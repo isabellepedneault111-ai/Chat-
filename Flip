@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Vocal Illimité</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #111;
+    }
+    #meet {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Iframe Jitsi illimitée -->
+  <iframe
+    id="meet"
+    src="https://meet.jit.si/ma-salle-vocale-secrete-92hf83#config.prejoinPageEnabled=false&config.startWithVideoMuted=true&config.startWithAudioMuted=false"
+    allow="camera; microphone; fullscreen; autoplay">
+  </iframe>
+</body>
+</html>
