@@ -25,7 +25,7 @@
   /* Footage */
   .vwrap { z-index: 1; overflow: hidden; }
   .vwrap video { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .shade { z-index: 3; background: linear-gradient(180deg, rgba(5,8,22,.15) 0%, rgba(5,8,22,.25) 55%, rgba(5,8,22,.85) 100%); }
+  .shade { z-index: 6; background: linear-gradient(180deg, rgba(5,8,22,.15) 0%, rgba(5,8,22,.25) 55%, rgba(5,8,22,.85) 100%); }
   .bars { z-index: 9; }
   .bars::before, .bars::after { content: ""; position: absolute; left: 0; right: 0; height: 120px; background: #000; }
   .bars::before { top: 0; } .bars::after { bottom: 0; }
@@ -35,7 +35,7 @@
   #three canvas { width: 100%; height: 100%; display: block; }
 
   /* 1. Ouverture */
-  #open { z-index: 10; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; }
+  #open { z-index: 10; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; }
   #open .l1 { font-size: 46px; letter-spacing: 0.12em; color: #fff; }
   #open .l2 { font-size: 30px; letter-spacing: 0.3em; color: #6CB33F; }
   #open .caret { display: inline-block; width: 22px; height: 44px; background: #6CB33F; vertical-align: middle; margin-left: 8px; }
@@ -103,9 +103,6 @@
   <div id="bg-grid" class="layer"></div>
 
   <!-- FOOTAGE -->
-  <div id="vw-corr" class="layer vwrap"><video id="v-corr" class="clip" src="assets/corridor.mp4" muted playsinline data-start="3.5" data-duration="10" data-media-start="6" data-track-index="1"></video></div>
-  <div id="vw-sign" class="layer vwrap"><video id="v-sign" class="clip" src="assets/corridor.mp4" muted playsinline data-start="19.5" data-duration="4.5" data-media-start="0.3" data-playback-rate="0.8" data-track-index="1"></video></div>
-  <div id="vw-mur" class="layer vwrap"><video id="v-mur" class="clip" src="assets/murale.mp4" muted playsinline data-start="102" data-duration="8.5" data-media-start="0" data-playback-rate="0.66" data-track-index="1"></video></div>
 
   <div id="shade-a" class="clip layer shade" data-start="3.5" data-duration="10" data-track-index="3"></div>
   <div id="shade-b" class="clip layer shade" data-start="19.5" data-duration="4.5" data-track-index="3"></div>
@@ -255,19 +252,19 @@
 
   <!-- 3. IRRITANTS -->
   
-    <div id="q0" class="clip scene quote" data-start="13.5" data-duration="2" data-track-index="6" style="background:#2456B0">
+    <div id="q0" class="clip scene quote" data-start="13.5" data-duration="2" data-track-index="6" style="background:#2456B0B8">
       <div class="q-in">
         <div class="q-text">T'as-tu mon document?</div>
         <div class="q-who">— Prof n° 1 · 8 h 13</div>
       </div>
     </div>
-    <div id="q1" class="clip scene quote" data-start="15.5" data-duration="2" data-track-index="6" style="background:#2F7A2A">
+    <div id="q1" class="clip scene quote" data-start="15.5" data-duration="2" data-track-index="6" style="background:#2F7A2AB8">
       <div class="q-in">
         <div class="q-text">C'était quoi, déjà, le lien?</div>
         <div class="q-who">— Prof n° 2 · 8 h 14</div>
       </div>
     </div>
-    <div id="q2" class="clip scene quote" data-start="17.5" data-duration="2" data-track-index="6" style="background:#0B0F1E">
+    <div id="q2" class="clip scene quote" data-start="17.5" data-duration="2" data-track-index="6" style="background:#0B0F1EB8">
       <div class="q-in">
         <div class="q-text">Je l'ai envoyé… mais je sais pu où.</div>
         <div class="q-who">— Prof n° 3 · 8 h 15</div>
@@ -337,7 +334,6 @@
   tl.to("#open .l1, #open .l2", { opacity: 0, duration: 0.3 }, 3.15);
 
   // 2. Corridor : lente poussée + textes
-  tl.fromTo("#vw-corr", { scale: 1.04 }, { scale: 1.16, duration: 10, ease: "none" }, 3.5);
   const tline = (sel, a, b) => {
     tl.fromTo(sel, { opacity: 0, y: 30, scale: 1.06 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out" }, a);
     tl.to(sel, { opacity: 0, y: -16, duration: 0.4, ease: "power2.in" }, b);
@@ -355,7 +351,6 @@
   });
 
   // 4. Enseigne
-  tl.fromTo("#vw-sign", { scale: 1.12 }, { scale: 1.0, duration: 4.5, ease: "power1.out" }, 19.5);
   tline("#sl1", 19.8, 21.3);
   tline("#sl2", 21.6, 23.6);
   tl.fromTo("#flash", { opacity: 0 }, { opacity: 0.9, duration: 0.12 }, 23.85);
@@ -388,7 +383,6 @@
   tl.to("#flash", { opacity: 0, duration: 0.6 }, P0 + 9 * PD + 0.05);
 
   // 7. Murale
-  tl.fromTo("#vw-mur", { scale: 1.0 }, { scale: 1.12, duration: 8.5, ease: "none" }, 102);
   tline("#ml1", 102.6, 105.6);
   tline("#ml2", 106.0, 110.1);
 
@@ -461,6 +455,101 @@
   scene.add(dust);
 
   const COLORS = ["#6CB33F","#FF6B6B","#22C7D6","#9B8CFF","#4FA3FF","#FF8A3D","#F472B6","#2DD4BF","#FFB020","#F5C542"];
+  // Texture de halo (dégradé radial, déterministe)
+  const gc = document.createElement("canvas"); gc.width = gc.height = 256;
+  const gx = gc.getContext("2d"); const gg = gx.createRadialGradient(128, 128, 0, 128, 128, 128);
+  gg.addColorStop(0, "rgba(255,255,255,1)"); gg.addColorStop(0.25, "rgba(255,255,255,0.55)"); gg.addColorStop(1, "rgba(255,255,255,0)");
+  gx.fillStyle = gg; gx.fillRect(0, 0, 256, 256);
+  const glowTex = new THREE.CanvasTexture(gc); glowTex.colorSpace = THREE.SRGBColorSpace;
+  const mkGlow = () => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffffff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })); sp.visible = false; scene.add(sp); return sp; };
+  const glowA = mkGlow(), glowB = mkGlow();
+
+  // Ondes de choc
+  const mkRing = () => { const m = new THREE.Mesh(new THREE.RingGeometry(0.92, 1, 128), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); m.visible = false; scene.add(m); return m; };
+  const shockA = mkRing(), shockB = mkRing();
+
+  // Tornade de feuilles volantes
+  const NP = 520, rp = rng(77);
+  const paperGeo = new THREE.PlaneGeometry(0.42, 0.56);
+  const paperMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.55, metalness: 0, side: THREE.DoubleSide, emissive: 0x223355, emissiveIntensity: 0.25 });
+  const papers = new THREE.InstancedMesh(paperGeo, paperMat, NP);
+  const PS = [];
+  const pal = [0xffffff, 0xffffff, 0xffffff, 0xe8f0ff, 0xdbe9ff, 0xfff3a6, 0xc8f0b0];
+  for (let i = 0; i < NP; i++) {
+    PS.push({ a0: rp() * 6.283, r0: 1.2 + rp() * 6.5, h0: rp() * 14 - 7, sp: 0.35 + rp() * 0.9, s1: rp() * 4 - 2, s2: rp() * 4 - 2, s3: rp() * 3 - 1.5, ph: rp() * 6.283, b: 0.5 + rp() });
+    papers.setColorAt(i, new THREE.Color(pal[Math.floor(rp() * pal.length)]));
+  }
+  papers.visible = false; scene.add(papers);
+  const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _e = new THREE.Euler(), _p = new THREE.Vector3(), _s = new THREE.Vector3();
+  const SLAMS = [13.5, 15.5, 17.5];
+
+  function paperStorm(t) {
+    papers.visible = true;
+    const k = Math.pow(clamp((t - 19.5) / 4.3), 2);
+    let shake = 0;
+    for (const ts of SLAMS) if (t > ts) shake += Math.exp(-(t - ts) * 7) * 0.22;
+    let cz = t < 13.5 ? 16.5 - (t - 1.8) * 0.5 : 10.65 - clamp((t - 19.5) / 4.3) * 3.2;
+    camera.position.set(Math.sin(t * 0.25) * 1.6 + Math.sin(t * 83) * shake, 0.4 + Math.cos(t * 71) * shake, cz);
+    camera.lookAt(0, 0, -2);
+    for (let i = 0; i < NP; i++) {
+      const P = PS[i];
+      const fade = clamp((t - 2.5 - i * 0.003) / 1.2);
+      let burst = 0;
+      for (const ts of SLAMS) if (t > ts) burst += 3.2 * P.b * Math.exp(-(t - ts) * 2.4);
+      const r = (P.r0 + burst) * (1 - k);
+      const ang = P.a0 + t * (0.35 + 1.1 / P.r0) + k * k * 9;
+      const y = ((((P.h0 + t * P.sp * 1.1 + 7) % 14) + 14) % 14 - 7) * (1 - k);
+      _p.set(Math.cos(ang) * r, y, Math.sin(ang) * r - 2);
+      _e.set(t * P.s1 + P.ph, t * P.s2, t * P.s3 + P.ph);
+      _q.setFromEuler(_e);
+      const sc = fade * (1 - k * 0.9);
+      _s.set(sc, sc, sc);
+      _m.compose(_p, _q, _s);
+      papers.setMatrixAt(i, _m);
+    }
+    papers.instanceMatrix.needsUpdate = true;
+    // Cœur lumineux du vortex
+    if (t > 19.5) {
+      glowA.visible = true; glowA.material.color.set(0xfff0c0);
+      glowA.position.set(0, 0, -2); glowA.scale.setScalar(0.6 + k * 9);
+      glowA.material.opacity = 0.25 + k * 0.75;
+    }
+    // Onde de choc à chaque irritant
+    for (const ts of SLAMS) {
+      const u = t - ts;
+      if (u > 0 && u < 0.9) {
+        shockA.visible = true; shockA.material.color.set(0xffffff);
+        shockA.position.set(0, 0, 0); shockA.lookAt(camera.position);
+        shockA.scale.setScalar(0.5 + u * 14); shockA.material.opacity = (1 - u / 0.9) * 0.7;
+      }
+    }
+  }
+
+  // Convergence finale des 10 pépites
+  function converge(t, t0, t1) {
+    camera.position.set(0, 0.3, 12); camera.lookAt(0, 0.6, 0);
+    const u = easeInOut(clamp((t - t0) / 3.6)), out = clamp((t1 - t) / 0.5);
+    nuggets.forEach((m, i) => {
+      const a = i / 10 * Math.PI * 2 + (t - t0) * (0.6 + u * 1.2);
+      const rad = 9.5 * (1 - u) + (1.05 + 0.3 * Math.sin(i * 2.1)) * u;
+      m.visible = true;
+      m.position.set(Math.cos(a) * rad, 1.0 + Math.sin(a) * rad * 0.38 + Math.sin(i * 1.7) * 0.45 * u, Math.sin(a) * rad * 0.6);
+      m.rotation.set(t * 0.9 + i, t * 1.3 + i, 0);
+      m.scale.setScalar(0.55 * out);
+    });
+    glowA.visible = true; glowA.material.color.set(0xffd36b);
+    glowA.position.set(0, 1.0, -1.5); glowA.scale.setScalar(2 + u * 7); glowA.material.opacity = (0.15 + u * 0.6) * out;
+    if (t > t0 + 3.4 && t < t0 + 4.6) {
+      const v = (t - t0 - 3.4) / 1.2;
+      shockA.visible = true; shockA.material.color.set(0xffd36b);
+      shockA.position.set(0, 1.0, 0); shockA.lookAt(camera.position);
+      shockA.scale.setScalar(1 + v * 12); shockA.material.opacity = (1 - v) * 0.8;
+    }
+    rim.color.set(0xffd36b); rim.intensity = 90; rim.position.set(0, 1, -3);
+    updateDust(t, u * out, 1.0);
+  }
+
+
   const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
   const easeOutBack = (x) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
   const easeInOut = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
@@ -513,8 +602,15 @@
 
   function renderAt(t) {
     nuggets.forEach((m) => (m.visible = false)); hero.visible = false; dust.visible = false;
+    papers.visible = false; glowA.visible = false; glowB.visible = false; shockA.visible = false; shockB.visible = false;
+    if (t >= 2.5 && t < 24.2) {
+      paperStorm(t);
+    }
     if (t >= 24 && t < 32) {
       ring(t, 24, 32, 5.7, 3.05, 13);
+      const u = t - 24;
+      glowB.visible = true; glowB.material.color.set(0xffe9a8); glowB.position.set(0, 0, -4); glowB.scale.setScalar(16); glowB.material.opacity = 0.32 * clamp(u / 0.8) * clamp((32 - t) / 0.5);
+      if (u < 1.2) { shockB.visible = true; shockB.material.color.set(0xffffff); shockB.position.set(0, 0, 0); shockB.lookAt(camera.position); shockB.scale.setScalar(0.5 + u * 16); shockB.material.opacity = (1 - u / 1.2) * 0.9; }
     } else if (t >= P0 && t < P0 + 10 * PD) {
       const i = Math.floor((t - P0) / PD), u = t - P0 - i * PD;
       camera.position.set(0, 0, 11); camera.lookAt(0, 0, 0);
@@ -528,6 +624,17 @@
       rim.color.set(COLORS[i]); rim.intensity = 140; rim.position.set(-1.2, 1.2, -3.2);
       updateDust(t, Math.min(clamp(u / 0.6), out) * (i === 9 ? 1 : 0.55), 0.55);
       dust.position.set(-3.2, 0, 0);
+      glowA.visible = true; glowA.material.color.set(COLORS[i]);
+      glowA.position.set(m.position.x, m.position.y, -1.5); glowA.scale.setScalar(7.5 * big); glowA.material.opacity = 0.55 * inn * out;
+      const w = u - 0.6;
+      if (w > 0 && w < 1.1) {
+        shockA.visible = true; shockA.material.color.set(COLORS[i]);
+        shockA.position.set(m.position.x, m.position.y, 0); shockA.lookAt(camera.position);
+        shockA.scale.setScalar(1.2 + w * 6); shockA.material.opacity = (1 - w / 1.1) * 0.85;
+        if (i === 9) { shockB.visible = true; shockB.material.color.set(0xffffff); shockB.position.copy(shockA.position); shockB.lookAt(camera.position); shockB.scale.setScalar(0.8 + w * 11); shockB.material.opacity = (1 - w / 1.1) * 0.7; }
+      }
+    } else if (t >= 102 && t < 110.5) {
+      converge(t, 102, 110.5);
     } else if (t >= 110.5 && t <= 120) {
       dust.position.set(0, 0, 0);
       bands(t, 110.5, 120);
