@@ -38,7 +38,7 @@ pres.defineSlideMaster({
 pres.addSection({ title: "Ouverture" });
 let s = pres.addSlide({ masterName: "VIDEO", sectionTitle: "Ouverture" });
 if (QA) s.addImage({ path: "media/focus.jpg", x: 0, y: 0, w: 13.333, h: 7.5, objectName: "Vidéo Focus FGA" }); else s.addMedia({ type: "video", path: "media/focus.mp4", cover: cover("media/focus.jpg"), x: 0, y: 0, w: 13.333, h: 7.5, objectName: "Vidéo Focus FGA" });
-s.addNotes("0:00 – 2:00 · BANDE-ANNONCE. Lance la vidéo dès l'ouverture, sans dire un mot avant : l'effet de surprise fait le travail. Rappel Teams : si tu partages ton écran plutôt qu'en PowerPoint Live, coche « Inclure le son de l'ordinateur » (utile si tu as ajouté de la musique).");
+s.addNotes("0:00 – 2:40 · BANDE-ANNONCE (2 min 36, avec ta voix off). Lance la vidéo dès l'ouverture, sans dire un mot avant : l'effet de surprise fait le travail. Rappel Teams : si tu partages ton écran plutôt qu'en PowerPoint Live, coche « Inclure le son de l'ordinateur » (utile si tu as ajouté de la musique).");
 
 // 2 · Qui suis-je
 pres.addSection({ title: "Qui suis-je" });
@@ -59,19 +59,19 @@ cards.forEach(([n, t], i) => {
   s.addText(t, { x: 7.65, y, w: 4.75, h: 1.5, fontSize: 18, color: C.background1, valign: "middle", isTextBox: true, margin: 0 });
 });
 s.addText("Un coup de main ciblé : dans ta matière, avec ton groupe, sur tes outils.", { x: 5.9, y: 6.25, w: 6.7, h: 0.5, fontSize: 15, italic: true, color: C.accent2, isTextBox: true, margin: 0 });
-s.addNotes("2:00 – 3:30 · QUI SUIS-JE (90 s). Trois chiffres, une promesse. Ajoute UNE anecdote personnelle (pourquoi la FGA te tient à cœur, ou un moment de classe marquant) : c'est elle qu'on retiendra. Phrase de transition : « Avant de parler d'outils, j'ai voulu savoir qui on accueille vraiment. »");
+s.addNotes("2:40 – 4:00 · QUI SUIS-JE (80 s). Trois chiffres, une promesse. Ajoute UNE anecdote personnelle (pourquoi la FGA te tient à cœur, ou un moment de classe marquant) : c'est elle qu'on retiendra. Phrase de transition : « Avant de parler d'outils, j'ai voulu savoir qui on accueille vraiment. »");
 
 // 3 · Stats
 pres.addSection({ title: "Nos élèves" });
 s = pres.addSlide({ masterName: "VIDEO", sectionTitle: "Nos élèves" });
 if (QA) s.addImage({ path: "media/stats.jpg", x: 0, y: 0, w: 13.333, h: 7.5, objectName: "Vidéo stats clientèle" }); else s.addMedia({ type: "video", path: "media/stats.mp4", cover: cover("media/stats.jpg"), x: 0, y: 0, w: 13.333, h: 7.5, objectName: "Vidéo stats clientèle" });
-s.addNotes("3:30 – 6:00 · QUI ACCUEILLONS-NOUS VRAIMENT? Vidéo de 80 s. Ensuite, une seule question dans le clavardage : « En un mot, qu'est-ce qui vous surprend? » Lis 2 ou 3 réponses à voix haute. Message clé : 70 % valorisent déjà plus l'école qu'avant, et ça se joue dans les premières semaines.");
+s.addNotes("4:00 – 6:15 · QUI ACCUEILLONS-NOUS VRAIMENT? Vidéo de 80 s. Ensuite, une seule question dans le clavardage : « En un mot, qu'est-ce qui vous surprend? » Lis 2 ou 3 réponses à voix haute. Message clé : 70 % valorisent déjà plus l'école qu'avant, et ça se joue dans les premières semaines.");
 
 // 4 · Whiteboard
 pres.addSection({ title: "Exemple concret" });
 s = pres.addSlide({ masterName: "VIDEO", sectionTitle: "Exemple concret" });
 if (QA) s.addImage({ path: "media/whiteboard.jpg", x: 0, y: 0, w: 13.333, h: 7.5, objectName: "Vidéo tableau blanc" }); else s.addMedia({ type: "video", path: "media/whiteboard.mp4", cover: cover("media/whiteboard.jpg"), x: 0, y: 0, w: 13.333, h: 7.5, objectName: "Vidéo tableau blanc" });
-s.addNotes("6:00 – 8:00 · UN EXEMPLE CONCRET. Vidéo de 54 s. Lien avec le sondage : la formation à distance revient parmi vos défis. L'astuce à répéter de vive voix : ouvrir Whiteboard dans sa propre fenêtre et partager cette fenêtre, sinon l'enregistrement ne capte pas le tableau.");
+s.addNotes("6:15 – 8:00 · UN EXEMPLE CONCRET. Vidéo de 54 s. Lien avec le sondage : la formation à distance revient parmi vos défis. L'astuce à répéter de vive voix : ouvrir Whiteboard dans sa propre fenêtre et partager cette fenêtre, sinon l'enregistrement ne capte pas le tableau.");
 
 // 5 · Labo techno-IA
 pres.addSection({ title: "Labo techno-IA" });
