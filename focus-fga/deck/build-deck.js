@@ -109,10 +109,8 @@ s.addNotes("12:00 – 14:30 · INSCRIPTION EN DIRECT. AVANT la rencontre : dans 
 
 // 8 · Merci
 pres.addSection({ title: "Clôture" });
-s = pres.addSlide({ masterName: "SOMBRE", sectionTitle: "Clôture" });
-s.addText("Les pépites, c'était la bande-annonce.", { x: 0.6, y: 2.2, w: 12.1, h: 0.9, fontSize: 40, bold: true, color: C.background1, fontFace: "Arial", isTextBox: true, margin: 0, align: "center" });
-s.addText("Le film, on le fait ensemble.", { x: 0.6, y: 3.1, w: 12.1, h: 0.9, fontSize: 40, bold: true, color: C.accent1, fontFace: "Arial", isTextBox: true, margin: 0, align: "center" });
-s.addText("Isabelle Pedneault · Conseillère pédagonumérique · Écris-moi sur Teams", { x: 0.6, y: 4.6, w: 12.1, h: 0.5, fontSize: 18, color: C.accent5, isTextBox: true, margin: 0, align: "center" });
+s = pres.addSlide({ masterName: "IMAGE", sectionTitle: "Clôture" });
+s.addImage({ path: "media/fin.jpg", x: 0, y: 0, w: 13.333, h: 7.5, altText: "Carte finale Labo techno-IA", objectName: "Fond de clôture" });
 s.addNotes("14:30 – 15:00 · CLÔTURE. Une phrase, un merci, et tu laisses le tableau Loop ouvert. Prochaine étape à annoncer si tu l'as : la première rencontre du Labo (novembre, mardi ou jeudi après-midi selon le sondage).");
 
 (async () => {
