@@ -238,8 +238,8 @@ const html = `<!doctype html>
   <div id="end" class="clip scene" data-start="110.5" data-duration="9.5" data-track-index="6">
     ${logoSvg("end-logo")}
     <div class="ecol">
-      <div class="ek mono">FOCUS FGA · SAISON 2026-2027</div>
-      <div class="et disp">CoP <span class="g">pédago</span>numérique</div>
+      <div class="ek mono">FOCUS FGA · AUTOMNE 2026</div>
+      <div class="et disp">Labo <span class="g">techno-IA</span></div>
       <div class="ecta">Inscris-toi. On t'attend.</div>
       <div class="esig mono">LA RÉUSSITE, NOTRE PRIORITÉ.</div>
     </div>

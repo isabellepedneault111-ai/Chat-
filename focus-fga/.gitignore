@@ -10,3 +10,8 @@ stats/renders/*.log
 whiteboard/.hyperframes/
 stats/.hyperframes/
 visuels/*/.hyperframes/
+deck/node_modules/
+deck/qa.*
+deck/slide-*.jpg
+deck/*.pdf
+deck/media/*.mp4
