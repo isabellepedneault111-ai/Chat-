@@ -8,16 +8,16 @@ const GOLD = "#F5C542";
 
 // Compte à rebours : #10 → #1 (7 s chacune, à partir de 32 s)
 const PEPITES = [
-  { n: 10, tag: "Vie de classe", irritant: "« C'est où, déjà, le document? »", title: ["Une équipe.", "Tout au même endroit."], benefit: "Canaux, fichiers, consignes : les élèves savent toujours où revenir.", color: GREEN },
-  { n: 9, tag: "Motivation", irritant: "« Comment je les garde accrochés? »", title: ["Les badges", "Félicitations"], benefit: "Persévérance, leadership, créativité : un renforcement positif en deux clics.", color: "#FFB020" },
-  { n: 8, tag: "Co-construction", irritant: "« Qui a la dernière version? »", title: ["Les composants", "Loop"], benefit: "Une liste ou un tableau qui se met à jour en direct, dans la conversation.", color: "#9B8CFF" },
-  { n: 7, tag: "Pensée visuelle", irritant: "« Il me faudrait un tableau, là. »", title: ["Whiteboard", "intégré"], benefit: "Remue-méninges, kanban, résolution de problèmes, sans quitter Teams.", color: "#22C7D6" },
-  { n: 6, tag: "Francisation", irritant: "« Il ne comprend pas la consigne. »", title: ["Traduction", "et sous-titres"], benefit: "Un message traduit en un clic. Des sous-titres en direct pendant l'appel.", color: "#4FA3FF" },
-  { n: 5, tag: "Communication orale", irritant: "« Ils stressent pour leur exposé. »", title: ["Le coach", "de présentation"], benefit: "Débit, tics de langage, intonation : une rétroaction privée, générée par l'IA.", color: "#FF6B6B" },
-  { n: 4, tag: "Évaluation", irritant: "« Encore mes grilles papier… »", title: ["Grilles par", "compétences"], benefit: "Un clic sur le niveau atteint. Une rétroaction claire, axée sur la progression.", color: "#FF8A3D" },
+  { n: 10, tag: "Esprit critique", irritant: "« Ils copient le premier site venu. »", title: ["Progrès", "en recherche"], benefit: "Des sources fiables, une démarche visible : tu vois comment l'élève cherche.", color: GREEN },
+  { n: 9, tag: "Communication orale", irritant: "« Ils stressent pour leur exposé. »", title: ["Le coach", "de présentation"], benefit: "Débit, tics de langage, intonation : une rétroaction privée, générée par l'IA.", color: "#FF6B6B" },
+  { n: 8, tag: "Formation à distance", irritant: "« Il n'a pas pu venir au cours. »", title: ["Tableau blanc", "enregistré"], benefit: "En direct, en interaction, puis en réécoute. Astuce : partage la fenêtre Whiteboard.", color: "#22C7D6" },
+  { n: 7, tag: "Autonomie", irritant: "« Il bloque le soir, seul devant ses exercices. »", title: ["Copilot :", "étudier et apprendre"], benefit: "Un tuteur qui guide sans donner la réponse. Pour les 13 ans et plus.", color: "#9B8CFF" },
+  { n: 6, tag: "Individualisation", irritant: "« Chacun avance à son rythme… et moi je cours. »", title: ["Learning", "Zone"], benefit: "Micro-leçons, questionnaires, appariements : intégrés aux devoirs, ajustés à l'élève.", color: "#4FA3FF" },
+  { n: 5, tag: "Évaluation", irritant: "« Encore mes grilles papier… »", title: ["Grilles", "générées par IA"], benefit: "L'IA propose la grille à partir de ta consigne. Tu valides. Tes notes deviennent une rétroaction claire.", color: "#FF8A3D" },
+  { n: 4, tag: "Bien-être", irritant: "« Je ne l'ai pas vu décrocher. »", title: ["Reflect"], benefit: "Un check-in émotionnel en deux clics. Tu vois qui a besoin de toi.", color: "#F472B6" },
   { n: 3, tag: "Inclusion", irritant: "« Tu peux me lire ça? »", title: ["Le lecteur", "immersif"], benefit: "Lecture à voix haute, syllabes, traduction : chacun lit à sa façon.", color: "#2DD4BF" },
-  { n: 2, tag: "Bien-être", irritant: "« Je ne l'ai pas vu décrocher. »", title: ["Reflect"], benefit: "Un check-in émotionnel en deux clics. Tu vois qui a besoin de toi.", color: "#F472B6" },
-  { n: 1, tag: "Lecture", irritant: "« Je n'ai pas le temps d'écouter tout le monde lire. »", title: ["Progrès", "en lecture"], benefit: "L'élève lit, l'IA écoute, repère les mots difficiles et crée la pratique sur mesure.", color: GOLD },
+  { n: 2, tag: "Lecture", irritant: "« Je n'ai pas le temps d'écouter tout le monde lire. »", title: ["Progrès", "en lecture"], benefit: "L'élève lit, l'IA écoute, repère les mots difficiles et crée la pratique sur mesure.", color: "#FFB020" },
+  { n: 1, tag: "Intégrité", irritant: "« Est-ce qu'on a le droit d'utiliser l'IA? »", title: ["L'IA permise,", "devoir par devoir"], benefit: "Pour chaque devoir, tu choisis le niveau d'IA permis : d'aucune IA à Copilot au complet.", color: GOLD },
 ];
 
 const P0 = 32; // début du compte à rebours
@@ -150,7 +150,7 @@ const html = `<!doctype html>
   .pk-tag { color: rgba(255,255,255,.85); }
   .pirr { position: relative; display: inline-block; margin-top: 34px; font-family: "Space Mono", monospace; font-size: 32px; color: rgba(255,255,255,.9); }
   .pirr-x { position: absolute; left: -6px; right: -6px; top: 52%; height: 5px; background: var(--c); transform-origin: left center; display: block; }
-  .ptitle { margin-top: 26px; font-family: "League Gothic", sans-serif; font-weight: 400; font-size: 168px; line-height: 0.9; text-transform: uppercase; }
+  .ptitle { margin-top: 26px; font-family: "League Gothic", sans-serif; font-weight: 400; font-size: 150px; line-height: 0.9; text-transform: uppercase; }
   .pline { display: block; overflow: hidden; padding-bottom: 6px; }
   .pline-in { display: block; }
   .pline:last-child .pline-in { color: var(--c); }
