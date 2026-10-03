@@ -20,8 +20,11 @@ const PEPITES = [
   { n: 1, tag: "Intégrité", irritant: "« Est-ce qu'on a le droit d'utiliser l'IA? »", title: ["L'IA permise,", "devoir par devoir"], benefit: "Pour chaque devoir, tu choisis le niveau d'IA permis : d'aucune IA à Copilot au complet.", color: GOLD },
 ];
 
-const P0 = 32; // début du compte à rebours
-const PD = 7; // durée par pépite
+const P0 = 38; // début du compte à rebours
+const PD = 10; // durée par pépite (place pour la voix off)
+const TC = P0 + 10 * PD; // convergence + murale
+const TE = TC + 8.5; // carte finale
+const TT = TE + 9.5; // durée totale
 
 const QUOTES = [
   { text: "T'as-tu mon document?", who: "Prof n° 1 · 8 h 13", bg: BLUE },
@@ -103,6 +106,7 @@ const html = `<!doctype html>
   /* Footage */
   .vwrap { z-index: 1; overflow: hidden; }
   .vwrap video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .dim { z-index: 2; background: radial-gradient(1200px 700px at 50% 45%, rgba(5,8,22,.25), rgba(5,8,22,.7)); }
   .shade { z-index: 6; background: linear-gradient(180deg, rgba(5,8,22,.15) 0%, rgba(5,8,22,.25) 55%, rgba(5,8,22,.85) 100%); }
   .bars { z-index: 9; }
   .bars::before, .bars::after { content: ""; position: absolute; left: 0; right: 0; height: 120px; background: #000; }
@@ -171,23 +175,39 @@ const html = `<!doctype html>
   #end .ecta { margin-top: 34px; display: inline-block; padding: 18px 36px; background: ${GREEN}; color: #06120A; font-weight: 900; font-size: 34px; letter-spacing: 0.08em; text-transform: uppercase; border-radius: 6px; }
   #end .esig { margin-top: 30px; font-size: 24px; letter-spacing: 0.2em; color: rgba(255,255,255,.7); }
 
+  #gag { z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 140px; }
+  #gag .g-k { font-size: 26px; letter-spacing: .3em; color: #6CB33F; }
+  #gag .g-q { margin-top: 26px; font-size: 150px; line-height: .95; color: #fff; }
+  #gag .g-a { position: absolute; left: 0; right: 0; top: 50%; margin-top: -110px; font-size: 230px; line-height: 1; color: #F5C542; opacity: 0; }
+  #wbp { z-index: 8; opacity: 0; }
+  .wb-frame { position: absolute; left: 80px; top: 300px; width: 740px; height: 416px; border-radius: 22px; overflow: hidden; border: 4px solid #22C7D6; box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 60px rgba(34,199,214,.35); transform: perspective(1500px) rotateY(12deg); }
+  .wb-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
   #flash { z-index: 50; background: #fff; opacity: 0; }
 </style>
 </head>
 <body>
-<div id="root" data-composition-id="main" data-start="0" data-duration="120" data-width="1920" data-height="1080">
+<div id="root" data-composition-id="main" data-start="0" data-duration="${TT}" data-width="1920" data-height="1080">
 
   <div id="bg" class="layer"></div>
   <div id="bg-grid" class="layer"></div>
 
   <!-- FOOTAGE -->
 
+  <!-- FOOTAGE STABILISÉ -->
+  <div id="vw-a" class="layer vwrap"><video id="v-a" class="clip" src="assets/corridor-stab.mp4" muted playsinline data-start="3.5" data-duration="3.3" data-media-start="6.0" data-track-index="1"></video></div>
+  <div id="vw-b" class="layer vwrap"><video id="v-b" class="clip" src="assets/corridor-stab.mp4" muted playsinline data-start="6.8" data-duration="6.7" data-media-start="10.4" data-track-index="1"></video></div>
+  <div id="vw-c" class="layer vwrap"><video id="v-c" class="clip" src="assets/corridor-stab.mp4" muted playsinline data-start="19.5" data-duration="4.5" data-media-start="0.3" data-playback-rate="0.8" data-track-index="1"></video></div>
+  <div id="vw-d" class="layer vwrap"><video id="v-d" class="clip" src="assets/murale.mp4" muted playsinline data-start="${TC}" data-duration="8.5" data-media-start="0" data-playback-rate="0.66" data-track-index="1"></video></div>
+  <div id="dim-a" class="clip layer dim" data-start="3.5" data-duration="10" data-track-index="2"></div>
+  <div id="dim-b" class="clip layer dim" data-start="19.5" data-duration="4.5" data-track-index="2"></div>
+  <div id="dim-c" class="clip layer dim" data-start="${TC}" data-duration="8.5" data-track-index="2"></div>
+
   <div id="shade-a" class="clip layer shade" data-start="3.5" data-duration="10" data-track-index="3"></div>
   <div id="shade-b" class="clip layer shade" data-start="19.5" data-duration="4.5" data-track-index="3"></div>
-  <div id="shade-c" class="clip layer shade" data-start="102" data-duration="8.5" data-track-index="3"></div>
+  <div id="shade-c" class="clip layer shade" data-start="${TC}" data-duration="8.5" data-track-index="3"></div>
   <div id="bars-a" class="clip layer bars" data-start="3.5" data-duration="10" data-track-index="4"></div>
   <div id="bars-b" class="clip layer bars" data-start="19.5" data-duration="4.5" data-track-index="4"></div>
-  <div id="bars-c" class="clip layer bars" data-start="102" data-duration="8.5" data-track-index="4"></div>
+  <div id="bars-c" class="clip layer bars" data-start="${TC}" data-duration="8.5" data-track-index="4"></div>
 
   <!-- PÉPITES (fonds) -->
   ${pepiteHtml.split("\n").filter((l) => true).join("\n")}
@@ -225,14 +245,23 @@ const html = `<!doctype html>
     <div class="chip mono">10 PÉPITES · 2 MINUTES</div>
   </div>
 
+  <!-- GAG : TEAMS, C'EST PAS JUSTE POUR LES RÉUNIONS? -->
+  <div id="gag" class="clip scene" data-start="32" data-duration="6" data-track-index="6">
+    <div class="g-k mono">PENDANT CE TEMPS, QUELQUE PART AU CFGA…</div>
+    <div class="g-q disp">« Teams, c'est pas juste pour les réunions, ça?! »</div>
+    <div class="g-a disp">Attends de voir.</div>
+  </div>
+
+  <div id="wbp" class="layer"><div class="wb-frame"><video id="v-wb" class="clip" src="assets/whiteboard.mp4" muted playsinline data-start="${P0 + 2 * PD + 0.5}" data-duration="9" data-media-start="25.5" data-track-index="5"></video></div></div>
+
   <!-- 7. MURALE -->
-  <div id="mural-tx" class="clip scene trailer" data-start="102" data-duration="8.5" data-track-index="6">
+  <div id="mural-tx" class="clip scene trailer" data-start="${TC}" data-duration="8.5" data-track-index="6">
     <div id="ml1" class="tline disp" data-layout-allow-overlap>Les pépites, c'était <em>la bande-annonce</em>.</div>
     <div id="ml2" class="tline disp" data-layout-allow-overlap>Le film, on le fait <em>ensemble</em>.</div>
   </div>
 
   <!-- 8. FIN -->
-  <div id="end" class="clip scene" data-start="110.5" data-duration="9.5" data-track-index="6">
+  <div id="end" class="clip scene" data-start="${TE}" data-duration="9.5" data-track-index="6">
     ${logoSvg("end-logo")}
     <div class="ecol">
       <div class="ek mono">FOCUS FGA · AUTOMNE 2026</div>
@@ -293,6 +322,24 @@ const html = `<!doctype html>
   tl.fromTo("#title .chip", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, 26.6);
   tl.to("#title .big, #title .pre, #title .sub, #title .chip", { opacity: 0, scale: 1.08, duration: 0.45, ease: "power2.in" }, 31.4);
 
+  // Footage : lente poussée
+  tl.fromTo("#vw-a", { scale: 1.04 }, { scale: 1.1, duration: 3.3, ease: "none" }, 3.5);
+  tl.fromTo("#vw-b", { scale: 1.04 }, { scale: 1.14, duration: 6.7, ease: "none" }, 6.8);
+  tl.fromTo("#vw-c", { scale: 1.12 }, { scale: 1.0, duration: 4.5, ease: "power1.out" }, 19.5);
+  tl.fromTo("#vw-d", { scale: 1.0 }, { scale: 1.1, duration: 8.5, ease: "none" }, ${TC});
+
+  // Gag
+  tl.fromTo("#gag .g-k", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 32.2);
+  tl.fromTo("#gag .g-q", { opacity: 0, scale: 1.3 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power4.out" }, 32.7);
+  tl.fromTo("#gag .g-q", { x: 0 }, { x: 10, duration: 0.05, repeat: 7, yoyo: true }, 33.0);
+  tl.to("#gag .g-q, #gag .g-k", { opacity: 0, scaleY: 0.02, duration: 0.18, ease: "power2.in" }, 35.3);
+  tl.fromTo("#gag .g-a", { opacity: 0, scale: 2.2 }, { opacity: 1, scale: 1, duration: 0.25, ease: "power4.out" }, 35.5);
+  tl.to("#gag .g-a", { opacity: 0, scale: 1.15, duration: 0.4, ease: "power2.in" }, 37.5);
+
+  // Pépite #8 : extrait de la vidéo Whiteboard
+  tl.fromTo("#wbp", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)" }, ${P0 + 2 * PD + 0.5});
+  tl.to("#wbp", { opacity: 0, duration: 0.4 }, ${P0 + 3 * PD - 0.5});
+
   // 6. Pépites
   for (let i = 0; i < 10; i++) {
     const s = P0 + i * PD;
@@ -313,18 +360,18 @@ const html = `<!doctype html>
   tl.to("#flash", { opacity: 0, duration: 0.6 }, P0 + 9 * PD + 0.05);
 
   // 7. Murale
-  tline("#ml1", 102.6, 105.6);
-  tline("#ml2", 106.0, 110.1);
+  tline("#ml1", ${TC + 0.6}, ${TC + 3.6});
+  tline("#ml2", ${TC + 4}, ${TC + 8.1});
 
   // 8. Fin
-  tl.fromTo("#end-logo .logo-arc", { strokeDashoffset: 1, strokeDasharray: 1 }, { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut" }, 110.7);
-  tl.fromTo("#end-logo .logo-bldg", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.6)" }, 111.0);
-  tl.fromTo("#end-logo .logo-word, #end-logo .logo-sub", { opacity: 0 }, { opacity: 1, duration: 0.5, stagger: 0.2 }, 111.3);
-  tl.fromTo("#end .ek", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5 }, 111.4);
-  tl.fromTo("#end .et", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.8, ease: "power4.out" }, 111.7);
-  tl.fromTo("#end .ecta", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, 112.8);
-  tl.fromTo("#end .esig", { opacity: 0 }, { opacity: 1, duration: 0.8 }, 114.0);
-  tl.to("#end .logo, #end .ecol", { opacity: 0, duration: 0.8 }, 119.0);
+  tl.fromTo("#end-logo .logo-arc", { strokeDashoffset: 1, strokeDasharray: 1 }, { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut" }, ${TE + 0.2});
+  tl.fromTo("#end-logo .logo-bldg", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.6)" }, ${TE + 0.5});
+  tl.fromTo("#end-logo .logo-word, #end-logo .logo-sub", { opacity: 0 }, { opacity: 1, duration: 0.5, stagger: 0.2 }, ${TE + 0.8});
+  tl.fromTo("#end .ek", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5 }, ${TE + 0.9});
+  tl.fromTo("#end .et", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.8, ease: "power4.out" }, ${TE + 1.2});
+  tl.fromTo("#end .ecta", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, ${TE + 2.3});
+  tl.fromTo("#end .esig", { opacity: 0 }, { opacity: 1, duration: 0.8 }, ${TE + 3.5});
+  tl.to("#end .logo, #end .ecol", { opacity: 0, duration: 0.8 }, ${TE + 8.5});
 
   window.__timelines["main"] = tl;
 </script>
@@ -536,6 +583,11 @@ const html = `<!doctype html>
     if (t >= 2.5 && t < 24.2) {
       paperStorm(t);
     }
+    if (t >= 35.5 && t < 36.6) {
+      const v = (t - 35.5) / 1.1;
+      camera.position.set(0, 0, 13); camera.lookAt(0, 0, 0);
+      shockB.visible = true; shockB.material.color.set(0xf5c542); shockB.position.set(0, 0, 0); shockB.lookAt(camera.position); shockB.scale.setScalar(1 + v * 14); shockB.material.opacity = (1 - v) * 0.9;
+    }
     if (t >= 24 && t < 32) {
       ring(t, 24, 32, 5.7, 3.05, 13);
       const u = t - 24;
@@ -547,27 +599,27 @@ const html = `<!doctype html>
       const m = nuggets[i];
       const inn = clamp(u / 0.85), out = clamp((PD - u) / 0.45);
       const big = i === 9 ? 1.12 : 1;
-      m.visible = true;
+      m.visible = i !== 2;
       m.position.set(-3.0, (1 - easeOutBack(inn)) * 7 + Math.sin(t * 1.4) * 0.12 + (1 - out) * 1.5, 0);
       m.rotation.set(0.35 + Math.sin(t * 0.7) * 0.25, t * 0.9 + i * 1.7 + (1 - inn) * 3, 0.15);
       m.scale.setScalar(1.75 * big * out);
       rim.color.set(COLORS[i]); rim.intensity = 140; rim.position.set(-1.2, 1.2, -3.2);
       updateDust(t, Math.min(clamp(u / 0.6), out) * (i === 9 ? 1 : 0.55), 0.55);
       dust.position.set(-3.2, 0, 0);
-      glowA.visible = true; glowA.material.color.set(COLORS[i]);
+      glowA.visible = i !== 2; glowA.material.color.set(COLORS[i]);
       glowA.position.set(m.position.x, m.position.y, -1.5); glowA.scale.setScalar(7.5 * big); glowA.material.opacity = 0.55 * inn * out;
       const w = u - 0.6;
-      if (w > 0 && w < 1.1) {
+      if (w > 0 && w < 1.1 && i !== 2) {
         shockA.visible = true; shockA.material.color.set(COLORS[i]);
         shockA.position.set(m.position.x, m.position.y, 0); shockA.lookAt(camera.position);
         shockA.scale.setScalar(1.2 + w * 6); shockA.material.opacity = (1 - w / 1.1) * 0.85;
         if (i === 9) { shockB.visible = true; shockB.material.color.set(0xffffff); shockB.position.copy(shockA.position); shockB.lookAt(camera.position); shockB.scale.setScalar(0.8 + w * 11); shockB.material.opacity = (1 - w / 1.1) * 0.7; }
       }
-    } else if (t >= 102 && t < 110.5) {
-      converge(t, 102, 110.5);
-    } else if (t >= 110.5 && t <= 120) {
+    } else if (t >= ${TC} && t < ${TE}) {
+      converge(t, ${TC}, ${TE});
+    } else if (t >= ${TE} && t <= ${TT}) {
       dust.position.set(0, 0, 0);
-      bands(t, 110.5, 120);
+      bands(t, ${TE}, ${TT});
     }
     if (!(t >= P0 && t < P0 + 10 * PD)) dust.position.set(0, 0, 0);
     renderer.render(scene, camera);
