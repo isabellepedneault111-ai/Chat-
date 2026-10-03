@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<script src="gsap.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #060B1C; }
+  #root { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: Montserrat, sans-serif; color: #fff;
+    background: radial-gradient(900px 700px at 15% 10%, #13265A 0%, transparent 70%), radial-gradient(800px 600px at 95% 90%, #1E3A1A 0%, transparent 70%), #060B1C; }
+  .mono { font-family: "Space Mono", monospace; }
+  .disp { font-family: "League Gothic", sans-serif; font-weight: 400; text-transform: uppercase; }
+  .grid { position: absolute; inset: 0; opacity: .12; background-image: linear-gradient(rgba(108,179,63,.35) 1px, transparent 1px), linear-gradient(90deg, rgba(108,179,63,.35) 1px, transparent 1px); background-size: 64px 64px; }
+
+  .comp { position: absolute; left: 90px; top: 60px; display: inline-flex; align-items: center; gap: 16px; padding: 10px 22px 10px 10px; border-radius: 999px; background: #F5C542; color: #1A1400; }
+  .comp b { display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background: #1A1400; color: #F5C542; font-family: "League Gothic", sans-serif; font-weight: 400; font-size: 32px; }
+  .comp span { font-size: 18px; letter-spacing: .14em; font-weight: 700; }
+
+  h1 { position: absolute; left: 90px; top: 160px; font-size: 104px; line-height: .9; }
+  h1 .g { color: #6CB33F; } h1 .y { color: #F5C542; }
+
+  .stats { position: absolute; left: 90px; top: 395px; display: flex; }
+  .st { padding: 0 30px; border-left: 2px solid rgba(255,255,255,.18); }
+  .st:first-child { padding-left: 0; border-left: none; }
+  .st .n { font-family: "League Gothic", sans-serif; font-size: 84px; line-height: .9; }
+  .st .l { margin-top: 6px; font-size: 15px; letter-spacing: .12em; color: rgba(255,255,255,.72); text-transform: uppercase; font-family: "Space Mono", monospace; max-width: 220px; line-height: 1.35; }
+
+  .lab { position: absolute; left: 90px; top: 548px; font-size: 18px; letter-spacing: .3em; color: #6CB33F; }
+  .cards { position: absolute; left: 90px; top: 590px; width: 1060px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .card { display: flex; gap: 20px; align-items: center; padding: 18px; border-radius: 20px; background: rgba(255,255,255,.06); border: 1.5px solid rgba(255,255,255,.12); height: 200px; }
+  .ill { flex: 0 0 164px; height: 164px; border-radius: 16px; background: #F4F1E6; display: block; }
+  .card h3 { font-size: 25px; font-weight: 900; line-height: 1.18; }
+  .card p { margin-top: 8px; font-size: 17px; line-height: 1.4; color: rgba(255,255,255,.82); }
+
+  .side { position: absolute; right: 80px; top: 60px; width: 640px; height: 960px; padding: 32px 36px; border-radius: 28px; background: #F4F1E6; color: #12131A; }
+  .side .k { font-size: 16px; letter-spacing: .3em; color: #2F7A2A; font-weight: 700; }
+  .side h2 { margin-top: 8px; font-size: 60px; line-height: .92; }
+  .side h2 span { color: #2456B0; }
+  .said { margin-top: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .sd { padding: 14px 14px 16px; border-radius: 16px; background: #12131A; color: #fff; }
+  .sd .n { font-family: "League Gothic", sans-serif; font-size: 62px; line-height: .9; color: #F5C542; }
+  .sd .n small { font-size: 30px; color: rgba(255,255,255,.6); }
+  .sd .t { margin-top: 6px; font-size: 15px; line-height: 1.35; color: rgba(255,255,255,.85); }
+  .src { margin-top: 8px; font-size: 12px; letter-spacing: .15em; color: #6B6553; }
+  .side ul { list-style: none; margin-top: 30px; display: flex; flex-direction: column; gap: 24px; }
+  .side li { display: flex; gap: 14px; align-items: flex-start; }
+  .side li i { flex: 0 0 40px; height: 40px; border-radius: 11px; background: #2456B0; color: #fff; font-style: normal; display: flex; align-items: center; justify-content: center; font-family: "League Gothic", sans-serif; font-size: 26px; }
+  .side li b { display: block; font-size: 22px; line-height: 1.25; font-weight: 900; }
+  .side li span { display: block; margin-top: 4px; font-size: 17px; line-height: 1.38; color: #3C3F4A; }
+  .reg { position: absolute; left: 36px; right: 36px; bottom: 32px; display: flex; gap: 20px; align-items: center; padding: 18px; border-radius: 20px; background: #12131A; color: #fff; }
+  .qrph { flex: 0 0 120px; height: 120px; border-radius: 14px; border: 3px dashed #F5C542; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 13px; color: #F5C542; letter-spacing: .1em; line-height: 1.3; }
+  .reg b { display: block; font-family: "League Gothic", sans-serif; font-weight: 400; font-size: 46px; line-height: .95; text-transform: uppercase; color: #F5C542; }
+  .reg span { display: block; margin-top: 6px; font-size: 16px; line-height: 1.4; color: rgba(255,255,255,.85); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="2" data-width="1920" data-height="1080">
+  <div class="grid"></div>
+  <div class="comp"><b>12</b><span>COMPÉTENCE PROFESSIONNELLE · MOBILISER LE NUMÉRIQUE</span></div>
+
+  <h1 class="disp">35 profs. ½ journée par mois.<br /><span class="g">Zéro expert</span> <span class="y">au départ.</span></h1>
+
+  <div class="stats">
+    <div class="st"><div class="n">35</div><div class="l">enseignant·es de la CoP IA 2025-2026</div></div>
+    <div class="st"><div class="n">½ J.</div><div class="l">libérée chaque mois pour expérimenter</div></div>
+    <div class="st"><div class="n">1</div><div class="l">défi personnel par mois, présenté aux pairs</div></div>
+    <div class="st"><div class="n">6</div><div class="l">capsules vidéo créées par les profs</div></div>
+  </div>
+
+  <div class="lab mono">CE QU'ILS ONT CRÉÉ</div>
+  <div class="cards">
+    <div class="card">
+      <svg class="ill" viewBox="0 0 164 164">
+        <rect x="62" y="30" width="40" height="66" rx="20" fill="#2456B0"/>
+        <path d="M50 78 Q50 112 82 112 Q114 112 114 78" fill="none" stroke="#12131A" stroke-width="6" stroke-linecap="round"/>
+        <path d="M82 112 V134 M64 134 H100" stroke="#12131A" stroke-width="6" stroke-linecap="round"/>
+        <path d="M30 60 Q22 72 30 84 M18 52 Q4 72 18 92" fill="none" stroke="#6CB33F" stroke-width="5" stroke-linecap="round"/>
+        <path d="M134 60 Q142 72 134 84 M146 52 Q160 72 146 92" fill="none" stroke="#6CB33F" stroke-width="5" stroke-linecap="round"/>
+        <rect x="104" y="14" width="46" height="28" rx="10" fill="#F5C542"/><path d="M112 42 L108 52 L120 42Z" fill="#F5C542"/>
+        <circle cx="118" cy="28" r="3" fill="#12131A"/><circle cx="127" cy="28" r="3" fill="#12131A"/><circle cx="136" cy="28" r="3" fill="#12131A"/>
+      </svg>
+      <div><h3>Un balado d'histoires racontées par les élèves</h3><p>L'IA prépare la démarche et les images. Les élèves racontent, s'écoutent et publient.</p></div>
+    </div>
+    <div class="card">
+      <svg class="ill" viewBox="0 0 164 164">
+        <rect x="14" y="14" width="136" height="136" rx="8" fill="#DCE8D2"/>
+        <path d="M14 82 H150 M82 14 V150" stroke="#fff" stroke-width="14"/>
+        <rect x="24" y="24" width="44" height="44" rx="4" fill="#9FC5E8"/><rect x="96" y="96" width="44" height="44" rx="4" fill="#B6D7A8"/>
+        <path d="M30 120 Q30 82 82 82 Q132 82 132 40" fill="none" stroke="#C62828" stroke-width="4" stroke-dasharray="7 6"/>
+        <circle cx="132" cy="40" r="8" fill="#C62828"/>
+        <rect x="18" y="108" width="26" height="22" rx="5" fill="#2456B0"/><circle cx="24" cy="132" r="4" fill="#12131A"/><circle cx="38" cy="132" r="4" fill="#12131A"/><circle cx="26" cy="117" r="2.5" fill="#fff"/><circle cx="36" cy="117" r="2.5" fill="#fff"/>
+      </svg>
+      <div><h3>Leur vrai quartier devient le parcours du robot</h3><p>Un générateur transforme une carte Google Maps en tapis de programmation.</p></div>
+    </div>
+    <div class="card">
+      <svg class="ill" viewBox="0 0 164 164">
+        <rect x="14" y="14" width="136" height="136" rx="8" fill="#EDE6D2"/>
+        <path d="M14 104 Q60 80 92 110 T150 96" fill="none" stroke="#9FC5E8" stroke-width="12"/>
+        <path d="M44 20 V150" stroke="#fff" stroke-width="8"/>
+        <path d="M40 66 a12 12 0 1 1 24 0 c0 10 -12 22 -12 22 s-12 -12 -12 -22z" fill="#C62828"/>
+        <path d="M100 40 a12 12 0 1 1 24 0 c0 10 -12 22 -12 22 s-12 -12 -12 -22z" fill="#2456B0"/>
+        <rect x="60" y="74" width="62" height="18" rx="4" fill="#12131A"/><text x="91" y="87" text-anchor="middle" font-family="Montserrat" font-weight="700" font-size="11" fill="#fff">beaucoup</text>
+        <path d="M118 112 V136 M118 112 L134 108 V130" stroke="#12131A" stroke-width="4" fill="none"/><circle cx="114" cy="137" r="6" fill="#12131A"/><circle cx="130" cy="131" r="6" fill="#12131A"/>
+      </svg>
+      <div><h3>Un palais de mémoire pour l'orthographe</h3><p>Chaque mot difficile ancré dans un lieu réel, puis une chanson pour s'en souvenir.</p></div>
+    </div>
+    <div class="card">
+      <svg class="ill" viewBox="0 0 164 164">
+        <rect x="16" y="16" width="62" height="62" rx="12" fill="#C62828"/><path d="M40 34 L60 47 L40 60Z" fill="#fff"/>
+        <rect x="86" y="16" width="62" height="62" rx="12" fill="#2456B0"/><path d="M101 54 V46 a16 16 0 0 1 32 0 V54" fill="none" stroke="#fff" stroke-width="5"/><rect x="97" y="50" width="10" height="16" rx="3" fill="#fff"/><rect x="127" y="50" width="10" height="16" rx="3" fill="#fff"/>
+        <rect x="16" y="86" width="62" height="62" rx="12" fill="#12131A"/><path d="M28 102 H66 M28 113 H66 M28 124 H54 M28 135 H60" stroke="#fff" stroke-width="4"/>
+        <rect x="86" y="86" width="62" height="62" rx="12" fill="#6CB33F"/><rect x="98" y="122" width="9" height="16" fill="#fff"/><rect x="112" y="110" width="9" height="28" fill="#fff"/><rect x="126" y="98" width="9" height="40" fill="#fff"/>
+      </svg>
+      <div><h3>L'histoire en modules différenciés</h3><p>Une même notion en balado, vidéo, texte et infographie : chaque élève choisit son entrée.</p></div>
+    </div>
+  </div>
+
+  <div class="side">
+    <div class="k mono">ET EN FGA?</div>
+    <h2 class="disp">Vous l'avez dit. <span>On le fait.</span></h2>
+    <div class="said">
+      <div class="sd"><div class="n">8<small>/12</small></div><div class="t">veulent du soutien techno et IA</div></div>
+      <div class="sd"><div class="n">9<small>/12</small></div><div class="t">préfèrent l'atelier en petit groupe</div></div>
+      <div class="sd"><div class="n" style="font-size:44px;line-height:1.05">MARDI<br />JEUDI</div><div class="t">après-midi : vos meilleures plages</div></div>
+    </div>
+    <div class="src mono">SONDAGE DES BESOINS D'ACCOMPAGNEMENT · CFGA · SEPT. 2026</div>
+    <ul>
+      <li><i>01</i><div><b>Ton vrai problème de classe comme point de départ</b><span>Chaque rencontre part d'un défi apporté par un·e participant·e.</span></div></li>
+      <li><i>02</i><div><b>Un défi par mois, présenté aux pairs</b><span>On essaie, on raffine, on partage. Pas d'expert requis.</span></div></li>
+      <li><i>03</i><div><b>Des idées FGA prêtes à essayer</b><span>Balado de révision par sigle, modules à la carte, tableau blanc en FAD, ta propre appli.</span></div></li>
+    </ul>
+    <div class="reg">
+      <div class="qrph mono">CODE QR<br />DU FORM<br />D'INSCRIPTION</div>
+      <div><b>Je m'inscris</b><span>Un Form de 3 questions en fin de rencontre : je suis partant·e, mon défi, mes disponibilités.</span></div>
+    </div>
+  </div>
+</div>
+<script>
+  const tl = gsap.timeline({ paused: true });
+  window.__timelines["main"] = tl;
+</script>
+</body>
+</html>

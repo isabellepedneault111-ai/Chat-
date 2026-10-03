@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<script src="assets/gsap.min.js"></script>
+<style>
+  @font-face { font-family: "Caveat"; font-weight: 400; src: url("assets/caveat-latin-400-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Caveat"; font-weight: 700; src: url("assets/caveat-latin-700-normal.woff2") format("woff2"); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0A1022; }
+  #root { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: Montserrat, sans-serif; color: #fff;
+    background: radial-gradient(1100px 700px at 30% 30%, #17306A 0%, transparent 70%), radial-gradient(700px 600px at 90% 80%, #133A2A 0%, transparent 70%), #0A1022; }
+  .mono { font-family: "Space Mono", monospace; }
+  .disp { font-family: "League Gothic", sans-serif; font-weight: 400; text-transform: uppercase; }
+  .scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* ---------- TITRE ---------- */
+  #title { z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: #0A1022; }
+  #title .k { font-size: 24px; letter-spacing: .35em; color: #6CB33F; }
+  #title h1 { margin-top: 18px; font-size: 150px; line-height: .9; }
+  #title h1 .y { color: #F5C542; }
+  #title .s { margin-top: 24px; font-size: 30px; color: rgba(255,255,255,.8); }
+
+  /* ---------- POSTE DU PROF ---------- */
+  #stage { z-index: 2; }
+  .laptop { position: absolute; left: 70px; top: 120px; width: 1130px; height: 760px; border-radius: 26px; background: #161B2C; padding: 16px; box-shadow: 0 40px 80px rgba(0,0,0,.5); }
+  .laptop-base { position: absolute; left: 20px; top: 880px; width: 1230px; height: 26px; border-radius: 0 0 30px 30px; background: linear-gradient(#2A3149, #121626); }
+  .scr { position: relative; width: 100%; height: 100%; border-radius: 12px; background: #F7F8FB; overflow: hidden; }
+  .bar { height: 46px; background: #ECEEF5; border-bottom: 1px solid #D9DCE6; display: flex; align-items: center; gap: 14px; padding: 0 18px; color: #2B3150; font-size: 16px; font-weight: 700; }
+  .bar .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .bar .rec { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 14px; color: #A51717; font-family: "Space Mono", monospace; }
+  .bar .rec i { display: block; width: 12px; height: 12px; border-radius: 50%; background: #E53935; }
+  .tools { position: absolute; left: 12px; top: 70px; width: 52px; padding: 10px 0; border-radius: 14px; background: #fff; box-shadow: 0 4px 14px rgba(20,30,60,.12); display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .tools span { display: block; width: 26px; height: 26px; border-radius: 50%; }
+  .board-wrap { position: absolute; left: 80px; top: 62px; width: 1000px; height: 640px; }
+
+  /* Tableau (cloné chez l'élève) */
+  .board { position: relative; width: 1000px; height: 640px; border-radius: 10px; background-color: #fff; background-image: radial-gradient(#C9CFDE 1.3px, transparent 1.5px); background-size: 28px 28px; font-family: "Caveat", cursive; font-weight: 700; color: #1F2A44; overflow: hidden; }
+  .ln { position: absolute; display: block; white-space: nowrap; line-height: 1.1; }
+  .ink { display: block; clip-path: inset(0 100% 0 0); }
+  .b-l1 { left: 34px; top: 22px; font-size: 44px; }
+  .b-l2 { left: 34px; top: 84px; font-size: 38px; color: #1E5BD8; }
+  .b-l3 { left: 34px; top: 150px; font-size: 76px; color: #C62828; }
+  .b-box { position: absolute; left: 22px; top: 146px; width: 450px; height: 96px; }
+  .b-lb1 { left: 496px; top: 150px; font-size: 32px; color: #2E7D32; }
+  .b-lb2 { left: 496px; top: 196px; font-size: 32px; color: #2E7D32; }
+  .b-tb { position: absolute; left: 40px; top: 290px; width: 300px; height: 210px; }
+  .b-tb .row { position: absolute; left: 0; width: 300px; font-size: 36px; display: flex; }
+  .b-tb .row span { display: block; width: 150px; text-align: center; }
+  .b-gr { position: absolute; left: 400px; top: 270px; width: 300px; height: 250px; }
+  .b-q { left: 34px; top: 540px; font-size: 46px; color: #6A1B9A; }
+  .b-s1 { left: 600px; top: 300px; font-size: 40px; color: #E8590C; }
+  .b-s2 { left: 600px; top: 352px; font-size: 40px; color: #E8590C; }
+  .b-s3 { left: 600px; top: 404px; font-size: 54px; color: #E8590C; }
+  .b-ok { left: 470px; top: 540px; font-size: 60px; color: #2E7D32; }
+  .b-s1, .b-s2, .b-s3 { left: 730px; }
+
+  /* Crayon du prof / curseur élève */
+  .pen { position: absolute; left: 0; top: 0; width: 34px; height: 34px; z-index: 5; opacity: 0; }
+  .scur { position: absolute; left: 0; top: 0; z-index: 6; opacity: 0; }
+  .scur .tag { position: absolute; left: 22px; top: 22px; padding: 3px 10px; border-radius: 8px; background: #E8590C; color: #fff; font-family: Montserrat, sans-serif; font-size: 16px; font-weight: 700; white-space: nowrap; }
+
+  /* Webcam du prof */
+  .cam { position: absolute; left: 1040px; top: 690px; width: 200px; height: 200px; border-radius: 50%; overflow: hidden; border: 5px solid #6CB33F; background: linear-gradient(160deg, #36507F, #1B2747); box-shadow: 0 16px 40px rgba(0,0,0,.5); z-index: 4; }
+  .cam-tag { position: absolute; left: 1040px; top: 900px; width: 200px; text-align: center; font-size: 16px; letter-spacing: .12em; color: rgba(255,255,255,.85); z-index: 4; }
+  .wave { position: absolute; left: 1060px; top: 940px; width: 160px; height: 30px; display: flex; gap: 5px; align-items: center; justify-content: center; z-index: 4; }
+  .wave i { display: block; width: 8px; height: 30px; border-radius: 4px; background: #6CB33F; transform-origin: center; }
+
+  /* ---------- TABLETTE DE L'ÉLÈVE ---------- */
+  .tablet { position: absolute; left: 1310px; top: 110px; width: 540px; height: 800px; border-radius: 44px; background: #10141F; padding: 16px; box-shadow: 0 40px 80px rgba(0,0,0,.55); }
+  .tscr { position: relative; width: 100%; height: 100%; border-radius: 30px; background: #F3F5FA; overflow: hidden; color: #1B2240; }
+  .thead { display: flex; justify-content: space-between; align-items: center; padding: 22px 22px 10px; }
+  .thead b { font-size: 19px; font-weight: 900; }
+  .live { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: #C62828; color: #fff; font-size: 13px; font-weight: 700; letter-spacing: .12em; }
+  .live i { display: block; width: 9px; height: 9px; border-radius: 50%; background: #fff; }
+  .twho { padding: 0 22px; font-size: 14px; color: #5A6385; }
+  .mirror { position: absolute; left: 20px; top: 104px; width: 468px; height: 300px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(20,30,60,.15); }
+  .mirror .board { transform: scale(0.468); transform-origin: 0 0; }
+  .caps { position: absolute; left: 20px; top: 424px; width: 468px; height: 150px; border-radius: 14px; background: #1B2240; padding: 16px 18px; }
+  .caps .h { font-size: 12px; letter-spacing: .2em; color: #8FA0D8; }
+  .cap { position: absolute; left: 18px; right: 18px; top: 44px; font-size: 21px; line-height: 1.35; color: #fff; opacity: 0; }
+  .cap b { color: #F5C542; }
+  .cap.el b { color: #FF9A5C; }
+  .tctl { position: absolute; left: 20px; right: 20px; bottom: 26px; display: flex; justify-content: space-between; }
+  .tctl span { display: flex; align-items: center; justify-content: center; width: 96px; height: 64px; border-radius: 16px; background: #fff; box-shadow: 0 3px 10px rgba(20,30,60,.12); font-size: 13px; font-weight: 700; color: #1B2240; text-align: center; line-height: 1.2; }
+  .tctl span.hot { background: #B93E0A; color: #fff; }
+  .tswave { position: absolute; left: 20px; top: 590px; width: 468px; height: 50px; display: flex; gap: 6px; align-items: center; }
+  .tswave i { display: block; flex: 1; height: 40px; border-radius: 4px; background: #6CB33F; transform-origin: center; }
+
+  /* Mode réécoute */
+  .replay { position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: #F3F5FA; opacity: 0; }
+  .rp-h { padding: 24px 22px 0; font-size: 13px; letter-spacing: .2em; color: #2E7D32; font-weight: 700; }
+  .rp-t { padding: 6px 22px 0; font-size: 26px; font-weight: 900; line-height: 1.15; }
+  .rp-v { position: absolute; left: 20px; top: 130px; width: 468px; height: 300px; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 16px rgba(20,30,60,.15); }
+  .rp-v .board { transform: scale(0.468); transform-origin: 0 0; }
+  .rp-play { position: absolute; left: 194px; top: 110px; width: 80px; height: 80px; border-radius: 50%; background: rgba(27,34,64,.85); }
+  .rp-play::after { content: ""; position: absolute; left: 31px; top: 22px; border-left: 26px solid #fff; border-top: 18px solid transparent; border-bottom: 18px solid transparent; }
+  .rp-bar { position: absolute; left: 20px; top: 450px; width: 468px; height: 10px; border-radius: 10px; background: #D6DBEA; }
+  .rp-fill { position: absolute; left: 0; top: 0; height: 10px; width: 468px; border-radius: 10px; background: #2E7D32; transform-origin: left center; }
+  .rp-ch { position: absolute; left: 20px; top: 472px; width: 468px; display: flex; justify-content: space-between; font-size: 13px; color: #5A6385; font-weight: 700; }
+  .rp-tr { position: absolute; left: 20px; top: 512px; width: 468px; padding: 16px 18px; border-radius: 14px; background: #fff; font-size: 17px; line-height: 1.45; color: #2B3150; }
+  .rp-tr small { display: block; font-size: 12px; letter-spacing: .15em; color: #5A6385; margin-bottom: 6px; }
+  .rp-tr mark { background: #FFF1B8; color: #1B2240; }
+  .rp-tag { position: absolute; left: 20px; bottom: 26px; right: 20px; padding: 14px; border-radius: 14px; background: #1B2240; color: #fff; font-size: 16px; text-align: center; }
+
+  /* Narration à l'écran */
+  .nar { position: absolute; left: 70px; top: 30px; width: 1180px; font-size: 40px; line-height: 1.15; z-index: 8; opacity: 0; }
+  .nar .n { color: #F5C542; }
+  .tip { position: absolute; left: 330px; top: 940px; width: 1260px; padding: 18px 26px; border-radius: 18px; background: #F5C542; color: #1A1400; font-size: 24px; line-height: 1.35; z-index: 9; opacity: 0; box-shadow: 0 20px 50px rgba(0,0,0,.45); }
+  .tip b { font-weight: 900; }
+
+  /* ---------- FINALE ---------- */
+  #outro { z-index: 20; background: #0A1022; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  #outro .k { font-size: 22px; letter-spacing: .35em; color: #6CB33F; }
+  .tri { margin-top: 36px; display: flex; gap: 28px; }
+  .tc { width: 500px; padding: 34px 32px; border-radius: 26px; background: #141B36; border: 2px solid rgba(255,255,255,.1); }
+  .tc .ic { font-family: "League Gothic", sans-serif; font-size: 74px; line-height: 1; }
+  .tc h3 { margin-top: 12px; font-family: "League Gothic", sans-serif; font-weight: 400; font-size: 64px; line-height: .95; text-transform: uppercase; }
+  .tc p { margin-top: 14px; font-size: 24px; line-height: 1.38; color: rgba(255,255,255,.82); }
+  .stat { margin-top: 40px; font-size: 26px; color: rgba(255,255,255,.85); text-align: center; max-width: 1400px; line-height: 1.4; }
+  .stat b { color: #F5C542; }
+  .sig { margin-top: 26px; font-size: 18px; letter-spacing: .3em; color: rgba(255,255,255,.6); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="54" data-width="1920" data-height="1080">
+
+  <div id="stage" class="scene">
+    <div class="nar disp" id="n1"><span class="n">1.</span> Le prof modélise, en direct, sur le tableau blanc.</div>
+    <div class="nar disp" id="n2"><span class="n">1.</span> De chez lui, l'élève voit chaque trait et entend chaque mot.</div>
+    <div class="nar disp" id="n3"><span class="n">2.</span> L'élève prend le crayon. Sur le même tableau.</div>
+    <div class="nar disp" id="n4"><span class="n">3.</span> Il a manqué le cours? Il réécoute après son quart de travail.</div>
+
+    <div class="laptop-base"></div>
+    <div class="laptop">
+      <div class="scr">
+        <div class="bar"><span class="dot" style="background:#E8590C"></span><span>Tableau blanc · MAT-3051 · Modélisation algébrique</span><span class="rec"><i></i>ENREGISTREMENT</span></div>
+        <div class="tools"><span style="background:#1F2A44"></span><span style="background:#1E5BD8"></span><span style="background:#C62828"></span><span style="background:#2E7D32"></span><span style="background:#6A1B9A"></span></div>
+        <div class="board-wrap" id="prof-board"></div>
+      </div>
+    </div>
+    <div class="cam">
+      <svg viewBox="0 0 200 200" width="200" height="200"><circle cx="100" cy="82" r="38" fill="#E8C9A8"/><path d="M62 74 Q100 20 138 74 Q132 46 100 42 Q68 46 62 74Z" fill="#3B2A20"/><path d="M30 200 Q36 132 100 128 Q164 132 170 200Z" fill="#6CB33F"/></svg>
+    </div>
+    <div class="cam-tag mono">PROF · EN DIRECT</div>
+    <div class="wave" id="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+    <div class="tablet">
+      <div class="tscr">
+        <div class="thead"><b>Maths 3051 · Rencontre</b><span class="live"><i></i>EN DIRECT</span></div>
+        <div class="twho">Élève · à la maison</div>
+        <div class="mirror" id="stud-board"></div>
+        <div class="caps">
+          <div class="h mono">SOUS-TITRES EN DIRECT</div>
+          <div class="cap" id="c1"><b>Prof :</b> On modélise un forfait cellulaire.</div>
+          <div class="cap" id="c2"><b>Prof :</b> m, c'est le nombre de Mo. C, le coût total.</div>
+          <div class="cap" id="c3"><b>Prof :</b> Le 25 $, tu le paies même si tu n'utilises rien.</div>
+          <div class="cap" id="c4"><b>Prof :</b> Chaque Mo ajoute 0,10 $. Regarde la droite monter.</div>
+          <div class="cap" id="c5"><b>Prof :</b> À ton tour : si tu paies 40 $, combien de Mo?</div>
+          <div class="cap el" id="c6"><b>Élève :</b> J'essaie direct sur le tableau!</div>
+          <div class="cap" id="c7"><b>Prof :</b> Bravo! 150 Mo, et tu m'as montré ta démarche.</div>
+        </div>
+        <div class="tswave" id="swave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="tctl"><span>Micro</span><span>Caméra</span><span class="hot" id="hand">Main levée</span><span>Réagir</span></div>
+
+        <div class="replay" id="replay" data-layout-allow-overlap data-layout-allow-occlusion>
+          <div class="rp-h mono">● ENREGISTRÉ DANS LE CANAL · MATHS 3051</div>
+          <div class="rp-t">Rencontre du mardi · Modélisation algébrique · 42 min</div>
+          <div class="rp-v" id="replay-board"><div class="rp-play"></div></div>
+          <div class="rp-bar"><div class="rp-fill" id="rpfill"></div></div>
+          <div class="rp-ch"><span>Modéliser</span><span>Table</span><span>Graphique</span><span>À ton tour</span></div>
+          <div class="rp-tr"><small class="mono">TRANSCRIPTION · 12:41</small>« Le 25 $, c'est la <mark>valeur initiale</mark> : tu le paies même si tu n'utilises rien. Le 0,10, c'est le <mark>taux de variation</mark>. »</div>
+          <div class="rp-tag">Mardi, 22 h 10 · réécoute après le travail</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip" id="tip"><b>L'astuce qui change tout :</b> ouvre Whiteboard dans sa propre fenêtre et partage cette fenêtre dans la rencontre. Le tableau intégré à Teams, lui, n'est pas capté par l'enregistrement.</div>
+  </div>
+
+  <!-- Contenu du tableau (cloné dans les 3 écrans) -->
+  <template id="board-tpl">
+    <div class="board">
+      <span class="ln b-l1"><span class="ink">Forfait cell : 25 $ par mois + 0,10 $ par Mo</span></span>
+      <span class="ln b-l2"><span class="ink">m = nombre de Mo      C = coût total ($)</span></span>
+      <svg class="b-box" viewBox="0 0 450 96"><rect x="4" y="4" width="442" height="88" rx="18" fill="none" stroke="#C62828" stroke-width="5" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" class="box-r"/></svg>
+      <span class="ln b-l3"><span class="ink">C = 0,10m + 25</span></span>
+      <span class="ln b-lb1"><span class="ink">← 0,10 : taux de variation</span></span>
+      <span class="ln b-lb2"><span class="ink">← 25 : valeur initiale</span></span>
+      <div class="b-tb">
+        <svg width="300" height="210" viewBox="0 0 300 210" style="position:absolute;left:0;top:0"><path class="tb-lines" d="M150 6 V204 M10 58 H290" stroke="#1F2A44" stroke-width="4" fill="none" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>
+        <div class="row ln" style="top:8px"><span class="ink" style="display:flex"><span>m</span><span>C</span></span></div>
+        <div class="row ln" style="top:66px"><span class="ink" style="display:flex"><span>0</span><span>25</span></span></div>
+        <div class="row ln" style="top:112px"><span class="ink" style="display:flex"><span>100</span><span>35</span></span></div>
+        <div class="row ln" style="top:158px"><span class="ink" style="display:flex"><span>200</span><span>45</span></span></div>
+      </div>
+      <svg class="b-gr" viewBox="0 0 300 250">
+        <path class="gr-ax" d="M30 10 V220 H290" stroke="#1F2A44" stroke-width="4" fill="none" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+        <path class="gr-ln" d="M30 160 L280 60" stroke="#1E5BD8" stroke-width="6" fill="none" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+        <circle class="gr-pt" cx="30" cy="160" r="8" fill="#1E5BD8"/>
+        <circle class="gr-pt" cx="155" cy="110" r="8" fill="#1E5BD8"/>
+        <circle class="gr-pt" cx="280" cy="60" r="8" fill="#1E5BD8"/>
+        <text class="gr-tx" x="4" y="164" font-family="Caveat" font-weight="700" font-size="26" fill="#1F2A44">25</text>
+        <text class="gr-tx" x="250" y="244" font-family="Caveat" font-weight="700" font-size="26" fill="#1F2A44">m</text>
+        <text class="gr-tx" x="40" y="26" font-family="Caveat" font-weight="700" font-size="26" fill="#1F2A44">C</text>
+      </svg>
+      <span class="ln b-q"><span class="ink">Si C = 40 $, m = ?</span></span>
+      <span class="ln b-s1"><span class="ink">0,10m + 25 = 40</span></span>
+      <span class="ln b-s2"><span class="ink">0,10m = 15</span></span>
+      <span class="ln b-s3"><span class="ink">m = 150 Mo</span></span>
+      <span class="ln b-ok"><span class="ink">✓ Bravo!</span></span>
+      <svg class="pen" viewBox="0 0 34 34"><path d="M4 30 L8 20 L24 4 L30 10 L14 26 Z" fill="#1E5BD8" stroke="#0B1B4A" stroke-width="2"/><path d="M4 30 L8 20 L14 26 Z" fill="#F5C542"/></svg>
+      <div class="scur" data-layout-allow-overlap><svg width="26" height="30" viewBox="0 0 26 30"><path d="M2 2 L2 26 L9 19 L14 29 L18 27 L13 17 L23 17 Z" fill="#E8590C" stroke="#fff" stroke-width="2"/></svg><span class="tag" data-layout-allow-overlap>Élève</span></div>
+    </div>
+  </template>
+
+  <div id="title" data-layout-allow-occlusion data-layout-allow-overlap class="clip scene" data-start="0" data-duration="4.2" data-track-index="2">
+    <div class="k mono">FOCUS FGA · TABLEAU BLANC × TEAMS</div>
+    <h1 class="disp">Un tableau. <span class="y">Trois façons</span><br />d'être en classe.</h1>
+    <div class="s">Enseigner à distance : en direct, en interaction… et en différé.</div>
+  </div>
+
+  <div id="outro" data-layout-allow-occlusion data-layout-allow-overlap class="clip scene" data-start="45" data-duration="9" data-track-index="2">
+    <div class="k mono">CE QUE VIT L'ÉLÈVE</div>
+    <div class="tri">
+      <div class="tc"><div class="ic" style="color:#E53935">● LIVE</div><h3>J'écoute en direct</h3><p>Je vois la démarche se construire et je lis les sous-titres en temps réel.</p></div>
+      <div class="tc"><div class="ic" style="color:#E8590C">✎ À MOI</div><h3>J'écris sur le tableau</h3><p>Même tableau, même moment. Le prof voit ma démarche, pas juste ma réponse.</p></div>
+      <div class="tc"><div class="ic" style="color:#6CB33F">▶ PLUS TARD</div><h3>Je réécoute quand je peux</h3><p>Enregistrement, chapitres et transcription restent dans le canal.</p></div>
+    </div>
+    <div class="stat"><b>50 %</b> de nos élèves travaillent pendant leurs études. Le <b>transport</b> est l'obstacle le plus cité. Le cours peut aller les rejoindre.</div>
+    <div class="sig mono">FOCUS FGA · COP PÉDAGONUMÉRIQUE · CFGA DE LA JONQUIÈRE</div>
+  </div>
+</div>
+
+<script>
+  // Cloner le tableau dans les trois écrans (prof, élève, réécoute)
+  const tpl = document.getElementById("board-tpl");
+  ["prof-board", "stud-board", "replay-board"].forEach((id) => {
+    const host = document.getElementById(id);
+    host.insertBefore(tpl.content.cloneNode(true), host.firstChild);
+  });
+
+  function build() {
+    const tl = gsap.timeline({ paused: true });
+    const P = "#prof-board", S = "#stud-board", R = "#replay-board";
+    const LAG = 0.3; // latence du direct
+
+    // Écrire une ligne : révélation + crayon qui suit
+    function write(cls, t, dur, who) {
+      const ink = document.querySelector(P + " ." + cls + " .ink");
+      const ln = document.querySelector(P + " ." + cls);
+      const w = ink.getBoundingClientRect().width;
+      const x0 = ln.offsetLeft, y0 = ln.offsetTop + ln.offsetHeight * 0.55;
+      const first = who === "eleve" ? S : P, second = who === "eleve" ? P : S;
+      tl.fromTo(first + " ." + cls + " .ink", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: dur, ease: "none" }, t);
+      tl.fromTo(second + " ." + cls + " .ink", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: dur, ease: "none" }, t + LAG);
+      tl.set(R + " ." + cls + " .ink", { clipPath: "inset(0 0% 0 0)" }, 0);
+      const cur = who === "eleve" ? " .scur" : " .pen";
+      [P, S].forEach((b, k) => {
+        const tt = t + ((b === first) ? 0 : LAG);
+        tl.fromTo(b + cur, { x: x0, y: y0 - 28 }, { x: x0 + w, y: y0 - 28, duration: dur, ease: "none" }, tt);
+      });
+    }
+    function draw(sel, t, dur) {
+      tl.fromTo(P + " " + sel, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: dur, ease: "power1.inOut" }, t);
+      tl.fromTo(S + " " + sel, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: dur, ease: "power1.inOut" }, t + LAG);
+      tl.set(R + " " + sel, { strokeDashoffset: 0 }, 0);
+    }
+
+    // Entrée de la scène
+    tl.fromTo(".laptop, .laptop-base", { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, 4.0);
+    tl.fromTo(".tablet", { x: 120, opacity: 0 }, { x: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, 4.3);
+    tl.fromTo(".cam, .cam-tag", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(2)" }, 4.8);
+    tl.set(R + " .gr-pt", { opacity: 1 }, 0);
+
+    // Narration
+    const nar = (id, a, b) => { tl.fromTo(id, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.5 }, a); tl.to(id, { opacity: 0, duration: 0.3 }, b); };
+    nar("#n1", 5.2, 11.6); nar("#n2", 12.0, 25.6); nar("#n3", 26.0, 35.6); nar("#n4", 36.0, 44.6);
+
+    // Sous-titres
+    const caps = [["#c1", 6, 10], ["#c2", 10, 14], ["#c3", 14, 18.5], ["#c4", 18.5, 23.5], ["#c5", 23.5, 27.5], ["#c6", 27.5, 33], ["#c7", 33, 36]];
+    caps.forEach(([id, a, b]) => { tl.fromTo(id, { opacity: 0 }, { opacity: 1, duration: 0.2 }, a); tl.to(id, { opacity: 0, duration: 0.2 }, b - 0.2); });
+
+    // Ondes de voix (déterministes)
+    const bars = gsap.utils.toArray("#wave i, #swave i");
+    bars.forEach((b, i) => {
+      tl.fromTo(b, { scaleY: 0.25 }, { scaleY: 1, duration: 0.18 + (i % 5) * 0.04, ease: "sine.inOut", yoyo: true, repeat: Math.floor(30 / (0.36 + (i % 5) * 0.08)) - 1 }, 6);
+    });
+
+    // Prof écrit
+    tl.to(P + " .pen, " + S + " .pen", { opacity: 1, duration: 0.2 }, 5.9);
+    write("b-l1", 6.0, 2.6);
+    write("b-l2", 10.0, 2.4);
+    write("b-l3", 14.0, 1.6);
+    draw(".box-r", 15.8, 0.8);
+    write("b-lb1", 16.6, 1.2);
+    write("b-lb2", 17.8, 1.0);
+    draw(".tb-lines", 18.8, 0.7);
+    [0, 1, 2, 3].forEach((i) => {
+      [P, S].forEach((b, k) => tl.fromTo(b + " .b-tb .row:nth-of-type(" + (i + 1) + ") .ink", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.5, ease: "none" }, 19.4 + i * 0.55 + k * LAG));
+      tl.set(R + " .b-tb .row:nth-of-type(" + (i + 1) + ") .ink", { clipPath: "inset(0 0% 0 0)" }, 0);
+    });
+    draw(".gr-ax", 21.6, 0.7);
+    [P, S].forEach((b, k) => tl.fromTo(b + " .gr-tx", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 22.1 + k * LAG));
+    [P, S].forEach((b, k) => tl.fromTo(b + " .gr-pt", { opacity: 0, scale: 0, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.25, stagger: 0.2 }, 22.3 + k * LAG));
+    draw(".gr-ln", 22.9, 1.0);
+    write("b-q", 24.2, 1.8);
+    tl.to(P + " .pen, " + S + " .pen", { opacity: 0, duration: 0.2 }, 26.2);
+
+    // L'élève lève la main puis écrit
+    tl.fromTo("#hand", { scale: 1 }, { scale: 1.15, duration: 0.2, yoyo: true, repeat: 3 }, 27.0);
+    tl.to(S + " .scur, " + P + " .scur", { opacity: 1, duration: 0.2 }, 27.8);
+    write("b-s1", 28.0, 1.6, "eleve");
+    write("b-s2", 29.8, 1.3, "eleve");
+    write("b-s3", 31.3, 1.3, "eleve");
+    tl.to(S + " .scur, " + P + " .scur", { opacity: 0, duration: 0.2 }, 32.8);
+    tl.to(P + " .pen, " + S + " .pen", { opacity: 1, duration: 0.2 }, 33.0);
+    write("b-ok", 33.2, 1.0);
+    tl.to(P + " .pen, " + S + " .pen", { opacity: 0, duration: 0.2 }, 34.4);
+
+    // Réécoute
+    tl.fromTo("#replay", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 36.2);
+    tl.to(".thead, .twho, .mirror, .caps, .tswave, .tctl", { opacity: 0, duration: 0.5 }, 36.2);
+    tl.fromTo("#rpfill", { scaleX: 0.05 }, { scaleX: 0.62, duration: 7, ease: "none" }, 36.6);
+    tl.fromTo("#tip", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.6)" }, 38.6);
+    tl.to("#tip", { opacity: 0, duration: 0.3 }, 44.6);
+
+    // Finale
+    tl.to("#stage", { opacity: 0, duration: 0.4 }, 44.7);
+    tl.fromTo("#outro .tc", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.25, ease: "power3.out" }, 45.3);
+    tl.fromTo("#outro .stat", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 47.0);
+    tl.fromTo("#outro .sig", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 48.0);
+    tl.fromTo("#title h1", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 0.3);
+    tl.fromTo("#title .s, #title .k", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 1.0);
+
+    window.__timelines["main"] = tl;
+  }
+  document.fonts.ready.then(build);
+</script>
+</body>
+</html>

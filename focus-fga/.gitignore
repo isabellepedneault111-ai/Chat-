@@ -2,3 +2,11 @@ node_modules/
 video/renders/
 video/snapshots/
 video/.hyperframes/
+visuels/*/snapshots/
+whiteboard/snapshots/
+stats/snapshots/
+whiteboard/renders/*.log
+stats/renders/*.log
+whiteboard/.hyperframes/
+stats/.hyperframes/
+visuels/*/.hyperframes/

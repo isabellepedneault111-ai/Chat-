@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<script src="gsap.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #F3F7F6; }
+  #root { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: Montserrat, sans-serif; color: #0B2A3C; background: #F3F7F6; }
+  .mono { font-family: "Space Mono", monospace; }
+
+  /* Fond */
+  .bg-arc { position: absolute; right: -430px; top: -200px; width: 1300px; height: 1300px; border-radius: 50%; background: radial-gradient(circle at 40% 40%, #1B8A78 0%, #0F5F6E 45%, #0B3954 100%); }
+  .bg-ring { position: absolute; right: -260px; top: -50px; width: 960px; height: 960px; border-radius: 50%; border: 2px dashed rgba(255,255,255,.25); }
+  .bg-dots { position: absolute; left: 0; bottom: 0; width: 900px; height: 300px; background-image: radial-gradient(#0B3954 1.4px, transparent 1.6px); background-size: 26px 26px; opacity: .08; }
+
+  /* Colonne gauche */
+  .left { position: absolute; left: 100px; top: 64px; width: 880px; }
+  .brand { display: flex; align-items: center; gap: 18px; }
+  .brand-mark { width: 58px; height: 58px; border-radius: 16px; background: #0B3954; display: flex; align-items: center; justify-content: center; }
+  .brand-mark span { display: block; width: 26px; height: 26px; border-radius: 50%; border: 5px solid #5FD3B9; box-shadow: inset 0 0 0 5px #0B3954, inset 0 0 0 12px #5FD3B9; }
+  .brand-t { font-weight: 900; font-size: 34px; color: #0B3954; letter-spacing: -0.02em; }
+  .brand-s { font-size: 15px; letter-spacing: .25em; color: #4A6A78; margin-top: 2px; }
+  .kick { margin-top: 34px; display: inline-flex; align-items: center; gap: 12px; padding: 10px 20px; border-radius: 999px; background: #0B3954; color: #fff; font-size: 18px; letter-spacing: .22em; }
+  .kick i { display: block; width: 10px; height: 10px; border-radius: 50%; background: #5FD3B9; }
+  h1 { margin-top: 22px; font-weight: 900; font-size: 84px; line-height: .98; letter-spacing: -0.035em; color: #0B2A3C; }
+  h1 .t1 { display: block; }
+  h1 .t2 { display: block; color: #12806F; font-size: 46px; margin-top: 8px; letter-spacing: -0.03em; }
+  .lede { margin-top: 22px; font-size: 24px; line-height: 1.4; color: #2C4A58; max-width: 780px; }
+  .lede b { color: #0B3954; }
+
+  .row { margin-top: 30px; display: flex; gap: 24px; }
+  .data { flex: 0 0 380px; padding: 22px 24px; border-radius: 22px; background: #fff; border: 2px solid #D5E6E2; }
+  .data .n { font-weight: 900; font-size: 72px; line-height: .9; color: #C0392B; letter-spacing: -0.03em; }
+  .data .n small { font-size: 40px; }
+  .data .d { margin-top: 8px; font-size: 18px; line-height: 1.35; color: #2C4A58; }
+  .data .d b { color: #0B2A3C; }
+  .data .arrow { margin-top: 12px; padding-top: 12px; border-top: 2px dashed #D5E6E2; font-size: 18px; line-height: 1.35; font-weight: 700; color: #12806F; }
+  .data .src { margin-top: 10px; font-size: 13px; color: #7A939C; letter-spacing: .05em; }
+
+  .ask { flex: 1; padding: 22px 24px; border-radius: 22px; background: #0B3954; color: #fff; }
+  .ask h3 { font-size: 16px; letter-spacing: .25em; color: #5FD3B9; font-family: "Space Mono", monospace; font-weight: 700; }
+  .ask ol { list-style: none; margin-top: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .ask li { display: flex; gap: 14px; align-items: flex-start; font-size: 20px; line-height: 1.3; }
+  .ask li span.k { flex: 0 0 36px; height: 36px; border-radius: 50%; background: #5FD3B9; color: #0B3954; font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 19px; }
+
+  .cta { margin-top: 28px; display: flex; align-items: center; gap: 28px; }
+  .qr { width: 120px; height: 120px; padding: 12px; background: #fff; border-radius: 18px; border: 2px solid #D5E6E2; }
+  .qr img { width: 100%; height: 100%; display: block; }
+  .cta-t { font-weight: 900; font-size: 34px; color: #0B2A3C; letter-spacing: -0.02em; }
+  .cta-u { margin-top: 6px; font-size: 24px; color: #12806F; font-weight: 700; }
+  .cta-s { margin-top: 8px; font-size: 18px; color: #4A6A78; }
+
+  /* Téléphone */
+  .phone { position: absolute; left: 1230px; top: 100px; width: 450px; height: 900px; border-radius: 64px; background: #0A1F2B; padding: 16px; box-shadow: 0 50px 90px rgba(4,30,40,.45); }
+  .screen { width: 100%; height: 100%; border-radius: 50px; background: #F4F8F7; overflow: hidden; padding: 64px 24px 24px; position: relative; }
+  .notch { position: absolute; top: 18px; left: 50%; margin-left: -60px; width: 120px; height: 30px; border-radius: 20px; background: #0A1F2B; }
+  .app-h { display: flex; justify-content: space-between; align-items: center; }
+  .app-h b { font-size: 21px; font-weight: 900; color: #0B3954; }
+  .app-h span { font-size: 12px; color: #6B8792; letter-spacing: .15em; }
+  .card { margin-top: 16px; padding: 18px; border-radius: 20px; background: #fff; border: 1.5px solid #D5E6E2; }
+  .card.goal { background: linear-gradient(160deg, #E8F5F2, #FFFFFF); border-color: #9ED9CB; }
+  .lab { font-size: 11px; letter-spacing: .18em; color: #12806F; font-weight: 700; }
+  .goal-t { margin-top: 8px; font-size: 21px; font-weight: 900; line-height: 1.2; color: #0B2A3C; }
+  .goal-p { margin-top: 10px; font-size: 14px; line-height: 1.4; color: #2C4A58; }
+  .chip { display: inline-block; margin-top: 10px; padding: 5px 12px; border-radius: 999px; background: #12806F; color: #fff; font-size: 12px; font-weight: 700; }
+  .btn { margin-top: 14px; padding: 12px; border-radius: 12px; background: #0B3954; color: #fff; text-align: center; font-size: 13px; font-weight: 700; }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .pill { padding: 6px 10px; border-radius: 999px; border: 1.5px solid #CFE0DC; font-size: 12px; color: #2C4A58; }
+  .pill.on { background: #12806F; border-color: #12806F; color: #fff; font-weight: 700; }
+  .bar { margin-top: 14px; height: 10px; border-radius: 99px; background: #E1ECE9; position: relative; }
+  .bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 38%; border-radius: 99px; background: linear-gradient(90deg, #0B3954, #12806F); }
+  .bar-l { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: #6B8792; }
+
+  /* Badges flottants */
+  .badge { position: absolute; padding: 16px 20px; border-radius: 18px; background: #fff; box-shadow: 0 18px 40px rgba(4,30,40,.22); max-width: 300px; }
+  .badge b { display: block; font-size: 19px; color: #0B2A3C; font-weight: 900; }
+  .badge span { display: block; margin-top: 4px; font-size: 15px; line-height: 1.35; color: #4A6A78; }
+  .badge .ic { display: inline-block; width: 30px; height: 30px; border-radius: 9px; margin-bottom: 8px; }
+  .b1 { left: 1570px; top: 150px; max-width: 290px; }
+  .b2 { left: 1600px; top: 690px; max-width: 280px; }
+  .b3 { left: 1020px; top: 820px; max-width: 280px; }
+  .sig { position: absolute; right: 60px; bottom: 26px; text-align: right; font-size: 15px; color: #fff; font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,.35); line-height: 1.4; }
+  .dk { font-size: 16px; letter-spacing: .25em; color: #12806F; font-weight: 700; }
+  .chg { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 14px; }
+  .chg li { position: relative; padding-left: 30px; font-size: 20px; line-height: 1.35; color: #2C4A58; }
+  .chg li::before { content: ""; position: absolute; left: 0; top: 7px; width: 16px; height: 16px; border-radius: 50%; background: #5FD3B9; box-shadow: 0 0 0 4px #E3F1EE; }
+  .chg li b { color: #0B2A3C; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="2" data-width="1920" data-height="1080">
+  <div class="bg-arc"></div>
+  <div class="bg-ring"></div>
+  <div class="bg-dots"></div>
+
+  <div class="left">
+    <div class="brand">
+      <div class="brand-mark"><span></span></div>
+      <div><div class="brand-t">Mon Parcours</div><div class="brand-s mono">CFGA DE LA JONQUIÈRE</div></div>
+    </div>
+    <div class="kick mono"><i></i>APPEL À VOLONTAIRES · AUTOMNE 2026</div>
+    <h1><span class="t1">Testez-la. Brisez-la.</span><span class="t2">Améliorez-la avant tout le monde.</span></h1>
+    <p class="lede">Une appli qui réunit <b>le portrait de l'élève</b>, <b>son objectif SMART de la semaine</b> et <b>son parcours jusqu'à la fin</b>, pour qu'il avance avec un plan qui est le sien.</p>
+
+    <div class="row">
+      <div class="data">
+        <div class="dk mono">CE QUE ÇA CHANGE</div>
+        <ul class="chg">
+          <li><b>La rencontre s'ouvre sur un projet</b>, pas sur les retards.</li>
+          <li><b>L'élève choisit ses moyens</b>, donc il les tient.</li>
+          <li><b>Il voit ses progrès</b>, semaine après semaine.</li>
+        </ul>
+      </div>
+      <div class="ask">
+        <h3>CE QU'ON TE DEMANDE</h3>
+        <ol>
+          <li><span class="k">1</span><span>L'essayer avec <b>un ou deux élèves</b> cet automne.</span></li>
+          <li><span class="k">2</span><span>Faire <b>une rencontre</b> avec l'appli, ou le laisser l'utiliser <b>seul</b>.</span></li>
+          <li><span class="k">3</span><span>Nous dire ce qui marche… et <b>ce qui accroche</b>.</span></li>
+        </ol>
+      </div>
+    </div>
+  <div class="cta">
+      <div class="qr"><img src="qr-parcours.svg" alt="QR parcourscfga.netlify.app" /></div>
+      <div>
+        <div class="cta-t">Je lève la main.</div>
+        <div class="cta-u">parcourscfga.netlify.app</div>
+        <div class="cta-s">Écris-moi sur Teams ou viens me voir. Rien à installer : ça s'ouvre dans le navigateur.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="phone">
+    <div class="screen">
+      <div class="notch"></div>
+      <div class="app-h"><b>Mon Parcours</b><span class="mono">SEMAINE 6</span></div>
+      <div class="card goal">
+        <div class="lab mono">MON OBJECTIF DE LA SEMAINE</div>
+        <div class="goal-t">Faire les exercices du chapitre 3 et les faire corriger</div>
+        <div class="goal-p"><b>Réussi quand :</b> j'ai fait 5 exercices par jour, corrigés avant vendredi.</div>
+        <div class="goal-p"><b>Si</b> le matin je n'ai pas d'énergie, <b>alors</b> je commence par l'exercice le plus court.</div>
+        <span class="chip">MAT-3051-2</span>
+        <div class="btn">Imprimer ou télécharger mon objectif</div>
+      </div>
+      <div class="card">
+        <div class="lab mono">AI-JE ATTEINT MON OBJECTIF?</div>
+        <div class="pills"><span class="pill">Pas encore</span><span class="pill">Un peu</span><span class="pill">À moitié</span><span class="pill on">Presque</span><span class="pill">Oui!</span></div>
+      </div>
+      <div class="card">
+        <div class="lab mono">MES MOYENS</div>
+        <div class="pills"><span class="pill">Minuterie de 25 min</span><span class="pill">Place au calme</span><span class="pill">Demander de l'aide dès que je bloque</span></div>
+      </div>
+      <div class="card">
+        <div class="lab mono">MON PARCOURS, JUSQU'À LA FIN</div>
+        <div class="bar"><i></i></div>
+        <div class="bar-l"><span>Aujourd'hui</span><span>Janv.</span><span>Juin</span><span>Fin</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="badge b1"><i class="ic" style="background:#5FD3B9"></i><b>Rien ne sort de l'appareil</b><span>Aucun compte, aucun serveur. Conforme à la Loi 25.</span></div>
+  <div class="badge b2"><i class="ic" style="background:#F5C542"></i><b>37 fiches « J'ai MON plan! »</b><span>De l'Université Laval, adaptées à la FGA.</span></div>
+  <div class="badge b3"><i class="ic" style="background:#0B3954"></i><b>Appuyé sur la recherche</b><span>Objectifs, autorégulation, sentiment d'efficacité.</span></div>
+
+  <div class="sig">Isabelle Pedneault · Conseillère pédagogique<br />CFGA de la Jonquière</div>
+</div>
+<script>
+  const tl = gsap.timeline({ paused: true });
+  window.__timelines["main"] = tl;
+</script>
+</body>
+</html>

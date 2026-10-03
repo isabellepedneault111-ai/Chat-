@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<script src="assets/gsap.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0F2240; }
+  #root { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: Montserrat, sans-serif; color: #fff;
+    background: radial-gradient(1200px 800px at 75% 20%, #1D4073 0%, transparent 70%), #0F2240; }
+  .mono { font-family: "Space Mono", monospace; }
+  .scene { position: absolute; inset: 0; width: 100%; height: 100%; padding: 110px 130px; }
+  .k { font-size: 20px; letter-spacing: .3em; color: #4FB3E8; }
+  .y { color: #F2C200; }
+  .b { color: #4FB3E8; }
+  .src { position: absolute; left: 130px; bottom: 50px; font-size: 15px; letter-spacing: .15em; color: rgba(255,255,255,.5); }
+
+  /* 1 */
+  #s1 { display: flex; flex-direction: column; justify-content: center; }
+  #s1 h1 { margin-top: 24px; font-size: 150px; font-weight: 900; line-height: .95; letter-spacing: -0.04em; }
+  #s1 .lede { margin-top: 30px; font-size: 32px; color: rgba(255,255,255,.8); max-width: 1100px; line-height: 1.35; }
+
+  /* 2 */
+  #s2 { display: flex; align-items: center; gap: 120px; }
+  .dots { flex: 0 0 640px; display: grid; grid-template-columns: repeat(10, 52px); gap: 12px; }
+  .dot { width: 52px; height: 52px; border-radius: 50%; background: #2B4E7E; display: block; }
+  .dot.a { background: #2D6CC0; } .dot.c { background: #4FB3E8; } .dot.d { background: #7D8BA3; }
+  #s2 h2 { font-size: 118px; font-weight: 900; line-height: .95; letter-spacing: -0.04em; }
+  #s2 .leg { margin-top: 34px; display: flex; flex-direction: column; gap: 14px; font-size: 28px; }
+  #s2 .leg span { display: inline-block; width: 22px; height: 22px; border-radius: 50%; margin-right: 14px; vertical-align: middle; }
+  #s2 .med { margin-top: 34px; font-size: 30px; color: rgba(255,255,255,.85); }
+  #s2 .med b { font-size: 64px; color: #F2C200; font-weight: 900; }
+
+  /* 3 */
+  #s3 h2 { margin-top: 14px; font-size: 76px; font-weight: 900; letter-spacing: -0.03em; }
+  .myth { margin-top: 46px; display: flex; flex-direction: column; gap: 22px; }
+  .mr { display: flex; align-items: center; gap: 30px; }
+  .mr .l { position: relative; flex: 0 0 640px; padding: 22px 28px; border-radius: 16px; background: rgba(255,255,255,.07); font-size: 30px; font-style: italic; color: rgba(255,255,255,.75); }
+  .mr .l i { position: absolute; left: 20px; right: 20px; top: 50%; height: 4px; background: #E05A4F; transform-origin: left center; display: block; }
+  .mr .ar { font-size: 44px; color: #E05A4F; }
+  .mr .r { flex: 1; padding: 22px 30px; border-radius: 16px; background: #E8F2FB; color: #0F2240; font-size: 32px; font-weight: 900; }
+
+  /* 4 */
+  #s4 h2 { margin-top: 14px; font-size: 76px; font-weight: 900; letter-spacing: -0.03em; }
+  .cards { margin-top: 60px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+  .cd { padding: 34px 30px; border-radius: 24px; background: #F4F7FB; color: #0F2240; border-top: 10px solid var(--c); }
+  .cd .n { font-size: 132px; font-weight: 900; line-height: .9; letter-spacing: -0.05em; color: var(--c); }
+  .cd .n small { font-size: 56px; }
+  .cd .t { margin-top: 18px; font-size: 30px; font-weight: 900; line-height: 1.15; }
+  .cd .d { margin-top: 10px; font-size: 21px; line-height: 1.4; color: #4A5A72; }
+
+  /* 5 */
+  #s5 { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  #s5 h2 { margin-top: 14px; font-size: 84px; font-weight: 900; line-height: .98; letter-spacing: -0.03em; }
+  .wl { margin-top: 44px; display: flex; flex-direction: column; gap: 26px; }
+  .w { display: flex; align-items: baseline; gap: 24px; }
+  .w .n { flex: 0 0 230px; font-size: 92px; font-weight: 900; color: #E07A6F; letter-spacing: -0.04em; line-height: 1; }
+  .w .n small { font-size: 44px; }
+  .w .t { font-size: 27px; line-height: 1.35; color: rgba(255,255,255,.88); }
+  .qt { padding: 50px 56px; border-radius: 28px; background: #2A1E2A; border-left: 12px solid #E07A6F; }
+  .qt p { font-family: "EB Garamond", serif; font-style: italic; font-size: 58px; line-height: 1.2; }
+  .qt small { display: block; margin-top: 26px; font-size: 17px; letter-spacing: .2em; color: rgba(255,255,255,.6); font-style: normal; }
+
+  /* 6 : répare */
+  #s6 { background: #F2C200; color: #0F2240; display: flex; flex-direction: column; justify-content: center; }
+  #s6 .k { color: #0F2240; }
+  #s6 h2 { margin-top: 10px; font-size: 230px; font-weight: 900; line-height: .86; letter-spacing: -0.05em; }
+  #s7 { padding-top: 90px; }
+  #s7 .k { color: #F2C200; }
+  .bars { margin-top: 40px; display: flex; flex-direction: column; gap: 30px; width: 1100px; }
+  .br .l { font-size: 26px; margin-bottom: 12px; color: rgba(255,255,255,.85); }
+  .br .track { position: relative; height: 84px; border-radius: 16px; background: rgba(255,255,255,.08); overflow: hidden; }
+  .br .fill { position: absolute; left: 0; top: 0; height: 84px; border-radius: 16px; transform-origin: left center; display: block; }
+  .br .v { position: absolute; top: 14px; font-size: 48px; font-weight: 900; }
+  .delta { position: absolute; right: 130px; top: 170px; width: 560px; text-align: right; }
+  .delta .n { white-space: nowrap; font-size: 190px; font-weight: 900; line-height: .85; color: #F2C200; letter-spacing: -0.05em; }
+  .delta .n small { font-size: 64px; }
+  .delta .t { margin-top: 34px; font-size: 26px; line-height: 1.35; color: rgba(255,255,255,.85); }
+  .traj { position: absolute; left: 130px; top: 640px; width: 1100px; }
+  .traj .h { font-size: 22px; letter-spacing: .15em; color: rgba(255,255,255,.7); }
+  .tdots { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 9px; width: 1100px; }
+  .td { width: 28px; height: 28px; border-radius: 50%; display: block; background: #2B4E7E; }
+  .td.up { background: #3DBE6A; } .td.st { background: #7D8BA3; } .td.dn { background: #E07A6F; }
+  .tleg { margin-top: 16px; display: flex; gap: 36px; font-size: 24px; }
+  .tleg b { font-weight: 900; }
+  .kpis { position: absolute; right: 130px; top: 560px; width: 560px; display: flex; flex-direction: column; gap: 22px; }
+  .kp { padding: 20px 24px; border-radius: 18px; background: rgba(255,255,255,.08); }
+  .kp .n { font-size: 60px; font-weight: 900; color: #3DBE6A; line-height: 1; }
+  .kp .t { margin-top: 6px; font-size: 21px; line-height: 1.35; color: rgba(255,255,255,.85); }
+
+  #s8 { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .qt2 { padding: 50px 56px; border-radius: 28px; background: #12351F; border-left: 12px solid #3DBE6A; }
+  .qt2 p { font-family: "EB Garamond", serif; font-style: italic; font-size: 60px; line-height: 1.2; }
+  .qt2 small { display: block; margin-top: 26px; font-size: 17px; letter-spacing: .2em; color: rgba(255,255,255,.6); font-style: normal; }
+  #s8 .big { font-size: 190px; font-weight: 900; color: #3DBE6A; line-height: .85; letter-spacing: -0.05em; }
+  #s8 .big small { font-size: 80px; }
+  #s8 .t { margin-top: 18px; font-size: 34px; line-height: 1.35; }
+  #s8 .t2 { margin-top: 26px; font-size: 24px; line-height: 1.4; color: rgba(255,255,255,.75); }
+
+  /* 9 */
+  #s9 h2 { margin-top: 14px; font-size: 80px; font-weight: 900; line-height: 1; letter-spacing: -0.03em; max-width: 1500px; }
+  .acts { margin-top: 56px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .ac { padding: 32px 30px; border-radius: 22px; background: #F4F7FB; color: #0F2240; }
+  .ac .i { display: inline-flex; width: 56px; height: 56px; border-radius: 50%; background: #1B7A3D; color: #fff; font-weight: 900; font-size: 28px; align-items: center; justify-content: center; }
+  .ac h3 { margin-top: 18px; font-size: 32px; font-weight: 900; line-height: 1.15; }
+  .ac p { margin-top: 10px; font-size: 21px; line-height: 1.4; color: #4A5A72; }
+  #s9 .end { margin-top: 50px; font-size: 22px; letter-spacing: .25em; color: rgba(255,255,255,.65); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="80" data-width="1920" data-height="1080">
+
+  <div id="s1" class="clip scene" data-start="0" data-duration="5" data-track-index="1">
+    <div class="k mono">CFGA DE LA JONQUIÈRE · ACCUEIL DES APPRENANT·ES 2026</div>
+    <h1>Qui accueillons-nous <span class="y">vraiment?</span></h1>
+    <div class="lede">151 réponses aux formulaires d'accueil. Quatre lectures. Une surprise.</div>
+  </div>
+
+  <div id="s2" class="clip scene" data-start="5" data-duration="10" data-track-index="1">
+    <div class="dots" id="dots"></div>
+    <div>
+      <div class="k mono">CHAQUE POINT = 1 % DES APPRENANT·ES</div>
+      <h2>Le visage de la FGA <span class="y">a changé.</span></h2>
+      <div class="leg">
+        <div><span style="background:#2D6CC0"></span><b>67 %</b> ont 16 ou 17 ans</div>
+        <div><span style="background:#4FB3E8"></span><b>14 %</b> ont 18 ans</div>
+        <div><span style="background:#7D8BA3"></span><b>19 %</b> ont 19 ans et plus</div>
+      </div>
+      <div class="med">Âge médian : <b>17 ans</b></div>
+    </div>
+  </div>
+
+  <div id="s3" class="clip scene" data-start="15" data-duration="14" data-track-index="1">
+    <div class="k mono">CE QU'ON CROIT · CE QUE MONTRENT NOS DONNÉES</div>
+    <h2>L'image qu'on a de la FGA <span class="y">ne tient plus.</span></h2>
+    <div class="myth">
+      <div class="mr"><div class="l">Un adulte en retour aux études<i></i></div><div class="ar">→</div><div class="r">Âge médian : 17 ans</div></div>
+      <div class="mr"><div class="l">Une reprise après des années d'arrêt<i></i></div><div class="ar">→</div><div class="r">67 % arrivent sans aucune interruption</div></div>
+      <div class="mr"><div class="l">Un parent, autonome financièrement<i></i></div><div class="ar">→</div><div class="r">76 % sont soutenus par leurs parents</div></div>
+      <div class="mr"><div class="l">Quelques préalables à mettre à niveau<i></i></div><div class="ar">→</div><div class="r">40 % sont en sec. 3 ou moins en français</div></div>
+    </div>
+  </div>
+
+  <div id="s4" class="clip scene" data-start="29" data-duration="11" data-track-index="1">
+    <div class="k mono">DES BESOINS DE SECTEUR JEUNE, DANS UN CADRE PENSÉ POUR ADULTES</div>
+    <h2>Derrière chaque bureau.</h2>
+    <div class="cards">
+      <div class="cd" style="--c:#C0473D"><div class="n"><span class="cnt" data-to="62">0</span><small> %</small></div><div class="t">trouble d'apprentissage diagnostiqué</div><div class="d">TDA/H : 46 % des profils</div></div>
+      <div class="cd" style="--c:#2D6CC0"><div class="n"><span class="cnt" data-to="30">0</span><small> %</small></div><div class="t">viennent d'une classe d'adaptation</div><div class="d">scolaire ou spécialisée au secondaire</div></div>
+      <div class="cd" style="--c:#1B7A3D"><div class="n"><span class="cnt" data-to="50">0</span><small> %</small></div><div class="t">occupent un emploi pendant leurs études</div><div class="d">69 % d'entre eux : 15 h ou plus par semaine</div></div>
+      <div class="cd" style="--c:#B88A00"><div class="n"><span class="cnt" data-to="20">0</span><small> %</small></div><div class="t">citent le transport comme obstacle</div><div class="d">l'obstacle le plus nommé, devant les difficultés d'apprentissage</div></div>
+    </div>
+  </div>
+
+  <div id="s5" class="clip scene" data-start="40" data-duration="10" data-track-index="1">
+    <div>
+      <div class="k mono" style="color:#E07A6F">CE QU'ILS TRAÎNENT EN ARRIVANT</div>
+      <h2>Un passé scolaire <span style="color:#E07A6F">éprouvant.</span></h2>
+      <div class="wl">
+        <div class="w"><div class="n">2,8<small>/5</small></div><div class="t">la note moyenne donnée à leur expérience scolaire passée</div></div>
+        <div class="w"><div class="n">34<small> %</small></div><div class="t">la notent 1 ou 2 sur 5</div></div>
+        <div class="w"><div class="n">31<small> %</small></div><div class="t">se souviennent d'une personne qui les a découragés</div></div>
+      </div>
+    </div>
+    <div class="qt"><p>« Elle m'a dit que je n'allais pas aller loin dans la vie. »</p><small class="mono">PROPOS RAPPORTÉ · ANONYMISÉ</small></div>
+  </div>
+
+  <div id="s6" class="clip scene" data-start="50" data-duration="3.5" data-track-index="1">
+    <div class="k mono">ET POURTANT…</div>
+    <h2>Le CFGA<br />répare déjà.</h2>
+  </div>
+
+  <div id="s7" class="clip scene" data-start="53.5" data-duration="11.5" data-track-index="1">
+    <div class="k mono">ACCORDENT UNE GRANDE OU TRÈS GRANDE VALEUR À L'ÉCOLE</div>
+    <div class="bars">
+      <div class="br"><div class="l">Avant d'arriver au CFGA</div><div class="track"><span class="fill" id="f1" style="width:1100px;background:#7D8BA3"></span><span class="v" id="v1" style="left:24px">15 %</span></div></div>
+      <div class="br"><div class="l">Aujourd'hui</div><div class="track"><span class="fill" id="f2" style="width:1100px;background:#3DBE6A"></span><span class="v" id="v2" style="left:24px;color:#0F2240">64 %</span></div></div>
+    </div>
+    <div class="delta"><div class="n">+49<small> pts</small></div><div class="t">entre « avant » et « aujourd'hui », au moment du raccrochage.</div></div>
+    <div class="traj">
+      <div class="h mono">61 TRAJECTOIRES INDIVIDUELLES · VALEUR DE L'ÉCOLE</div>
+      <div class="tdots" id="tdots"></div>
+      <div class="tleg"><span style="color:#3DBE6A"><b>43</b> en hausse</span><span style="color:#AEB8C9"><b>17</b> stables</span><span style="color:#E07A6F"><b>1</b> en baisse</span></div>
+    </div>
+    <div class="kpis">
+      <div class="kp"><div class="n">79 %</div><div class="t">chez celles et ceux qui déclarent un trouble valorisent davantage l'école qu'avant</div></div>
+      <div class="kp"><div class="n">89 %</div><div class="t">pensent aujourd'hui atteindre leur objectif</div></div>
+    </div>
+  </div>
+
+  <div id="s8" class="clip scene" data-start="65" data-duration="7" data-track-index="1">
+    <div class="qt2"><p>« Mon professeur m'encourageait et voyait un potentiel en moi. »</p><small class="mono">APPRENANT·E · EXTRAIT, ORTHOGRAPHE CORRIGÉE</small></div>
+    <div>
+      <div class="k mono" style="color:#3DBE6A">LA RELATION FAIT LA DIFFÉRENCE</div>
+      <div class="big">66<small> %</small></div>
+      <div class="t">se souviennent d'un·e enseignant·e qui les a aidés.</div>
+      <div class="t2">Ce qu'ils en retiennent : du temps, de la patience et quelqu'un qui croyait en eux.</div>
+    </div>
+  </div>
+
+  <div id="s9" class="clip scene" data-start="72" data-duration="8" data-track-index="1">
+    <div class="k mono" style="color:#F2C200">CE CAPITAL EST FRAGILE</div>
+    <h2>Il se consolide, ou s'effrite, <span class="y">dans les premières semaines.</span></h2>
+    <div class="acts">
+      <div class="ac"><span class="i">1</span><h3>Un contact tuteur–élève</h3><p>planifié dans les deux premières semaines.</p></div>
+      <div class="ac"><span class="i">2</span><h3>L'horaire de travail</h3><p>abordé dès l'accueil, intégré au plan de formation.</p></div>
+      <div class="ac"><span class="i">3</span><h3>Les parents associés</h3><p>avec l'accord de l'élève : accueil et progrès.</p></div>
+    </div>
+    <div class="end mono">GAINS RAPIDES · NI BUDGET, NI CHANGEMENT DE STRUCTURE</div>
+  </div>
+
+  <div class="src mono" id="src">DOSSIER DE SYNTHÈSE CLIENTÈLE CFGA 2026 · DONNÉES AGRÉGÉES ET ANONYMISÉES</div>
+</div>
+
+<script>
+  // Points (100) et trajectoires (61), générés avant le timeline
+  const dots = document.getElementById("dots");
+  for (let i = 0; i < 100; i++) { const d = document.createElement("span"); d.className = "dot " + (i < 67 ? "a" : i < 81 ? "c" : "d"); dots.appendChild(d); }
+  const td = document.getElementById("tdots");
+  for (let i = 0; i < 61; i++) { const d = document.createElement("span"); d.className = "td " + (i < 43 ? "up" : i < 60 ? "st" : "dn"); td.appendChild(d); }
+
+  const tl = gsap.timeline({ paused: true });
+
+  // 1
+  tl.fromTo("#s1 .k", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, 0.2);
+  tl.fromTo("#s1 h1", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.9, ease: "power4.out" }, 0.5);
+  tl.fromTo("#s1 .lede", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 1.6);
+  tl.to("#s1 h1, #s1 .lede, #s1 .k", { opacity: 0, duration: 0.4 }, 4.5);
+
+  // 2
+  tl.fromTo("#dots .dot", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2)", stagger: 0.025 }, 5.2);
+  tl.fromTo("#s2 h2", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.7, ease: "power3.out" }, 5.6);
+  tl.fromTo("#s2 .leg > div", { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.5, stagger: 0.4 }, 7.4);
+  tl.fromTo("#s2 .med", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, 9.6);
+
+  // 3
+  tl.fromTo("#s3 h2", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6 }, 15.2);
+  gsap.utils.toArray("#s3 .mr").forEach((r, i) => {
+    const t = 16.4 + i * 2.8;
+    tl.fromTo(r.querySelector(".l"), { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.5 }, t);
+    tl.fromTo(r.querySelector(".l i"), { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power2.inOut" }, t + 1.0);
+    tl.fromTo(r.querySelector(".ar"), { opacity: 0 }, { opacity: 1, duration: 0.3 }, t + 1.3);
+    tl.fromTo(r.querySelector(".r"), { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: "back.out(1.6)" }, t + 1.4);
+  });
+
+  // 4
+  tl.fromTo("#s4 h2", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6 }, 29.2);
+  gsap.utils.toArray("#s4 .cd").forEach((c, i) => {
+    const t = 30.0 + i * 0.6;
+    tl.fromTo(c, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, t);
+    const el = c.querySelector(".cnt"), obj = { v: 0 }, to = +el.dataset.to;
+    tl.to(obj, { v: to, duration: 1.4, ease: "power2.out", onUpdate: () => { el.textContent = Math.round(obj.v); } }, t + 0.2);
+  });
+
+  // 5
+  tl.fromTo("#s5 h2", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6 }, 40.2);
+  tl.fromTo("#s5 .w", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5, stagger: 0.7 }, 41.0);
+  tl.fromTo("#s5 .qt", { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.8, ease: "power3.out" }, 43.4);
+
+  // 6
+  tl.fromTo("#s6 h2", { scale: 1.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "power4.out" }, 50.3);
+  tl.fromTo("#s6 .k", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 50.1);
+
+  // 7
+  tl.fromTo("#f1", { scaleX: 0 }, { scaleX: 0.15, duration: 1.0, ease: "power2.out" }, 54.0);
+  tl.fromTo("#v1", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 54.4);
+  tl.fromTo("#f2", { scaleX: 0 }, { scaleX: 0.64, duration: 1.6, ease: "power3.out" }, 55.2);
+  tl.fromTo("#v2", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 56.2);
+  tl.fromTo(".delta", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(2)" }, 57.0);
+  tl.fromTo("#tdots .td", { scale: 0 }, { scale: 1, duration: 0.25, stagger: 0.03, ease: "back.out(2)" }, 58.0);
+  tl.fromTo(".tleg span", { opacity: 0 }, { opacity: 1, duration: 0.4, stagger: 0.3 }, 60.0);
+  tl.fromTo(".kp", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, stagger: 0.8 }, 61.0);
+
+  // 8
+  tl.fromTo("#s8 .qt2", { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.8, ease: "power3.out" }, 65.2);
+  tl.fromTo("#s8 .big, #s8 .k", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6 }, 66.4);
+  tl.fromTo("#s8 .t, #s8 .t2", { opacity: 0 }, { opacity: 1, duration: 0.6, stagger: 0.6 }, 67.2);
+
+  // 9
+  tl.fromTo("#s9 h2", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7 }, 72.2);
+  tl.fromTo("#s9 .ac", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.6, stagger: 0.35, ease: "power3.out" }, 73.4);
+  tl.fromTo("#s9 .end", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 75.4);
+  tl.fromTo("#src", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 5.2);
+
+  window.__timelines["main"] = tl;
+</script>
+</body>
+</html>
