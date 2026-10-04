@@ -98,6 +98,43 @@
   #gag .g-k { font-size: 26px; letter-spacing: .3em; color: #6CB33F; }
   #gag .g-q { margin-top: 26px; font-size: 150px; line-height: .95; color: #fff; }
   #gag .g-a { position: absolute; left: 0; right: 0; top: 50%; margin-top: -110px; font-size: 230px; line-height: 1; color: #F5C542; opacity: 0; }
+  .mk { z-index: 8; opacity: 0; }
+  .mk-frame { position: absolute; left: 80px; top: 300px; width: 740px; height: 430px; border-radius: 22px; overflow: hidden; border: 4px solid var(--c); background: #F6F7FB; color: #1B2240; box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 60px color-mix(in srgb, var(--c) 40%, transparent); transform: perspective(1500px) rotateY(12deg); font-family: Montserrat, sans-serif; }
+  .mk-bar { height: 44px; background: #E9ECF4; display: flex; align-items: center; gap: 12px; padding: 0 18px; font-size: 16px; font-weight: 700; color: #2B3150; }
+  .mk-bar i { display: block; width: 12px; height: 12px; border-radius: 50%; background: var(--c); }
+  .mk-body { padding: 18px 26px; }
+  .mk-h { font-size: 25px; font-weight: 900; margin-bottom: 12px; }
+  .mk-row { display: grid; grid-template-columns: 200px 200px 1fr; align-items: center; gap: 14px; margin: 9px 0; font-size: 15px; }
+  .mk-row b { font-size: 16px; }
+  .mk-row em { font-style: normal; color: #4A5370; font-size: 14px; }
+  .mk-g { height: 14px; border-radius: 8px; background: #DDE2EE; position: relative; overflow: hidden; }
+  .mk-fill { position: absolute; left: 0; top: 0; height: 14px; width: 200px; border-radius: 8px; transform-origin: left center; display: block; }
+  .mk-tip { margin-top: 12px; padding: 10px 14px; border-radius: 10px; background: #FFF4D6; font-size: 15px; color: #5A4500; }
+  .rf-faces { display: flex; gap: 14px; margin-top: 4px; }
+  .rf { width: 118px; padding: 10px 6px; border-radius: 14px; background: #fff; text-align: center; box-shadow: 0 2px 8px rgba(20,30,60,.08); }
+  .rf svg { width: 54px; height: 54px; display: block; margin: 0 auto; }
+  .rf span { display: block; margin-top: 6px; font-size: 13px; font-weight: 700; }
+  .rf b { display: block; margin-top: 4px; font-size: 26px; color: var(--f); }
+  .rf-alert { margin-top: 16px; padding: 12px 16px; border-radius: 12px; background: #1B2240; color: #fff; font-size: 17px; }
+  .rf-alert b { color: #F472B6; }
+  .rf-alert u { color: #9FD3FF; }
+  .li-tools { display: flex; gap: 8px; }
+  .li-tools span { padding: 7px 12px; border-radius: 999px; background: #E9ECF4; font-size: 14px; font-weight: 700; }
+  .li-tools span.on { background: #0F766E; color: #fff; }
+  .li-txt { margin-top: 20px; font-family: "Open Sans", sans-serif; font-size: 34px; line-height: 1.6; letter-spacing: .02em; }
+  .lw { padding: 0 4px; border-radius: 6px; }
+  .lw i { font-style: normal; color: #E8590C; opacity: 0; }
+  .li-tr { margin-top: 18px; padding: 12px 16px; border-radius: 12px; background: #E6FFFA; font-size: 18px; opacity: 0; }
+  .li-tr b { display: block; font-size: 13px; color: #0F766E; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
+  .pl-top { display: flex; gap: 16px; }
+  .pl-top div { flex: 1; padding: 10px 14px; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(20,30,60,.08); }
+  .pl-top b { font-size: 34px; font-weight: 900; color: #B26A00; }
+  .pl-top small { font-size: 20px; color: #B26A00; font-weight: 900; }
+  .pl-top span { display: block; font-size: 13px; color: #4A5370; font-weight: 700; }
+  .pl-txt { margin-top: 16px; font-size: 20px; line-height: 1.6; }
+  .pl-x { border-bottom: 3px solid transparent; }
+  .pl-gen { margin-top: 14px; padding: 10px 14px; border-radius: 12px; background: #1B2240; color: #fff; font-size: 16px; opacity: 0; }
+  .pl-gen b { display: block; font-size: 12px; letter-spacing: .12em; color: #FFB020; text-transform: uppercase; margin-bottom: 3px; }
   #wbp { z-index: 8; opacity: 0; }
   .wb-frame { position: absolute; left: 80px; top: 300px; width: 740px; height: 416px; border-radius: 22px; overflow: hidden; border: 4px solid #22C7D6; box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 60px rgba(34,199,214,.35); transform: perspective(1500px) rotateY(12deg); }
   .wb-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -309,6 +346,42 @@
     <div class="g-a disp">Attends de voir.</div>
   </div>
 
+
+  <!-- ÉCRANS DE DÉMO EN FRANÇAIS -->
+  <div id="mk1" class="layer mk" style="--c:#FF6B6B"><div class="mk-frame"><div class="mk-bar"><i></i><span>Coach de présentation · Rapport de répétition</span></div><div class="mk-body">
+    <div class="mk-h">Ta répétition · 2 min 14 s</div>
+    <div class="mk-row"><b>Débit</b><div class="mk-g"><span class="mk-fill" style="--w:.72;background:#2E7D32"></span></div><em>152 mots/min · bon rythme</em></div>
+    <div class="mk-row"><b>Mots de remplissage</b><div class="mk-g"><span class="mk-fill" style="--w:.55;background:#E8590C"></span></div><em>« euh » × <span class="cnt" data-to="7">0</span> · « genre » × <span class="cnt" data-to="3">0</span></em></div>
+    <div class="mk-row"><b>Intonation</b><div class="mk-g"><span class="mk-fill" style="--w:.8;background:#2E7D32"></span></div><em>variée, ça garde l'attention</em></div>
+    <div class="mk-row"><b>Lecture de la diapo</b><div class="mk-g"><span class="mk-fill" style="--w:.3;background:#C62828"></span></div><em>2 fois : regarde ton public</em></div>
+    <div class="mk-tip">Conseil : fais une courte pause au lieu de dire « euh ».</div>
+  </div></div></div>
+
+  <div id="mk6" class="layer mk" style="--c:#F472B6"><div class="mk-frame"><div class="mk-bar"><i></i><span>Reflect · Check-in de la semaine</span></div><div class="mk-body">
+    <div class="mk-h">Comment te sens-tu aujourd'hui?</div>
+    <div class="rf-faces">
+      <div class="rf" style="--f:#2E7D32"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="var(--f)"/><circle cx="21" cy="25" r="3.5" fill="#fff"/><circle cx="39" cy="25" r="3.5" fill="#fff"/><path d="M18 36 Q30 48 42 36" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/></svg><span>Fier·ère</span><b class="cnt" data-to="6">0</b></div>
+      <div class="rf" style="--f:#1E88E5"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="var(--f)"/><circle cx="21" cy="26" r="3.5" fill="#fff"/><circle cx="39" cy="26" r="3.5" fill="#fff"/><path d="M20 39 H40" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg><span>Calme</span><b class="cnt" data-to="8">0</b></div>
+      <div class="rf" style="--f:#8E7CC3"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="var(--f)"/><path d="M16 26 H26 M34 26 H44" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M22 40 Q30 36 38 40" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/></svg><span>Fatigué·e</span><b class="cnt" data-to="5">0</b></div>
+      <div class="rf" style="--f:#E8590C"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="var(--f)"/><circle cx="21" cy="25" r="3.5" fill="#fff"/><circle cx="39" cy="25" r="3.5" fill="#fff"/><path d="M19 41 L24 37 L30 41 L36 37 L41 41" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg><span>Stressé·e</span><b class="cnt" data-to="4">0</b></div>
+      <div class="rf" style="--f:#C62828"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="26" fill="var(--f)"/><circle cx="21" cy="25" r="3.5" fill="#fff"/><circle cx="39" cy="25" r="3.5" fill="#fff"/><path d="M18 43 Q30 32 42 43" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/></svg><span>Découragé·e</span><b class="cnt" data-to="1">0</b></div>
+    </div>
+    <div class="rf-alert"><b>3 élèves</b> aimeraient te parler cette semaine · <u>Voir qui</u></div>
+    <div class="mk-tip">Visible seulement par toi. 24 réponses sur 26.</div>
+  </div></div></div>
+
+  <div id="mk7" class="layer mk" style="--c:#2DD4BF"><div class="mk-frame"><div class="mk-bar"><i></i><span>Lecteur immersif</span></div><div class="mk-body li">
+    <div class="li-tools"><span class="on">▶ Lire à voix haute</span><span>Syllabes</span><span>Parties du discours</span><span>Traduire</span></div>
+    <div class="li-txt"><span class="lw" data-k="0">Cal<i>·</i>cu<i>·</i>le</span> <span class="lw" data-k="1">le</span> <span class="lw" data-k="2">coût</span> <span class="lw" data-k="3">to<i>·</i>tal</span> <span class="lw" data-k="4">si</span> <span class="lw" data-k="5">tu</span> <span class="lw" data-k="6">u<i>·</i>ti<i>·</i>li<i>·</i>ses</span> <span class="lw" data-k="7">150</span> <span class="lw" data-k="8">Mo</span> <span class="lw" data-k="9">ce</span> <span class="lw" data-k="10">mois-ci.</span></div>
+    <div class="li-tr"><b>Traduction · espagnol</b> Calcula el costo total si usas 150 MB este mes.</div>
+  </div></div></div>
+
+  <div id="mk8" class="layer mk" style="--c:#FFB020"><div class="mk-frame"><div class="mk-bar"><i></i><span>Progrès en lecture · Rapport de Samir</span></div><div class="mk-body">
+    <div class="pl-top"><div><b class="cnt" data-to="92">0</b><small> %</small><span>précision</span></div><div><b class="cnt" data-to="118">0</b><span>mots/min</span></div><div><b class="cnt" data-to="4">0</b><span>mots à pratiquer</span></div></div>
+    <div class="pl-txt">Le transport collectif est <span class="pl-x">particulièrement</span> utile pour protéger l'<span class="pl-x">environnement</span>. Chaque jour, des milliers de <span class="pl-x">travailleurs</span> l'utilisent pour se rendre au <span class="pl-x">centre-ville</span>.</div>
+    <div class="pl-gen"><b>Pratique générée par l'IA</b> particulièrement · environnement · travailleurs · centre-ville</div>
+  </div></div></div>
+
   <div id="wbp" class="layer"><div class="wb-frame"><video id="v-wb" class="clip" src="assets/whiteboard.mp4" muted playsinline data-start="58.5" data-duration="9" data-media-start="25.5" data-track-index="5"></video></div></div>
 
   <!-- 7. MURALE -->
@@ -402,6 +475,35 @@
   tl.to("#gag .g-q, #gag .g-k", { opacity: 0, scaleY: 0.02, duration: 0.18, ease: "power2.in" }, 35.3);
   tl.fromTo("#gag .g-a", { opacity: 0, scale: 2.2 }, { opacity: 1, scale: 1, duration: 0.25, ease: "power4.out" }, 35.5);
   tl.to("#gag .g-a", { opacity: 0, scale: 1.15, duration: 0.4, ease: "power2.in" }, 37.5);
+
+  // Écrans de démo
+  const mkIn = (id, i) => {
+    const s0 = P0 + i * PD;
+    tl.fromTo(id, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)" }, s0 + 0.5);
+    tl.to(id, { opacity: 0, duration: 0.4 }, s0 + PD - 0.5);
+    gsap.utils.toArray(id + " .cnt").forEach((el) => {
+      const o = { v: 0 }, to = +el.dataset.to;
+      tl.to(o, { v: to, duration: 1.6, ease: "power2.out", onUpdate: () => { el.textContent = Math.round(o.v); } }, s0 + 1.6);
+    });
+    return s0;
+  };
+  let s1 = mkIn("#mk1", 1);
+  [0.72, 0.55, 0.8, 0.3].forEach((w, k) => tl.fromTo("#mk1 .mk-row:nth-of-type(" + (k + 2) + ") .mk-fill", { scaleX: 0 }, { scaleX: w, duration: 1.2, ease: "power2.out" }, s1 + 1.3 + k * 0.35));
+  tl.fromTo("#mk1 .mk-tip", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 }, s1 + 4.0);
+  let s6 = mkIn("#mk6", 6);
+  tl.fromTo("#mk6 .rf", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.15 }, s6 + 1.0);
+  tl.fromTo("#mk6 .rf-alert", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, s6 + 3.6);
+  tl.fromTo("#mk6 .mk-tip", { opacity: 0 }, { opacity: 1, duration: 0.5 }, s6 + 4.4);
+  let s7 = mkIn("#mk7", 7);
+  tl.to("#mk7 .lw i", { opacity: 1, duration: 0.3 }, s7 + 1.2);
+  gsap.utils.toArray("#mk7 .lw").forEach((w, k) => {
+    tl.fromTo(w, { backgroundColor: "rgba(253,224,71,0)" }, { backgroundColor: "rgba(253,224,71,1)", duration: 0.12 }, s7 + 1.6 + k * 0.38);
+    tl.to(w, { backgroundColor: "rgba(253,224,71,0)", duration: 0.2 }, s7 + 1.6 + k * 0.38 + 0.36);
+  });
+  tl.fromTo("#mk7 .li-tr", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5 }, s7 + 6.0);
+  let s8 = mkIn("#mk8", 8);
+  tl.fromTo("#mk8 .pl-x", { borderBottomColor: "rgba(198,40,40,0)", color: "#1B2240" }, { borderBottomColor: "rgba(198,40,40,1)", color: "#C62828", duration: 0.3, stagger: 0.5 }, s8 + 2.2);
+  tl.fromTo("#mk8 .pl-gen", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 }, s8 + 4.6);
 
   // Pépite #8 : extrait de la vidéo Whiteboard
   tl.fromTo("#wbp", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)" }, 58.5);
@@ -598,6 +700,7 @@
   const easeOutBack = (x) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
   const easeInOut = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
   const P0 = 38, PD = 10;
+  const SCREENS = [1, 2, 6, 7, 8];
 
   function updateDust(t, alpha, spread) {
     for (let i = 0; i < N; i++) {
@@ -666,17 +769,17 @@
       const m = nuggets[i];
       const inn = clamp(u / 0.85), out = clamp((PD - u) / 0.45);
       const big = i === 9 ? 1.12 : 1;
-      m.visible = i !== 2;
+      m.visible = !SCREENS.includes(i);
       m.position.set(-3.0, (1 - easeOutBack(inn)) * 7 + Math.sin(t * 1.4) * 0.12 + (1 - out) * 1.5, 0);
       m.rotation.set(0.35 + Math.sin(t * 0.7) * 0.25, t * 0.9 + i * 1.7 + (1 - inn) * 3, 0.15);
       m.scale.setScalar(1.75 * big * out);
       rim.color.set(COLORS[i]); rim.intensity = 140; rim.position.set(-1.2, 1.2, -3.2);
       updateDust(t, Math.min(clamp(u / 0.6), out) * (i === 9 ? 1 : 0.55), 0.55);
       dust.position.set(-3.2, 0, 0);
-      glowA.visible = i !== 2; glowA.material.color.set(COLORS[i]);
+      glowA.visible = !SCREENS.includes(i); glowA.material.color.set(COLORS[i]);
       glowA.position.set(m.position.x, m.position.y, -1.5); glowA.scale.setScalar(7.5 * big); glowA.material.opacity = 0.55 * inn * out;
       const w = u - 0.6;
-      if (w > 0 && w < 1.1 && i !== 2) {
+      if (w > 0 && w < 1.1 && !SCREENS.includes(i)) {
         shockA.visible = true; shockA.material.color.set(COLORS[i]);
         shockA.position.set(m.position.x, m.position.y, 0); shockA.lookAt(camera.position);
         shockA.scale.setScalar(1.2 + w * 6); shockA.material.opacity = (1 - w / 1.1) * 0.85;
