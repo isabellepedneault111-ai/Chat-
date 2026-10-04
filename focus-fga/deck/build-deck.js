@@ -34,84 +34,128 @@ pres.defineSlideMaster({
   placeholders: undefined,
 });
 
-// 1 · Bande-annonce
-pres.addSection({ title: "Ouverture" });
-let s = pres.addSlide({ masterName: "VIDEO", sectionTitle: "Ouverture" });
-if (QA) s.addImage({ path: "media/focus.jpg", x: 0, y: 0, w: 13.333, h: 7.5, objectName: "Vidéo Focus FGA" }); else s.addMedia({ type: "video", path: "media/focus.mp4", cover: cover("media/focus.jpg"), x: 0, y: 0, w: 13.333, h: 7.5, objectName: "Vidéo Focus FGA" });
-s.addNotes("0:00 – 2:40 · BANDE-ANNONCE (2 min 36, avec ta voix off). Lance la vidéo dès l'ouverture, sans dire un mot avant : l'effet de surprise fait le travail. Rappel Teams : si tu partages ton écran plutôt qu'en PowerPoint Live, coche « Inclure le son de l'ordinateur » (utile si tu as ajouté de la musique).");
+
+const vid = (s, name, label) => {
+  if (QA) s.addImage({ path: `media/${name}.jpg`, x: 0, y: 0, w: 13.333, h: 7.5, objectName: label });
+  else s.addMedia({ type: "video", path: `media/${name}.mp4`, cover: cover(`media/${name}.jpg`), x: 0, y: 0, w: 13.333, h: 7.5, objectName: label });
+};
+const title = (s, t, sub) => {
+  s.addText(t, { x: 0.6, y: 0.45, w: 12.1, h: 0.85, fontSize: 38, bold: true, color: C.background1, fontFace: "Arial", isTextBox: true, margin: 0 });
+  if (sub) s.addText(sub, { x: 0.6, y: 1.3, w: 12.1, h: 0.45, fontSize: 17, color: C.accent5, isTextBox: true, margin: 0 });
+};
+
+// 1 · Ordre du jour + intentions (affichée pendant que les gens arrivent)
+pres.addSection({ title: "Accueil" });
+let s = pres.addSlide({ masterName: "SOMBRE", sectionTitle: "Accueil" });
+title(s, "Focus FGA · 15 minutes", "Pendant que tout le monde arrive : voici où on s'en va");
+s.addText("NOS INTENTIONS", { x: 0.6, y: 2.0, w: 5.6, h: 0.4, fontSize: 14, bold: true, color: C.accent2, charSpacing: 4, isTextBox: true, margin: 0 });
+const intents = [
+  ["Connaître", "qui on accueille vraiment… et ce qui fonctionne déjà"],
+  ["Découvrir", "des outils Teams et IA concrets pour la FGA"],
+  ["Choisir", "comment je veux être accompagné·e cette année"],
+];
+intents.forEach(([v, t], i) => {
+  const y = 2.55 + i * 1.25;
+  s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y, w: 5.6, h: 1.05, rectRadius: 0.12, fill: { color: "16234A" }, line: { color: "2A3A66", width: 1 }, objectName: "Intention " + (i + 1) });
+  s.addText([{ text: v + "  ", options: { bold: true, color: THEME.colors.accent1, fontSize: 22 } }, { text: t, options: { color: "FFFFFF", fontSize: 16 } }], { x: 0.85, y, w: 5.2, h: 1.05, valign: "middle", isTextBox: true, margin: 0 });
+});
+s.addText("L'ORDRE DU JOUR", { x: 6.9, y: 2.0, w: 5.8, h: 0.4, fontSize: 14, bold: true, color: C.accent2, charSpacing: 4, isTextBox: true, margin: 0 });
+const agenda = [
+  ["2 min", "Qui suis-je?"],
+  ["3 min", "Qui accueillons-nous vraiment?"],
+  ["3 min", "Le Labo techno-IA"],
+  ["2 min", "Mon Parcours : volontaires recherchés"],
+  ["3 min", "La bande-annonce : 10 pépites Teams"],
+  ["2 min", "Je m'inscris, en direct"],
+];
+agenda.forEach(([m, t], i) => {
+  const y = 2.55 + i * 0.62;
+  s.addText(m, { x: 6.9, y, w: 1.2, h: 0.5, fontSize: 16, bold: true, color: C.accent1, valign: "middle", isTextBox: true, margin: 0 });
+  s.addText(t, { x: 8.15, y, w: 4.75, h: 0.5, fontSize: 16, color: C.background1, valign: "middle", isTextBox: true, margin: 0 });
+});
+s.addNotes("AVANT LE DÉBUT · Affiche cette diapo pendant que les gens se connectent. Dès que tu commences, lis les trois intentions en 20 secondes : « Aujourd'hui, trois choses : connaître, découvrir, choisir. » Rappel : mode « Mis en avant » dans Teams pour qu'on voie ta caméra par-dessus les diapos.");
 
 // 2 · Qui suis-je
 pres.addSection({ title: "Qui suis-je" });
 s = pres.addSlide({ masterName: "SOMBRE", sectionTitle: "Qui suis-je" });
-s.addShape(pres.shapes.OVAL, { x: 0.8, y: 1.45, w: 2.6, h: 2.6, fill: { color: C.accent1 }, objectName: "Pastille initiales" });
-s.addText("IP", { x: 0.8, y: 1.45, w: 2.6, h: 2.6, align: "center", valign: "middle", fontSize: 72, bold: true, color: C.text1, fontFace: "Arial", isTextBox: true, margin: 0 });
-s.addText("Allô! Moi, c'est Isabelle", { x: 0.8, y: 4.35, w: 4.9, h: 1.1, fontSize: 30, bold: true, color: C.background1, fontFace: "Arial", isTextBox: true, margin: 0, valign: "top" });
-s.addText("Conseillère pédagonumérique · CFGA de la Jonquière", { x: 0.8, y: 5.45, w: 4.4, h: 0.6, fontSize: 15, color: C.accent5, isTextBox: true, margin: 0 });
-const cards = [
-  ["35", "profs accompagnés dans la CoP IA 2025-2026, avec l'UQAC"],
-  ["1", "appli créée pour l'accompagnement des élèves : Mon Parcours"],
-  ["0", "jugement sur ta pratique : mon rôle, c'est le coup de main"],
+title(s, "Allô! Moi, c'est Isabelle", "Conseillère pédagonumérique · CFGA de la Jonquière");
+const steps = [
+  ["15 ans", "en classe · CSS de la Capitale", "Milieu très défavorisé · indice 10/10"],
+  ["Recherche", "Univ. Laval · UQAM", "Écriture · cyberintimidation · Plan numérique 2018"],
+  ["Lévis", "Conseillance au CFP", "Électromécanique · mentore classes multiâges"],
+  ["2018", "Retour au Saguenay", "CP maths-sciences · pédagonumérique · CFGA"],
+  ["2025-26", "UQAC · Patrick Giroux", "CoP IA · cadre réflexif IA pour le CSS"],
 ];
-cards.forEach(([n, t], i) => {
-  const y = 1.0 + i * 1.75;
-  s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 5.9, y, w: 6.7, h: 1.5, rectRadius: 0.15, fill: { color: "16234A" }, line: { color: "2A3A66", width: 1 }, objectName: "Carte " + (i + 1) });
-  s.addText(n, { x: 6.15, y, w: 1.4, h: 1.5, fontSize: 54, bold: true, color: C.accent1, fontFace: "Arial", valign: "middle", isTextBox: true, margin: 0 });
-  s.addText(t, { x: 7.65, y, w: 4.75, h: 1.5, fontSize: 18, color: C.background1, valign: "middle", isTextBox: true, margin: 0 });
+steps.forEach(([k, a, b], i) => {
+  const y = 1.95 + i * 0.93;
+  s.addShape(pres.shapes.OVAL, { x: 0.6, y: y + 0.12, w: 0.7, h: 0.7, fill: { color: i === 4 ? C.accent2 : C.accent1 }, objectName: "Jalon " + (i + 1) });
+  s.addText(String(i + 1), { x: 0.6, y: y + 0.12, w: 0.7, h: 0.7, align: "center", valign: "middle", fontSize: 20, bold: true, color: C.text1, isTextBox: true, margin: 0 });
+  s.addText([{ text: k + "  ", options: { bold: true, color: THEME.colors.accent1, fontSize: 20 } }, { text: a, options: { bold: true, color: "FFFFFF", fontSize: 18 } }], { x: 1.5, y: y + 0.05, w: 5.4, h: 0.5, isTextBox: true, margin: 0, valign: "middle" });
+  s.addText(b, { x: 1.5, y: y + 0.52, w: 5.4, h: 0.42, fontSize: 15, color: C.accent5, isTextBox: true, margin: 0, valign: "middle" });
 });
-s.addText("Un coup de main ciblé : dans ta matière, avec ton groupe, sur tes outils.", { x: 5.9, y: 6.25, w: 6.7, h: 0.5, fontSize: 15, italic: true, color: C.accent2, isTextBox: true, margin: 0 });
-s.addNotes("2:40 – 4:00 · QUI SUIS-JE (80 s). Trois chiffres, une promesse. Ajoute UNE anecdote personnelle (pourquoi la FGA te tient à cœur, ou un moment de classe marquant) : c'est elle qu'on retiendra. Phrase de transition : « Avant de parler d'outils, j'ai voulu savoir qui on accueille vraiment. »");
+s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 7.4, y: 2.0, w: 5.3, h: 2.35, rectRadius: 0.15, fill: { color: "16234A" }, line: { color: "2A3A66", width: 1 }, objectName: "Mes classes" });
+s.addText("MES CLASSES", { x: 7.7, y: 2.15, w: 4.8, h: 0.35, fontSize: 13, bold: true, color: C.accent2, charSpacing: 4, isTextBox: true, margin: 0 });
+s.addText([
+  { text: "⅓ issus de l'immigration", options: { bullet: true, breakLine: true } },
+  { text: "Jusqu'à 5 ans d'écart dans les apprentissages", options: { bullet: true, breakLine: true } },
+  { text: "Attachement · comportement", options: { bullet: true, breakLine: true } },
+  { text: "Élèves HDAA intégrés", options: { bullet: true } },
+], { x: 7.7, y: 2.55, w: 4.8, h: 1.7, fontSize: 16, color: "FFFFFF", paraSpaceAfter: 4, isTextBox: true, margin: 0, valign: "top" });
+s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 7.4, y: 4.5, w: 5.3, h: 1.8, rectRadius: 0.15, fill: { color: "16234A" }, line: { color: "2A3A66", width: 1 }, objectName: "Mes approches" });
+s.addText("MES APPROCHES", { x: 7.7, y: 4.7, w: 4.8, h: 0.35, fontSize: 13, bold: true, color: C.accent2, charSpacing: 4, isTextBox: true, margin: 0 });
+s.addText("Décloisonnement · co-enseignement · plan de travail différencié · tableau de programmation · projet Flex · 1er middle school au Québec", { x: 7.7, y: 5.1, w: 4.8, h: 0.95, fontSize: 15, color: "FFFFFF", isTextBox: true, margin: 0, valign: "top" });
+s.addText("Je reconnais mes élèves dans les vôtres.", { x: 7.4, y: 6.4, w: 5.3, h: 0.45, fontSize: 16, italic: true, bold: true, color: C.accent1, isTextBox: true, margin: 0 });
+s.addNotes("2 MIN · QUI SUIS-JE. Des mots-clés à l'écran, l'histoire dans ta bouche. Parcours : 15 ans en classe au CSS de la Capitale, en milieu très défavorisé (indice 10/10). Co-chercheuse : texte d'opinion et texte d'information avec l'Université Laval (direction : Érick Falardeau); cyberintimidation avec l'UQAM. Contribution au plan d'action numérique 2018. Conseillance au CFP de Lévis (électromécanique), mentore des classes multiâges. Retour au Saguenay en 2018 : CP maths-sciences, pédagonumérique, maintenant le CFGA. L'an dernier : toute l'année avec Patrick Giroux, directeur du département de recherche en éducation à l'UQAC. Mandat du comité de gouvernance pédagonumérique : produire le cadre réflexif sur l'utilisation de l'IA pour le CSS, et animer la CoP IA (35 profs). Pont vers la suite : « Et c'est ce qu'on va faire ensemble ici, avec le Labo techno-IA. » La phrase qui compte : « Je reconnais mes élèves dans les vôtres. » Transition : « Justement, qui accueille-t-on vraiment? »");
 
 // 3 · Stats
 pres.addSection({ title: "Nos élèves" });
 s = pres.addSlide({ masterName: "VIDEO", sectionTitle: "Nos élèves" });
-if (QA) s.addImage({ path: "media/stats.jpg", x: 0, y: 0, w: 13.333, h: 7.5, objectName: "Vidéo stats clientèle" }); else s.addMedia({ type: "video", path: "media/stats.mp4", cover: cover("media/stats.jpg"), x: 0, y: 0, w: 13.333, h: 7.5, objectName: "Vidéo stats clientèle" });
-s.addNotes("4:00 – 6:15 · QUI ACCUEILLONS-NOUS VRAIMENT? Vidéo de 80 s. Ensuite, une seule question dans le clavardage : « En un mot, qu'est-ce qui vous surprend? » Lis 2 ou 3 réponses à voix haute. Message clé : 70 % valorisent déjà plus l'école qu'avant, et ça se joue dans les premières semaines.");
+vid(s, "stats", "Vidéo stats clientèle");
+s.addNotes("3 MIN · QUI ACCUEILLONS-NOUS VRAIMENT? Vidéo de 80 s. Ensuite, une seule question dans le clavardage : « En un mot, qu'est-ce qui vous surprend? » Lis 2 ou 3 réponses. Message clé : 70 % valorisent déjà plus l'école qu'avant, et ça se joue dans les premières semaines.");
 
-// 4 · Whiteboard
-pres.addSection({ title: "Exemple concret" });
-s = pres.addSlide({ masterName: "VIDEO", sectionTitle: "Exemple concret" });
-if (QA) s.addImage({ path: "media/whiteboard.jpg", x: 0, y: 0, w: 13.333, h: 7.5, objectName: "Vidéo tableau blanc" }); else s.addMedia({ type: "video", path: "media/whiteboard.mp4", cover: cover("media/whiteboard.jpg"), x: 0, y: 0, w: 13.333, h: 7.5, objectName: "Vidéo tableau blanc" });
-s.addNotes("6:15 – 8:00 · UN EXEMPLE CONCRET. Vidéo de 54 s. Lien avec le sondage : la formation à distance revient parmi vos défis. L'astuce à répéter de vive voix : ouvrir Whiteboard dans sa propre fenêtre et partager cette fenêtre, sinon l'enregistrement ne capte pas le tableau.");
-
-// 5 · Labo techno-IA
+// 4 · Labo techno-IA
 pres.addSection({ title: "Labo techno-IA" });
 s = pres.addSlide({ masterName: "IMAGE", sectionTitle: "Labo techno-IA" });
-s.addImage({ path: "media/labo.png", x: 0, y: 0, w: 13.333, h: 7.5, altText: "Labo techno-IA : 35 profs, ½ journée par mois, zéro expert au départ. Réalisations de la CoP IA et proposition pour la FGA.", objectName: "Visuel Labo techno-IA" });
-s.addNotes("8:00 – 10:30 · LE LABO TECHNO-IA. Raconte la CoP IA en une phrase : 35 profs, ½ journée par mois, un défi personnel chaque mois, zéro expert au départ. Montre UNE réalisation qui te parle. Puis la bascule : « Vous l'avez dit dans le sondage : techno et IA, en petit groupe, mardi ou jeudi après-midi. On le fait. »");
+s.addImage({ path: "media/labo.png", x: 0, y: 0, w: 13.333, h: 7.5, altText: "Labo techno-IA : 35 profs, ½ journée par mois, zéro expert au départ.", objectName: "Visuel Labo techno-IA" });
+s.addNotes("3 MIN · LE LABO TECHNO-IA. Rappel du pont : le cadre réflexif IA produit avec l'UQAC sert de base au Labo (pédagogique · éthique · légal, avant, pendant, après). La CoP IA en une phrase : 35 profs, ½ journée par mois, un défi chaque mois, zéro expert au départ. Montre UNE réalisation. Puis : « Vous l'avez dit dans le sondage : techno et IA, en petit groupe, mardi ou jeudi après-midi. On le fait. »");
 
-// 6 · Mon Parcours
+// 5 · Mon Parcours
 pres.addSection({ title: "Mon Parcours" });
 s = pres.addSlide({ masterName: "IMAGE", sectionTitle: "Mon Parcours" });
-s.addImage({ path: "media/parcours.png", x: 0, y: 0, w: 13.333, h: 7.5, altText: "Appel aux volontaires pour tester l'application Mon Parcours avec un ou deux élèves cet automne.", objectName: "Visuel Mon Parcours" });
-s.addNotes("10:30 – 12:00 · MON PARCOURS. Je cherche quelques profs pour l'essayer avec un ou deux élèves cet automne. Rien à installer, rien ne sort de l'appareil. Montre le code QR : ils peuvent l'ouvrir pendant que tu parles.");
+s.addImage({ path: "media/parcours.png", x: 0, y: 0, w: 13.333, h: 7.5, altText: "Appel aux volontaires pour tester l'application Mon Parcours.", objectName: "Visuel Mon Parcours" });
+s.addNotes("2 MIN · MON PARCOURS. Je cherche quelques profs pour l'essayer avec un ou deux élèves cet automne. Rien à installer, rien ne sort de l'appareil. Montre le code QR.");
+
+// 6 · Bande-annonce
+pres.addSection({ title: "Bande-annonce" });
+s = pres.addSlide({ masterName: "VIDEO", sectionTitle: "Bande-annonce" });
+vid(s, "focus", "Vidéo Focus FGA");
+s.addNotes("3 MIN · LA BANDE-ANNONCE (2 min 36). Phrase d'intro : « Et pour vous donner le goût, voici 10 pépites Teams. » Puis tu lances, sans parler. La vidéo finit sur « Inscris-toi » : enchaîne directement sur la diapo suivante.");
 
 // 7 · Inscription
 pres.addSection({ title: "Inscription" });
 s = pres.addSlide({ masterName: "SOMBRE", sectionTitle: "Inscription" });
-s.addText("On s'inscrit, là, maintenant", { x: 0.6, y: 0.45, w: 12.1, h: 0.9, fontSize: 40, bold: true, color: C.background1, fontFace: "Arial", isTextBox: true, margin: 0 });
-s.addText("Dans le clavardage de la rencontre, ajoute ton nom au tableau Loop", { x: 0.6, y: 1.35, w: 12.1, h: 0.5, fontSize: 18, color: C.accent5, isTextBox: true, margin: 0 });
+title(s, "On s'inscrit, là, maintenant", "Dans le clavardage de la rencontre, ajoute ton nom au tableau Loop");
 const rows = [
-  [{ text: "Nom", options: { bold: true, color: "0B1530", fill: { color: "F5C542" } } }, { text: "Labo techno-IA", options: { bold: true, color: "0B1530", fill: { color: "F5C542" } } }, { text: "Mon Parcours", options: { bold: true, color: "0B1530", fill: { color: "F5C542" } } }, { text: "Café 1:1", options: { bold: true, color: "0B1530", fill: { color: "F5C542" } } }, { text: "Mon défi en une ligne", options: { bold: true, color: "0B1530", fill: { color: "F5C542" } } }],
+  ["Nom", "Labo techno-IA", "Mon Parcours", "Café 1:1", "Mon défi en une ligne"].map((t) => ({ text: t, options: { bold: true, color: "0B1530", fill: { color: "F5C542" } } })),
   ["Ton nom ici", "✔", "", "✔", "Mes élèves en FAD décrochent après 20 min"],
   ["", "", "✔", "", ""],
   ["", "", "", "", ""],
 ];
 s.addTable(rows, { x: 0.6, y: 2.15, w: 12.1, colW: [2.4, 2.0, 2.0, 1.6, 4.1], rowH: 0.6, fontSize: 16, color: "FFFFFF", fill: { color: "16234A" }, border: { type: "solid", color: "2A3A66", pt: 1 }, valign: "middle", objectName: "Tableau Loop exemple" });
-const steps = [["1", "Ouvre le clavardage"], ["2", "Coche ce qui t'intéresse"], ["3", "Écris ton défi : on part de là"]];
-steps.forEach(([n, t], i) => {
+[["1", "Ouvre le clavardage"], ["2", "Coche ce qui t'intéresse"], ["3", "Écris ton défi : on part de là"]].forEach(([n, t], i) => {
   const x = 0.6 + i * 4.1;
   s.addShape(pres.shapes.OVAL, { x, y: 5.0, w: 0.8, h: 0.8, fill: { color: C.accent2 }, objectName: "Étape " + n });
   s.addText(n, { x, y: 5.0, w: 0.8, h: 0.8, align: "center", valign: "middle", fontSize: 24, bold: true, color: C.text1, isTextBox: true, margin: 0 });
   s.addText(t, { x: x + 0.95, y: 5.0, w: 3.0, h: 0.8, valign: "middle", fontSize: 17, color: C.background1, isTextBox: true, margin: 0 });
 });
 s.addText("Pas prêt·e à écrire ton nom devant tout le monde? Écris-moi en privé sur Teams, c'est parfait aussi.", { x: 0.6, y: 6.1, w: 12.1, h: 0.5, fontSize: 15, italic: true, color: C.accent1, isTextBox: true, margin: 0 });
-s.addNotes("12:00 – 14:30 · INSCRIPTION EN DIRECT. AVANT la rencontre : dans le clavardage de la rencontre Teams, insère un composant Loop « Tableau » avec ces 5 colonnes, puis épingle le message. Pendant : laisse 90 secondes de silence pendant qu'ils écrivent, et lis les noms qui apparaissent (« Bienvenue Sophie! ») pour créer l'effet d'entraînement. Le tableau reste dans le clavardage après la rencontre : les retardataires peuvent s'ajouter.");
+s.addNotes("2 MIN · INSCRIPTION EN DIRECT. Avant la rencontre : insère un composant Loop « Tableau » avec ces 5 colonnes dans le clavardage de la rencontre, puis épingle-le. Pendant : 90 secondes de silence, et lis les noms qui apparaissent. Le tableau reste dans le clavardage après la rencontre. Merci et fin.");
 
-// 8 · Merci
-pres.addSection({ title: "Clôture" });
-s = pres.addSlide({ masterName: "IMAGE", sectionTitle: "Clôture" });
-s.addImage({ path: "media/fin.jpg", x: 0, y: 0, w: 13.333, h: 7.5, altText: "Carte finale Labo techno-IA", objectName: "Fond de clôture" });
-s.addNotes("14:30 – 15:00 · CLÔTURE. Une phrase, un merci, et tu laisses le tableau Loop ouvert. Prochaine étape à annoncer si tu l'as : la première rencontre du Labo (novembre, mardi ou jeudi après-midi selon le sondage).");
+// 8 · Bonus (à garder sous la main, pas prévu dans les 15 min)
+pres.addSection({ title: "Bonus" });
+s = pres.addSlide({ masterName: "VIDEO", sectionTitle: "Bonus" });
+vid(s, "whiteboard", "Vidéo tableau blanc");
+s.addNotes("BONUS, seulement si on te pose la question sur la formation à distance : la vidéo complète du tableau blanc (54 s). Astuce à répéter : ouvrir Whiteboard dans sa propre fenêtre et partager cette fenêtre, sinon l'enregistrement ne capte pas le tableau.");
 
 (async () => {
   const out = QA ? "qa.pptx" : "Focus-FGA-presentation.pptx";
