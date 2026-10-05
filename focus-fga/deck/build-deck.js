@@ -73,7 +73,9 @@ agenda.forEach(([m, t], i) => {
   s.addText(m, { x: 6.9, y, w: 1.2, h: 0.5, fontSize: 16, bold: true, color: C.accent1, valign: "middle", isTextBox: true, margin: 0 });
   s.addText(t, { x: 8.15, y, w: 4.75, h: 0.5, fontSize: 16, color: C.background1, valign: "middle", isTextBox: true, margin: 0 });
 });
-s.addNotes("AVANT LE DÉBUT · Affiche cette diapo pendant que les gens se connectent. Dès que tu commences, lis les trois intentions en 20 secondes : « Aujourd'hui, trois choses : connaître, découvrir, choisir. » Rappel : mode « Mis en avant » dans Teams pour qu'on voie ta caméra par-dessus les diapos.");
+s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y: 6.35, w: 12.1, h: 0.5, rectRadius: 0.12, fill: { color: THEME.colors.accent1 }, objectName: "Bandeau clavardage" });
+s.addText("💬 Dans le clavardage : ta matière + ton énergie ce matin, en un mot", { x: 0.85, y: 6.35, w: 11.7, h: 0.5, fontSize: 16, bold: true, color: "0B1530", valign: "middle", isTextBox: true, margin: 0 });
+s.addNotes("INTERACTION 1 (pendant l'arrivée) : lis quelques réponses à voix haute en accueillant les gens (« Bienvenue Julie, maths, énergie : café! »). Ça réchauffe la salle. AVANT LE DÉBUT · Affiche cette diapo pendant que les gens se connectent. Dès que tu commences, lis les trois intentions en 20 secondes : « Aujourd'hui, trois choses : connaître, découvrir, choisir. » Rappel : mode « Mis en avant » dans Teams pour qu'on voie ta caméra par-dessus les diapos.");
 
 // 2 · Qui suis-je
 pres.addSection({ title: "Qui suis-je" });
@@ -113,13 +115,13 @@ s.addNotes("2 MIN · QUI SUIS-JE. Des mots-clés à l'écran, l'histoire dans ta
 pres.addSection({ title: "Nos élèves" });
 s = pres.addSlide({ masterName: "VIDEO", sectionTitle: "Nos élèves" });
 vid(s, "stats", "Vidéo stats clientèle");
-s.addNotes("3 MIN · QUI ACCUEILLONS-NOUS VRAIMENT? Vidéo de 80 s. Ensuite, une seule question dans le clavardage : « En un mot, qu'est-ce qui vous surprend? » Lis 2 ou 3 réponses. Message clé : 70 % valorisent déjà plus l'école qu'avant, et ça se joue dans les premières semaines.");
+s.addNotes("3 MIN · QUI ACCUEILLONS-NOUS VRAIMENT? Vidéo de 80 s. Ensuite, une seule question dans le clavardage : « En un mot, qu'est-ce qui vous surprend? » Lis 2 ou 3 réponses. INTERACTION 2 : « En un mot, qu'est-ce qui vous surprend? » Laisse 30 secondes, lis 3 mots. Message clé : 70 % valorisent déjà plus l'école qu'avant, et ça se joue dans les premières semaines.");
 
 // 4 · Labo techno-IA
 pres.addSection({ title: "Labo techno-IA" });
 s = pres.addSlide({ masterName: "IMAGE", sectionTitle: "Labo techno-IA" });
 s.addImage({ path: "media/labo.png", x: 0, y: 0, w: 13.333, h: 7.5, altText: "Labo techno-IA : 35 profs, ½ journée par mois, zéro expert au départ.", objectName: "Visuel Labo techno-IA" });
-s.addNotes("3 MIN · LE LABO TECHNO-IA. Rappel du pont : le cadre réflexif IA produit avec l'UQAC sert de base au Labo (pédagogique · éthique · légal, avant, pendant, après). La CoP IA en une phrase : 35 profs, ½ journée par mois, un défi chaque mois, zéro expert au départ. Montre UNE réalisation. Puis : « Vous l'avez dit dans le sondage : techno et IA, en petit groupe, mardi ou jeudi après-midi. On le fait. »");
+s.addNotes("3 MIN · LE LABO TECHNO-IA. Rappel du pont : le cadre réflexif IA produit avec l'UQAC sert de base au Labo (pédagogique · éthique · légal, avant, pendant, après). La CoP IA en une phrase : 35 profs, ½ journée par mois, un défi chaque mois, zéro expert au départ. Montre UNE réalisation. INTERACTION 3 : « Si l'IA pouvait t'enlever UNE tâche cette semaine, ce serait laquelle? Écris-la dans le clavardage. » Lis-en 2 ou 3 : ce seront les premiers défis du Labo! Puis : « Vous l'avez dit dans le sondage : techno et IA, en petit groupe, mardi ou jeudi après-midi. On le fait. »");
 
 // 5 · Mon Parcours
 pres.addSection({ title: "Mon Parcours" });
@@ -131,7 +133,7 @@ s.addNotes("2 MIN · MON PARCOURS. Je cherche quelques profs pour l'essayer avec
 pres.addSection({ title: "Bande-annonce" });
 s = pres.addSlide({ masterName: "VIDEO", sectionTitle: "Bande-annonce" });
 vid(s, "focus", "Vidéo Focus FGA");
-s.addNotes("3 MIN · LA BANDE-ANNONCE (2 min 36). Phrase d'intro : « Et pour vous donner le goût, voici 10 pépites Teams. » Puis tu lances, sans parler. La vidéo finit sur « Inscris-toi » : enchaîne directement sur la diapo suivante.");
+s.addNotes("3 MIN · LA BANDE-ANNONCE (2 min 36). Phrase d'intro : « Et pour vous donner le goût, voici 10 pépites Teams. » Puis tu lances, sans parler. INTERACTION 4, juste après la vidéo : « Votre pépite préférée? Écrivez son numéro dans le clavardage! » Lis le numéro le plus populaire : ce sera le sujet de la première rencontre du Labo. Puis enchaîne sur la diapo suivante.");
 
 // 7 · Inscription
 pres.addSection({ title: "Inscription" });
