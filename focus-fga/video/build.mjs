@@ -21,7 +21,7 @@ const PEPITES = [
 ];
 
 const P0 = 38; // début du compte à rebours
-const PD = 14; // durée par pépite (place pour la voix off)
+const PD = 10; // durée par pépite (10 s, cadre d'avertissement à la fin)
 const TC = P0 + 10 * PD; // convergence + murale
 const TE = TC + 8.5; // carte finale
 const TT = TE + 9.5; // durée totale
@@ -220,6 +220,7 @@ const html = `<!doctype html>
   .wb-frame { position: absolute; left: 80px; top: 300px; width: 740px; height: 416px; border-radius: 22px; overflow: hidden; border: 4px solid #22C7D6; box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 60px rgba(34,199,214,.35); transform: perspective(1500px) rotateY(12deg); }
   .wb-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
   #flash { z-index: 50; background: #fff; opacity: 0; }
+  #edge { z-index: 60; opacity: 0; pointer-events: none; box-shadow: inset 0 0 0 10px rgba(245,197,66,.95), inset 0 0 90px 30px rgba(245,197,66,.55); }
 </style>
 </head>
 <body>
@@ -345,6 +346,7 @@ const html = `<!doctype html>
   </div>
 
   <div id="flash" class="layer"></div>
+  <div id="edge" class="layer"></div>
 
   <div id="grain-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:40;">
     <div class="grain-texture"></div>
@@ -456,6 +458,14 @@ const html = `<!doctype html>
     tl.fromTo(tx + " .pben", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, s + 3.0);
     tl.to(tx + " .pcol", { opacity: 0, x: 60, duration: 0.4, ease: "power2.in" }, s + PD - 0.45);
     tl.to(bg + " .pnum, " + bg + " .pglow", { opacity: 0, duration: 0.4 }, s + PD - 0.45);
+  }
+  // Cadre d'avertissement : fin de pépite dans 2,5 s
+  for (let i = 0; i < 10; i++) {
+    const e = P0 + (i + 1) * PD;
+    tl.fromTo("#edge", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "sine.inOut", immediateRender: false }, e - 2.5);
+    tl.to("#edge", { opacity: 0.3, duration: 0.5, ease: "sine.inOut" }, e - 2.0);
+    tl.to("#edge", { opacity: 1, duration: 0.5, ease: "sine.inOut" }, e - 1.5);
+    tl.to("#edge", { opacity: 0, duration: 0.6, ease: "sine.inOut" }, e - 0.8);
   }
   // Pépite #1 : éclair doré
   tl.fromTo("#flash", { opacity: 0 }, { opacity: 0.75, duration: 0.1 }, P0 + 9 * PD - 0.05);

@@ -70,13 +70,13 @@ const agenda = [
   ["1 min", "Le parcours d'accueil : merci!"],
 ];
 agenda.forEach(([m, t], i) => {
-  const y = 2.55 + i * 0.54;
+  const y = 2.5 + i * 0.52;
   s.addText(m, { x: 6.9, y, w: 1.2, h: 0.5, fontSize: 16, bold: true, color: C.accent1, valign: "middle", isTextBox: true, margin: 0 });
   s.addText(t, { x: 8.15, y, w: 4.75, h: 0.5, fontSize: 16, color: C.background1, valign: "middle", isTextBox: true, margin: 0 });
 });
-s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y: 6.35, w: 12.1, h: 0.5, rectRadius: 0.12, fill: { color: THEME.colors.accent1 }, objectName: "Bandeau clavardage" });
-s.addText("💬 Dans le clavardage : ta matière + ton énergie ce matin, en un mot", { x: 0.85, y: 6.35, w: 11.7, h: 0.5, fontSize: 16, bold: true, color: "0B1530", valign: "middle", isTextBox: true, margin: 0 });
-s.addNotes("INTERACTION 1 (pendant l'arrivée) : lis quelques réponses à voix haute en accueillant les gens (« Bienvenue Julie, maths, énergie : café! »). Ça réchauffe la salle. AVANT LE DÉBUT · Affiche cette diapo pendant que les gens se connectent. Dès que tu commences, lis les trois intentions en 20 secondes : « Aujourd'hui, trois choses : connaître, découvrir, choisir. » Rappel : mode « Mis en avant » dans Teams pour qu'on voie ta caméra par-dessus les diapos.");
+s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y: 6.25, w: 12.1, h: 0.75, rectRadius: 0.12, fill: { color: THEME.colors.accent1 }, objectName: "Bandeau clavardage" });
+s.addText([{ text: "💬 Dans le clavardage : Teams, tu l'utilises pour quoi? Un mot ou plusieurs!", options: { bold: true, fontSize: 16, breakLine: true } }, { text: "Stocker · Collaborer · Partager · Contribuer · Soutenir l'apprentissage · Communiquer…", options: { fontSize: 14 } }], { x: 0.85, y: 6.25, w: 11.7, h: 0.75, color: "0B1530", valign: "middle", isTextBox: true, margin: 0 });
+s.addNotes("INTERACTION 1 (pendant l'arrivée) : « Teams, vous l'utilisez pour quoi? Un mot ou plusieurs, dans le clavardage. » Lis quelques réponses à voix haute en accueillant les gens. Ça prépare la bande-annonce (« Teams, c'est pas juste pour les réunions! »). AVANT LE DÉBUT · Affiche cette diapo pendant que les gens se connectent. Dès que tu commences, lis les trois intentions en 20 secondes : « Aujourd'hui, trois choses : connaître, découvrir, choisir. » Rappel : mode « Mis en avant » dans Teams pour qu'on voie ta caméra par-dessus les diapos.");
 
 // 2 · Qui suis-je
 pres.addSection({ title: "Qui suis-je" });

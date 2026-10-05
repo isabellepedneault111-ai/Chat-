@@ -139,10 +139,11 @@
   .wb-frame { position: absolute; left: 80px; top: 300px; width: 740px; height: 416px; border-radius: 22px; overflow: hidden; border: 4px solid #22C7D6; box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 60px rgba(34,199,214,.35); transform: perspective(1500px) rotateY(12deg); }
   .wb-frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
   #flash { z-index: 50; background: #fff; opacity: 0; }
+  #edge { z-index: 60; opacity: 0; pointer-events: none; box-shadow: inset 0 0 0 10px rgba(245,197,66,.95), inset 0 0 90px 30px rgba(245,197,66,.55); }
 </style>
 </head>
 <body>
-<div id="root" data-composition-id="main" data-start="0" data-duration="196" data-width="1920" data-height="1080">
+<div id="root" data-composition-id="main" data-start="0" data-duration="156" data-width="1920" data-height="1080">
 
   <div id="bg" class="layer"></div>
   <div id="bg-grid" class="layer"></div>
@@ -153,25 +154,25 @@
   <div id="vw-a" class="layer vwrap"><video id="v-a" class="clip" src="assets/corridor-stab.mp4" muted playsinline data-start="3.5" data-duration="3.3" data-media-start="6.0" data-track-index="1"></video></div>
   <div id="vw-b" class="layer vwrap"><video id="v-b" class="clip" src="assets/corridor-stab.mp4" muted playsinline data-start="6.8" data-duration="6.7" data-media-start="10.4" data-track-index="1"></video></div>
   <div id="vw-c" class="layer vwrap"><video id="v-c" class="clip" src="assets/corridor-stab.mp4" muted playsinline data-start="19.5" data-duration="4.5" data-media-start="0.3" data-playback-rate="0.8" data-track-index="1"></video></div>
-  <div id="vw-d" class="layer vwrap"><video id="v-d" class="clip" src="assets/murale.mp4" muted playsinline data-start="178" data-duration="8.5" data-media-start="0" data-playback-rate="0.66" data-track-index="1"></video></div>
+  <div id="vw-d" class="layer vwrap"><video id="v-d" class="clip" src="assets/murale.mp4" muted playsinline data-start="138" data-duration="8.5" data-media-start="0" data-playback-rate="0.66" data-track-index="1"></video></div>
   <div id="dim-a" class="clip layer dim" data-start="3.5" data-duration="10" data-track-index="2"></div>
   <div id="dim-b" class="clip layer dim" data-start="19.5" data-duration="4.5" data-track-index="2"></div>
-  <div id="dim-c" class="clip layer dim" data-start="178" data-duration="8.5" data-track-index="2"></div>
+  <div id="dim-c" class="clip layer dim" data-start="138" data-duration="8.5" data-track-index="2"></div>
 
   <div id="shade-a" class="clip layer shade" data-start="3.5" data-duration="10" data-track-index="3"></div>
   <div id="shade-b" class="clip layer shade" data-start="19.5" data-duration="4.5" data-track-index="3"></div>
-  <div id="shade-c" class="clip layer shade" data-start="178" data-duration="8.5" data-track-index="3"></div>
+  <div id="shade-c" class="clip layer shade" data-start="138" data-duration="8.5" data-track-index="3"></div>
   <div id="bars-a" class="clip layer bars" data-start="3.5" data-duration="10" data-track-index="4"></div>
   <div id="bars-b" class="clip layer bars" data-start="19.5" data-duration="4.5" data-track-index="4"></div>
-  <div id="bars-c" class="clip layer bars" data-start="178" data-duration="8.5" data-track-index="4"></div>
+  <div id="bars-c" class="clip layer bars" data-start="138" data-duration="8.5" data-track-index="4"></div>
 
   <!-- PÉPITES (fonds) -->
   
-    <div id="pbg0" class="clip scene pbg" data-start="38" data-duration="14" data-track-index="2" style="--c:#6CB33F">
+    <div id="pbg0" class="clip scene pbg" data-start="38" data-duration="10" data-track-index="2" style="--c:#6CB33F">
       <div class="pglow"></div>
       <div class="pnum">10</div>
     </div>
-    <div id="ptx0" class="clip scene ptx" data-start="38" data-duration="14" data-track-index="6" style="--c:#6CB33F">
+    <div id="ptx0" class="clip scene ptx" data-start="38" data-duration="10" data-track-index="6" style="--c:#6CB33F">
       <div class="pcol">
         <div class="pkick"><span class="pk-n">PÉPITE #10</span><span class="pk-sep"></span><span class="pk-tag">ESPRIT CRITIQUE</span></div>
         <div class="pirr"><span class="pirr-t">« Ils copient le premier site venu. »</span><span class="pirr-x"></span></div>
@@ -179,11 +180,11 @@
         <p class="pben">Des sources fiables, une démarche visible : tu vois comment l'élève cherche.</p>
       </div>
     </div>
-    <div id="pbg1" class="clip scene pbg" data-start="52" data-duration="14" data-track-index="2" style="--c:#FF6B6B">
+    <div id="pbg1" class="clip scene pbg" data-start="48" data-duration="10" data-track-index="2" style="--c:#FF6B6B">
       <div class="pglow"></div>
       <div class="pnum">9</div>
     </div>
-    <div id="ptx1" class="clip scene ptx" data-start="52" data-duration="14" data-track-index="6" style="--c:#FF6B6B">
+    <div id="ptx1" class="clip scene ptx" data-start="48" data-duration="10" data-track-index="6" style="--c:#FF6B6B">
       <div class="pcol">
         <div class="pkick"><span class="pk-n">PÉPITE #09</span><span class="pk-sep"></span><span class="pk-tag">COMMUNICATION ORALE</span></div>
         <div class="pirr"><span class="pirr-t">« Ils stressent pour leur exposé. »</span><span class="pirr-x"></span></div>
@@ -191,11 +192,11 @@
         <p class="pben">Débit, tics de langage, intonation : une rétroaction privée, générée par l'IA.</p>
       </div>
     </div>
-    <div id="pbg2" class="clip scene pbg" data-start="66" data-duration="14" data-track-index="2" style="--c:#22C7D6">
+    <div id="pbg2" class="clip scene pbg" data-start="58" data-duration="10" data-track-index="2" style="--c:#22C7D6">
       <div class="pglow"></div>
       <div class="pnum">8</div>
     </div>
-    <div id="ptx2" class="clip scene ptx" data-start="66" data-duration="14" data-track-index="6" style="--c:#22C7D6">
+    <div id="ptx2" class="clip scene ptx" data-start="58" data-duration="10" data-track-index="6" style="--c:#22C7D6">
       <div class="pcol">
         <div class="pkick"><span class="pk-n">PÉPITE #08</span><span class="pk-sep"></span><span class="pk-tag">FORMATION À DISTANCE</span></div>
         <div class="pirr"><span class="pirr-t">« Il n'a pas pu venir au cours. »</span><span class="pirr-x"></span></div>
@@ -203,11 +204,11 @@
         <p class="pben">En direct, en interaction, puis en réécoute. Astuce : partage la fenêtre Whiteboard.</p>
       </div>
     </div>
-    <div id="pbg3" class="clip scene pbg" data-start="80" data-duration="14" data-track-index="2" style="--c:#9B8CFF">
+    <div id="pbg3" class="clip scene pbg" data-start="68" data-duration="10" data-track-index="2" style="--c:#9B8CFF">
       <div class="pglow"></div>
       <div class="pnum">7</div>
     </div>
-    <div id="ptx3" class="clip scene ptx" data-start="80" data-duration="14" data-track-index="6" style="--c:#9B8CFF">
+    <div id="ptx3" class="clip scene ptx" data-start="68" data-duration="10" data-track-index="6" style="--c:#9B8CFF">
       <div class="pcol">
         <div class="pkick"><span class="pk-n">PÉPITE #07</span><span class="pk-sep"></span><span class="pk-tag">AUTONOMIE</span></div>
         <div class="pirr"><span class="pirr-t">« Il bloque le soir, seul devant ses exercices. »</span><span class="pirr-x"></span></div>
@@ -215,11 +216,11 @@
         <p class="pben">Un tuteur qui guide sans donner la réponse. Pour les 13 ans et plus.</p>
       </div>
     </div>
-    <div id="pbg4" class="clip scene pbg" data-start="94" data-duration="14" data-track-index="2" style="--c:#4FA3FF">
+    <div id="pbg4" class="clip scene pbg" data-start="78" data-duration="10" data-track-index="2" style="--c:#4FA3FF">
       <div class="pglow"></div>
       <div class="pnum">6</div>
     </div>
-    <div id="ptx4" class="clip scene ptx" data-start="94" data-duration="14" data-track-index="6" style="--c:#4FA3FF">
+    <div id="ptx4" class="clip scene ptx" data-start="78" data-duration="10" data-track-index="6" style="--c:#4FA3FF">
       <div class="pcol">
         <div class="pkick"><span class="pk-n">PÉPITE #06</span><span class="pk-sep"></span><span class="pk-tag">INDIVIDUALISATION</span></div>
         <div class="pirr"><span class="pirr-t">« Chacun avance à son rythme… et moi je cours. »</span><span class="pirr-x"></span></div>
@@ -227,11 +228,11 @@
         <p class="pben">Micro-leçons, questionnaires, appariements : intégrés aux devoirs, ajustés à l'élève.</p>
       </div>
     </div>
-    <div id="pbg5" class="clip scene pbg" data-start="108" data-duration="14" data-track-index="2" style="--c:#FF8A3D">
+    <div id="pbg5" class="clip scene pbg" data-start="88" data-duration="10" data-track-index="2" style="--c:#FF8A3D">
       <div class="pglow"></div>
       <div class="pnum">5</div>
     </div>
-    <div id="ptx5" class="clip scene ptx" data-start="108" data-duration="14" data-track-index="6" style="--c:#FF8A3D">
+    <div id="ptx5" class="clip scene ptx" data-start="88" data-duration="10" data-track-index="6" style="--c:#FF8A3D">
       <div class="pcol">
         <div class="pkick"><span class="pk-n">PÉPITE #05</span><span class="pk-sep"></span><span class="pk-tag">ÉVALUATION</span></div>
         <div class="pirr"><span class="pirr-t">« Encore mes grilles papier… »</span><span class="pirr-x"></span></div>
@@ -239,11 +240,11 @@
         <p class="pben">L'IA propose la grille à partir de ta consigne. Tu valides. Tes notes deviennent une rétroaction claire.</p>
       </div>
     </div>
-    <div id="pbg6" class="clip scene pbg" data-start="122" data-duration="14" data-track-index="2" style="--c:#F472B6">
+    <div id="pbg6" class="clip scene pbg" data-start="98" data-duration="10" data-track-index="2" style="--c:#F472B6">
       <div class="pglow"></div>
       <div class="pnum">4</div>
     </div>
-    <div id="ptx6" class="clip scene ptx" data-start="122" data-duration="14" data-track-index="6" style="--c:#F472B6">
+    <div id="ptx6" class="clip scene ptx" data-start="98" data-duration="10" data-track-index="6" style="--c:#F472B6">
       <div class="pcol">
         <div class="pkick"><span class="pk-n">PÉPITE #04</span><span class="pk-sep"></span><span class="pk-tag">BIEN-ÊTRE</span></div>
         <div class="pirr"><span class="pirr-t">« Je ne l'ai pas vu décrocher. »</span><span class="pirr-x"></span></div>
@@ -251,11 +252,11 @@
         <p class="pben">Un check-in émotionnel en deux clics. Tu vois qui a besoin de toi.</p>
       </div>
     </div>
-    <div id="pbg7" class="clip scene pbg" data-start="136" data-duration="14" data-track-index="2" style="--c:#2DD4BF">
+    <div id="pbg7" class="clip scene pbg" data-start="108" data-duration="10" data-track-index="2" style="--c:#2DD4BF">
       <div class="pglow"></div>
       <div class="pnum">3</div>
     </div>
-    <div id="ptx7" class="clip scene ptx" data-start="136" data-duration="14" data-track-index="6" style="--c:#2DD4BF">
+    <div id="ptx7" class="clip scene ptx" data-start="108" data-duration="10" data-track-index="6" style="--c:#2DD4BF">
       <div class="pcol">
         <div class="pkick"><span class="pk-n">PÉPITE #03</span><span class="pk-sep"></span><span class="pk-tag">INCLUSION</span></div>
         <div class="pirr"><span class="pirr-t">« Tu peux me lire ça? »</span><span class="pirr-x"></span></div>
@@ -263,11 +264,11 @@
         <p class="pben">Lecture à voix haute, syllabes, traduction : chacun lit à sa façon.</p>
       </div>
     </div>
-    <div id="pbg8" class="clip scene pbg" data-start="150" data-duration="14" data-track-index="2" style="--c:#FFB020">
+    <div id="pbg8" class="clip scene pbg" data-start="118" data-duration="10" data-track-index="2" style="--c:#FFB020">
       <div class="pglow"></div>
       <div class="pnum">2</div>
     </div>
-    <div id="ptx8" class="clip scene ptx" data-start="150" data-duration="14" data-track-index="6" style="--c:#FFB020">
+    <div id="ptx8" class="clip scene ptx" data-start="118" data-duration="10" data-track-index="6" style="--c:#FFB020">
       <div class="pcol">
         <div class="pkick"><span class="pk-n">PÉPITE #02</span><span class="pk-sep"></span><span class="pk-tag">LECTURE</span></div>
         <div class="pirr"><span class="pirr-t">« Je n'ai pas le temps d'écouter tout le monde lire. »</span><span class="pirr-x"></span></div>
@@ -275,11 +276,11 @@
         <p class="pben">L'élève lit, l'IA écoute, repère les mots difficiles et crée la pratique sur mesure.</p>
       </div>
     </div>
-    <div id="pbg9" class="clip scene pbg" data-start="164" data-duration="14" data-track-index="2" style="--c:#F5C542">
+    <div id="pbg9" class="clip scene pbg" data-start="128" data-duration="10" data-track-index="2" style="--c:#F5C542">
       <div class="pglow"></div>
       <div class="pnum">1</div>
     </div>
-    <div id="ptx9" class="clip scene ptx" data-start="164" data-duration="14" data-track-index="6" style="--c:#F5C542">
+    <div id="ptx9" class="clip scene ptx" data-start="128" data-duration="10" data-track-index="6" style="--c:#F5C542">
       <div class="pcol">
         <div class="pkick"><span class="pk-n">PÉPITE #01</span><span class="pk-sep"></span><span class="pk-tag">INTÉGRITÉ</span></div>
         <div class="pirr"><span class="pirr-t">« Est-ce qu'on a le droit d'utiliser l'IA? »</span><span class="pirr-x"></span></div>
@@ -382,16 +383,16 @@
     <div class="pl-gen"><b>Pratique générée par l'IA</b> particulièrement · environnement · travailleurs · centre-ville</div>
   </div></div></div>
 
-  <div id="wbp" class="layer"><div class="wb-frame"><video id="v-wb" class="clip" src="assets/whiteboard.mp4" muted playsinline data-start="66.5" data-duration="13" data-media-start="24" data-track-index="5"></video></div></div>
+  <div id="wbp" class="layer"><div class="wb-frame"><video id="v-wb" class="clip" src="assets/whiteboard.mp4" muted playsinline data-start="58.5" data-duration="9" data-media-start="24" data-track-index="5"></video></div></div>
 
   <!-- 7. MURALE -->
-  <div id="mural-tx" class="clip scene trailer" data-start="178" data-duration="8.5" data-track-index="6">
+  <div id="mural-tx" class="clip scene trailer" data-start="138" data-duration="8.5" data-track-index="6">
     <div id="ml1" class="tline disp" data-layout-allow-overlap>Les pépites, c'était <em>la bande-annonce</em>.</div>
     <div id="ml2" class="tline disp" data-layout-allow-overlap>Le film, on le fait <em>ensemble</em>.</div>
   </div>
 
   <!-- 8. FIN -->
-  <div id="end" class="clip scene" data-start="186.5" data-duration="9.5" data-track-index="6">
+  <div id="end" class="clip scene" data-start="146.5" data-duration="9.5" data-track-index="6">
     
 <svg id="end-logo" class="logo" viewBox="0 0 200 200" aria-label="CFGA de la Jonquière">
   <path class="logo-arc" d="M122.8 15 A88 88 0 1 1 23.8 144" fill="none" stroke="#6CB33F" stroke-width="9" stroke-linecap="round" pathLength="1"/>
@@ -412,6 +413,7 @@
   </div>
 
   <div id="flash" class="layer"></div>
+  <div id="edge" class="layer"></div>
 
   <div id="grain-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:40;">
     <div class="grain-texture"></div>
@@ -424,7 +426,7 @@
 
 <script>
   const tl = gsap.timeline({ paused: true });
-  const P0 = 38, PD = 14;
+  const P0 = 38, PD = 10;
 
   // 1. Ouverture : machine à écrire
   tl.fromTo(".oc1", { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 0.055 }, 0.25);
@@ -466,7 +468,7 @@
   tl.fromTo("#vw-a", { scale: 1.04 }, { scale: 1.1, duration: 3.3, ease: "none" }, 3.5);
   tl.fromTo("#vw-b", { scale: 1.04 }, { scale: 1.14, duration: 6.7, ease: "none" }, 6.8);
   tl.fromTo("#vw-c", { scale: 1.12 }, { scale: 1.0, duration: 4.5, ease: "power1.out" }, 19.5);
-  tl.fromTo("#vw-d", { scale: 1.0 }, { scale: 1.1, duration: 8.5, ease: "none" }, 178);
+  tl.fromTo("#vw-d", { scale: 1.0 }, { scale: 1.1, duration: 8.5, ease: "none" }, 138);
 
   // Gag
   tl.fromTo("#gag .g-k", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 32.2);
@@ -506,8 +508,8 @@
   tl.fromTo("#mk8 .pl-gen", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 }, s8 + 4.6);
 
   // Pépite #8 : extrait de la vidéo Whiteboard
-  tl.fromTo("#wbp", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)" }, 66.5);
-  tl.to("#wbp", { opacity: 0, duration: 0.4 }, 79.5);
+  tl.fromTo("#wbp", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)" }, 58.5);
+  tl.to("#wbp", { opacity: 0, duration: 0.4 }, 67.5);
 
   // 6. Pépites
   for (let i = 0; i < 10; i++) {
@@ -524,23 +526,31 @@
     tl.to(tx + " .pcol", { opacity: 0, x: 60, duration: 0.4, ease: "power2.in" }, s + PD - 0.45);
     tl.to(bg + " .pnum, " + bg + " .pglow", { opacity: 0, duration: 0.4 }, s + PD - 0.45);
   }
+  // Cadre d'avertissement : fin de pépite dans 2,5 s
+  for (let i = 0; i < 10; i++) {
+    const e = P0 + (i + 1) * PD;
+    tl.fromTo("#edge", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "sine.inOut", immediateRender: false }, e - 2.5);
+    tl.to("#edge", { opacity: 0.3, duration: 0.5, ease: "sine.inOut" }, e - 2.0);
+    tl.to("#edge", { opacity: 1, duration: 0.5, ease: "sine.inOut" }, e - 1.5);
+    tl.to("#edge", { opacity: 0, duration: 0.6, ease: "sine.inOut" }, e - 0.8);
+  }
   // Pépite #1 : éclair doré
   tl.fromTo("#flash", { opacity: 0 }, { opacity: 0.75, duration: 0.1 }, P0 + 9 * PD - 0.05);
   tl.to("#flash", { opacity: 0, duration: 0.6 }, P0 + 9 * PD + 0.05);
 
   // 7. Murale
-  tline("#ml1", 178.6, 181.6);
-  tline("#ml2", 182, 186.1);
+  tline("#ml1", 138.6, 141.6);
+  tline("#ml2", 142, 146.1);
 
   // 8. Fin
-  tl.fromTo("#end-logo .logo-arc", { strokeDashoffset: 1, strokeDasharray: 1 }, { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut" }, 186.7);
-  tl.fromTo("#end-logo .logo-bldg", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.6)" }, 187);
-  tl.fromTo("#end-logo .logo-word, #end-logo .logo-sub", { opacity: 0 }, { opacity: 1, duration: 0.5, stagger: 0.2 }, 187.3);
-  tl.fromTo("#end .ek", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5 }, 187.4);
-  tl.fromTo("#end .et", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.8, ease: "power4.out" }, 187.7);
-  tl.fromTo("#end .ecta", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, 188.8);
-  tl.fromTo("#end .esig", { opacity: 0 }, { opacity: 1, duration: 0.8 }, 190);
-  tl.to("#end .logo, #end .ecol", { opacity: 0, duration: 0.8 }, 195);
+  tl.fromTo("#end-logo .logo-arc", { strokeDashoffset: 1, strokeDasharray: 1 }, { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut" }, 146.7);
+  tl.fromTo("#end-logo .logo-bldg", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.6, ease: "back.out(1.6)" }, 147);
+  tl.fromTo("#end-logo .logo-word, #end-logo .logo-sub", { opacity: 0 }, { opacity: 1, duration: 0.5, stagger: 0.2 }, 147.3);
+  tl.fromTo("#end .ek", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5 }, 147.4);
+  tl.fromTo("#end .et", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.8, ease: "power4.out" }, 147.7);
+  tl.fromTo("#end .ecta", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, 148.8);
+  tl.fromTo("#end .esig", { opacity: 0 }, { opacity: 1, duration: 0.8 }, 150);
+  tl.to("#end .logo, #end .ecol", { opacity: 0, duration: 0.8 }, 155);
 
   window.__timelines["main"] = tl;
 </script>
@@ -699,7 +709,7 @@
   const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
   const easeOutBack = (x) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
   const easeInOut = (x) => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
-  const P0 = 38, PD = 14;
+  const P0 = 38, PD = 10;
   const SCREENS = [1, 2, 6, 7, 8];
 
   function updateDust(t, alpha, spread) {
@@ -785,11 +795,11 @@
         shockA.scale.setScalar(1.2 + w * 6); shockA.material.opacity = (1 - w / 1.1) * 0.85;
         if (i === 9) { shockB.visible = true; shockB.material.color.set(0xffffff); shockB.position.copy(shockA.position); shockB.lookAt(camera.position); shockB.scale.setScalar(0.8 + w * 11); shockB.material.opacity = (1 - w / 1.1) * 0.7; }
       }
-    } else if (t >= 178 && t < 186.5) {
-      converge(t, 178, 186.5);
-    } else if (t >= 186.5 && t <= 196) {
+    } else if (t >= 138 && t < 146.5) {
+      converge(t, 138, 146.5);
+    } else if (t >= 146.5 && t <= 156) {
       dust.position.set(0, 0, 0);
-      bands(t, 186.5, 196);
+      bands(t, 146.5, 156);
     }
     if (!(t >= P0 && t < P0 + 10 * PD)) dust.position.set(0, 0, 0);
     renderer.render(scene, camera);
