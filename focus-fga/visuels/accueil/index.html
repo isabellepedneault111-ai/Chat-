@@ -13,33 +13,37 @@
   .disp { font-family: "League Gothic", sans-serif; font-weight: 400; text-transform: uppercase; }
   .grid { position: absolute; inset: 0; opacity: .1; background-image: linear-gradient(rgba(108,179,63,.35) 1px, transparent 1px), linear-gradient(90deg, rgba(108,179,63,.35) 1px, transparent 1px); background-size: 64px 64px; }
 
-  .head { position: absolute; left: 90px; top: 64px; width: 1740px; }
+  .head { position: absolute; left: 90px; top: 50px; width: 1740px; }
   .k { font-size: 20px; letter-spacing: .3em; color: #6CB33F; font-weight: 700; }
-  h1 { margin-top: 8px; font-size: 150px; line-height: .86; }
+  h1 { margin-top: 6px; font-size: 128px; line-height: .86; }
   h1 .y { color: #F5C542; }
   .sub { margin-top: 16px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
   .pill { padding: 10px 20px; border-radius: 999px; font-size: 24px; font-weight: 800; }
   .pill.y { background: #F5C542; color: #1A1400; }
   .pill.o { border: 2px solid rgba(255,255,255,.35); color: #fff; font-weight: 600; }
 
-  .road { position: absolute; left: 90px; top: 440px; width: 1740px; height: 300px; }
-  .road::before { content: ""; position: absolute; left: 60px; right: 60px; top: 58px; height: 8px; border-radius: 8px; background: linear-gradient(90deg, #F5C542, #6CB33F); }
-  .steps { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
-  .s .n { width: 124px; height: 124px; border-radius: 50%; background: #0B1530; border: 6px solid #F5C542; display: flex; align-items: center; justify-content: center; font-family: "League Gothic", sans-serif; font-size: 64px; color: #F5C542; }
+  .road { position: absolute; left: 90px; top: 360px; width: 1740px; }
+  .road::before { content: ""; position: absolute; left: 50px; right: 50px; top: 48px; height: 7px; border-radius: 7px; background: linear-gradient(90deg, #F5C542, #6CB33F); }
+  .steps { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; }
+  .s .n { width: 102px; height: 102px; border-radius: 50%; background: #0B1530; border: 6px solid #F5C542; display: flex; align-items: center; justify-content: center; font-family: "League Gothic", sans-serif; font-size: 54px; color: #F5C542; }
+  .s.eng .n { background: #F5C542; color: #1A1400; }
   .s.last .n { background: #6CB33F; border-color: #6CB33F; color: #06120A; }
-  .s h3 { margin-top: 22px; font-family: "League Gothic", sans-serif; font-weight: 400; font-size: 62px; line-height: .95; text-transform: uppercase; }
-  .s p { margin-top: 8px; font-size: 25px; line-height: 1.3; color: rgba(255,255,255,.86); }
+  .s h3 { margin-top: 18px; font-family: "League Gothic", sans-serif; font-weight: 400; font-size: 54px; line-height: .95; text-transform: uppercase; }
+  .s.eng h3 { color: #F5C542; }
+  .s p { margin-top: 8px; font-size: 22px; line-height: 1.3; color: rgba(255,255,255,.86); }
 
-  .bottom { position: absolute; left: 90px; top: 790px; width: 1740px; display: grid; grid-template-columns: 1fr 1.25fr; gap: 28px; }
-  .team { padding: 26px 30px; border-radius: 24px; background: #F4F1E6; color: #12131A; }
-  .team .ck { font-size: 16px; letter-spacing: .3em; color: #2F7A2A; font-weight: 700; }
-  .chips { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; }
-  .chip { padding: 10px 18px; border-radius: 999px; background: #12131A; color: #fff; font-size: 21px; font-weight: 700; }
-  .chip.g { background: #2F7A2A; }
-  .chip.b { background: #2456B0; }
+  .teamrow { position: absolute; left: 90px; top: 668px; width: 1740px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .teamrow .ck { font-size: 17px; letter-spacing: .25em; color: #6CB33F; font-weight: 700; margin-right: 6px; }
+  .chip { padding: 9px 18px; border-radius: 999px; background: #F4F1E6; color: #12131A; font-size: 21px; font-weight: 800; }
+
+  .bottom { position: absolute; left: 90px; top: 760px; width: 1740px; height: 250px; display: grid; grid-template-columns: 1fr 1.3fr; gap: 28px; }
+  .auto { padding: 24px 32px; border-radius: 24px; background: #2F7A2A; display: flex; flex-direction: column; justify-content: center; }
+  .auto .eq { font-family: "League Gothic", sans-serif; font-size: 84px; line-height: .9; text-transform: uppercase; }
+  .auto .eq span { color: #F5C542; }
+  .auto p { margin-top: 10px; font-size: 23px; line-height: 1.3; font-weight: 600; }
   .quote { padding: 24px 34px; border-radius: 24px; background: #F5C542; color: #1A1400; display: flex; flex-direction: column; justify-content: center; }
-  .quote p { font-family: "League Gothic", sans-serif; font-size: 60px; line-height: .95; text-transform: uppercase; }
-  .quote small { margin-top: 8px; font-size: 22px; font-weight: 800; }
+  .quote p { font-family: "League Gothic", sans-serif; font-size: 64px; line-height: .95; text-transform: uppercase; }
+  .quote small { margin-top: 10px; font-size: 23px; font-weight: 800; }
 </style>
 </head>
 <body>
@@ -58,22 +62,23 @@
 
   <div class="road">
     <div class="steps">
-      <div class="s"><div class="n">1</div><h3>Accueillir</h3><p>Le centre, ses ressources, ses personnes</p></div>
-      <div class="s"><div class="n">2</div><h3>Se connaître</h3><p>Le selfie d'apprenant</p></div>
-      <div class="s"><div class="n">3</div><h3>Se fixer un cap</h3><p>Ses objectifs de formation</p></div>
+      <div class="s"><div class="n">1</div><h3>Accueillir</h3><p>Le centre, ses personnes-ressources, son horaire</p></div>
+      <div class="s"><div class="n">2</div><h3>Se connaître</h3><p>Selfie d'apprenant · bilan d'accrocheur</p></div>
+      <div class="s eng"><div class="n">3</div><h3>S'engager</h3><p>Motivation · persévérance · engagement</p></div>
+      <div class="s"><div class="n">4</div><h3>Se fixer un cap</h3><p>Objectif professionnel · objectifs SMART</p></div>
       <div class="s last"><div class="n">★</div><h3>L'entretien EVR</h3><p>Avec son tuteur · crédit de 5<sup>e</sup> secondaire</p></div>
     </div>
   </div>
 
+  <div class="teamrow">
+    <span class="ck mono">UNE ÉQUIPE, UN PARCOURS</span>
+    <span class="chip">Tuteurs</span><span class="chip">Profs de matière</span><span class="chip">Toute l'équipe d'accueil</span><span class="chip">Personnes-ressources</span>
+  </div>
+
   <div class="bottom">
-    <div class="team">
-      <div class="ck mono">UNE ÉQUIPE, UN PARCOURS</div>
-      <div class="chips">
-        <span class="chip g">Tuteurs</span>
-        <span class="chip b">Profs de matière</span>
-        <span class="chip">Toute l'équipe d'accueil</span>
-        <span class="chip">Personnes-ressources</span>
-      </div>
+    <div class="auto">
+      <div class="eq">Horaire = <span>autonomie</span></div>
+      <p>Avancer à son rythme, ça s'apprend. Dès l'accueil.</p>
     </div>
     <div class="quote">
       <p>Ça se joue dans les premières semaines. On y est déjà, ensemble.</p>
