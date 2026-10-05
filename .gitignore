@@ -2,3 +2,4 @@ focus-fga/*/renders/work-*/
 focus-fga/*/renders/*.log
 focus-fga/*/renders/**/owner.json
 focus-fga/*/renders/.*hf-transaction*/
+focus-fga/video/renders/*.mp4

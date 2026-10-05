@@ -111,7 +111,7 @@ s.addNotes("2 MIN · MON PARCOURS. Je cherche quelques profs pour l'essayer avec
 pres.addSection({ title: "Bande-annonce" });
 s = pres.addSlide({ masterName: "VIDEO", sectionTitle: "Bande-annonce" });
 vid(s, "focus", "Vidéo Focus FGA");
-s.addNotes("3 MIN · LA BANDE-ANNONCE (2 min 36). Phrase d'intro : « Et pour vous donner le goût, voici 10 pépites Teams. » Puis tu lances, sans parler. INTERACTION 4, juste après la vidéo : « Votre pépite préférée? Écrivez son numéro dans le clavardage! » Lis le numéro le plus populaire : ce sera le sujet de la première rencontre du Labo. Les autres pépites : en Pépite express (20 min, à la carte, dans ta classe ou en période libre). Puis enchaîne sur la diapo suivante.");
+s.addNotes("3 MIN · LA BANDE-ANNONCE (2 min 36). Phrase d'intro : « Et pour vous donner le goût, voici 10 pépites Teams. » Puis tu lances. Chaque pépite dure 10 secondes. CADRE DORÉ qui pulse autour de l'image = la pépite se termine dans 2,5 secondes : clique sur pause (barre d'espace) si tu veux en dire plus, puis relance. INTERACTION 4, juste après la vidéo : « Votre pépite préférée? Écrivez son numéro dans le clavardage! » Lis le numéro le plus populaire : ce sera le sujet de la première rencontre du Labo. Les autres pépites : en Pépite express (20 min, à la carte, dans ta classe ou en période libre). Puis enchaîne sur la diapo suivante.");
 
 // 7 · Inscription
 pres.addSection({ title: "Inscription" });
