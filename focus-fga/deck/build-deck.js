@@ -118,19 +118,19 @@ s = pres.addSlide({ masterName: "SOMBRE", sectionTitle: "Inscription" });
 title(s, "On s'inscrit, là, maintenant", "Dans le clavardage de la rencontre, ajoute ton nom au tableau Loop");
 const rows = [
   ["Nom", "Labo techno-IA", "Mon Parcours : je la teste", "Café 1:1", "Mon défi en une ligne"].map((t) => ({ text: t, options: { bold: true, color: "0B1530", fill: { color: "F5C542" } } })),
-  ["Ton nom ici", "✔", "", "✔", "Donner une rétroaction plus rapide"],
-  ["", "", "✔", "", ""],
+  ["Ton nom ici", "X", "", "X", "Donner une rétroaction plus rapide"],
+  ["", "", "X", "", ""],
   ["", "", "", "", ""],
 ];
 s.addTable(rows, { x: 0.6, y: 2.15, w: 12.1, colW: [2.2, 2.0, 2.7, 1.5, 3.7], rowH: 0.6, fontSize: 16, color: "FFFFFF", fill: { color: "16234A" }, border: { type: "solid", color: "2A3A66", pt: 1 }, valign: "middle", objectName: "Tableau Loop exemple" });
-[["1", "Ouvre le clavardage"], ["2", "Coche : Labo, appli, café"], ["3", "Écris ton défi : on part de là"]].forEach(([n, t], i) => {
+[["1", "Ouvre le clavardage"], ["2", "Un X : Labo, appli, café"], ["3", "Écris ton défi : on part de là"]].forEach(([n, t], i) => {
   const x = 0.6 + i * 4.1;
   s.addShape(pres.shapes.OVAL, { x, y: 5.0, w: 0.8, h: 0.8, fill: { color: C.accent2 }, objectName: "Étape " + n });
   s.addText(n, { x, y: 5.0, w: 0.8, h: 0.8, align: "center", valign: "middle", fontSize: 24, bold: true, color: C.text1, isTextBox: true, margin: 0 });
   s.addText(t, { x: x + 0.95, y: 5.0, w: 3.0, h: 0.8, valign: "middle", fontSize: 17, color: C.background1, isTextBox: true, margin: 0 });
 });
 s.addText("Pas prêt·e à écrire ton nom devant tout le monde? Écris-moi en privé sur Teams, c'est parfait aussi.", { x: 0.6, y: 6.1, w: 12.1, h: 0.5, fontSize: 15, italic: true, color: C.accent1, isTextBox: true, margin: 0 });
-s.addNotes("2 MIN · INSCRIPTION EN DIRECT. AVANT LA RENCONTRE (5 min, dans le clavardage de la réunion Teams) : 1) clique sur l'icône Loop (ou « + ») sous la zone de message, 2) choisis « Tableau », 3) nomme les colonnes : Nom · Labo techno-IA · Mon Parcours : je la teste · Café 1:1 · Mon défi en une ligne, 4) envoie, puis épingle le message. Plan B sans Loop : « Écrivez dans le clavardage : Labo, Appli ou Café + votre défi ». Pour l'appli : « Testez-la, brisez-la! Cochez la colonne Mon Parcours. » Pendant : 90 secondes de silence, et lis les noms qui apparaissent. Le tableau reste dans le clavardage après la rencontre. Merci et fin.");
+s.addNotes("2 MIN · INSCRIPTION EN DIRECT. AVANT LA RENCONTRE (5 min, dans le clavardage de la réunion Teams) : 1) clique sur l'icône Loop (ou « + ») sous la zone de message, 2) choisis « Tableau », 3) nomme les colonnes : Nom · Labo techno-IA · Mon Parcours : je la teste · Café 1:1 · Mon défi en une ligne, 4) envoie, puis épingle le message. Plan B sans Loop : « Écrivez dans le clavardage : Labo, Appli ou Café + votre défi ». Pour l'appli : « Testez-la, brisez-la! Mettez un X dans la colonne Mon Parcours. » Pendant : 90 secondes de silence, et lis les noms qui apparaissent. Le tableau reste dans le clavardage après la rencontre. Merci et fin.");
 
 // 8 · Bonus (à garder sous la main, pas prévu dans les 15 min)
 pres.addSection({ title: "Bonus" });
