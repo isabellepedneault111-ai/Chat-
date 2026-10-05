@@ -64,12 +64,13 @@ const agenda = [
   ["2 min", "Qui suis-je?"],
   ["3 min", "Qui accueillons-nous vraiment?"],
   ["3 min", "Le Labo techno-IA"],
-  ["2 min", "Mon Parcours : volontaires recherchés"],
+  ["1 min", "Mon Parcours : volontaires recherchés"],
   ["3 min", "La bande-annonce : 10 pépites Teams"],
   ["2 min", "Je m'inscris, en direct"],
+  ["1 min", "Le parcours d'accueil : merci!"],
 ];
 agenda.forEach(([m, t], i) => {
-  const y = 2.55 + i * 0.62;
+  const y = 2.55 + i * 0.54;
   s.addText(m, { x: 6.9, y, w: 1.2, h: 0.5, fontSize: 16, bold: true, color: C.accent1, valign: "middle", isTextBox: true, margin: 0 });
   s.addText(t, { x: 8.15, y, w: 4.75, h: 0.5, fontSize: 16, color: C.background1, valign: "middle", isTextBox: true, margin: 0 });
 });
@@ -130,7 +131,13 @@ s.addTable(rows, { x: 0.6, y: 2.15, w: 12.1, colW: [2.2, 2.0, 2.7, 1.5, 3.7], ro
   s.addText(t, { x: x + 0.95, y: 5.0, w: 3.0, h: 0.8, valign: "middle", fontSize: 17, color: C.background1, isTextBox: true, margin: 0 });
 });
 s.addText("Pas prêt·e à écrire ton nom devant tout le monde? Écris-moi en privé sur Teams, c'est parfait aussi.", { x: 0.6, y: 6.1, w: 12.1, h: 0.5, fontSize: 15, italic: true, color: C.accent1, isTextBox: true, margin: 0 });
-s.addNotes("2 MIN · INSCRIPTION EN DIRECT. AVANT LA RENCONTRE (5 min, dans le clavardage de la réunion Teams) : 1) clique sur l'icône Loop (ou « + ») sous la zone de message, 2) choisis « Tableau », 3) nomme les colonnes : Nom · Labo techno-IA · Mon Parcours : je la teste · Pépite # · Mon défi en une ligne, 4) envoie, puis épingle le message. Plan B sans Loop : « Écrivez dans le clavardage : Labo, Appli ou Pépite # + votre défi ». Pour l'appli : « Testez-la, brisez-la! Mettez un X dans la colonne Mon Parcours. » Pour les pépites : « Une pépite vous fait de l'œil? Mettez son numéro : je viens vous la montrer en 20 minutes, une Pépite express. » Pendant : 90 secondes de silence, et lis les noms qui apparaissent. Le tableau reste dans le clavardage après la rencontre. Merci et fin.");
+s.addNotes("2 MIN · INSCRIPTION EN DIRECT. AVANT LA RENCONTRE (5 min, dans le clavardage de la réunion Teams) : 1) clique sur l'icône Loop (ou « + ») sous la zone de message, 2) choisis « Tableau », 3) nomme les colonnes : Nom · Labo techno-IA · Mon Parcours : je la teste · Pépite # · Mon défi en une ligne, 4) envoie, puis épingle le message. Plan B sans Loop : « Écrivez dans le clavardage : Labo, Appli ou Pépite # + votre défi ». Pour l'appli : « Testez-la, brisez-la! Mettez un X dans la colonne Mon Parcours. » Pour les pépites : « Une pépite vous fait de l'œil? Mettez son numéro : je viens vous la montrer en 20 minutes, une Pépite express. » Pendant : 90 secondes de silence, et lis les noms qui apparaissent. Le tableau reste dans le clavardage après la rencontre. Puis passe à la diapo finale : le parcours d'accueil.");
+
+// 7b · Parcours d'accueil (fin)
+pres.addSection({ title: "Parcours d'accueil" });
+s = pres.addSlide({ masterName: "IMAGE", sectionTitle: "Parcours d'accueil" });
+s.addImage({ path: "media/accueil.png", x: 0, y: 0, w: 13.333, h: 7.5, altText: "Le parcours d'accueil EVR-5001 : accueillir, se connaître, se fixer un cap, l'entretien EVR. Merci à toute l'équipe d'accueil.", objectName: "Parcours d'accueil EVR" });
+s.addNotes("1 MIN · LE MOT DE LA FIN. Le lien avec les stats : « Tout à l'heure, on a vu que ça se joue dans les premières semaines. Ces premières semaines, on les a déjà : c'est le parcours d'accueil. » EVR-5001, Engagement vers sa réussite : cours obligatoire pour tout nouvel élève, environ 25 h, 8 modules, projet-pilote depuis le 24 août. L'élève découvre le centre et ses personnes-ressources, remplit son selfie d'apprenant, se fixe des objectifs, puis passe l'entretien EVR avec son tuteur (crédit de 5e secondaire). Deux rôles qui se parlent : le tuteur suit l'élève dans la durée; le prof de matière supervise le cahier et signale les alertes au tuteur. Nomme et remercie l'équipe d'accueil. Dernière phrase : « Merci. On y est déjà, ensemble. » Laisse cette diapo à l'écran pendant que les gens quittent.");
 
 // 8 · Bonus (à garder sous la main, pas prévu dans les 15 min)
 pres.addSection({ title: "Bonus" });
