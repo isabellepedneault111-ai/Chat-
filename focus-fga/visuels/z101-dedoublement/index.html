@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Z101 · Dédoublement</title>
+<link href="fonts/fonts.css" rel="stylesheet">
+<style>
+:root{
+  --nuit:#060B1C; --halo1:#13265A; --halo2:#1E3A1A;
+  --jaune:#F5C542; --sur-jaune:#1A1400;
+  --vert:#6CB33F; --vert2:#2F7A2A; --bleu:#2456B0;
+  --creme:#F4F1E6; --encre:#12131A;
+  --ciel:#4FA3FF; --corail:#FF6B6B; --lilas:#B9A7FF; --turq:#2DD4BF; --orange:#FF8A3D; --rose:#F472B6;
+  --blanc:#F7F8FC; --doux:rgba(247,248,252,.72);
+  --titre:'League Gothic','Oswald',Impact,sans-serif;
+  --texte:'Montserrat','Helvetica Neue',Arial,sans-serif;
+  --mono:'Space Mono','Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;font-family:var(--texte);color:var(--blanc)}
+.slide{width:1920px;height:1080px;position:relative;overflow:hidden;padding:76px 110px 120px;
+  background:
+    radial-gradient(900px 700px at 0% 0%,var(--halo1) 0%,transparent 70%),
+    radial-gradient(900px 700px at 100% 100%,var(--halo2) 0%,transparent 70%),
+    var(--nuit);
+  display:flex;flex-direction:column;gap:30px;page-break-after:always;break-after:page}
+.slide::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(108,179,63,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(108,179,63,.07) 1px,transparent 1px);
+  background-size:60px 60px}
+.slide>*{position:relative}
+.sur{font-family:var(--mono);font-weight:700;text-transform:uppercase;letter-spacing:.3em;color:var(--vert);font-size:22px}
+h1,h2{font-family:var(--titre);font-weight:400;text-transform:uppercase;line-height:.88;letter-spacing:.01em}
+h1{font-size:210px}
+h2{font-size:112px}
+.b{color:var(--ciel)} .j{color:var(--jaune)} .v{color:var(--vert)}
+.lead{font-size:30px;line-height:1.45;color:var(--doux);max-width:1480px}
+.lead strong{color:var(--blanc)}
+.pied{position:absolute;left:110px;right:110px;bottom:44px;display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:17px;letter-spacing:.22em;text-transform:uppercase;color:rgba(247,248,252,.4)}
+.pied b{color:var(--vert);font-weight:700}
+
+/* Faits */
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
+.fact{border-top:4px solid var(--c,var(--jaune));padding-top:18px}
+.fact .n{font-family:var(--titre);font-size:130px;line-height:.85;color:var(--c,var(--jaune))}
+.fact .l{font-size:24px;line-height:1.35;color:var(--doux);margin-top:10px}
+.fact .l strong{color:var(--blanc)}
+
+/* Pilules */
+.chips{display:flex;flex-wrap:wrap;gap:14px}
+.chip{font-family:var(--mono);font-weight:700;font-size:18px;letter-spacing:.06em;text-transform:uppercase;
+  padding:10px 20px;border-radius:999px;border:2px solid var(--c);color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+
+/* Citation */
+.quote{background:var(--jaune);color:var(--sur-jaune);border-radius:28px;padding:30px 48px;
+  font-size:32px;font-weight:700;line-height:1.3;position:relative}
+.quote::before{content:"«\00a0";font-family:var(--titre);font-size:1.6em;line-height:0;vertical-align:-.12em;color:var(--sur-jaune)}
+.quote small{display:block;font-family:var(--mono);font-size:17px;letter-spacing:.2em;text-transform:uppercase;margin-top:12px;font-weight:700;opacity:.75}
+
+/* Cartes */
+.cards{display:grid;gap:26px}
+.card{background:var(--creme);color:var(--encre);border-radius:26px;padding:30px 32px;display:flex;flex-direction:column;gap:12px}
+.card .ico{width:66px;height:66px;border-radius:20px;display:grid;place-items:center;background:var(--c)}
+.card .ico svg{width:38px;height:38px;stroke:var(--encre);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.card h3{font-family:var(--titre);font-weight:400;font-size:52px;line-height:.9;text-transform:uppercase}
+.card p{font-size:22px;line-height:1.42;color:#2b2d38}
+.card p strong{color:var(--encre)}
+.card .tag{font-family:var(--mono);font-size:16px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--vert2)}
+
+/* Bandeau compétence */
+.bandeau{background:var(--jaune);color:var(--sur-jaune);border-radius:999px;padding:20px 40px;display:flex;align-items:center;gap:26px;font-size:30px;font-weight:700}
+.bandeau .k{font-family:var(--mono);font-size:19px;letter-spacing:.24em;text-transform:uppercase;background:var(--sur-jaune);color:var(--jaune);padding:10px 20px;border-radius:999px;white-space:nowrap}
+
+/* Ligne du temps */
+.tl{display:grid;grid-template-columns:200px 1fr;row-gap:0}
+.tl .h{font-family:var(--titre);font-size:50px;color:var(--jaune);padding:14px 0;line-height:1}
+.tl .h small{display:block;font-family:var(--mono);font-size:15px;letter-spacing:.2em;color:rgba(247,248,252,.45);margin-top:6px}
+.lanes{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:8px 0;border-top:1px dashed rgba(247,248,252,.18)}
+.lane{border-radius:20px;padding:14px 26px;font-size:23px;line-height:1.35;display:flex;gap:18px;align-items:center}
+.lane .dot{flex:none;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-family:var(--titre);font-size:36px;color:var(--encre)}
+.lane b{font-weight:800}
+.lane.ens{background:rgba(36,86,176,.28);border:2px solid var(--ciel)}
+.lane.ens .dot{background:var(--ciel)}
+.lane.at{background:rgba(108,179,63,.18);border:2px solid var(--vert)}
+.lane.at .dot{background:var(--vert)}
+.lane.all{grid-column:1/-1;background:rgba(245,197,66,.12);border:2px solid var(--jaune)}
+.lane.all .dot{background:var(--jaune)}
+
+/* Chemin */
+.road{position:relative;padding-top:20px}
+.road::before{content:"";position:absolute;left:4%;right:4%;top:61px;height:10px;border-radius:10px;
+  background:linear-gradient(90deg,var(--corail),var(--jaune) 50%,var(--vert))}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:34px;position:relative}
+.step{display:flex;flex-direction:column;align-items:center;text-align:center;gap:18px}
+.step .dot{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;font-family:var(--titre);font-size:60px;color:var(--encre);background:var(--c);box-shadow:0 0 0 10px var(--nuit)}
+.step .card{width:100%;text-align:left}
+.meter{height:14px;border-radius:10px;background:#d9d4c3;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--c)}
+.meter-l{display:flex;justify-content:space-between;font-family:var(--mono);font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:#555a66}
+
+/* Objections */
+.obj{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.o{background:var(--creme);color:var(--encre);border-radius:24px;padding:24px 28px;display:flex;flex-direction:column;gap:10px}
+.o .q{font-family:var(--titre);font-size:42px;line-height:.95;text-transform:uppercase;color:var(--encre)}
+.o .q::before{content:"« ";color:var(--corail)} .o .q::after{content:" »";color:var(--corail)}
+.o p{font-size:20px;line-height:1.42;color:#2b2d38}
+.o p strong{color:var(--encre)}
+.o .r{font-family:var(--mono);font-size:15px;letter-spacing:.22em;font-weight:700;text-transform:uppercase;color:var(--vert2)}
+.o.hl{background:var(--jaune)}
+.o.hl .q::before,.o.hl .q::after{color:var(--sur-jaune)}
+</style>
+</head>
+<body>
+
+<!-- 1 · COUVERTURE -->
+<section class="slide" id="s1">
+  <div class="sur">PPS Z101 · Participation sociale · Proposition à la table des directions</div>
+  <h1>Z101 : on garde<br><span class="j">la porte</span> <span class="v">ouverte</span></h1>
+  <p class="lead">Le groupe est plein, mais la demande continue d'arriver. On propose de <strong>dédoubler le groupe</strong> sans embauche et sans trou à l'horaire, grâce à une formule d'ateliers autonomes.</p>
+  <div class="facts" style="margin-top:auto">
+    <div class="fact" style="--c:var(--ciel)"><div class="n">9</div><div class="l"><strong>élèves en classe</strong><br>groupe complet et fermé</div></div>
+    <div class="fact" style="--c:var(--jaune)"><div class="n">9</div><div class="l"><strong>élèves en attente</strong><br>référés par la FBC, prêts à entrer</div></div>
+    <div class="fact" style="--c:var(--vert)"><div class="n">0</div><div class="l"><strong>embauche</strong><br>équipe déjà en place</div></div>
+    <div class="fact" style="--c:var(--lilas)"><div class="n">0</div><div class="l"><strong>période vide</strong><br>chaque bloc est programmé</div></div>
+  </div>
+  <div class="pied"><span><b>01</b> / 07 · Le projet</span><span>CFGA · Secteur PPS · Octobre 2026</span></div>
+</section>
+
+<!-- 2 · POURQUOI MAINTENANT -->
+<section class="slide" id="s2">
+  <div class="sur">Pourquoi maintenant</div>
+  <h2>Fermer les inscriptions,<br><span class="j">c'est fermer des parcours</span></h2>
+  <div class="cards" style="grid-template-columns:repeat(3,1fr)">
+    <div class="card" style="--c:var(--ciel)">
+      <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 12h13M12 7l5 5-5 5"/><path d="M20 4v16"/></svg></div>
+      <div class="tag">La demande</div>
+      <h3>La FBC nous réfère des élèves</h3>
+      <p>Depuis quelques semaines, des enseignantes de la FBC dirigent vers nous des élèves dont <strong>le profil correspond à PPS</strong>.</p>
+    </div>
+    <div class="card" style="--c:var(--jaune)">
+      <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg></div>
+      <div class="tag">Le levier</div>
+      <h3>Un cours qui raccroche</h3>
+      <p>Pour ces élèves, Z101 est <strong>un moteur d'engagement et de motivation</strong> : on y apprend en agissant, avec et pour les autres.</p>
+    </div>
+    <div class="card" style="--c:var(--vert)">
+      <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V6M16 20v-8M22 20H2"/></svg></div>
+      <div class="tag">La suite</div>
+      <h3>Ils restent au centre</h3>
+      <p>Les élèves du Z101 <strong>poursuivent en années 2 et 3 en PPS</strong>. Chaque élève accueilli aujourd'hui est un parcours de trois ans au centre.</p>
+    </div>
+  </div>
+  <div class="quote">Pour certains de ces élèves, ce cours peut changer complètement leur parcours scolaire, professionnel et surtout leur vie. »<small>L'équipe PPS Z101</small></div>
+  <div class="pied"><span><b>02</b> / 07 · Le besoin</span><span>CFGA · Secteur PPS · Octobre 2026</span></div>
+</section>
+
+<!-- 3 · LA FORMULE -->
+<section class="slide" id="s3">
+  <div class="sur">La formule · Matinée mosaïque type (mardi et jeudi)</div>
+  <h2>Un groupe, <span class="j">deux sous-groupes</span>, <span class="v">zéro trou</span></h2>
+  <div class="tl">
+    <div class="h">8 h 30<small>Accueil</small></div>
+    <div class="lanes"><div class="lane all"><span class="dot">✦</span><span><b>Tout le groupe :</b> briefing, météo d'équipe, choix des tâches au registre d'autonomie.</span></div></div>
+    <div class="h">9 h 00<small>Bloc 1</small></div>
+    <div class="lanes">
+      <div class="lane ens"><span class="dot">A</span><span><b>Sous-groupe A avec l'enseignante :</b> enseignement direct du Z101.</span></div>
+      <div class="lane at"><span class="dot">B</span><span><b>Sous-groupe B en ateliers autonomes :</b> fiche de tâche, leader tournant, coaching de la TES.</span></div>
+    </div>
+    <div class="h">10 h 10<small>Bloc 2</small></div>
+    <div class="lanes">
+      <div class="lane at"><span class="dot">A</span><span><b>A passe en ateliers :</b> Cuisine, Grenier, chariots TEACCH.</span></div>
+      <div class="lane ens"><span class="dot">B</span><span><b>B rejoint l'enseignante :</b> enseignement direct du Z101.</span></div>
+    </div>
+    <div class="h">11 h 15<small>Retour</small></div>
+    <div class="lanes"><div class="lane all"><span class="dot">✦</span><span><b>Tout le groupe :</b> débriefing réflexif co-animé avec la TES, rangement collaboratif.</span></div></div>
+  </div>
+  <div class="chips">
+    <span class="chip" style="--c:var(--jaune)">Tableau de programmation</span>
+    <span class="chip" style="--c:var(--vert)">Fiches de tâches autonomes</span>
+    <span class="chip" style="--c:var(--ciel)">Leader tournant</span>
+    <span class="chip" style="--c:var(--lilas)">Registre d'autonomie</span>
+    <span class="chip" style="--c:var(--turq)">Règle « 3 avant l'enseignante »</span>
+  </div>
+  <div class="pied"><span><b>03</b> / 07 · Horaire type, à ajuster</span><span>CFGA · Secteur PPS · Octobre 2026</span></div>
+</section>
+
+<!-- 4 · LA TES -->
+<section class="slide" id="s4">
+  <div class="sur">Le rôle de la TES</div>
+  <h2>Pas une surveillante :<br><span class="v">une passeuse vers l'autonomie</span></h2>
+  <div class="road">
+    <div class="steps">
+      <div class="step" style="--c:var(--corail)">
+        <div class="dot">1</div>
+        <div class="card">
+          <div class="tag">Période d'ancrage</div>
+          <h3>Elle installe</h3>
+          <p>Routines, cohésion d'équipe, modélisation du rôle de leader. Elle est <strong>présente sur les plateaux</strong>.</p>
+          <div class="meter-l"><span>Présence TES</span><span>Forte</span></div><div class="meter"><i style="width:90%"></i></div>
+        </div>
+      </div>
+      <div class="step" style="--c:var(--jaune)">
+        <div class="dot">2</div>
+        <div class="card">
+          <div class="tag">Période de consolidation</div>
+          <h3>Elle coache</h3>
+          <p>Elle conseille le leader en retrait, intervient aux moments critiques et soutient l'autorégulation. <strong>Les élèves règlent les blocages entre eux.</strong></p>
+          <div class="meter-l"><span>Présence TES</span><span>Ciblée</span></div><div class="meter"><i style="width:55%"></i></div>
+        </div>
+      </div>
+      <div class="step" style="--c:var(--vert)">
+        <div class="dot">3</div>
+        <div class="card">
+          <div class="tag">Période d'autonomie</div>
+          <h3>Elle se retire</h3>
+          <p>Les équipes fonctionnent avec la fiche, le leader et le registre. La TES <strong>anime ses ateliers d'habiletés de vie</strong> et le retour réflexif.</p>
+          <div class="meter-l"><span>Présence TES</span><span>Ponctuelle</span></div><div class="meter"><i style="width:22%"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bandeau" style="margin-top:auto"><span class="k">Mesurable</span>Moins d'interventions de la TES au fil des semaines, c'est la preuve que l'autonomie progresse.</div>
+  <div class="pied"><span><b>04</b> / 07 · Transition vers l'autonomie</span><span>CFGA · Secteur PPS · Octobre 2026</span></div>
+</section>
+
+<!-- 5 · ENGAGEMENT -->
+<section class="slide" id="s5">
+  <div class="sur">Pourquoi ça fonctionne</div>
+  <h2>Les 4 ingrédients<br><span class="j">de l'engagement</span>, réunis</h2>
+  <div class="cards" style="grid-template-columns:repeat(4,1fr)">
+    <div class="card" style="--c:var(--jaune)">
+      <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></div>
+      <div class="tag">Sens</div>
+      <h3>Des tâches de vraie vie</h3>
+      <p>Cuisiner, gérer un inventaire, faire un budget, choisir un logement. <strong>On voit à quoi ça sert.</strong></p>
+    </div>
+    <div class="card" style="--c:var(--vert)">
+      <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 13l5 5L20 7"/></svg></div>
+      <div class="tag">Compétence</div>
+      <h3>Des réussites visibles</h3>
+      <p>Fiches de 1 à 5 étapes, critères de réussite clairs, étapes validées au registre. <strong>Le progrès se voit.</strong></p>
+    </div>
+    <div class="card" style="--c:var(--ciel)">
+      <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v18M5 8l7-5 7 5"/><path d="M7 21h10"/></svg></div>
+      <div class="tag">Autonomie</div>
+      <h3>Du pouvoir sur sa matinée</h3>
+      <p>L'élève choisit sa tâche, s'inscrit au registre et règle ses blocages par « 3 avant l'enseignante ».</p>
+    </div>
+    <div class="card" style="--c:var(--rose)">
+      <div class="ico"><svg viewBox="0 0 24 24"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2.5 20c.8-3.3 3-5 5.5-5s4.7 1.7 5.5 5M10.5 20c.8-3.3 3-5 5.5-5s4.7 1.7 5.5 5"/></svg></div>
+      <div class="tag">Appartenance</div>
+      <h3>Une équipe qui compte sur moi</h3>
+      <p>Leader tournant, équipes hétérogènes, entraide. <strong>Chaque élève a un rôle.</strong></p>
+    </div>
+  </div>
+  <div class="bandeau" style="margin-top:auto"><span class="k">Cette année</span>La cohorte actuelle est très participative. La formule s'appuie sur cette force.</div>
+  <div class="pied"><span><b>05</b> / 07 · Engagement</span><span>CFGA · Secteur PPS · Octobre 2026</span></div>
+</section>
+
+<!-- 6 · OBJECTIONS -->
+<section class="slide" id="s6">
+  <div class="sur">Vos questions, nos réponses</div>
+  <h2>On a pensé <span class="j">aux objections</span></h2>
+  <div class="obj">
+    <div class="o">
+      <div class="q">Ça va créer des trous à l'horaire</div>
+      <div class="r">Réponse</div>
+      <p><strong>Aucune période vide.</strong> Chaque bloc est au tableau de programmation : l'élève est toujours avec l'enseignante ou en atelier guidé par une fiche.</p>
+    </div>
+    <div class="o">
+      <div class="q">Il faudra embaucher quelqu'un</div>
+      <div class="r">Réponse</div>
+      <p><strong>Aucune embauche.</strong> Enseignante, TES préventive, orthopédagogue et CP sont déjà en place. Les chariots TEACCH sont partagés avec l'alpha-pré et la DAP.</p>
+    </div>
+    <div class="o">
+      <div class="q">On l'a essayé l'an dernier</div>
+      <div class="r">Réponse</div>
+      <p><strong>Vérification faite :</strong> des cas très particuliers expliquent le désengagement de l'an dernier. Cette année, la cohorte est engagée, et la formule est structurée (fiches, leader, registre).</p>
+    </div>
+    <div class="o">
+      <div class="q">La TES va devenir surveillante</div>
+      <div class="r">Réponse</div>
+      <p><strong>Non.</strong> Elle installe, puis coache, puis se retire. Son rôle diminue à mesure que l'autonomie des élèves augmente.</p>
+    </div>
+    <div class="o">
+      <div class="q">Et si ça ne marche pas ?</div>
+      <div class="r">Réponse</div>
+      <p><strong>On le saura vite.</strong> Projet pilote avec bilan à 6 semaines : présence, tâches validées, interventions TES. Le retour au groupe unique reste possible.</p>
+    </div>
+    <div class="o hl">
+      <div class="q">Et si on ne fait rien ?</div>
+      <div class="r" style="color:var(--sur-jaune)">Le vrai risque</div>
+      <p style="color:var(--sur-jaune)"><strong>9 élèves restent à la porte</strong>, au moment précis où ils sont prêts à s'engager. Certains ne reviendront pas.</p>
+    </div>
+  </div>
+  <div class="bandeau" style="margin-top:auto"><span class="k">Bilan à 6 sem.</span>Trois indicateurs suivis : la présence, les tâches validées au registre et les interventions de la TES.</div>
+  <div class="pied"><span><b>06</b> / 07 · Objections</span><span>CFGA · Secteur PPS · Octobre 2026</span></div>
+</section>
+
+<!-- 7 · LA DEMANDE -->
+<section class="slide" id="s7">
+  <div class="sur">Au-delà du Z101</div>
+  <h2>Un prototype<br><span class="v">pour tout le centre</span></h2>
+  <p class="lead">Une formule où la collaboration est au cœur de l'apprentissage peut s'appliquer partout où l'on veut <strong>plus d'élèves, plus d'autonomie, sans plus de ressources</strong>.</p>
+  <div class="chips">
+    <span class="chip" style="--c:var(--vert)">PPS Z101</span>
+    <span class="chip" style="--c:var(--ciel)">Alpha-pré</span>
+    <span class="chip" style="--c:var(--orange)">Francisation</span>
+    <span class="chip" style="--c:var(--lilas)">FBC</span>
+    <span class="chip" style="--c:var(--turq)">DAP</span>
+    <span class="chip" style="--c:var(--rose)">Et ailleurs…</span>
+  </div>
+  <div class="quote">Ce qu'on vous demande : rouvrir les inscriptions au Z101 et accueillir les 9 élèves en attente avec la formule en deux sous-groupes, à titre de projet pilote. »<small>Bilan avec indicateurs à 6 semaines</small></div>
+  <div class="facts" style="grid-template-columns:repeat(3,1fr);margin-top:auto">
+    <div class="fact" style="--c:var(--vert)"><div class="n">18</div><div class="l"><strong>élèves accueillis</strong> au lieu de 9</div></div>
+    <div class="fact" style="--c:var(--jaune)"><div class="n">6</div><div class="l"><strong>semaines</strong> avant un premier bilan</div></div>
+    <div class="fact" style="--c:var(--ciel)"><div class="n">3</div><div class="l"><strong>années</strong> de parcours PPS au centre pour chacun</div></div>
+  </div>
+  <div class="pied"><span><b>07</b> / 07 · La décision</span><span>CFGA · Secteur PPS · Octobre 2026</span></div>
+</section>
+
+</body>
+</html>
