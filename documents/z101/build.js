@@ -84,26 +84,52 @@ const chiffres = new Table({
   ] })],
 });
 
-// Menu du matin : moment | élèves | enseignante | TES
+// Menu du matin : horaire réel en trois périodes d'une heure
+const hW = [1500, 1300, 3280, 3280];
+const SG1 = 'Sous-groupe 1 : PPS pur';
+const SG2 = 'Sous-groupe 2';
+const Z = { c: '**Z101** avec Mme Lisa', f: C.bleuPale };
+const AE = { c: '**Atelier exploratoire** avec fiche de tâche et équipe de leaders', f: C.vertPale };
+const hRow = (heure, per, a, b) => new TableRow({ cantSplit: true, children: [
+  cell(`**${heure}**`, hW[0], { fill: C.grisPale }), cell(per, hW[1], { fill: C.grisPale }), cell(a.c, hW[2], { fill: a.f }), cell(b.c, hW[3], { fill: b.f }),
+] });
+const hAll = (heure, per, s, fill) => new TableRow({ cantSplit: true, children: [
+  cell(`**${heure}**`, hW[0], { fill: C.grisPale }), cell(per, hW[1], { fill: C.grisPale }), cell(s, hW[2] + hW[3], { span: 2, fill }),
+] });
+const horaire = new Table({
+  width: { size: W, type: WidthType.DXA }, columnWidths: hW, layout: TableLayoutType.FIXED, borders: grid,
+  rows: [
+    new TableRow({ tableHeader: true, children: [enTete('Heure', hW[0]), enTete('Période', hW[1]), enTete(SG1, hW[2]), enTete(SG2, hW[3])] }),
+    hAll('8 h 25 à 9 h 00', '**Période 1**', '**Tout le groupe :** accueil et rassemblement, présentation du menu du matin, formation des équipes de leaders.', C.jaunePale),
+    hRow('9 h 00 à 9 h 25', '**Période 1**', Z, { c: '**Atelier exploratoire :** démarrage rapide. Le leader lit la fiche et distribue les rôles.', f: C.vertPale }),
+    hAll('9 h 25 à 9 h 35', 'Pause', 'Pause de 10 minutes', 'FFFFFF'),
+    hRow('9 h 35 à 10 h 35', '**Période 2**', Z, AE),
+    hAll('10 h 35 à 10 h 45', 'Pause', 'Pause de 10 minutes. Les sous-groupes changent de place.', 'FFFFFF'),
+    hRow('10 h 45 à 11 h 45', '**Période 3**', AE, Z),
+  ],
+});
+const tempsTotal = tableau([3120, 3120, 3120], ['', 'Temps en Z101', 'Temps en atelier exploratoire'], [
+  ['**' + SG1 + '**', '**1 h 25** (9 h 00 à 10 h 35)', '1 h (10 h 45 à 11 h 45)'],
+  ['**' + SG2 + '**', '1 h (10 h 45 à 11 h 45)', '**1 h 25** (9 h 00 à 10 h 35)'],
+], { col1: C.grisPale });
+
+// Qui fait quoi à chaque moment : moment | enseignante | TES | leaders
 const mW = [1560, 2600, 2600, 2600];
-const mHead = (labels) => new TableRow({ tableHeader: true, children: labels.map((l, i) => enTete(l, mW[i])) });
-const mRow = (heure, moment, el, ens, tes, fill) => new TableRow({ cantSplit: true, children: [
+const mRow = (heure, moment, ens, tes, lead, fill) => new TableRow({ cantSplit: true, children: [
   cell([p([t(heure, { bold: true, color: C.marine })], { spacing: { after: 0 } }), p([t(moment, { size: 19, color: C.gris })], { spacing: { after: 0 } })], mW[0], { fill: C.grisPale }),
-  cell(el, mW[1], { fill }), cell(ens, mW[2], { fill }), cell(tes, mW[3], { fill }),
+  cell(ens, mW[1], { fill }), cell(tes, mW[2], { fill }), cell(lead, mW[3], { fill }),
 ] });
 const menu = (rows) => new Table({ width: { size: W, type: WidthType.DXA }, columnWidths: mW, layout: TableLayoutType.FIXED, borders: grid,
-  rows: [mHead(['Moment', 'Les élèves', 'L\'enseignante', 'La TES']), ...rows] });
+  rows: [new TableRow({ tableHeader: true, children: ['Moment', 'L\'enseignante (Mme Lisa)', 'La TES', 'Les leaders'].map((l, i) => enTete(l, mW[i])) }), ...rows] });
 const menu12 = menu([
-  mRow('8 h 30', 'Accueil et briefing', 'Météo d\'équipe. Chacun inscrit sa tâche au registre d\'autonomie. Le leader du jour reçoit son rôle.', 'Présente les objectifs du jour et les ateliers. Forme les sous-groupes A et B.', 'Accueille les élèves un à un. Repère les signes d\'anxiété et prévient les difficultés.', C.jaunePale),
-  mRow('9 h 00', 'Bloc 1', '**A :** enseignement direct.\n**B :** ateliers autonomes (cuisine, grenier, chariots TEACCH) avec fiche de tâche et leader.', 'Enseigne le Z101 au sous-groupe A. N\'est pas interrompue : le sous-groupe B applique « 3 avant l\'enseignante ».', 'Accompagne le sous-groupe B en atelier : soutient le leader, aide à régler les blocages, offre des pauses de régulation.'),
-  mRow('10 h 05', 'Transition', 'Le leader fait valider la fiche et ranger le poste. Les sous-groupes changent de place.', 'Termine le bloc et accueille le sous-groupe B.', 'Encadre le changement de place pour qu\'il se fasse calmement et rapidement.', C.grisPale),
-  mRow('10 h 10', 'Bloc 2', '**B :** enseignement direct.\n**A :** ateliers autonomes avec un nouveau leader.', 'Enseigne le Z101 au sous-groupe B.', 'Accompagne le sous-groupe A en atelier, comme au bloc 1.'),
-  mRow('11 h 15', 'Retour et rangement', 'Retour sur ce qui a été appris et sur le travail d\'équipe. Rangement collaboratif.', 'Valide le registre d\'autonomie et note les progrès.', 'Co-anime le retour réflexif : ce qui a aidé, ce qui a bloqué, comment on s\'est réglé.', C.jaunePale),
+  mRow('8 h 25', 'Accueil', 'Présente le menu du matin et les objectifs du jour.', 'Accueille les élèves un à un. Repère les signes d\'anxiété et prévient les difficultés.', 'Reçoivent leur rôle et leur atelier. Chaque élève inscrit sa tâche au registre d\'autonomie.', C.jaunePale),
+  mRow('9 h 00 à 10 h 35', 'Périodes 1 et 2', 'Enseigne le Z101 au sous-groupe PPS pur. **Circule** aussi vers les ateliers pour s\'assurer de leur bon fonctionnement. En atelier, on applique « 3 avant l\'enseignante ».', 'Accompagne le sous-groupe 2 en atelier exploratoire : soutient discrètement les leaders, aide à régler les blocages, offre des pauses de régulation.', 'Lisent la fiche à voix haute, distribuent les rôles, gèrent le temps, donnent la parole à chacun.'),
+  mRow('10 h 35', 'Pause et changement', 'Accueille le sous-groupe 2.', 'Encadre le changement de place pour qu\'il se fasse calmement.', 'Passent en revue les critères de réussite et font ranger le poste.', C.grisPale),
+  mRow('10 h 45 à 11 h 45', 'Période 3', 'Enseigne le Z101 au sous-groupe 2. **Circule** vers les ateliers. Valide le registre d\'autonomie.', 'Accompagne le sous-groupe PPS pur en atelier exploratoire, comme aux périodes 1 et 2.', 'Un nouveau leader prend le relais pour le sous-groupe PPS pur.'),
 ]);
 const menu3 = menu([
-  mRow('8 h 30', 'Accueil et briefing', 'Même routine, animée de plus en plus par les élèves leaders.', 'Annonce qui participe aux sous-groupes de besoins du jour.', 'Annonce qui participe à ses ateliers ciblés du jour.', C.jaunePale),
-  mRow('9 h 00 à 11 h 15', 'Blocs de travail', 'La majorité travaille en ateliers autonomes. Quelques élèves rejoignent l\'enseignante ou la TES selon leurs besoins.', '**Anime des ateliers en sous-groupes de besoins** (petits groupes formés selon les difficultés observées) en plus de l\'enseignement direct.', '**Anime des ateliers ciblés en petits groupes** : habiletés de vie, gestion des émotions, préparation à l\'emploi.'),
-  mRow('11 h 15', 'Retour et rangement', 'Les élèves animent eux-mêmes une partie du retour.', 'Valide le registre.', 'Co-anime le retour réflexif.', C.jaunePale),
+  mRow('8 h 25', 'Accueil', 'Annonce qui participe aux sous-groupes de besoins du jour.', 'Annonce qui participe à ses ateliers ciblés du jour.', 'Animent une partie de l\'accueil, par exemple la météo d\'équipe.', C.jaunePale),
+  mRow('9 h 00 à 11 h 45', 'Périodes 1, 2 et 3', 'Garde le même horaire de Z101 et **anime des ateliers en sous-groupes de besoins** : de petits groupes formés selon les difficultés observées.', '**Anime des ateliers ciblés en petits groupes** : habiletés de vie, gestion des émotions, préparation à l\'emploi. Les ateliers exploratoires fonctionnent sans elle.', 'Font fonctionner les ateliers exploratoires de façon autonome, avec la fiche et le registre.'),
 ]);
 
 // Trois périodes
@@ -120,9 +146,9 @@ const periodes = new Table({
   rows: [
     new TableRow({ tableHeader: true, children: [
       enTete('', pW[0]),
-      new TableCell({ ...{}, children: [p([t('1. Ancrage', { bold: true, color: 'FFFFFF', size: 22 })], { spacing: { after: 0 } }), p([t('On installe', { color: 'FFFFFF', size: 18 })], { spacing: { after: 0 } })], width: { size: pW[1], type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, color: 'auto', fill: C.marine }, margins: { top: 100, bottom: 100, left: 140, right: 140 } }),
-      new TableCell({ children: [p([t('2. Consolidation', { bold: true, color: 'FFFFFF', size: 22 })], { spacing: { after: 0 } }), p([t('On renforce', { color: 'FFFFFF', size: 18 })], { spacing: { after: 0 } })], width: { size: pW[2], type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, color: 'auto', fill: C.marine }, margins: { top: 100, bottom: 100, left: 140, right: 140 } }),
-      new TableCell({ children: [p([t('3. Autonomie', { bold: true, color: 'FFFFFF', size: 22 })], { spacing: { after: 0 } }), p([t('On différencie', { color: 'FFFFFF', size: 18 })], { spacing: { after: 0 } })], width: { size: pW[3], type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, color: 'auto', fill: C.marine }, margins: { top: 100, bottom: 100, left: 140, right: 140 } }),
+      new TableCell({ ...{}, children: [p([t('Étape 1 : ancrage', { bold: true, color: 'FFFFFF', size: 22 })], { spacing: { after: 0 } }), p([t('On installe', { color: 'FFFFFF', size: 18 })], { spacing: { after: 0 } })], width: { size: pW[1], type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, color: 'auto', fill: C.marine }, margins: { top: 100, bottom: 100, left: 140, right: 140 } }),
+      new TableCell({ children: [p([t('Étape 2 : consolidation', { bold: true, color: 'FFFFFF', size: 22 })], { spacing: { after: 0 } }), p([t('On renforce', { color: 'FFFFFF', size: 18 })], { spacing: { after: 0 } })], width: { size: pW[2], type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, color: 'auto', fill: C.marine }, margins: { top: 100, bottom: 100, left: 140, right: 140 } }),
+      new TableCell({ children: [p([t('Étape 3 : autonomie', { bold: true, color: 'FFFFFF', size: 22 })], { spacing: { after: 0 } }), p([t('On différencie', { color: 'FFFFFF', size: 18 })], { spacing: { after: 0 } })], width: { size: pW[3], type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, color: 'auto', fill: C.marine }, margins: { top: 100, bottom: 100, left: 140, right: 140 } }),
     ] }),
     rowP('Objectif',
       'Installer les routines, la cohésion des équipes et les outils d\'autonomie.',
@@ -133,7 +159,7 @@ const periodes = new Table({
       'Enseignement direct. Ajuste les fiches avec l\'orthopédagogue selon ce qu\'elle observe.',
       '**Anime des ateliers en sous-groupes de besoins**, pendant que les autres élèves travaillent en autonomie.', undefined),
     rowP('TES',
-      'Présente sur les plateaux. Modélise le rôle de leader, sécurise les transitions, repère les signes d\'anxiété.',
+      'Présente dans les ateliers. Modélise le rôle de leader, sécurise les transitions, repère les signes d\'anxiété.',
       'Coache en retrait. Conseille le leader, intervient aux moments critiques, soutient l\'autorégulation.',
       '**Anime des ateliers ciblés en petits groupes** : habiletés de vie, gestion des émotions, préparation à l\'emploi.'),
     rowP('Élèves',
@@ -159,9 +185,9 @@ const fiche = (rows) => new Table({
 const demarrage = tableau([2000, 4960, 2400], ['Quand', 'Étape', 'Responsable'], [
   ['**Semaine 0**', 'Décision de la table des directions. Confirmation des locaux et de l\'horaire de la TES.', 'Direction'],
   ['**Semaine 0**', 'Appel aux 9 élèves en attente et inscription dans le groupe Z101.', 'Secrétariat, CP'],
-  ['**Semaine 0**', 'Formation des sous-groupes A et B (mixtes). Préparation des premières fiches de tâches et du registre.', 'Enseignante, orthopédagogue, CP'],
-  ['**Semaine 1**', 'Début de la période d\'ancrage avec les 24 élèves.', 'Enseignante, TES'],
-  ['**Fin de l\'ancrage**', 'Premier bilan à partir des indicateurs (section 9). Décision : poursuivre, ajuster ou revenir au groupe unique.', 'CP, direction'],
+  ['**Semaine 0**', 'Formation des deux sous-groupes : PPS pur et sous-groupe 2. Préparation des premières fiches de tâches et du registre.', 'Enseignante, orthopédagogue, CP'],
+  ['**Semaine 1**', 'Début de la étape d\'ancrage avec les 24 élèves.', 'Enseignante, TES'],
+  ['**Fin de l\'ancrage**', 'Premier bilan à partir des indicateurs (section 11). Décision : poursuivre, ajuster ou revenir au groupe unique.', 'CP, direction'],
   ['**Fin de l\'année**', 'Bilan final et recommandation sur la transférabilité à d\'autres services.', 'CP, équipe, direction'],
 ]);
 
@@ -196,11 +222,11 @@ const doc = new Document({
       h2('Fiche synthèse'),
       fiche([
         ['Problème', 'Le groupe Z101 est complet (15 élèves) et 9 élèves référés attendent une place. Sans solution, ils restent à la porte au moment où ils sont prêts à s\'engager.'],
-        ['Solution', 'Accueillir les 24 élèves en **deux sous-groupes de 12** qui alternent entre l\'enseignement direct et des ateliers autonomes structurés.'],
+        ['Solution', 'Accueillir les 24 élèves en **deux sous-groupes** qui alternent entre le Z101 avec l\'enseignante et des ateliers exploratoires structurés. Les élèves en PPS pur, qui ont besoin de plus de soutien, ont plus de temps en Z101.'],
         ['Clientèle', 'Élèves adultes du programme Participation sociale (PPS), dont plusieurs référés par des enseignantes de la FBC.'],
         ['Équipe', 'Enseignante du Z101, TES préventive, orthopédagogue et conseillère pédagogique. Tous déjà en poste.'],
         ['Coût', '**Aucune embauche.** Matériel : fiches plastifiées et chariots TEACCH partagés avec l\'alpha-pré et la DAP.'],
-        ['Durée', 'Projet pilote à partir de l\'acceptation, en trois périodes, avec un premier bilan à la fin de la période d\'ancrage.'],
+        ['Durée', 'Projet pilote à partir de l\'acceptation, en trois étapes, avec un premier bilan à la fin de la étape d\'ancrage.'],
         ['Décision demandée', 'Rouvrir les inscriptions au Z101 et autoriser la formule en deux sous-groupes à titre de projet pilote.'],
       ]),
 
@@ -215,7 +241,7 @@ const doc = new Document({
         ['**Persévérance**', 'Ces élèves sont prêts à s\'engager maintenant. Les faire attendre, c\'est risquer qu\'ils décrochent avant d\'avoir commencé. Pour certains, ce cours peut changer complètement leur parcours scolaire, professionnel et de vie.'],
         ['**Rétention au centre**', 'Chaque élève accueilli en Z101 représente un parcours possible de trois ans en PPS au centre.'],
         ['**Équité**', 'Ces élèves ont un profil qui correspond à PPS. Leur offrir une place, c\'est leur offrir le service qui leur convient.'],
-        ['**Innovation**', 'La formule peut devenir un modèle pour d\'autres services du centre (section 10).'],
+        ['**Innovation**', 'La formule peut devenir un modèle pour d\'autres services du centre (section 12).'],
       ], { col1: C.vertPale }),
 
       // ── 2
@@ -223,38 +249,62 @@ const doc = new Document({
       para('**Objectif général :** accueillir les 9 élèves en attente au Z101 et développer l\'autonomie de tous les élèves du groupe, sans embauche ni période vide.'),
       h2('Objectifs spécifiques'),
       num('**Retenir** les 24 élèves pendant le projet pilote, dans un environnement sécurisant.'),
-      num('**Développer l\'autonomie** des élèves en atelier, au point où les adultes peuvent enseigner de façon ciblée (période 3).'),
+      num('**Développer l\'autonomie** des élèves en atelier, au point où les adultes peuvent enseigner de façon ciblée (étape 3).'),
       num('**Soutenir l\'engagement** en nourrissant les quatre besoins : compétence, autonomie, sens et appartenance.'),
       num('**Documenter la formule** pour évaluer si elle peut s\'appliquer ailleurs au centre.'),
 
       // ── 3
       h1('3. Description de la formule'),
-      para('Les 24 élèves forment **deux sous-groupes de 12 (A et B)**, composés d\'élèves de profils variés. Pendant que l\'un reçoit l\'enseignement direct du Z101 avec l\'enseignante, l\'autre travaille en **ateliers autonomes**. Les sous-groupes changent de place à mi-matinée. Chaque élève est donc toujours en apprentissage encadré.'),
+      para('Les 24 élèves forment **deux sous-groupes**. Le **sous-groupe 1** réunit les élèves en **PPS pur**, qui ont généralement besoin de plus de soutien : ils reçoivent donc plus de temps en Z101. Le **sous-groupe 2** réunit les autres élèves.'),
+      para('Pendant que l\'un des sous-groupes est en **Z101 avec l\'enseignante**, l\'autre est en **atelier exploratoire**, guidé par une fiche de tâche et une équipe de leaders. Les sous-groupes changent de place à la troisième période. Chaque élève est donc toujours en apprentissage encadré.'),
       h2('Les outils qui rendent les élèves autonomes'),
       puce('**Fiches de tâches autonomes :** une tâche par fiche, de 1 à 5 étapes illustrées, et des critères de réussite pour s\'auto-évaluer.'),
       puce('**Leader tournant :** à chaque atelier, un élève lit la fiche, distribue les rôles et gère le temps. Le rôle tourne pour que chacun l\'exerce.'),
       puce('**Registre d\'autonomie :** chaque élève y inscrit sa tâche en début de matinée, le leader valide les étapes et l\'enseignante fait la validation finale.'),
       puce('**Règle « 3 avant l\'enseignante » :** relire la fiche, demander à un coéquipier, essayer une autre solution.'),
-      puce('**Plateaux et chariots TEACCH :** ateliers en cuisine et au grenier, postes de travail visuels et structurés.'),
-      puce('**Tableau de programmation :** chaque bloc de la matinée est planifié et affiché. Aucune période n\'est laissée vide.'),
+      puce('**Deux lieux d\'ateliers exploratoires :** le grenier de Maria, juste à côté de la classe de Mme Lisa, et le local d\'arts plastiques, un grand local actuellement libre.'),
+      puce('**Chariots TEACCH :** postes de travail visuels et structurés, partagés avec l\'alpha-pré et la DAP.'),
+      puce('**Tableau de programmation :** chaque bloc de la matinée est planifié et affiché. Aucun moment n\'est laissé vide.'),
 
       // ── 4
       h1('4. Le menu du matin'),
-      h2('Périodes 1 et 2 : installer et consolider l\'autonomie'),
+      para('La matinée compte **trois périodes d\'une heure**, séparées par deux pauses de 10 minutes.'),
+      horaire,
+      espace(140),
+      tempsTotal,
+      h2('Qui fait quoi pendant la matinée (étapes 1 et 2)'),
       menu12,
-      note('Heures indicatives, à ajuster à l\'horaire réel du groupe.'),
-      h2('Période 3 : quand l\'autonomie est acquise'),
-      para('Quand les élèves fonctionnent seuls en atelier et que la gestion de classe le permet, les adultes n\'ont plus besoin d\'accompagner les ateliers. Ils enseignent alors de façon ciblée.'),
+      h2('Étape 3 : quand l\'autonomie est acquise'),
+      para('L\'horaire reste le même. Quand les élèves fonctionnent seuls en atelier et que la gestion de classe le permet, les adultes n\'ont plus besoin d\'accompagner les ateliers. Ils enseignent alors de façon ciblée.'),
       menu3,
 
+      // ── Leaders
+      h1('5. Le rôle des leaders'),
+      para('Le leader n\'est pas un chef qui fait tout. C\'est un **facilitateur** qui assure la cohésion de son équipe, pour que l\'enseignante puisse enseigner sans être interrompue.'),
+      tableau([2100, 7260], ['Moment', 'Ce que fait le leader'], [
+        ['**Au début**', 'Rassemble l\'équipe autour de la table. Lit la fiche de tâche lentement, à voix haute. Vérifie que chacun a son matériel.'],
+        ['**Pendant**', 'Distribue la parole pour que les plus timides s\'expriment. Gère le temps (« Il nous reste 10 minutes »). Règle les blocages avec la règle « 3 avant l\'enseignante ».'],
+        ['**À la fin**', 'Passe en revue les critères de réussite avec l\'équipe. Fait ranger le matériel. Valide les étapes au registre par ses initiales, avant la validation finale de l\'enseignante.'],
+      ], { col1: C.vertPale }),
+      h2('Les tâches selon le lieu'),
+      tableau([2100, 7260], ['Lieu', 'Responsabilités du leader'], [
+        ['**Grenier de Maria**', 'Organise le tri, l\'inventaire et la manutention sécuritaire. Répartit les tâches de logistique. Assure le contrôle de la qualité.'],
+        ['**Local d\'arts plastiques**', 'Distribue le matériel, fait respecter les consignes de sécurité et veille au rangement du local à la fin de l\'atelier.'],
+      ], { col1: C.vertPale }),
+      h2('Comment on choisit les leaders'),
+      puce('**Rotation :** chaque élève occupe le rôle au moins une fois par étape.'),
+      puce('**Volontariat encouragé :** priorité aux élèves qui veulent développer leur leadership.'),
+      puce('**Jumelage :** un leader plus réservé peut être jumelé à un co-leader de soutien.'),
+      puce('**Soutien de la TES :** elle conseille discrètement le leader pour renforcer sa posture.'),
+
       // ── 5
-      h1('5. Rôles et responsabilités'),
-      tableau([2100, 3630, 3630], ['Personne', 'Périodes 1 et 2', 'Période 3'], [
-        ['**Enseignante**\nPilote pédagogique', 'Enseigne le Z101 à chaque sous-groupe. Planifie, évalue et valide le registre. Présente les outils d\'autonomie.', 'Enseigne le Z101 et **anime des ateliers en sous-groupes de besoins** pendant que les autres travaillent en autonomie.'],
-        ['**TES préventive**\nTransition vers l\'autonomie', 'Accompagne le sous-groupe en atelier : modélise le rôle de leader, aide à régler les blocages, soutient l\'autorégulation, encadre les transitions. Co-anime le retour réflexif.', '**Anime des ateliers ciblés en petits groupes** : habiletés de vie, gestion des émotions, préparation à l\'emploi. Elle a déjà donné son accord.'],
+      h1('6. Rôles et responsabilités'),
+      tableau([2100, 3630, 3630], ['Personne', 'Étapes 1 et 2', 'Étape 3'], [
+        ['**Enseignante**\nPilote pédagogique', 'Enseigne le Z101 à chaque sous-groupe et **circule** vers les ateliers pour s\'assurer de leur bon fonctionnement. Planifie, évalue et valide le registre. Présente les outils d\'autonomie.', 'Enseigne le Z101 et **anime des ateliers en sous-groupes de besoins** pendant que les autres travaillent en autonomie.'],
+        ['**TES préventive**\nTransition vers l\'autonomie', 'Accompagne le sous-groupe en atelier : modélise le rôle de leader, aide à régler les blocages, soutient l\'autorégulation, encadre les transitions.', '**Anime des ateliers ciblés en petits groupes** : habiletés de vie, gestion des émotions, préparation à l\'emploi. Elle a déjà donné son accord.'],
         ['**Orthopédagogue**', 'Conçoit les boîtes TEACCH. Adapte les fiches et le matériel aux besoins des élèves.', 'Ajuste le matériel selon les besoins observés.'],
         ['**Conseillère pédagogique**', 'Accompagne l\'équipe dans l\'implantation. Assure la conformité au programme. Prépare les outils de suivi.', 'Analyse les indicateurs, rédige le bilan et la recommandation.'],
-        ['**Élèves leaders**', 'Lisent la fiche, distribuent les rôles, gèrent le temps, font ranger.', 'Animent aussi une partie de l\'accueil et du retour.'],
+        ['**Élèves leaders**', 'Lisent la fiche, distribuent les rôles, gèrent le temps, font ranger.', 'Animent aussi une partie de l\'accueil.'],
         ['**Direction**', 'Autorise le projet, confirme les locaux et l\'horaire de la TES.', 'Reçoit le bilan et décide de la suite.'],
       ], { col1: C.vertPale }),
       espace(160),
@@ -264,25 +314,25 @@ const doc = new Document({
       ], C.vertPale, C.vert),
 
       // ── 6
-      h1('6. Échéancier'),
-      h2('Les trois périodes'),
-      para('On passe d\'une période à l\'autre quand on observe les signes de réussite, et non à une date fixe.'),
+      h1('7. Échéancier'),
+      h2('Les trois étapes'),
+      para('Le projet se déroule en trois étapes. On passe d\'une étape à l\'autre quand on observe les signes de réussite.'),
       periodes,
       h2('Démarrage du projet'),
       demarrage,
 
       // ── 7
-      h1('7. Ressources et coûts'),
+      h1('8. Ressources et coûts'),
       tableau([2300, 7060], ['Ressource', 'Détail'], [
         ['**Ressources humaines**', 'Enseignante du Z101, TES préventive, orthopédagogue, conseillère pédagogique. **Aucune embauche.**'],
-        ['**Horaire de la TES**', 'Présente pendant les matinées d\'ateliers (8 h 30 à 11 h 45), selon l\'horaire d\'intervention déjà prévu au guide d\'organisation.'],
-        ['**Locaux**', 'Classe du Z101 pour l\'enseignement direct. Plateaux cuisine et grenier pour les ateliers.'],
+        ['**Horaire de la TES**', 'Présente pendant les matinées d\'ateliers, de 8 h 25 à 11 h 45. Sa présence a déjà été validée.'],
+        ['**Locaux**', 'Classe de Mme Lisa pour le Z101. Pour les ateliers exploratoires : le grenier de Maria, juste à côté de la classe, et le local d\'arts plastiques, un grand local actuellement libre.'],
         ['**Matériel**', 'Fiches de tâches plastifiées, registre d\'autonomie, chariots TEACCH partagés avec l\'alpha-pré et la DAP.'],
         ['**Coût supplémentaire**', 'Aucun salaire supplémentaire. Matériel : impression et plastification des fiches.'],
       ], { col1: C.vertPale }),
 
       // ── 8
-      h1('8. Fondements : les quatre besoins de l\'engagement'),
+      h1('9. Fondements : les quatre besoins de l\'engagement'),
       para('L\'engagement, c\'est **la décision de participer activement**. Il se nourrit de **quatre besoins**, et la formule a été pensée pour nourrir chacun d\'eux.'),
       tableau([2500, 6860], ['Besoin', 'Comment la formule le nourrit'], [
         [[pc('**Sentiment de compétence**'), p([t('Défi optimal, rétroaction de qualité, progression visible', { size: 18, italics: true, color: C.gris })], { spacing: { after: 0 } })],
@@ -290,49 +340,50 @@ const doc = new Document({
         [[pc('**Autonomie**'), p([t('Choix, voix et participation, contrôle sur la tâche', { size: 18, italics: true, color: C.gris })], { spacing: { after: 0 } })],
           'L\'élève choisit sa tâche et s\'inscrit au registre. Il prend la parole comme leader. Il règle ses blocages avec la règle « 3 avant l\'enseignante ».'],
         [[pc('**Sens**'), p([t('Utilité, but personnel, transfert', { size: 18, italics: true, color: C.gris })], { spacing: { after: 0 } })],
-          'Des tâches de la vraie vie : cuisiner, gérer un inventaire, faire un budget, choisir un logement. Ce qui est appris sert dès maintenant.'],
+          'Des tâches de la vraie vie : trier, gérer un inventaire, créer, faire un budget, choisir un logement. Ce qui est appris sert dès maintenant.'],
         [[pc('**Sentiment d\'appartenance**'), p([t('Relations positives, climat sécurisant, temps de qualité', { size: 18, italics: true, color: C.gris })], { spacing: { after: 0 } })],
           'Équipes mixtes, entraide et leader tournant : chaque élève compte pour son équipe. Les ateliers en petits groupes offrent du temps de qualité avec un adulte.'],
       ], { col1: C.vertPale }),
       note('Cadre de référence : affiche « L\'engagement » d\'Isabelle Pedneault (CC BY-NC-SA 4.0).'),
 
       // ── 9
-      h1('9. Risques et mesures prévues'),
+      h1('10. Risques et mesures prévues'),
       tableau([3000, 6360], ['Risque ou préoccupation', 'Mesure prévue'], [
         ['**Des périodes vides à l\'horaire**', 'Chaque bloc est planifié au tableau de programmation : l\'élève est soit avec l\'enseignante, soit en atelier guidé par une fiche.'],
         ['**Le besoin d\'embaucher une ressource**', 'L\'équipe est déjà en place. La TES, l\'orthopédagogue et la CP ont des rôles définis dans le projet.'],
         ['**Le désengagement observé l\'an dernier**', 'Après vérification, il s\'explique par des cas très particuliers propres à la cohorte de l\'an dernier. Cette année, les élèves sont très participatifs. La formule est aussi plus structurée : fiches, leader, registre et transition planifiée vers l\'autonomie.'],
-        ['**La TES utilisée comme surveillante**', 'Son rôle évolue de l\'accompagnement vers l\'animation d\'ateliers ciblés (section 5). Ses interventions en atelier sont suivies et doivent diminuer.'],
+        ['**La TES utilisée comme surveillante**', 'Son rôle évolue de l\'accompagnement vers l\'animation d\'ateliers ciblés (section 6). Ses interventions en atelier sont suivies et doivent diminuer.'],
+        ['**Des ateliers dans deux locaux en même temps**', 'Le grenier de Maria est juste à côté de la classe de Mme Lisa. L\'enseignante circule pour s\'assurer du bon fonctionnement des ateliers, et la TES les accompagne aux étapes 1 et 2.'],
         ['**Un leader qui fait tout le travail**', 'Le rôle tourne à chaque atelier. La fiche précise les tâches de chacun et tous les membres signent l\'auto-évaluation.'],
         ['**Des élèves qui s\'essoufflent**', 'Fiches courtes et visuelles, ajustées par l\'orthopédagogue. La TES repère les signes d\'anxiété dès l\'accueil.'],
-        ['**La formule ne fonctionne pas**', 'Bilan à la fin de la période d\'ancrage. Si les indicateurs ne sont pas au rendez-vous, on ajuste ou on revient à la formule actuelle.'],
+        ['**La formule ne fonctionne pas**', 'Bilan à la fin de la étape d\'ancrage. Si les indicateurs ne sont pas au rendez-vous, on ajuste ou on revient à la formule actuelle.'],
       ], { col1: C.grisPale }),
 
       // ── 10
-      h1('10. Évaluation et suivi'),
+      h1('11. Évaluation et suivi'),
       tableau([2700, 2860, 1900, 1900], ['Indicateur', 'Cible', 'Outil', 'Moment'], [
         ['**Rétention des élèves**', '100 % des 24 élèves toujours inscrits', 'Liste de présence', 'Chaque bilan'],
         ['**Présence**', 'Stable ou en hausse', 'Liste de présence', 'Chaque semaine'],
-        ['**Tâches réalisées en autonomie**', 'En hausse d\'une période à l\'autre', 'Registre d\'autonomie', 'Chaque semaine'],
-        ['**Interventions de la TES en atelier**', 'En baisse d\'une période à l\'autre', 'Grille d\'observation de la TES', 'Chaque semaine'],
-        ['**Rôle de leader**', 'Chaque élève l\'a exercé au moins une fois par période', 'Registre d\'autonomie', 'Fin de période'],
+        ['**Tâches réalisées en autonomie**', 'En hausse d\'une étape à l\'autre', 'Registre d\'autonomie', 'Chaque semaine'],
+        ['**Interventions de la TES en atelier**', 'En baisse d\'une étape à l\'autre', 'Grille d\'observation de la TES', 'Chaque semaine'],
+        ['**Rôle de leader**', 'Chaque élève l\'a exercé au moins une fois par étape', 'Registre d\'autonomie', 'Fin d\'étape'],
         ['**Poursuite en PPS**', 'Inscription en année 2', 'Inscriptions', 'Fin de l\'année'],
       ], { col1: C.vertPale }),
 
       // ── 11
-      h1('11. Retombées et transférabilité'),
+      h1('12. Retombées et transférabilité'),
       puce('**Pour les élèves :** une place au moment où ils sont prêts, plus d\'autonomie, de leadership et d\'estime de soi.'),
       puce('**Pour le centre :** des élèves qui poursuivent en PPS, une meilleure réponse aux références de la FBC, et une utilisation optimale des ressources existantes.'),
       puce('**Pour d\'autres services :** une formule où la collaboration est au cœur de l\'apprentissage, qui pourrait s\'appliquer en **alpha-pré**, en **francisation**, à la **FBC** et ailleurs au centre.'),
 
       // ── 12
-      h1('12. Décision demandée et prochaines étapes'),
+      h1('13. Décision demandée et prochaines étapes'),
       para('Nous demandons à la table des directions :'),
       num('**De rouvrir les inscriptions au Z101** pour accueillir les 9 élèves en attente.'),
       num('**D\'autoriser la formule en deux sous-groupes** à titre de projet pilote, avec l\'équipe déjà en place.'),
       num('**De confirmer les locaux et l\'horaire de la TES** pour les matinées d\'ateliers.'),
-      num('**De recevoir un bilan** à la fin de la période d\'ancrage.'),
-      para('Dès l\'acceptation, l\'équipe peut contacter les élèves et démarrer selon l\'échéancier de la section 6.'),
+      num('**De recevoir un bilan** à la fin de la étape d\'ancrage.'),
+      para('Dès l\'acceptation, l\'équipe peut contacter les élèves et démarrer selon l\'échéancier de la section 7.'),
       espace(160),
       encadre([
         p([t('« Quand une fleur ne fleurit pas, on corrige l\'environnement dans lequel elle pousse, pas la fleur. »', { italics: true, size: 24, color: C.marine })], { spacing: { after: 60 } }),
