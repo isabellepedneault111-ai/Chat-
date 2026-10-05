@@ -21,7 +21,7 @@ const PEPITES = [
 ];
 
 const P0 = 38; // début du compte à rebours
-const PD = 10; // durée par pépite (place pour la voix off)
+const PD = 14; // durée par pépite (place pour la voix off)
 const TC = P0 + 10 * PD; // convergence + murale
 const TE = TC + 8.5; // carte finale
 const TT = TE + 9.5; // durée totale
@@ -325,7 +325,7 @@ const html = `<!doctype html>
     <div class="pl-gen"><b>Pratique générée par l'IA</b> particulièrement · environnement · travailleurs · centre-ville</div>
   </div></div></div>
 
-  <div id="wbp" class="layer"><div class="wb-frame"><video id="v-wb" class="clip" src="assets/whiteboard.mp4" muted playsinline data-start="${P0 + 2 * PD + 0.5}" data-duration="9" data-media-start="25.5" data-track-index="5"></video></div></div>
+  <div id="wbp" class="layer"><div class="wb-frame"><video id="v-wb" class="clip" src="assets/whiteboard.mp4" muted playsinline data-start="${P0 + 2 * PD + 0.5}" data-duration="${PD - 1}" data-media-start="24" data-track-index="5"></video></div></div>
 
   <!-- 7. MURALE -->
   <div id="mural-tx" class="clip scene trailer" data-start="${TC}" data-duration="8.5" data-track-index="6">
