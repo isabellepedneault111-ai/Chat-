@@ -117,6 +117,15 @@ s = pres.addSlide({ masterName: "VIDEO", sectionTitle: "Nos élèves" });
 vid(s, "stats", "Vidéo stats clientèle");
 s.addNotes("3 MIN · QUI ACCUEILLONS-NOUS VRAIMENT? Vidéo de 80 s. Ensuite, une seule question dans le clavardage : « En un mot, qu'est-ce qui vous surprend? » Lis 2 ou 3 réponses. INTERACTION 2 : « En un mot, qu'est-ce qui vous surprend? » Laisse 30 secondes, lis 3 mots. Message clé : 70 % valorisent déjà plus l'école qu'avant, et ça se joue dans les premières semaines.");
 
+// 3b · Image fixe pour la discussion
+s = pres.addSlide({ masterName: "IMAGE", sectionTitle: "Nos élèves" });
+s.addImage({ path: "media/repare.png", x: 0, y: 0, w: 13.333, h: 7.5, altText: "Le CFGA répare déjà : 15 % valorisaient l'école avant, 64 % aujourd'hui, +49 points.", objectName: "Le CFGA répare déjà" });
+s.addNotes("À GARDER À L'ÉCRAN pendant la discussion. « 15 % accordaient une grande valeur à l'école avant d'arriver. 64 % aujourd'hui. 43 sur 61 en hausse. Le CFGA répare déjà. Et ça se joue dans les premières semaines. » Diapo de rechange si la vidéo ne joue pas : la diapo suivante (mythes contre réalité) est masquée, affiche-la au besoin.");
+s = pres.addSlide({ masterName: "IMAGE", sectionTitle: "Nos élèves" });
+s.addImage({ path: "media/mythes.png", x: 0, y: 0, w: 13.333, h: 7.5, altText: "Ce qu'on croit contre ce que montrent nos données.", objectName: "Mythes et réalité" });
+s.hidden = true;
+s.addNotes("DIAPO MASQUÉE (plan B) : si la vidéo des stats ne joue pas, affiche celle-ci et la précédente.");
+
 // 4 · Labo techno-IA
 pres.addSection({ title: "Labo techno-IA" });
 s = pres.addSlide({ masterName: "IMAGE", sectionTitle: "Labo techno-IA" });

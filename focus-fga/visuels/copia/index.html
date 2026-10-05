@@ -27,11 +27,13 @@
   .st .l { margin-top: 6px; font-size: 15px; letter-spacing: .12em; color: rgba(255,255,255,.72); text-transform: uppercase; font-family: "Space Mono", monospace; max-width: 220px; line-height: 1.35; }
 
   .lab { position: absolute; left: 90px; top: 548px; font-size: 18px; letter-spacing: .3em; color: #6CB33F; }
-  .cards { position: absolute; left: 90px; top: 590px; width: 1060px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-  .card { display: flex; gap: 20px; align-items: center; padding: 18px; border-radius: 20px; background: rgba(255,255,255,.06); border: 1.5px solid rgba(255,255,255,.12); height: 200px; }
+  .cards { position: absolute; left: 90px; top: 588px; width: 1060px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card { display: flex; gap: 16px; align-items: center; padding: 10px 14px; border-radius: 16px; background: rgba(255,255,255,.06); border: 1.5px solid rgba(255,255,255,.12); height: 94px; }
+  .ic { flex: 0 0 64px; width: 64px; height: 64px; display: block; }
+  .card .tag { font-size: 11px; letter-spacing: .2em; color: #F5C542; }
   .ill { flex: 0 0 164px; height: 164px; border-radius: 16px; background: #F4F1E6; display: block; }
-  .card h3 { font-size: 25px; font-weight: 900; line-height: 1.18; }
-  .card p { margin-top: 8px; font-size: 17px; line-height: 1.4; color: rgba(255,255,255,.82); }
+  .card h3 { font-size: 19px; font-weight: 900; line-height: 1.15; margin-top: 2px; }
+  .card p { margin-top: 3px; font-size: 14px; line-height: 1.3; color: rgba(255,255,255,.82); }
 
   .side { position: absolute; right: 80px; top: 60px; width: 640px; height: 960px; padding: 32px 36px; border-radius: 28px; background: #F4F1E6; color: #12131A; }
   .side .k { font-size: 16px; letter-spacing: .3em; color: #2F7A2A; font-weight: 700; }
@@ -68,52 +70,16 @@
     <div class="st"><div class="n">6</div><div class="l">capsules vidéo créées par les profs</div></div>
   </div>
 
-  <div class="lab mono">CE QU'ILS ONT CRÉÉ</div>
+  <div class="lab mono">LEURS DÉFIS EN COP IA</div>
   <div class="cards">
-    <div class="card">
-      <svg class="ill" viewBox="0 0 164 164">
-        <rect x="62" y="30" width="40" height="66" rx="20" fill="#2456B0"/>
-        <path d="M50 78 Q50 112 82 112 Q114 112 114 78" fill="none" stroke="#12131A" stroke-width="6" stroke-linecap="round"/>
-        <path d="M82 112 V134 M64 134 H100" stroke="#12131A" stroke-width="6" stroke-linecap="round"/>
-        <path d="M30 60 Q22 72 30 84 M18 52 Q4 72 18 92" fill="none" stroke="#6CB33F" stroke-width="5" stroke-linecap="round"/>
-        <path d="M134 60 Q142 72 134 84 M146 52 Q160 72 146 92" fill="none" stroke="#6CB33F" stroke-width="5" stroke-linecap="round"/>
-        <rect x="104" y="14" width="46" height="28" rx="10" fill="#F5C542"/><path d="M112 42 L108 52 L120 42Z" fill="#F5C542"/>
-        <circle cx="118" cy="28" r="3" fill="#12131A"/><circle cx="127" cy="28" r="3" fill="#12131A"/><circle cx="136" cy="28" r="3" fill="#12131A"/>
-      </svg>
-      <div><h3>Un balado d'histoires racontées par les élèves</h3><p>L'IA prépare la démarche et les images. Les élèves racontent, s'écoutent et publient.</p></div>
-    </div>
-    <div class="card">
-      <svg class="ill" viewBox="0 0 164 164">
-        <rect x="14" y="14" width="136" height="136" rx="8" fill="#DCE8D2"/>
-        <path d="M14 82 H150 M82 14 V150" stroke="#fff" stroke-width="14"/>
-        <rect x="24" y="24" width="44" height="44" rx="4" fill="#9FC5E8"/><rect x="96" y="96" width="44" height="44" rx="4" fill="#B6D7A8"/>
-        <path d="M30 120 Q30 82 82 82 Q132 82 132 40" fill="none" stroke="#C62828" stroke-width="4" stroke-dasharray="7 6"/>
-        <circle cx="132" cy="40" r="8" fill="#C62828"/>
-        <rect x="18" y="108" width="26" height="22" rx="5" fill="#2456B0"/><circle cx="24" cy="132" r="4" fill="#12131A"/><circle cx="38" cy="132" r="4" fill="#12131A"/><circle cx="26" cy="117" r="2.5" fill="#fff"/><circle cx="36" cy="117" r="2.5" fill="#fff"/>
-      </svg>
-      <div><h3>Leur vrai quartier devient le parcours du robot</h3><p>Un générateur transforme une carte Google Maps en tapis de programmation.</p></div>
-    </div>
-    <div class="card">
-      <svg class="ill" viewBox="0 0 164 164">
-        <rect x="14" y="14" width="136" height="136" rx="8" fill="#EDE6D2"/>
-        <path d="M14 104 Q60 80 92 110 T150 96" fill="none" stroke="#9FC5E8" stroke-width="12"/>
-        <path d="M44 20 V150" stroke="#fff" stroke-width="8"/>
-        <path d="M40 66 a12 12 0 1 1 24 0 c0 10 -12 22 -12 22 s-12 -12 -12 -22z" fill="#C62828"/>
-        <path d="M100 40 a12 12 0 1 1 24 0 c0 10 -12 22 -12 22 s-12 -12 -12 -22z" fill="#2456B0"/>
-        <rect x="60" y="74" width="62" height="18" rx="4" fill="#12131A"/><text x="91" y="87" text-anchor="middle" font-family="Montserrat" font-weight="700" font-size="11" fill="#fff">beaucoup</text>
-        <path d="M118 112 V136 M118 112 L134 108 V130" stroke="#12131A" stroke-width="4" fill="none"/><circle cx="114" cy="137" r="6" fill="#12131A"/><circle cx="130" cy="131" r="6" fill="#12131A"/>
-      </svg>
-      <div><h3>Un palais de mémoire pour l'orthographe</h3><p>Chaque mot difficile ancré dans un lieu réel, puis une chanson pour s'en souvenir.</p></div>
-    </div>
-    <div class="card">
-      <svg class="ill" viewBox="0 0 164 164">
-        <rect x="16" y="16" width="62" height="62" rx="12" fill="#C62828"/><path d="M40 34 L60 47 L40 60Z" fill="#fff"/>
-        <rect x="86" y="16" width="62" height="62" rx="12" fill="#2456B0"/><path d="M101 54 V46 a16 16 0 0 1 32 0 V54" fill="none" stroke="#fff" stroke-width="5"/><rect x="97" y="50" width="10" height="16" rx="3" fill="#fff"/><rect x="127" y="50" width="10" height="16" rx="3" fill="#fff"/>
-        <rect x="16" y="86" width="62" height="62" rx="12" fill="#12131A"/><path d="M28 102 H66 M28 113 H66 M28 124 H54 M28 135 H60" stroke="#fff" stroke-width="4"/>
-        <rect x="86" y="86" width="62" height="62" rx="12" fill="#6CB33F"/><rect x="98" y="122" width="9" height="16" fill="#fff"/><rect x="112" y="110" width="9" height="28" fill="#fff"/><rect x="126" y="98" width="9" height="40" fill="#fff"/>
-      </svg>
-      <div><h3>L'histoire en modules différenciés</h3><p>Une même notion en balado, vidéo, texte et infographie : chaque élève choisit son entrée.</p></div>
-    </div>
+    <div class="card"><svg class="ic" viewBox="0 0 64 64" style="--c:#F5C542"><rect width="64" height="64" rx="16" fill="#F5C542" opacity=".18"/><path d="M14 18h28a6 6 0 0 1 6 6v12a6 6 0 0 1-6 6H28l-9 8v-8h-5a6 6 0 0 1-6-6V24a6 6 0 0 1 6-6z" fill="#F5C542"/><path d="M22 28l4-5 4 5 4-5 4 5v6H22z" fill="#1A1400"/></svg><div><div class="tag mono">HISTOIRE</div><h3>Une appli pour susciter l'empathie historique</h3><p>L'élève écrit à un personnage historique… qui lui répond.</p></div></div>
+    <div class="card"><svg class="ic" viewBox="0 0 64 64" style="--c:#6CB33F"><rect width="64" height="64" rx="16" fill="#6CB33F" opacity=".18"/><path d="M18 46l4-12 22-22 8 8-22 22z" fill="#6CB33F"/><path d="M18 46l12-4-8-8z" fill="#fff"/></svg><div><div class="tag mono">FRANÇAIS</div><h3>Un coach d'écriture</h3><p>Métacognition et stratégies de correction, pas de réponses toutes faites.</p></div></div>
+    <div class="card"><svg class="ic" viewBox="0 0 64 64" style="--c:#4FA3FF"><rect width="64" height="64" rx="16" fill="#4FA3FF" opacity=".18"/><rect x="12" y="14" width="40" height="36" rx="4" fill="#4FA3FF"/><rect x="17" y="20" width="14" height="10" fill="#fff"/><path d="M35 21h12M35 27h12M17 35h30M17 41h22" stroke="#fff" stroke-width="3"/></svg><div><div class="tag mono">ACTUALITÉ</div><h3>Une infographie d'actualité chaque matin</h3><p>Générée par l'IA, discutée en groupe.</p></div></div>
+    <div class="card"><svg class="ic" viewBox="0 0 64 64" style="--c:#FF6B6B"><rect width="64" height="64" rx="16" fill="#FF6B6B" opacity=".18"/><path d="M12 50V14M12 50h40" stroke="#FF6B6B" stroke-width="4"/><path d="M16 42l10-10 8 6 14-16" stroke="#FF6B6B" stroke-width="4" fill="none" stroke-linecap="round"/></svg><div><div class="tag mono">SUIVI</div><h3>Des outils de suivi des élèves</h3><p>L'IA aide à repérer qui avance et qui bloque.</p></div></div>
+    <div class="card"><svg class="ic" viewBox="0 0 64 64" style="--c:#B9A7FF"><rect width="64" height="64" rx="16" fill="#B9A7FF" opacity=".18"/><rect x="14" y="14" width="36" height="36" rx="8" fill="#B9A7FF"/><circle cx="24" cy="24" r="3.5" fill="#1A1400"/><circle cx="40" cy="24" r="3.5" fill="#1A1400"/><circle cx="32" cy="32" r="3.5" fill="#1A1400"/><circle cx="24" cy="40" r="3.5" fill="#1A1400"/><circle cx="40" cy="40" r="3.5" fill="#1A1400"/></svg><div><div class="tag mono">MATHS</div><h3>Un jeu de société pour réviser</h3><p>Questions et planche de jeu créées avec l'IA.</p></div></div>
+    <div class="card"><svg class="ic" viewBox="0 0 64 64" style="--c:#2DD4BF"><rect width="64" height="64" rx="16" fill="#2DD4BF" opacity=".18"/><path d="M26 12h12M28 12v16L16 48a4 4 0 0 0 3.5 6h25a4 4 0 0 0 3.5-6L36 28V12" fill="none" stroke="#2DD4BF" stroke-width="4"/><path d="M20 44h24l3 6H17z" fill="#2DD4BF"/></svg><div><div class="tag mono">CHIMIE</div><h3>Des rapports de laboratoire guidés</h3><p>L'IA soutient la rédaction, étape par étape.</p></div></div>
+    <div class="card"><svg class="ic" viewBox="0 0 64 64" style="--c:#FF8A3D"><rect width="64" height="64" rx="16" fill="#FF8A3D" opacity=".18"/><path d="M10 20a4 4 0 0 1 4-4h12l4 5h20a4 4 0 0 1 4 4v21a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4z" fill="#FF8A3D"/><path d="M20 36h24" stroke="#fff" stroke-width="3"/></svg><div><div class="tag mono">COLLÈGUES</div><h3>Un répertoire de requêtes partagé</h3><p>Grilles, planifications, activités : on réutilise.</p></div></div>
+    <div class="card"><svg class="ic" viewBox="0 0 64 64" style="--c:#F472B6"><rect width="64" height="64" rx="16" fill="#F472B6" opacity=".18"/><rect x="10" y="14" width="20" height="16" rx="3" fill="#F472B6"/><rect x="34" y="14" width="20" height="16" rx="3" fill="#F472B6"/><rect x="10" y="34" width="44" height="16" rx="3" fill="#F472B6"/><circle cx="20" cy="22" r="4" fill="#fff"/><circle cx="44" cy="22" r="4" fill="#fff"/><circle cx="32" cy="42" r="4" fill="#fff"/></svg><div><div class="tag mono">ANGLAIS</div><h3>Une BD avec le même personnage</h3><p>Du début à la fin de l'histoire, grâce à l'IA.</p></div></div>
   </div>
 
   <div class="side">
