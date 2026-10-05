@@ -79,37 +79,9 @@ s.addNotes("INTERACTION 1 (pendant l'arrivée) : lis quelques réponses à voix 
 
 // 2 · Qui suis-je
 pres.addSection({ title: "Qui suis-je" });
-s = pres.addSlide({ masterName: "SOMBRE", sectionTitle: "Qui suis-je" });
-title(s, "Allô! Moi, c'est Isabelle", "Conseillère pédagonumérique · CFGA de la Jonquière");
-const steps = [
-  ["15 ans", "en classe · CSS de la Capitale", "Milieu très défavorisé · indice 10/10"],
-  ["Recherche", "Univ. Laval · UQAM", "Écriture · cyberintimidation · Plan numérique 2018"],
-  ["Lévis", "Conseillance au CFP", "Électromécanique · mentore classes multiâges"],
-  ["2018", "Retour au Saguenay", "CP maths-sciences · pédagonumérique · CFGA"],
-  ["2025-26", "UQAC · Patrick Giroux", "Plusieurs CoP IA · cadre réflexif IA du CSS"],
-];
-steps.forEach(([k, a, b], i) => {
-  const y = 1.95 + i * 0.93;
-  s.addShape(pres.shapes.OVAL, { x: 0.6, y: y + 0.12, w: 0.7, h: 0.7, fill: { color: i === 4 ? C.accent2 : C.accent1 }, objectName: "Jalon " + (i + 1) });
-  s.addText(String(i + 1), { x: 0.6, y: y + 0.12, w: 0.7, h: 0.7, align: "center", valign: "middle", fontSize: 20, bold: true, color: C.text1, isTextBox: true, margin: 0 });
-  s.addText([{ text: k + "  ", options: { bold: true, color: THEME.colors.accent1, fontSize: 20 } }, { text: a, options: { bold: true, color: "FFFFFF", fontSize: 18 } }], { x: 1.5, y: y + 0.05, w: 5.4, h: 0.5, isTextBox: true, margin: 0, valign: "middle" });
-  s.addText(b, { x: 1.5, y: y + 0.52, w: 5.4, h: 0.42, fontSize: 15, color: C.accent5, isTextBox: true, margin: 0, valign: "middle" });
-});
-s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 7.4, y: 1.95, w: 5.3, h: 1.95, rectRadius: 0.15, fill: { color: "16234A" }, line: { color: "2A3A66", width: 1 }, objectName: "Mes classes" });
-s.addText("MES CLASSES", { x: 7.7, y: 2.05, w: 4.8, h: 0.35, fontSize: 13, bold: true, color: C.accent2, charSpacing: 4, isTextBox: true, margin: 0 });
-s.addText([
-  { text: "⅓ issus de l'immigration", options: { bullet: true, breakLine: true } },
-  { text: "Jusqu'à 5 ans d'écart dans les apprentissages", options: { bullet: true, breakLine: true } },
-  { text: "Attachement · comportement", options: { bullet: true, breakLine: true } },
-  { text: "Élèves HDAA intégrés", options: { bullet: true } },
-], { x: 7.7, y: 2.4, w: 4.8, h: 1.45, fontSize: 14, color: "FFFFFF", paraSpaceAfter: 2, isTextBox: true, margin: 0, valign: "top" });
-s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 7.4, y: 4.05, w: 5.3, h: 2.25, rectRadius: 0.15, fill: { color: "16234A" }, line: { color: "2A3A66", width: 1 }, objectName: "Mes approches" });
-s.addText("MES APPROCHES", { x: 7.7, y: 4.15, w: 4.8, h: 0.35, fontSize: 13, bold: true, color: C.accent2, charSpacing: 4, isTextBox: true, margin: 0 });
-const ap1 = ["Potentiel ouvert", "Classe collaborative et réflexive", "Classes multiâges", "Décloisonnement", "Co-enseignement", "Plan de travail différencié"];
-const ap2 = ["Tableau de programmation", "Technologie éducative", "Projets entrepreneuriaux", "Projet Flex", "1er middle school au Québec"];
-[ap1, ap2].forEach((list, c) => s.addText(list.map((t, i) => ({ text: t, options: { bullet: true, breakLine: i < list.length - 1 } })), { x: 7.7 + c * 2.45, y: 4.5, w: c ? 2.35 : 2.45, h: 1.75, fontSize: 12, color: "FFFFFF", paraSpaceAfter: 2, isTextBox: true, margin: 0, valign: "top" }));
-s.addText("Je reconnais mes élèves dans les vôtres.", { x: 7.4, y: 6.4, w: 5.3, h: 0.45, fontSize: 16, italic: true, bold: true, color: C.accent1, isTextBox: true, margin: 0 });
-s.addNotes("2 MIN · QUI SUIS-JE. Des mots-clés à l'écran, l'histoire dans ta bouche. Parcours : 15 ans en classe au CSS de la Capitale, en milieu très défavorisé (indice 10/10). Co-chercheuse : texte d'opinion et texte d'information avec l'Université Laval (direction : Érick Falardeau); cyberintimidation avec l'UQAM. Contribution au plan d'action numérique 2018. Conseillance au CFP de Lévis (électromécanique), mentore des classes multiâges. Retour au Saguenay en 2018 : CP maths-sciences, pédagonumérique, maintenant le CFGA. L'an dernier : toute l'année avec Patrick Giroux, directeur du département de recherche en éducation à l'UQAC. Mandat du comité de gouvernance pédagonumérique : produire le cadre réflexif sur l'utilisation de l'IA pour le CSS, et animer plusieurs CoP IA (35 profs au total). Pont vers la suite : « Et c'est ce qu'on va faire ensemble ici, avec le Labo techno-IA. » La phrase qui compte : « Je reconnais mes élèves dans les vôtres. » Transition : « Justement, qui accueille-t-on vraiment? »");
+s = pres.addSlide({ masterName: "IMAGE", sectionTitle: "Qui suis-je" });
+s.addImage({ path: "media/bio.png", x: 0, y: 0, w: 13.333, h: 7.5, altText: "Allô! Moi, c'est Isabelle : parcours, classes et approches.", objectName: "Visuel Qui suis-je" });
+s.addNotes("2 MIN · QUI SUIS-JE. Des mots-clés à l'écran, l'histoire dans ta bouche. Parcours : 15 ans en classe au CSS de la Capitale, en milieu très défavorisé (indice 10/10). Co-chercheuse : texte d'opinion et texte d'information avec l'Université Laval (direction : Érick Falardeau); cyberintimidation avec l'UQAM; Chaire de recherche VISAJ (F. Pouliot, co-titulaire). Contribution au Plan d'action numérique (2018). Conseillance au CFP de Lévis (électromécanique), mentore des classes multiâges. Retour au Saguenay en 2018 : CP maths-sciences, pédagonumérique, maintenant le CFGA. L'an dernier : toute l'année avec Patrick Giroux, directeur du département de recherche en éducation à l'UQAC. Mandat du comité de gouvernance pédagonumérique : produire le cadre réflexif sur l'utilisation de l'IA pour le CSS, et animer plusieurs CoP IA (35 profs au total). Pont vers la suite : « Et c'est ce qu'on va faire ensemble ici, avec le Labo techno-IA. » La phrase qui compte : « Je reconnais mes élèves dans les vôtres. » Transition : « Justement, qui accueille-t-on vraiment? »");
 
 // 3 · Stats
 pres.addSection({ title: "Nos élèves" });
