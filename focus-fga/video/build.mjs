@@ -341,7 +341,6 @@ const html = `<!doctype html>
       <div class="ek mono">FOCUS FGA · AUTOMNE 2026</div>
       <div class="et disp">Labo <span class="g">techno-IA</span></div>
       <div class="ecta">Inscris-toi. On t'attend.</div>
-      <div class="esig mono">LA RÉUSSITE, NOTRE PRIORITÉ.</div>
     </div>
   </div>
 
@@ -482,7 +481,6 @@ const html = `<!doctype html>
   tl.fromTo("#end .ek", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5 }, ${TE + 0.9});
   tl.fromTo("#end .et", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.8, ease: "power4.out" }, ${TE + 1.2});
   tl.fromTo("#end .ecta", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, ${TE + 2.3});
-  tl.fromTo("#end .esig", { opacity: 0 }, { opacity: 1, duration: 0.8 }, ${TE + 3.5});
   tl.to("#end .logo, #end .ecol", { opacity: 0, duration: 0.8 }, ${TE + 8.5});
 
   window.__timelines["main"] = tl;
@@ -558,7 +556,7 @@ const html = `<!doctype html>
   const shockA = mkRing(), shockB = mkRing();
 
   // Tornade de feuilles volantes
-  const NP = 520, rp = rng(77);
+  const NP = 200, rp = rng(77);
   const paperGeo = new THREE.PlaneGeometry(0.42, 0.56);
   const paperMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.55, metalness: 0, side: THREE.DoubleSide, emissive: 0x223355, emissiveIntensity: 0.25 });
   const papers = new THREE.InstancedMesh(paperGeo, paperMat, NP);
