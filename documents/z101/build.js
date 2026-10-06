@@ -88,7 +88,7 @@ const bandeau = new Table({
         p([t('PRÉSENTATION DE PROJET', { size: 18, bold: true, color: C.ciel, characterSpacing: 40 })], { spacing: { after: 160 } }),
         p([t('Projet PPS Z101', { size: 64, bold: true, color: C.blanc })], { spacing: { after: 80, line: 240 } }),
         p([t('Accueillir 9 élèves de plus grâce à une formule en deux sous-groupes', { size: 30, color: C.blanc })], { spacing: { after: 280 } }),
-        p([t('Table des directions · Octobre 2026', { size: 20, color: C.pale })], { spacing: { after: 0 } }),
+        p([t('Octobre 2026', { size: 20, color: C.pale })], { spacing: { after: 0 } }),
         p([t('Préparé par la conseillère pédagogique, secteur PPS, CFGA', { size: 20, color: C.pale })], { spacing: { after: 0 } }),
       ],
     })] }),
@@ -130,7 +130,7 @@ const doc = new Document({
     properties: { page: { size: { width: 12240, height: 15840 }, margin: { top: 1200, bottom: 1200, left: 1440, right: 1440 } } },
     footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [
       logo(28), t('   '),
-      t('Projet PPS Z101 · Table des directions · page ', { size: 16, color: C.gris }),
+      t('Projet PPS Z101 · page ', { size: 16, color: C.gris }),
       new TextRun({ children: [PageNumber.CURRENT], font: FONT, size: 16, color: C.gris }),
     ] })] }) },
     children: [
