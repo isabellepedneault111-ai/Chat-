@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Projet PPS Z101</title>
+<link href="visuels/fonts/fonts.css" rel="stylesheet">
+<style>
+/* Mise en page lettre, une <section class="page"> par feuille, aux couleurs du logo CFGA */
+@page{size:8.5in 11in;margin:0}
+:root{
+  --bleu:#004983; --bleu2:#1F64A6; --lime:#7AA32B; --vert:#5E8A1E; --tes:#C8553D;
+  --encre:#1A1D24; --gris:#596273; --ligne:#D5DAE1; --fond:#F2F4F7; --pale:#E8F0F8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#fff}
+body{font-family:'Montserrat',Arial,sans-serif;color:var(--encre);font-size:12.5px;line-height:1.5;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:8.5in;height:11in;position:relative;overflow:hidden;padding:62px 64px 70px;page-break-after:always;break-after:page;display:flex;flex-direction:column;gap:14px}
+.page:last-child{page-break-after:auto;break-after:auto}
+.pied{position:absolute;left:64px;right:64px;bottom:28px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--gris);border-top:1px solid var(--ligne);padding-top:8px}
+.pied img{height:22px}
+.pied span{display:flex;align-items:center;gap:8px}
+
+h1{font-size:23px;font-weight:800;color:var(--bleu);display:flex;align-items:center;gap:12px;margin-top:6px}
+h1 .n{flex:none;width:34px;height:34px;border-radius:50%;background:var(--lime);color:#fff;display:grid;place-items:center;font-size:16px}
+h2{font-size:15px;font-weight:800;color:var(--bleu2);margin-top:4px}
+p{max-width:100%}
+strong{font-weight:700}
+.lead{font-size:13.5px;color:#2b2f38}
+.note{font-size:11px;color:var(--gris);font-style:italic}
+ul.puces{list-style:none;display:flex;flex-direction:column;gap:7px}
+ul.puces li{padding-left:20px;position:relative}
+ul.puces li::before{content:"";position:absolute;left:2px;top:7px;width:8px;height:8px;border-radius:2px;background:var(--lime)}
+
+table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--ligne);border-radius:10px;overflow:hidden}
+th{background:var(--bleu);color:#fff;text-align:left;font-size:11.5px;font-weight:700;padding:9px 12px;letter-spacing:.02em}
+td{padding:9px 12px;border-top:1px solid var(--ligne);vertical-align:top}
+td:first-child{font-weight:700;color:var(--bleu);width:30%}
+tr:nth-child(even) td{background:#FAFBFC}
+.visuel{width:100%;display:block;border-radius:6px}
+
+/* Couverture */
+.couv{padding:0;gap:0;background:var(--bleu);color:#fff}
+.couv .haut{background:#fff;padding:40px 64px 30px;display:flex;align-items:center;gap:22px}
+.couv .haut img{width:120px;height:120px}
+.couv .haut div{font-size:12px;color:var(--gris);line-height:1.5}
+.couv .haut b{display:block;color:var(--bleu);font-size:14px}
+.couv .corps{flex:1;padding:70px 64px 0;display:flex;flex-direction:column;gap:22px;position:relative}
+.couv .corps::before{content:"";position:absolute;right:-180px;top:40px;width:520px;height:520px;border-radius:50%;border:34px solid var(--lime);opacity:.9;clip-path:polygon(0 0,100% 0,100% 100%,30% 100%)}
+.couv .eti{font-size:12px;font-weight:700;letter-spacing:.3em;color:#C5DB8F}
+.couv h1{color:#fff;font-size:58px;line-height:1.02;display:block;margin:0}
+.couv .sous{font-size:21px;font-weight:500;max-width:470px;line-height:1.35;color:#E3ECF6}
+.couv .date{font-size:13px;color:#C9D8EA;margin-top:6px}
+.chiffres{display:grid;grid-template-columns:repeat(4,1fr);background:#003A69}
+.chiffres div{padding:26px 22px 30px;border-top:6px solid var(--lime)}
+.chiffres b{display:block;font-size:46px;font-weight:800;line-height:1}
+.chiffres span{font-size:12px;color:#C9D8EA;line-height:1.35;display:block;margin-top:6px}
+
+/* Page 2 */
+.bref td:first-child{width:24%}
+.toc{list-style:none;counter-reset:none;display:flex;flex-direction:column;gap:0;border-top:2px solid var(--bleu)}
+.toc li{display:flex;align-items:baseline;gap:10px;padding:8px 2px;border-bottom:1px solid var(--ligne);font-size:13px}
+.toc li b{color:var(--lime);width:26px;font-weight:800}
+.toc li span{flex:1}
+.toc li i{font-style:normal;font-weight:700;color:var(--bleu)}
+
+/* Cartes */
+.cartes{display:grid;gap:12px}
+.carte{border:1px solid var(--ligne);border-top:5px solid var(--bleu);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.carte h3{font-size:14px;font-weight:800;color:var(--bleu)}
+.carte p{font-size:12px;line-height:1.45}
+.carte.lime{border-top-color:var(--lime)}
+.encadre{border-left:6px solid var(--lime);background:var(--pale);border-radius:0 10px 10px 0;padding:14px 18px;font-size:12.5px}
+.encadre b{color:var(--bleu)}
+.citation{margin-top:auto;background:var(--bleu);color:#fff;border-radius:12px;padding:26px 30px;font-size:17px;font-style:italic;line-height:1.45;position:relative}
+.citation small{display:block;font-style:normal;font-size:12px;color:#C9D8EA;margin-top:8px}
+.decision{counter-reset:d;list-style:none;display:flex;flex-direction:column;gap:10px}
+.decision li{counter-increment:d;display:flex;gap:14px;align-items:center;border:1px solid var(--ligne);border-radius:10px;padding:12px 16px;font-size:13.5px}
+.decision li::before{content:counter(d);flex:none;width:30px;height:30px;border-radius:50%;background:var(--bleu);color:#fff;display:grid;place-items:center;font-weight:800}
+</style>
+</head>
+<body>
+
+<!-- 1 · Couverture -->
+<section class="page couv">
+  <div class="haut"><img src="visuels/logo-cfga.png" alt="Logo CFGA De La Jonquière"><div><b>CFGA De La Jonquière</b>Secteur PPS · Participation sociale</div></div>
+  <div class="corps">
+    <div class="eti">PRÉSENTATION DE PROJET</div>
+    <h1>Projet<br>PPS Z101</h1>
+    <div class="sous">Accueillir 9 élèves de plus grâce à une formule en deux sous-groupes</div>
+    <div class="date">Octobre 2026 · Préparé par la conseillère pédagogique, secteur PPS</div>
+  </div>
+  <div class="chiffres">
+    <div><b>15</b><span>élèves inscrits au Z101</span></div>
+    <div><b>9</b><span>élèves en attente d'une place</span></div>
+    <div><b>24</b><span>élèves accueillis avec la formule</span></div>
+    <div><b>2</b><span>matinées par semaine</span></div>
+  </div>
+</section>
+
+<!-- 2 · En bref et sommaire -->
+<section class="page">
+  <h1>En bref</h1>
+  <table class="bref">
+    <tr><th>Élément</th><th>Résumé</th></tr>
+    <tr><td>Situation</td><td>Groupe Z101 complet (15 élèves). <strong>9 élèves attendent une place en PPS.</strong> Ils sont déjà inscrits en matières au centre.</td></tr>
+    <tr><td>Proposition</td><td>Deux sous-groupes qui alternent entre le <strong>Z101</strong> et des <strong>ateliers exploratoires</strong>. Le même temps pour tous dans la semaine.</td></tr>
+    <tr><td>Quand</td><td>Mardi et jeudi matin, de 8 h 25 à 11 h 45.</td></tr>
+    <tr><td>Qui</td><td>Mme Lisa, enseignante du Z101, et Janie-Lee, TES, qui a accepté son rôle.</td></tr>
+    <tr><td>Suivi</td><td>Projet pilote en trois étapes, avec un bilan aux directions à la fin de chaque étape.</td></tr>
+    <tr><td>Décision</td><td><strong>Ouvrir 9 places supplémentaires au Z101.</strong></td></tr>
+  </table>
+  <h1 style="margin-top:22px">Table des matières</h1>
+  <ol class="toc">
+    <li><b>1</b><span>Contexte et enjeux</span><i>3</i></li>
+    <li><b>2</b><span>La formule en bref</span><i>3</i></li>
+    <li><b>3</b><span>Le menu du matin</span><i>4</i></li>
+    <li><b>4</b><span>Qui fait quoi</span><i>4</i></li>
+    <li><b>5</b><span>Le rôle des leaders</span><i>5</i></li>
+    <li><b>6</b><span>Les ateliers exploratoires</span><i>5</i></li>
+    <li><b>7</b><span>Les trois étapes</span><i>6</i></li>
+    <li><b>8</b><span>Pourquoi ça soutient l'engagement</span><i>6</i></li>
+    <li><b>9</b><span>Préoccupations et réponses</span><i>7</i></li>
+    <li><b>10</b><span>Suivi</span><i>7</i></li>
+    <li><b>11</b><span>Décision demandée</span><i>8</i></li>
+  </ol>
+  <div class="pied"><span><img src="visuels/logo-cfga.png" alt="">Projet PPS Z101</span><span>2</span></div>
+</section>
+
+<!-- Page 3 -->
+<section class="page">
+  <h1><span class="n">1</span>Contexte et enjeux</h1>
+  <ul class="puces">
+    <li>Le groupe Z101 est <strong>complet avec 15 élèves</strong>.</li>
+    <li><strong>9 élèves attendent une place en PPS.</strong> Ils sont déjà en matières au centre. Plusieurs ont été référés par des enseignantes de la FBC.</li>
+    <li>Les élèves du Z101 <strong>poursuivent en années 2 et 3</strong> en PPS.</li>
+    <li>Les directions demandent <strong>aucune période vide</strong> et <strong>aucune ressource supplémentaire</strong>. La formule respecte ces deux conditions.</li>
+  </ul>
+  <h2>Pourquoi agir maintenant</h2>
+  <div class="cartes" style="grid-template-columns:repeat(3,1fr)">
+    <div class="carte"><h3>Persévérance</h3><p>Ces élèves sont motivés maintenant. Attendre retarde leur parcours en PPS.</p></div>
+    <div class="carte"><h3>Continuité</h3><p>Chaque élève accueilli peut faire trois ans en PPS au centre.</p></div>
+    <div class="carte"><h3>Innovation</h3><p>La formule pourrait servir ailleurs : alpha-pré, francisation, FBC.</p></div>
+  </div>
+  <h1 style="margin-top:16px"><span class="n">2</span>La formule en bref</h1>
+  <table>
+    <tr><th></th><th>Comment ça fonctionne</th></tr>
+    <tr><td>Deux sous-groupes</td><td><strong>PPS pur</strong> (plus de soutien) et <strong>concomitance</strong> (élèves qui suivent aussi d'autres matières).</td></tr>
+    <tr><td>En alternance</td><td>Un sous-groupe est en <strong>Z101 avec Mme Lisa</strong> pendant que l'autre est en <strong>atelier exploratoire</strong>.</td></tr>
+    <tr><td>Même temps pour tous</td><td>L'horaire du mardi et celui du jeudi sont inversés.</td></tr>
+    <tr><td>Soutien de la TES</td><td>Les élèves en PPS pur sont <strong>toujours avec Janie-Lee</strong> quand ils sont en atelier.</td></tr>
+    <tr><td>Outils d'autonomie</td><td>Fiches de tâches, équipes de leaders, registre d'autonomie, règle « 3 avant l'enseignante ». Des boîtes de découverte TEACCH pourraient s'ajouter si le projet souhaité avec l'orthopédagogue se réalise.</td></tr>
+  </table>
+  <div class="pied"><span><img src="visuels/logo-cfga.png" alt="">Projet PPS Z101</span><span>3</span></div>
+</section>
+
+<!-- Page 4 -->
+<section class="page">
+  <h1><span class="n">3</span>Le menu du matin</h1>
+  <p class="lead">Trois périodes d'une heure (P1, P2, P3) et deux pauses de 10 minutes. L'horaire du mardi et celui du jeudi sont inversés : chaque sous-groupe reçoit le même temps de Z101 et d'ateliers dans la semaine.</p>
+  <img class="visuel" src="visuels/menu.png" alt="Horaire du mardi et du jeudi matin">
+  <div class="encadre"><b>La TES n'est pas une surveillante.</b> Ses heures sont placées pendant les transitions et les ateliers, aux moments où les élèves en PPS pur en ont le plus besoin.</div>
+  <h1 style="margin-top:16px"><span class="n">4</span>Qui fait quoi</h1>
+  <table>
+    <tr><th>Personne</th><th>Rôle</th></tr>
+    <tr><td>Mme Lisa<br><span style="font-weight:500;color:var(--gris)">Enseignante</span></td><td>Enseigne le Z101. <strong>Circule</strong> vers les ateliers pour offrir un soutien ponctuel et rediriger les élèves.</td></tr>
+    <tr><td>Janie-Lee<br><span style="font-weight:500;color:var(--gris)">TES</span></td><td>Accompagne les élèves en PPS pur en atelier et pendant les transitions.<br><strong>Mardi :</strong> P3, de 10 h 45 à 11 h 45. <strong>Jeudi :</strong> de 9 h 00 à 10 h 35.</td></tr>
+    <tr><td>Élèves leaders</td><td>Lisent la fiche, distribuent les rôles, gèrent le temps, font ranger.</td></tr>
+    <tr><td>Directions</td><td>Autorisent le projet et confirment l'accès au local d'arts plastiques.</td></tr>
+  </table>
+  <div class="pied"><span><img src="visuels/logo-cfga.png" alt="">Projet PPS Z101</span><span>4</span></div>
+</section>
+
+<!-- Page 5 -->
+<section class="page">
+  <h1><span class="n">5</span>Le rôle des leaders</h1>
+  <p class="lead">Le leader aide son équipe à bien fonctionner. <strong>La gestion de classe demeure la responsabilité des adultes.</strong></p>
+  <div class="cartes" style="grid-template-columns:repeat(3,1fr)">
+    <div class="carte"><h3>Au début</h3><p>Rassemble l'équipe, lit la fiche à voix haute, vérifie le matériel.</p></div>
+    <div class="carte"><h3>Pendant</h3><p>Donne la parole à chacun, gère le temps, aide à régler les blocages.</p></div>
+    <div class="carte"><h3>À la fin</h3><p>Vérifie les critères de réussite, fait ranger, valide au registre.</p></div>
+  </div>
+  <h2>Ce que ce rôle apporte</h2>
+  <div class="cartes" style="grid-template-columns:repeat(3,1fr)">
+    <div class="carte lime"><h3>Confiance</h3><p>Estime de soi et autonomie devant des tâches nouvelles.</p></div>
+    <div class="carte lime"><h3>Habiletés sociales</h3><p>Écouter, encourager, régler un désaccord.</p></div>
+    <div class="carte lime"><h3>Compétences pour l'emploi</h3><p>Organiser, gérer son temps, prendre des responsabilités.</p></div>
+  </div>
+  <p class="note">Au départ, l'enseignante forme des équipes hétérogènes et choisit le leader de chaque équipe. Ensuite, chaque élève est leader au moins une fois par étape. Un leader plus réservé peut avoir un co-leader.</p>
+  <h1 style="margin-top:16px"><span class="n">6</span>Les ateliers exploratoires</h1>
+  <p class="lead">Les élèves ont été <strong>sondés</strong> sur la formule et sur ce qu'ils veulent apprendre. Les ateliers combinent ce qui existe déjà en PPS et leurs propres idées.</p>
+  <img class="visuel" src="visuels/ateliers.png" alt="Ateliers exploratoires">
+  <div class="pied"><span><img src="visuels/logo-cfga.png" alt="">Projet PPS Z101</span><span>5</span></div>
+</section>
+
+<!-- Page 6 -->
+<section class="page">
+  <h1><span class="n">7</span>Les trois étapes</h1>
+  <p class="lead">On passe à l'étape suivante quand on observe les signes de réussite. <strong>Un bilan est présenté aux directions à la fin de chaque étape.</strong></p>
+  <img class="visuel" src="visuels/etapes.png" alt="Les trois étapes">
+  <h1 style="margin-top:16px"><span class="n">8</span>Pourquoi ça soutient l'engagement</h1>
+  <img class="visuel" src="visuels/besoins.png" alt="Les quatre besoins de l'engagement">
+  <p class="note">Cadre de référence : affiche « L'engagement » d'Isabelle Pedneault (CC BY-NC-SA 4.0).</p>
+  <div class="pied"><span><img src="visuels/logo-cfga.png" alt="">Projet PPS Z101</span><span>6</span></div>
+</section>
+
+<!-- Page 7 -->
+<section class="page">
+  <h1><span class="n">9</span>Préoccupations et réponses</h1>
+  <table>
+    <tr><th>Préoccupation</th><th>Réponse</th></tr>
+    <tr><td>Des périodes vides</td><td>Aucune : chaque élève est en Z101 ou en atelier guidé par une fiche.</td></tr>
+    <tr><td>L'ajout de personnel</td><td>La formule repose sur l'enseignante et la TES qui accompagnent déjà le groupe.</td></tr>
+    <tr><td>Le désengagement de l'an dernier</td><td>Il s'explique par des cas très particuliers. Cette année, la cohorte est très participative et la formule est plus structurée.</td></tr>
+    <tr><td>La TES utilisée comme surveillante</td><td>Son rôle évolue : elle accompagne, puis coache, puis anime ses propres ateliers.</td></tr>
+    <tr><td>Deux locaux en même temps</td><td>Le grenier est à côté de la classe. Mme Lisa circule. Les élèves en PPS pur sont avec la TES.</td></tr>
+    <tr><td>Garder les élèves centrés sur leur tâche</td><td>Fiches courtes et visuelles, un rôle pour chacun, critères de réussite, registre.</td></tr>
+    <tr><td>Des résultats moins bons que prévu</td><td>Le bilan de l'étape 1 permet d'ajuster la formule rapidement.</td></tr>
+  </table>
+  <h1 style="margin-top:16px"><span class="n">10</span>Suivi</h1>
+  <table>
+    <tr><th>Indicateur</th><th>Cible</th><th>Outil</th></tr>
+    <tr><td>Rétention</td><td>100 % des 24 élèves</td><td>Présences</td></tr>
+    <tr><td>Présence</td><td>Stable ou en hausse</td><td>Présences</td></tr>
+    <tr><td>Tâches faites en autonomie</td><td>En hausse</td><td>Registre d'autonomie</td></tr>
+    <tr><td>Interventions de la TES</td><td>En baisse</td><td>Grille d'observation</td></tr>
+    <tr><td>Poursuite en PPS</td><td>Inscription en année 2</td><td>Inscriptions</td></tr>
+  </table>
+  <p class="note">Indicateurs suivis chaque semaine et présentés au bilan de fin d'étape.</p>
+  <div class="pied"><span><img src="visuels/logo-cfga.png" alt="">Projet PPS Z101</span><span>7</span></div>
+</section>
+
+<!-- Page 8 -->
+<section class="page">
+  <h1><span class="n">11</span>Décision demandée</h1>
+  <ol class="decision">
+    <li><span><strong>Ouvrir 9 places supplémentaires au Z101.</strong></span></li>
+    <li><span><strong>Autoriser la formule en deux sous-groupes</strong> à titre de projet pilote.</span></li>
+    <li><span><strong>Confirmer l'accès au local d'arts plastiques</strong> le mardi et le jeudi matin.</span></li>
+  </ol>
+  <h2 style="margin-top:10px">Si le projet est accepté</h2>
+  <table>
+    <tr><th>Quand</th><th>Quoi</th><th>Qui</th></tr>
+    <tr><td>Semaine 0</td><td>Inscription des 9 élèves et accès au local.</td><td>Directions</td></tr>
+    <tr><td>Semaine 0</td><td>Formation des sous-groupes, premières fiches et registre.</td><td>Mme Lisa, Janie-Lee</td></tr>
+    <tr><td>Semaine 1</td><td>Début de l'étape 1.</td><td>Mme Lisa, Janie-Lee</td></tr>
+    <tr><td>Fin de chaque étape</td><td>Bilan aux directions.</td><td>Mme Lisa, Janie-Lee</td></tr>
+  </table>
+  <div class="citation">« Quand une fleur ne fleurit pas, on corrige l'environnement dans lequel elle pousse, pas la fleur. »<small>Paulo Amaro</small></div>
+  <div class="pied"><span><img src="visuels/logo-cfga.png" alt="">Projet PPS Z101</span><span>8</span></div>
+</section>
+
+</body>
+</html>
