@@ -222,7 +222,7 @@ const doc = new Document({
       puce('**Équipes de leaders :** à chaque atelier, un leader lit la fiche, distribue les rôles et gère le temps. Le rôle tourne pour que chacun l\'exerce (section 5).'),
       puce('**Registre d\'autonomie :** chaque élève y inscrit sa tâche en début de matinée, le leader valide les étapes et l\'enseignante fait la validation finale.'),
       puce('**Règle « 3 avant l\'enseignante » :** relire la fiche, demander à un coéquipier, essayer une autre solution.'),
-      puce('**Boîtes de découverte TEACCH :** des tâches visuelles et structurées pour travailler l\'autonomie. L\'orthopédagogue prévoit déjà d\'en concevoir pour les élèves du centre, notamment en alpha-pré. Ces boîtes pourront aussi servir aux élèves du Z101.'),
+      puce('**Boîtes de découverte TEACCH :** des tâches visuelles et structurées pour travailler l\'autonomie. Un projet de boîtes de découverte avec l\'orthopédagogue est souhaité pour les élèves du centre, notamment en alpha-pré. Si ce projet se réalise, ces boîtes pourraient aussi servir aux élèves du Z101.'),
       puce('**Tableau de programmation :** chaque moment de la matinée est planifié et affiché.'),
       h2('Les ateliers exploratoires'),
       para('Les ateliers s\'appuient sur les suggestions des élèves. En voici des exemples :'),
@@ -310,7 +310,7 @@ const doc = new Document({
         ['**Personnel**', 'Mme Lisa, enseignante du Z101, et Janie-Lee, TES. La formule ne prévoit pas de personnel supplémentaire.'],
         ['**Horaire de la TES**', '**Mardi matin :** P3, de 10 h 45 à 11 h 45.\n**Jeudi matin :** de la fin du rassemblement à la fin de la P2, de 9 h 00 à 10 h 35.'],
         ['**Locaux**', 'Classe de Mme Lisa pour le Z101. Pour les ateliers exploratoires : le grenier de Maria, juste à côté de la classe, et le local d\'arts plastiques, un grand local actuellement libre.'],
-        ['**Matériel**', 'Fiches de tâches plastifiées et registre d\'autonomie. Les boîtes de découverte TEACCH que l\'orthopédagogue prévoit déjà de concevoir pour les élèves du centre pourront aussi être utilisées.'],
+        ['**Matériel**', 'Fiches de tâches plastifiées et registre d\'autonomie. Si le projet de boîtes de découverte TEACCH souhaité avec l\'orthopédagogue se réalise, ces boîtes pourraient aussi être utilisées.'],
       ]),
 
       // 9
