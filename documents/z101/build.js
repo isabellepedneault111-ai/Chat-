@@ -204,16 +204,12 @@ const doc = new Document({
       tableau([3120, 3120, 3120], ['Confiance', 'Habiletés sociales', 'Compétences pour l\'emploi'], [
         ['Estime de soi et autonomie devant des tâches nouvelles.', 'Écouter, encourager, régler un désaccord.', 'Organiser, gérer son temps, prendre des responsabilités.'],
       ]),
-      note('Chaque élève est leader au moins une fois par étape. Un leader plus réservé peut avoir un co-leader.'),
+      note('Au départ, l\'enseignante forme des équipes hétérogènes et choisit le leader de chaque équipe. Ensuite, chaque élève est leader au moins une fois par étape. Un leader plus réservé peut avoir un co-leader.'),
 
       // 6
       h1('6. Les ateliers exploratoires'),
-      para('Les élèves ont été **sondés** sur la formule et sur ce qu\'ils veulent apprendre. Quelques exemples, **liste non exhaustive** :'),
-      tableau([3120, 3120, 3120], ['Pré-employabilité', 'Développement durable', 'Entrepreneuriat'], [
-        ['Au grenier de Maria.', 'Une suggestion des élèves.', 'Des projets que les élèves veulent réaliser et qui débuteront bientôt en PPS.'],
-      ]),
-      para('**Exemple de projet :** un projet d\'entrepreneuriat en développement durable, qui se poursuit d\'un atelier à l\'autre.'),
-      para('**Locaux :** le grenier de Maria, à côté de la classe de Mme Lisa, et le local d\'arts plastiques, un grand local libre.'),
+      para('Les élèves ont été **sondés** sur la formule et sur ce qu\'ils veulent apprendre. Les ateliers combinent ce qui existe déjà en PPS et leurs propres idées.'),
+      visuel('ateliers'),
 
       // 7
       h1('7. Les trois étapes'),
