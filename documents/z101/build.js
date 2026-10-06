@@ -8,11 +8,13 @@ const {
   PageNumber, TableLayoutType, VerticalAlign, TableOfContents, PageBreak, ImageRun,
 } = require('docx');
 
-// Palette sobre : marine institutionnel, vert foncé en accent, gris neutres
+// Palette du logo CFGA De La Jonquière : bleu et vert lime, gris neutres
 const C = {
-  marine: '1D3557', marine2: '2C4A75', vert: '2F7A2A', encre: '1A1D24', gris: '596273',
-  ligne: 'C9CFD8', fond: 'F2F4F7', blanc: 'FFFFFF', pale: 'D6DEEA', ciel: '8FB5E8',
+  marine: '004983', marine2: '1F64A6', vert: '5E8A1E', lime: '7AA32B', encre: '1A1D24', gris: '596273',
+  ligne: 'C9CFD8', fond: 'F2F4F7', blanc: 'FFFFFF', pale: 'D6E4F2', ciel: 'B9D37A',
 };
+const LOGO = fs.readFileSync(path.join(__dirname, 'visuels', 'logo-cfga.png'));
+const logo = (px) => new ImageRun({ type: 'png', data: LOGO, transformation: { width: px, height: px } });
 const FONT = 'Calibri';
 const W = 9360; // largeur utile : Letter, marges de 1 po
 
@@ -27,7 +29,7 @@ const pc = (s, o = {}) => p(rich(s, o), { spacing: serre });
 const puce = (s) => new Paragraph({ children: rich(s), numbering: { reference: 'puces', level: 0 }, spacing: { after: 80, line: 276 } });
 const num = (s) => new Paragraph({ children: rich(s), numbering: { reference: 'nums', level: 0 }, spacing: { after: 80, line: 276 } });
 const h1 = (s) => new Paragraph({ heading: HeadingLevel.HEADING_1, children: [t(s)], spacing: { before: 400, after: 160 }, keepNext: true,
-  border: { bottom: { style: BorderStyle.SINGLE, size: 8, color: C.marine, space: 4 } } });
+  border: { bottom: { style: BorderStyle.SINGLE, size: 12, color: C.lime, space: 4 } } });
 const h2 = (s) => new Paragraph({ heading: HeadingLevel.HEADING_2, children: [t(s)], spacing: { before: 240, after: 100 }, keepNext: true });
 const note = (s) => p([t(s, { size: 18, italics: true, color: C.gris })], { spacing: { before: 60, after: 120 } });
 const espace = (n = 160) => new Paragraph({ children: [], spacing: { after: n } });
@@ -74,7 +76,7 @@ const q = W / 4;
 const chiffre = (n, l) => cell([
   p([t(n, { bold: true, size: 64, color: C.blanc })], { spacing: { after: 0, line: 240 } }),
   p([t(l, { size: 19, color: C.pale })], { spacing: { after: 0, line: 252 } }),
-], q, { fill: C.marine2, borders: { ...noBorders, top: { style: BorderStyle.SINGLE, size: 12, color: C.ciel } } });
+], q, { fill: C.marine2, borders: { ...noBorders, top: { style: BorderStyle.SINGLE, size: 24, color: C.lime } } });
 const bandeau = new Table({
   width: { size: W, type: WidthType.DXA }, columnWidths: [q, q, q, q], layout: TableLayoutType.FIXED,
   borders: { ...noBorders, insideHorizontal: NONE, insideVertical: NONE },
@@ -127,11 +129,13 @@ const doc = new Document({
   sections: [{
     properties: { page: { size: { width: 12240, height: 15840 }, margin: { top: 1200, bottom: 1200, left: 1440, right: 1440 } } },
     footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [
+      logo(28), t('   '),
       t('Projet PPS Z101 · Table des directions · page ', { size: 16, color: C.gris }),
       new TextRun({ children: [PageNumber.CURRENT], font: FONT, size: 16, color: C.gris }),
     ] })] }) },
     children: [
       // ── Page 1 : couverture et résumé
+      new Paragraph({ alignment: AlignmentType.LEFT, spacing: { after: 160 }, children: [logo(120)] }),
       bandeau,
       espace(280),
       p([t('En bref', { bold: true, size: 30, color: C.marine })], { spacing: { after: 120 } }),
