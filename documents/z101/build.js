@@ -89,7 +89,6 @@ const bandeau = new Table({
         p([t('Projet PPS Z101', { size: 64, bold: true, color: C.blanc })], { spacing: { after: 80, line: 240 } }),
         p([t('Accueillir 9 élèves de plus grâce à une formule en deux sous-groupes', { size: 30, color: C.blanc })], { spacing: { after: 280 } }),
         p([t('Octobre 2026', { size: 20, color: C.pale })], { spacing: { after: 0 } }),
-        p([t('Préparé par la conseillère pédagogique, secteur PPS, CFGA', { size: 20, color: C.pale })], { spacing: { after: 0 } }),
       ],
     })] }),
     new TableRow({ children: [
@@ -143,7 +142,7 @@ const doc = new Document({
         ['**Situation**', 'Groupe Z101 complet (15 élèves). **9 élèves attendent une place en PPS.** Ils sont déjà inscrits en matières au centre.'],
         ['**Proposition**', 'Deux sous-groupes qui alternent entre le **Z101** et des **ateliers exploratoires**. Le même temps pour tous dans la semaine.'],
         ['**Quand**', 'Mardi et jeudi matin, de 8 h 25 à 11 h 45.'],
-        ['**Qui**', 'Mme Lisa, enseignante du Z101, et Janie-Lee, TES, qui a accepté son rôle.'],
+        ['**Qui**', 'Mme Lisa, enseignante du Z101, et Janie-Lee, TES, qui a accepté son rôle dans le projet.'],
         ['**Suivi**', 'Projet pilote en trois étapes, avec un bilan aux directions à la fin de chaque étape.'],
         ['**Décision**', '**Ouvrir 9 places supplémentaires au Z101.**'],
       ]),
@@ -162,9 +161,9 @@ const doc = new Document({
       puce('Les directions demandent **aucune période vide** et **aucune ressource supplémentaire**. La formule respecte ces deux conditions.'),
       h2('Pourquoi agir maintenant'),
       tableau([2300, 7060], ['Enjeu', 'En une phrase'], [
-        ['**Persévérance**', 'Ces élèves sont motivés maintenant. Attendre retarde leur parcours en PPS.'],
-        ['**Continuité**', 'Chaque élève accueilli peut faire trois ans en PPS au centre.'],
-        ['**Innovation**', 'La formule pourrait servir ailleurs : alpha-pré, francisation, FBC.'],
+        ['**Persévérance**', 'Ces élèves sont motivés maintenant. Attendre retarde leur parcours en PPS et peut avoir un impact sur leur engagement dans leur parcours scolaire.'],
+        ['**Continuité**', 'Chaque élève accueilli pourra poursuivre en PPS dans les prochaines années.'],
+        ['**Innovation**', 'La formule pourrait servir ailleurs : alpha-pré, francisation, FBC, etc.'],
       ]),
 
       // 2
@@ -172,8 +171,8 @@ const doc = new Document({
       tableau([2300, 7060], ['', 'Comment ça fonctionne'], [
         ['**Deux sous-groupes**', '**PPS pur** (plus de soutien) et **concomitance** (élèves qui suivent aussi d\'autres matières).'],
         ['**En alternance**', 'Un sous-groupe est en **Z101 avec Mme Lisa** pendant que l\'autre est en **atelier exploratoire**.'],
-        ['**Même temps pour tous**', 'L\'horaire du mardi et celui du jeudi sont inversés.'],
-        ['**Soutien de la TES**', 'Les élèves en PPS pur sont **toujours avec Janie-Lee** quand ils sont en atelier.'],
+        ['**Même temps pour tous**', 'L\'horaire du mardi et celui du jeudi sont inversés (voir visuel).'],
+        ['**Soutien de la TES**', 'Les élèves en PPS pur pourront bénéficier de la **présence de Janie-Lee** quand ils sont en ateliers.'],
         ['**Outils d\'autonomie**', 'Fiches de tâches, équipes de leaders, registre d\'autonomie, règle « 3 avant l\'enseignante ». Des boîtes de découverte TEACCH pourraient s\'ajouter si le projet souhaité avec l\'orthopédagogue se réalise.'],
       ]),
 
@@ -185,8 +184,8 @@ const doc = new Document({
       // 4
       h1('4. Qui fait quoi'),
       tableau([2300, 7060], ['Personne', 'Rôle'], [
-        ['**Mme Lisa**\nEnseignante', 'Enseigne le Z101. **Circule** vers les ateliers pour offrir un soutien ponctuel et rediriger les élèves.'],
-        ['**Janie-Lee**\nTES', 'Accompagne les élèves en PPS pur en atelier et pendant les transitions.\n**Mardi :** P3, de 10 h 45 à 11 h 45.\n**Jeudi :** de 9 h 00 à 10 h 35.'],
+        ['**Mme Lisa**\nEnseignante', 'Enseigne le Z101. **Circule** vers les ateliers pour offrir un soutien ponctuel et rediriger les élèves au besoin.'],
+        ['**Janie-Lee**\nTES', 'Accompagne les élèves en PPS pur en ateliers et pendant les transitions.\n**Mardi :** P3, de 10 h 45 à 11 h 45.\n**Jeudi :** de 9 h 00 à 10 h 35.'],
         ['**Élèves leaders**', 'Lisent la fiche, distribuent les rôles, gèrent le temps, font ranger.'],
         ['**Directions**', 'Autorisent le projet et confirment l\'accès au local d\'arts plastiques.'],
       ]),
@@ -210,6 +209,14 @@ const doc = new Document({
       h1('6. Les ateliers exploratoires'),
       para('Les élèves ont été **sondés** sur la formule et sur ce qu\'ils veulent apprendre. Les ateliers combinent ce qui existe déjà en PPS et leurs propres idées.'),
       visuel('ateliers'),
+      encadre('Un démarrage graduel', [
+        'Les idées des élèves sont des **propositions** : elles ne sont pas encore confirmées. Si le projet est accepté, nous débuterons avec **un ou deux ateliers exploratoires à la fois**, pour ne pas nous éparpiller.',
+      ]),
+      h2('Pour aller plus loin'),
+      para('Ces pistes ne sont pas encore en place. Elles montrent ce que la formule pourrait permettre :'),
+      puce('**Un rôle plus préventif pour la TES.** Quand l\'autonomie et les routines seront bien acquises, les ateliers exploratoires, signifiants et concrets pour les élèves, seront une occasion en or pour faire de la prévention et offrir des ateliers ciblés.'),
+      puce('**Des places pour d\'autres élèves du centre.** Par exemple, ouvrir quelques places à des élèves d\'alpha-pré dans un atelier d\'écriture : lecture d\'un album par la conseillère pédagogique, suivie d\'une question de réaction.'),
+      puce('**La vie étudiante.** Des ateliers en collaboration avec la technicienne en loisirs.'),
 
       // 7
       h1('7. Les trois étapes'),
@@ -228,7 +235,7 @@ const doc = new Document({
         ['**L\'ajout de personnel**', 'La formule repose sur l\'enseignante et la TES qui accompagnent déjà le groupe.'],
         ['**Le désengagement de l\'an dernier**', 'Il s\'explique par des cas très particuliers. Cette année, la cohorte est très participative et la formule est plus structurée.'],
         ['**La TES utilisée comme surveillante**', 'Son rôle évolue : elle accompagne, puis coache, puis anime ses propres ateliers.'],
-        ['**Deux locaux en même temps**', 'Le grenier est à côté de la classe. Mme Lisa circule. Les élèves en PPS pur sont avec la TES.'],
+        ['**Deux locaux en même temps**', 'Le grenier est à côté de la classe. Mme Lisa circule. Les élèves en PPS pur bénéficient de la présence de la TES.'],
         ['**Garder les élèves centrés sur leur tâche**', 'Fiches courtes et visuelles, un rôle pour chacun, critères de réussite, registre.'],
         ['**Des résultats moins bons que prévu**', 'Le bilan de l\'étape 1 permet d\'ajuster la formule rapidement.'],
       ]),
@@ -251,10 +258,10 @@ const doc = new Document({
       num('**Confirmer l\'accès au local d\'arts plastiques** le mardi et le jeudi matin.'),
       h2('Si le projet est accepté'),
       tableau([2300, 4660, 2400], ['Quand', 'Quoi', 'Qui'], [
-        ['**Semaine 0**', 'Inscription des 9 élèves et accès au local.', 'Directions'],
+        ['**Semaine 0**', 'Inscription des 9 élèves.', 'Conseillère pédagogique'],
         ['**Semaine 0**', 'Formation des sous-groupes, premières fiches et registre.', 'Mme Lisa, Janie-Lee'],
         ['**Semaine 1**', 'Début de l\'étape 1.', 'Mme Lisa, Janie-Lee'],
-        ['**Fin de chaque étape**', 'Bilan aux directions.', 'Mme Lisa, Janie-Lee'],
+        ['**Fin de chaque étape**', 'Bilan aux directions.', 'Mme Lisa, Janie-Lee, conseillère pédagogique'],
       ]),
       espace(240),
       new Table({
