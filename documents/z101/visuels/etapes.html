@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Trois étapes Z101</title>
+<link href="fonts/fonts.css" rel="stylesheet">
+<style>
+:root{ --marine:#1D3557; --marine2:#2C4A75; --marine3:#3E6496; --vert:#2F7A2A; --tes:#C8553D; --encre:#1A1D24; --gris:#596273; --ligne:#D5DAE1; --fond:#F2F4F7; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#fff;font-family:'Montserrat',Arial,sans-serif;color:var(--encre)}
+#v{width:1600px;padding:36px 44px 40px;background:#fff}
+.grille{display:grid;grid-template-columns:190px repeat(3,1fr);column-gap:14px}
+.chev{height:120px;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:0 40px 0 52px;
+  clip-path:polygon(0 0,calc(100% - 34px) 0,100% 50%,calc(100% - 34px) 100%,0 100%,34px 50%)}
+.chev:first-of-type{clip-path:polygon(0 0,calc(100% - 34px) 0,100% 50%,calc(100% - 34px) 100%,0 100%);padding-left:28px}
+.chev b{font-size:16px;letter-spacing:.2em;text-transform:uppercase;opacity:.8}
+.chev span{font-size:32px;font-weight:800}
+.lab{display:flex;align-items:center;gap:12px;font-size:19px;font-weight:800;color:var(--marine);padding:22px 0;border-top:2px solid var(--ligne)}
+.lab i{width:14px;height:14px;border-radius:50%;flex:none}
+.c{font-size:20px;line-height:1.35;padding:22px 18px;border-top:2px solid var(--ligne);font-weight:500}
+.c strong{font-weight:800}
+.passe{background:var(--fond);border-radius:10px;border-top:none;margin-top:10px}
+.lab.passe{background:none}
+</style>
+</head>
+<body>
+<div id="v">
+  <div class="grille">
+    <div></div>
+    <div class="chev" style="background:var(--marine3)"><b>Étape 1</b><span>Ancrage</span></div>
+    <div class="chev" style="background:var(--marine2)"><b>Étape 2</b><span>Consolidation</span></div>
+    <div class="chev" style="background:var(--marine)"><b>Étape 3</b><span>Autonomie</span></div>
+
+    <div class="lab"><i style="background:var(--marine)"></i>Mme Lisa</div>
+    <div class="c">Enseigne le Z101.<br>Présente les fiches, le registre et le rôle de leader.</div>
+    <div class="c">Enseigne le Z101.<br>Ajuste les fiches selon ce qu'elle observe.</div>
+    <div class="c">Enseigne le Z101 et <strong>anime des ateliers en sous-groupes de besoins</strong>.</div>
+
+    <div class="lab"><i style="background:var(--tes)"></i>Janie-Lee (TES)</div>
+    <div class="c"><strong>Accompagne</strong> les élèves en PPS pur en atelier. Modélise le rôle de leader.</div>
+    <div class="c"><strong>Coache en retrait.</strong> Conseille le leader, soutient l'autorégulation.</div>
+    <div class="c"><strong>Anime des ateliers ciblés</strong> en petits groupes.</div>
+
+    <div class="lab"><i style="background:var(--vert)"></i>Élèves</div>
+    <div class="c">Apprennent les routines. Suivent la fiche avec de l'aide.</div>
+    <div class="c">Règlent leurs blocages entre eux. Chacun a été leader.</div>
+    <div class="c">S'auto-évaluent et se fixent des défis.</div>
+
+    <div class="lab passe" style="border-top:none">On avance quand…</div>
+    <div class="c passe">Les équipes suivent une fiche du début à la fin avec peu d'aide.</div>
+    <div class="c passe">Les interventions de la TES diminuent.</div>
+    <div class="c passe">Bilan final et recommandation.</div>
+  </div>
+</div>
+</body>
+</html>

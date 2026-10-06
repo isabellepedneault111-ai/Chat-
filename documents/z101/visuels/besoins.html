@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Quatre besoins de l'engagement</title>
+<link href="fonts/fonts.css" rel="stylesheet">
+<style>
+:root{ --marine:#1D3557; --vert:#2F7A2A; --encre:#1A1D24; --gris:#596273; --ligne:#D5DAE1; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#fff;font-family:'Montserrat',Arial,sans-serif;color:var(--encre)}
+#v{width:1600px;padding:36px 44px 40px;background:#fff}
+.centre{text-align:center;margin-bottom:30px}
+.centre b{display:inline-block;background:var(--marine);color:#fff;font-size:26px;font-weight:800;padding:16px 36px;border-radius:999px}
+.centre p{font-size:19px;color:var(--gris);margin-top:12px;font-weight:500}
+.g{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+.k{border:2px solid var(--ligne);border-top:8px solid var(--marine);border-radius:12px;padding:26px 24px;display:flex;flex-direction:column;gap:14px}
+.ico{width:64px;height:64px;border-radius:50%;background:var(--marine);display:grid;place-items:center}
+.ico svg{width:34px;height:34px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+h3{font-size:25px;font-weight:800;color:var(--marine);line-height:1.15}
+.q{font-size:17px;font-style:italic;color:var(--gris);line-height:1.35}
+ul{list-style:none;display:flex;flex-direction:column;gap:10px;font-size:19px;line-height:1.35;font-weight:500}
+li{padding-left:24px;position:relative}
+li::before{content:"";position:absolute;left:0;top:9px;width:11px;height:11px;border-radius:3px;background:var(--vert)}
+</style>
+</head>
+<body>
+<div id="v">
+  <div class="centre"><b>L'engagement : la décision de participer activement</b><p>Il se nourrit de quatre besoins. Voici comment la formule nourrit chacun d'eux.</p></div>
+  <div class="g">
+    <div class="k">
+      <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 14l5 5L20 7"/></svg></div>
+      <h3>Sentiment de compétence</h3>
+      <div class="q">« J'apprends et je deviens meilleur. »</div>
+      <ul><li>Fiches courtes, à sa mesure</li><li>Critères de réussite connus d'avance</li><li>Progrès visibles au registre</li></ul>
+    </div>
+    <div class="k">
+      <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></div>
+      <h3>Autonomie</h3>
+      <div class="q">« Je fais des choix. »</div>
+      <ul><li>Élèves consultés sur la formule</li><li>Choix de sa tâche</li><li>Prise de parole comme leader</li></ul>
+    </div>
+    <div class="k">
+      <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="4"/></svg></div>
+      <h3>Sens</h3>
+      <div class="q">« Je comprends pourquoi c'est important pour moi. »</div>
+      <ul><li>Ateliers proposés par les élèves</li><li>Liens avec l'emploi et la vie</li><li>Projets concrets</li></ul>
+    </div>
+    <div class="k">
+      <div class="ico"><svg viewBox="0 0 24 24"><circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2.5 20c.8-3.3 3-5 5.5-5s4.7 1.7 5.5 5M10.5 20c.8-3.3 3-5 5.5-5s4.7 1.7 5.5 5"/></svg></div>
+      <h3>Sentiment d'appartenance</h3>
+      <div class="q">« Je compte pour quelqu'un ici. »</div>
+      <ul><li>Un rôle pour chacun dans l'équipe</li><li>Entraide entre pairs</li><li>Temps de qualité avec la TES</li></ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>

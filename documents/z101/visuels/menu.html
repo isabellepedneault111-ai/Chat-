@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Menu du matin Z101</title>
+<link href="fonts/fonts.css" rel="stylesheet">
+<style>
+:root{
+  --marine:#1D3557; --vert:#2F7A2A; --tes:#C8553D; --encre:#1A1D24; --gris:#596273;
+  --ligne:#D5DAE1; --fond:#F2F4F7; --blanc:#FFFFFF;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--blanc);font-family:'Montserrat',Arial,sans-serif;color:var(--encre)}
+#v{width:1600px;padding:40px 48px 44px;background:var(--blanc)}
+.legende{display:flex;gap:34px;align-items:center;font-size:21px;font-weight:600;margin-bottom:34px}
+.legende span{display:flex;align-items:center;gap:12px}
+.sw{width:34px;height:22px;border-radius:5px;display:inline-block}
+.jour{margin-bottom:34px}
+.jour h3{font-size:30px;font-weight:800;color:var(--marine);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.plan{position:relative;height:192px}
+.lane-l{position:absolute;left:0;width:200px;font-size:19px;font-weight:700;color:var(--marine);display:flex;align-items:center;height:78px}
+.bloc{position:absolute;height:78px;border-radius:8px;color:#fff;padding:0 16px;display:flex;align-items:center;gap:14px;font-size:19px;font-weight:700;line-height:1.2;overflow:hidden}
+.bloc small{font-weight:500;font-size:16px;opacity:.9}
+.z{background:var(--marine)} .a{background:var(--vert)}
+.bloc .txt{display:flex;flex-direction:column}
+.r{background:var(--fond);color:var(--marine);border:2px solid var(--ligne);justify-content:center;text-align:center}
+.r small{color:var(--gris)}
+.p{position:absolute;top:0;border-radius:8px;background:repeating-linear-gradient(135deg,#fff 0 8px,#e6e9ef 8px 16px)}
+.tes{margin-left:auto;height:38px;border-radius:17px;background:var(--tes);color:#fff;font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;padding:0 14px;white-space:nowrap;border:2px solid #fff}
+.tes svg{width:20px;height:20px;fill:#fff}
+.axe{position:relative;height:40px;margin-left:0}
+.tick{position:absolute;top:0;white-space:nowrap;font-size:17px;font-weight:600;color:var(--gris);transform:translateX(-50%)}
+.tick::before{content:"";position:absolute;left:50%;top:-10px;width:2px;height:8px;background:var(--ligne)}
+.per{position:absolute;top:2px;height:30px;border-top:3px solid var(--marine);white-space:nowrap;font-size:17px;font-weight:800;color:var(--marine);text-align:center;padding-top:2px}
+.bilan{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:14px;padding-top:28px;border-top:2px solid var(--ligne)}
+.bilan h4{font-size:22px;font-weight:800;color:var(--marine);margin-bottom:14px}
+.barre{display:flex;height:46px;border-radius:8px;overflow:hidden;font-size:17px;font-weight:700;color:#fff}
+.barre div{display:flex;align-items:center;justify-content:center}
+.bilan p{font-size:17px;color:var(--gris);margin-top:10px;font-weight:500}
+.bilan p b{color:var(--tes)}
+</style>
+</head>
+<body>
+<div id="v">
+  <div class="legende">
+    <span><i class="sw" style="background:var(--marine)"></i>Z101 avec Mme Lisa</span>
+    <span><i class="sw" style="background:var(--vert)"></i>Atelier exploratoire</span>
+    <span><i class="sw" style="background:var(--tes);border-radius:11px"></i>Janie-Lee (TES) présente</span>
+    <span><i class="sw" style="background:var(--fond);border:2px solid var(--ligne)"></i>Tout le groupe</span>
+    <span><i class="sw" style="background:repeating-linear-gradient(135deg,#fff 0 5px,#e6e9ef 5px 10px);border:1px solid var(--ligne)"></i>Pause</span>
+  </div>
+  <div class="jour" id="mardi"><h3>Mardi matin</h3><div class="plan"></div><div class="axe"></div></div>
+  <div class="jour" id="jeudi"><h3>Jeudi matin</h3><div class="plan"></div><div class="axe"></div></div>
+  <div class="bilan">
+    <div>
+      <h4>Élèves en PPS pur · dans la semaine</h4>
+      <div class="barre"><div class="z" style="width:50%">Z101 · 2 h 25</div><div class="a" style="width:50%">Ateliers · 2 h 25</div></div>
+      <p>Toujours accompagnés par <b>la TES</b> en atelier.</p>
+    </div>
+    <div>
+      <h4>Élèves en concomitance · dans la semaine</h4>
+      <div class="barre"><div class="z" style="width:50%">Z101 · 2 h 25</div><div class="a" style="width:50%">Ateliers · 2 h 25</div></div>
+      <p>Ateliers en autonomie, avec la circulation de Mme Lisa.</p>
+    </div>
+  </div>
+</div>
+<script>
+// Échelle : minutes depuis 8 h 25 → pixels
+const X0 = 210, X1 = 1500, T0 = 8*60+25, T1 = 11*60+45;
+const x = h => X0 + (h - T0) / (T1 - T0) * (X1 - X0);
+const m = s => { const [h, mi] = s.split(':').map(Number); return h*60 + mi; };
+const ICON = '<svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg>';
+const LANES = [{ label: 'PPS pur', y: 0 }, { label: 'Concomitance', y: 100 }];
+
+function jour(id, plan) {
+  const el = document.querySelector(`#${id} .plan`), axe = document.querySelector(`#${id} .axe`);
+  const add = (cls, a, b, y, html, h = 78) => {
+    const d = document.createElement('div'); d.className = cls;
+    Object.assign(d.style, { left: x(m(a)) + 'px', width: (x(m(b)) - x(m(a)) - 4) + 'px', top: y + 'px', height: h + 'px' });
+    d.innerHTML = html; el.appendChild(d); return d;
+  };
+  LANES.forEach(l => { const d = document.createElement('div'); d.className = 'lane-l'; d.style.top = l.y + 'px'; d.textContent = l.label; el.appendChild(d); });
+  add('bloc r', '8:25', '9:00', 0, '<div class="txt">Rassemblement<small>tout le groupe</small></div>', 178);
+  add('p', '9:25', '9:35', 0, '', 178);
+  add('p', '10:35', '10:45', 0, '', 178);
+  const badge = (a, b) => '<div class="tes">' + ICON + 'TES ' + a.replace(':', ' h ') + ' à ' + b.replace(':', ' h ') + '</div>';
+  plan.forEach(([lane, a, b, type, tes]) => {
+    const y = LANES[lane].y;
+    const titre = type === 'z' ? 'Z101<small>avec Mme Lisa</small>' : 'Atelier exploratoire<small>' + (tes ? 'avec la TES' : 'en autonomie') + '</small>';
+    if (a === '9:00') {
+      // P1 (9 h 00 à 9 h 25) puis P2 (9 h 35 à 10 h 35), séparés par la pause
+      add('bloc ' + type, '9:00', '9:25', y, '');
+      add('bloc ' + type, '9:35', '10:35', y, '<div class="txt">' + titre + '</div>' + (tes ? badge('9:00', '10:35') : ''));
+    } else {
+      add('bloc ' + type, a, b, y, '<div class="txt">' + titre + '</div>' + (tes ? badge(a, b) : ''));
+    }
+  });
+  [['P1', '8:25', '9:25'], ['P2', '9:35', '10:35'], ['P3', '10:45', '11:45']].forEach(([n, a, b]) => {
+    const d = document.createElement('div'); d.className = 'per'; d.textContent = n + ' · ' + a.replace(':', ' h ') + ' à ' + b.replace(':', ' h ');
+    d.style.left = x(m(a)) + 'px'; d.style.width = (x(m(b)) - x(m(a)) - 4) + 'px'; axe.appendChild(d);
+  });
+}
+// [couloir, début, fin, type, TES présente]
+jour('mardi', [[0, '9:00', '10:35', 'z'], [1, '9:00', '10:35', 'a'], [0, '10:45', '11:45', 'a', true], [1, '10:45', '11:45', 'z']]);
+jour('jeudi', [[0, '9:00', '10:35', 'a', true], [1, '9:00', '10:35', 'z'], [0, '10:45', '11:45', 'z'], [1, '10:45', '11:45', 'a']]);
+</script>
+</body>
+</html>
