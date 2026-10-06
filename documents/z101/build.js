@@ -144,7 +144,7 @@ const doc = new Document({
         ['**Proposition**', 'Deux sous-groupes qui alternent entre le **Z101** et des **ateliers exploratoires**. Le même temps pour tous dans la semaine.'],
         ['**Quand**', 'Mardi et jeudi matin, de 8 h 25 à 11 h 45.'],
         ['**Qui**', 'Mme Lisa, enseignante du Z101, et Janie-Lee, TES, qui a accepté son rôle.'],
-        ['**Suivi**', 'Projet pilote en trois étapes, avec un bilan à la fin de chaque étape.'],
+        ['**Suivi**', 'Projet pilote en trois étapes, avec un bilan aux directions à la fin de chaque étape.'],
         ['**Décision**', '**Ouvrir 9 places supplémentaires au Z101.**'],
       ]),
       saut(),
@@ -159,7 +159,7 @@ const doc = new Document({
       puce('Le groupe Z101 est **complet avec 15 élèves**.'),
       puce('**9 élèves attendent une place en PPS.** Ils sont déjà en matières au centre. Plusieurs ont été référés par des enseignantes de la FBC.'),
       puce('Les élèves du Z101 **poursuivent en années 2 et 3** en PPS.'),
-      puce('La direction demande **aucune période vide** et **aucune ressource supplémentaire**. La formule respecte ces deux conditions.'),
+      puce('Les directions demandent **aucune période vide** et **aucune ressource supplémentaire**. La formule respecte ces deux conditions.'),
       h2('Pourquoi agir maintenant'),
       tableau([2300, 7060], ['Enjeu', 'En une phrase'], [
         ['**Persévérance**', 'Ces élèves sont motivés maintenant. Attendre retarde leur parcours en PPS.'],
@@ -188,7 +188,7 @@ const doc = new Document({
         ['**Mme Lisa**\nEnseignante', 'Enseigne le Z101. **Circule** vers les ateliers pour offrir un soutien ponctuel et rediriger les élèves.'],
         ['**Janie-Lee**\nTES', 'Accompagne les élèves en PPS pur en atelier et pendant les transitions.\n**Mardi :** P3, de 10 h 45 à 11 h 45.\n**Jeudi :** de 9 h 00 à 10 h 35.'],
         ['**Élèves leaders**', 'Lisent la fiche, distribuent les rôles, gèrent le temps, font ranger.'],
-        ['**Direction**', 'Autorise le projet et confirme l\'accès au local d\'arts plastiques.'],
+        ['**Directions**', 'Autorisent le projet et confirment l\'accès au local d\'arts plastiques.'],
       ]),
       note('La TES n\'est pas une surveillante : ses heures sont placées pendant les transitions et les ateliers, aux moments où les élèves en ont le plus besoin.'),
 
@@ -217,7 +217,7 @@ const doc = new Document({
 
       // 7
       h1('7. Les trois étapes'),
-      para('On passe à l\'étape suivante quand on observe les signes de réussite. **Un bilan est présenté à la direction à la fin de chaque étape.**'),
+      para('On passe à l\'étape suivante quand on observe les signes de réussite. **Un bilan est présenté aux directions à la fin de chaque étape.**'),
       visuel('etapes'),
 
       // 8
@@ -255,10 +255,10 @@ const doc = new Document({
       num('**Confirmer l\'accès au local d\'arts plastiques** le mardi et le jeudi matin.'),
       h2('Si le projet est accepté'),
       tableau([2300, 4660, 2400], ['Quand', 'Quoi', 'Qui'], [
-        ['**Semaine 0**', 'Inscription des 9 élèves et accès au local.', 'Direction'],
+        ['**Semaine 0**', 'Inscription des 9 élèves et accès au local.', 'Directions'],
         ['**Semaine 0**', 'Formation des sous-groupes, premières fiches et registre.', 'Mme Lisa, Janie-Lee'],
         ['**Semaine 1**', 'Début de l\'étape 1.', 'Mme Lisa, Janie-Lee'],
-        ['**Fin de chaque étape**', 'Bilan à la direction.', 'Mme Lisa, Janie-Lee'],
+        ['**Fin de chaque étape**', 'Bilan aux directions.', 'Mme Lisa, Janie-Lee'],
       ]),
       espace(240),
       new Table({
