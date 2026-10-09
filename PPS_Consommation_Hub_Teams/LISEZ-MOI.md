@@ -24,3 +24,15 @@
 - `99_ENSEIGNANTE_SEULEMENT` : corrigés, cartes portefeuille, cartes-routines, étiquettes du magasin-école, cartes « Besoin ou désir ? » et carnets de liaison pour le partenaire.
 
 Les élèves suivent deux personnages fil rouge : **Sam** pour *Achat et consommation* et **Maya** pour *Budget et consommation*. Ils travaillent ainsi l'argent sans avoir à exposer leur situation personnelle.
+
+## Leçons clés en main
+
+`Lecons/2026-10-13_Mardi_Estimer-Besoins-Desirs/` contient une leçon de 2 h 15 : estimer, puis le pont vers besoin ou désir, puis l'amorce de la séquence sur la publicité.
+
+| Fichier | Usage |
+|---|---|
+| `0_Plan-de-lecon_2h15_Enseignante.pdf` | Minutage, organisation et questions de relance |
+| `1_Diaporama_Grand-groupe.pptx` | 23 diapos, notes de l'enseignante sous chaque diapo |
+| `2_Cahier-eleve_Estimer-c-est-ruse.pdf` | À imprimer ou à déposer dans OneNote |
+| `3_Jeu-ordi_Estime-moi-ca.html` | Station ordinateur : double-clic, fonctionne sans Internet, avec lecture à voix haute |
+| `4_Materiel-a-imprimer.pdf` | Cartes d'équipes, défis, cartes « Assez ou pas assez ? », étiquettes, cartons de vote |
