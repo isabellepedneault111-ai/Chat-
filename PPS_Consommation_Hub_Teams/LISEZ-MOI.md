@@ -36,3 +36,13 @@ Les élèves suivent deux personnages fil rouge : **Sam** pour *Achat et consomm
 | `2_Cahier-eleve_Estimer-c-est-ruse.pdf` | À imprimer ou à déposer dans OneNote |
 | `3_Jeu-ordi_Estime-moi-ca.html` | Station ordinateur : double-clic, fonctionne sans Internet, avec lecture à voix haute |
 | `4_Materiel-a-imprimer.pdf` | Cartes d'équipes, défis, cartes « Assez ou pas assez ? », étiquettes, cartons de vote |
+
+`Lecons/2026-10-20_Mardi_Detectives-de-la-pub/` contient la suite (2 h 15) : enquêtes sur 6 fausses pubs, les 8 ruses de la pub, puis l'atelier « Piège le renard ! » où les élèves créent leur propre pub piège.
+
+| Fichier | Usage |
+|---|---|
+| `0_Plan-de-lecon_2h15_Enseignante.pdf` | Minutage, matériel, relances, corrigé des 6 enquêtes |
+| `1_Diaporama_Grand-groupe.pptx` | 20 diapos, notes de l'enseignante sous chaque diapo |
+| `2_Cahier-eleve_Detectives-de-la-pub.pdf` | Musée des pubs, fiche de détective, 8 ruses, plan de ma pub, bouclier |
+| `3_Atelier-ordi_Piege-le-renard.html` | Sans Internet : enquête, fabrique de pub (image téléchargeable pour Teams), mode détective |
+| `4_Materiel-a-imprimer.pdf` | 6 pubs couleur, cartes-loupes, cartes-produits, étiquettes-ruses, gabarit, cartes portefeuille |
