@@ -31,11 +31,11 @@ Les élèves suivent deux personnages fil rouge : **Sam** pour *Achat et consomm
 
 | Fichier | Usage |
 |---|---|
-| `0_Plan-de-lecon_2h15_Enseignante.pdf` | Minutage, organisation et questions de relance |
-| `1_Diaporama_Grand-groupe.pptx` | 23 diapos, notes de l'enseignante sous chaque diapo |
+| `0_Plan-de-lecon_2h15_Enseignante.pdf` | Minutage, préparation, didactique de l'estimation, corrigé et grille d'observation (vert, jaune, rouge) |
+| `1_Diaporama_Grand-groupe.pptx` | 25 diapos sans emoji, visuels mathématiques (droite numérique, nombres compatibles, reçu avec taxes), notes de l'enseignante |
 | `2_Cahier-eleve_Estimer-c-est-ruse.pdf` | À imprimer ou à déposer dans OneNote |
-| `3_Jeu-ordi_Estime-moi-ca.html` | Station ordinateur : double-clic, fonctionne sans Internet, avec lecture à voix haute |
-| `4_Materiel-a-imprimer.pdf` | Cartes d'équipes, défis, cartes « Assez ou pas assez ? », étiquettes, cartons de vote |
+| `3_Jeu-ordi_Estime-moi-ca.html` | Atelier ordinateur, avec lecture à voix haute et code de couleur (à mettre en ligne, voir `Site_Netlify`) |
+| `4_Materiel-a-imprimer.pdf` | Cartes-défis 0 à 6 en format reçu, indices, cartes « Assez ou pas assez ? », étiquettes de prix réalistes et rabats, cartons de vote |
 
 `Lecons/2026-10-20_Mardi_Detectives-de-la-pub/` contient la suite (2 h 15) : enquêtes sur 6 fausses pubs, les 8 ruses de la pub, puis l'atelier « Piège le renard ! » où les élèves créent leur propre pub piège.
 
@@ -46,3 +46,9 @@ Les élèves suivent deux personnages fil rouge : **Sam** pour *Achat et consomm
 | `2_Cahier-eleve_Detectives-de-la-pub.pdf` | Musée des pubs, fiche de détective, 8 ruses, plan de ma pub, bouclier |
 | `3_Atelier-ordi_Piege-le-renard.html` | Sans Internet : enquête, fabrique de pub (image téléchargeable pour Teams), mode détective |
 | `4_Materiel-a-imprimer.pdf` | 6 pubs couleur, cartes-loupes, cartes-produits, étiquettes-ruses, gabarit, cartes portefeuille |
+
+## Mettre les jeux en ligne
+
+Le dossier `Site_Netlify` (ou `Site_Netlify.zip`) contient les deux jeux et une page d'accueil. Glissez le dossier sur https://app.netlify.com/drop : Netlify donne un lien à publier dans Teams. Les étapes sont dans `Site_Netlify/LISEZ-MOI.txt`.
+
+Ce dépôt GitHub est public : la grille d'observation y est publiée avec des lignes vides, sans aucun nom d'élève.

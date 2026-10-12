@@ -1,0 +1,9 @@
+METTRE LES JEUX EN LIGNE AVEC NETLIFY (5 minutes, gratuit)
+
+1. Aller sur https://app.netlify.com/drop et se connecter (ou créer un compte gratuit).
+2. Glisser-déposer TOUT le dossier « Site_Netlify » dans la zone de la page.
+3. Netlify donne une adresse (ex. : https://nom-au-hasard.netlify.app). C'est le lien à publier dans Teams.
+4. Pour un nom plus clair : Site configuration > Change site name (ex. : jeux-du-renard-pps).
+
+Pour mettre à jour un jeu plus tard : Deploys > glisser le dossier de nouveau.
+Aucun nom d'élève ni donnée personnelle n'est contenu dans ces fichiers.
