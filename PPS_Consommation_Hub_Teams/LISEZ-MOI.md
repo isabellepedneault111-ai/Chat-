@@ -49,6 +49,6 @@ Les élèves suivent deux personnages fil rouge : **Sam** pour *Achat et consomm
 
 ## Mettre les jeux en ligne
 
-Le dossier `Site_Netlify` (ou `Site_Netlify.zip`) contient les deux jeux et une page d'accueil. Glissez le dossier sur https://app.netlify.com/drop : Netlify donne un lien à publier dans Teams. Les étapes sont dans `Site_Netlify/LISEZ-MOI.txt`.
+Le dossier `Site_Netlify` (ou `Site_Netlify.zip`) contient les deux jeux et une page d'accueil. Le site est en ligne : https://pps-z128-estimer.netlify.app (projet Netlify « pps-z128-estimer »).
 
 Ce dépôt GitHub est public : la grille d'observation y est publiée avec des lignes vides, sans aucun nom d'élève.
