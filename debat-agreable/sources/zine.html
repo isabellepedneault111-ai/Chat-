@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Alfa;src:url(fonts/AlfaSlab.ttf)}
+@font-face{font-family:RS;src:url(fonts/RSlab.ttf);font-weight:400}
+@font-face{font-family:RS;src:url(fonts/RSlabB.ttf);font-weight:700}
+@font-face{font-family:RS;src:url(fonts/RSlabK.ttf);font-weight:900}
+@font-face{font-family:Elite;src:url(fonts/Elite.ttf)}
+@page{size:11in 8.5in;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--paper:#EFE6D1;--red:#D2232A;--ink:#1B1714;--orange:#F0A12E}
+body{font-family:RS,serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.sheet{width:11in;height:8.5in;display:grid;grid-template-columns:repeat(4,2.75in);grid-template-rows:repeat(2,4.25in);background:var(--paper);position:relative;page-break-after:always;overflow:hidden}
+.sheet::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;mix-blend-mode:multiply;
+ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/><feColorMatrix values='0 0 0 0 .35 0 0 0 0 .28 0 0 0 0 .18 0 0 0 .9 0'/></filter><rect width='300' height='300' filter='url(%23n)'/></svg>")}
+.p{position:relative;padding:.2in .2in .18in;overflow:hidden;border-right:.5px dashed rgba(0,0,0,.12);border-bottom:.5px dashed rgba(0,0,0,.12)}
+.flip{transform:rotate(180deg)}
+.folio{position:absolute;bottom:.08in;right:.2in;font-family:Alfa;font-size:8pt;color:var(--red)}
+.folio.l{right:auto;left:.2in}
+h1,h2,h3{font-family:Alfa;font-weight:400;color:var(--red);line-height:.86;letter-spacing:-.01em}
+h2{font-size:21pt;margin-bottom:.07in}
+h3{font-size:9.5pt;line-height:1;margin:.05in 0 .02in}
+p,li{font-size:7.3pt;line-height:1.3}
+.elite{font-family:Elite}
+.k{font-weight:900}
+.tag{display:inline-block;background:var(--ink);color:var(--paper);font-family:Alfa;font-size:6.5pt;padding:1px 4px;transform:rotate(-2deg)}
+svg.fig{display:block}
+/* COVER */
+.cover h1{font-size:30pt;margin-top:1.6in;line-height:.98}
+.cover .mott{margin-top:.1in;text-align:left;font-weight:900;font-size:8.6pt;line-height:1.15}
+.cover .jump{position:absolute;top:.05in;right:-.1in;width:1.9in;transform:rotate(8deg)}
+.cover .issue{position:absolute;top:.18in;left:.2in;font-family:Elite;font-size:6.5pt;line-height:1.2}
+/* misc */
+.bigq{font-family:Alfa;font-size:12.5pt;line-height:1;color:var(--ink)}
+.box{border:1.6px solid var(--ink);padding:.07in;margin:.06in 0;background:rgba(255,255,255,.25)}
+.strat{display:grid;grid-template-columns:.32in 1fr;gap:0 .05in;margin-bottom:.045in;align-items:start}
+.strat b.n{font-family:Alfa;color:var(--red);font-size:13pt;line-height:.9}
+.strat p{font-size:6.5pt;line-height:1.22}
+.strat p i{color:#6b4b10;font-style:normal;font-weight:700}
+.beasts{display:grid;grid-template-columns:1fr 1fr;gap:.06in .08in}
+.beast{display:grid;grid-template-columns:.42in 1fr;gap:.04in;align-items:center}
+.beast svg{width:.42in;height:.56in}
+.beast h3{font-size:8pt;margin:0}
+.beast p{font-size:6.2pt;line-height:1.15}
+.pyr{width:100%}
+.lines{border-bottom:1px solid var(--ink);height:.2in}
+.phr li{list-style:none;padding:.025in 0 .025in .13in;position:relative;font-size:7.1pt}
+.phr li::before{content:"";position:absolute;left:0;top:.05in;width:.07in;height:.07in;background:var(--orange);border:1px solid var(--ink);border-radius:50%}
+.rules li{list-style:none;margin:.04in 0;display:grid;grid-template-columns:.3in 1fr;align-items:start}
+.rules li>b{font-family:Alfa;font-size:17pt;color:var(--red);line-height:.85}
+/* instruction sheet */
+.guide{width:11in;height:8.5in;padding:.55in .6in;background:#fff;font-family:RS;display:grid;grid-template-columns:1.05fr 1fr;gap:.45in}
+.guide h1{font-size:30pt;margin-bottom:.12in}
+.guide h2{font-size:15pt;margin:.14in 0 .05in}
+.guide p,.guide li{font-size:9.6pt;line-height:1.38}
+.guide ol{padding-left:.22in}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:.12in;margin-top:.08in}
+.steps div{border:1.5px solid var(--ink);padding:.06in;font-size:8.5pt;line-height:1.25}
+.steps svg{width:100%;height:.8in;display:block;margin-bottom:.04in}
+</style></head><body>
+
+<!-- ============ RECTO : le zine (imposition 8 pages) ============ -->
+<div class="sheet">
+ <!-- rangée du haut (à l'envers) : 5 4 3 2 -->
+ <section class="p flip" id="p5">
+  <h2>Monte la pyramide</h2>
+  <p style="margin-bottom:.05in">Paul Graham a classé nos façons d'être en désaccord. Plus tu montes, plus le débat devient <b>agréable</b>… et dangereux pour les mauvais arguments.</p>
+  <svg class="pyr" viewBox="0 0 200 215" id="pyr"></svg>
+  <p class="elite" style="font-size:6.6pt;margin-top:.03in">Défi : la prochaine fois que tu réponds à quelqu'un, nomme ton étage.</p>
+  <span class="folio l">5</span>
+ </section>
+ <section class="p flip" id="p4">
+  <h2>9 coups bas à repérer</h2>
+  <p style="margin-bottom:.05in;font-size:6.6pt">Numéros tirés des 38 stratagèmes. <i style="color:#6b4b10;font-weight:700;font-style:normal">→ la parade agréable</i></p>
+  <div class="strat"><b class="n">1</b><p><b>L'élastique.</b> Étirer ta thèse jusqu'à l'absurde. <i>→ « Ce n'est pas ce que j'ai dit. Je dis seulement… »</i></p></div>
+  <div class="strat"><b class="n">8</b><p><b>L'allumette.</b> Te mettre en colère pour que tu raisonnes mal. <i>→ Respire. Nomme-le : « Je sens que ça monte, je ralentis. »</i></p></div>
+  <div class="strat"><b class="n">13</b><p><b>Le faux choix.</b> « C'est ça ou le chaos. » <i>→ « Il existe une 3ᵉ option… »</i></p></div>
+  <div class="strat"><b class="n">18</b><p><b>Le coupe-fil.</b> Interrompre quand on perd. <i>→ « Je finis ma phrase, puis je t'écoute. »</i></p></div>
+  <div class="strat"><b class="n">29</b><p><b>La diversion.</b> Changer de sujet en douce. <i>→ « On y reviendra. Là, on parlait de… »</i></p></div>
+  <div class="strat"><b class="n">30</b><p><b>Le galon.</b> « Un expert l'a dit. » <i>→ « Quelles sont ses raisons ? »</i></p></div>
+  <div class="strat"><b class="n">32</b><p><b>L'étiquette.</b> Coller un nom odieux à ton idée. <i>→ Décolle : « Parlons de l'idée, pas du mot. »</i></p></div>
+  <div class="strat"><b class="n">36</b><p><b>Le brouillard.</b> Noyer sous le jargon. <i>→ « Peux-tu le dire à un enfant de 10 ans ? »</i></p></div>
+  <div class="strat"><b class="n">38</b><p><b>Le K.-O.</b> L'attaque personnelle, ultime recours. <i>→ Le calme. Ton adversaire vient d'avouer qu'il n'a plus d'arguments.</i></p></div>
+  <span class="folio l">4</span>
+ </section>
+ <section class="p flip" id="p3">
+  <h2>Le bestiaire du débat</h2>
+  <p style="margin-bottom:.07in">Dans chaque groupe, ils sont là. Sauras-tu les reconnaître… et te reconnaître?</p>
+  <div class="beasts">
+   <div class="beast"><svg data-pose="push"></svg><div><h3>Le Bulldozer</h3><p>Parle fort, parle long, ne recule jamais.</p></div></div>
+   <div class="beast"><svg data-pose="fog"></svg><div><h3>Le Brouillard</h3><p>Change de sujet dès que ça chauffe.</p></div></div>
+   <div class="beast"><svg data-pose="point"></svg><div><h3>Le Sniper</h3><p>Vise la personne, jamais l'idée.</p></div></div>
+   <div class="beast"><svg data-pose="prof"></svg><div><h3>Le Professeur</h3><p>« Les experts disent que… » Point final.</p></div></div>
+   <div class="beast"><svg data-pose="shrug"></svg><div><h3>La Girouette</h3><p>D'accord avec le dernier qui a parlé.</p></div></div>
+   <div class="beast"><svg data-pose="hide"></svg><div><h3>La Tortue</h3><p>Pense fort, ne dit rien. Le groupe s'appauvrit.</p></div></div>
+   <div class="beast"><svg data-pose="think"></svg><div><h3>L'Avocat du diable</h3><p>Conteste tout… parfois juste pour jouer.</p></div></div>
+   <div class="beast"><svg data-pose="jump"></svg><div><h3>Le Bâtisseur</h3><p>Reformule, questionne, construit. <b>Le but du jeu.</b></p></div></div>
+  </div>
+  <span class="folio l">3</span>
+ </section>
+ <section class="p flip" id="p2">
+  <h2>Le manuel du tricheur</h2>
+  <p>Vers 1830, le philosophe <b>Arthur Schopenhauer</b> rédige <i>L'Art d'avoir toujours raison</i>&nbsp;: <b>38 stratagèmes</b> pour gagner un débat, même quand on a tort.</p>
+  <div class="box" style="margin:.08in 0"><p class="bigq">« Le débat est un combat d'escrime intellectuel. »</p></div>
+  <p>Il précise pourtant : ne débats qu'avec ceux qui cherchent la vérité et acceptent d'avoir tort.</p>
+  <p style="margin-top:.06in"><span class="tag">NOTRE PARI</span></p>
+  <p style="margin-top:.04in">Ce zine retourne le manuel. On apprend les coups bas <b>pour les reconnaître</b>, pas pour les jouer. C'est un vaccin.</p>
+  <p style="margin-top:.06in">Car le but n'est pas d'avoir raison <b>contre</b> quelqu'un, c'est d'avoir <b>un peu plus raison ensemble</b>.</p>
+  <svg class="fig" data-pose="duel" style="width:100%;height:.95in;margin-top:.04in"></svg>
+  <span class="folio l">2</span>
+ </section>
+
+ <!-- rangée du bas (à l'endroit) : 6 7 8 1 -->
+ <section class="p" id="p6">
+  <h2>Les 4 règles de Rapoport</h2>
+  <p style="margin-bottom:.04in">Avant de critiquer une idée, gagne le droit de le faire :</p>
+  <ol class="rules">
+   <li><b>1</b><p>Reformule l'idée de l'autre si bien qu'il dise : <span class="elite">« Wow, j'aurais aimé le dire comme ça. »</span></p></li>
+   <li><b>2</b><p>Nomme tes <b>points d'accord</b>, surtout les surprenants.</p></li>
+   <li><b>3</b><p>Dis ce que tu as <b>appris</b> de cette personne.</p></li>
+   <li><b>4</b><p><b>Seulement là</b>, ta critique.</p></li>
+  </ol>
+  <div class="box"><h3 style="margin-top:0">Homme de paille → homme d'acier</h3><p>L'homme de paille rend la thèse adverse plus faible pour mieux la frapper. L'<b>homme d'acier</b> la rend <b>plus forte</b>, puis l'affronte. Si tu gagnes, tu as vraiment gagné.</p></div>
+  <span class="folio">6</span>
+ </section>
+ <section class="p" id="p7">
+  <h2>Phrases qui désamorcent</h2>
+  <ul class="phr">
+   <li>« Si je te comprends bien, tu dis que… c'est ça? »</li>
+   <li>« Qu'est-ce qui pourrait te faire changer d'idée? »</li>
+   <li>« On est d'accord sur ___. On diffère sur ___. »</li>
+   <li>« Bon point. Je n'y avais pas pensé. »</li>
+   <li>« Je vois ça autrement. Je t'explique? »</li>
+   <li>« Sur quoi tu t'appuies? Ça m'intéresse. »</li>
+   <li>« Je pense que j'avais tort sur ce bout-là. »</li>
+  </ul>
+  <div class="box" style="margin-top:.07in"><h3 style="margin-top:0">Le 39ᵉ stratagème</h3><p>Schopenhauer s'est arrêté à 38. Invente le 39ᵉ : un coup <b>loyal</b> qui fait gagner tout le monde.</p>
+  <div class="lines"></div><div class="lines"></div><div class="lines"></div></div>
+  <span class="folio">7</span>
+ </section>
+ <section class="p" id="p8" style="background:var(--ink);color:var(--paper)">
+  <h2 style="color:var(--orange);font-size:19pt">Règles du jeu</h2>
+  <p style="font-size:7.6pt">Comme dans les <i>New Games</i> des années 70 : on joue fort, on joue juste, personne n'est blessé.</p>
+  <h3 style="color:var(--orange)">Débattre fort</h3><p>Des idées claires, des preuves, du cran.</p>
+  <h3 style="color:var(--orange)">Débattre juste</h3><p>Pas de coups bas. Écouter avant de frapper.</p>
+  <h3 style="color:var(--orange)">Personne blessé·e</h3><p>On attaque les idées, on protège les gens.</p>
+  <div style="border:1.5px dashed var(--orange);padding:.07in;margin-top:.09in">
+   <h3 style="color:var(--paper);margin-top:0">Mini-jeu : pierre-papier-argument</h3>
+   <p style="font-size:6.7pt">À deux, 30 secondes chacun sur un sujet absurde (« la pizza à l'ananas »). Celui qui est convaincu devient le <b>meneur de claque</b> de l'autre : il doit reformuler son argument devant le groupe, avec enthousiasme.</p>
+  </div>
+  <p class="elite" style="font-size:6pt;margin-top:.1in;opacity:.85">Zine libre de droits. Photocopie-le, plie-le, prête-le, débats-en.</p>
+  <span class="folio" style="color:var(--orange)">8</span>
+ </section>
+ <section class="p cover" id="p1">
+  <div class="issue">ZINE Nº 1<br>pour élèves,<br>profs &amp; humains</div>
+  <svg class="fig jump" data-pose="jump" viewBox="0 0 100 130"></svg>
+  <h1>LE<br>NOUVEAU<br>LIVRE<br>DU<br>DÉBAT</h1>
+  <div class="mott">Débattre fort<br>Débattre juste<br>Personne blessé·e</div>
+ </section>
+</div>
+
+<!-- ============ VERSO / feuille 2 : pliage + guide ============ -->
+<div class="guide">
+ <div>
+  <h1>Plie ton zine</h1>
+  <p>Une seule feuille lettre (8,5 × 11), un ciseau, 2 minutes. Imprime la page 1 seulement, à <b>taille réelle (100 %)</b>, en paysage.</p>
+  <div class="steps">
+   <div><svg viewBox="0 0 120 80"><rect x="5" y="5" width="110" height="70" fill="#EFE6D1" stroke="#1B1714" stroke-width="2"/><line x1="5" y1="40" x2="115" y2="40" stroke="#D2232A" stroke-width="2" stroke-dasharray="4 3"/></svg><b>1.</b> Plie en deux dans le sens de la longueur, puis déplie.</div>
+   <div><svg viewBox="0 0 120 80"><rect x="5" y="5" width="110" height="70" fill="#EFE6D1" stroke="#1B1714" stroke-width="2"/><line x1="32.5" y1="5" x2="32.5" y2="75" stroke="#D2232A" stroke-width="2" stroke-dasharray="4 3"/><line x1="60" y1="5" x2="60" y2="75" stroke="#D2232A" stroke-width="2" stroke-dasharray="4 3"/><line x1="87.5" y1="5" x2="87.5" y2="75" stroke="#D2232A" stroke-width="2" stroke-dasharray="4 3"/></svg><b>2.</b> Plie en 4 dans l'autre sens (accordéon), puis déplie : 8 cases.</div>
+   <div><svg viewBox="0 0 120 80"><rect x="5" y="5" width="110" height="70" fill="#EFE6D1" stroke="#1B1714" stroke-width="2"/><line x1="32.5" y1="40" x2="87.5" y2="40" stroke="#1B1714" stroke-width="3.5"/><text x="60" y="34" font-size="12" text-anchor="middle" fill="#D2232A">✂</text></svg><b>3.</b> Plié en deux, coupe le centre entre les 2 cases du milieu.</div>
+   <div><svg viewBox="0 0 120 80"><path d="M20 60 L60 30 L100 60" fill="none" stroke="#1B1714" stroke-width="3"/><path d="M60 30 L60 70" stroke="#D2232A" stroke-width="2" stroke-dasharray="3 3"/><polygon points="30,25 50,35 30,45" fill="#F0A12E"/><polygon points="90,25 70,35 90,45" fill="#F0A12E"/></svg><b>4.</b> Tiens par les bouts et pousse vers le centre : le trou s'ouvre en losange.</div>
+   <div><svg viewBox="0 0 120 80"><path d="M60 10 L60 70 M60 40 L20 40 M60 40 L100 40 M60 40 L60 10" stroke="#1B1714" stroke-width="5"/></svg><b>5.</b> Ça fait une croix de 4 ailes. Rabats-les en livret.</div>
+   <div><svg viewBox="0 0 120 80"><rect x="38" y="8" width="44" height="64" fill="#EFE6D1" stroke="#1B1714" stroke-width="2"/><text x="60" y="44" font-size="13" text-anchor="middle" fill="#D2232A" font-family="Alfa">1</text></svg><b>6.</b> La couverture « Le nouveau livre du débat » sur le dessus. C'est prêt!</div>
+  </div>
+ </div>
+ <div>
+  <h1 style="font-size:22pt">Pour l'animateur·trice</h1>
+  <h2>Avant</h2>
+  <ul style="padding-left:.2in"><li>Faire plier le zine <b>en ouverture</b> de séance : un geste manuel calme la salle et crée l'objet commun.</li><li>Chacun signe la page 7 au moment d'écrire son 39ᵉ stratagème.</li></ul>
+  <h2>Pendant</h2>
+  <ul style="padding-left:.2in"><li>Page 3 : support de l'activité <b>Bestiaire</b> (cartes rôles secrets).</li><li>Page 4 : grille de <b>bingo des coups bas</b> pour les observateurs.</li><li>Page 5 : <b>réécriture</b> d'une réplique toxique, étage par étage.</li><li>Page 6 : atelier <b>homme d'acier</b>.</li></ul>
+  <h2>Lien PFEQ</h2>
+  <p><b>Culture et citoyenneté québécoise</b> : pratique du dialogue et procédés susceptibles d'entraver le dialogue (attaque personnelle, caricature, faux dilemme, appel au clan, argument d'autorité…), qui recoupent directement plusieurs stratagèmes de Schopenhauer.<br><b>Français</b> : communiquer oralement, argumenter, adapter son discours.</p>
+  <h2>Question pour finir</h2>
+  <p class="elite" style="font-size:11pt">« As-tu déjà gagné un débat… et perdu un ami? Qu'aurais-tu échangé? »</p>
+ </div>
+</div>
+
+<script>
+const INK='#1B1714',OR='#F0A12E';
+const P={
+ jump:{h:[54,14],n:[52,27],hp:[46,60],a:[[34,18],[18,4]],b:[[68,20],[86,8]],c:[[30,74],[38,96]],d:[[62,76],[80,90]]},
+ point:{h:[46,14],n:[46,28],hp:[46,66],a:[[34,46],[40,64]],b:[[64,30],[86,26]],c:[[40,90],[36,116]],d:[[54,90],[60,116]]},
+ push:{h:[62,20],n:[56,32],hp:[40,66],a:[[72,42],[90,40]],b:[[70,34],[90,30]],c:[[30,90],[14,112]],d:[[52,90],[58,116]]},
+ fog:{h:[50,16],n:[50,30],hp:[50,68],a:[[30,30],[18,14]],b:[[70,30],[82,14]],c:[[40,92],[30,116]],d:[[60,92],[72,116]]},
+ prof:{h:[50,14],n:[50,28],hp:[50,68],a:[[36,48],[42,62]],b:[[64,22],[66,2]],c:[[44,92],[42,118]],d:[[56,92],[58,118]]},
+ shrug:{h:[50,14],n:[50,30],hp:[52,68],a:[[30,40],[22,26]],b:[[70,40],[78,26]],c:[[44,92],[38,118]],d:[[60,92],[64,118]]},
+ hide:{h:[42,62],n:[48,72],hp:[64,96],a:[[40,86],[34,98]],b:[[56,92],[50,104]],c:[[48,104],[40,118]],d:[[66,110],[56,118]]},
+ think:{h:[50,16],n:[50,30],hp:[50,68],a:[[36,50],[58,52]],b:[[66,46],[54,22]],c:[[44,92],[42,118]],d:[[58,92],[62,118]]},
+};
+function fig(p,dx=0,mirror=false){
+ const m=([x,y])=>[(mirror?100-x:x)+dx,y];
+ const seg=(pts,w,c)=>`<polyline points="${pts.map(m).map(q=>q.join(',')).join(' ')}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+ const draw=c=>[seg([p.n,p.hp],17,c),seg([p.n,...p.a],8,c),seg([p.n,...p.b],8,c),seg([p.hp,...p.c],10,c),seg([p.hp,...p.d],10,c),`<circle cx="${m(p.h)[0]}" cy="${m(p.h)[1]}" r="9.5" fill="${c}"/>`].join('');
+ // riso misregistration: orange layer shifted, ink on top
+ return `<g transform="translate(3,2.5)" opacity=".95">${draw(OR)}</g><g style="mix-blend-mode:multiply">${draw(INK)}</g>`;
+}
+document.querySelectorAll('svg[data-pose]').forEach(s=>{
+ const k=s.dataset.pose;
+ if(k==='duel'){s.setAttribute('viewBox','0 0 260 125');s.innerHTML=fig(P.point,20)+fig(P.point,140,true)+`<text x="130" y="40" text-anchor="middle" font-family="Alfa" font-size="26" fill="#D2232A">?!</text>`;return;}
+ s.setAttribute('viewBox','0 0 100 125');s.innerHTML=fig(P[k]);
+});
+// pyramide de Graham
+const lv=[['6','Réfuter le cœur','« Ton idée centrale ne tient pas parce que… »'],['5','Réfutation','Citer l\'autre et montrer l\'erreur.'],['4','Contre-argument','Une autre raison, avec preuve.'],['3','Contradiction','« Non, c\'est faux. » (sans raison)'],['2','Critique du ton','« Calme-toi! »'],['1','Ad hominem','« Tu dis ça parce que t\'es jeune. »'],['0','Insulte','« T\'es niaiseux. »']];
+let g='';const H=30;
+lv.forEach((l,i)=>{const y=i*H,w1=40+i*22,w2=40+(i+1)*22,c=i<3?'#D2232A':i<4?'#F0A12E':'#1B1714';
+ g+=`<polygon points="${100-w1/2*1.9},${y} ${100+w1/2*1.9},${y} ${100+w2/2*1.9},${y+H-2} ${100-w2/2*1.9},${y+H-2}" fill="${c}" transform="translate(0,0)"/>`;
+ g+=`<text x="100" y="${y+12}" text-anchor="middle" font-family="Alfa" font-size="${i<2?8:9.5}" fill="#EFE6D1">${l[0]} · ${l[1]}</text>`;
+ g+=`<text x="100" y="${y+23}" text-anchor="middle" font-family="RS" font-size="${i<2?5.3:6}" fill="#EFE6D1">${l[2]}</text>`;});
+g+=`<text x="2" y="10" font-family="Alfa" font-size="7" fill="#D2232A">↑ agréable</text><text x="2" y="205" font-family="Alfa" font-size="7" fill="#1B1714">↓ toxique</text>`;
+document.getElementById('pyr').innerHTML=g;
+</script>
+</body></html>
