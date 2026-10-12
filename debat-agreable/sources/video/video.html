@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Alfa;src:url(fonts/AlfaSlab.ttf)}
+@font-face{font-family:RS;src:url(fonts/RSlab.ttf);font-weight:400}
+@font-face{font-family:RS;src:url(fonts/RSlabB.ttf);font-weight:700}
+@font-face{font-family:RS;src:url(fonts/RSlabK.ttf);font-weight:900}
+@font-face{font-family:Elite;src:url(fonts/Elite.ttf)}
+:root{--paper:#EFE6D1;--red:#D2232A;--ink:#1B1714;--orange:#F0A12E;--brown:#6B4B10}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--paper);font-family:RS,serif;color:var(--ink)}
+.scene{position:absolute;inset:0;padding:90px 120px;background:var(--paper);opacity:0;overflow:hidden}
+.scene .in{position:absolute;inset:0;padding:90px 120px;transform-origin:50% 50%}
+.dark{background:var(--ink);color:var(--paper)}
+.redbg{background:var(--red);color:var(--paper)}
+#grain{position:absolute;inset:0;pointer-events:none;opacity:.2;mix-blend-mode:multiply;z-index:50;
+ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/><feColorMatrix values='0 0 0 0 .35 0 0 0 0 .28 0 0 0 0 .18 0 0 0 .9 0'/></filter><rect width='400' height='400' filter='url(%23n)'/></svg>")}
+h1,h2,.alfa{font-family:Alfa;font-weight:400;line-height:.9}
+h2{font-size:84px;color:var(--red);margin-bottom:40px}
+.dark h2{color:var(--orange)}
+p,li{font-size:38px;line-height:1.3}
+.ref{position:absolute;left:120px;bottom:70px;font-size:24px;color:var(--brown);font-style:italic}
+.dark .ref{color:#c9b994}
+.elite{font-family:Elite}
+.box{border:4px solid var(--ink);background:#fff;padding:26px 30px}
+.chip{display:inline-flex;align-items:center;justify-content:center;width:70px;height:70px;border-radius:50%;background:var(--red);color:var(--paper);border:3px solid var(--ink);font-family:Alfa;font-size:34px;flex:none}
+.fig{display:block}
+.grid{display:grid;gap:26px}
+.card{border:4px solid var(--ink);background:#fff;padding:22px 24px;position:relative}
+.card .n{font-family:Alfa;color:var(--red);font-size:62px;line-height:1}
+.card h3{font-family:Alfa;font-weight:400;font-size:34px;line-height:1.05;color:var(--red)}
+.card p{font-size:27px;line-height:1.25}
+.stamp{position:absolute;font-family:Alfa;color:var(--red);border:8px solid var(--red);padding:10px 30px;font-size:70px;transform:rotate(-8deg);background:rgba(239,230,209,.85)}
+.org{background:var(--orange)!important}
+</style></head><body>
+<div id="grain"></div>
+
+<!-- S1 cold open -->
+<section class="scene dark" id="s1"><div class="in">
+ <div style="margin-top:200px">
+  <p class="elite a" data-a="type" data-k="Avez-vous" style="font-size:86px;line-height:1.15">Avez-vous déjà gagné un débat…</p>
+  <p class="elite a" data-a="type" data-k="perdu" style="font-size:86px;line-height:1.15;color:var(--orange)">…et perdu un collègue?</p>
+ </div>
+ <div style="display:flex;gap:30px;margin-top:80px">
+  <span class="a alfa" data-a="pop" data-k="comité" style="font-size:40px;border:3px solid var(--paper);padding:12px 26px">comité</span>
+  <span class="a alfa" data-a="pop" data-k="soutenance" style="font-size:40px;border:3px solid var(--paper);padding:12px 26px">soutenance</span>
+  <span class="a alfa" data-a="pop" data-k="colloque" style="font-size:40px;border:3px solid var(--paper);padding:12px 26px">colloque</span>
+ </div>
+ <svg class="fig a" data-a="up" data-k="vraiment" data-pose="duel" style="position:absolute;right:120px;bottom:110px;width:560px;height:280px"></svg>
+</div></section>
+
+<!-- S2 titre -->
+<section class="scene" id="s2"><div class="in">
+ <p class="a" data-a="up" data-t="0" style="font-size:30px;font-weight:700;letter-spacing:8px">SÉMINAIRE · LA CONFRONTATION AGRÉABLE</p>
+ <h1 class="a" data-a="draw" data-t=".2" style="font-size:170px;color:var(--red);margin-top:60px;line-height:.86">LE NOUVEAU<br>LIVRE DU<br>DÉBAT</h1>
+ <svg class="fig bob" data-pose="jump" style="position:absolute;right:170px;top:90px;width:560px;height:680px;transform-origin:50% 100%"></svg>
+ <div style="position:absolute;left:120px;bottom:110px;display:flex;gap:28px">
+  <div class="box a" data-a="pop" data-k="séminaire"><span class="alfa" style="font-size:56px;color:var(--red)">3 h</span><p style="font-size:28px">de séminaire</p></div>
+  <div class="box a" data-a="pop" data-k="zine"><span class="alfa" style="font-size:56px;color:var(--red)">1</span><p style="font-size:28px">zine d'une feuille</p></div>
+  <div class="box a org" data-a="pop" data-k="hypothèse"><span class="alfa" style="font-size:56px;color:var(--red)">1</span><p style="font-size:28px">hypothèse de travail</p></div>
+ </div>
+</div></section>
+
+<!-- S3 New Games -->
+<section class="scene" id="s3"><div class="in">
+ <div class="alfa a" data-a="pop" data-k="1976" style="font-size:300px;color:var(--red)">1976</div>
+ <p class="a" data-a="up" data-k="devise" style="font-size:52px;font-weight:900;margin-top:20px;position:relative;display:inline-block">Play hard. Play fair. Nobody hurt.
+  <span class="a" data-a="draw" data-k="transposons" style="position:absolute;left:-10px;right:-10px;top:50%;height:8px;background:var(--red)"></span></p>
+ <div style="margin-top:50px">
+  <p class="alfa a" data-a="up" data-k="Débattre" style="font-size:76px;color:var(--red)">Débattre fort.</p>
+  <p class="alfa a" data-a="up" data-k="juste" style="font-size:76px;color:var(--red)">Débattre juste.</p>
+  <p class="alfa a" data-a="up" data-k="blessé" style="font-size:76px;color:var(--red)">Personne blessé·e.</p>
+ </div>
+ <div class="stamp a" data-a="stamp" data-k="cahier" style="right:140px;bottom:170px">CAHIER DES CHARGES</div>
+ <svg class="fig a bob" data-a="up" data-t="0" data-pose="jump" style="position:absolute;right:220px;top:80px;width:300px;height:360px"></svg>
+ <p class="ref">New Games Foundation · A. Fluegelman (dir.), The New Games Book, 1976</p>
+</div></section>
+
+<!-- S4 Schopenhauer -->
+<section class="scene" id="s4"><div class="in">
+ <div style="display:flex;gap:80px;align-items:flex-start">
+  <div class="alfa a" data-a="pop" data-k="Trente-huit" style="font-size:440px;color:var(--red);line-height:.8">38</div>
+  <div style="flex:1;margin-top:20px">
+   <p class="a" data-a="up" data-k="1830" style="font-size:40px"><b>Arthur Schopenhauer</b><br><i>Dialectique éristique</i>, v. 1830<br><span style="color:var(--brown)">publ. posthume 1864 · <i>L'Art d'avoir toujours raison</i></span></p>
+   <div class="box a" data-a="up" data-k="détour" style="margin-top:50px;background:var(--orange)"><p class="alfa" style="font-size:46px;line-height:1.1">« …l'art de disputer de façon à avoir toujours raison, <i>per fas et nefas</i>. »</p></div>
+  </div>
+ </div>
+ <div style="position:absolute;left:120px;bottom:120px;display:flex;align-items:center;gap:40px">
+  <span class="alfa a" data-a="up" data-k="pari" style="font-size:80px">MANUEL</span>
+  <span class="alfa a" data-a="draw" data-k="enseigner" style="font-size:80px;color:var(--red)">→</span>
+  <span class="alfa a" data-a="stamp" data-k="immuniser" style="font-size:80px;color:var(--paper);background:var(--red);padding:6px 30px">VACCIN</span>
+ </div>
+</div></section>
+
+<!-- S5 Mercier & Sperber -->
+<section class="scene" id="s5"><div class="in">
+ <h2 class="a" data-a="up" data-t="0">Pourquoi raisonne-t-on?</h2>
+ <p class="a" data-a="up" data-k="convaincre" style="font-size:44px;max-width:1500px">Pour <b>convaincre</b>, et pour <b>évaluer les arguments d'autrui</b>.</p>
+ <div style="display:flex;gap:60px;margin-top:60px">
+  <div class="box a" data-a="up" data-k="Seuls" style="flex:1;display:flex;gap:30px;align-items:center">
+   <svg class="fig" data-pose="think" style="width:180px;height:220px;flex:none"></svg>
+   <div><p class="alfa" style="font-size:50px;color:var(--red)">Seul·e</p><p>on cherche surtout à se donner raison</p></div>
+  </div>
+  <div class="box a org" data-a="up" data-k="groupe" style="flex:1.2;display:flex;gap:20px;align-items:center">
+   <svg class="fig" data-pose="point" style="width:160px;height:200px;flex:none"></svg>
+   <svg class="fig" data-pose="point" data-mirror="1" style="width:160px;height:200px;flex:none;margin-left:-50px"></svg>
+   <div><p class="alfa" style="font-size:50px;color:var(--red)">En groupe</p><p>on corrige mutuellement nos biais</p></div>
+  </div>
+ </div>
+ <p class="alfa a" data-a="up" data-k="fiable" style="font-size:54px;margin-top:60px">Le débat : là où la pensée devient <span style="color:var(--red)">fiable</span>.</p>
+ <p class="ref">H. Mercier et D. Sperber, « Why do humans reason? », Behavioral and Brain Sciences, 2011</p>
+</div></section>
+
+<!-- S6 pragma-dialectique + 9 coups -->
+<section class="scene" id="s6"><div class="in">
+ <h2 class="a" data-a="up" data-t="0" style="font-size:70px;margin-bottom:16px">Un sophisme = une règle enfreinte</h2>
+ <p class="a" data-a="up" data-k="carte" style="font-size:32px;margin-bottom:34px">Les stratagèmes de Schopenhauer, relus comme une carte des règles de la discussion critique</p>
+ <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:22px">
+  <div class="card a" data-a="pop" data-k="L'élastique" style="display:flex;gap:24px;align-items:center"><span class="n">1</span><div><h3>L'élastique</h3><p>étirer la thèse jusqu'à l'absurde</p></div></div>
+  <div class="card a" data-a="pop" data-k="L'allumette" style="display:flex;gap:24px;align-items:center"><span class="n">8</span><div><h3>L'allumette</h3><p>provoquer la colère</p></div></div>
+  <div class="card a" data-a="pop" data-k="faux" style="display:flex;gap:24px;align-items:center"><span class="n">13</span><div><h3>Le faux choix</h3><p>« c'est ça ou le chaos »</p></div></div>
+  <div class="card a" data-a="pop" data-k="coupe-fil" style="display:flex;gap:24px;align-items:center"><span class="n">18</span><div><h3>Le coupe-fil</h3><p>interrompre quand on perd</p></div></div>
+  <div class="card a" data-a="pop" data-k="diversion" style="display:flex;gap:24px;align-items:center"><span class="n">29</span><div><h3>La diversion</h3><p>changer de sujet en douce</p></div></div>
+  <div class="card a" data-a="pop" data-k="galon" style="display:flex;gap:24px;align-items:center"><span class="n">30</span><div><h3>Le galon</h3><p>l'argument d'autorité</p></div></div>
+  <div class="card a" data-a="pop" data-k="L'étiquette" style="display:flex;gap:24px;align-items:center"><span class="n">32</span><div><h3>L'étiquette</h3><p>un nom odieux sur l'idée</p></div></div>
+  <div class="card a" data-a="pop" data-k="brouillard" style="display:flex;gap:24px;align-items:center"><span class="n">36</span><div><h3>Le brouillard</h3><p>noyer sous le jargon</p></div></div>
+  <div class="card a org" data-a="pop" data-k="K.-O." style="display:flex;gap:24px;align-items:center"><span class="n">38</span><div><h3>Le K.-O.</h3><p>l'attaque personnelle</p></div></div>
+ </div>
+ <p class="ref">F. H. van Eemeren et R. Grootendorst, A Systematic Theory of Argumentation, 2004</p>
+</div></section>
+
+<!-- S7 matrice -->
+<section class="scene" id="s7"><div class="in">
+ <h2 class="a" data-a="up" data-t="0">Agréable ≠ mou</h2>
+ <p class="a" data-a="up" data-k="dur" style="font-size:40px"><b>Dur</b> sur le problème. <b>Doux</b> avec les personnes.</p>
+ <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:46px;width:1300px">
+  <div class="card a" data-a="pop" data-k="Girouette" style="display:flex;gap:20px;align-items:center;height:250px"><svg class="fig" data-pose="shrug" style="width:150px;height:190px"></svg><div><h3 style="font-size:48px">La Girouette</h3><p>douce avec les gens, molle sur le fond</p></div></div>
+  <div class="card a org" data-a="pop" data-k="Bâtisseur" style="display:flex;gap:20px;align-items:center;height:250px"><svg class="fig bob" data-pose="jump" style="width:150px;height:190px"></svg><div><h3 style="font-size:48px">Le Bâtisseur</h3><p>exigeant sur le fond, bienveillant avec les gens</p></div></div>
+  <div class="card a" data-a="pop" data-k="Sniper" style="display:flex;gap:20px;align-items:center;height:250px"><svg class="fig" data-pose="point" style="width:150px;height:190px"></svg><div><h3 style="font-size:48px">Le Sniper</h3><p>faible sur le fond, cruel avec les gens</p></div></div>
+  <div class="card a" data-a="pop" data-k="Bulldozer" style="display:flex;gap:20px;align-items:center;height:250px"><svg class="fig" data-pose="push" style="width:150px;height:190px"></svg><div><h3 style="font-size:48px">Le Bulldozer</h3><p>gagne les débats, perd les relations</p></div></div>
+ </div>
+ <div class="stamp a" data-a="stamp" data-k="seule" style="right:50px;top:560px;font-size:48px">LA SEULE<br>CASE UTILE</div>
+ <p class="ref">R. Fisher et W. Ury, Getting to Yes, 1981</p>
+</div></section>
+
+<!-- S8 Graham + Rapoport -->
+<section class="scene" id="s8"><div class="in">
+ <h2 class="a" data-a="up" data-t="0" style="font-size:72px">Gagner le droit de critiquer</h2>
+ <div style="display:flex;gap:70px">
+  <svg id="pyr" viewBox="0 0 700 560" style="width:760px;height:600px;flex:none"></svg>
+  <div style="flex:1">
+   <p class="alfa a" data-a="up" data-k="Rapoport" style="font-size:44px;color:var(--red);margin-bottom:20px">Règles de Rapoport</p>
+   <div class="a" data-a="up" data-k="reformuler" style="display:flex;gap:22px;align-items:center;margin-bottom:22px"><span class="chip">1</span><p style="font-size:32px">Reformuler si bien que l'autre aurait aimé le dire ainsi</p></div>
+   <div class="a" data-a="up" data-k="Nommer" style="display:flex;gap:22px;align-items:center;margin-bottom:22px"><span class="chip">2</span><p style="font-size:32px">Nommer ses accords</p></div>
+   <div class="a" data-a="up" data-k="appris" style="display:flex;gap:22px;align-items:center;margin-bottom:22px"><span class="chip">3</span><p style="font-size:32px">Dire ce qu'on a appris</p></div>
+   <div class="a" data-a="up" data-k="critiquer" style="display:flex;gap:22px;align-items:center;margin-bottom:30px"><span class="chip" style="background:var(--orange);color:var(--ink)">4</span><p style="font-size:32px"><b>Ensuite</b> seulement, critiquer</p></div>
+   <p class="alfa a" data-a="up" data-k="paille" style="font-size:40px">homme de paille <span style="color:var(--red)">→</span> <span class="a" data-a="pop" data-k="d'acier" style="color:var(--red)">homme d'acier</span></p>
+  </div>
+ </div>
+ <p class="ref">P. Graham, « How to Disagree », 2008 · D. Dennett, Intuition Pumps, 2013</p>
+</div></section>
+
+<!-- S9 bestiaire -->
+<section class="scene" id="s9"><div class="in">
+ <h2 class="a" data-a="up" data-t="0" style="font-size:72px;margin-bottom:30px">Le bestiaire du débat</h2>
+ <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:22px">
+  <div class="card a" data-a="pop" data-k="Bulldozer"><svg class="fig" data-pose="push" style="width:110px;height:140px;float:left;margin-right:10px"></svg><h3>Le Bulldozer</h3><p class="elite" style="clear:both;font-size:24px">« Laisse-moi finir! »</p></div>
+  <div class="card a" data-a="pop" data-k="Brouillard"><svg class="fig" data-pose="fog" style="width:110px;height:140px;float:left;margin-right:10px"></svg><h3>Le Brouillard</h3><p class="elite" style="clear:both;font-size:24px">« Oui, mais le vrai problème… »</p></div>
+  <div class="card a" data-a="pop" data-k="Sniper"><svg class="fig" data-pose="point" style="width:110px;height:140px;float:left;margin-right:10px"></svg><h3>Le Sniper</h3><p class="elite" style="clear:both;font-size:24px">« Venant de toi… »</p></div>
+  <div class="card a" id="prof" data-a="pop" data-k="Professeur"><svg class="fig" data-pose="prof" style="width:110px;height:140px;float:left;margin-right:10px"></svg><h3>Le Professeur</h3><p class="elite" style="clear:both;font-size:24px">« Les études montrent que… »</p></div>
+  <div class="card a" data-a="pop" data-k="Girouette"><svg class="fig" data-pose="shrug" style="width:110px;height:140px;float:left;margin-right:10px"></svg><h3>La Girouette</h3><p class="elite" style="clear:both;font-size:24px">« T'as raison. Toi aussi. »</p></div>
+  <div class="card a" data-a="pop" data-k="Tortue"><svg class="fig" data-pose="hide" style="width:110px;height:140px;float:left;margin-right:10px"></svg><h3>La Tortue</h3><p class="elite" style="clear:both;font-size:24px">« … »</p></div>
+  <div class="card a" data-a="pop" data-k="diable"><svg class="fig" data-pose="think" style="width:110px;height:140px;float:left;margin-right:10px"></svg><h3>L'Avocat du diable</h3><p class="elite" style="clear:both;font-size:24px">« Juste pour jouer… »</p></div>
+  <div class="card a org" data-a="pop" data-k="Bâtisseur"><svg class="fig bob" data-pose="jump" style="width:110px;height:140px;float:left;margin-right:10px"></svg><h3>Le Bâtisseur</h3><p class="elite" style="clear:both;font-size:24px">« Si je te comprends bien… »</p></div>
+ </div>
+ <p class="a" data-a="up" data-k="phrase-signature" style="font-size:28px;margin-top:26px;color:var(--brown);font-weight:700">phrase-signature · coups bas favoris · besoin caché · parade · force cachée</p>
+ <div class="stamp a" data-a="stamp" data-k="départements" style="right:120px;bottom:60px;font-size:56px">VU EN COMITÉ</div>
+</div></section>
+
+<!-- S10 dispositif -->
+<section class="scene" id="s10"><div class="in">
+ <h2 class="a" data-a="up" data-t="0">Le dispositif</h2>
+ <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:34px">
+  <div class="card a" data-a="up" data-k="bal" style="height:600px"><svg class="fig" data-pose="fog" style="width:170px;height:210px"></svg><h3 style="font-size:46px;margin:16px 0">Le bal masqué</h3><p>Rôles tirés au sort.<br>Les observateurs remplissent un <b>bingo des coups bas</b>.</p></div>
+  <div class="card a org" data-a="up" data-k="course" style="height:600px"><div style="display:flex"><svg class="fig bob" data-pose="walk" style="width:170px;height:210px"></svg><svg class="fig bob2" data-pose="walk" data-mirror="1" style="width:170px;height:210px;margin-left:-70px"></svg></div><h3 style="font-size:46px;margin:16px 0">La course à trois jambes</h3><p>On n'avance que par <b>accords sincères</b>.</p></div>
+  <div class="card a" data-a="up" data-k="ateliers" style="height:600px"><svg class="fig" data-pose="think" style="width:170px;height:210px"></svg><h3 style="font-size:46px;margin:16px 0">3 ateliers d'écriture</h3>
+   <p class="a" data-a="up" data-k="l'ascenseur">• L'ascenseur</p><p class="a" data-a="up" data-k="signé">• L'homme d'acier signé</p><p class="a" data-a="up" data-k="inattendu" style="color:var(--red);font-weight:900">• ?</p></div>
+ </div>
+</div></section>
+
+<!-- S11 39 + prix -->
+<section class="scene redbg" id="s11"><div class="in">
+ <div style="display:flex;gap:80px;align-items:flex-start">
+  <div style="position:relative">
+   <div class="alfa a" data-a="out" data-k="trente-neuvième" style="font-size:440px;line-height:.8;color:var(--ink)">38</div>
+   <div class="alfa a" data-a="stamp" data-k="trente-neuvième" style="position:absolute;top:-20px;left:-30px;padding:20px 30px;font-size:440px;line-height:.8;color:var(--paper);background:var(--red)">39</div>
+  </div>
+  <div style="flex:1;margin-top:30px">
+   <p class="alfa a" data-a="up" data-k="loyal" style="font-size:60px">Un coup loyal qui fait gagner tout le monde.</p>
+   <p class="a" data-a="up" data-k="aucun" style="font-size:38px;margin-top:40px">Dans l'arène : <b>aucun prix pour la victoire.</b></p>
+  </div>
+ </div>
+ <div style="display:flex;gap:40px;position:absolute;left:120px;right:120px;bottom:110px">
+  <div class="box a" data-a="pop" data-k="meilleure" style="flex:1;color:var(--ink)"><p class="alfa" style="font-size:44px;color:var(--red)">L'homme d'acier d'or</p><p style="font-size:30px">la meilleure reformulation de l'adversaire</p></div>
+  <div class="box a org" data-a="pop" data-k="girouette" style="flex:1;color:var(--ink)"><p class="alfa" style="font-size:44px;color:var(--red)">La girouette courageuse</p><p style="font-size:30px">a changé d'avis… <b class="a" data-a="up" data-k="dit">et l'a dit</b></p></div>
+ </div>
+</div></section>
+
+<!-- S12 question -->
+<section class="scene dark" id="s12"><div class="in">
+ <p class="a" data-a="up" data-t="0" style="font-size:34px;letter-spacing:6px;color:var(--orange);font-weight:700">UNE QUESTION POUR VOUS</p>
+ <p class="alfa a" data-a="up" data-k="évaluations" style="font-size:76px;margin-top:40px;line-height:1.05">Nos évaluations, nos soutenances, nos comités récompensent-ils le <span class="a" data-a="pop" data-k="Bâtisseur" style="color:var(--orange)">Bâtisseur</span>… ou le <span class="a" data-a="pop" data-k="Bulldozer" style="color:var(--red)">Bulldozer</span>?</p>
+ <p class="elite a" data-a="type" data-k="exactement" style="font-size:56px;margin-top:80px">« Oui, c'est exactement ça. »</p>
+ <svg class="fig a" data-a="up" data-k="soutenance" data-pose="duel" style="position:absolute;right:120px;bottom:90px;width:440px;height:220px"></svg>
+</div></section>
+
+<!-- S13 fin -->
+<section class="scene" id="s13"><div class="in">
+ <div style="display:flex;justify-content:space-between">
+  <div>
+   <h1 class="a" data-a="up" data-k="fort" style="font-size:112px;color:var(--red)">Débattre fort.</h1>
+   <h1 class="a" data-a="up" data-k="juste" style="font-size:112px;color:var(--red)">Débattre juste.</h1>
+   <h1 class="a" data-a="up" data-k="blessé" style="font-size:112px;color:var(--red)">Personne blessé·e.</h1>
+   <p class="a" data-a="up" data-k="ensemble" style="font-size:42px;margin-top:50px;max-width:1150px;font-weight:700">Avoir un peu plus raison, ensemble.</p>
+  </div>
+  <div style="position:relative;width:440px">
+   <svg class="fig bob" data-pose="jump" style="position:absolute;top:0;left:0;width:260px;height:320px"></svg>
+   <svg class="fig bob2" data-pose="jump" data-mirror="1" style="position:absolute;top:150px;right:0;width:260px;height:320px"></svg>
+  </div>
+ </div>
+ <p class="ref" style="font-style:normal;font-size:22px;line-height:1.5;right:120px">Schopenhauer, <i>L'Art d'avoir toujours raison</i> · Mercier et Sperber, 2011 · van Eemeren et Grootendorst, 2004 · Fisher et Ury, 1981 · Graham, 2008 · Dennett, 2013 · Fluegelman, <i>The New Games Book</i>, 1976<br>Séminaire, zine et fiches : « Le nouveau livre du débat »</p>
+</div></section>
+
+<script>
+const INK='#1B1714',OR='#F0A12E',PAPER='#EFE6D1';
+const P={
+ jump:{h:[54,14],n:[52,27],hp:[46,60],a:[[34,18],[18,4]],b:[[68,20],[86,8]],c:[[30,74],[38,96]],d:[[62,76],[80,90]]},
+ point:{h:[46,14],n:[46,28],hp:[46,66],a:[[34,46],[40,64]],b:[[64,30],[86,26]],c:[[40,90],[36,116]],d:[[54,90],[60,116]]},
+ push:{h:[62,20],n:[56,32],hp:[40,66],a:[[72,42],[90,40]],b:[[70,34],[90,30]],c:[[30,90],[14,112]],d:[[52,90],[58,116]]},
+ fog:{h:[50,16],n:[50,30],hp:[50,68],a:[[30,30],[18,14]],b:[[70,30],[82,14]],c:[[40,92],[30,116]],d:[[60,92],[72,116]]},
+ prof:{h:[50,14],n:[50,28],hp:[50,68],a:[[36,48],[42,62]],b:[[64,22],[66,2]],c:[[44,92],[42,118]],d:[[56,92],[58,118]]},
+ shrug:{h:[50,14],n:[50,30],hp:[52,68],a:[[30,40],[22,26]],b:[[70,40],[78,26]],c:[[44,92],[38,118]],d:[[60,92],[64,118]]},
+ hide:{h:[42,62],n:[48,72],hp:[64,96],a:[[40,86],[34,98]],b:[[56,92],[50,104]],c:[[48,104],[40,118]],d:[[66,110],[56,118]]},
+ think:{h:[50,16],n:[50,30],hp:[50,68],a:[[36,50],[58,52]],b:[[66,46],[54,22]],c:[[44,92],[42,118]],d:[[58,92],[62,118]]},
+ walk:{h:[52,14],n:[50,28],hp:[48,66],a:[[38,46],[30,62]],b:[[62,46],[70,60]],c:[[38,90],[28,116]],d:[[58,90],[70,114]]},
+};
+function fig(p,dx=0,mirror=false,ink=INK){
+ const m=([x,y])=>[(mirror?100-x:x)+dx,y];
+ const seg=(pts,w,c)=>`<polyline points="${pts.map(m).map(q=>q.join(',')).join(' ')}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+ const draw=c=>[seg([p.n,p.hp],17,c),seg([p.n,...p.a],8,c),seg([p.n,...p.b],8,c),seg([p.hp,...p.c],10,c),seg([p.hp,...p.d],10,c),`<circle cx="${m(p.h)[0]}" cy="${m(p.h)[1]}" r="9.5" fill="${c}"/>`].join('');
+ return `<g transform="translate(3.5,3)">${draw(OR)}</g><g>${draw(ink)}</g>`;
+}
+document.querySelectorAll('svg[data-pose]').forEach(s=>{
+ const k=s.dataset.pose, dark=s.closest('.dark');
+ if(k==='duel'){s.setAttribute('viewBox','0 0 260 128');s.innerHTML=fig(P.point,20,false,dark?PAPER:INK)+fig(P.point,140,true,dark?PAPER:INK)+`<text x="130" y="40" text-anchor="middle" font-family="Alfa" font-size="26" fill="${OR}">?!</text>`;return;}
+ s.setAttribute('viewBox','0 0 106 128');s.innerHTML=fig(P[k],0,!!s.dataset.mirror,dark?PAPER:INK);
+});
+// pyramide (scène 8), étages animés de bas en haut
+(function(){const lv=[['6','Réfuter le cœur'],['5','Réfutation'],['4','Contre-argument'],['3','Contradiction'],['2','Critique du ton'],['1','Ad hominem'],['0','Insulte']];
+ const keys=['central','central','central','monte','monte','monte','insulte'];
+ let g='';lv.forEach((l,i)=>{const H=78,y=i*H,w=330+i*60,x=350-w/2,c=i<3?'#D2232A':i===3?'#F0A12E':'#1B1714';
+  g+=`<g class="a" data-a="pop" data-k="${'Graham'}" data-delay="${(6-i)*0.18}"><rect x="${x}" y="${y}" width="${w}" height="${H-8}" fill="${c}"/><text x="350" y="${y+48}" text-anchor="middle" font-family="Alfa" font-size="29" fill="${i===3?'#1B1714':'#EFE6D1'}">${l[0]} · ${l[1]}</text></g>`;});
+ document.getElementById('pyr').innerHTML=g;})();
+
+// ---------- moteur de temps ----------
+const TIMING = window.TIMING || [];
+const LEAD=0.6, TAIL=1.0;
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[«»"“”.,;:!?…()]/g,'');
+let scenes=[], total=0;
+function setup(){
+ TIMING.forEach((T,i)=>{
+  const el=document.getElementById(T.id);
+  const len=LEAD+T.dur+TAIL;
+  const words=T.words.map(w=>({w:norm(w.w),t:w.t}));
+  const anims=[...el.querySelectorAll('.a')].map(a=>{
+   let t=0;
+   if(a.dataset.k){const k=norm(a.dataset.k);const hit=words.find(w=>w.w===k)||words.find(w=>w.w.includes(k)||k.includes(w.w)&&w.w.length>3);t=hit?hit.t:0; if(!hit) console.log('MISS',T.id,a.dataset.k);}
+   else if(a.dataset.t) t=parseFloat(a.dataset.t)*T.dur;
+   t+=parseFloat(a.dataset.delay||0);
+   const txt=a.dataset.a==='type'?a.textContent:null;
+   return {a,t,type:a.dataset.a,txt};
+  });
+  scenes.push({el,start:total,len,anims});total+=len;
+ });
+ window.TOTAL=total;
+}
+const clamp=x=>Math.max(0,Math.min(1,x));
+const eo=x=>1-Math.pow(1-x,3);
+const back=x=>{const c=1.7;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2);};
+window.renderAt=function(t){
+ scenes.forEach((S,i)=>{
+  const local=t-S.start;
+  let op=0;
+  if(local>=-0.4&&local<S.len){op=local<0?clamp((local+0.4)/0.4):1;}
+  if(i<scenes.length-1&&local>S.len-0.0) op=0;
+  S.el.style.opacity=op; S.el.style.zIndex=i;
+  if(op===0)return;
+  const lt=local-LEAD;
+  S.el.querySelector('.in').style.transform=`scale(${1+0.025*clamp(local/S.len)})`;
+  S.anims.forEach(A=>{
+   const p=clamp((lt-A.t)/0.55), e=eo(p), s=A.a.style;
+   switch(A.type){
+    case 'up': s.opacity=e; s.transform=`translateY(${(1-e)*50}px)`; break;
+    case 'pop': s.opacity=clamp(p*2); s.transform=`scale(${p<=0?0.6:0.6+0.4*back(p)})`; s.transformOrigin='center'; s.transformBox='fill-box'; break;
+    case 'out': s.opacity=1-e; break;
+    case 'draw': s.clipPath=`inset(0 ${(1-e)*100}% 0 0)`; break;
+    case 'stamp': s.opacity=clamp(p*3); s.transform=`rotate(-8deg) scale(${2.2-1.2*e})`; break;
+    case 'type': {const n=Math.floor(A.txt.length*clamp((lt-A.t)/(A.txt.length*0.05))); A.a.textContent=A.txt.slice(0,n)+(n<A.txt.length&&n>0?'▌':''); s.opacity=n>0?1:0; break;}
+   }
+  });
+  S.el.querySelectorAll('.bob,.bob2').forEach(b=>{const ph=b.classList.contains('bob2')?1.3:0;const y=-Math.abs(Math.sin(t*2.6+ph))*24;b.style.translate=`0 ${y}px`;});
+ });
+};
+setup();
+</script>
+</body></html>
