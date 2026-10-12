@@ -133,7 +133,7 @@ async function fig(pose, opts = {}) {
   s = content("Ouverture");
   s.addText("Le parcours de la séance", { placeholder: "title" });
   const steps = [
-    ["0", "Échauffement", "Zine, pierre-papier-argument, ligne qui bouge", "30 min"],
+    ["0", "Échauffement", "Zine, ligne qui bouge, course à trois jambes", "30 min"],
     ["1", "Le manuel du tricheur", "Schopenhauer, coups bas, pyramide, Rapoport", "35 min"],
     ["2", "Le bestiaire", "Bal masqué des débatteurs, bingo", "40 min"],
     ["3", "Ateliers d'écriture", "Ascenseur, homme d'acier, 39ᵉ stratagème", "45 min"],
@@ -172,31 +172,9 @@ async function fig(pose, opts = {}) {
   T(s, "Un geste manuel ralentit la salle, crée un objet commun et donne à chacun un « passeport » qu'on remplira en cours de route (pages 3, 4, 5 et 7).", { x: 8.95, y: 2.85, w: 3.5, h: 2.8, fontSize: 15, color: C.background2 });
   s.addNotes("Distribuer le PDF du zine imprimé recto seulement, taille réelle. Démontrer le pliage une fois, puis laisser les participants s'entraider : premier geste de coopération.");
 
-  // 6. PIERRE-PAPIER-ARGUMENT
-  s = content("Échauffement");
-  s.addText("Pierre-papier-argument", { placeholder: "title" });
-  timer(s, "10 min");
-  s.addImage({ data: await fig("point"), x: 0.6, y: 1.7, w: 2.0, h: 2.4 });
-  s.addImage({ data: await fig("point", { mirror: true }), x: 2.5, y: 1.7, w: 2.0, h: 2.4 });
-  s.addImage({ data: await fig("jump"), x: 1.5, y: 4.2, w: 1.9, h: 2.3 });
-  T(s, "Inspiré de « Rock-Paper-Scissors Cheerleaders » du New Games Book", { x: 4.9, y: 1.55, w: 7.8, h: 0.4, fontSize: 13, italic: true, color: C.text2 });
-  const rps = [
-    ["À deux", "Sujet absurde tiré au hasard : la pizza à l'ananas, les chaussettes dans les sandales, l'hiver est la meilleure saison."],
-    ["30 s chacun", "Chacun plaide. Puis : « Qui a ébranlé l'autre? » On tranche honnêtement."],
-    ["Meneur de claque", "Le convaincu devient le fan de l'autre et le suit vers un nouveau duel en reformulant son argument avec enthousiasme."],
-    ["La finale", "Deux champions, deux foules qui reformulent. Personne n'est éliminé : tout le monde finit dans une équipe."],
-  ];
-  rps.forEach(([h, d], i) => {
-    const y = 2.1 + i * 1.15;
-    chip(s, 4.9, y, String(i + 1), { w: 0.55, fs: 18, fill: i === 2 ? C.accent2 : C.accent1, color: i === 2 ? C.text1 : C.background2 });
-    T(s, h, { x: 5.65, y: y - 0.02, w: 7, h: 0.4, fontFace: THEME.headFontFace, fontSize: 17, color: C.accent1 });
-    T(s, d, { x: 5.65, y: y + 0.38, w: 7, h: 0.7, fontSize: 14 });
-  });
-  s.addNotes("Objectif caché : rendre désirable le fait d'être convaincu. Perdre = gagner un rôle actif. Faire remarquer à la fin : quelle sensation quand vous avez dû reformuler l'argument de l'autre?");
-
   // 7. LA LIGNE QUI BOUGE
   s = content("Échauffement");
-  s.addText("Activité 3 · La ligne qui bouge", { placeholder: "title" });
+  s.addText("Activité 2 · La ligne qui bouge", { placeholder: "title" });
   timer(s, "13 min");
   s.addShape(pres.shapes.LINE, { x: 0.9, y: 2.55, w: 11.5, h: 0, line: { color: C.text1, width: 4, beginArrowType: "triangle", endArrowType: "triangle" } });
   T(s, "TOTALEMENT D'ACCORD", { x: 0.6, y: 1.65, w: 4, h: 0.4, fontSize: 13, bold: true, color: C.accent1 });
@@ -208,6 +186,32 @@ async function fig(pose, opts = {}) {
   T(s, "La règle surprise", { x: 7.55, y: 3.2, w: 5, h: 0.5, fontFace: THEME.headFontFace, fontSize: 20, color: C.accent2 });
   T(s, "On ne peut bouger que si quelqu'un d'autre nous a fait bouger. Puis, au signal « Change de bord! », chacun va défendre la position opposée à la sienne pendant 1 minute.", { x: 7.55, y: 3.8, w: 4.9, h: 2.3, fontSize: 16, color: C.background2 });
   s.addNotes("Les participants se placent physiquement sur une ligne imaginaire au sol. Chaque déplacement doit être justifié : « Qui t'a fait bouger, et avec quoi? » Le « Change de bord! » prépare l'atelier homme d'acier.");
+
+
+  // 7b. COURSE À TROIS JAMBES
+  s = content("Échauffement");
+  s.addText("Activité 3 · La course à trois jambes", { placeholder: "title" });
+  timer(s, "12 min");
+  const course = [
+    ["Duos opposés", "Un de chaque bout de la ligne qui bouge. Bras dessus, bras dessous."],
+    ["Départ", "Tous les duos au fond de la salle, face au tableau."],
+    ["Un accord = un pas", "Énonce un point d'accord sincère sur le sujet. Si l'autre dit « d'accord », le duo avance d'un pas."],
+    ["« Trop facile! »", "Le groupe peut crier « Trop facile! » sur un accord banal (« on veut tous être heureux »). Pas refusé."],
+    ["Le mur", "Premier duo arrivé : il écrit sa phrase commune au tableau, puis la lit."],
+  ];
+  course.forEach(([h, d], i) => {
+    const y = 1.45 + i * 1.02;
+    chip(s, 0.6, y, String(i + 1), { w: 0.6, fs: 20, fill: i === 2 ? C.accent2 : C.accent1, color: i === 2 ? C.text1 : C.background2 });
+    T(s, h, { x: 1.4, y: y + 0.02, w: 2.5, h: 0.55, fontFace: THEME.headFontFace, fontSize: 17, color: C.accent1, valign: "middle" });
+    T(s, d, { x: 3.9, y: y - 0.04, w: 4.6, h: 0.95, fontSize: 14, valign: "middle" });
+  });
+  box(s, 8.9, 1.45, 3.8, 5.0, { fill: C.text1, line: C.text1 });
+  s.addImage({ data: await fig("walk", { ink: "#" + HEX.paper }), x: 9.25, y: 1.6, w: 1.2, h: 1.45 });
+  s.addImage({ data: await fig("walk", { ink: "#" + HEX.paper, mirror: true }), x: 9.95, y: 1.6, w: 1.2, h: 1.45 });
+  T(s, "Pourquoi ça marche", { x: 9.15, y: 3.2, w: 3.3, h: 0.5, fontFace: THEME.headFontFace, fontSize: 18, color: C.accent2 });
+  const pq = ["Liés, on ne peut pas s'éloigner de l'autre.", "La course oblige à chercher l'accord vite et fort.", "C'est la règle 2 de Rapoport, vécue avec le corps."];
+  T(s, pq.map((t, i) => ({ text: t, options: { bullet: true, breakLine: i < pq.length - 1 } })), { x: 9.15, y: 3.75, w: 3.35, h: 2.5, fontSize: 14, color: C.background2, paraSpaceAfter: 8 });
+  s.addNotes("Sujet : reprendre un énoncé de la ligne qui bouge. Les accords doivent porter sur le sujet, pas sur la météo. Le « Trop facile! » rend le jeu exigeant et drôle. Inclusion : pour un élève à mobilité réduite, le duo avance un jeton sur une piste dessinée au tableau. Retour : quel accord vous a le plus surpris? Lequel a été le plus difficile à dire?");
 
   // =====================================================================
   pres.addSection({ title: "Le manuel du tricheur" });
@@ -333,29 +337,75 @@ async function fig(pose, opts = {}) {
   pres.addSection({ title: "Le bestiaire" });
   await section("Le bestiaire", "2", "Le bestiaire du débat", "Reconnaître les débatteurs… et se reconnaître", "fog");
 
-  // 16. BESTIAIRE
+  // 16. BESTIAIRE (aperçu)
+  const BEASTS = [
+    { p: "push", n: "Le Bulldozer", sig: "« Laisse-moi finir! » (il parle depuis 3 minutes)",
+      coups: "18 Le coupe-fil · 14 Crier victoire", dessous: "La peur de ne pas être entendu, de perdre le contrôle.",
+      rep: "« Je t'ai entendu dire X. Maintenant, 1 minute pour moi. »", force: "Conviction et énergie.",
+      jouer: "Ne laisse jamais un silence. Reprends ta phrase plus fort." },
+    { p: "fog", n: "Le Brouillard", sig: "« Oui, mais le vrai problème, c'est… »",
+      coups: "29 La diversion · 36 Le brouillard", dessous: "Éviter de perdre la face sur une question précise.",
+      rep: "« Bonne question, on la garde. Mais sur X, ta réponse? »", force: "Voit les liens et le portrait d'ensemble.",
+      jouer: "Chaque fois qu'on te coince, élargis le sujet." },
+    { p: "point", n: "Le Sniper", sig: "« Venant de toi, franchement… »",
+      coups: "38 Le K.-O. · 8 L'allumette · 32 L'étiquette", dessous: "Se sentir menacé, ou déjà blessé.",
+      rep: "Le calme. « Admettons. Et l'argument lui-même? »", force: "Un sens critique aiguisé… mal visé.",
+      jouer: "Commente la personne, jamais l'idée. Attaques fictives et légères seulement." },
+    { p: "prof", n: "Le Professeur", sig: "« Les études montrent que… »",
+      coups: "30 Le galon · 36 Le brouillard", dessous: "Le besoin de crédibilité, de statut.",
+      rep: "« Lesquelles? Qu'est-ce qu'elles disent exactement? »", force: "Il s'appuie sur des sources.",
+      jouer: "Cite des experts vagues. Utilise des mots compliqués." },
+    { p: "shrug", n: "La Girouette", sig: "« T'as raison… Toi aussi, t'as raison. »",
+      coups: "Aucun : elle les subit (28, rire de la salle)", dessous: "Le besoin d'harmonie, la peur du conflit.",
+      rep: "« Si tu devais choisir une seule position? »", force: "Écoute et ouverture.",
+      jouer: "Donne raison à la dernière personne qui a parlé." },
+    { p: "hide", n: "La Tortue", sig: "« … » ou « Je sais pas » (alors qu'elle sait)",
+      coups: "Aucun : elle se retire", dessous: "La peur du jugement, le besoin de sécurité.",
+      rep: "Temps d'écriture d'abord, puis une question précise.", force: "Observe et réfléchit : détient souvent la meilleure idée.",
+      jouer: "Reste muet·te, sauf si on t'invite très clairement." },
+    { p: "think", n: "L'Avocat du diable", sig: "« Juste pour jouer l'avocat du diable… »",
+      coups: "1 L'élastique · 13 Le faux choix", dessous: "Le plaisir du jeu, le besoin de stimulation.",
+      rep: "« Et toi, tu penses vraiment quoi? »", force: "Teste la solidité des idées. Précieux s'il l'annonce.",
+      jouer: "Contredis chaque affirmation, même celles que tu approuves." },
+    { p: "jump", n: "Le Bâtisseur", sig: "« Si je te comprends bien, tu dis que… »",
+      coups: "Aucun : il applique Rapoport", dessous: "L'envie de comprendre, pas de gagner.",
+      rep: "Devenir paillasson à force de douceur.", force: "Il fait progresser tout le groupe.",
+      jouer: "Reformule avant chaque prise de parole. Nomme un accord.", piege: true },
+  ];
   s = content("Le bestiaire");
   s.addText("8 créatures à reconnaître", { placeholder: "title" });
-  const beasts = [
-    ["push", "Le Bulldozer", "Parle fort et long, ne recule jamais"],
-    ["fog", "Le Brouillard", "Change de sujet dès que ça chauffe"],
-    ["point", "Le Sniper", "Vise la personne, jamais l'idée"],
-    ["prof", "Le Professeur", "« Les experts disent que… » Point final"],
-    ["shrug", "La Girouette", "D'accord avec le dernier qui a parlé"],
-    ["hide", "La Tortue", "Pense fort, ne dit rien"],
-    ["think", "L'Avocat du diable", "Conteste tout, parfois juste pour jouer"],
-    ["jump", "Le Bâtisseur", "Reformule, questionne, construit"],
-  ];
-  for (let i = 0; i < beasts.length; i++) {
-    const [p, h, d] = beasts[i];
+  for (let i = 0; i < BEASTS.length; i++) {
+    const B = BEASTS[i];
     const col = i % 4, row = Math.floor(i / 4);
     const x = 0.6 + col * 3.07, y = 1.45 + row * 2.75;
     box(s, x, y, 2.9, 2.55, { fill: i === 7 ? C.accent2 : C.background1 });
-    s.addImage({ data: await fig(p), x: x + 0.15, y: y + 0.2, w: 1.05, h: 1.27 });
-    T(s, h, { x: x + 1.25, y: y + 0.3, w: 1.55, h: 1.0, fontFace: THEME.headFontFace, fontSize: 16, color: C.accent1, valign: "middle" });
-    T(s, d, { x: x + 0.15, y: y + 1.6, w: 2.6, h: 0.85, fontSize: 14 });
+    s.addImage({ data: await fig(B.p), x: x + 0.15, y: y + 0.2, w: 1.05, h: 1.27 });
+    T(s, B.n, { x: x + 1.25, y: y + 0.3, w: 1.55, h: 1.0, fontFace: THEME.headFontFace, fontSize: 16, color: C.accent1, valign: "middle" });
+    T(s, B.sig, { x: x + 0.15, y: y + 1.6, w: 2.6, h: 0.85, fontSize: 14, italic: true });
   }
-  s.addNotes("Présenter rapidement. Insister : personne n'est une seule créature. On change selon la fatigue, le sujet, le public. L'Avocat du diable peut être précieux s'il l'annonce; toxique s'il le cache.");
+  s.addNotes("Aperçu : on reconnaît chaque créature d'abord à sa phrase-signature. Insister : personne n'est une seule créature. On change selon la fatigue, le sujet, le public. Les 4 diapos suivantes sont des fiches d'identité à imprimer : elles servent de cartes-rôles pour le bal masqué.");
+
+  // 16b-e. FICHES D'IDENTITÉ (2 par diapo, imprimables comme cartes-rôles)
+  for (let k = 0; k < 4; k++) {
+    s = content("Le bestiaire");
+    s.addText("Fiches d'identité · " + (k + 1) + "/4", { placeholder: "title" });
+    for (let j = 0; j < 2; j++) {
+      const B = BEASTS[k * 2 + j];
+      const x = 0.6 + j * 6.15, y = 1.4;
+      box(s, x, y, 5.95, 5.4, { fill: B.piege ? C.accent2 : C.background1 });
+      s.addImage({ data: await fig(B.p), x: x + 0.15, y: y + 0.12, w: 0.95, h: 1.15 });
+      T(s, B.n, { x: x + 1.2, y: y + 0.15, w: 4.6, h: 0.5, fontFace: THEME.headFontFace, fontSize: 22, color: C.accent1 });
+      T(s, B.sig, { x: x + 1.2, y: y + 0.68, w: 4.6, h: 0.6, fontSize: 14, italic: true, bold: true });
+      const rows = [["Coups bas favoris", B.coups], ["Ce qui se cache dessous", B.dessous], [B.piege ? "Son piège" : "Comment lui répondre", B.rep], ["Sa force cachée", B.force], ["Pour le jouer au bal masqué", B.jouer]];
+      rows.forEach(([l, t], r) => {
+        const ry = y + 1.42 + r * 0.79;
+        s.addShape(pres.shapes.LINE, { x: x + 0.15, y: ry, w: 5.65, h: 0, line: { color: C.text1, width: 0.75 } });
+        T(s, l, { x: x + 0.15, y: ry + 0.06, w: 1.55, h: 0.68, fontSize: 11, bold: true, color: C.text2 });
+        T(s, t, { x: x + 1.75, y: ry + 0.06, w: 4.05, h: 0.7, fontSize: 14, bold: r === 2 });
+      });
+    }
+    s.addNotes("Fiches d'identité. Imprimer cette diapo et couper en deux : chaque moitié devient une carte-rôle pour le bal masqué (la dernière ligne dit comment jouer la créature). Les numéros renvoient aux stratagèmes de Schopenhauer; 14 = crier victoire malgré la défaite.");
+  }
 
   // 17. BAL MASQUÉ
   s = content("Le bestiaire");
@@ -378,7 +428,7 @@ async function fig(pose, opts = {}) {
   T(s, "Sujets testés", { x: 9.25, y: 1.7, w: 3.3, h: 0.5, fontFace: THEME.headFontFace, fontSize: 18, color: C.accent2 });
   const sujets = ["Uniforme obligatoire?", "Une semaine de 4 jours à l'école?", "Les notes devraient-elles disparaître?", "L'IA pour faire ses devoirs : tricherie ou outil?"];
   T(s, sujets.map((t, i) => ({ text: t, options: { bullet: true, breakLine: i < sujets.length - 1 } })), { x: 9.25, y: 2.3, w: 3.25, h: 3.9, fontSize: 15, color: C.background2, paraSpaceAfter: 10 });
-  s.addNotes("Imprimer les 8 cartes-créatures (diapo suivante) en plusieurs exemplaires. Débat en aquarium : 5 au centre, le reste en observation. L'étape 5 (rejouer en Bâtisseurs) est la plus importante : faire nommer la différence d'ambiance.");
+  s.addNotes("Imprimer les 4 diapos « Fiches d'identité » et les couper en deux : 8 cartes-rôles. Débat en aquarium : 5 au centre, le reste en observation. L'étape 5 (rejouer en Bâtisseurs) est la plus importante : faire nommer la différence d'ambiance.");
 
   // 18. CARTES + BINGO
   s = content("Le bestiaire");
