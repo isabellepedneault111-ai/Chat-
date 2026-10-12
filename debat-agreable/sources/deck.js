@@ -4,7 +4,7 @@ const { applyTheme } = require("/root/.claude/skills/synced/2159d0f0-c9f4-456a-9
 
 const HEX = { ink: "1B1714", paper: "EFE6D1", red: "D2232A", orange: "F0A12E", white: "FFFFFF", brown: "6B4B10" };
 const THEME = {
-  name: "Nouveau livre du debat",
+  name: "Confrontation agreable",
   headFontFace: "Rockwell Extra Bold",
   bodyFontFace: "Arial",
   colors: {
@@ -41,7 +41,7 @@ async function fig(pose, opts = {}) {
 (async () => {
   const pres = new pptxgen();
   pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5
-  pres.title = "Le nouveau livre du débat : la confrontation agréable";
+  pres.title = "La confrontation agréable";
   pres.author = "Séminaire pédagonumérique";
   pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
   const C = pres.SchemeColor;
@@ -68,7 +68,7 @@ async function fig(pose, opts = {}) {
     background: { color: C.background2 },
     objects: [
       { placeholder: { options: { name: "title", type: "title", align: "left", x: 0.6, y: 0.4, w: 10.1, h: 0.95, fontSize: 36, color: C.accent1, valign: "top", margin: 0 }, text: "" } },
-      { text: { text: "LE NOUVEAU LIVRE DU DÉBAT", options: { x: 0.6, y: 6.98, w: 6, h: 0.3, fontFace: "Arial", fontSize: 9, bold: true, color: C.text2, charSpacing: 2, margin: 0 } } },
+      { text: { text: "LA CONFRONTATION AGRÉABLE", options: { x: 0.6, y: 6.98, w: 6, h: 0.3, fontFace: "Arial", fontSize: 9, bold: true, color: C.text2, charSpacing: 2, margin: 0 } } },
     ],
     slideNumber: { x: 12.3, y: 6.95, w: 0.6, h: 0.35, fontFace: "Arial", fontSize: 10, color: C.accent1, align: "right" },
   });
@@ -108,15 +108,14 @@ async function fig(pose, opts = {}) {
   // 1. COUVERTURE
   pres.addSection({ title: "Ouverture" });
   let s = pres.addSlide({ masterName: "COUVERTURE", sectionTitle: "Ouverture" });
-  T(s, "SÉMINAIRE · LA CONFRONTATION AGRÉABLE", { x: 0.6, y: 0.55, w: 7, h: 0.4, fontSize: 14, bold: true, charSpacing: 3 });
-  s.addText("LE NOUVEAU\nLIVRE DU\nDÉBAT", { placeholder: "title" });
+  T(s, "SÉMINAIRE · 3 H · ADULTES CURIEUX", { x: 0.6, y: 0.55, w: 7, h: 0.4, fontSize: 14, bold: true, charSpacing: 3 });
+  s.addText("LA\nCONFRON-\nTATION\nAGRÉABLE", { placeholder: "title" });
   s.addImage({ data: await fig("jump"), x: 8.3, y: 0.2, w: 4.6, h: 5.55, rotate: 8, objectName: "sauteur" });
   T(s, [
-    { text: "Débattre fort", options: { breakLine: true } },
-    { text: "Débattre juste", options: { breakLine: true } },
-    { text: "Personne blessé·e" },
+    { text: "Dur sur les idées.", options: { breakLine: true } },
+    { text: "Doux avec les gens." },
   ], { x: 9.6, y: 5.75, w: 3.2, h: 1.2, fontSize: 18, bold: true, align: "left" });
-  s.addNotes("Accueil. Le visuel s'inspire du New Games Book (1976) : « Play hard, play fair, nobody hurt ». Notre pari : transposer cette éthique du jeu coopératif au débat. On va apprendre les coups bas de Schopenhauer pour les reconnaître, puis pratiquer un débat ferme ET agréable. Durée totale : environ 3 h.");
+  s.addNotes("Accueil. Notre pari : apprendre les coups bas de Schopenhauer pour les reconnaître, puis pratiquer un débat ferme ET agréable : dur sur les idées, doux avec les gens. Durée totale : environ 3 h.");
 
   // 2. QUESTION D'OUVERTURE
   s = night("Ouverture");
@@ -632,12 +631,12 @@ async function fig(pose, opts = {}) {
 
   // 28. FERMETURE
   s = pres.addSlide({ masterName: "COUVERTURE", sectionTitle: "Repartir avec" });
-  s.addText("Débattre fort.\nDébattre juste.\nPersonne blessé·e.", { placeholder: "title" });
+  s.addText("Dur sur\nles idées.\nDoux avec\nles gens.", { placeholder: "title" });
   s.addImage({ data: await fig("jump"), x: 8.6, y: 0.5, w: 2.1, h: 2.55, rotate: -6 });
   s.addImage({ data: await fig("jump", { mirror: true }), x: 10.6, y: 1.1, w: 2.1, h: 2.55, rotate: 6 });
   T(s, "Le but n'est pas d'avoir raison contre quelqu'un, c'est d'avoir un peu plus raison ensemble.", { x: 0.6, y: 0.6, w: 7.6, h: 1.1, fontSize: 18, bold: true });
-  T(s, "Sources : A. Schopenhauer, L'Art d'avoir toujours raison · P. Graham, How to Disagree (2008) · D. Dennett, Intuition Pumps (2013) · R. Fisher et W. Ury, Getting to Yes · A. Fluegelman, The New Games Book (1976)", { x: 8.6, y: 3.9, w: 4.2, h: 2.9, fontSize: 11, color: C.text2 });
-  s.addNotes("Clôture. Remettre la devise du New Games Book transposée au débat. Inviter les participants à repartir avec leur zine, leur talisman et, peut-être, une mise à jour envoyée.");
+  T(s, "Sources : A. Schopenhauer, L'Art d'avoir toujours raison · P. Graham, How to Disagree (2008) · D. Dennett, Intuition Pumps (2013) · R. Fisher et W. Ury, Getting to Yes", { x: 8.6, y: 3.9, w: 4.2, h: 2.9, fontSize: 11, color: C.text2 });
+  s.addNotes("Clôture. Rappeler la devise : dur sur les idées, doux avec les gens. Inviter les participants à repartir avec leur zine, leur talisman et, peut-être, une mise à jour envoyée.");
 
   pres.addSection({ title: "Annexes" });
   // ANNEXE : fiches d'identité imprimables (cartes-rôles du bal masqué)
