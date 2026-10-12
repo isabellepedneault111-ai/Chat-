@@ -26,7 +26,7 @@ p,li{font-size:7.3pt;line-height:1.3}
 .tag{display:inline-block;background:var(--ink);color:var(--paper);font-family:Alfa;font-size:6.5pt;padding:1px 4px;transform:rotate(-2deg)}
 svg.fig{display:block}
 /* COVER */
-.cover h1{font-size:30pt;margin-top:1.6in;line-height:.98}
+.cover h1{font-size:30pt;margin-top:1.38in;line-height:.98}
 .cover .mott{margin-top:.1in;text-align:left;font-weight:900;font-size:8.6pt;line-height:1.15}
 .cover .jump{position:absolute;top:.05in;right:-.1in;width:1.9in;transform:rotate(8deg)}
 .cover .issue{position:absolute;top:.18in;left:.2in;font-family:Elite;font-size:6.5pt;line-height:1.2}
@@ -50,6 +50,10 @@ svg.fig{display:block}
 .br p{font-size:6.1pt;line-height:1.12}
 .br p.par{font-size:5.9pt;color:#6b4b10;font-weight:700}
 .br b{font-family:Alfa;font-weight:400;color:var(--red);font-size:6.6pt;text-align:right;line-height:1}
+.wl{border-bottom:1px solid var(--ink);height:.25in;position:relative}
+.wl i{position:absolute;left:0;bottom:.02in;font-style:normal;font-family:Alfa;font-size:6.5pt;color:var(--red)}
+.rules.tight li{margin:.02in 0}.rules.tight li>b{font-size:13pt}
+.phr.tight li{padding:.012in 0 .012in .13in;font-size:6.5pt}
 .pyr{width:100%}
 .lines{border-bottom:1px solid var(--ink);height:.2in}
 .phr li{list-style:none;padding:.025in 0 .025in .13in;position:relative;font-size:7.1pt}
@@ -71,10 +75,11 @@ svg.fig{display:block}
 <div class="sheet">
  <!-- rangée du haut (à l'envers) : 5 4 3 2 -->
  <section class="p flip" id="p5">
-  <h2>Monte la pyramide</h2>
-  <p style="margin-bottom:.05in">Paul Graham a classé nos façons d'être en désaccord. Plus tu montes, plus le débat devient <b>agréable</b>… et dangereux pour les mauvais arguments.</p>
-  <svg class="pyr" viewBox="0 0 200 215" id="pyr"></svg>
-  <p class="elite" style="font-size:6.6pt;margin-top:.03in">Défi : la prochaine fois que tu réponds à quelqu'un, nomme ton étage.</p>
+  <h2 style="font-size:18pt">Monte la pyramide</h2>
+  <svg class="pyr" viewBox="0 0 200 215" id="pyr" style="height:1.5in;display:block;margin:0 auto"></svg>
+  <h3>À toi : l'ascenseur</h3>
+  <p style="font-size:6.2pt">Une réplique entendue, réécrite étage par étage.</p>
+  <div class="wl"><i>0</i></div><div class="wl"><i>3</i></div><div class="wl"><i>4</i></div><div class="wl"><i>6</i></div><div class="wl"></div>
   <span class="folio l">5</span>
  </section>
  <section class="p flip" id="p4">
@@ -106,42 +111,44 @@ svg.fig{display:block}
  </section>
  <section class="p flip" id="p2">
   <h2>Le manuel du tricheur</h2>
-  <p>Vers 1830, le philosophe <b>Arthur Schopenhauer</b> rédige <i>L'Art d'avoir toujours raison</i>&nbsp;: <b>38 stratagèmes</b> pour gagner un débat, même quand on a tort.</p>
-  <div class="box" style="margin:.08in 0"><p class="bigq">« Le débat est un combat d'escrime intellectuel. »</p></div>
-  <p>Il précise pourtant : ne débats qu'avec ceux qui cherchent la vérité et acceptent d'avoir tort.</p>
-  <p style="margin-top:.06in"><span class="tag">NOTRE PARI</span></p>
-  <p style="margin-top:.04in">Ce zine retourne le manuel. On apprend les coups bas <b>pour les reconnaître</b>, pas pour les jouer. C'est un vaccin.</p>
-  <p style="margin-top:.06in">Car le but n'est pas d'avoir raison <b>contre</b> quelqu'un, c'est d'avoir <b>un peu plus raison ensemble</b>.</p>
-  <svg class="fig" data-pose="duel" style="width:100%;height:.95in;margin-top:.04in"></svg>
+  <p>Vers 1830, le philosophe <b>Arthur Schopenhauer</b> écrit <i>L'Art d'avoir toujours raison</i>&nbsp;: <b>38 stratagèmes</b> pour gagner un débat, même quand on a tort.</p>
+  <div class="box" style="margin:.06in 0"><p class="bigq" style="font-size:11pt">« Le débat est un combat d'escrime intellectuel. »</p></div>
+  <p><span class="tag">NOTRE PARI</span> On apprend les coups bas <b>pour les reconnaître</b>, pas pour les jouer. C'est un vaccin.</p>
+  <h3>À toi</h3>
+  <p style="font-size:6.2pt">Un débat que j'ai gagné… et ce qu'il m'a coûté :</p>
+  <div class="wl"></div><div class="wl"></div><div class="wl"></div><div class="wl"></div><div class="wl"></div>
   <span class="folio l">2</span>
  </section>
 
  <!-- rangée du bas (à l'endroit) : 6 7 8 1 -->
  <section class="p" id="p6">
-  <h2>Les 4 règles de Rapoport</h2>
-  <p style="margin-bottom:.04in">Avant de critiquer une idée, gagne le droit de le faire :</p>
-  <ol class="rules">
-   <li><b>1</b><p>Reformule l'idée de l'autre si bien qu'il dise : <span class="elite">« Wow, j'aurais aimé le dire comme ça. »</span></p></li>
-   <li><b>2</b><p>Nomme tes <b>points d'accord</b>, surtout les surprenants.</p></li>
-   <li><b>3</b><p>Dis ce que tu as <b>appris</b> de cette personne.</p></li>
+  <h2 style="font-size:18pt">Les 4 règles de Rapoport</h2>
+  <ol class="rules tight">
+   <li><b>1</b><p>Reformule l'idée de l'autre si bien qu'il dise : <span class="elite">« J'aurais aimé le dire comme ça. »</span></p></li>
+   <li><b>2</b><p>Nomme tes <b>points d'accord</b>.</p></li>
+   <li><b>3</b><p>Dis ce que tu as <b>appris</b>.</p></li>
    <li><b>4</b><p><b>Seulement là</b>, ta critique.</p></li>
   </ol>
-  <div class="box"><h3 style="margin-top:0">Homme de paille → homme d'acier</h3><p>L'homme de paille rend la thèse adverse plus faible pour mieux la frapper. L'<b>homme d'acier</b> la rend <b>plus forte</b>, puis l'affronte. Si tu gagnes, tu as vraiment gagné.</p></div>
+  <h3>À toi : l'homme d'acier</h3>
+  <p style="font-size:6.2pt">Ce que tu penses, dit mieux que toi :</p>
+  <div class="wl"></div><div class="wl"></div><div class="wl"></div><div class="wl"></div><div class="wl"></div>
+  <div class="wl"><i>Signé :</i></div>
   <span class="folio">6</span>
  </section>
  <section class="p" id="p7">
-  <h2>Phrases qui désamorcent</h2>
-  <ul class="phr">
+  <h2 style="font-size:18pt">Le 39ᵉ stratagème</h2>
+  <p>Schopenhauer s'est arrêté à 38. Invente le 39ᵉ : un coup <b>loyal</b> qui fait gagner tout le monde.</p>
+  <div class="wl"><i>Son nom :</i></div>
+  <div class="wl"><i>Quand l'utiliser :</i></div><div class="wl"></div>
+  <div class="wl"><i>La phrase ou le geste :</i></div><div class="wl"></div><div class="wl"></div>
+  <div class="wl"><i>Ce qu'il désamorce :</i></div>
+  <h3 style="margin-top:.08in">Phrases qui désamorcent</h3>
+  <ul class="phr tight">
    <li>« Si je te comprends bien, tu dis que… c'est ça? »</li>
    <li>« Qu'est-ce qui pourrait te faire changer d'idée? »</li>
-   <li>« On est d'accord sur ___. On diffère sur ___. »</li>
    <li>« Bon point. Je n'y avais pas pensé. »</li>
-   <li>« Je vois ça autrement. Je t'explique? »</li>
-   <li>« Sur quoi tu t'appuies? Ça m'intéresse. »</li>
    <li>« Je pense que j'avais tort sur ce bout-là. »</li>
   </ul>
-  <div class="box" style="margin-top:.07in"><h3 style="margin-top:0">Le 39ᵉ stratagème</h3><p>Schopenhauer s'est arrêté à 38. Invente le 39ᵉ : un coup <b>loyal</b> qui fait gagner tout le monde.</p>
-  <div class="lines"></div><div class="lines"></div><div class="lines"></div></div>
   <span class="folio">7</span>
  </section>
  <section class="p" id="p8" style="background:var(--ink);color:var(--paper)">
@@ -182,9 +189,9 @@ svg.fig{display:block}
  <div>
   <h1 style="font-size:22pt">Pour l'animateur·trice</h1>
   <h2>Avant</h2>
-  <ul style="padding-left:.2in"><li>Faire plier le zine <b>en ouverture</b> de séance : un geste manuel brise la glace et crée l'objet commun.</li><li>Chacun signe la page 7 au moment d'écrire son 39ᵉ stratagème.</li></ul>
+  <ul style="padding-left:.2in"><li>Faire plier le zine <b>en ouverture</b> de séance : un geste manuel brise la glace et crée l'objet commun.</li><li>Zones d'écriture : page 2 (un débat gagné… à quel prix?), 5 (l'ascenseur), 6 (l'homme d'acier signé), 7 (le 39ᵉ stratagème).</li></ul>
   <h2>Pendant</h2>
-  <ul style="padding-left:.2in"><li>Page 3 : support de l'activité <b>Bestiaire</b> (cartes rôles secrets).</li><li>Page 4 : grille de <b>bingo des coups bas</b> pour les observateurs.</li><li>Page 5 : <b>réécriture</b> d'une réplique toxique, étage par étage.</li><li>Page 6 : atelier <b>homme d'acier</b>.</li></ul>
+  <ul style="padding-left:.2in"><li>Page 3 : support de l'activité <b>Bestiaire</b> (cartes rôles secrets).</li><li>Page 4 : grille de <b>bingo des coups bas</b> pour les observateurs.</li><li>Pages 5 à 7 : les <b>trois ateliers d'écriture</b>, directement dans le zine.</li></ul>
   <h2>Pour qui?</h2>
   <p>Adultes volontaires de tout acabit, <b>aucun prérequis</b>. On vient pour jouer, pas pour être évalué.</p>
   <h2>Règle du joker</h2>
