@@ -135,8 +135,8 @@ async function fig(pose, opts = {}) {
     ["0", "Échauffement", "Zine, ligne qui bouge, course à trois jambes", "25 min"],
     ["1", "Les coups bas", "Coche-les, dur/doux, pyramide", "20 min"],
     ["2", "Le bestiaire", "Croquis-éclair, bal masqué, bingo", "40 min"],
-    ["3", "Écrire", "Ascenseur, homme d'acier, 39ᵉ stratagème", "35 min"],
-    ["4", "L'arène", "Aquarium à jetons", "25 min"],
+    ["3", "Écrire", "Menu de 7 jeux d'écriture", "40 min"],
+    ["4", "L'arène", "Aquarium à jetons", "20 min"],
     ["5", "Repartir avec", "Talisman, mise à jour relationnelle", "35 min"],
   ];
   steps.forEach(([n, h, d, t], i) => {
@@ -392,6 +392,33 @@ async function fig(pose, opts = {}) {
   }
   s.addNotes("Aperçu : on reconnaît chaque créature d'abord à sa phrase-signature. Insister : personne n'est une seule créature. On change selon la fatigue, le sujet, le public. Les 4 diapos suivantes sont des fiches d'identité à imprimer : elles servent de cartes-rôles pour le bal masqué.");
 
+  // 16f. LE BESTIAIRE EN ACTION (extraits animés)
+  const CLIPS = [
+    ["bulldozer", "Le Bulldozer", "« Laisse-moi finir! »", "coupe la parole et pousse"],
+    ["brouillard", "Le Brouillard", "« Oui, mais le vrai problème… »", "change de sujet quand ça chauffe"],
+    ["sniper", "Le Sniper", "« Venant de toi, franchement… »", "vise la personne, pas l'idée"],
+    ["professeur", "Le Professeur", "« Les études montrent que… »", "brandit l'autorité"],
+    ["girouette", "La Girouette", "« T'as raison! Toi aussi! »", "suit le dernier qui parle"],
+    ["tortue", "La Tortue", "« … »", "se tait avec la meilleure idée"],
+    ["avocat", "L'Avocat du diable", "« Juste pour jouer… prouve-le! »", "contredit tout"],
+    ["batisseur", "Le Bâtisseur", "« Si je te comprends bien… »", "reformule, puis construit"],
+  ];
+  for (let k = 0; k < 4; k++) {
+    s = content("Le bestiaire");
+    s.addText("Le bestiaire en action · " + (k + 1) + "/4", { placeholder: "title" });
+    for (let j = 0; j < 2; j++) {
+      const [f, n, dit, fait] = CLIPS[k * 2 + j]; const x = 0.6 + j * 6.15;
+      const cover = "data:image/png;base64," + (await sharp(__dirname + "/clips/" + f + ".jpg").png().toBuffer()).toString("base64");
+      s.addShape(pres.shapes.RECTANGLE, { x: x + 0.08, y: 1.53, w: 5.95, h: 3.35, fill: { color: C.accent2 }, line: { type: "none" } });
+      s.addMedia({ type: "video", path: __dirname + "/clips/" + f + ".mp4", cover, x, y: 1.45, w: 5.95, h: 3.35 });
+      s.addShape(pres.shapes.RECTANGLE, { x, y: 1.45, w: 5.95, h: 3.35, fill: { type: "none" }, line: { color: C.text1, width: 2.5 } });
+      T(s, n, { x, y: 5.0, w: 5.95, h: 0.5, fontFace: THEME.headFontFace, fontSize: 22, color: C.accent1 });
+      T(s, [{ text: "DIT  ", options: { bold: true, color: C.text2 } }, { text: dit, options: { italic: true } }], { x, y: 5.55, w: 5.95, h: 0.45, fontSize: 16 });
+      T(s, [{ text: "FAIT  ", options: { bold: true, color: C.text2 } }, { text: fait }], { x, y: 6.0, w: 5.95, h: 0.45, fontSize: 16 });
+    }
+    s.addNotes("Cliquer sur chaque extrait pour le lancer (3,5 s, sans son). Question au groupe : où avez-vous déjà vu cette créature? Qu'est-ce qu'elle dit, qu'est-ce qu'elle fait? Comment l'autre personne réagit-elle?");
+  }
+
   // 17. BAL MASQUÉ
   s = content("Le bestiaire");
   s.addText("Le bal masqué du débat", { placeholder: "title" });
@@ -452,6 +479,28 @@ async function fig(pose, opts = {}) {
   // =====================================================================
   pres.addSection({ title: "Ateliers d'écriture" });
   await section("Ateliers d'écriture", "3", "Ateliers d'écriture", "L'agréabilité se travaille aussi au crayon", "walk");
+
+  // 20b. MENU DES JEUX D'ÉCRITURE
+  s = content("Ateliers d'écriture");
+  s.addText("Le menu des jeux d'écriture", { placeholder: "title" });
+  const JEUX = [
+    ["L'ascenseur", "10 min", "à deux", "Une réplique blessante, réécrite étage par étage"],
+    ["L'homme d'acier signé", "10 min", "à deux", "L'autre signe si tu as bien dit sa pensée"],
+    ["Le 39ᵉ stratagème", "10 min", "seul·e", "Invente un coup loyal"],
+    ["Le relais de reformulation", "10 min", "groupe de 4", "Reformule, ajoute, passe la feuille"],
+    ["Débat sans « mais »", "8 min", "à deux", "6 répliques, le mot « mais » est interdit"],
+    ["Avis de recherche", "8 min", "seul·e", "Portrait-robot écrit et dessiné d'une créature"],
+    ["Le tweet de paix", "5 min", "seul·e", "280 caractères pour désamorcer"],
+  ];
+  JEUX.forEach(([n, dur, mode, desc], i) => {
+    const col = i % 4, row = Math.floor(i / 4);
+    const x = 0.6 + col * 3.07 + (row ? 1.53 : 0), y = 1.45 + row * 2.65;
+    box(s, x, y, 2.9, 2.45, { fill: i > 2 ? C.accent2 : C.background1 });
+    T(s, n, { x: x + 0.15, y: y + 0.15, w: 2.6, h: 0.85, fontFace: THEME.headFontFace, fontSize: 17, color: C.accent1 });
+    T(s, desc, { x: x + 0.15, y: y + 1.0, w: 2.6, h: 0.9, fontSize: 14 });
+    T(s, dur + " · " + mode, { x: x + 0.15, y: y + 1.95, w: 2.6, h: 0.35, fontSize: 13, bold: true, color: C.text2 });
+  });
+  s.addNotes("Choisir 3 ou 4 jeux selon le groupe (40 min). En orange : les nouveaux jeux, dont les gabarits sont sur la feuille de jeux d'écriture (page 4 du PDF du zine).");
 
   // 21. ASCENSEUR
   s = content("Ateliers d'écriture");
@@ -517,6 +566,76 @@ async function fig(pose, opts = {}) {
     s.addShape(pres.shapes.LINE, { x: 5.8, y: y + 0.82, w: 6.6, h: 0, line: { color: C.text1, width: 1 } });
   });
   s.addNotes("Production finale du séminaire. On compile les stratagèmes du groupe dans un « Manuel du débat loyal » numéroté à partir de 39 : le zine nº 2 du groupe.");
+
+  // 23b. RELAIS DE REFORMULATION
+  s = content("Ateliers d'écriture");
+  s.addText("Jeu · Le relais de reformulation", { placeholder: "title" });
+  timer(s, "10 min");
+  const rel = [["Écris", "Une opinion sur le sujet du jour, en une phrase."], ["Passe", "La feuille va à ta droite."], ["Reformule", "« Si je comprends bien, tu dis que… » puis ajoute UN argument."], ["Répète", "4 tours. On lit la feuille à voix haute : l'idée a-t-elle dérivé?"]];
+  rel.forEach(([h, t2], i) => {
+    const x = 0.6 + i * 3.07;
+    box(s, x, 1.6, 2.9, 3.0, { fill: i === 2 ? C.accent2 : C.background1 });
+    chip(s, x + 0.2, 1.8, String(i + 1), { w: 0.6, fs: 20 });
+    T(s, h, { x: x + 0.95, y: 1.85, w: 1.85, h: 0.5, fontFace: THEME.headFontFace, fontSize: 20, color: C.accent1 });
+    T(s, t2, { x: x + 0.2, y: 2.65, w: 2.5, h: 1.8, fontSize: 15 });
+  });
+  s.addShape(pres.shapes.LINE, { x: 0.9, y: 5.2, w: 11.5, h: 0, line: { color: C.text1, width: 3, dashType: "dash", endArrowType: "triangle" } });
+  T(s, "Le point de départ et d'arrivée se ressemblent-ils encore? Qui a déformé, qui a enrichi?", { x: 0.6, y: 5.5, w: 12.1, h: 0.6, fontSize: 17, italic: true, color: C.text2 });
+  s.addNotes("Groupes de 4, une feuille par personne, qui circule. Le jeu rend visible la dérive des idées : un bon relais garde le cœur de l'idée de départ. Discuter : qu'est-ce qui a déformé? (l'élastique, le stratagème 1, revient souvent).");
+
+  // 23c. LE DÉBAT SANS « MAIS »
+  s = content("Ateliers d'écriture");
+  s.addText("Jeu · Le débat sans « mais »", { placeholder: "title" });
+  timer(s, "8 min");
+  T(s, "MAIS", { x: 0.6, y: 1.7, w: 5.2, h: 1.9, fontFace: THEME.headFontFace, fontSize: 110, color: C.accent1, align: "center", valign: "middle" });
+  s.addShape(pres.shapes.LINE, { x: 1.0, y: 1.9, w: 4.4, h: 1.5, flipV: true, line: { color: C.text1, width: 10 } });
+  T(s, "Remplace-le par « et », « et pourtant », « en même temps », « je me demande si… ».", { x: 0.6, y: 4.2, w: 5.2, h: 1.6, fontSize: 18, bold: true });
+  const sm = ["À deux, sur une feuille.", "Écrivez un débat de 6 répliques, en alternance.", "Le mot « mais » est interdit. Un « mais » = on recommence la réplique.", "Lisez-le à voix haute : le ton a-t-il changé?"];
+  sm.forEach((t2, i) => {
+    const y = 1.6 + i * 1.1;
+    chip(s, 6.5, y, String(i + 1), { w: 0.6, fs: 20, fill: i === 2 ? C.accent2 : C.accent1, color: i === 2 ? C.text1 : C.background2 });
+    T(s, t2, { x: 7.3, y: y - 0.05, w: 5.4, h: 0.9, fontSize: 17, valign: "middle" });
+  });
+  s.addNotes("Contrainte d'écriture à la manière de l'Oulipo. « Oui, mais » annule souvent ce qui précède; « oui, et » le prolonge. Les participants découvrent combien le mot revient par réflexe.");
+
+  // 23d. AVIS DE RECHERCHE
+  s = content("Ateliers d'écriture");
+  s.addText("Jeu · Avis de recherche", { placeholder: "title" });
+  timer(s, "8 min");
+  box(s, 0.6, 1.45, 5.6, 5.2, { fill: C.background1, lw: 3 });
+  T(s, "RECHERCHÉ", { x: 0.6, y: 1.55, w: 5.6, h: 0.8, fontFace: THEME.headFontFace, fontSize: 40, color: C.accent1, align: "center" });
+  s.addShape(pres.shapes.RECTANGLE, { x: 1.9, y: 2.4, w: 3.0, h: 2.0, fill: { color: C.background2 }, line: { color: C.text1, width: 1.5, dashType: "dash" } });
+  s.addImage({ data: await fig("fog"), x: 2.85, y: 2.5, w: 1.1, h: 1.33 });
+  ["Nom :", "Dernière phrase entendue :", "Signe distinctif :", "Récompense :"].forEach((l, i) => {
+    const y = 4.6 + i * 0.48;
+    T(s, l, { x: 0.9, y, w: 5.0, h: 0.4, fontSize: 14, bold: true });
+    s.addShape(pres.shapes.LINE, { x: 0.9, y: y + 0.4, w: 5.0, h: 0, line: { color: C.text1, width: 1 } });
+  });
+  const av = ["Choisis une créature du bestiaire… ou invente la tienne.", "Dessine son portrait-robot (60 s).", "Écris sa dernière phrase entendue et son signe distinctif.", "Récompense : ce qu'on gagne quand elle disparaît d'un débat."];
+  av.forEach((t2, i) => {
+    const y = 1.6 + i * 1.2;
+    chip(s, 6.7, y, String(i + 1), { w: 0.6, fs: 20, fill: i === 3 ? C.accent2 : C.accent1, color: i === 3 ? C.text1 : C.background2 });
+    T(s, t2, { x: 7.5, y: y - 0.05, w: 5.2, h: 0.95, fontSize: 17, valign: "middle" });
+  });
+  s.addNotes("Écriture et dessin rapide combinés. Afficher les avis au mur : une galerie des créatures du groupe. Une créature inventée peut devenir la 9e du bestiaire.");
+
+  // 23e. LE TWEET DE PAIX
+  s = content("Ateliers d'écriture");
+  s.addText("Jeu · Le tweet de paix", { placeholder: "title" });
+  timer(s, "5 min");
+  box(s, 0.6, 1.5, 6.2, 2.0, { fill: C.text1, line: C.text1 });
+  T(s, "« Franchement, faut être niaiseux pour croire ça. #réveillezvous »", { x: 0.9, y: 1.6, w: 5.6, h: 1.4, fontSize: 18, italic: true, color: C.background2, valign: "middle" });
+  T(s, "↓", { x: 0.6, y: 3.5, w: 6.2, h: 0.7, fontFace: THEME.headFontFace, fontSize: 36, color: C.accent1, align: "center" });
+  box(s, 0.6, 4.2, 6.2, 2.2, { fill: C.background1 });
+  T(s, "Ta version : 280 caractères maximum", { x: 0.9, y: 4.3, w: 5.6, h: 0.4, fontSize: 14, bold: true, color: C.text2 });
+  for (let i = 0; i < 3; i++) s.addShape(pres.shapes.LINE, { x: 0.9, y: 5.1 + i * 0.4, w: 5.6, h: 0, line: { color: C.text1, width: 1 } });
+  const tw = ["Réponds au commentaire, sans l'ignorer.", "280 caractères, pas un de plus.", "Un mot obligatoire, tiré au hasard : merci · peut-être · curieux · ensemble.", "On vote pour celui qu'on aimerait vraiment recevoir."];
+  tw.forEach((t2, i) => {
+    const y = 1.6 + i * 1.2;
+    chip(s, 7.3, y, String(i + 1), { w: 0.6, fs: 20, fill: i === 2 ? C.accent2 : C.accent1, color: i === 2 ? C.text1 : C.background2 });
+    T(s, t2, { x: 8.1, y: y - 0.05, w: 4.6, h: 0.95, fontSize: 17, valign: "middle" });
+  });
+  s.addNotes("Le format court force à choisir l'essentiel. Le mot imposé ajoute du jeu. Variante : répondre à un vrai commentaire public (anonymisé) apporté par le groupe.");
 
   // =====================================================================
   pres.addSection({ title: "L'arène agréable" });

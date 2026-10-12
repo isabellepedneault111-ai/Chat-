@@ -86,6 +86,18 @@ table.ck td b{font-family:Alfa;font-weight:400;color:var(--ink);display:block;fo
 .rules li{list-style:none;margin:.04in 0;display:grid;grid-template-columns:.3in 1fr;align-items:start}
 .rules li>b{font-family:Alfa;font-size:17pt;color:var(--red);line-height:.85}
 /* instruction sheet */
+.games{width:11in;height:8.5in;padding:.4in .5in;background:#fff;font-family:RS;page-break-before:always}
+.games h1{font-size:24pt;margin-bottom:.1in}
+.gg{display:grid;grid-template-columns:1fr 1fr;gap:.2in}
+.gb{border:2px solid var(--ink);padding:.12in .16in;height:3.55in;position:relative}
+.gb h2{font-size:14pt;margin-bottom:.06in}.gb h2 i{font-family:RS;font-style:normal;font-size:8.5pt;color:#6b4b10;margin-left:.08in}
+.rl{border-bottom:1px solid var(--ink);height:.72in;font-size:8.5pt;position:relative;padding-top:.04in}.rl b{font-family:Alfa;color:var(--red);font-size:12pt;margin-right:.06in}
+.ln{border-bottom:1px solid var(--ink);height:.38in;position:relative}.ln b{position:absolute;left:0;bottom:.03in;font-size:8pt;color:var(--red)}
+.hint{font-size:8.5pt;color:#6b4b10;margin-top:.06in}
+.wanted{border:1.5px dashed var(--ink);padding:.06in .1in;height:2.95in}.wt{font-family:Alfa;color:var(--red);font-size:18pt;text-align:center}
+.ph{height:1.05in;width:1.5in;margin:.03in auto .02in;border:1px dotted #888;font-size:7pt;color:#888;text-align:center;padding-top:.45in}
+.wanted .ln{height:.3in}
+.tweet{border:1.5px solid var(--ink);border-radius:.15in;padding:.08in .14in;height:2.4in;position:relative}.tweet .ln{height:.48in}.tweet span{position:absolute;right:.14in;bottom:.06in;font-size:9pt;color:#6b4b10}
 .plate{width:11in;height:8.5in;padding:.45in .6in;background:#fff;font-family:RS;page-break-before:always}
 .plate h1{font-size:24pt}.plate p{font-size:10pt;max-width:9in;margin:.05in 0 .15in}
 .tals{display:grid;grid-template-columns:repeat(3,1fr);gap:.2in;justify-items:center}
@@ -220,6 +232,7 @@ table.ck td b{font-family:Alfa;font-weight:400;color:var(--ink);display:block;fo
    <li><b>p. 5 · L'ascenseur</b> (10 min) : une réplique réécrite étage par étage.</li>
    <li><b>p. 6 · L'homme d'acier</b> (10 min, à deux) : l'autre signe si c'est juste.</li>
    <li><b>p. 7 · Talisman</b> (15 min) : symbole + phrase-bouclier, recopié sur la planche à découper.</li>
+   <li><b>Feuille 4 · Jeux d'écriture</b> : relais de reformulation, débat sans « mais », avis de recherche, tweet de paix.</li>
    <li><b>p. 8 · Mise à jour relationnelle</b> (10 min) : des notes de version à quelqu'un, avec une demande. On décide soi-même de l'envoyer ou non.</li>
   </ul>
   <h2>Pour qui?</h2>
@@ -234,6 +247,24 @@ table.ck td b{font-family:Alfa;font-weight:400;color:var(--ink);display:block;fo
  <h1>Planche de talismans</h1>
  <p>Recopie ton symbole et ta phrase-bouclier. Découpe sur le pointillé. Perce le petit rond pour une ficelle, ou glisse-le dans ton portefeuille. Variante : fais-en un <b>pour ton partenaire</b>, avec la phrase que tu l'as vu bien utiliser.</p>
  <div class="tals"><div class="tal big"><span class="hole"></span><div class="tal-in"></div><div class="tal-line"></div></div><div class="tal big"><span class="hole"></span><div class="tal-in"></div><div class="tal-line"></div></div><div class="tal big"><span class="hole"></span><div class="tal-in"></div><div class="tal-line"></div></div><div class="tal big"><span class="hole"></span><div class="tal-in"></div><div class="tal-line"></div></div><div class="tal big"><span class="hole"></span><div class="tal-in"></div><div class="tal-line"></div></div><div class="tal big"><span class="hole"></span><div class="tal-in"></div><div class="tal-line"></div></div></div>
+</div>
+
+<!-- ============ feuille 4 : jeux d'écriture ============ -->
+<div class="games">
+ <h1>Jeux d'écriture</h1>
+ <div class="gg">
+  <div class="gb"><h2>Le relais de reformulation <i>groupe de 4 · 10 min</i></h2>
+   <div class="rl"><b>1</b> Mon opinion :</div><div class="rl"><b>2</b> Si je comprends bien, tu dis que… et j'ajoute :</div><div class="rl"><b>3</b> Si je comprends bien, tu dis que… et j'ajoute :</div><div class="rl"><b>4</b> Si je comprends bien, tu dis que… et j'ajoute :</div></div>
+  <div class="gb"><h2>Le débat sans « mais » <i>à deux · 8 min</i></h2>
+   <div class="ln"><b>A</b></div><div class="ln"><b>B</b></div><div class="ln"><b>A</b></div><div class="ln"><b>B</b></div><div class="ln"><b>A</b></div><div class="ln"><b>B</b></div>
+   <p class="hint">Interdit : « mais ». Essaie : « et », « et pourtant », « en même temps », « je me demande si… »</p></div>
+  <div class="gb"><h2>Avis de recherche <i>seul·e · 8 min</i></h2>
+   <div class="wanted"><div class="wt">RECHERCHÉ</div><div class="ph">portrait-robot</div>
+    <div class="ln"><b>Nom</b></div><div class="ln"><b>Dernière phrase entendue</b></div><div class="ln"><b>Signe distinctif</b></div><div class="ln"><b>Récompense</b></div></div></div>
+  <div class="gb"><h2>Le tweet de paix <i>seul·e · 5 min</i></h2>
+   <p class="hint" style="margin:0 0 .06in">Réponds en 280 caractères maximum. Mot obligatoire : ☐ merci ☐ peut-être ☐ curieux ☐ ensemble</p>
+   <div class="tweet"><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><span>… / 280</span></div></div>
+ </div>
 </div>
 
 <script>
