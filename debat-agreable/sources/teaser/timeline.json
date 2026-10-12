@@ -1,0 +1,114 @@
+{
+ "scenes": [
+  {
+   "id": "intro",
+   "who": "SYS",
+   "start": 0,
+   "dur": 2.4,
+   "text": "",
+   "typeStart": 0.25,
+   "char": 0.032
+  },
+  {
+   "id": "l1",
+   "who": "IA",
+   "start": 2.4,
+   "dur": 3.5999999999999996,
+   "text": "ANALYSE EN COURS… DÉBAT DÉTECTÉ.",
+   "typeStart": 2.65,
+   "char": 0.032
+  },
+  {
+   "id": "l2",
+   "who": "HUMAIN",
+   "start": 6.0,
+   "dur": 4.8,
+   "text": "Avez-vous déjà gagné un débat… et perdu un ami?",
+   "typeStart": 6.25,
+   "char": 0.032
+  },
+  {
+   "id": "l3",
+   "who": "IA",
+   "start": 10.8,
+   "dur": 6.0,
+   "text": "38 stratagèmes pour avoir toujours raison. Schopenhauer, 1830. Archivés.",
+   "typeStart": 11.05,
+   "char": 0.032
+  },
+  {
+   "id": "l4",
+   "who": "HUMAIN",
+   "start": 16.8,
+   "dur": 3.5999999999999996,
+   "text": "On les apprend… pour s'en protéger.",
+   "typeStart": 17.05,
+   "char": 0.032
+  },
+  {
+   "id": "l5",
+   "who": "IA",
+   "start": 20.4,
+   "dur": 6.0,
+   "text": "Profils détectés :",
+   "typeStart": 20.65,
+   "char": 0.032
+  },
+  {
+   "id": "l6",
+   "who": "HUMAIN",
+   "start": 26.4,
+   "dur": 4.8,
+   "text": "Et le Bâtisseur : dur sur les idées, doux avec les gens.",
+   "typeStart": 26.65,
+   "char": 0.032
+  },
+  {
+   "id": "l7",
+   "who": "IA",
+   "start": 31.2,
+   "dur": 4.8,
+   "text": "Si je vous comprends bien… gagner ne suffit pas?",
+   "typeStart": 31.45,
+   "char": 0.032
+  },
+  {
+   "id": "l8",
+   "who": "HUMAIN",
+   "start": 36.0,
+   "dur": 3.5999999999999996,
+   "text": "Exactement. Tu viens de reformuler.",
+   "typeStart": 36.25,
+   "char": 0.032
+  },
+  {
+   "id": "l9",
+   "who": "IA",
+   "start": 39.6,
+   "dur": 4.8,
+   "text": "Mise à jour : j'avais tort sur ce bout-là.",
+   "typeStart": 39.85,
+   "char": 0.032
+  },
+  {
+   "id": "l10",
+   "who": "SYS",
+   "start": 44.4,
+   "dur": 6.0,
+   "text": "",
+   "typeStart": 44.65,
+   "char": 0.032
+  },
+  {
+   "id": "l11",
+   "who": "SYS",
+   "start": 50.4,
+   "dur": 7.199999999999999,
+   "text": "",
+   "typeStart": 50.65,
+   "char": 0.032
+  }
+ ],
+ "total": 58.8,
+ "beat": 0.6
+}

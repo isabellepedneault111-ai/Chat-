@@ -149,7 +149,8 @@ async function fig(pose, opts = {}) {
     T(s, d, { x: x + 0.15, y: 3.9, w: 1.55, h: 1.4, fontSize: 13 });
     T(s, t, { x: x + 0.15, y: 5.5, w: 1.55, h: 0.4, fontSize: 14, bold: true, color: C.text2 });
   });
-  s.addNotes("Aperçu de la séance. Prévoir une pause entre le bestiaire et les ateliers d'écriture.");
+  T(s, [{ text: "Règle du joker : ", options: { bold: true, color: C.accent1 } }, { text: "chacun peut passer son tour, à tout moment, sans se justifier." }], { x: 0.6, y: 6.3, w: 12.1, h: 0.45, fontSize: 15 });
+  s.addNotes("Aperçu de la séance. Prévoir une pause entre le bestiaire et les ateliers d'écriture. Public : adultes volontaires de tout acabit, sans prérequis. Annoncer la règle du joker dès le départ, et choisir des sujets qui font réfléchir sans viser l'identité ou le vécu intime des personnes présentes.");
 
   // =====================================================================
   pres.addSection({ title: "Échauffement" });
@@ -179,7 +180,7 @@ async function fig(pose, opts = {}) {
   s.addShape(pres.shapes.LINE, { x: 0.9, y: 2.55, w: 11.5, h: 0, line: { color: C.text1, width: 4, beginArrowType: "triangle", endArrowType: "triangle" } });
   T(s, "TOTALEMENT D'ACCORD", { x: 0.6, y: 1.65, w: 4, h: 0.4, fontSize: 13, bold: true, color: C.accent1 });
   T(s, "PAS DU TOUT", { x: 9.7, y: 1.65, w: 3, h: 0.4, fontSize: 13, bold: true, color: C.accent1, align: "right" });
-  const statements = ["« Les devoirs devraient être abolis. »", "« Le cellulaire devrait être permis en classe. »", "« Un bon argument peut toujours être dit poliment. »", "« Changer d'avis, c'est perdre la face. »"];
+  const statements = ["« Le télétravail devrait être un droit. »", "« On devrait pouvoir parler politique au souper de famille. »", "« Un bon argument peut toujours être dit poliment. »", "« Changer d'avis, c'est perdre la face. »"];
   T(s, "Énoncés possibles", { x: 0.6, y: 3.0, w: 6, h: 0.45, fontFace: THEME.headFontFace, fontSize: 18, color: C.accent1 });
   T(s, statements.map((t, i) => ({ text: t, options: { bullet: true, breakLine: i < statements.length - 1 } })), { x: 0.6, y: 3.5, w: 6.2, h: 2.3, fontSize: 16, paraSpaceAfter: 8 });
   box(s, 7.3, 3.0, 5.4, 3.3, { fill: C.text1, line: C.text1 });
@@ -211,7 +212,7 @@ async function fig(pose, opts = {}) {
   T(s, "Pourquoi ça marche", { x: 9.15, y: 3.2, w: 3.3, h: 0.5, fontFace: THEME.headFontFace, fontSize: 18, color: C.accent2 });
   const pq = ["Liés, on ne peut pas s'éloigner de l'autre.", "La course oblige à chercher l'accord vite et fort.", "C'est la règle 2 de Rapoport, vécue avec le corps."];
   T(s, pq.map((t, i) => ({ text: t, options: { bullet: true, breakLine: i < pq.length - 1 } })), { x: 9.15, y: 3.75, w: 3.35, h: 2.5, fontSize: 14, color: C.background2, paraSpaceAfter: 8 });
-  s.addNotes("Sujet : reprendre un énoncé de la ligne qui bouge. Les accords doivent porter sur le sujet, pas sur la météo. Le « Trop facile! » rend le jeu exigeant et drôle. Inclusion : pour un élève à mobilité réduite, le duo avance un jeton sur une piste dessinée au tableau. Retour : quel accord vous a le plus surpris? Lequel a été le plus difficile à dire?");
+  s.addNotes("Sujet : reprendre un énoncé de la ligne qui bouge. Les accords doivent porter sur le sujet, pas sur la météo. Le « Trop facile! » rend le jeu exigeant et drôle. Inclusion : pour une personne à mobilité réduite, le duo avance un jeton sur une piste dessinée au tableau. Retour : quel accord vous a le plus surpris? Lequel a été le plus difficile à dire?");
 
   // =====================================================================
   pres.addSection({ title: "Le manuel du tricheur" });
@@ -280,29 +281,38 @@ async function fig(pose, opts = {}) {
     T(s, d, { x: x + 1.1, y: y + 0.5, w: 2.7, h: 0.45, fontSize: 12 });
     T(s, "→ " + r, { x: x + 0.15, y: y + 1.05, w: 3.65, h: 0.45, fontSize: 13, bold: true, color: C.text2 });
   });
-  s.addNotes("Les numéros correspondent aux stratagèmes de Schopenhauer. Les surnoms sont les nôtres, pour que les élèves les retiennent. Ces 9 cartes deviennent la grille de bingo de l'activité du bestiaire.");
+  s.addNotes("Les numéros correspondent aux stratagèmes de Schopenhauer. Les surnoms sont les nôtres, pour qu'on les retienne. Ces 9 cartes deviennent la grille de bingo de l'activité du bestiaire.");
 
-  // 12. LIEN CCQ
+  // 12. DANS LA VRAIE VIE
   s = content("Le manuel du tricheur");
-  s.addText("Ce que dit le programme", { placeholder: "title" });
-  T(s, "Culture et citoyenneté québécoise : la pratique du dialogue nomme des procédés qui entravent le dialogue. Schopenhauer en avait déjà décrit plusieurs.", { x: 0.6, y: 1.45, w: 12.1, h: 0.8, fontSize: 16 });
-  const map = [["Attaque personnelle", "38 · Le K.-O."], ["Caricature", "1 · L'élastique"], ["Faux dilemme", "13 · Le faux choix"], ["Argument d'autorité", "30 · Le galon"], ["Appel au clan / au préjugé", "32 · L'étiquette"], ["Diversion (hors programme)", "29 · La diversion"]];
-  T(s, "Entrave au dialogue (CCQ)", { x: 0.9, y: 2.45, w: 5, h: 0.4, fontSize: 14, bold: true, color: C.text2 });
-  T(s, "Stratagème de Schopenhauer", { x: 7.4, y: 2.45, w: 5, h: 0.4, fontSize: 14, bold: true, color: C.text2 });
-  map.forEach(([a, b], i) => {
-    const y = 2.95 + i * 0.62;
-    box(s, 0.6, y, 5.4, 0.5, { fill: C.background1, lw: 1.5 });
-    T(s, a, { x: 0.8, y, w: 5.1, h: 0.5, fontSize: 15, bold: true, valign: "middle" });
-    s.addShape(pres.shapes.LINE, { x: 6.1, y: y + 0.25, w: 1.0, h: 0, line: { color: C.accent1, width: 2.5, endArrowType: "triangle" } });
-    box(s, 7.2, y, 5.5, 0.5, { fill: C.accent2, lw: 1.5 });
-    T(s, b, { x: 7.4, y, w: 5.2, h: 0.5, fontSize: 15, bold: true, valign: "middle" });
+  s.addText("Les coups bas dans la vraie vie", { placeholder: "title" });
+  T(s, "Ils ne restent pas dans les livres de philosophie. On les croise chaque semaine.", { x: 0.6, y: 1.45, w: 12.1, h: 0.6, fontSize: 16 });
+  const map = [
+    ["Souper de famille", "« Toi, de toute façon, t'as toujours été comme ça. »", "38 · Le K.-O."],
+    ["Réunion d'équipe", "« C'est ça ou on ferme le projet. »", "13 · Le faux choix"],
+    ["Réseaux sociaux", "« Donc tu veux qu'on abolisse la police? »", "1 · L'élastique"],
+    ["Conseil municipal", "« Ça, c'est une idée de radicaux. »", "32 · L'étiquette"],
+    ["Entre ami·es", "« Un médecin l'a dit à la télé, c'est réglé. »", "30 · Le galon"],
+    ["Couple", "« Pis toi, la semaine passée, hein? »", "29 · La diversion"],
+  ];
+  T(s, "Où", { x: 0.8, y: 2.2, w: 2.5, h: 0.4, fontSize: 14, bold: true, color: C.text2 });
+  T(s, "Ce qu'on entend", { x: 3.6, y: 2.2, w: 5, h: 0.4, fontSize: 14, bold: true, color: C.text2 });
+  T(s, "Le coup bas", { x: 9.6, y: 2.2, w: 3, h: 0.4, fontSize: 14, bold: true, color: C.text2 });
+  map.forEach(([a, b, c], i) => {
+    const y = 2.65 + i * 0.68;
+    box(s, 0.6, y, 2.8, 0.56, { fill: C.text1, line: C.text1, lw: 1.5 });
+    T(s, a, { x: 0.75, y, w: 2.6, h: 0.56, fontSize: 15, bold: true, color: C.background2, valign: "middle" });
+    box(s, 3.4, y, 6.0, 0.56, { fill: C.background1, lw: 1.5 });
+    T(s, b, { x: 3.6, y, w: 5.7, h: 0.56, fontSize: 15, italic: true, valign: "middle" });
+    box(s, 9.4, y, 3.3, 0.56, { fill: C.accent2, lw: 1.5 });
+    T(s, c, { x: 9.6, y, w: 3.0, h: 0.56, fontSize: 15, bold: true, valign: "middle" });
   });
-  s.addNotes("Valider la liste exacte des procédés avec la version en vigueur du programme CCQ de votre cycle. Aussi en lien : Français, communiquer oralement (argumenter, adapter son discours).");
+  s.addNotes("Demander aux participants de compléter le tableau avec leurs propres exemples, anonymisés. Où les entendez-vous le plus? Lesquels utilisez-vous vous-même sans vous en rendre compte?");
 
   // 13. PYRAMIDE GRAHAM
   s = content("Le manuel du tricheur");
   s.addText("Monte la pyramide du désaccord", { placeholder: "title" });
-  const lv = [["6", "Réfuter le cœur", "« Ton idée centrale ne tient pas parce que… »"], ["5", "Réfutation", "Citer l'autre et montrer l'erreur"], ["4", "Contre-argument", "Une autre raison, avec preuve"], ["3", "Contradiction", "« Non, c'est faux. » (sans raison)"], ["2", "Critique du ton", "« Calme-toi! »"], ["1", "Ad hominem", "« Tu dis ça parce que t'es jeune. »"], ["0", "Insulte", "« T'es niaiseux. »"]];
+  const lv = [["6", "Réfuter le cœur", "« Ton idée centrale ne tient pas parce que… »"], ["5", "Réfutation", "Citer l'autre et montrer l'erreur"], ["4", "Contre-argument", "Une autre raison, avec preuve"], ["3", "Contradiction", "« Non, c'est faux. » (sans raison)"], ["2", "Critique du ton", "« Calme-toi! »"], ["1", "Ad hominem", "« Tu dis ça parce que t'es de ta génération. »"], ["0", "Insulte", "« T'es niaiseux. »"]];
   lv.forEach(([n, h, d], i) => {
     const w = 2.6 + i * 0.8, y = 1.45 + i * 0.72, x = 4.4 - w / 2;
     const fill = i < 3 ? C.accent1 : i === 3 ? C.accent2 : C.text1;
@@ -413,7 +423,7 @@ async function fig(pose, opts = {}) {
   timer(s, "25 min");
   const bal = [
     ["Tirage", "Groupes de 5 débatteurs. Chacun pioche en secret une carte-créature (la Tortue compte aussi!)."],
-    ["Débat", "6 minutes sur un vrai sujet de classe. Chacun joue sa créature… sans la nommer."],
+    ["Débat", "6 minutes sur un vrai sujet de société. Chacun joue sa créature… sans la nommer."],
     ["Observation", "Les autres participants forment un cercle extérieur : ils cochent leur bingo des coups bas et devinent les créatures."],
     ["Démasquage", "Les observateurs nomment chaque créature et citent la phrase exacte qui l'a trahie."],
     ["Rejouer", "On rejoue 2 minutes : toutes les créatures deviennent des Bâtisseurs. Qu'est-ce qui a changé?"],
@@ -426,13 +436,13 @@ async function fig(pose, opts = {}) {
   });
   box(s, 9.0, 1.5, 3.7, 4.95, { fill: C.text1, line: C.text1 });
   T(s, "Sujets testés", { x: 9.25, y: 1.7, w: 3.3, h: 0.5, fontFace: THEME.headFontFace, fontSize: 18, color: C.accent2 });
-  const sujets = ["Uniforme obligatoire?", "Une semaine de 4 jours à l'école?", "Les notes devraient-elles disparaître?", "L'IA pour faire ses devoirs : tricherie ou outil?"];
+  const sujets = ["La semaine de 4 jours au travail?", "Bannir les cellulaires au restaurant?", "Le pourboire devrait-il disparaître?", "L'IA au travail : outil ou menace?"];
   T(s, sujets.map((t, i) => ({ text: t, options: { bullet: true, breakLine: i < sujets.length - 1 } })), { x: 9.25, y: 2.3, w: 3.25, h: 3.9, fontSize: 15, color: C.background2, paraSpaceAfter: 10 });
   s.addNotes("Imprimer les 4 diapos « Fiches d'identité » et les couper en deux : 8 cartes-rôles. Débat en aquarium : 5 au centre, le reste en observation. L'étape 5 (rejouer en Bâtisseurs) est la plus importante : faire nommer la différence d'ambiance.");
 
   // 18. CARTES + BINGO
   s = content("Le bestiaire");
-  s.addText("Bingo des coups bas · grille de l'observateur", { placeholder: "title" });
+  s.addText("Bingo des coups bas", { placeholder: "title" });
   const bingo = ["L'élastique", "L'allumette", "Le faux choix", "Le coupe-fil", "★ Une reformulation", "La diversion", "Le galon", "L'étiquette", "Le brouillard"];
   bingo.forEach((b, i) => {
     const col = i % 3, row = Math.floor(i / 3);
@@ -468,10 +478,10 @@ async function fig(pose, opts = {}) {
   timer(s, "15 min");
   T(s, "Prends une réplique toxique et fais-la monter dans la pyramide, un étage à la fois.", { x: 0.6, y: 1.4, w: 12, h: 0.5, fontSize: 17 });
   const asc = [
-    ["0", "« T'es vraiment niaiseux de penser que les devoirs servent à rien. »", C.text1, C.background2],
-    ["3", "« Non, les devoirs servent à quelque chose. »", C.accent2, C.text1],
-    ["4", "« Les devoirs permettent de pratiquer à son rythme, loin de la pression de la classe. »", C.accent1, C.background2],
-    ["6", "« Tu dis que les devoirs sont inutiles parce qu'ils creusent les écarts. C'est vrai pour certains élèves. Mais si on les rendait facultatifs et soutenus en classe, le problème tomberait-il? »", C.accent1, C.background2],
+    ["0", "« T'es vraiment déconnecté si tu penses que le télétravail marche. »", C.text1, C.background2],
+    ["3", "« Non, le télétravail ne marche pas. »", C.accent2, C.text1],
+    ["4", "« Le télétravail isole les nouveaux employés : ils apprennent moins vite sans collègues autour. »", C.accent1, C.background2],
+    ["6", "« Tu dis que le télétravail rend plus productif. C'est vrai pour le travail concentré. Mais si on gardait deux jours sur place pour l'accueil et la collaboration, ton argument tiendrait-il encore? »", C.accent1, C.background2],
   ];
   asc.forEach(([n, t, f, c], i) => {
     const y = 5.45 - i * 1.15, w = 7.6 + i * 0.4;
@@ -481,8 +491,8 @@ async function fig(pose, opts = {}) {
   });
   box(s, 9.4, 2.15, 3.3, 4.3, { fill: C.background1 });
   T(s, "Consigne", { x: 9.6, y: 2.3, w: 3, h: 0.5, fontFace: THEME.headFontFace, fontSize: 18, color: C.accent1 });
-  T(s, "En équipe de 2, choisissez une réplique entendue en ligne ou à l'école. Réécrivez-la aux étages 3, 4 et 6. Lisez l'étage 0 et l'étage 6 à voix haute.", { x: 9.6, y: 2.85, w: 2.95, h: 3.5, fontSize: 15 });
-  s.addNotes("Utiliser la page 5 du zine. Lecture à voix haute : faire sentir physiquement la différence de ton. Variante numérique : réécrire un commentaire de réseau social fictif.");
+  T(s, "En équipe de 2, choisissez une réplique entendue en ligne, au travail ou en famille. Réécrivez-la aux étages 3, 4 et 6. Lisez l'étage 0 et l'étage 6 à voix haute.", { x: 9.6, y: 2.85, w: 2.95, h: 3.5, fontSize: 15 });
+  s.addNotes("Utiliser la page 5 du zine. Lecture à voix haute : faire sentir physiquement la différence de ton. Variante : réécrire un commentaire de réseau social fictif.");
 
   // 22. HOMME D'ACIER SIGNÉ
   s = content("Ateliers d'écriture");
@@ -525,7 +535,7 @@ async function fig(pose, opts = {}) {
     T(s, d, { x: 5.8, y: y + 0.36, w: 6.6, h: 0.35, fontSize: 13, italic: true, color: C.text2 });
     s.addShape(pres.shapes.LINE, { x: 5.8, y: y + 0.82, w: 6.6, h: 0, line: { color: C.text1, width: 1 } });
   });
-  s.addNotes("Production finale du séminaire. On compile les stratagèmes de la classe dans un « Manuel du débat loyal » numéroté à partir de 39 : le zine nº 2 de la classe. Page 7 du zine.");
+  s.addNotes("Production finale du séminaire. On compile les stratagèmes du groupe dans un « Manuel du débat loyal » numéroté à partir de 39 : le zine nº 2 du groupe. Page 7 du zine.");
 
   // =====================================================================
   pres.addSection({ title: "L'arène agréable" });
@@ -579,7 +589,7 @@ async function fig(pose, opts = {}) {
     T(s, h, { x: x + 0.2, y: y + 0.1, w: 1.9, h: 0.9, fontFace: THEME.headFontFace, fontSize: 15, color: C.accent1, valign: "middle" });
     T(s, d, { x: x + 2.1, y: y + 0.1, w: 3.7, h: 0.9, fontSize: 15, valign: "middle" });
   });
-  s.addNotes("Afficher en permanence dans la classe. La dernière phrase (Céder) est la plus difficile et la plus puissante. Défi de la semaine : l'utiliser une fois.");
+  s.addNotes("À afficher au travail, sur le frigo, ou à garder dans son portefeuille. La dernière phrase (Céder) est la plus difficile et la plus puissante. Défi de la semaine : l'utiliser une fois.");
 
   // =====================================================================
   pres.addSection({ title: "Sortie" });
@@ -603,7 +613,7 @@ async function fig(pose, opts = {}) {
   s.addImage({ data: await fig("jump"), x: 8.6, y: 0.5, w: 2.1, h: 2.55, rotate: -6 });
   s.addImage({ data: await fig("jump", { mirror: true }), x: 10.6, y: 1.1, w: 2.1, h: 2.55, rotate: 6 });
   T(s, "Le but n'est pas d'avoir raison contre quelqu'un, c'est d'avoir un peu plus raison ensemble.", { x: 0.6, y: 0.6, w: 7.6, h: 1.1, fontSize: 18, bold: true });
-  T(s, "Sources : A. Schopenhauer, L'Art d'avoir toujours raison · P. Graham, How to Disagree (2008) · D. Dennett, Intuition Pumps (2013) · R. Fisher et W. Ury, Getting to Yes · A. Fluegelman, The New Games Book (1976) · PFEQ, Culture et citoyenneté québécoise", { x: 8.6, y: 3.9, w: 4.2, h: 2.9, fontSize: 11, color: C.text2 });
+  T(s, "Sources : A. Schopenhauer, L'Art d'avoir toujours raison · P. Graham, How to Disagree (2008) · D. Dennett, Intuition Pumps (2013) · R. Fisher et W. Ury, Getting to Yes · A. Fluegelman, The New Games Book (1976)", { x: 8.6, y: 3.9, w: 4.2, h: 2.9, fontSize: 11, color: C.text2 });
   s.addNotes("Clôture. Remettre la devise du New Games Book transposée au débat. Inviter les participants à repartir avec leur zine signé.");
 
   await pres.writeFile({ fileName: __dirname + "/deck.pptx" });

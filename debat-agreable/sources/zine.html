@@ -158,7 +158,7 @@ svg.fig{display:block}
   <span class="folio" style="color:var(--orange)">8</span>
  </section>
  <section class="p cover" id="p1">
-  <div class="issue">ZINE Nº 1<br>pour élèves,<br>profs &amp; humains</div>
+  <div class="issue">ZINE Nº 1<br>pour adultes<br>curieux de<br>tout acabit</div>
   <svg class="fig jump" data-pose="jump" viewBox="0 0 100 130"></svg>
   <h1>LE<br>NOUVEAU<br>LIVRE<br>DU<br>DÉBAT</h1>
   <div class="mott">Débattre fort<br>Débattre juste<br>Personne blessé·e</div>
@@ -182,11 +182,13 @@ svg.fig{display:block}
  <div>
   <h1 style="font-size:22pt">Pour l'animateur·trice</h1>
   <h2>Avant</h2>
-  <ul style="padding-left:.2in"><li>Faire plier le zine <b>en ouverture</b> de séance : un geste manuel calme la salle et crée l'objet commun.</li><li>Chacun signe la page 7 au moment d'écrire son 39ᵉ stratagème.</li></ul>
+  <ul style="padding-left:.2in"><li>Faire plier le zine <b>en ouverture</b> de séance : un geste manuel brise la glace et crée l'objet commun.</li><li>Chacun signe la page 7 au moment d'écrire son 39ᵉ stratagème.</li></ul>
   <h2>Pendant</h2>
   <ul style="padding-left:.2in"><li>Page 3 : support de l'activité <b>Bestiaire</b> (cartes rôles secrets).</li><li>Page 4 : grille de <b>bingo des coups bas</b> pour les observateurs.</li><li>Page 5 : <b>réécriture</b> d'une réplique toxique, étage par étage.</li><li>Page 6 : atelier <b>homme d'acier</b>.</li></ul>
-  <h2>Lien PFEQ</h2>
-  <p><b>Culture et citoyenneté québécoise</b> : pratique du dialogue et procédés susceptibles d'entraver le dialogue (attaque personnelle, caricature, faux dilemme, appel au clan, argument d'autorité…), qui recoupent directement plusieurs stratagèmes de Schopenhauer.<br><b>Français</b> : communiquer oralement, argumenter, adapter son discours.</p>
+  <h2>Pour qui?</h2>
+  <p>Adultes volontaires de tout acabit, <b>aucun prérequis</b>. On vient pour jouer, pas pour être évalué.</p>
+  <h2>Règle du joker</h2>
+  <p>Chacun peut <b>passer son tour</b> à tout moment, sans se justifier. On choisit des sujets qui font réfléchir, pas des sujets qui blessent : pas de débat sur l'identité ou le vécu intime des personnes présentes.</p>
   <h2>Question pour finir</h2>
   <p class="elite" style="font-size:11pt">« As-tu déjà gagné un débat… et perdu un ami? Qu'aurais-tu échangé? »</p>
  </div>
@@ -217,7 +219,7 @@ document.querySelectorAll('svg[data-pose]').forEach(s=>{
  s.setAttribute('viewBox','0 0 100 125');s.innerHTML=fig(P[k]);
 });
 // pyramide de Graham
-const lv=[['6','Réfuter le cœur','« Ton idée centrale ne tient pas parce que… »'],['5','Réfutation','Citer l\'autre et montrer l\'erreur.'],['4','Contre-argument','Une autre raison, avec preuve.'],['3','Contradiction','« Non, c\'est faux. » (sans raison)'],['2','Critique du ton','« Calme-toi! »'],['1','Ad hominem','« Tu dis ça parce que t\'es jeune. »'],['0','Insulte','« T\'es niaiseux. »']];
+const lv=[['6','Réfuter le cœur','« Ton idée centrale ne tient pas parce que… »'],['5','Réfutation','Citer l\'autre et montrer l\'erreur.'],['4','Contre-argument','Une autre raison, avec preuve.'],['3','Contradiction','« Non, c\'est faux. » (sans raison)'],['2','Critique du ton','« Calme-toi! »'],['1','Ad hominem','« Tu dis ça, t\'es de ta génération. »'],['0','Insulte','« T\'es niaiseux. »']];
 let g='';const H=30;
 lv.forEach((l,i)=>{const y=i*H,w1=40+i*22,w2=40+(i+1)*22,c=i<3?'#D2232A':i<4?'#F0A12E':'#1B1714';
  g+=`<polygon points="${100-w1/2*1.9},${y} ${100+w1/2*1.9},${y} ${100+w2/2*1.9},${y+H-2} ${100-w2/2*1.9},${y+H-2}" fill="${c}" transform="translate(0,0)"/>`;
