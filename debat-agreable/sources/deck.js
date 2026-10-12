@@ -133,12 +133,12 @@ async function fig(pose, opts = {}) {
   s = content("Ouverture");
   s.addText("Le parcours de la séance", { placeholder: "title" });
   const steps = [
-    ["0", "Échauffement", "Zine, ligne qui bouge, course à trois jambes", "30 min"],
-    ["1", "Le manuel du tricheur", "Schopenhauer, coups bas, pyramide, Rapoport", "35 min"],
-    ["2", "Le bestiaire", "Bal masqué des débatteurs, bingo", "40 min"],
-    ["3", "Ateliers d'écriture", "Ascenseur, homme d'acier, 39ᵉ stratagème", "45 min"],
-    ["4", "L'arène agréable", "Aquarium à jetons de reformulation", "25 min"],
-    ["5", "Sortie", "Billet 3-2-1, mur des cicatrices", "10 min"],
+    ["0", "Échauffement", "Zine, ligne qui bouge, course à trois jambes", "25 min"],
+    ["1", "Les coups bas", "Coche-les, dur/doux, pyramide", "20 min"],
+    ["2", "Le bestiaire", "Croquis-éclair, bal masqué, bingo", "40 min"],
+    ["3", "Écrire", "Ascenseur, homme d'acier, 39ᵉ stratagème", "35 min"],
+    ["4", "L'arène", "Aquarium à jetons", "25 min"],
+    ["5", "Repartir avec", "Talisman, mise à jour relationnelle", "35 min"],
   ];
   steps.forEach(([n, h, d, t], i) => {
     const x = 0.6 + i * 2.05;
@@ -170,8 +170,8 @@ async function fig(pose, opts = {}) {
   });
   box(s, 8.7, 1.65, 4.0, 4.2, { fill: C.text1, line: C.text1 });
   T(s, "Pourquoi commencer par du papier?", { x: 8.95, y: 1.85, w: 3.5, h: 0.9, fontFace: THEME.headFontFace, fontSize: 18, color: C.accent2 });
-  T(s, "Un geste manuel ralentit la salle, crée un objet commun et donne à chacun un « passeport » qu'on remplira en cours de route (pages 3, 4, 5 et 7).", { x: 8.95, y: 2.85, w: 3.5, h: 2.8, fontSize: 15, color: C.background2 });
-  s.addNotes("Distribuer le PDF du zine imprimé recto seulement, taille réelle. Démontrer le pliage une fois, puis laisser les participants s'entraider : premier geste de coopération.");
+  T(s, "Un geste manuel ralentit la salle, crée un objet commun et donne à chacun un carnet de 8 activités à remplir en cours de route.", { x: 8.95, y: 2.85, w: 3.5, h: 2.8, fontSize: 15, color: C.background2 });
+  s.addNotes("Imprimer la page 1 du PDF du zine (taille réelle) pour chacun, et la page 3 (planche de talismans) pour la fin. Démontrer le pliage une fois, puis laisser les participants s'entraider : premier geste de coopération.");
 
   // 7. LA LIGNE QUI BOUGE
   s = content("Échauffement");
@@ -220,19 +220,16 @@ async function fig(pose, opts = {}) {
 
   // 9. SCHOPENHAUER 38
   s = content("Le manuel du tricheur");
-  s.addText("Schopenhauer a écrit le guide du tricheur", { placeholder: "title" });
+  s.addText("Le guide du tricheur", { placeholder: "title" });
   T(s, "38", { x: 0.5, y: 1.4, w: 5, h: 3.4, fontFace: THEME.headFontFace, fontSize: 220, color: C.accent1 });
   T(s, "stratagèmes pour avoir raison, même quand on a tort", { x: 0.6, y: 4.75, w: 4.8, h: 0.9, fontSize: 18, bold: true });
   T(s, [
     { text: "L'Art d'avoir toujours raison", options: { italic: true, bold: true, breakLine: true } },
-    { text: "Rédigé vers 1830, publié après sa mort. Un inventaire lucide, presque cynique, des ruses du débat.", options: { breakLine: true } },
+    { text: "Écrit vers 1830 par Arthur Schopenhauer.", options: { breakLine: true } },
   ], { x: 6.0, y: 1.6, w: 6.7, h: 1.4, fontSize: 17 });
   box(s, 6.0, 3.1, 6.7, 1.4, { fill: C.accent2 });
   T(s, "« Le débat est un combat d'escrime intellectuel. »", { x: 6.25, y: 3.3, w: 6.2, h: 1.0, fontFace: THEME.headFontFace, fontSize: 21, valign: "middle" });
-  T(s, [
-    { text: "Le paradoxe : ", options: { bold: true, color: C.accent1 } },
-    { text: "il conseille lui-même de ne débattre qu'avec ceux qui cherchent la vérité et acceptent d'avoir tort. Son manuel est donc aussi un avertissement." },
-  ], { x: 6.0, y: 4.75, w: 6.7, h: 1.4, fontSize: 16 });
+  T(s, "On les apprend pour s'en protéger. Comme un vaccin.", { x: 6.0, y: 4.85, w: 6.7, h: 0.8, fontFace: THEME.headFontFace, fontSize: 20, color: C.accent1 });
   s.addNotes("Présenter le livre comme un vaccin : connaître les ruses pour les désamorcer. Question à la salle : est-ce éthique d'enseigner ces ruses? Que se passe-t-il si on ne les enseigne pas?");
 
   // 10. DUR / DOUX
@@ -260,7 +257,8 @@ async function fig(pose, opts = {}) {
 
   // 11. 9 COUPS BAS
   s = content("Le manuel du tricheur");
-  s.addText("9 coups bas et leur parade", { placeholder: "title" });
+  s.addText("9 coups bas · coche-les", { placeholder: "title" });
+  timer(s, "5 min");
   const coups = [
     ["1", "L'élastique", "Étirer ta thèse jusqu'à l'absurde", "« Ce n'est pas ce que j'ai dit. »"],
     ["8", "L'allumette", "Te mettre en colère", "« Ça monte, je ralentis. »"],
@@ -281,7 +279,7 @@ async function fig(pose, opts = {}) {
     T(s, d, { x: x + 1.1, y: y + 0.5, w: 2.7, h: 0.45, fontSize: 12 });
     T(s, "→ " + r, { x: x + 0.15, y: y + 1.05, w: 3.65, h: 0.45, fontSize: 13, bold: true, color: C.text2 });
   });
-  s.addNotes("Les numéros correspondent aux stratagèmes de Schopenhauer. Les surnoms sont les nôtres, pour qu'on les retienne. Ces 9 cartes deviennent la grille de bingo de l'activité du bestiaire.");
+  s.addNotes("Les numéros correspondent aux stratagèmes de Schopenhauer. Les surnoms sont les nôtres, pour qu'on les retienne. Activité : dans le zine (p. 2), chacun coche ceux qu'il a subis… et ceux qu'il a faits. Ces 9 cartes deviennent aussi la grille de bingo du bestiaire.");
 
   // 12. DANS LA VRAIE VIE
   s = content("Le manuel du tricheur");
@@ -395,28 +393,6 @@ async function fig(pose, opts = {}) {
   }
   s.addNotes("Aperçu : on reconnaît chaque créature d'abord à sa phrase-signature. Insister : personne n'est une seule créature. On change selon la fatigue, le sujet, le public. Les 4 diapos suivantes sont des fiches d'identité à imprimer : elles servent de cartes-rôles pour le bal masqué.");
 
-  // 16b-e. FICHES D'IDENTITÉ (2 par diapo, imprimables comme cartes-rôles)
-  for (let k = 0; k < 4; k++) {
-    s = content("Le bestiaire");
-    s.addText("Fiches d'identité · " + (k + 1) + "/4", { placeholder: "title" });
-    for (let j = 0; j < 2; j++) {
-      const B = BEASTS[k * 2 + j];
-      const x = 0.6 + j * 6.15, y = 1.4;
-      box(s, x, y, 5.95, 5.4, { fill: B.piege ? C.accent2 : C.background1 });
-      s.addImage({ data: await fig(B.p), x: x + 0.15, y: y + 0.12, w: 0.95, h: 1.15 });
-      T(s, B.n, { x: x + 1.2, y: y + 0.15, w: 4.6, h: 0.5, fontFace: THEME.headFontFace, fontSize: 22, color: C.accent1 });
-      T(s, B.sig, { x: x + 1.2, y: y + 0.68, w: 4.6, h: 0.6, fontSize: 14, italic: true, bold: true });
-      const rows = [["Coups bas favoris", B.coups], ["Ce qui se cache dessous", B.dessous], [B.piege ? "Son piège" : "Comment lui répondre", B.rep], ["Sa force cachée", B.force], ["Pour le jouer au bal masqué", B.jouer]];
-      rows.forEach(([l, t], r) => {
-        const ry = y + 1.42 + r * 0.79;
-        s.addShape(pres.shapes.LINE, { x: x + 0.15, y: ry, w: 5.65, h: 0, line: { color: C.text1, width: 0.75 } });
-        T(s, l, { x: x + 0.15, y: ry + 0.06, w: 1.55, h: 0.68, fontSize: 11, bold: true, color: C.text2 });
-        T(s, t, { x: x + 1.75, y: ry + 0.06, w: 4.05, h: 0.7, fontSize: 14, bold: r === 2 });
-      });
-    }
-    s.addNotes("Fiches d'identité. Imprimer cette diapo et couper en deux : chaque moitié devient une carte-rôle pour le bal masqué (la dernière ligne dit comment jouer la créature). Les numéros renvoient aux stratagèmes de Schopenhauer; 14 = crier victoire malgré la défaite.");
-  }
-
   // 17. BAL MASQUÉ
   s = content("Le bestiaire");
   s.addText("Le bal masqué du débat", { placeholder: "title" });
@@ -438,7 +414,7 @@ async function fig(pose, opts = {}) {
   T(s, "Sujets testés", { x: 9.25, y: 1.7, w: 3.3, h: 0.5, fontFace: THEME.headFontFace, fontSize: 18, color: C.accent2 });
   const sujets = ["La semaine de 4 jours au travail?", "Bannir les cellulaires au restaurant?", "Le pourboire devrait-il disparaître?", "L'IA au travail : outil ou menace?"];
   T(s, sujets.map((t, i) => ({ text: t, options: { bullet: true, breakLine: i < sujets.length - 1 } })), { x: 9.25, y: 2.3, w: 3.25, h: 3.9, fontSize: 15, color: C.background2, paraSpaceAfter: 10 });
-  s.addNotes("Imprimer les 4 diapos « Fiches d'identité » et les couper en deux : 8 cartes-rôles. Débat en aquarium : 5 au centre, le reste en observation. L'étape 5 (rejouer en Bâtisseurs) est la plus importante : faire nommer la différence d'ambiance.");
+  s.addNotes("Imprimer les 4 diapos « Fiches d'identité » (en annexe) et les couper en deux : 8 cartes-rôles. Débat en aquarium : 5 au centre, le reste en observation. L'étape 5 (rejouer en Bâtisseurs) est la plus importante : faire nommer la différence d'ambiance.");
 
   // 18. CARTES + BINGO
   s = content("Le bestiaire");
@@ -454,19 +430,25 @@ async function fig(pose, opts = {}) {
   T(s, "Règles", { x: 7.6, y: 1.5, w: 5, h: 0.5, fontFace: THEME.headFontFace, fontSize: 20, color: C.accent1 });
   const br = ["Coche une case quand tu entends le coup. Note qui et la phrase exacte.", "La case centrale est un bon coup : la reformulation loyale. Elle vaut double.", "Ligne complète? Lève la main en silence : le débat continue.", "Surprise : on termine en comptant les reformulations, pas les coups bas."];
   T(s, br.map((t, i) => ({ text: t, options: { bullet: true, breakLine: i < br.length - 1 } })), { x: 7.6, y: 2.1, w: 5.1, h: 4.3, fontSize: 16, paraSpaceAfter: 10 });
-  s.addNotes("La grille reprend la page 4 du zine. La case étoile oriente l'attention vers les bons comportements : on finit sur ce qui construit.");
+  s.addNotes("Imprimer cette diapo pour les observateurs. La case étoile oriente l'attention vers les bons comportements : on finit sur ce qui construit.");
 
-  // 19. MIROIR
-  s = night("Le bestiaire");
-  s.addText("Le miroir", { placeholder: "title" });
-  T(s, "Quelle créature deviens-tu…", { x: 0.6, y: 1.5, w: 8, h: 0.7, fontFace: THEME.headFontFace, fontSize: 30, color: C.background2 });
-  const mir = ["quand tu es fatigué·e?", "quand le sujet te touche personnellement?", "quand il y a un public?", "quand tu sais que tu as tort?"];
-  mir.forEach((m, i) => {
-    T(s, "… " + m, { x: 0.9, y: 2.45 + i * 0.85, w: 7.8, h: 0.7, fontSize: 24, color: i % 2 ? C.accent2 : C.background2 });
+  // 19. CROQUIS-ÉCLAIR
+  s = content("Le bestiaire");
+  s.addText("Croquis-éclair", { placeholder: "title" });
+  timer(s, "8 min");
+  const cq = [["1", "Ta créature quand tu es à bout"], ["2", "Un coup bas : le groupe devine lequel"], ["3", "Sa parade"]];
+  cq.forEach(([n, h], i) => {
+    const x = 0.6 + i * 4.08;
+    box(s, x, 1.5, 3.9, 3.6, { fill: C.background1 });
+    chip(s, x + 0.2, 1.7, n, { w: 0.65, fs: 22, fill: i === 2 ? C.accent2 : C.accent1, color: i === 2 ? C.text1 : C.background2 });
+    T(s, "60 s", { x: x + 2.8, y: 1.75, w: 0.9, h: 0.5, fontFace: THEME.headFontFace, fontSize: 18, color: C.text2, align: "right" });
+    T(s, h, { x: x + 0.2, y: 5.25, w: 3.5, h: 0.8, fontFace: THEME.headFontFace, fontSize: 18, color: C.accent1 });
   });
-  s.addImage({ data: await fig("think", { ink: "#" + HEX.paper }), x: 9.3, y: 1.4, w: 3.3, h: 4.0 });
-  timer(s, "5 min", true);
-  s.addNotes("Réflexion individuelle silencieuse, puis partage volontaire en dyade. Le but est la métacognition : reconnaître ses propres réflexes sous pression.");
+  s.addImage({ data: await fig("push"), x: 1.7, y: 2.6, w: 1.6, h: 1.95 });
+  s.addImage({ data: await fig("point"), x: 5.8, y: 2.6, w: 1.6, h: 1.95 });
+  s.addImage({ data: await fig("jump"), x: 9.9, y: 2.6, w: 1.6, h: 1.95 });
+  T(s, "Bonshommes allumettes bienvenus. Aucun talent requis.", { x: 0.6, y: 6.25, w: 12.1, h: 0.5, fontSize: 16, italic: true, color: C.text2 });
+  s.addNotes("Zine p. 3 et 4. D'abord, chacun encercle sa créature sous stress (p. 3). Puis trois dessins de 60 secondes (p. 4). Au 2e dessin, on montre son croquis au voisin, qui devine le coup bas. Rire est encouragé : le dessin maladroit désamorce la gêne de se reconnaître.");
 
   // =====================================================================
   pres.addSection({ title: "Ateliers d'écriture" });
@@ -492,7 +474,7 @@ async function fig(pose, opts = {}) {
   box(s, 9.4, 2.15, 3.3, 4.3, { fill: C.background1 });
   T(s, "Consigne", { x: 9.6, y: 2.3, w: 3, h: 0.5, fontFace: THEME.headFontFace, fontSize: 18, color: C.accent1 });
   T(s, "En équipe de 2, choisissez une réplique entendue en ligne, au travail ou en famille. Réécrivez-la aux étages 3, 4 et 6. Lisez l'étage 0 et l'étage 6 à voix haute.", { x: 9.6, y: 2.85, w: 2.95, h: 3.5, fontSize: 15 });
-  s.addNotes("Utiliser la page 5 du zine. Lecture à voix haute : faire sentir physiquement la différence de ton. Variante : réécrire un commentaire de réseau social fictif.");
+  s.addNotes("Zine p. 5. Lecture à voix haute : faire sentir physiquement la différence de ton. Variante : réécrire un commentaire de réseau social fictif.");
 
   // 22. HOMME D'ACIER SIGNÉ
   s = content("Ateliers d'écriture");
@@ -513,7 +495,7 @@ async function fig(pose, opts = {}) {
   });
   box(s, 0.6, 5.4, 12.1, 1.15, { fill: C.text1, line: C.text1 });
   T(s, "Signature : ________________________   « Tu as mieux dit ma pensée que moi. »", { x: 0.9, y: 5.4, w: 11.6, h: 1.15, fontFace: "Courier New", fontSize: 17, color: C.background2, valign: "middle" });
-  s.addNotes("Version écrite de la règle 1 de Rapoport. Le moment de la signature est souvent émouvant : être bien compris désarme. Afficher les feuilles signées au mur.");
+  s.addNotes("Zine p. 6. Version écrite de la règle 1 de Rapoport. Le moment de la signature est souvent émouvant : être bien compris désarme. Afficher les feuilles signées au mur.");
 
   // 23. 39E STRATAGÈME
   s = content("Ateliers d'écriture");
@@ -535,7 +517,7 @@ async function fig(pose, opts = {}) {
     T(s, d, { x: 5.8, y: y + 0.36, w: 6.6, h: 0.35, fontSize: 13, italic: true, color: C.text2 });
     s.addShape(pres.shapes.LINE, { x: 5.8, y: y + 0.82, w: 6.6, h: 0, line: { color: C.text1, width: 1 } });
   });
-  s.addNotes("Production finale du séminaire. On compile les stratagèmes du groupe dans un « Manuel du débat loyal » numéroté à partir de 39 : le zine nº 2 du groupe. Page 7 du zine.");
+  s.addNotes("Production finale du séminaire. On compile les stratagèmes du groupe dans un « Manuel du débat loyal » numéroté à partir de 39 : le zine nº 2 du groupe.");
 
   // =====================================================================
   pres.addSection({ title: "L'arène agréable" });
@@ -592,9 +574,50 @@ async function fig(pose, opts = {}) {
   s.addNotes("À afficher au travail, sur le frigo, ou à garder dans son portefeuille. La dernière phrase (Céder) est la plus difficile et la plus puissante. Défi de la semaine : l'utiliser une fois.");
 
   // =====================================================================
-  pres.addSection({ title: "Sortie" });
+  pres.addSection({ title: "Repartir avec" });
+  await section("Repartir avec", "5", "Repartir avec", "Un objet à garder, une relation à mettre à jour", "jump");
+
+  // 26b. TALISMAN
+  s = content("Repartir avec");
+  s.addText("Le talisman", { placeholder: "title" });
+  timer(s, "15 min");
+  s.addShape(pres.shapes.OVAL, { x: 0.9, y: 1.5, w: 4.6, h: 4.6, fill: { color: C.background1 }, line: { color: C.text1, width: 3, dashType: "dash" } });
+  s.addShape(pres.shapes.OVAL, { x: 1.9, y: 2.0, w: 2.6, h: 2.0, fill: { color: C.background1 }, line: { color: C.text2, width: 1, dashType: "sysDot" } });
+  s.addImage({ data: await fig("jump"), x: 2.65, y: 2.1, w: 1.1, h: 1.35 });
+  s.addShape(pres.shapes.LINE, { x: 1.6, y: 4.75, w: 3.2, h: 0, line: { color: C.text1, width: 1.5 } });
+  T(s, "« Je t'écoute jusqu'au bout. »", { x: 1.4, y: 4.25, w: 3.6, h: 0.45, fontSize: 15, italic: true, align: "center" });
+  const tal = [["Choisis ta phrase-bouclier", "Celle qui te protège de ta créature sous stress."], ["Dessine un symbole", "60 secondes. Simple, à toi."], ["Découpe, garde-le sur toi", "Portefeuille, étui de téléphone, ficelle."], ["Variante : offre-le", "Fais-en un pour ton partenaire, avec la phrase que tu l'as vu bien utiliser."]];
+  tal.forEach(([h, t2], i) => {
+    const y = 1.5 + i * 1.17;
+    chip(s, 6.2, y, String(i + 1), { w: 0.6, fs: 20, fill: i === 3 ? C.accent2 : C.accent1, color: i === 3 ? C.text1 : C.background2 });
+    T(s, h, { x: 7.0, y: y - 0.02, w: 5.7, h: 0.45, fontFace: THEME.headFontFace, fontSize: 18, color: C.accent1 });
+    T(s, t2, { x: 7.0, y: y + 0.42, w: 5.7, h: 0.6, fontSize: 15 });
+  });
+  s.addNotes("Zine p. 7 pour l'esquisse, puis planche de talismans (3e page du PDF du zine) à découper. Matériel : ciseaux, crayons-feutres, ficelle ou épingles. Exemples de phrases-boucliers : « Je t'écoute jusqu'au bout. » « Dur sur l'idée, doux avec toi. » « J'ai peut-être tort. » « Qu'est-ce qui te ferait changer d'idée? » La variante « offert » crée un beau moment de reconnaissance mutuelle.");
+
+  // 26c. MISE À JOUR RELATIONNELLE
+  s = night("Repartir avec");
+  s.addText("Mise à jour relationnelle", { placeholder: "title" });
+  timer(s, "15 min", true);
+  s.addShape(pres.shapes.RECTANGLE, { x: 0.6, y: 1.5, w: 6.0, h: 4.9, fill: { color: C.background1 }, line: { color: C.background2, width: 2 } });
+  s.addShape(pres.shapes.RECTANGLE, { x: 0.6, y: 1.5, w: 6.0, h: 0.45, fill: { color: C.accent2 }, line: { type: "none" } });
+  T(s, "● ● ●   notes_de_version.txt", { x: 0.8, y: 1.5, w: 5.6, h: 0.45, fontFace: "Courier New", fontSize: 14, bold: true, valign: "middle" });
+  T(s, "Relation v2.0", { x: 0.9, y: 2.1, w: 5.4, h: 0.5, fontFace: THEME.headFontFace, fontSize: 22, color: C.accent1 });
+  ["À :", "Correctif : j'arrête de…", "Nouveauté : je vais essayer…", "Bogue connu :", "Mise à jour demandée : je te demande…"].forEach((l, i) => {
+    const y = 2.75 + i * 0.68;
+    T(s, l, { x: 0.9, y, w: 5.4, h: 0.4, fontSize: 15, bold: true, color: i === 4 ? C.accent1 : C.text1 });
+    s.addShape(pres.shapes.LINE, { x: 0.9, y: y + 0.5, w: 5.4, h: 0, line: { color: C.text1, width: 1 } });
+  });
+  const mj = ["Pense à une personne avec qui un débat a mal tourné.", "Écris-lui tes notes de version (zine p. 8).", "Ajoute ta demande : ce que tu aimerais qu'elle mette à jour, elle aussi.", "Tu décides : l'envoyer, en parler, ou la garder."];
+  mj.forEach((t2, i) => {
+    const y = 1.6 + i * 1.15;
+    chip(s, 7.1, y, String(i + 1), { w: 0.6, fs: 20, fill: i === 2 ? C.accent2 : C.accent1, color: i === 2 ? C.text1 : C.background2 });
+    T(s, t2, { x: 7.9, y: y - 0.05, w: 4.8, h: 0.9, fontSize: 17, color: C.background2, valign: "middle" });
+  });
+  s.addNotes("Écho à la question d'ouverture (« gagné un débat et perdu un ami? ») et à la bande-annonce, où l'IA fait sa propre mise à jour. Le format des notes de version dédramatise : on parle de correctifs et de bogues, pas de fautes. Rien n'est lu sans accord. Variante à deux : chacun demande à l'autre « Qu'est-ce que je pourrais mettre à jour quand on débat? » et l'inscrit dans son bogue connu.");
+
   // 27. BILLET 3-2-1
-  s = content("Sortie");
+  s = content("Repartir avec");
   s.addText("Billet de sortie 3 · 2 · 1", { placeholder: "title" });
   timer(s, "7 min");
   const exit = [["3", "coups bas que je reconnaîtrai maintenant", C.accent1, C.background2], ["2", "phrases de la boîte que je vais essayer cette semaine", C.accent2, C.text1], ["1", "créature que je veux arrêter d'être", C.text1, C.background2]];
@@ -608,13 +631,37 @@ async function fig(pose, opts = {}) {
   s.addNotes("Retour sur la question d'ouverture. Les papillons réécrits peuvent devenir une affiche collective.");
 
   // 28. FERMETURE
-  s = pres.addSlide({ masterName: "COUVERTURE", sectionTitle: "Sortie" });
+  s = pres.addSlide({ masterName: "COUVERTURE", sectionTitle: "Repartir avec" });
   s.addText("Débattre fort.\nDébattre juste.\nPersonne blessé·e.", { placeholder: "title" });
   s.addImage({ data: await fig("jump"), x: 8.6, y: 0.5, w: 2.1, h: 2.55, rotate: -6 });
   s.addImage({ data: await fig("jump", { mirror: true }), x: 10.6, y: 1.1, w: 2.1, h: 2.55, rotate: 6 });
   T(s, "Le but n'est pas d'avoir raison contre quelqu'un, c'est d'avoir un peu plus raison ensemble.", { x: 0.6, y: 0.6, w: 7.6, h: 1.1, fontSize: 18, bold: true });
   T(s, "Sources : A. Schopenhauer, L'Art d'avoir toujours raison · P. Graham, How to Disagree (2008) · D. Dennett, Intuition Pumps (2013) · R. Fisher et W. Ury, Getting to Yes · A. Fluegelman, The New Games Book (1976)", { x: 8.6, y: 3.9, w: 4.2, h: 2.9, fontSize: 11, color: C.text2 });
-  s.addNotes("Clôture. Remettre la devise du New Games Book transposée au débat. Inviter les participants à repartir avec leur zine signé.");
+  s.addNotes("Clôture. Remettre la devise du New Games Book transposée au débat. Inviter les participants à repartir avec leur zine, leur talisman et, peut-être, une mise à jour envoyée.");
+
+  pres.addSection({ title: "Annexes" });
+  // ANNEXE : fiches d'identité imprimables (cartes-rôles du bal masqué)
+  // 16b-e. FICHES D'IDENTITÉ (2 par diapo, imprimables comme cartes-rôles)
+  for (let k = 0; k < 4; k++) {
+    s = content("Annexes");
+    s.addText("Fiches d'identité · " + (k + 1) + "/4", { placeholder: "title" });
+    for (let j = 0; j < 2; j++) {
+      const B = BEASTS[k * 2 + j];
+      const x = 0.6 + j * 6.15, y = 1.4;
+      box(s, x, y, 5.95, 5.4, { fill: B.piege ? C.accent2 : C.background1 });
+      s.addImage({ data: await fig(B.p), x: x + 0.15, y: y + 0.12, w: 0.95, h: 1.15 });
+      T(s, B.n, { x: x + 1.2, y: y + 0.15, w: 4.6, h: 0.5, fontFace: THEME.headFontFace, fontSize: 22, color: C.accent1 });
+      T(s, B.sig, { x: x + 1.2, y: y + 0.68, w: 4.6, h: 0.6, fontSize: 14, italic: true, bold: true });
+      const rows = [["Coups bas favoris", B.coups], ["Ce qui se cache dessous", B.dessous], [B.piege ? "Son piège" : "Comment lui répondre", B.rep], ["Sa force cachée", B.force], ["Pour le jouer au bal masqué", B.jouer]];
+      rows.forEach(([l, t], r) => {
+        const ry = y + 1.42 + r * 0.79;
+        s.addShape(pres.shapes.LINE, { x: x + 0.15, y: ry, w: 5.65, h: 0, line: { color: C.text1, width: 0.75 } });
+        T(s, l, { x: x + 0.15, y: ry + 0.06, w: 1.55, h: 0.68, fontSize: 11, bold: true, color: C.text2 });
+        T(s, t, { x: x + 1.75, y: ry + 0.06, w: 4.05, h: 0.7, fontSize: 14, bold: r === 2 });
+      });
+    }
+    s.addNotes("Fiches d'identité. Imprimer cette diapo et couper en deux : chaque moitié devient une carte-rôle pour le bal masqué (la dernière ligne dit comment jouer la créature). Les numéros renvoient aux stratagèmes de Schopenhauer; 14 = crier victoire malgré la défaite.");
+  }
 
   await pres.writeFile({ fileName: __dirname + "/deck.pptx" });
   await applyTheme(__dirname + "/deck.pptx", THEME);

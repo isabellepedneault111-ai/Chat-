@@ -54,6 +54,31 @@ svg.fig{display:block}
 .wl i{position:absolute;left:0;bottom:.02in;font-style:normal;font-family:Alfa;font-size:6.5pt;color:var(--red)}
 .rules.tight li{margin:.02in 0}.rules.tight li>b{font-size:13pt}
 .phr.tight li{padding:.012in 0 .012in .13in;font-size:6.5pt}
+.act{display:inline-block;background:var(--ink);color:var(--paper);font-family:Alfa;font-size:6pt;letter-spacing:.06em;padding:1px 5px;margin-bottom:.04in;transform:rotate(-1.5deg)}
+.wl.tall{height:.3in}
+.frame{border:1.5px solid var(--ink);height:1.02in;margin:.05in 0;position:relative;background:rgba(255,255,255,.35)}
+.frame i{position:absolute;left:.05in;top:.03in;font-style:normal;font-family:Alfa;font-size:6.5pt;color:var(--red)}
+.beasts2{display:grid;grid-template-columns:1fr 1fr;gap:.04in;margin-top:.05in}
+.beasts2>div{border:1px solid var(--ink);padding:.03in;text-align:center;height:.74in;background:rgba(255,255,255,.3)}
+.beasts2>div.good{background:var(--orange)}
+.beasts2 svg{width:.36in;height:.42in;display:block;margin:0 auto}
+.beasts2 h3{font-size:7.3pt;margin:0}.beasts2 p{font-size:5.8pt;line-height:1.1}
+table.ck{width:100%;border-collapse:collapse;margin-top:.04in}
+table.ck td,table.ck th{font-size:6.8pt;padding:.025in .02in;border-bottom:.6px solid rgba(0,0,0,.35);text-align:left}
+table.ck th{font-size:5.5pt;color:#6b4b10;text-align:center}
+table.ck td:first-child{font-family:Alfa;color:var(--red);width:.22in}
+table.ck td:nth-child(3),table.ck td:nth-child(4){text-align:center;font-size:10pt;width:.25in}
+table.ck td b{font-family:Alfa;font-weight:400;color:var(--ink);display:block;font-size:7.6pt}
+.tal{width:2.15in;height:2.15in;border:2px dashed var(--ink);border-radius:50%;margin:.04in auto 0;position:relative;background:rgba(255,255,255,.35)}
+.tal-in{position:absolute;left:.45in;right:.45in;top:.3in;height:.95in;border:1px dotted rgba(0,0,0,.4);border-radius:50%}
+.tal-in i,.tal-lab{position:absolute;font-style:normal;font-size:5.5pt;color:#6b4b10;left:0;right:0;text-align:center}
+.tal-in i{bottom:-.13in}
+.tal-line{position:absolute;left:.3in;right:.3in;top:1.55in;border-bottom:1px solid var(--ink)}
+.tal-lab{top:1.6in}
+.win{border:1.6px solid var(--ink);background:#fff;margin-top:.04in}
+.win .bar{background:var(--ink);color:var(--paper);font-family:Elite;font-size:6pt;padding:2px 5px}
+.win .bar span{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--orange);margin-right:2px}
+.wbody{padding:.05in .08in}
 .pyr{width:100%}
 .lines{border-bottom:1px solid var(--ink);height:.2in}
 .phr li{list-style:none;padding:.025in 0 .025in .13in;position:relative;font-size:7.1pt}
@@ -61,6 +86,13 @@ svg.fig{display:block}
 .rules li{list-style:none;margin:.04in 0;display:grid;grid-template-columns:.3in 1fr;align-items:start}
 .rules li>b{font-family:Alfa;font-size:17pt;color:var(--red);line-height:.85}
 /* instruction sheet */
+.plate{width:11in;height:8.5in;padding:.45in .6in;background:#fff;font-family:RS;page-break-before:always}
+.plate h1{font-size:24pt}.plate p{font-size:10pt;max-width:9in;margin:.05in 0 .15in}
+.tals{display:grid;grid-template-columns:repeat(3,1fr);gap:.2in;justify-items:center}
+.tal.big{width:2.9in;height:2.9in;margin:0;background:#fff}
+.tal.big .tal-in{left:.6in;right:.6in;top:.35in;height:1.35in}
+.tal.big .tal-line{top:2.05in;left:.4in;right:.4in}
+.hole{position:absolute;left:50%;top:.1in;width:.12in;height:.12in;margin-left:-.06in;border:1px solid #1B1714;border-radius:50%}
 .guide{width:11in;height:8.5in;padding:.55in .6in;background:#fff;font-family:RS;display:grid;grid-template-columns:1.05fr 1fr;gap:.45in}
 .guide h1{font-size:30pt;margin-bottom:.12in}
 .guide h2{font-size:15pt;margin:.14in 0 .05in}
@@ -75,94 +107,87 @@ svg.fig{display:block}
 <div class="sheet">
  <!-- rangée du haut (à l'envers) : 5 4 3 2 -->
  <section class="p flip" id="p5">
-  <h2 style="font-size:18pt">Monte la pyramide</h2>
-  <svg class="pyr" viewBox="0 0 200 215" id="pyr" style="height:1.5in;display:block;margin:0 auto"></svg>
-  <h3>À toi : l'ascenseur</h3>
-  <p style="font-size:6.2pt">Une réplique entendue, réécrite étage par étage.</p>
-  <div class="wl"><i>0</i></div><div class="wl"><i>3</i></div><div class="wl"><i>4</i></div><div class="wl"><i>6</i></div><div class="wl"></div>
+  <div class="act">ATELIER · 10 MIN</div>
+  <h2 style="font-size:19pt">L'ascenseur</h2>
+  <p>Une réplique blessante. Fais-la monter.</p>
+  <svg class="pyr" viewBox="0 0 200 215" id="pyr" style="height:1.15in;display:block;margin:.04in auto"></svg>
+  <div class="wl tall"><i>0</i></div><div class="wl tall"><i>3</i></div><div class="wl tall"><i>4</i></div><div class="wl tall"><i>6</i></div><div class="wl tall"></div>
   <span class="folio l">5</span>
  </section>
  <section class="p flip" id="p4">
-  <h2>9 coups bas à repérer</h2>
-  <p style="margin-bottom:.05in;font-size:6.6pt">Numéros tirés des 38 stratagèmes. <i style="color:#6b4b10;font-weight:700;font-style:normal">→ la parade agréable</i></p>
-  <div class="strat"><b class="n">1</b><p><b>L'élastique.</b> Étirer ta thèse jusqu'à l'absurde. <i>→ « Ce n'est pas ce que j'ai dit. Je dis seulement… »</i></p></div>
-  <div class="strat"><b class="n">8</b><p><b>L'allumette.</b> Te mettre en colère pour que tu raisonnes mal. <i>→ Respire. Nomme-le : « Je sens que ça monte, je ralentis. »</i></p></div>
-  <div class="strat"><b class="n">13</b><p><b>Le faux choix.</b> « C'est ça ou le chaos. » <i>→ « Il existe une 3ᵉ option… »</i></p></div>
-  <div class="strat"><b class="n">18</b><p><b>Le coupe-fil.</b> Interrompre quand on perd. <i>→ « Je finis ma phrase, puis je t'écoute. »</i></p></div>
-  <div class="strat"><b class="n">29</b><p><b>La diversion.</b> Changer de sujet en douce. <i>→ « On y reviendra. Là, on parlait de… »</i></p></div>
-  <div class="strat"><b class="n">30</b><p><b>Le galon.</b> « Un expert l'a dit. » <i>→ « Quelles sont ses raisons ? »</i></p></div>
-  <div class="strat"><b class="n">32</b><p><b>L'étiquette.</b> Coller un nom odieux à ton idée. <i>→ Décolle : « Parlons de l'idée, pas du mot. »</i></p></div>
-  <div class="strat"><b class="n">36</b><p><b>Le brouillard.</b> Noyer sous le jargon. <i>→ « Peux-tu le dire à un enfant de 10 ans ? »</i></p></div>
-  <div class="strat"><b class="n">38</b><p><b>Le K.-O.</b> L'attaque personnelle, ultime recours. <i>→ Le calme. Ton adversaire vient d'avouer qu'il n'a plus d'arguments.</i></p></div>
+  <div class="act">CROQUIS-ÉCLAIR · 3 × 60 S</div>
+  <h2 style="font-size:19pt">Dessine vite!</h2>
+  <div class="frame"><i>1 · Ma créature quand je suis à bout</i></div>
+  <div class="frame"><i>2 · Un coup bas (les autres devinent)</i></div>
+  <div class="frame"><i>3 · Sa parade</i></div>
   <span class="folio l">4</span>
  </section>
  <section class="p flip" id="p3">
-  <h2 style="font-size:19pt">Le bestiaire du débat</h2>
-  <div class="bh"><span></span><span>Créature · <i>sa phrase-signature</i></span><span>Coups</span></div>
-  <div class="br"><svg data-pose="push"></svg><div><h3>Le Bulldozer</h3><p class="elite">« Laisse-moi finir! »</p><p class="par">→ Chronomètre : « Je t'ai entendu. À moi, 1 minute. »</p></div><b>18 · 14</b></div>
-  <div class="br"><svg data-pose="fog"></svg><div><h3>Le Brouillard</h3><p class="elite">« Oui, mais le vrai problème… »</p><p class="par">→ Épingle : « Gardons ça. Ta réponse à X? »</p></div><b>29 · 36</b></div>
-  <div class="br"><svg data-pose="point"></svg><div><h3>Le Sniper</h3><p class="elite">« Venant de toi, franchement… »</p><p class="par">→ Ramène : « Admettons. Et l'argument? »</p></div><b>38 · 8</b></div>
-  <div class="br"><svg data-pose="prof"></svg><div><h3>Le Professeur</h3><p class="elite">« Les études montrent que… »</p><p class="par">→ Creuse : « Lesquelles? Elles disent quoi? »</p></div><b>30 · 36</b></div>
-  <div class="br"><svg data-pose="shrug"></svg><div><h3>La Girouette</h3><p class="elite">« T'as raison. Toi aussi. »</p><p class="par">→ Force le choix : « Une seule position? »</p></div><b>subit 28</b></div>
-  <div class="br"><svg data-pose="hide"></svg><div><h3>La Tortue</h3><p class="elite">« … » ou « Je sais pas. »</p><p class="par">→ Ouvre : écrit d'abord, puis tour de parole.</p></div><b>subit tout</b></div>
-  <div class="br"><svg data-pose="think"></svg><div><h3>L'Avocat du diable</h3><p class="elite">« Juste pour jouer… »</p><p class="par">→ Démasque : « Et toi, tu penses quoi? »</p></div><b>1 · 13</b></div>
-  <div class="br"><svg data-pose="jump"></svg><div><h3>Le Bâtisseur</h3><p class="elite">« Si je te comprends bien… »</p><p class="par">→ Imite-le. Attention : peut virer paillasson.</p></div><b>aucun</b></div>
+  <div class="act">LE BESTIAIRE</div>
+  <h2 style="font-size:19pt">Qui es-tu?</h2>
+  <p>Encercle ta créature quand ça chauffe.</p>
+  <div class="beasts2">
+   <div><svg data-pose="push"></svg><h3>Bulldozer</h3><p class="elite">« Laisse-moi finir! »</p></div>
+   <div><svg data-pose="fog"></svg><h3>Brouillard</h3><p class="elite">« Oui, mais… »</p></div>
+   <div><svg data-pose="point"></svg><h3>Sniper</h3><p class="elite">« Venant de toi… »</p></div>
+   <div><svg data-pose="prof"></svg><h3>Professeur</h3><p class="elite">« Les études… »</p></div>
+   <div><svg data-pose="shrug"></svg><h3>Girouette</h3><p class="elite">« T'as raison. »</p></div>
+   <div><svg data-pose="hide"></svg><h3>Tortue</h3><p class="elite">« … »</p></div>
+   <div><svg data-pose="think"></svg><h3>Avocat du diable</h3><p class="elite">« Juste pour jouer… »</p></div>
+   <div class="good"><svg data-pose="jump"></svg><h3>Bâtisseur</h3><p class="elite">« Si je comprends bien… »</p></div>
+  </div>
   <span class="folio l">3</span>
  </section>
  <section class="p flip" id="p2">
-  <h2>Le manuel du tricheur</h2>
-  <p>Vers 1830, le philosophe <b>Arthur Schopenhauer</b> écrit <i>L'Art d'avoir toujours raison</i>&nbsp;: <b>38 stratagèmes</b> pour gagner un débat, même quand on a tort.</p>
-  <div class="box" style="margin:.06in 0"><p class="bigq" style="font-size:11pt">« Le débat est un combat d'escrime intellectuel. »</p></div>
-  <p><span class="tag">NOTRE PARI</span> On apprend les coups bas <b>pour les reconnaître</b>, pas pour les jouer. C'est un vaccin.</p>
-  <h3>À toi</h3>
-  <p style="font-size:6.2pt">Un débat que j'ai gagné… et ce qu'il m'a coûté :</p>
-  <div class="wl"></div><div class="wl"></div><div class="wl"></div><div class="wl"></div><div class="wl"></div>
+  <div class="act">COCHE-LES</div>
+  <h2 style="font-size:19pt">9 coups bas</h2>
+  <table class="ck"><tr><th></th><th></th><th>subi</th><th>fait</th></tr>
+   <tr><td>1</td><td><b>L'élastique</b> exagérer ta pensée</td><td>☐</td><td>☐</td></tr>
+   <tr><td>8</td><td><b>L'allumette</b> te faire fâcher</td><td>☐</td><td>☐</td></tr>
+   <tr><td>13</td><td><b>Le faux choix</b> « ça ou le chaos »</td><td>☐</td><td>☐</td></tr>
+   <tr><td>18</td><td><b>Le coupe-fil</b> interrompre</td><td>☐</td><td>☐</td></tr>
+   <tr><td>29</td><td><b>La diversion</b> changer de sujet</td><td>☐</td><td>☐</td></tr>
+   <tr><td>30</td><td><b>Le galon</b> « un expert l'a dit »</td><td>☐</td><td>☐</td></tr>
+   <tr><td>32</td><td><b>L'étiquette</b> un nom qui salit</td><td>☐</td><td>☐</td></tr>
+   <tr><td>36</td><td><b>Le brouillard</b> noyer de jargon</td><td>☐</td><td>☐</td></tr>
+   <tr><td>38</td><td><b>Le K.-O.</b> attaquer la personne</td><td>☐</td><td>☐</td></tr>
+  </table>
+  <p class="elite" style="font-size:6.2pt;margin-top:.06in">Numéros : les 38 stratagèmes de Schopenhauer (v. 1830). On les apprend pour s'en protéger.</p>
   <span class="folio l">2</span>
  </section>
 
  <!-- rangée du bas (à l'endroit) : 6 7 8 1 -->
  <section class="p" id="p6">
-  <h2 style="font-size:18pt">Les 4 règles de Rapoport</h2>
-  <ol class="rules tight">
-   <li><b>1</b><p>Reformule l'idée de l'autre si bien qu'il dise : <span class="elite">« J'aurais aimé le dire comme ça. »</span></p></li>
-   <li><b>2</b><p>Nomme tes <b>points d'accord</b>.</p></li>
-   <li><b>3</b><p>Dis ce que tu as <b>appris</b>.</p></li>
-   <li><b>4</b><p><b>Seulement là</b>, ta critique.</p></li>
-  </ol>
-  <h3>À toi : l'homme d'acier</h3>
-  <p style="font-size:6.2pt">Ce que tu penses, dit mieux que toi :</p>
-  <div class="wl"></div><div class="wl"></div><div class="wl"></div><div class="wl"></div><div class="wl"></div>
-  <div class="wl"><i>Signé :</i></div>
+  <div class="act">ATELIER À DEUX · 10 MIN</div>
+  <h2 style="font-size:19pt">L'homme d'acier</h2>
+  <p>Écris sa pensée <b>mieux que lui</b>. Il signe si c'est juste.</p>
+  <div class="wl tall"></div><div class="wl tall"></div><div class="wl tall"></div><div class="wl tall"></div><div class="wl tall"></div><div class="wl tall"></div>
+  <div class="wl tall"><i>Signé :</i></div>
+  <p class="elite" style="font-size:6.2pt;margin-top:.06in">Reformuler · nommer un accord · dire ce qu'on a appris · <b>puis</b> critiquer.</p>
   <span class="folio">6</span>
  </section>
  <section class="p" id="p7">
-  <h2 style="font-size:18pt">Le 39ᵉ stratagème</h2>
-  <p>Schopenhauer s'est arrêté à 38. Invente le 39ᵉ : un coup <b>loyal</b> qui fait gagner tout le monde.</p>
-  <div class="wl"><i>Son nom :</i></div>
-  <div class="wl"><i>Quand l'utiliser :</i></div><div class="wl"></div>
-  <div class="wl"><i>La phrase ou le geste :</i></div><div class="wl"></div><div class="wl"></div>
-  <div class="wl"><i>Ce qu'il désamorce :</i></div>
-  <h3 style="margin-top:.08in">Phrases qui désamorcent</h3>
-  <ul class="phr tight">
-   <li>« Si je te comprends bien, tu dis que… c'est ça? »</li>
-   <li>« Qu'est-ce qui pourrait te faire changer d'idée? »</li>
-   <li>« Bon point. Je n'y avais pas pensé. »</li>
-   <li>« Je pense que j'avais tort sur ce bout-là. »</li>
-  </ul>
+  <div class="act">TALISMAN · 15 MIN</div>
+  <h2 style="font-size:19pt">Ton talisman</h2>
+  <div class="tal"><div class="tal-in"><i>ton symbole</i></div><div class="tal-line"></div><i class="tal-lab">ta phrase-bouclier</i></div>
+  <p style="margin-top:.06in"><b>1.</b> Dessine un symbole. <b>2.</b> Écris ta phrase-bouclier. <b>3.</b> Recopie-le sur la planche, découpe, garde-le sur toi.</p>
+  <p class="elite" style="font-size:6.2pt;margin-top:.04in">Idées : « Je t'écoute jusqu'au bout. » · « Dur sur l'idée, doux avec toi. » · « J'ai peut-être tort. »</p>
   <span class="folio">7</span>
  </section>
- <section class="p" id="p8" style="background:var(--ink);color:var(--paper)">
-  <h2 style="color:var(--orange);font-size:19pt">Règles du jeu</h2>
-  <p style="font-size:7.6pt">Comme dans les <i>New Games</i> des années 70 : on joue fort, on joue juste, personne n'est blessé.</p>
-  <h3 style="color:var(--orange)">Débattre fort</h3><p>Des idées claires, des preuves, du cran.</p>
-  <h3 style="color:var(--orange)">Débattre juste</h3><p>Pas de coups bas. Écouter avant de frapper.</p>
-  <h3 style="color:var(--orange)">Personne blessé·e</h3><p>On attaque les idées, on protège les gens.</p>
-  <div style="border:1.5px dashed var(--orange);padding:.07in;margin-top:.09in">
-   <h3 style="color:var(--paper);margin-top:0">Mini-jeu : la course à trois jambes</h3>
-   <p style="font-size:6.6pt">Deux adversaires, bras dessus bras dessous, au fond de la salle. Chaque <b>point d'accord</b> sincère sur le sujet = un pas vers le mur. L'autre doit dire « d'accord » pour que ça compte. Premier duo au mur y écrit sa <b>phrase commune</b>.</p>
-  </div>
-  <p class="elite" style="font-size:6pt;margin-top:.1in;opacity:.85">Zine libre de droits. Photocopie-le, plie-le, prête-le, débats-en.</p>
-  <span class="folio" style="color:var(--orange)">8</span>
+ <section class="p" id="p8">
+  <div class="act">MISE À JOUR RELATIONNELLE</div>
+  <div class="win"><div class="bar"><span></span><span></span><span></span> notes_de_version.txt</div>
+   <div class="wbody">
+    <h3 style="margin:0 0 .02in">Relation v2.0</h3>
+    <div class="wl"><i>À :</i></div>
+    <div class="wl"><i>Correctif : j'arrête de</i></div><div class="wl"></div>
+    <div class="wl"><i>Nouveauté : je vais essayer</i></div><div class="wl"></div>
+    <div class="wl"><i>Bogue connu :</i></div>
+    <div class="wl"><i>Mise à jour demandée : je te demande</i></div><div class="wl"></div>
+    <p style="margin-top:.05in;font-size:7pt">☐ envoyée &nbsp; ☐ pas encore &nbsp; ☐ en personne</p>
+   </div></div>
+  <p class="elite" style="font-size:6pt;margin-top:.05in">Débattre fort · débattre juste · personne blessé·e</p>
+  <span class="folio">8</span>
  </section>
  <section class="p cover" id="p1">
   <div class="issue">ZINE Nº 1<br>pour adultes<br>curieux de<br>tout acabit</div>
@@ -187,18 +212,28 @@ svg.fig{display:block}
   </div>
  </div>
  <div>
-  <h1 style="font-size:22pt">Pour l'animateur·trice</h1>
-  <h2>Avant</h2>
-  <ul style="padding-left:.2in"><li>Faire plier le zine <b>en ouverture</b> de séance : un geste manuel brise la glace et crée l'objet commun.</li><li>Zones d'écriture : page 2 (un débat gagné… à quel prix?), 5 (l'ascenseur), 6 (l'homme d'acier signé), 7 (le 39ᵉ stratagème).</li></ul>
-  <h2>Pendant</h2>
-  <ul style="padding-left:.2in"><li>Page 3 : support de l'activité <b>Bestiaire</b> (cartes rôles secrets).</li><li>Page 4 : grille de <b>bingo des coups bas</b> pour les observateurs.</li><li>Pages 5 à 7 : les <b>trois ateliers d'écriture</b>, directement dans le zine.</li></ul>
+  <h1 style="font-size:22pt">Les activités du zine</h1>
+  <ul style="padding-left:.2in">
+   <li><b>p. 2 · Coche-les</b> (5 min) : les coups bas subis et faits.</li>
+   <li><b>p. 3 · Qui es-tu?</b> (5 min) : encercle ta créature sous stress.</li>
+   <li><b>p. 4 · Croquis-éclair</b> (3 × 60 s) : dessine; le groupe devine le coup bas.</li>
+   <li><b>p. 5 · L'ascenseur</b> (10 min) : une réplique réécrite étage par étage.</li>
+   <li><b>p. 6 · L'homme d'acier</b> (10 min, à deux) : l'autre signe si c'est juste.</li>
+   <li><b>p. 7 · Talisman</b> (15 min) : symbole + phrase-bouclier, recopié sur la planche à découper.</li>
+   <li><b>p. 8 · Mise à jour relationnelle</b> (10 min) : des notes de version à quelqu'un, avec une demande. On décide soi-même de l'envoyer ou non.</li>
+  </ul>
   <h2>Pour qui?</h2>
-  <p>Adultes volontaires de tout acabit, <b>aucun prérequis</b>. On vient pour jouer, pas pour être évalué.</p>
+  <p>Adultes volontaires de tout acabit, <b>aucun prérequis</b>.</p>
   <h2>Règle du joker</h2>
-  <p>Chacun peut <b>passer son tour</b> à tout moment, sans se justifier. On choisit des sujets qui font réfléchir, pas des sujets qui blessent : pas de débat sur l'identité ou le vécu intime des personnes présentes.</p>
-  <h2>Question pour finir</h2>
-  <p class="elite" style="font-size:11pt">« As-tu déjà gagné un débat… et perdu un ami? Qu'aurais-tu échangé? »</p>
+  <p>Chacun peut <b>passer son tour</b>, sans se justifier. Rien n'est lu à voix haute sans accord.</p>
  </div>
+</div>
+
+<!-- ============ feuille 3 : planche de talismans ============ -->
+<div class="plate">
+ <h1>Planche de talismans</h1>
+ <p>Recopie ton symbole et ta phrase-bouclier. Découpe sur le pointillé. Perce le petit rond pour une ficelle, ou glisse-le dans ton portefeuille. Variante : fais-en un <b>pour ton partenaire</b>, avec la phrase que tu l'as vu bien utiliser.</p>
+ <div class="tals"><div class="tal big"><span class="hole"></span><div class="tal-in"></div><div class="tal-line"></div></div><div class="tal big"><span class="hole"></span><div class="tal-in"></div><div class="tal-line"></div></div><div class="tal big"><span class="hole"></span><div class="tal-in"></div><div class="tal-line"></div></div><div class="tal big"><span class="hole"></span><div class="tal-in"></div><div class="tal-line"></div></div><div class="tal big"><span class="hole"></span><div class="tal-in"></div><div class="tal-line"></div></div><div class="tal big"><span class="hole"></span><div class="tal-in"></div><div class="tal-line"></div></div></div>
 </div>
 
 <script>
