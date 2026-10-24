@@ -297,6 +297,20 @@ select { cursor: pointer; }
 .range-scale { display: flex; justify-content: space-between; font-size: .72rem; color: var(--muted); gap: 8px; }
 .range-scale .threshold { color: var(--amber); }
 .strip { width: 100%; height: 90px; margin-top: 16px; display: block; }
+.wave-panel { position: relative; margin-top: 18px; background: #080710; }
+.wave-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.wave-head .seg { display: flex; gap: 8px; flex-wrap: wrap; }
+.wave-caption { margin: 4px 0 0; max-width: 60ch; }
+.air { width: 100%; height: 56px; display: block; margin-top: 12px; }
+.wave { width: 100%; height: 200px; display: block; }
+.slow-tag { position: absolute; right: 16px; bottom: 12px; font-size: .72rem; color: var(--amber); letter-spacing: .06em; }
+.kb-panel { margin-top: 18px; }
+.kb-caption { min-height: 2.6em; }
+.key.k-lit { background: var(--lc) !important; box-shadow: 0 0 22px var(--lc); }
+.key.k-ghost { box-shadow: inset 0 0 0 3px var(--lc); outline: 2px dashed var(--lc); outline-offset: -7px; }
+.key.white.k-ghost { background: color-mix(in srgb, var(--lc) 22%, #f5f4fb); }
+.key.black.k-ghost { background: color-mix(in srgb, var(--lc) 45%, #0e0d16); }
+@media (max-width: 760px) { .wave { height: 150px; } }
 
 /* ---------- Studio ---------- */
 .transport { display: flex; align-items: center; gap: 16px 22px; flex-wrap: wrap; }
@@ -375,7 +389,7 @@ select { cursor: pointer; }
 @media (max-width: 1080px) {
   .nav a b { display: none; }
   .nav a { padding: 8px 10px; }
-  .labo-grid { grid-template-columns: 1fr; }
+  .labo-grid { grid-template-columns: minmax(0, 1fr); }
   .radar-panel { max-height: none; max-width: 620px; width: 100%; margin-left: auto; margin-right: auto; }
 }
 @media (max-width: 900px) {

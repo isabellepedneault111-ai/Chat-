@@ -1,6 +1,6 @@
 import { audio, out, impulseOsc } from '../audio.js';
-import { autoCanvas, animate, css } from '../ui.js';
-import { nameFR, ftom, clamp } from '../music.js';
+import { autoCanvas, animate, css, keyboard } from '../ui.js';
+import { nameFR, ftom, mtof, clamp } from '../music.js';
 import { RATIO_PRESETS } from '../data.js';
 
 const FMIN = 0.5;
@@ -8,6 +8,12 @@ const FMAX = 880;
 const toF = (v) => FMIN * (FMAX / FMIN) ** (v / 1000);
 const toV = (f) => (Math.log(f / FMIN) / Math.log(FMAX / FMIN)) * 1000;
 const COLORS = ['--cyan', '--violet', '--pink', '--amber', '--lime'];
+const KB_FROM = 24; // Do1
+const KB_TO = 96; // Do7
+const WAVE_SPEED = 0.8; // périodes visibles par seconde, au maximum
+
+// Nombre de « ×2 » pour amener une fréquence sur le clavier (une octave = doubler).
+const octavesUp = (fr) => Math.max(0, Math.ceil(Math.log2(mtof(KB_FROM - 0.5) / fr)));
 
 export default {
   id: 'labo',
@@ -18,6 +24,8 @@ export default {
     let nodes = null;
     let sweep = null;
     const taps = [];
+    let waveMode = 'sin';
+    let wavePhase = 0;
 
     el.innerHTML = `
       <div class="mod-head">
@@ -54,12 +62,36 @@ export default {
           <button class="btn" data-act="tap">👆 Tape le tempo</button>
         </div>
         <canvas class="strip" aria-label="Ligne du temps des clics de chaque disque"></canvas>
+      </div>
+      <div class="panel wave-panel">
+        <div class="wave-head">
+          <div>
+            <p class="eyebrow">L’onde, au ralenti</p>
+            <p class="muted small wave-caption"></p>
+          </div>
+          <div class="seg" role="group" aria-label="Forme de l’onde">
+            <button class="chip" data-wave="sin">〰 Vague pure</button>
+            <button class="chip" data-wave="click">⚡ Clics réels</button>
+          </div>
+        </div>
+        <canvas class="air" aria-label="Particules d’air poussées par l’onde"></canvas>
+        <canvas class="wave" aria-label="Forme de l’onde de chaque disque et leur somme"></canvas>
+        <div class="slow-tag mono"></div>
+      </div>
+      <div class="panel kb-panel">
+        <p class="eyebrow">Sur le clavier</p>
+        <p class="muted small kb-caption"></p>
+        <div class="kb-host big"></div>
+        <p class="muted small">Touche une note : la vitesse saute directement à sa fréquence.</p>
       </div>`;
 
     const q = (s) => el.querySelector(s);
     const radar = autoCanvas(q('.radar'));
     const strip = autoCanvas(q('.strip'));
     const range = q('.big-range');
+    const air = autoCanvas(q('.air'));
+    const wave = autoCanvas(q('.wave'));
+    const kb = keyboard(q('.kb-host'), { from: KB_FROM, to: KB_TO, onPlay: (m) => { sweep = null; setF(mtof(m)); } });
     const colors = COLORS.map(css);
     const voices = () => preset.ratios.map((r) => (r / preset.ratios[0]));
     let phases = [];
@@ -106,6 +138,27 @@ export default {
         </div>
         <p class="muted small">Même rapport, deux sensations. C’est la même fraction qui se cache dans le rythme et dans l’accord.</p>`;
       el.querySelectorAll('[data-preset]').forEach((b) => b.classList.toggle('active', b.dataset.preset === preset.id));
+      updateKeyboard(zone);
+    }
+
+    // Allume la touche de chaque disque. Sous le seuil, on « monte » le rythme
+    // d'octave en octave (×2) jusqu'au clavier : sa note fantôme apparaît.
+    function updateKeyboard(zone) {
+      kb.keys.forEach((k) => { k.classList.remove('k-lit', 'k-ghost'); k.style.removeProperty('--lc'); });
+      const n = octavesUp(f * Math.min(...voices()));
+      const lines = [];
+      voices().forEach((r, i) => {
+        const m = Math.round(ftom(f * r * 2 ** n));
+        const k = kb.keys.get(clamp(m, KB_FROM, KB_TO));
+        if (!k) return;
+        k.classList.add(n ? 'k-ghost' : 'k-lit');
+        k.style.setProperty('--lc', colors[i]);
+        lines.push(`<b style="color:${colors[i]}">${nameFR(m)}</b>`);
+      });
+      const fmt = (x) => (x < 10 ? x.toFixed(2) : x.toFixed(0)).replace('.', ',');
+      q('.kb-caption').innerHTML = n === 0
+        ? `Ce que tu entends : ${lines.join(' + ')}.`
+        : `Trop lent pour être une note… mais double-le ${n} fois (×2${n > 1 ? `<sup>${n}</sup> = ×${2 ** n}` : ''}) : ${fmt(f)} Hz devient ${fmt(f * 2 ** n)} Hz, et ce rythme <em>est</em> ${lines.join(' + ')}, ${n} octave${n > 1 ? 's' : ''} plus bas. Les touches pointillées sont ses notes fantômes.${zone === 'flou' ? ' Accélère encore un peu…' : ''}`;
     }
 
     function startAudio() {
@@ -141,6 +194,8 @@ export default {
     }
 
     el.addEventListener('click', (e) => {
+      const wb = e.target.closest('[data-wave]');
+      if (wb) { waveMode = wb.dataset.wave; syncWaveButtons(); return; }
       const pb = e.target.closest('[data-preset]');
       if (pb) {
         preset = RATIO_PRESETS.find((p) => p.id === pb.dataset.preset);
@@ -166,6 +221,11 @@ export default {
         }
       }
     });
+    function syncWaveButtons() {
+      el.querySelectorAll('[data-wave]').forEach((b) => b.classList.toggle('active', b.dataset.wave === waveMode));
+    }
+    syncWaveButtons();
+
     range.addEventListener('input', () => { sweep = null; setF(toF(+range.value), 'range'); });
     q('[data-in=hz]').addEventListener('change', (e) => { const v = parseFloat(e.target.value.replace(',', '.')); if (v > 0) setF(v, 'hz'); });
     q('[data-in=bpm]').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) setF(v / 60, 'bpm'); });
@@ -195,7 +255,10 @@ export default {
           while (hits[i].length && hits[i][0] < clock - 3) hits[i].shift();
           if (hits[i].length > 1200) hits[i].splice(0, hits[i].length - 1200);
         });
+        // L'onde avance au ralenti : jamais plus de WAVE_SPEED périodes par seconde.
+        wavePhase += Math.min(f, WAVE_SPEED) * dt;
       }
+      drawWave(vs);
 
       // Radar, avec persistance rétinienne simulée (on efface partiellement).
       const { ctx, w, h } = radar;
@@ -259,8 +322,78 @@ export default {
       }
     });
 
+    // Forme d'un disque à la phase ph (en tours). En mode « clics », une impulsion
+    // étroite à chaque tour : c'est la vraie forme du son qu'on entend ici.
+    const shape = (ph) => {
+      if (waveMode === 'sin') return Math.sin(ph * Math.PI * 2);
+      const d = ph - Math.round(ph);
+      return Math.exp(-((d / 0.035) ** 2)) * 1.6 - 0.6;
+    };
+
+    function drawWave(vs) {
+      const slow = f / WAVE_SPEED;
+      q('.slow-tag').textContent = !playing ? 'en pause' : slow > 1.05 ? `ralenti ×${Math.round(slow).toLocaleString('fr-CA')}` : 'vitesse réelle';
+      q('.wave-caption').textContent = waveMode === 'sin'
+        ? 'Chaque couleur, un disque dessiné comme une vague. En blanc, leur somme : ce que ton tympan reçoit. Regarde le motif se répéter.'
+        : 'La vraie forme ici : un pic à chaque tour de disque. Même fréquence, autre forme : c’est ce qui change le timbre.';
+      const periods = 4; // la fenêtre montre 4 tours du premier disque
+      const val = (x, w) => vs.map((r) => shape((wavePhase - (x / w) * periods) * r));
+      const { ctx, w, h } = wave;
+      if (w) {
+        ctx.clearRect(0, 0, w, h);
+        const mid = h / 2;
+        const amp = h * 0.36;
+        ctx.strokeStyle = 'rgba(255,255,255,.08)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(w, mid); ctx.stroke();
+        const step = 2;
+        const cols = [];
+        for (let x = 0; x <= w; x += step) cols.push(val(x, w));
+        vs.forEach((_, i) => {
+          ctx.strokeStyle = colors[i];
+          ctx.globalAlpha = vs.length > 1 ? 0.55 : 1;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          cols.forEach((v, j) => { const y = mid - v[i] * amp * (vs.length > 1 ? 0.5 : 1); j ? ctx.lineTo(j * step, y) : ctx.moveTo(0, y); });
+          ctx.stroke();
+        });
+        ctx.globalAlpha = 1;
+        if (vs.length > 1) {
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 3;
+          ctx.shadowColor = '#fff';
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          cols.forEach((v, j) => { const y = mid - (v.reduce((a, b) => a + b, 0) / vs.length) * amp; j ? ctx.lineTo(j * step, y) : ctx.moveTo(0, y); });
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+        }
+      }
+      // L'air : chaque particule est poussée puis tirée par l'onde. Les zones
+      // serrées sont les compressions qui voyagent jusqu'à l'oreille.
+      const a = air;
+      if (a.w) {
+        a.ctx.clearRect(0, 0, a.w, a.h);
+        const gap = 14;
+        const rows = Math.max(1, Math.floor(a.h / gap));
+        a.ctx.fillStyle = '#fff';
+        for (let x = gap / 2; x < a.w; x += gap) {
+          const v = val(x, a.w).reduce((s2, b) => s2 + b, 0) / vs.length;
+          const dx = (playing ? v : 0) * gap * 0.7;
+          for (let r = 0; r < rows; r++) {
+            const jitter = ((x * 7 + r * 13) % 5) - 2;
+            a.ctx.globalAlpha = 0.35 + 0.5 * clamp((v + 1) / 2, 0, 1);
+            a.ctx.beginPath();
+            a.ctx.arc(x + dx, gap / 2 + r * gap + jitter, 2.2, 0, Math.PI * 2);
+            a.ctx.fill();
+          }
+        }
+        a.ctx.globalAlpha = 1;
+      }
+    }
+
     resetVoices();
     setF(f);
-    return () => { stop(); stopAudio(); radar.dispose(); strip.dispose(); };
+    return () => { stop(); stopAudio(); radar.dispose(); strip.dispose(); air.dispose(); wave.dispose(); kb.dispose(); };
   },
 };
