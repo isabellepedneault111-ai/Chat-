@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Diapason — le labo où le son devient visible</title>
+  <meta name="description" content="Labo sonore pour la classe : voix en direct, tessiture du groupe, gym vocal noté, rythmes qui deviennent des notes, studio de création et pochettes génératives.">
+  <meta name="theme-color" content="#07060f">
+  <meta property="og:title" content="Diapason — le labo où le son devient visible">
+  <meta property="og:description" content="Chante, frappe, compose : chaque vibration se dessine en direct.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="#/" aria-label="Diapason, accueil">
+      <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3ee6ff"/><stop offset=".5" stop-color="#9b6bff"/><stop offset="1" stop-color="#ff4fb3"/></linearGradient></defs>
+        <path d="M10 3v12a6 6 0 0 0 12 0V3" fill="none" stroke="url(#lg)" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M16 21v8" stroke="url(#lg)" stroke-width="3.2" stroke-linecap="round"/>
+      </svg>
+      <span>Diapason</span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Modules">
+      <a href="#/miroir" data-id="miroir"><b>01</b>Miroir</a>
+      <a href="#/tessiture" data-id="tessiture"><b>02</b>Empreinte</a>
+      <a href="#/gym" data-id="gym"><b>03</b>Gym</a>
+      <a href="#/labo" data-id="labo"><b>04</b>Rythme↔Note</a>
+      <a href="#/studio" data-id="studio"><b>05</b>Studio</a>
+    </nav>
+    <div class="tools">
+      <button class="mic-pill" id="micBtn" type="button" aria-pressed="false">
+        <span class="mic-dot"></span><span class="mic-label">Micro</span>
+      </button>
+      <button class="icon-btn" id="pistesBtn" type="button" title="Pistes pédagogiques" aria-label="Pistes pédagogiques">💡</button>
+      <button class="icon-btn" id="defiBtn" type="button" title="Défi surprise" aria-label="Défi surprise">🎲</button>
+      <button class="icon-btn" id="projBtn" type="button" title="Mode projecteur (texte agrandi)" aria-label="Mode projecteur" aria-pressed="false">⛶</button>
+    </div>
+  </header>
+
+  <main id="view" class="view" tabindex="-1"></main>
+
+  <aside id="drawer" class="drawer" aria-hidden="true" aria-labelledby="drawerTitle">
+    <div class="drawer-inner">
+      <div class="drawer-head">
+        <div><p class="eyebrow">Pour l’enseignant·e</p><h2 id="drawerTitle">Pistes pédagogiques</h2></div>
+        <button class="icon-btn" id="drawerClose" type="button" aria-label="Fermer">✕</button>
+      </div>
+      <div id="drawerBody"></div>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim" hidden></div>
+
+  <div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <p class="eyebrow" id="modalEyebrow">Défi surprise</p>
+      <h2 id="modalTitle"></h2>
+      <div class="modal-actions">
+        <button class="btn" id="modalAgain" type="button">🎲 Un autre</button>
+        <button class="btn primary" id="modalClose" type="button">On y va!</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
