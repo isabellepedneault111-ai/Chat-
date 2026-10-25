@@ -7,6 +7,16 @@ import { currentMonth, planContext, planStart, weekRhythm } from '../plan.js';
 import { esc, espaceGate, ago, embedHTML } from './carnet.js';
 import { activeSession } from './session.js';
 import { relaisPending, asksOf } from './relais.js';
+import { pendantHTML } from '../traces.js';
+
+// Où aller : chaque outil rangé par ce qu'on veut faire, pas par son nom.
+const OU_ALLER = [
+  ['Jouer ensemble', 'Dans la même pièce ou à distance, une séance guidée qui finit par une prise.', [['session', 'Lancer une séance'], ['accord', 'Voix + piano']]],
+  ['Entre deux séances', 'Se lancer des sons, répondre par-dessus, garder les perles.', [['relais', 'Le relais'], ['coffre', 'Le coffre']]],
+  ['Écrire', 'Délier la main, puis sculpter les textes pour qu’ils se chantent.', [['jeux', 'Le grimoire'], ['ambiances', 'Ambiances'], ['paroles', 'Paroles']]],
+  ['Voir le chemin', 'Où on est rendus, ce qui progresse, et ce que la recherche conseille ensuite.', [['bilan', 'Notre bilan'], ['evolution', 'Nos courbes'], ['carnet', 'Le mur']]],
+  ['Travailler sa voix, son son', 'Les outils de fond, quand on veut creuser.', [['tessiture', 'Empreinte'], ['gym', 'Gym vocal'], ['miroir', 'Miroir'], ['studio', 'Studio'], ['labo', 'Le labo']]],
+];
 
 export default {
   id: 'home',
@@ -48,12 +58,16 @@ export default {
       const last = (f) => Math.max(0, ...espace.entries.filter(f).map((e) => e.data?.doneAt || e.createdAt));
       const live = activeSession();
       const modes = [
-        ['Dans la même pièce', 'Session duo, grand texte, raccourcis clavier : l’app s’efface, on joue.', '#/session', last((e) => e.type === 'session' && e.data?.format?.startsWith('duo') && e.data?.done)],
-        ['À distance, en même temps', 'La même session sur deux écrans, synchronisée : pause, phases, prises.', '#/session', live ? Date.now() : 0],
+        ['Dans la même pièce', 'Session duo, grand texte, raccourcis clavier : l’app s’efface, on joue.', '#/session', last((e) => e.type === 'session' && e.data?.format?.startsWith('duo') && e.data?.done && (e.data.lieu || 'piece') === 'piece')],
+        ['À distance, en même temps', 'La même session sur deux écrans, synchronisée : pause, phases, prises.', '#/session', live && live.data?.lieu === 'distance' ? Date.now() : last((e) => e.type === 'session' && e.data?.done && e.data.lieu === 'distance')],
         ['À distance, chacun son temps', 'Le relais : un son, une couche par-dessus, des mots, un cadavre exquis.', '#/relais', last((e) => e.data?.relais || (e.type === 'jeu' && e.data?.kind === 'cadavre'))],
         ['Seul, pour nous deux', 'Micro-session, ambiances, grimoire : ce qu’on fait seul nourrit le duo.', '#/ambiances', last((e) => (e.type === 'session' && e.data?.format === 'solo') || e.type === 'paroles')],
       ];
+      const ens = espace.entries.filter((e) => e.type === 'session' && e.data?.done && e.data.format?.startsWith('duo'));
+      const piece = ens.filter((e) => (e.data.lieu || 'piece') === 'piece').length;
+      const hrs = Math.round(ens.reduce((t, e) => t + Math.max(0, Math.min(240, (e.data.doneAt - e.data.startedAt - (e.data.pausedTotal || 0)) / 60000)), 0) / 6) / 10;
       return `<section class="fil" aria-label="Notre fil">
+        <a class="ensemble" href="#/bilan/seance"><b>${ens.length}</b><span>séance${ens.length > 1 ? 's' : ''} ensemble<small>${piece} dans la même pièce · ${ens.length - piece} à distance · ${hrs} h</small></span></a>
         <p class="fil-k">Notre fil <span>en présence · à distance · en même temps · chacun son temps</span><a class="fil-coffre" href="#/coffre">✦ Le coffre</a></p>
         <div class="fil-row">${modes.map(([t, d, h, at], i) => `<a class="fil-m ${at && Date.now() - at < 7 * 864e5 ? 'warm' : ''}" href="${h}"><span class="fil-n">${i + 1}</span><b>${t}</b><small>${d}</small><em>${live && i === 1 ? 'en ce moment' : at ? ago(at) : 'pas encore'}</em></a>`).join('<i class="fil-link" aria-hidden="true"></i>')}</div>
       </section>`;
@@ -70,6 +84,7 @@ export default {
       const head = `
         <header class="masthead">
           <h1 class="display"><img class="mast-logo" src="img/flip.svg" alt="FLIP"></h1>
+          <canvas class="mast-wave" aria-hidden="true"></canvas>
           <p class="lead">Six mois. Deux musiciens. Des morceaux originaux.</p>
           <p class="duo-line">${(espace.meta.members || MEMBERS).map((m) => `<span style="--c:${memberColor(m)}"><b>${esc(m)}</b> ${esc(ROLES[m] || '')}</span>`).join('')}</p>
         </header>`;
@@ -82,7 +97,7 @@ export default {
           <p>Objectifs, voix, styles, besoins : chacun le sien, puis notre portrait commun. C’est lui qui nourrit le plan.</p>
           <span class="e1-who">${portraits.map((x) => `<span style="--c:${memberColor(x.m)}" class="${x.ok ? 'ok' : ''}">${esc(x.m)} ${x.ok ? '✓' : '· à faire'}</span>`).join('')}</span>
         </a>` : '';
-      if (!start && !editingVision) { el.innerHTML = todayHTML() + filHTML() + head + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
+      if (!start && !editingVision) { el.innerHTML = head + todayHTML() + filHTML() + pendantHTML() + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
       if (editingVision) { el.innerHTML = head + setupHTML(!!start); return; }
 
       const m = currentMonth();
@@ -99,9 +114,10 @@ export default {
       const last = espace.entries.filter((e) => e.type === 'session' && e.data?.debrief?.prochaine).sort((a, b) => b.data.doneAt - a.data.doneAt)[0];
       const v = espace.meta.vision || {};
       el.innerHTML = `
+        ${head}
         ${todayHTML()}
         ${filHTML()}
-        ${head}
+        ${pendantHTML()}
         <section class="plan-hero">
           <div class="month-now">
             <p class="tape">Mois ${m} sur 6</p>
@@ -146,39 +162,17 @@ export default {
             </a>
           </div>`;
         })()}
-        <section class="panel months">
-          <div class="panel-head"><h2>Les six mois</h2><span class="muted small">Départ : ${new Date(start).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric' })}</span></div>
-          <ol>${PLAN.map((p) => {
-            const n = p.mesure(ctx);
-            const state = p.n < m ? 'past' : p.n === m ? 'now' : 'next';
-            return `<li class="${state} ${n >= p.cible ? 'reached' : ''}"><span class="mono">M${p.n}</span><b>${esc(p.titre)}</b><small>${esc(p.sortie)}</small><em class="mono">${Math.min(n, p.cible)}/${p.cible}</em></li>`;
-          }).join('')}</ol>
-        </section>
 
-        <div class="home-grid">
-          <section class="panel rythme">
-            <h2>Le rythme de la semaine</h2>
-            <div class="r-row"><span>Sessions duo</span><span class="dots">${[0, 1].map((i) => `<i class="${i < r.duo ? 'on' : ''}"></i>`).join('')}</span><small>${RYTHME[0].duree}</small></div>
-            ${mem.map((x) => `<div class="r-row"><span style="color:${memberColor(x)}">Solo ${esc(x)}</span><span class="dots">${[0, 1, 2].map((i) => `<i class="${i < (r.solo[x] || 0) ? 'on' : ''}" style="--c:${memberColor(x)}"></i>`).join('')}</span><small>${RYTHME[1].duree}</small></div>`).join('')}
-            <div class="r-row"><span>Écoute commune</span><span class="dots"><i class="${r.ecoute ? 'on' : ''}"></i></span><small>${RYTHME[2].duree}</small></div>
-            <cite>${RYTHME.map((x) => x.src).join(' · ')}</cite>
-          </section>
-          <section class="panel vision">
-            <div class="panel-head"><h2>Notre vision</h2><button class="btn small ghost" data-h="edit">Modifier</button></div>
-            <dl>${VISION_FIELDS.map(([k, label]) => `<dt>${label}</dt><dd>${v[k] ? esc(v[k]) : '<span class="muted">à décider ensemble</span>'}</dd>`).join('')}</dl>
-            <cite>Une vision partagée avant de composer · Merchán-Sánchez-Jara 2023</cite>
-          </section>
-          <section class="panel funnel-box">
-            <h2>Où en sont nos idées</h2>
-            <div class="funnel">${STAGES.map((st) => `<div><b>${ctx.stage(st.id)}</b><span>${st.label}</span></div>`).join('<i>→</i>')}</div>
-            <a class="btn small" href="#/carnet">Ouvrir le mur</a>
-          </section>
-        </div>
 
-        <section class="modules">
-          <div class="mod-grid">
-            ${MODULES.filter((x) => !['session', 'carnet'].includes(x.id)).map((x) => `<a class="mod-card ${x.id === 'labo' ? 'aside' : ''}" href="#/${x.id}" style="--c:${x.color}"><b>${x.name}</b><small>${x.tagline}</small></a>`).join('')}
-          </div>
+        <details class="panel vision-fold"><summary><h2>Notre vision</h2><span class="muted small">tonalité, genre, intention</span></summary>
+          <dl>${VISION_FIELDS.map(([k, label]) => `<dt>${label}</dt><dd>${v[k] ? esc(v[k]) : '<span class="muted">à décider ensemble</span>'}</dd>`).join('')}</dl>
+          <button class="btn small ghost" data-h="edit">Modifier</button>
+          <cite>Une vision partagée avant de composer · Merchán-Sánchez-Jara 2023</cite>
+        </details>
+
+        <section class="ou-aller" aria-label="Où aller">
+          <h2>Où aller</h2>
+          <div class="oa-grid">${OU_ALLER.map(([t, why, links]) => `<div class="oa-g"><h3>${t}</h3><p>${why}</p><div>${links.map(([h, l]) => `<a href="#/${h}">${l}</a>`).join('')}</div></div>`).join('')}</div>
         </section>`;
     }
 
@@ -225,7 +219,30 @@ export default {
         if (now !== lastSig || el.querySelector('.gate')) { lastSig = now; render(); }
       }
     });
+    // L'onde de l'atelier : trois sinus qui dérivent lentement, comme un son tenu qui respire.
+    let raf = 0;
+    const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const wave = (now) => {
+      raf = requestAnimationFrame(wave);
+      const cv = el.querySelector('.mast-wave');
+      if (!cv) return;
+      const dpr = Math.min(2, devicePixelRatio || 1); const w = cv.clientWidth; const h = cv.clientHeight;
+      if (cv.width !== Math.round(w * dpr)) { cv.width = w * dpr; cv.height = h * dpr; }
+      const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+      const t = calm ? 0 : now / 1000;
+      [['rgba(27,25,21,.75)', 1.6, 0], ['rgba(217,58,36,.55)', 1.2, 1.7]].forEach(([col, lw, off]) => {
+        c.beginPath();
+        for (let x = 0; x <= w; x += 2) {
+          const u = x / w;
+          const env = Math.sin(Math.PI * u) ** 1.4 * (0.6 + 0.4 * Math.sin(t * 0.5 + off));
+          const y = h / 2 + env * h * 0.38 * (Math.sin(u * 22 + t * 1.3 + off) * 0.6 + Math.sin(u * 47 - t * 0.9) * 0.25 + Math.sin(u * 9 + t * 0.4 + off) * 0.35);
+          if (x) c.lineTo(x, y); else c.moveTo(x, y);
+        }
+        c.strokeStyle = col; c.lineWidth = lw; c.stroke();
+      });
+    };
+    raf = requestAnimationFrame(wave);
     render();
-    return () => off();
+    return () => { off(); cancelAnimationFrame(raf); };
   },
 };

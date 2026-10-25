@@ -9,6 +9,7 @@ import { ecrire } from '../ecrire.js';
 import { rituel } from '../rituel.js';
 import { FLAME } from '../marque.js';
 import { intentions } from './relais.js';
+import { logPractice } from '../traces.js';
 
 // Le paquet : consignes classiques d'ateliers d'écriture. brise = 1 à 3 minutes pour se délier.
 const CARTES = [
@@ -112,7 +113,7 @@ export default {
       });
       rituel(tirages, {
         theme: find(CHAMP)?.data?.theme || '',
-        onAccept: (t) => { tirage = t; renderCard(); el.querySelector('.jx-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); },
+        onAccept: (t) => { tirage = t; logPractice('grimoire', 1, { carte: t.card.nom, mot: t.mots.join(', ') }); renderCard(); el.querySelector('.jx-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); },
       });
     }
     function renderCard() {

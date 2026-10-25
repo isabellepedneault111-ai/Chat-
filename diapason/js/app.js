@@ -66,6 +66,13 @@ async function route() {
   window.scrollTo({ top: 0 });
 }
 window.addEventListener('hashchange', route);
+// Le petit secret : FLIP retourné, c'est PLIF. Le bruit d'une goutte. Le feu et l'eau.
+document.querySelector('.logo-flip')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  const f = e.currentTarget;
+  f.classList.toggle('flipped');
+  if (f.classList.contains('flipped')) { toast('FLIP retourné : PLIF. Le bruit d’une goutte. Le feu et l’eau.'); setTimeout(() => f.classList.remove('flipped'), 4000); }
+});
 
 // --- Micro global ---
 const micBtn = $('#micBtn');

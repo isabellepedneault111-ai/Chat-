@@ -316,7 +316,7 @@ export default {
           });
         }
       });
-      document.fonts.load('900 80px "Bodoni Moda"').finally(draw);
+      document.fonts.load('900 80px "Literata"').finally(draw);
     }
 
     // ---------- Mon instrument : Diapason écoute, reconnaît, propose ----------
@@ -630,7 +630,7 @@ export default {
           const mid = ang(b * 8 + 4);
           ctx.globalAlpha = on ? 1 : 0.55;
           ctx.fillStyle = col;
-          ctx.font = `800 ${Math.round(R * (on ? 0.13 : 0.1))}px "Bodoni Moda", serif`;
+          ctx.font = `800 ${Math.round(R * (on ? 0.13 : 0.1))}px "Literata", serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText(chordName(ch.root, ch.qual), cx + Math.cos(mid) * R * 1.17, cy + Math.sin(mid) * R * 1.17);
@@ -709,7 +709,7 @@ export default {
         ctx.fillStyle = '#fff';
         const bar = curBar < 0 ? 0 : curBar;
         const ch = chordAt(bar);
-        ctx.font = `900 ${Math.round(R * 0.2)}px "Bodoni Moda", serif`;
+        ctx.font = `900 ${Math.round(R * 0.2)}px "Literata", serif`;
         ctx.fillText(chordName(ch.root, ch.qual), cx, cy - R * 0.05);
         ctx.font = `600 ${Math.round(R * 0.075)}px "Atkinson Hyperlegible", sans-serif`;
         ctx.fillStyle = S.mode === 'duo' ? (bar % 2 ? '#ff4fb3' : '#3ee6ff') : 'rgba(255,255,255,.7)';
@@ -723,7 +723,7 @@ export default {
           ctx.textAlign = 'left';
           ctx.textBaseline = 'alphabetic';
           ctx.fillStyle = '#fff';
-          ctx.font = `800 ${Math.round(w * 0.04)}px "Bodoni Moda", serif`;
+          ctx.font = `800 ${Math.round(w * 0.04)}px "Literata", serif`;
           ctx.fillText((cov.title || 'Sans titre').toUpperCase(), w * 0.04, h - w * 0.07);
           ctx.font = `500 ${Math.round(w * 0.028)}px "Atkinson Hyperlegible", sans-serif`;
           ctx.fillStyle = 'rgba(255,255,255,.75)';
@@ -863,7 +863,7 @@ function drawCover(canvas, { title, artist, mood }) {
   ctx.fillRect(0, 0, W, W);
   const t = (title || 'Sans titre').toUpperCase();
   let size = 132;
-  ctx.font = `900 ${size}px "Bodoni Moda", serif`;
+  ctx.font = `900 ${size}px "Literata", serif`;
   const words = t.split(' ');
   let lines = [];
   const wrap = () => {
@@ -878,7 +878,7 @@ function drawCover(canvas, { title, artist, mood }) {
   wrap();
   while ((lines.length > 3 || lines.some((l) => ctx.measureText(l).width > W - 140)) && size > 40) {
     size -= 6;
-    ctx.font = `900 ${size}px "Bodoni Moda", serif`;
+    ctx.font = `900 ${size}px "Literata", serif`;
     wrap();
   }
   ctx.fillStyle = '#fff';

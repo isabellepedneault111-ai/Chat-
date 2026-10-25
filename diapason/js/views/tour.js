@@ -2,6 +2,7 @@
 // Pas des bulles d'aide : des écrans plein format, comme un livret d'album.
 import { espace, audioURL, updateEspace } from '../espace.js';
 import { store } from '../ui.js';
+import { embers } from '../rituel.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
@@ -29,32 +30,32 @@ export function startTour(preview) {
      </div>`,
     `<p class="t-kicker">${esc(me)}, regarde. Une minute.</p>
      <video class="t-video" src="data/demo-frog.mp4" poster="data/demo-frog.jpg" playsinline controls preload="auto"></video>
-     <p class="t-src">L’app, filmée telle quelle : ton SV-1, ma voix, nos sons qui voyagent entre nous.</p>`,
+     <p class="t-src">L’app, filmée telle quelle : tes claviers, ma voix, nos sons qui voyagent entre nous.</p>`,
     `<p class="t-kicker">Le truc qui n’existe pas ailleurs</p>
-     <h2>Tu joues un accord.<br>Ma voix sait où aller.</h2>
+     <h2>Tu joues un accord.<br><i>Ma voix sait où aller.</i></h2>
      <ul class="t-list">
-       <li>Pendant que tu joues, <b>les notes que je peux chanter s’allument</b>, dans ma tessiture. L’app me dit si je suis dedans : la tierce, la quinte…</li>
-       <li><b>Tes sons choisissent mon exercice</b> : un orgue tenu travaille ma stabilité, un piano qui s’éteint ma mémoire de la note.</li>
-       <li>Et à l’envers : <b>je chante, tu cherches les accords qui me portent</b>. Le score est pour toi.</li>
+       <li><b>Les notes que je peux chanter s’allument</b> pendant que tu joues.</li>
+       <li><b>Tes sons choisissent mon exercice</b> : orgue, piano, Rhodes.</li>
+       <li>À l’envers : <b>je chante, tu trouves les accords</b>.</li>
      </ul>
      <div class="t-chords"><span>Do</span><span class="now">Lam</span><span>Fa</span><span>Sol</span></div>`,
     `<p class="t-kicker">Entre deux sessions</p>
-     <h2>On se lance des sons.</h2>
+     <h2>On se lance <i>des sons.</i></h2>
      <ul class="t-list">
-       <li>Un riff de ton SV-1, 10 secondes, <b>une touche</b> : il m’arrive.</li>
-       <li>Je chante <b>par-dessus</b>, ou j’écris des mots dessus. Tu ajoutes une couche. La chanson grandit sans attendre qu’on soit ensemble.</li>
-       <li>Ou on part dans une <b>ambiance</b> (fleuve gelé, cuisine à 2 h…) que tu pilotes avec tes accords.</li>
+       <li>Ton riff, <b>une touche</b> : il m’arrive, avec ton intention.</li>
+       <li>Je chante <b>par-dessus</b>. Tu ajoutes une couche. La chanson grandit entre nous.</li>
+       <li>Et quand on veut partir ailleurs : <b>les ambiances, le grimoire</b>.</li>
      </ul>`,
-    `<p class="t-kicker">Brancher le SV-1 · 2 minutes</p>
+    `<p class="t-kicker">Brancher tes claviers · 2 minutes</p>
      <h2>Un câble, et c’est parti.</h2>
      <ol class="t-steps">
-       <li>La prise <b>MIDI OUT</b> du SV-1 → une interface USB-MIDI → l’ordi. Pour enregistrer son vrai son : ses sorties audio → ta carte son.</li>
+       <li>N’importe quel clavier MIDI (le SV-1, un contrôleur, un synthé) : <b>USB</b> direct, ou <b>MIDI OUT</b> → une interface USB-MIDI → l’ordi. Pour enregistrer le vrai son : les sorties audio → ta carte son.</li>
        <li>Ouvre l’app dans <b>Chrome ou Edge</b> sur l’ordi.</li>
        <li><b>Voix → Voix + piano → Brancher le piano</b> : joue un accord, il apparaît.</li>
      </ol>`,
     `<h2>Par où commencer</h2>
      <div class="t-actions">
-       <a class="btn primary big" href="#/accord" data-t="end">① Brancher le SV-1 et jouer 3 accords pour moi</a>
+       <a class="btn primary big" href="#/accord" data-t="end">① Brancher un clavier et jouer 3 accords pour moi</a>
        <a class="btn big" href="#/relais" data-t="end">② Me lancer un premier son</a>
        <a class="btn big" href="#/depart" data-t="end">③ Ton point de départ (5 min)</a>
        <button class="btn big ghost" data-t="end">Explorer seul</button>
@@ -68,11 +69,13 @@ export function startTour(preview) {
   box.setAttribute('aria-modal', 'true');
   box.setAttribute('aria-label', 'Visite guidée');
   box.innerHTML = `
+    <canvas class="t-embers" aria-hidden="true"></canvas>
     <div class="t-progress">${slides.map(() => '<i></i>').join('')}</div>
     <button class="t-skip" data-t="end">Passer</button>
     <div class="t-slide"></div>
     <div class="t-nav"><button data-t="prev" aria-label="Précédent">←</button><button data-t="next" aria-label="Suivant">→</button></div>`;
   document.body.appendChild(box);
+  const fx = matchMedia('(prefers-reduced-motion: reduce)').matches ? null : embers(box.querySelector('.t-embers'), { soft: true });
   let i = 0;
   let player = null;
   const show = () => {
@@ -92,6 +95,7 @@ export function startTour(preview) {
     player?.pause();
     box.querySelector('video')?.pause();
     box.classList.add('out');
+    fx?.stop();
     setTimeout(() => box.remove(), 350);
     window.removeEventListener('keydown', onKey);
   };

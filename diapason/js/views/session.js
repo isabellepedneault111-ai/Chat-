@@ -1,6 +1,7 @@
 // La session guidée : une séance qui alterne exploration, sélection et stabilisation,
 // et qui finit toujours par une prise. Le minuteur est partagé entre les deux appareils.
 import { FLAME } from '../marque.js';
+import { depuisHTML } from '../traces.js';
 import { espace, onEspace, saveEntry, uploadAudio, uid } from '../espace.js';
 import { animate, toast } from '../ui.js';
 import { audio, click } from '../audio.js';
@@ -40,7 +41,7 @@ export const activeSession = () => espace.entries
 export default {
   id: 'session',
   mount(el) {
-    let setup = { format: 'duo60', cible: CIBLES[0], song: '', key: 0, grille: 'vamp' };
+    let setup = { format: 'duo60', cible: CIBLES[0], song: '', key: 0, grille: 'vamp', lieu: 'piece' };
     let lastPhase = -1;
     let lastSig = '';
     let recorder = null;
@@ -132,6 +133,15 @@ export default {
             <p class="muted">${m ? `Ce mois-ci : <b>${esc(PLAN[m - 1].titre)}</b>. ` : ''}Cette semaine : ${r.duo} / 2 sessions duo.</p>
           </div>
         </div>
+        ${depuisHTML()}
+        <section class="lieux" aria-label="Où êtes-vous?">
+          <p class="lieux-q">Où êtes-vous?</p>
+          <div class="lieux-row">
+            <button class="lieu ${setup.lieu === 'piece' ? 'on' : ''}" data-lieu="piece"><b>Ensemble, dans la même pièce</b><small>Un seul écran suffit. Grand texte et raccourcis clavier : l’app s’efface.</small></button>
+            <button class="lieu ${setup.lieu === 'distance' ? 'on' : ''}" data-lieu="distance"><b>À distance, en même temps</b><small>Chacun sur son appareil : la séance avance pour les deux à la fois.</small></button>
+            <button class="lieu ${setup.lieu === 'solo' ? 'on' : ''}" data-lieu="solo"><b>Seul, pour nous deux</b><small>Micro-session de 25 min : ce que tu prépares nourrit la prochaine séance.</small></button>
+          </div>
+        </section>
         <div class="setup-steps">
           <section class="panel">
             <p class="tape">1 · Le format</p>
@@ -290,7 +300,7 @@ export default {
         <section class="panel phase-card">
           <p class="tape">${i + 1} / ${f.phases.length} · ${P.titre}</p>
           <h2>${P.but}</h2>
-          ${pid === 'checkin' || pid === 'cible' ? `<p class="big-cible">Cible : <b>${esc(d.cible)}</b></p><p class="muted">Tonalité ${FR[d.key]} majeur · ${g.nom}</p>${grid}` : ''}
+          ${pid === 'checkin' || pid === 'cible' ? `<p class="big-cible">Cible : <b>${esc(d.cible)}</b></p><p class="muted">Tonalité ${FR[d.key]} majeur · ${g.nom}</p>${grid}${depuisHTML()}` : ''}
           ${ex ? `
             <div class="exercise">
               <div class="ex-head"><b>${ex.nom}</b><span class="mono">${ex.duree} min</span><button class="btn small ghost" data-a="reroll">Autre exercice</button></div>
@@ -311,7 +321,7 @@ export default {
       const g = GRILLES.find((x) => x.id === setup.grille);
       setLoop(setup.key, g);
       try {
-        await saveEntry({ id: uid(), type: 'session', title: custom || setup.cible, data: { format: setup.format, cible: custom || setup.cible, song: setup.song, key: setup.key, grille: setup.grille, ex, startedAt: Date.now(), pausedTotal: 0, pausedAt: null, offset: 0, takes: [] } });
+        await saveEntry({ id: uid(), type: 'session', title: custom || setup.cible, data: { format: setup.format, lieu: setup.lieu, cible: custom || setup.cible, song: setup.song, key: setup.key, grille: setup.grille, ex, startedAt: Date.now(), pausedTotal: 0, pausedAt: null, offset: 0, takes: [] } });
         render();
       } catch (err) { toast(err.message); }
     }
@@ -352,7 +362,9 @@ export default {
 
     el.addEventListener('click', async (e) => {
       const fb = e.target.closest('[data-f]');
-      if (fb) { setup.format = fb.dataset.f; renderSetup(); return; }
+      if (fb) { setup.format = fb.dataset.f; if (fb.dataset.f === 'solo') setup.lieu = 'solo'; else if (setup.lieu === 'solo') setup.lieu = 'piece'; renderSetup(); return; }
+      const lb = e.target.closest('[data-lieu]');
+      if (lb) { setup.lieu = lb.dataset.lieu; if (setup.lieu === 'solo') setup.format = 'solo'; else if (setup.format === 'solo') setup.format = 'duo60'; renderSetup(); return; }
       const cb = e.target.closest('[data-cible]');
       if (cb) { setup.cible = cb.dataset.cible; renderSetup(); return; }
       const gb = e.target.closest('[data-g]');

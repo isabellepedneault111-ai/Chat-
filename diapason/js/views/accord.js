@@ -8,6 +8,7 @@ import { startConsole, consoleState, onConsole, heldNotes } from '../console.js'
 import { matchChord, chordLabel } from '../instrument.js';
 import { espace, profileOf, saveEntry, onEspace } from '../espace.js';
 import { esc } from './carnet.js';
+import { logPractice } from '../traces.js';
 
 const WINDOW = 7; // secondes visibles
 const ROLE = ['fondamentale', 'seconde mineure', 'seconde', 'tierce mineure', 'tierce', 'quarte', 'triton', 'quinte', 'sixte mineure', 'sixte', 'septième', 'septième majeure'];
@@ -40,13 +41,20 @@ export function carteHTML(list = carte()) {
   return `<div class="carte">${list.slice(0, 18).map((x) => `<span class="carte-tile ${zone(x.j)}" style="--w:${(0.55 + 0.45 * (x.s / max)).toFixed(2)}" title="${Math.round(x.s / 60 * 10) / 10} min chantées, ${Math.round(x.j * 100)} % juste"><b>${esc(x.label)}</b><small>${Math.round(x.j * 100)} %</small></span>`).join('')}</div>
     <p class="carte-read">${home.length ? `Ta voix est chez elle sur <b>${home.join(', ')}</b> : bâtissez-y vos refrains.` : ''} ${wild.length ? `À apprivoiser : <b>${wild.join(', ')}</b>, en mode « Frog donne la note ».` : ''}</p>`;
 }
-async function saveCarte(delta) {
-  if (!espace.connected || !Object.keys(delta).length) return;
-  const apply = (data) => {
-    const c = { ...(data?.chords || {}) };
-    for (const [k, v] of Object.entries(delta)) { const o = c[k] || { s: 0, j: 0 }; c[k] = { s: Math.round((o.s + v.s) * 10) / 10, j: Math.round((o.j + v.j) * 10) / 10, t: Date.now() }; }
-    return { chords: c };
-  };
+// Les notes magiques : celles où la voix tient le plus stable (à ±15 cents), sur au moins 3 secondes.
+export function notesMagiques(n = 4) {
+  const notes = espace.entries.find((e) => e.id === CARTE)?.data?.notes || {};
+  return Object.entries(notes).filter(([, v]) => v.s >= 3).map(([m, v]) => ({ m: +m, r: v.j / v.s, s: v.s })).sort((a, b) => b.r - a.r).slice(0, n);
+}
+export function magiquesHTML() {
+  const l = notesMagiques();
+  if (!l.length) return '<p class="muted small">Elles apparaissent quand la voix a tenu quelques notes : celles où elle est la plus stable et la plus juste.</p>';
+  return `<div class="magiques">${l.map((x) => `<span><b>${nameFR(x.m)}</b><small>${Math.round(x.r * 100)} % stable</small></span>`).join('')}</div><p class="carte-read">Bâtissez les notes longues du refrain là-dessus : c’est là que la voix brille.</p>`;
+}
+async function saveCarte(delta, ndelta = {}) {
+  if (!espace.connected || (!Object.keys(delta).length && !Object.keys(ndelta).length)) return;
+  const merge = (src, d) => { const c = { ...(src || {}) }; for (const [k, v] of Object.entries(d)) { const o = c[k] || { s: 0, j: 0 }; c[k] = { s: Math.round((o.s + v.s) * 10) / 10, j: Math.round((o.j + v.j) * 10) / 10, t: Date.now() }; } return c; };
+  const apply = (data) => ({ chords: merge(data?.chords, delta), notes: merge(data?.notes, ndelta) });
   const cur = espace.entries.find((e) => e.id === CARTE);
   const r = await saveEntry({ id: CARTE, type: 'carte', title: 'Carte de nos accords', data: apply(cur?.data) }, { baseUpdatedAt: cur?.updatedAt });
   if (r.conflict) await saveEntry({ ...r.current, data: apply(r.current.data) }, { baseUpdatedAt: r.current.updatedAt });
@@ -60,9 +68,10 @@ export default {
     const trail = [];
     let inTime = 0; let voicedTime = 0; let streak = 0; let landedChord = ''; let curChord = '';
     let lastT = performance.now();
-    let pend = {}; let lastFlush = performance.now();
-    const flush = () => { const d = pend; pend = {}; lastFlush = performance.now(); saveCarte(d).catch(() => {}); };
-    const showCarte = () => { const b = el.querySelector('.acc-carte-body'); if (b) b.innerHTML = carteHTML(); };
+    let pend = {}; let npend = {}; let lastFlush = performance.now();
+    const sess = { sung: 0, chords: {}, notes: {}, modes: {} };
+    const flush = () => { const d = pend; const nd = npend; pend = {}; npend = {}; lastFlush = performance.now(); saveCarte(d, nd).catch(() => {}); };
+    const showCarte = () => { const b = el.querySelector('.acc-carte-body'); if (b) b.innerHTML = carteHTML(); const mg = el.querySelector('.acc-magiques'); if (mg) mg.innerHTML = magiquesHTML(); };
 
     // La tessiture de la voix qui chante (Zaza d'abord), sinon une plage médiane.
     const voice = () => {
@@ -95,7 +104,7 @@ export default {
           <div class="acc-score"><b class="mono">—</b><span>du temps chanté dans l’accord (30 dernières secondes)</span></div>
           <div class="acc-streak"><b class="mono">0</b><span>accords trouvés d’affilée</span></div>
           <p class="muted small acc-src"></p>
-          <div class="acc-carte"><h4>La carte de nos accords</h4><div class="acc-carte-body"></div></div>
+          <div class="acc-carte"><h4>Les notes magiques de la voix</h4><div class="acc-magiques"></div><h4>La carte de nos accords</h4><div class="acc-carte-body"></div></div>
           <details class="acc-why"><summary>Pourquoi c’est puissant</summary>
             <p>Chanter juste, c’est surtout <b>entendre où l’on est par rapport à l’harmonie</b>. Ici, l’harmonie vient du vrai piano de Frog, avec ses vrais sons (piano, Rhodes, orgue…) : Zaza apprend à placer sa voix dans les accords qu’ils joueront sur scène, pas sur un exercice abstrait.</p>
             <p>Un son tenu (orgue, nappe) aide à travailler la stabilité ; un piano qui s’éteint oblige à garder la note de mémoire. Frog choisit le son : il choisit l’exercice.</p>
@@ -165,8 +174,10 @@ export default {
         if (tg.includes(pc) && Math.abs(cents) <= 35) hit = { pc, role: mode === 'ailleurs' ? COULEUR[mod12(pc - ci.root)] : ROLE[mod12(pc - ci.root)] };
       }
       // Carte : temps chanté et temps juste, accord par accord (pas en duel : là, c'est Frog qu'on évalue).
-      if (p && ci && mode !== 'duel' && mode !== 'ailleurs') { const k = ci.label; pend[k] = pend[k] || { s: 0, j: 0 }; pend[k].s += dt; if (hit) pend[k].j += dt; }
-      if (now - lastFlush > 20000 && Object.keys(pend).length) flush();
+      if (p && ci && mode !== 'duel' && mode !== 'ailleurs') { const k = ci.label; pend[k] = pend[k] || { s: 0, j: 0 }; pend[k].s += dt; if (hit) pend[k].j += dt; sess.chords[k] = sess.chords[k] || { s: 0, j: 0 }; sess.chords[k].s += dt; if (hit) sess.chords[k].j += dt; }
+      if (p) { sess.sung += dt; sess.modes[mode] = (sess.modes[mode] || 0) + dt; const nk = Math.round(p.midi); sess.notes[nk] = sess.notes[nk] || { s: 0, j: 0 }; sess.notes[nk].s += dt; if (Math.abs((p.midi - nk) * 100) <= 15) sess.notes[nk].j += dt; }
+      if (p) { const k = Math.round(p.midi); const c = Math.abs((p.midi - k) * 100); npend[k] = npend[k] || { s: 0, j: 0 }; npend[k].s += dt; if (c <= 15) npend[k].j += dt; }
+      if (now - lastFlush > 20000 && (Object.keys(pend).length || Object.keys(npend).length)) flush();
       if (p) {
         voicedTime += dt;
         if (hit) inTime += dt;
@@ -238,6 +249,13 @@ export default {
       }
     });
     refreshTexts();
-    return () => { stop(); cv.dispose(); kb.dispose(); offPitch(); offCon(); offEsp(); flush(); };
+    return () => {
+      stop(); cv.dispose(); kb.dispose(); offPitch(); offCon(); offEsp(); flush();
+      // La pratique laisse sa trace : l'autre en verra des pistes sur son accueil.
+      const chords = Object.entries(sess.chords).filter(([, v]) => v.s >= 3).map(([label, v]) => ({ label, j: Math.round((v.j / v.s) * 100) / 100 }));
+      const magiques = Object.entries(sess.notes).filter(([, v]) => v.s >= 2).sort((a, b) => b[1].j / b[1].s - a[1].j / a[1].s).slice(0, 3).map(([m]) => +m);
+      const topMode = Object.entries(sess.modes).sort((a, b) => b[1] - a[1])[0]?.[0] || mode;
+      logPractice('accord', sess.sung / 60, { mode: topMode, chords, magiques });
+    };
   },
 };

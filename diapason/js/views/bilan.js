@@ -5,7 +5,7 @@ import { PLAN, EXERCICES, MEMBERS, memberColor, FORMATS, RYTHME } from '../duo.j
 import { FLAME } from '../marque.js';
 import { currentMonth, planContext, planStart, weekRhythm } from '../plan.js';
 import { esc, espaceGate } from './carnet.js';
-import { carte, carteHTML } from './accord.js';
+import { carte, carteHTML, notesMagiques } from './accord.js';
 import { nameFR } from '../music.js';
 import { toast } from '../ui.js';
 
@@ -208,6 +208,8 @@ export default {
       const tot = map.reduce((s, x) => s + x.s, 0);
       const just = tot ? map.reduce((s, x) => s + x.j * x.s, 0) / tot : null;
       if (just != null) up.push(`Dans les accords de Frog, la voix de Zaza est juste <b>${Math.round(just * 100)} %</b> du temps (${Math.round(tot / 60)} min chantées).`);
+      const mg = notesMagiques(3);
+      if (mg.length) up.push(`Les notes magiques de la voix : <b>${mg.map((x) => nameFR(x.m)).join(', ')}</b> (les plus stables).`);
       if (ctx.stage(2)) up.push(`<b>${ctx.stage(2)}</b> idée${ctx.stage(2) > 1 ? 's' : ''} en chantier ou plus loin, dont <b>${ctx.stage(3)}</b> jouable${ctx.stage(3) > 1 ? 's' : ''}.`);
       const evals = espace.entries.filter((e) => e.type === 'evaluation').length;
       if (evals) up.push(`<b>${evals}</b> autoévaluation${evals > 1 ? 's' : ''} : <a href="#/evolution">voir les courbes</a>.`);

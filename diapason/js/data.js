@@ -3,7 +3,7 @@
 // (Voir .claude/skills/diapason/SKILL.md pour le format détaillé.)
 
 export const MODULES = [
-  { id: 'accord', num: '★', name: 'Voix + piano', color: 'var(--rec)', tagline: 'Le SV-1 de Frog coache la voix de Zaza, accord par accord.' },
+  { id: 'accord', num: '★', name: 'Voix + piano', color: 'var(--rec)', tagline: 'Les claviers de Frog coachent la voix de Zaza, accord par accord.' },
   { id: 'miroir', num: '01', name: 'Miroir', color: 'var(--c-miroir)', tagline: 'La voix, dessinée en direct.' },
   { id: 'tessiture', num: '02', name: 'Empreinte', color: 'var(--c-empreinte)', tagline: 'L’étendue de chaque voix, et la zone du duo.' },
   { id: 'gym', num: '03', name: 'Gym vocal', color: 'var(--c-gym)', tagline: 'Échauffements transposés, notés en direct.' },

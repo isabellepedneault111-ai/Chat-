@@ -10,6 +10,7 @@ import { espace, saveEntry } from '../espace.js';
 import { esc } from './carnet.js';
 import { ecrire } from '../ecrire.js';
 import { sendSound, intentions } from './relais.js';
+import { logPractice } from '../traces.js';
 
 const AMB = [
   { id: 'fleuve', name: 'Fleuve gelé', bpm: 56, wave: 'triangle', texture: 'vent', part: 'neige', col: ['#a9d3ea', '#0f1d2a'],
@@ -191,6 +192,7 @@ export default {
   id: 'ambiances',
   mount(el) {
     const eng = engine();
+    let onSince = 0; let playedMs = 0; let lieu = '';
     let cur = AMB[0];
     let pts = [];
     let writer = null;
@@ -201,7 +203,7 @@ export default {
         <div>
           <p class="eyebrow">Ambiances</p>
           <h1>Partir ailleurs</h1>
-          <p class="muted">Choisis un lieu : l’app le fait sonner. Frog peut en prendre les commandes avec son SV-1. Écris dedans, chante dedans, puis lance-le à l’autre.</p>
+          <p class="muted">Choisis un lieu : l’app le fait sonner. Frog peut en prendre les commandes avec n’importe quel clavier MIDI. Écris dedans, chante dedans, puis lance-le à l’autre.</p>
           ${espace.meta?.vision?.intention ? `<p class="small amb-int">Notre intention d’album : <b>« ${esc(espace.meta.vision.intention)} »</b></p>` : ''}
         </div>
       </div>
@@ -217,7 +219,7 @@ export default {
           <label><span>Lumière</span><input type="range" min="0" max="1" step="0.01" value="0.5" data-x="light"></label>
           <label><span>Notes</span><input type="range" min="0" max="1" step="0.01" value="0.5" data-x="density"></label>
           <label><span>Texture</span><input type="range" min="0" max="1" step="0.01" value="0.5" data-x="texture"></label>
-          <button class="btn small" data-x="midi">${consoleState.on ? 'SV-1 aux commandes ✓' : 'Le SV-1 aux commandes'}</button>
+          <button class="btn small" data-x="midi">${consoleState.on ? 'Clavier aux commandes ✓' : 'Le clavier aux commandes'}</button>
         </div>
       </section>
       <div class="amb-grid">
@@ -287,13 +289,13 @@ export default {
       }
       ctx.globalAlpha = 1;
       if (cur.part === 'phares') { ctx.strokeStyle = '#ffffff55'; ctx.setLineDash([18, 22]); ctx.lineDashOffset = -t * 120 * sp; ctx.beginPath(); ctx.moveTo(w / 2, h * 0.35); ctx.lineTo(w / 2, h); ctx.stroke(); ctx.setLineDash([]); }
-      q('.amb-chord').textContent = eng.on ? `${eng.st.live ? 'SV-1 · ' : ''}${eng.chordLabel()}` : '';
+      q('.amb-chord').textContent = eng.on ? `${eng.st.live ? 'Clavier · ' : ''}${eng.chordLabel()}` : '';
     });
 
     async function toggleRec() {
       const btn = q('[data-x=rec]');
       if (rec) { rec.recorder.stop(); return; }
-      if (!eng.on) { eng.start(cur); q('[data-x=play]').textContent = '■ Sortir'; }
+      if (!eng.on) { eng.start(cur); onSince = performance.now(); lieu = cur.name; q('[data-x=play]').textContent = '■ Sortir'; }
       const c = audio();
       let mic = null;
       if (q('[data-x=withmic]').checked) {
@@ -332,9 +334,9 @@ export default {
       const card = e.target.closest('[data-amb]');
       if (card) { choose(AMB.find((a) => a.id === card.dataset.amb)); return; }
       const x = e.target.closest('[data-x]')?.dataset.x;
-      if (x === 'play') { if (eng.on) { eng.stop(); e.target.textContent = '▶ Entrer'; } else { eng.start(cur); e.target.textContent = '■ Sortir'; } }
+      if (x === 'play') { if (eng.on) { eng.stop(); playedMs += performance.now() - onSince; e.target.textContent = '▶ Entrer'; } else { eng.start(cur); onSince = performance.now(); lieu = cur.name; e.target.textContent = '■ Sortir'; } }
       if (x === 'midi') {
-        try { await startConsole(); e.target.textContent = 'SV-1 aux commandes ✓'; toast(consoleState.devices.length ? 'Tiens un accord sur le SV-1 : l’ambiance le suit.' : 'MIDI autorisé : branche le SV-1.'); } catch (err) { toast(err.message); }
+        try { await startConsole(); e.target.textContent = 'Clavier aux commandes ✓'; toast(consoleState.devices.length ? `Tiens un accord sur ${consoleState.devices[0]} : l’ambiance le suit.` : 'MIDI autorisé : branche le SV-1.'); } catch (err) { toast(err.message); }
       }
       if (x === 'rec') toggleRec();
       if (x === 'drop') { take = null; showTake(); }
@@ -353,6 +355,6 @@ export default {
       if (x === 'texture') eng.setTexture(+e.target.value);
     });
     const offCon = onConsole(() => {});
-    return () => { stop(); cv.dispose(); writer?.dispose(); offCon(); if (rec) { rec.recorder.onstop = null; rec.recorder.stop(); clearInterval(rec.timer); } eng.dispose(); };
+    return () => { stop(); cv.dispose(); writer?.dispose(); offCon(); if (rec) { rec.recorder.onstop = null; rec.recorder.stop(); clearInterval(rec.timer); } if (eng.on) playedMs += performance.now() - onSince; logPractice('ambiance', playedMs / 60000, { lieu: lieu || cur.name }); eng.dispose(); };
   },
 };

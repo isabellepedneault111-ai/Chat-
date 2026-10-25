@@ -128,7 +128,7 @@ export default {
           <div>
             <p class="eyebrow">Le relais</p>
             <h1>Lance-lui un son</h1>
-            <p class="muted">Pas besoin d’être ensemble. Un riff, une mélodie fredonnée, une nappe du SV-1 : ${esc(other())} répond <b>par-dessus</b>, écrit dessus, ou te le renvoie. La chanson grandit par couches, entre deux sessions.</p>
+            <p class="muted">Pas besoin d’être ensemble. Un riff, une mélodie fredonnée, une nappe au clavier : ${esc(other())} répond <b>par-dessus</b>, écrit dessus, ou te le renvoie. La chanson grandit par couches, entre deux sessions.</p>
           </div>
           <div class="actions"><a class="btn" href="#/ambiances">Partir d’une ambiance →</a></div>
         </div>
@@ -143,7 +143,7 @@ export default {
                 <label class="btn small">Un mémo du téléphone<input type="file" accept="audio/*,video/*" data-r="file" hidden></label>
                 <details class="rl-input"><summary>Entrée : ${store.get('relaisRaw', false) ? 'instrument (son brut)' : 'micro'}</summary>
                   <label class="field"><span>Appareil</span><select data-r="dev"><option value="">Par défaut</option></select></label>
-                  <label class="check"><input type="checkbox" data-r="raw" ${store.get('relaisRaw', false) ? 'checked' : ''}> Son d’instrument, brut : pour le SV-1 branché dans une carte son (sans réduction de bruit ni égaliseur automatique)</label>
+                  <label class="check"><input type="checkbox" data-r="raw" ${store.get('relaisRaw', false) ? 'checked' : ''}> Son d’instrument, brut : pour un clavier ou une guitare branchés dans une carte son (sans réduction de bruit ni égaliseur automatique)</label>
                   <p class="muted small">Pour chanter par-dessus : des écouteurs, sinon le micro reprend le son de l’autre.</p>
                 </details>
               </div>
@@ -177,7 +177,7 @@ export default {
       all.forEach((e) => { const t = threadOf(e); if (!threads.has(t)) threads.set(t, []); threads.get(t).push(e); });
       const list = [...threads.values()].map((l) => l.sort((a, b) => a.createdAt - b.createdAt)).sort((a, b) => b[b.length - 1].createdAt - a[a.length - 1].createdAt);
       if (!list.length) {
-        host.innerHTML = `<div class="rl-empty"><p class="tape">Le premier son</p><p>Rien encore. Lance n’importe quoi : 10 secondes de SV-1, un bout de mélodie sous la douche, un mot dit à voix haute. <b>Imparfait, c’est parfait</b> : c’est l’autre qui le fera grandir.</p></div>`;
+        host.innerHTML = `<div class="rl-empty"><p class="tape">Le premier son</p><p>Rien encore. Lance n’importe quoi : 10 secondes de clavier, un bout de mélodie sous la douche, un mot dit à voix haute. <b>Imparfait, c’est parfait</b> : c’est l’autre qui le fera grandir.</p></div>`;
         return;
       }
       const focus = location.hash.split('/')[2];
