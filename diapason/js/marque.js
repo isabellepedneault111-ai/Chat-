@@ -1,0 +1,3 @@
+// Éléments de la marque FLIP réutilisés dans l'interface.
+// La flamme (le I du logo), en icône : currentColor pour le corps, le cœur plus clair.
+export const FLAME = (cls = 'flame') => `<svg class="${cls}" viewBox="0 0 100 100" aria-hidden="true"><path d="M50.0 96.0 C9.3 96.0 -7.7 71.4 7.1 48.4 C14.5 37.0 11.5 30.4 16.0 22.2 C27.8 30.4 33.7 38.6 38.2 45.2 C35.2 30.4 48.5 17.3 66.3 0.9 C61.8 15.6 72.2 25.5 84.0 35.3 C95.9 46.8 101.8 63.2 95.9 78.0 C88.5 91.1 72.2 96.0 50.0 96.0 Z" fill="currentColor"/><path d="M51.5 91.9 C29.3 91.9 21.9 76.3 32.2 61.6 C39.6 51.7 42.6 41.9 51.5 30.4 C51.5 41.9 63.3 50.1 70.7 61.6 C78.1 73.0 72.2 91.9 51.5 91.9 Z" fill="#ffd36b" class="flame-core"/></svg>`;

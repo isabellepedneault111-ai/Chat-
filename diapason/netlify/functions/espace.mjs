@@ -6,7 +6,7 @@ import { getStore } from '@netlify/blobs';
 export const config = { path: ['/api/espace', '/api/espace/*'] };
 
 const ID = /^[A-Za-z0-9_-]{8,40}$/;
-const TYPES = new Set(['note', 'texte', 'paroles', 'audio', 'bilan', 'evaluation', 'essai', 'parcours', 'lien', 'session', 'profil', 'bravo']);
+const TYPES = new Set(['carte', 'note', 'texte', 'paroles', 'audio', 'bilan', 'evaluation', 'essai', 'parcours', 'lien', 'session', 'profil', 'bravo']);
 const MAX_ENTRY = 300 * 1024; // 300 Ko de JSON par entrée
 const MAX_PART = 4 * 1024 * 1024; // morceaux audio de 4 Mo (limite des fonctions : 6 Mo)
 const MAX_PARTS = 25; // ~100 Mo par audio
@@ -23,6 +23,13 @@ function newId(bytes = 16) {
   return btoa(String.fromCharCode(...a)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 const clean = (s, max) => String(s ?? '').slice(0, max);
+
+// Mot secret du duo : on n'en garde que l'empreinte, qui mène à l'espace (entrée depuis l'adresse normale).
+const normSecret = (s) => String(s ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+async function secretKey(s) {
+  const d = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`diapason:${normSecret(s)}`));
+  return `codes/${[...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, '0')).join('')}`;
+}
 
 async function bump(store, sid) {
   const rev = `${Date.now().toString(36)}-${newId(4)}`;
@@ -42,10 +49,20 @@ export async function handle(req, store) {
     const body = await req.json().catch(() => ({}));
     const sid = newId(16);
     const members = Array.isArray(body.members) ? body.members.slice(0, 2).map((m) => clean(m, 24)).filter(Boolean) : [];
-    const meta = { id: sid, name: clean(body.name, 80) || 'Zaza × Frog', members: members.length === 2 ? members : ['Zaza', 'Frog'], createdBy: clean(body.createdBy, 24), createdAt: Date.now() };
+    const meta = { id: sid, name: clean(body.name, 80) || 'FLIP', members: members.length === 2 ? members : ['Zaza', 'Frog'], createdBy: clean(body.createdBy, 24), createdAt: Date.now() };
     await store.setJSON(`${sid}/meta`, meta);
     const rev = await bump(store, sid);
     return json({ meta, rev }, 201);
+  }
+
+  // POST /api/espace/trouver { secret } → l'espace qui porte ce mot secret
+  if (parts[0] === 'trouver' && parts.length === 1) {
+    if (m !== 'POST') return fail(405, 'Méthode non permise');
+    const body = await req.json().catch(() => ({}));
+    await new Promise((r) => setTimeout(r, 400)); // freine les essais à la chaîne
+    if (normSecret(body.secret).length < 4) return fail(404, 'Mot secret inconnu');
+    const id = await store.get(await secretKey(body.secret));
+    return id ? json({ id }) : fail(404, 'Mot secret inconnu');
   }
 
   const [sid, kind, key, sub] = parts;
@@ -61,7 +78,17 @@ export async function handle(req, store) {
       if (body.name != null) meta.name = clean(body.name, 80) || meta.name;
       if (Array.isArray(body.members)) meta.members = body.members.slice(0, 2).map((m) => clean(m, 24)).filter(Boolean);
       // Réglages libres du duo (objectif, vision, plan, mot d'accueil) : petits objets JSON.
-      for (const k of ['goal', 'vision', 'plan', 'welcome', 'tour']) {
+      if (body.secret != null) {
+        // L'empreinte reste hors de la méta (que les clients reçoivent).
+        const k = normSecret(body.secret).length >= 4 ? await secretKey(body.secret) : null;
+        const taken = k && await store.get(k);
+        if (taken && taken !== sid) return fail(409, 'Ce mot secret est déjà pris : choisis-en un autre.');
+        const old = await store.get(`${sid}/secretkey`);
+        if (old && old !== k) await store.delete(old);
+        if (k) { await store.set(k, sid); await store.set(`${sid}/secretkey`, k); } else await store.delete(`${sid}/secretkey`);
+        meta.hasSecret = !!k;
+      }
+      for (const k of ['goal', 'vision', 'plan', 'welcome', 'tour', 'seen']) {
         if (body[k] != null) {
           const txt = JSON.stringify(body[k]);
           if (txt.length > 20000) return fail(413, 'Réglage trop volumineux');
@@ -72,6 +99,8 @@ export async function handle(req, store) {
       return json({ meta, rev: await bump(store, sid) });
     }
     if (m === 'DELETE') {
+      const old = await store.get(`${sid}/secretkey`);
+      if (old) await store.delete(old);
       const { blobs } = await store.list({ prefix: `${sid}/` });
       await Promise.all(blobs.map((b) => store.delete(b.key)));
       return json({ deleted: blobs.length });

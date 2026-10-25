@@ -6,6 +6,7 @@ import { PLAN, RYTHME, VISION_FIELDS, STAGES, MEMBERS, memberColor, ROLES } from
 import { currentMonth, planContext, planStart, weekRhythm } from '../plan.js';
 import { esc, espaceGate, ago, embedHTML } from './carnet.js';
 import { activeSession } from './session.js';
+import { relaisPending, ASKS } from './relais.js';
 
 export default {
   id: 'home',
@@ -16,24 +17,42 @@ export default {
     function todayHTML() {
       const live = activeSession();
       const r = weekRhythm();
+      const rp = relaisPending();
+      const ask = rp && ASKS.find((x) => x[0] === rp.data?.ask);
       const t = live ? { t: 'Rejoindre la session', d: 'en cours', why: `${live.author} a lancé « ${live.data.cible} ».`, href: '#/session' }
+        : rp ? { t: `${rp.author} t’a lancé ${rp.audio ? 'un son' : 'des mots'}`, d: ask ? ask[1] : 'à écouter', why: `« ${rp.title} » : ${ask ? ask[2] : 'écoute, puis réponds par-dessus'}.`, href: `#/relais/${rp.id}` }
         : !profileOf(espace.me)?.doneAt ? { t: 'Ton point de départ', d: '5 min', why: 'Ce que tu veux, ta voix, tes styles : c’est ce qui nourrit notre plan.', href: '#/depart' }
           : r.duo < 2 ? { t: 'Une session duo', d: '60 min', why: `${r.duo} sur 2 cette semaine : courtes et régulières, c’est ce qui fait progresser.`, href: '#/session' }
             : r.ecoute === 0 ? { t: 'Écoute commune', d: '20 min', why: 'Réécouter nos prises et faire avancer les idées sur le mur.', href: '#/session' }
               : { t: 'Voix + piano', d: '10 min', why: 'Frog joue, Zaza chante : la justesse se travaille dans nos vrais accords.', href: '#/accord' };
-      return `<a class="today" href="${t.href}"><span class="today-k mono">Aujourd’hui · ${esc(t.d)}</span><b>${esc(t.t)}</b><span class="today-why">${esc(t.why)}</span><span class="today-go">→</span></a>`;
+      return inviteHTML() + `<a class="today" href="${t.href}"><span class="today-k mono">Aujourd’hui · ${esc(t.d)}</span><b>${esc(t.t)}</b><span class="today-why">${esc(t.why)}</span><span class="today-go">→</span></a>`;
+    }
+
+    // Tant que l'autre n'est pas entré : le mot secret, prêt en un clic.
+    function inviteHTML() {
+      const mem = espace.meta.members || MEMBERS;
+      const o = mem.find((x) => x !== espace.me) || 'Frog';
+      const came = espace.meta.seen?.[o] || espace.meta.tour?.[o] || espace.entries.some((e) => e.author === o);
+      if (came) return '';
+      return `<section class="invite">
+        <p class="invite-k">${esc(o)} n’est pas encore entré</p>
+        ${espace.meta.hasSecret ? `<p>Le mot secret est actif. Dis-lui : <b>l’adresse du site</b>, il choisit « ${esc(o)} », puis tape le mot secret. Sa visite démarre toute seule.</p>`
+          : `<p>Il va sur l’adresse normale, choisit « ${esc(o)} » et tape ce mot : il entre dans votre espace et sa visite démarre.</p>
+        <div class="invite-row"><input class="input" data-h="secret" value="bell" aria-label="Mot secret du duo" autocomplete="off"><button class="btn primary" data-h="set-secret">Activer le mot secret</button></div>`}
+      </section>`;
     }
 
     function render() {
+      if (espace.connected && espace.me && !espace.meta.seen?.[espace.me]) updateEspace({ seen: { ...(espace.meta.seen || {}), [espace.me]: Date.now() } }).catch(() => {});
       if (!espace.connected || !espace.me) {
-        el.innerHTML = '<header class="masthead"><h1 class="display">Zaza <i>×</i> Frog</h1><p class="lead">Six mois. Deux musiciens. Des morceaux originaux.</p></header><div class="gate-host"></div>';
+        el.innerHTML = '<header class="masthead"><h1 class="display"><img class="mast-logo" src="img/flip.svg" alt="FLIP"></h1><p class="lead">Six mois. Deux musiciens. Des morceaux originaux.</p></header><div class="gate-host"></div>';
         espaceGate(el.querySelector('.gate-host'), { onReady: render });
         return;
       }
       const start = planStart();
       const head = `
         <header class="masthead">
-          <h1 class="display">Zaza <i>×</i> Frog</h1>
+          <h1 class="display"><img class="mast-logo" src="img/flip.svg" alt="FLIP"></h1>
           <p class="lead">Six mois. Deux musiciens. Des morceaux originaux.</p>
           <p class="duo-line">${(espace.meta.members || MEMBERS).map((m) => `<span style="--c:${memberColor(m)}"><b>${esc(m)}</b> ${esc(ROLES[m] || '')}</span>`).join('')}</p>
         </header>`;
@@ -102,10 +121,10 @@ export default {
                 ${arts.map((a) => `<li style="--c:${memberColor(a.by)}">${a.lien ? `<a href="${esc(a.lien)}" target="_blank" rel="noopener">${esc(a.nom)} ↗</a>` : esc(a.nom)}</li>`).join('')}</ul>
               ${!links.length && !arts.length ? '<p class="muted small">Collez un lien Spotify ou YouTube dans la capture du mur : il apparaît ici, prêt à écouter.</p>' : ''}
             </section>
-            <a class="panel evo-teaser" href="#/evolution">
-              <h2>Notre évolution</h2>
+            <a class="panel evo-teaser" href="#/bilan">
+              <h2>Notre bilan</h2>
               <div class="mini-stats"><div><b>${Math.floor(mins / 60)} h ${String(Math.round(mins % 60)).padStart(2, '0')}</b><span>jouées</span></div><div><b>${sessions.length}</b><span>sessions</span></div><div><b>${espace.entries.filter((e) => e.type === 'evaluation').length}</b><span>autoévaluations</span></div></div>
-              <span class="btn small">Voir nos courbes →</span>
+              <span class="btn small">Où on est rendus →</span>
             </a>
           </div>`;
         })()}
@@ -164,6 +183,9 @@ export default {
     el.addEventListener('click', async (e) => {
       const a = e.target.closest('[data-h]')?.dataset.h;
       if (a === 'edit') { editingVision = true; render(); }
+      if (a === 'set-secret') {
+        try { await updateEspace({ secret: el.querySelector('[data-h=secret]').value }); toast('Mot secret actif.'); } catch (err) { toast(err.message); }
+      }
       if (a === 'cancel') { editingVision = false; render(); }
       if (a === 'save') {
         const vision = {};

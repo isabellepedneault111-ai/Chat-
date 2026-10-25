@@ -1,5 +1,6 @@
 // La session guidée : une séance qui alterne exploration, sélection et stabilisation,
 // et qui finit toujours par une prise. Le minuteur est partagé entre les deux appareils.
+import { FLAME } from '../marque.js';
 import { espace, onEspace, saveEntry, uploadAudio, uid } from '../espace.js';
 import { animate, toast } from '../ui.js';
 import { audio, click } from '../audio.js';
@@ -250,7 +251,18 @@ export default {
       const f = FORMATS.find((x) => x.id === d.format);
       const body = el.querySelector('.run-body');
       if (i >= f.phases.length) {
-        body.innerHTML = `<section class="panel phase-card"><p class="tape red">Fin de la séance</p><h2>Bravo, vous deux.</h2><p>Terminez la session pour la ranger dans votre plan. Le debrief et la prise sont déjà sur le mur.</p><button class="btn primary big" data-a="end">Terminer la session</button></section>`;
+        const mine = d.traces?.[espace.me] || {};
+        const mins = Math.round((Date.now() - d.startedAt - (d.pausedTotal || 0)) / 60000);
+        body.innerHTML = `<section class="panel phase-card trace-card"><p class="tape red">Fin de la séance</p><h2>Bravo, vous deux.</h2>
+          <p class="trace-auto">${mins} min · ${(d.takes || []).length} prise${(d.takes || []).length > 1 ? 's' : ''} · ${allMarkers().length} moment${allMarkers().length > 1 ? 's' : ''} notés${d.debrief?.prochaine ? ` · prochaine cible : « ${esc(d.debrief.prochaine)} »` : ''}</p>
+          <div class="trace-form">
+            <p class="trace-q">${esc(espace.me)}, le feu de cette séance?</p>
+            <div class="feu" role="radiogroup" aria-label="Le feu de la séance">${[1, 2, 3, 4, 5].map((n) => `<button role="radio" aria-checked="${mine.feu === n}" data-feu="${n}" class="${mine.feu >= n ? 'on' : ''}" aria-label="${n} sur 5">${FLAME()}</button>`).join('')}</div>
+            <label class="field col"><span>Un mot pour la séance</span><input class="input" data-a-trace="mot" maxlength="40" value="${esc(mine.mot || '')}" placeholder="frissons, laborieux, enfin…"></label>
+            ${Object.entries(d.traces || {}).filter(([w]) => w !== espace.me).map(([w, t]) => `<p class="trace-other" style="--c:${memberColor(w)}"><b>${esc(w)}</b> ${'●'.repeat(t.feu || 0)} ${t.mot ? `« ${esc(t.mot)} »` : ''}</p>`).join('')}
+          </div>
+          <p class="muted small">Tout est gardé : le résumé, vos flammes, vos mots, le debrief et les prises. Vous les retrouvez dans « Notre bilan ».</p>
+          <button class="btn primary big" data-a="end">Ranger la séance</button></section>`;
         return;
       }
       const [pid] = f.phases[i];
@@ -362,13 +374,22 @@ export default {
       if (a === 'sync' && consoleState.bpm) { const b = setTempo(consoleState.bpm); toast(`La boucle suit maintenant ${b} BPM.`); }
       if (a === 'full') { const r = el.querySelector('.run'); if (document.fullscreenElement) document.exitFullscreen(); else r?.requestFullscreen?.(); }
       if (a === 'rec') recordTake(e.target.closest('[data-a]'));
+      const feu = e.target.closest('[data-feu]');
+      if (feu) {
+        const n = +feu.dataset.feu;
+        el.querySelectorAll('[data-feu]').forEach((b) => { b.classList.toggle('on', +b.dataset.feu <= n); b.setAttribute('aria-checked', +b.dataset.feu === n); });
+        await patch((d) => ({ traces: { ...(d.traces || {}), [espace.me]: { ...(d.traces?.[espace.me] || {}), feu: n } } })).catch(() => {});
+        return;
+      }
       if (a === 'end' && confirm('Terminer la session?')) {
+        const mot = el.querySelector('[data-a-trace=mot]')?.value.trim();
+        if (mot) await patch((d) => ({ traces: { ...(d.traces || {}), [espace.me]: { ...(d.traces?.[espace.me] || {}), mot } } })).catch(() => {});
         clearTimeout(flushT);
         await flush();
         await patch(() => ({ done: true, doneAt: Date.now() }));
         if (loopPlaying()) toggleLoop();
-        toast('Session rangée dans votre plan.');
-        location.hash = '#/';
+        toast('Séance rangée. Voici sa trace.');
+        location.hash = '#/bilan/seance';
       }
     });
     el.addEventListener('change', (e) => {

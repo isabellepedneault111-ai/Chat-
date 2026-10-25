@@ -282,7 +282,7 @@ export default {
             <h2>Pochette générative</h2>
             <p class="muted">L’image est calculée à partir de tes mots, de ta tonalité et de tes accords. Mêmes ingrédients → même pochette. Aucune IA externe, aucune clé, aucune donnée envoyée.</p>
             <label class="field col"><span>Titre de l’album</span><input class="input" data-c="title" maxlength="40" placeholder="Ex. : Forever more" value="${esc(c.title)}"></label>
-            <label class="field col"><span>Artiste</span><input class="input" data-c="artist" maxlength="40" placeholder="Zaza × Frog" value="${esc(c.artist)}"></label>
+            <label class="field col"><span>Artiste</span><input class="input" data-c="artist" maxlength="40" placeholder="FLIP" value="${esc(c.artist)}"></label>
             <label class="field col"><span>Ambiance</span><select data-c="mood">${Object.keys(MOODS).map((m) => `<option ${m === c.mood ? 'selected' : ''}>${m}</option>`).join('')}</select></label>
             <div class="row">
               <button class="btn" data-cv="remix">Variante</button>
@@ -316,7 +316,7 @@ export default {
           });
         }
       });
-      document.fonts.load('900 80px "Big Shoulders Display"').finally(draw);
+      document.fonts.load('900 80px "Bodoni Moda"').finally(draw);
     }
 
     // ---------- Mon instrument : Diapason écoute, reconnaît, propose ----------
@@ -630,7 +630,7 @@ export default {
           const mid = ang(b * 8 + 4);
           ctx.globalAlpha = on ? 1 : 0.55;
           ctx.fillStyle = col;
-          ctx.font = `800 ${Math.round(R * (on ? 0.13 : 0.1))}px Big Shoulders Display, sans-serif`;
+          ctx.font = `800 ${Math.round(R * (on ? 0.13 : 0.1))}px "Bodoni Moda", serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText(chordName(ch.root, ch.qual), cx + Math.cos(mid) * R * 1.17, cy + Math.sin(mid) * R * 1.17);
@@ -709,7 +709,7 @@ export default {
         ctx.fillStyle = '#fff';
         const bar = curBar < 0 ? 0 : curBar;
         const ch = chordAt(bar);
-        ctx.font = `900 ${Math.round(R * 0.2)}px Big Shoulders Display, sans-serif`;
+        ctx.font = `900 ${Math.round(R * 0.2)}px "Bodoni Moda", serif`;
         ctx.fillText(chordName(ch.root, ch.qual), cx, cy - R * 0.05);
         ctx.font = `600 ${Math.round(R * 0.075)}px "Atkinson Hyperlegible", sans-serif`;
         ctx.fillStyle = S.mode === 'duo' ? (bar % 2 ? '#ff4fb3' : '#3ee6ff') : 'rgba(255,255,255,.7)';
@@ -723,11 +723,11 @@ export default {
           ctx.textAlign = 'left';
           ctx.textBaseline = 'alphabetic';
           ctx.fillStyle = '#fff';
-          ctx.font = `800 ${Math.round(w * 0.04)}px Big Shoulders Display, sans-serif`;
+          ctx.font = `800 ${Math.round(w * 0.04)}px "Bodoni Moda", serif`;
           ctx.fillText((cov.title || 'Sans titre').toUpperCase(), w * 0.04, h - w * 0.07);
           ctx.font = `500 ${Math.round(w * 0.028)}px "Atkinson Hyperlegible", sans-serif`;
           ctx.fillStyle = 'rgba(255,255,255,.75)';
-          ctx.fillText(`${cov.artist || 'Zaza × Frog'} · ${S.bpm} BPM · Diapason`, w * 0.04, h - w * 0.035);
+          ctx.fillText(`${cov.artist || 'FLIP'} · ${S.bpm} BPM · Diapason`, w * 0.04, h - w * 0.035);
         }
       });
 
@@ -863,7 +863,7 @@ function drawCover(canvas, { title, artist, mood }) {
   ctx.fillRect(0, 0, W, W);
   const t = (title || 'Sans titre').toUpperCase();
   let size = 132;
-  ctx.font = `900 ${size}px Big Shoulders Display, sans-serif`;
+  ctx.font = `900 ${size}px "Bodoni Moda", serif`;
   const words = t.split(' ');
   let lines = [];
   const wrap = () => {
@@ -878,7 +878,7 @@ function drawCover(canvas, { title, artist, mood }) {
   wrap();
   while ((lines.length > 3 || lines.some((l) => ctx.measureText(l).width > W - 140)) && size > 40) {
     size -= 6;
-    ctx.font = `900 ${size}px Big Shoulders Display, sans-serif`;
+    ctx.font = `900 ${size}px "Bodoni Moda", serif`;
     wrap();
   }
   ctx.fillStyle = '#fff';
@@ -886,8 +886,8 @@ function drawCover(canvas, { title, artist, mood }) {
   lines.forEach((l, i) => ctx.fillText(l, 70, W - 130 - (lines.length - 1 - i) * size * 1.02));
   ctx.font = '600 38px "Atkinson Hyperlegible", sans-serif';
   ctx.fillStyle = pal[3];
-  ctx.fillText(artist || 'Zaza × Frog', 72, W - 70);
-  ctx.font = '500 22px "IBM Plex Mono", monospace';
+  ctx.fillText(artist || 'FLIP', 72, W - 70);
+  ctx.font = '500 22px "Atkinson Hyperlegible", sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,.7)';
   ctx.textAlign = 'right';
   ctx.fillText(`${FR[S.key]} · ${S.bpm} BPM · ${prog.roman}`, W - 60, 76);

@@ -2,7 +2,6 @@
 // Pas des bulles d'aide : des écrans plein format, comme un livret d'album.
 import { espace, audioURL, updateEspace } from '../espace.js';
 import { store } from '../ui.js';
-import { PLAN } from '../duo.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
@@ -23,49 +22,44 @@ export function startTour(preview) {
   const welcome = espace.meta.welcome?.text || 'Forever more…';
   const slides = [
     `<div class="t-open">
+       <img class="t-logo" src="img/flip-creme.svg" alt="FLIP">
        <p class="t-welcome">${esc(welcome).replace(/\n/g, '<br>')}</p>
        <p class="t-sign">— ${esc(from)}</p>
        ${espace.meta.welcome?.audio ? '<button class="t-play" data-t="play">▶ Écouter</button>' : ''}
      </div>`,
-    `<p class="t-kicker">${esc(me)}.</p>
-     <h2>Ton SV-1<br>+ ma voix<br>= notre son.</h2>
-     <p class="t-text">Aucun piano, aucun looper, aucun DAW ne fait ça : <b>cette app écoute ton clavier et ma voix en même temps</b>, et elle s’en sert pour nous faire progresser tous les deux. Regarde.</p>`,
-    `<p class="t-kicker">Une minute, en vrai</p>
-     <video class="t-video" src="data/demo-frog.mp4" poster="data/demo-frog.jpg" autoplay muted playsinline loop controls preload="auto"></video>
-     <p class="t-src">L’app, enregistrée telle quelle : ton SV-1 en MIDI, ma voix au micro, une session, le mur.</p>`,
-    `<p class="t-kicker">Le truc qui n’existe pas</p>
-     <h2>Tu joues un accord. Ma voix sait où aller.</h2>
+    `<p class="t-kicker">${esc(me)}, regarde. Une minute.</p>
+     <video class="t-video" src="data/demo-frog.mp4" poster="data/demo-frog.jpg" playsinline controls preload="auto"></video>
+     <p class="t-src">L’app, filmée telle quelle : ton SV-1, ma voix, nos sons qui voyagent entre nous.</p>`,
+    `<p class="t-kicker">Le truc qui n’existe pas ailleurs</p>
+     <h2>Tu joues un accord.<br>Ma voix sait où aller.</h2>
      <ul class="t-list">
-       <li><b>Les notes que je peux chanter s’allument</b>, dans MA tessiture, pendant que tu joues.</li>
-       <li>L’app me dit si je suis dedans, et laquelle je tiens : <b>la tierce, la quinte</b>…</li>
-       <li><b>Tes sons choisissent l’exercice</b> : un orgue tenu travaille ma stabilité, un piano qui s’éteint ma mémoire de la note, un Rhodes ma douceur.</li>
+       <li>Pendant que tu joues, <b>les notes que je peux chanter s’allument</b>, dans ma tessiture. L’app me dit si je suis dedans : la tierce, la quinte…</li>
+       <li><b>Tes sons choisissent mon exercice</b> : un orgue tenu travaille ma stabilité, un piano qui s’éteint ma mémoire de la note.</li>
+       <li>Et à l’envers : <b>je chante, tu cherches les accords qui me portent</b>. Le score est pour toi.</li>
      </ul>
      <div class="t-chords"><span>Do</span><span class="now">Lam</span><span>Fa</span><span>Sol</span></div>`,
-    `<p class="t-kicker">Ton matériel, mémoire du duo</p>
-     <h2>Ce que tu touches devient une trace.</h2>
+    `<p class="t-kicker">Entre deux sessions</p>
+     <h2>On se lance des sons.</h2>
      <ul class="t-list">
-       <li>Tempo, départs du séquenceur, changements de son : <b>des repères horodatés</b> dans chaque session.</li>
-       <li>Sur nos prises, on clique « 0:42 » et on réentend <b>le moment où tu as changé de son</b>.</li>
-       <li>L’app peut aussi <b>envoyer son horloge</b> : ta boîte à rythmes suit notre boucle.</li>
+       <li>Un riff de ton SV-1, 10 secondes, <b>une touche</b> : il m’arrive.</li>
+       <li>Je chante <b>par-dessus</b>, ou j’écris des mots dessus. Tu ajoutes une couche. La chanson grandit sans attendre qu’on soit ensemble.</li>
+       <li>Ou on part dans une <b>ambiance</b> (fleuve gelé, cuisine à 2 h…) que tu pilotes avec tes accords.</li>
      </ul>`,
-    `<p class="t-kicker">Le sens</p>
-     <h2>Six mois.<br>Trois à cinq originaux.<br>À deux.</h2>
-     <ol class="t-months">${PLAN.map((p) => `<li><span>M${p.n}</span>${esc(p.sortie)}</li>`).join('')}</ol>
-     <p class="t-src">Un plan tiré de la recherche de ${esc(from)} : séances courtes et régulières, impro d’abord, composition ensuite. Chaque session finit par une prise.</p>`,
     `<p class="t-kicker">Brancher le SV-1 · 2 minutes</p>
      <h2>Un câble, et c’est parti.</h2>
      <ol class="t-steps">
-       <li>La prise <b>MIDI OUT</b> du SV-1 → une interface USB-MIDI → l’ordi.</li>
-       <li>Ouvre l’app dans <b>Chrome ou Edge</b> (pas Safari, pas l’iPhone).</li>
-       <li>Voix → <b>Voix + piano</b> → « Brancher le piano » : joue un accord, il apparaît.</li>
+       <li>La prise <b>MIDI OUT</b> du SV-1 → une interface USB-MIDI → l’ordi. Pour enregistrer son vrai son : ses sorties audio → ta carte son.</li>
+       <li>Ouvre l’app dans <b>Chrome ou Edge</b> sur l’ordi.</li>
+       <li><b>Voix → Voix + piano → Brancher le piano</b> : joue un accord, il apparaît.</li>
      </ol>`,
-    `<h2>Tes 3 premiers gestes</h2>
+    `<h2>Par où commencer</h2>
      <div class="t-actions">
        <a class="btn primary big" href="#/accord" data-t="end">① Brancher le SV-1 et jouer 3 accords pour moi</a>
-       <a class="btn big" href="#/depart" data-t="end">② Ton point de départ (5 min)</a>
-       <a class="btn big" href="#/session" data-t="end">③ Notre première session</a>
+       <a class="btn big" href="#/relais" data-t="end">② Me lancer un premier son</a>
+       <a class="btn big" href="#/depart" data-t="end">③ Ton point de départ (5 min)</a>
        <button class="btn big ghost" data-t="end">Explorer seul</button>
-     </div>`,
+     </div>
+     <p class="t-src">Cette visite ne reviendra plus. Elle reste dans le Mur → Réglages.</p>`,
   ];
 
   const box = document.createElement('div');
@@ -82,10 +76,13 @@ export function startTour(preview) {
   let i = 0;
   let player = null;
   const show = () => {
+    box.querySelectorAll('video').forEach((x) => x.pause());
     box.querySelector('.t-slide').innerHTML = `<div class="t-inner t-${i}">${slides[i]}</div>`;
     box.querySelectorAll('.t-progress i').forEach((b, k) => b.classList.toggle('on', k <= i));
     box.querySelector('[data-t=prev]').disabled = i === 0;
     box.querySelector('[data-t=next]').hidden = i === slides.length - 1;
+    const v = box.querySelector('.t-video');
+    if (v) { v.muted = false; v.play().catch(() => { v.muted = true; v.play().catch(() => {}); }); }
   };
   const end = () => {
     if (!preview) {

@@ -50,6 +50,13 @@ export async function joinEspace(id) {
   return espace;
 }
 
+// Entrer depuis l'adresse normale, avec le mot secret que l'autre a choisi.
+export async function findEspace(secret) {
+  const r = await fetch(`${API}/trouver`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ secret }) });
+  if (!r.ok) throw Object.assign(new Error('Mot secret inconnu : vérifie avec l’autre (les accents et les majuscules ne comptent pas).'), { status: r.status });
+  return joinEspace((await r.json()).id);
+}
+
 export function leaveEspace() {
   espace.id = null;
   espace.meta = null;
@@ -63,7 +70,8 @@ export function leaveEspace() {
 
 // Met à jour les réglages de l'espace : { name, members, goal, vision, plan, welcome }.
 export async function updateEspace(body) {
-  const { data } = await api(`/${espace.id}`, { method: 'PATCH', body: JSON.stringify(body) });
+  const { status, data } = await api(`/${espace.id}`, { method: 'PATCH', body: JSON.stringify(body) });
+  if (status === 409) throw new Error(data?.error || 'Conflit');
   espace.meta = data.meta;
   espace.rev = data.rev;
   emit('meta');

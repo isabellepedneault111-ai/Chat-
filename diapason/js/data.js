@@ -11,6 +11,9 @@ export const MODULES = [
   { id: 'studio', num: '', name: 'Studio', color: 'var(--c-studio)', tagline: 'Beat, accords, instrument, scène, clip.' },
   { id: 'paroles', num: '', name: 'Paroles', color: 'var(--c-paroles)', tagline: 'Syllabes, rimes, synonymes : écrire pour être chanté.' },
   { id: 'carnet', num: '', name: 'Le mur', color: 'var(--c-carnet)', tagline: 'Toutes nos idées, et où elles s’en vont.' },
+  { id: 'relais', num: '', name: 'Relais', color: 'var(--rec)', tagline: 'Se lancer des sons entre deux sessions, et répondre par-dessus.' },
+  { id: 'ambiances', num: '', name: 'Ambiances', color: 'var(--rec)', tagline: 'Partir ailleurs avant d’écrire ou de chanter.' },
+  { id: 'bilan', num: '', name: 'Notre bilan', color: 'var(--rec)', tagline: 'Où on est rendus, et ce que la recherche dit de faire ensuite.' },
   { id: 'session', num: '', name: 'Session', color: 'var(--rec)', tagline: 'La séance guidée, du check-in à la prise.' },
 ];
 

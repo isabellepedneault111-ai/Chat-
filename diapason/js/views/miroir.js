@@ -181,7 +181,7 @@ export default {
         }
         if (!isBlack(m) && bh > 9) {
           ctx.fillStyle = m % 12 === 0 ? 'rgba(255,255,255,.75)' : 'rgba(255,255,255,.35)';
-          ctx.font = `${Math.min(12, bh * 0.8)}px "IBM Plex Mono", monospace`;
+          ctx.font = `${Math.min(12, bh * 0.8)}px "Atkinson Hyperlegible", sans-serif`;
           ctx.textBaseline = 'middle';
           ctx.fillText(nameFR(m), w - 56, yy);
         }

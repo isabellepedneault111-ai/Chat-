@@ -1,5 +1,5 @@
 // Carnet partagé du duo : écrits, audios, bilans, évaluations, essais — un seul fil, synchronisé.
-import { espace, onEspace, createEspace, joinEspace, leaveEspace, deleteEspace, updateEspace, saveEntry, deleteEntry, uploadAudio, audioURL } from '../espace.js';
+import { espace, onEspace, createEspace, joinEspace, findEspace, leaveEspace, deleteEspace, updateEspace, saveEntry, deleteEntry, uploadAudio, audioURL } from '../espace.js';
 import { toast, store } from '../ui.js';
 import { CARNET_TYPES, BILAN_QUESTIONS, EVAL_CRITERES } from '../data.js';
 import { MEMBERS, ROLES, memberColor, STAGES, PLAN, EVAL, NIVEAUX } from '../duo.js';
@@ -33,41 +33,47 @@ export function espaceGate(host, { onReady } = {}) {
     host.innerHTML = `
       <div class="gate"><div class="gate-card panel">
         <p class="tape">Notre espace</p>
-        <h2>Zaza × Frog</h2>
+        <h2>FLIP</h2>
         <p>Un seul endroit pour nos idées, nos sessions, nos paroles et nos prises. Ce que l’un ajoute, l’autre le voit en quelques secondes.</p>
         <h3 class="gate-q">Qui es-tu?</h3>
         ${who(espace.me)}
-        <div class="gate-actions">
-          <div>
-            <button class="btn primary" data-g="create">Créer notre espace</button>
-            <p class="muted small">Une seule fois. Tu enverras ensuite le lien à l’autre.</p>
-          </div>
-          <div class="gate-or">ou</div>
-          <div>
-            <label class="field col"><span>Le lien reçu</span><input class="input" data-g="link" placeholder="Colle le lien ici"></label>
-            <button class="btn" data-g="join">Rejoindre</button>
-          </div>
+        <div class="gate-secret">
+          <p class="gate-hint" data-g="hint">Votre espace existe déjà? Entre le mot secret du duo.</p>
+          <div class="gate-row"><input class="input" data-g="secret" placeholder="Le mot secret" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="btn primary" data-g="find">Entrer</button></div>
+          <details class="gate-link"><summary>J’ai plutôt un lien</summary>
+            <div class="gate-row"><input class="input" data-g="link" placeholder="Colle le lien ici"><button class="btn" data-g="join">Rejoindre</button></div>
+          </details>
         </div>
+        <p class="gate-first">Première fois pour vous deux? <button class="btn ghost small" data-g="create">Créer notre espace</button></p>
         <p class="fineprint">Pas de compte, pas de mot de passe : <b>le lien est la clé</b>. Garde-le entre vous deux.</p>
       </div></div>`;
   }
   let me = espace.me && names.includes(espace.me) ? espace.me : '';
+  host.querySelector('.gate').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.dataset.g === 'secret') host.querySelector('[data-g=find]').click();
+  });
   host.querySelector('.gate').addEventListener('click', async (e) => {
     const w = e.target.closest('[data-who]');
     if (w) {
       me = w.dataset.who;
       host.querySelectorAll('[data-who]').forEach((b) => b.classList.toggle('on', b === w));
+      const hint = host.querySelector('[data-g=hint]');
+      if (hint) { const o = names.find((n) => n !== me) || 'Zaza'; hint.textContent = `${me}, ${o} a sans doute déjà créé votre espace : entre le mot secret qu’${o === 'Zaza' ? 'elle' : 'il'} t’a donné.`; host.querySelector('[data-g=secret]').focus(); }
       if (espace.connected) { espace.me = me; onReady?.(); import('./tour.js').then((t) => t.maybeTour()); }
       return;
     }
     const a = e.target.closest('[data-g]')?.dataset.g;
-    if (a !== 'create' && a !== 'join') return;
+    if (a !== 'create' && a !== 'join' && a !== 'find') return;
     if (!me) { toast('Choisis d’abord : Zaza ou Frog?'); return; }
     espace.me = me;
     e.target.disabled = true;
     try {
-      if (a === 'create') await createEspace('Zaza × Frog', me);
-      else {
+      if (a === 'create') {
+        if (!confirm('Créer un NOUVEL espace? Si l’autre en a déjà créé un, entre plutôt son mot secret (sinon vous serez chacun dans le vôtre).')) { e.target.disabled = false; return; }
+        await createEspace('FLIP', me);
+      } else if (a === 'find') {
+        await findEspace(host.querySelector('[data-g=secret]').value);
+      } else {
         const v = host.querySelector('[data-g=link]').value.trim();
         const id = (v.match(/rejoindre\/([A-Za-z0-9_-]{8,40})/) || v.match(/^([A-Za-z0-9_-]{8,40})$/) || [])[1];
         if (!id) throw new Error('Ce lien ne ressemble pas à un lien d’espace.');
@@ -76,7 +82,7 @@ export function espaceGate(host, { onReady } = {}) {
       onReady?.();
       import('./tour.js').then((t) => t.maybeTour());
     } catch (err) {
-      toast(err.status === 404 ? 'Espace introuvable : vérifie le lien.' : err.message || 'Connexion impossible pour l’instant.');
+      toast(a === 'find' ? err.message : err.status === 404 ? 'Espace introuvable : vérifie le lien.' : err.message || 'Connexion impossible pour l’instant.');
       e.target.disabled = false;
     }
   });
@@ -188,6 +194,9 @@ export default {
             <button class="btn small ghost" data-c="tour">Voir la visite de ${esc(other())}</button>
           </div>
           <div>
+            <label class="field col"><span>Mot secret du duo ${espace.meta.hasSecret ? '<b class="ok-mark">· choisi ✓</b>' : ''}</span><input class="input" data-s="secret" placeholder="${espace.meta.hasSecret ? 'Nouveau mot secret (laisser vide pour garder l’actuel)' : 'Ex. : bell'}" autocomplete="off"></label>
+            <p class="muted small">${esc(other())} va sur l’adresse normale du site, choisit son nom et tape ce mot : il entre dans votre espace, et sa visite démarre. 4 lettres minimum.</p>
+            <button class="btn small" data-c="secret">Enregistrer le mot secret</button>
             <label class="field col"><span>Lien de l’espace (garde-le précieusement)</span><input class="input mono" readonly value="${esc(espace.link)}"></label>
             <div class="row">
               <button class="btn" data-c="save-settings">Enregistrer</button>
@@ -537,13 +546,18 @@ export default {
       if (a === 'tour') { const { startTour } = await import('./tour.js'); startTour(true); }
       if (a === 'share') {
         const text = `${other()}, voici notre espace : ${espace.link}`;
-        if (navigator.share) navigator.share({ title: 'Zaza × Frog', text, url: espace.link }).catch(() => {});
+        if (navigator.share) navigator.share({ title: 'FLIP', text, url: espace.link }).catch(() => {});
         else { await navigator.clipboard?.writeText(espace.link); toast(`Lien copié : envoie-le à ${other()}.`); }
       }
       if (a === 'settings') {
         const s = el.querySelector('.settings');
         s.hidden = !s.hidden;
         e.target.setAttribute('aria-expanded', !s.hidden);
+      }
+      if (a === 'secret') {
+        const v = el.querySelector('[data-s=secret]').value;
+        if (v.replace(/[^\p{L}\p{N}]/gu, '').length < 4) { toast('4 lettres ou chiffres minimum.'); return; }
+        try { await updateEspace({ secret: v }); toast(`Mot secret enregistré. Donne-le à ${other()} de vive voix.`); renderSettings(); } catch (err) { toast(err.message); }
       }
       if (a === 'save-settings') {
         await updateEspace({ welcome: { ...(espace.meta.welcome || {}), text: el.querySelector('[data-s=welcome]').value.trim(), by: espace.me } }).catch((err) => toast(err.message));
