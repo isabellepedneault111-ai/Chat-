@@ -6,7 +6,8 @@ import { embers } from '../rituel.js';
 import { VISITE } from '../visite-data.js';
 import { jouer, sonActif, basculerSon, prechargerVisite, bandeStart, bandeSection, bandeStop } from '../visite-sons.js';
 import { laboVivant } from '../labo-vivant.js';
-import { visuelVivant } from '../visuel-vivant.js';
+import { visuelVivant, preparerPortrait } from '../visuel-vivant.js';
+import { arcSVG, triskelSVG } from '../talismans.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
@@ -53,21 +54,44 @@ export function startTour(preview) {
   const MONTAGE = [
     ['m-voix.jpg', 'Placer ma voix dans le groove', 'FLIP joue un rythme (bossa, pop…) et les cases roses montrent où poser mes mots. La syncope devient un jeu.', 'Je chante avec plus de groove, pas seulement plus juste.', 'beat'],
     ['m-flux.jpg', 'Écrire sur le beat', 'Je chante des sons sans mots sur le beat (le mumble), et l’enregistrement part avec mon texte.', 'Tu entends la mélodie que j’avais en tête.', 'riff'],
-    ['m-labo.jpg', 'Un rythme devient une note', 'Trois rythmes calés sur ta musique accélèrent… jusqu’à devenir un accord de Fa majeur, dans la tonalité de Projet 1.', 'Tes beats et tes accords viennent de la même source : des idées qu’on n’aurait jamais trouvées.', 'labo'],
+    ['m-labo.jpg', 'Un rythme devient une note', 'Trois rythmes en même temps, sur ta musique : 4, 5 et 6 coups par mesure. Ils accélèrent : chacun devient une note, et les trois ensemble, un accord de Fa majeur.', 'Le rythme et l’harmonie sortent de la même source : des accords qu’on n’aurait jamais trouvés autrement.', 'labo'],
     ['m-trois.jpg', 'Un troisième musicien', 'Il écoute notre phrase, la transforme et nous la renvoie.', 'Un partenaire d’impro, même quand on est juste deux.', 'trois'],
     ['m-grimoire.jpg', 'Le grimoire', 'Des cartes à tirer pour lancer une chanson : un thème, une peur, une contrainte.', 'Fini la page blanche.', 'grimoire'],
-    ['m-pochette.jpg', 'Le visuel de notre chanson', 'Le vrai son d’une chanson ou d’un groove dessine son image, en direct. Ici : ta musique, en ce moment.', 'Notre son a enfin un visage : pour une pochette, une vidéo, une story.', 'pochette'],
+    ['m-pochette.jpg', 'Le portrait de notre chanson', 'L’oreille écoute toute la chanson et dessine son portrait : ses parties, son moment fort, sa boucle. Ici : Projet 1, analysé à l’instant, et le trait d’or suit la musique.', 'On voit d’un coup d’œil ce qui brille déjà dans nos chansons, et où on veut les retravailler.', 'pochette'],
   ];
 
   const r = (d) => `${Math.round(d.w)} / ${Math.round(d.h)}`;
+  const SOURCES = [
+    ['Pratique distribuée', 'Rohrer 2004 ; Cepeda et al. 2006', 'des petites séances souvent, plutôt qu’une grosse de temps en temps'],
+    ['Pipeline créatif et verbalisation guidée', 'Biasutti 2017, 2018 ; Aslan 2016 ; Marino 2023', 'de l’idée brute à la chanson, en se disant ce qu’on cherche'],
+    ['La prise en mode spectacle', 'Montemayor 2014', 'enregistrer comme si on jouait devant du monde'],
+    ['Retour visuel et justesse du chant', 'Welch, Howard et Rush 1989 ; Hoppe et al. 2006', 'voir sa voix aide à chanter juste'],
+    ['Écriture par les sens', 'Pattison 2009 (Berklee)', 'écrire ce qu’on voit, entend et touche'],
+    ['Écriture expressive', 'Pennebaker et Beall 1986', 'écrire ce qu’on ressent pour le traverser'],
+    ['La contrainte qui libère', 'De Bruin 2019 ; Merchán-Sánchez-Jara 2023 ; Oulipo', 'une règle du jeu, et l’imagination s’emballe'],
+    ['Vision commune avant de composer', 'Merchán-Sánchez-Jara 2023', 'savoir ensemble où on va'],
+    ['Pratique ciblée et progrès visibles', 'Miksza 2023', 'travailler le bon bout, et voir qu’on avance'],
+  ];
   const slides = [
+    // La mise en bouche : un mot sur ma façon de faire, nos talismans, et la flèche qui lance la visite.
+    `<div class="t-prelude">
+       <div class="tp-tal tp-z">${arcSVG()}<p>Mon talisman : la demi-lune devenue arc, la flèche tendue, prête à partir.</p></div>
+       <div class="tp-mid">
+         <p class="t-kicker">Avant la visite · 4 minutes, avec le son</p>
+         <h2>Un mot sur ma façon de faire</h2>
+         <p class="tp-mot">Je ne voulais pas une app de plus : je voulais un endroit qui nous ressemble. J’ai lu ce que la recherche sait de la création, de la voix et de la pratique, et je m’en suis servie comme d’un tremplin, jamais comme d’une cage. Chaque idée de FLIP part de là, puis je l’ai tordue pour nous.</p>
+         <details class="tp-src"${innerWidth > 860 ? ' open' : ''}><summary>Ce qui a nourri FLIP</summary><ul>${SOURCES.map(([t, ref, sens]) => `<li><b>${t}</b> <span>${sens}</span> <small>${ref}</small></li>`).join('')}</ul></details>
+         <button class="btn big t-start t-lancer" data-t="lancer">Lancer la flèche →</button>
+       </div>
+       <div class="tp-tal tp-f">${triskelSVG()}<p>Le tien : le triskel, la spirale qui tourne, revient et grandit.</p></div>
+     </div>`,
     `<div class="t-open">
        <img class="t-logo" src="img/flip-creme.svg" alt="FLIP">
        <p class="t-welcome">${esc(welcome).replace(/\n/g, '<br>')}</p>
        <p class="t-sign">— ${esc(from)}</p>
        <p class="t-auteure">J’ai imaginé FLIP pour nous deux.</p>
        ${espace.meta.welcome?.audio ? '<button class="t-play" data-t="play">▶ Écouter</button>' : ''}
-       <button class="btn big t-start" data-t="next">Commencer · 4 minutes, avec le son</button>
+       <button class="btn big t-start" data-t="next">Commencer la visite</button>
      </div>`,
     `<div class="t-title" data-auto="8000">
        <p class="t-kicker">Ce que j’ai imaginé pour nous deux</p>
@@ -109,7 +133,7 @@ export function startTour(preview) {
     // Une idée à la fois, le temps de lire ; la flèche passe à la suivante, rien ne file tout seul hors de l'écran.
     `<div class="t-montage">
        <header><p class="t-kicker">Et ce n’est pas tout</p><h2>Six idées <i>originales</i></h2><p class="mt-intro">Aucune autre app au monde ne les fait. Je les ai inventées pour nous.</p></header>
-       <div class="mt-stage">${MONTAGE.map(([img, t, ail, nous], i) => `<figure class="mt-tile" data-n="${i}"><div class="mt-img">${img === 'm-labo.jpg' ? '<canvas class="mt-live" data-live="labo" aria-label="Trois disques qui accélèrent jusqu’à chanter Fa majeur"></canvas>' : img === 'm-pochette.jpg' ? '<canvas class="mt-live" data-live="visuel" aria-label="Le son de la musique qui joue, dessiné en crêtes"></canvas>' : `<img src="img/visite/${img}" alt="">`}</div><figcaption><span class="mt-num">${i + 1} / ${MONTAGE.length} · idée originale</span><b>${t}</b><span class="mt-ail">${ail}</span><span class="mt-nous"><i>Pour nous :</i> ${nous}</span></figcaption></figure>`).join('')}</div>
+       <div class="mt-stage">${MONTAGE.map(([img, t, ail, nous], i) => `<figure class="mt-tile" data-n="${i}"><div class="mt-img">${img === 'm-labo.jpg' ? '<canvas class="mt-live" data-live="labo" aria-label="Trois disques qui accélèrent jusqu’à chanter Fa majeur"></canvas>' : img === 'm-pochette.jpg' ? '<canvas class="mt-live" data-live="visuel" aria-label="Le portrait de Projet 1 : ses parties, son moment fort et sa boucle"></canvas>' : `<img src="img/visite/${img}" alt="">`}</div><figcaption><span class="mt-num">${i + 1} / ${MONTAGE.length} · idée originale</span><b>${t}</b><span class="mt-ail">${ail}</span><span class="mt-nous"><i>Pour nous :</i> ${nous}</span></figcaption></figure>`).join('')}</div>
        <div class="mt-dots">${MONTAGE.map((_, i) => `<button type="button" data-n="${i}" aria-label="Idée ${i + 1}"></button>`).join('')}</div>
      </div>`,
     `<div class="t-title">
@@ -163,9 +187,9 @@ export function startTour(preview) {
   const show = () => {
     clearTimeout(auto); clearTimeout(stepT);
     box.querySelector('.t-slide').innerHTML = `<div class="t-inner t-${i}">${slides[i]}</div>`;
-    box.classList.toggle('slide0', i === 0); // les deux fils traversent tout l'écran d'accueil
+    box.classList.toggle('slide0', i === 1); // les deux fils traversent tout l'écran d'accueil
     // Une seule musique, qui change d'habit : feutrée à l'accueil, groove dans les scènes, piano dans la vitrine.
-    bandeStart(); bandeSection(i <= 1 ? 'accueil' : box.querySelector('.t-montage') ? 'vitrine' : 'scenes');
+    bandeStart(); bandeSection(i <= 2 ? 'accueil' : box.querySelector('.t-montage') ? 'vitrine' : 'scenes');
     const ms = +(box.querySelector('[data-auto]')?.dataset.auto || 0);
     box.querySelectorAll('.t-progress i').forEach((b, k) => { b.classList.toggle('on', k < i || (k === i && !ms)); b.classList.toggle('run', k === i && !!ms); b.style.setProperty('--dur', `${ms}ms`); });
     // Les scènes avancent seules, comme un film ; on peut toujours aller plus vite ou revenir.
@@ -192,6 +216,7 @@ export function startTour(preview) {
     }
     const mt = box.querySelector('.t-montage');
     if (mt) {
+      preparerPortrait(); // L'oreille écoute Projet 1 pendant les premières idées
       let k = -1;
       let stopLive = null;
       const montre = (n) => {
@@ -235,9 +260,21 @@ export function startTour(preview) {
     if (t === 'end') { end(); return; }
     // la visite n'est marquée comme vue qu'à la toute fin du tour de l'app
     if (t === 'coach') { end(false); setTimeout(() => import('../coach.js').then((c) => c.coachTour({ premiere: true, apercu: preview, onEnd: marquer })), 400); return; }
-    if (t === 'son') { const v = basculerSon(); e.target.textContent = v ? '♪ Son' : '♪ Muet'; e.target.setAttribute('aria-pressed', v); if (v) bandeStart(i <= 1 ? 'accueil' : 'scenes'); return; }
+    if (t === 'son') { const v = basculerSon(); e.target.textContent = v ? '♪ Son' : '♪ Muet'; e.target.setAttribute('aria-pressed', v); if (v) bandeStart(i <= 2 ? 'accueil' : 'scenes'); return; }
     // Commencer : la visite prend tout l'écran.
-    if (t === 'next' && i === 0 && !document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
+    if (t === 'lancer') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
+      bandeStart('accueil');
+      // La corde se relâche, la flèche file jusqu'au triskel, qui se met à tourner : la visite commence.
+      const arc = box.querySelector('.tp-z .tal-arc'); const tri = box.querySelector('.tp-f .tal-triskel');
+      const ra = arc.getBoundingClientRect(); const rt = tri.getBoundingClientRect();
+      const vol = ((rt.left + rt.width / 2) - (ra.left + ra.width * 0.96)) / (ra.width / 200);
+      arc.style.setProperty('--vol', `${calme ? 0 : vol}px`);
+      arc.classList.add('lancee');
+      setTimeout(() => tri.classList.add('touche'), calme ? 0 : 520);
+      setTimeout(() => box.isConnected && go(1), calme ? 200 : 1500);
+      return;
+    }
     if (t === 'prev') { go(-1); return; }
     if (t === 'next') { if (!box.querySelector('.t-montage')?.montageSuivant?.()) go(1); return; }
     if (t === 'play') {

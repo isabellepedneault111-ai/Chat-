@@ -22,6 +22,7 @@ const visible = (sel) => sel.split(',').map((x) => x.trim()).flatMap((x) => [...
 
 import { montrerExemples, retirerExemples } from './demo.js';
 import { espace, saveEntry } from './espace.js';
+import { arcSVG, triskelSVG } from './talismans.js';
 import { bandeStart, bandeSection, bandeStop } from './visite-sons.js';
 
 // apercu : Zaza voit exactement le tour de Frog, avec seulement une sortie discrète.
@@ -85,6 +86,7 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
     const de = espace.meta?.welcome?.by || espace.meta?.createdBy || 'Zaza';
     box.classList.add('coach-fin');
     box.innerHTML = `<div class="cq" role="dialog" aria-live="polite">
+      <div class="cq-tal">${arcSVG()}${triskelSVG()}</div>
       <p class="cq-1">Et puis…</p>
       <p class="cq-2">Ai-je réussi à te séduire ? ;P</p>
       <p class="cq-sign">— ${esc(de)}</p>

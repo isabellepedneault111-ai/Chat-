@@ -2314,3 +2314,57 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .cq-ok { margin: 0; font: italic 500 1.2rem var(--display); color: #f3c77a; }
 @keyframes cqin { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .mt-live { display: block; width: 100%; height: 100%; }
+/* Nos talismans : un trait d'or, comme gravé. */
+.tal { fill: none; stroke: #e8c27a; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; overflow: visible; filter: drop-shadow(0 0 10px rgba(232, 194, 122, .35)); }
+.tal-lune { fill: rgba(232, 194, 122, .18); }
+.tal-pointe { fill: #e8c27a; }
+.tal-droite { opacity: 0; }
+.tal-fleche { transition: transform .55s cubic-bezier(.5, 0, .9, .4), opacity .2s ease .5s; }
+.tal-arc.lancee .tal-tendue { opacity: 0; } .tal-arc.lancee .tal-droite { opacity: 1; }
+.tal-arc.lancee .tal-fleche { transform: translateX(var(--vol, 600px)); opacity: 0; }
+.tal-tourne { transform-origin: 100px 100px; animation: talTourne 40s linear infinite; }
+.tal-triskel.touche .tal-tourne { animation: talTourne 1.4s cubic-bezier(.2, .8, .2, 1) 1, talTourne 40s linear 1.4s infinite; }
+.tal-triskel.touche { filter: drop-shadow(0 0 24px rgba(232, 194, 122, .9)); transition: filter .3s; }
+@keyframes talTourne { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .tal-tourne { animation: none !important; } }
+
+/* La mise en bouche */
+.tour .t-inner:has(.t-prelude) { max-width: min(1240px, 100%); }
+.t-prelude { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(0, 2.6fr) minmax(120px, 1fr); gap: clamp(12px, 3vw, 40px); align-items: center; }
+.tp-tal { display: grid; justify-items: center; gap: 10px; text-align: center; position: relative; z-index: 2; }
+.tp-tal .tal { width: min(15vw, 26vh, 200px); height: auto; }
+.tp-tal p { margin: 0; font: italic 500 clamp(.85rem, 1.1vw, .98rem)/1.35 var(--display); color: #cfc6b4; max-width: 22ch; }
+.tp-mid { display: grid; gap: min(10px, 1.3vh); justify-items: center; text-align: center; }
+.tp-mid h2 { margin: 0; font: 800 clamp(1.6rem, min(3.6vw, 6vh), 3rem)/1.05 var(--display); color: #fff; }
+.tp-mot { margin: 0; max-width: 62ch; color: #efe9dc; font-size: clamp(.95rem, min(1.25vw, 2.1vh), 1.1rem); line-height: 1.45; }
+.tp-src { width: 100%; text-align: left; }
+.tp-src summary { cursor: pointer; font: italic 600 1rem var(--display); color: #f3c77a; text-align: center; list-style: none; margin-bottom: 6px; }
+.tp-src summary::-webkit-details-marker { display: none; }
+.tp-src ul { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: min(6px, .8vh) 22px; }
+.tp-src li { font-size: clamp(.78rem, min(.95vw, 1.6vh), .9rem); line-height: 1.3; color: #cfc6b4; border-left: 2px solid rgba(243, 199, 122, .4); padding-left: 8px; }
+.tp-src li b { color: #fff; font-weight: 700; } .tp-src li small { display: block; color: #a99f8c; font-size: .9em; }
+.tp-son { margin: 0; font-size: .85rem; color: #a99f8c; }
+.t-lancer { margin-top: min(6px, 1vh); }
+@media (max-width: 860px) {
+  .t-prelude { grid-template-columns: 1fr 1fr; grid-template-areas: "z f" "mid mid"; gap: 10px; }
+  .tp-z { grid-area: z; } .tp-f { grid-area: f; } .tp-mid { grid-area: mid; }
+  .tp-tal .tal { width: min(28vw, 15vh); }
+  .tp-tal p { font-size: .78rem; }
+  .tp-src ul { grid-template-columns: 1fr; }
+  .tp-src:not([open]) summary::after { content: ' (9) ›'; }
+}
+.tp-mid h2 { font-size: clamp(1.5rem, min(3vw, 5.4vh), 2.6rem); }
+@media (min-width: 861px) { .tp-mid h2 { white-space: nowrap; } }
+@media (max-width: 860px) {
+  .tp-tal .tal { width: min(22vw, 11vh); }
+  .tp-tal p { font-size: .72rem; line-height: 1.25; }
+  .tp-mot { font-size: .88rem; line-height: 1.4; }
+  .tp-mid { gap: 8px; }
+}
+.tp-mot { font-size: clamp(.9rem, min(1.25vw, 1.95vh), 1.1rem); }
+.tp-src li { font-size: clamp(.74rem, min(.95vw, 1.45vh), .9rem); }
+.tp-src ul { gap: min(5px, .6vh) 22px; }
+@media (max-width: 860px) { .tp-mid { gap: 6px; } .t-prelude { gap: 6px; } }
+@media (max-height: 700px) and (min-width: 861px) { .tp-mid { gap: 6px; } .tp-mot { line-height: 1.35; } .t-lancer { margin-top: 0; } }
+.cq-tal { display: flex; gap: 28px; justify-content: center; opacity: 0; animation: cqin 1.2s ease .1s forwards; }
+.cq-tal .tal { width: clamp(54px, 9vh, 84px); height: auto; }
