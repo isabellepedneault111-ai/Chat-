@@ -6,8 +6,15 @@ import { joue, accord, prechargerSons } from './sampler.js';
 import { store } from './ui.js';
 
 const R = (notes, t, o = {}) => accord('rhodes', notes, { when: t, dur: o.dur ?? 2, vel: o.vel ?? 0.5, egrene: 0.01 });
-const V = (seq, t, o = {}) => { let w = t; seq.forEach(([m, d]) => { if (m) joue('voix', m + decal, { when: w, dur: d * 0.92, vel: o.vel ?? 0.7 }); w += d; }); };
-const Pm = (seq, t, o = {}) => { let w = t; seq.forEach(([m, d]) => { if (m) joue('piano', m + decal, { when: w, dur: d, vel: o.vel ?? 0.6 }); w += d; }); };
+// Sur la musique de Frog, chaque note est transposée puis posée sur la gamme de SA pièce, et la voix laisse place au piano.
+const note = (m) => {
+  const g = lecture && PISTES[lecture.id].gamme; let x = m + decal;
+  if (!g) return x;
+  for (let d = 0; d < 3; d++) { if (g.includes(((x - d) % 12 + 12) % 12)) return x - d; if (g.includes(((x + d) % 12 + 12) % 12)) return x + d; }
+  return x;
+};
+const V = (seq, t, o = {}) => { let w = t; seq.forEach(([m, d]) => { if (m) { if (lecture) joue('piano', note(m) + 12, { when: w, dur: d, vel: (o.vel ?? 0.7) * 0.6 }); else joue('voix', m + decal, { when: w, dur: d * 0.92, vel: o.vel ?? 0.7 }); } w += d; }); };
+const Pm = (seq, t, o = {}) => { let w = t; seq.forEach(([m, d]) => { if (m) joue('piano', note(m), { when: w, dur: d, vel: (o.vel ?? 0.6) * (lecture ? 0.75 : 1) }); w += d; }); };
 
 // Les accents des scènes : des phrases (voix ou piano) dans la gamme de Do. Pas d'accords ici :
 // la bande les porte, les accents ne se marchent jamais dessus. b = la durée d'une noire.
@@ -81,8 +88,9 @@ function mesure(w, n) {
 // « Joy Walk » pendant le tour de l'app — une promenade. Fondu de l'une à l'autre, boucles invisibles.
 // Quand un effet ou un petit beat doit passer, la musique baisse un instant, puis remonte.
 const PISTES = {
-  projet1: { url: 'data/sons/frog-visite.mp3', boucle: [34.5, 115.51], xf: 0.1, decal: 0 },
-  joywalk: { url: 'data/sons/frog-joywalk.mp3', boucle: [16, 72.58], xf: 1.5, decal: -5 },
+  // bpm et t1 (un premier temps, en secondes dans le fichier) mesurés par flux spectral ; gamme par chroma.
+  projet1: { url: 'data/sons/frog-visite.mp3', boucle: [34.5, 115.51], xf: 0.1, decal: 2, bpm: 120, t1: 34.98, gamme: [2, 5, 7, 9, 0] }, // ré mineur pentatonique
+  joywalk: { url: 'data/sons/frog-joywalk.mp3', boucle: [16, 72.58], xf: 1.5, decal: -5, bpm: 116.6, t1: 16.43, gamme: [7, 9, 11, 2, 4] }, // sol majeur pentatonique
 };
 const bufs = {}; const charges = {};
 let decal = 0; // transposition des accents dans la tonalité de la pièce qui joue
@@ -99,6 +107,7 @@ function jouePiste(l, offset, when) {
   const g = c.createGain(); src.connect(g).connect(l.master);
   g.gain.setValueAtTime(0.0001, when); g.gain.linearRampToValueAtTime(1, when + Math.max(0.06, P.xf));
   src.start(when, offset);
+  l.pos = [...(l.pos || []).slice(-2), { when, offset }];
   const [A, B] = P.boucle;
   const fin = when + (B - offset);
   l.src.push(src);
@@ -128,6 +137,13 @@ function demarrePiste(id) {
   lecture = l; decal = PISTES[id].decal;
   fondu(l, niveau(), lecture.id === 'joywalk' ? 2 : 0.8);
   jouePiste(l, 0, c.currentTime + 0.05);
+}
+// Le prochain temps de la pièce de Frog, en heure de l'audio : les accents tombent sur SON temps.
+function prochainTemps(t) {
+  const P = PISTES[lecture.id]; const per = 60 / P.bpm;
+  const p = [...lecture.pos].reverse().find((x) => x.when <= t) || lecture.pos[0];
+  const ici = p.offset + (t - p.when);
+  return p.when + (P.t1 + Math.ceil((ici - P.t1) / per) * per - p.offset);
 }
 // La musique se pousse pour laisser passer un effet, puis revient.
 function laissePasser(duree = 2.6, creux = 0.32) {
@@ -188,10 +204,8 @@ export function jouer(nom) {
   try {
     const c = audio();
     let t = c.currentTime + 0.05;
-    // Sur la musique de Frog, pas de mélodie par-dessus (elle ne serait ni dans sa tonalité ni dans son tempo) :
-    // sa pièce respire un instant et un simple balai marque le geste. C'est sa musique qu'on écoute.
-    if (lecture) { laissePasser(1.1, 0.6); drums.hat(t + 0.1, 0.18); return; }
+    if (lecture) { t = prochainTemps(t + 0.1); laissePasser(2.6, 0.45); SONS[nom](t, 60 / PISTES[lecture.id].bpm); return; } // sur son temps, dans sa gamme
     if (bande.t) t = bande.t0 + Math.ceil((t - bande.t0) / NOIRE) * NOIRE; // calé sur le temps de la bande
     SONS[nom](t, lecture ? 0.5 : NOIRE);
-  } catch { /* le son n'est pas essentiel */ }
+  } catch (e) { console.debug('accent', e); } // le son n'est pas essentiel
 }

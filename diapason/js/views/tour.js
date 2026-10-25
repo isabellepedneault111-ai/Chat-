@@ -51,7 +51,7 @@ export function startTour(preview) {
   // [image, titre, ce qui n'existe nulle part ailleurs, ce que ça change pour nous, son]
   const MONTAGE = [
     ['m-voix.jpg', 'Un beat sous ta voix', 'Le phrasé à chanter s’allume sur le temps', `${esc(z)} joue avec le rythme, pas seulement la justesse`, 'beat'],
-    ['m-flux.jpg', 'Écrire sur le beat', 'Le yaourt chanté part avec le texte', `${esc(f)} joue sur ce que ${esc(z)} a chanté`, 'riff'],
+    ['m-flux.jpg', 'Écrire sur le beat', 'Le mumble chanté part avec le texte', `${esc(f)} joue sur ce que ${esc(z)} a chanté`, 'riff'],
     ['m-labo.jpg', 'Un rythme devient une note', 'On entend la frontière entre rythme et harmonie', 'Des beats qu’on n’aurait jamais trouvés', 'labo'],
     ['m-trois.jpg', 'Un troisième musicien', 'Il reprend votre phrase et la transforme', 'Un partenaire d’impro, même à deux', 'trois'],
     ['m-grimoire.jpg', 'Le grimoire', 'Des cartes pour écrire vrai : arcanes, peurs, contraintes', 'Plus jamais la page blanche', 'grimoire'],

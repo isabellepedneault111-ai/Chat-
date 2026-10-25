@@ -76,12 +76,12 @@ export default {
         r.onstop = () => {
           stream.getTracks().forEach((t) => t.stop());
           yaourtBlob = new Blob(chunks, { type: r.mimeType || 'audio/webm' }); yaourt = null;
-          btn.textContent = '● Refaire le yaourt'; btn.classList.remove('on');
+          btn.textContent = '● Refaire le mumble'; btn.classList.remove('on');
           el.querySelector('.flux-yaourt').innerHTML = `<audio controls src="${URL.createObjectURL(yaourtBlob)}"></audio><small>Réécoute : quels sons ressemblent déjà à des mots? Écris-les.</small>`;
         };
         fond();
         r.start(); yaourt = r;
-        btn.textContent = '■ Arrêter le yaourt'; btn.classList.add('on');
+        btn.textContent = '■ Arrêter le mumble'; btn.classList.add('on');
         setTimeout(() => yaourt === r && r.stop(), 90000);
       } catch { toast('Micro refusé : autorise-le dans la barre d’adresse.'); }
     }
@@ -102,21 +102,21 @@ export default {
         <section class="ec-flux">
           <div class="ec-flux-head">
             <h2>Écrire sur le beat</h2>
-            <p>Pour se découvrir : on ne réfléchit pas, on suit le rythme. D’abord le <b>yaourt</b> (chanter des sons sans mots), puis les mots viennent s’y poser.</p>
+            <p>Pour se découvrir : on ne réfléchit pas, on suit le rythme. D’abord le <b>mumble</b> (chanter des sons sans mots, comme en studio), puis les mots viennent s’y poser.</p>
           </div>
           <label class="flux-sur"><span>Écrire sur</span><select data-e="sur">${piecesAvecOreille().map(([id, nom]) => `<option value="${id}" ${window.__flipFond && id === 'oreille' ? 'selected' : ''}>${esc(nom)}</option>`).join('')}</select></label>
           <div class="flux-beat">${grooveHTML()}</div>
-          <div class="flux-piece" hidden><audio controls preload="none"></audio><small>La pièce joue en boucle pendant le flux et le yaourt.</small></div>
+          <div class="flux-piece" hidden><audio controls preload="none"></audio><small>La pièce joue en boucle pendant le flux et le mumble.</small></div>
           <div class="flux-row">
             <button class="btn primary" data-e="flux">▶ 5 minutes de flux</button>
-            <button class="btn" data-e="yaourt">● Yaourt : chanter sans mots</button>
+            <button class="btn" data-e="yaourt">● Mumble : chanter sans mots</button>
             <label class="check"><input type="checkbox" data-e="noback" checked> Sans effacer</label>
             <span class="flux-time mono"></span>
           </div>
           <p class="flux-mot" aria-live="polite"></p>
           <textarea class="input flux-text" rows="7" placeholder="Écris tout ce qui vient, au rythme. Pas de retour en arrière : on corrige plus tard."></textarea>
           <div class="flux-yaourt"></div>
-          <div class="ec-row"><button class="btn" data-e="flux-save">Dans le journal</button><span class="muted small">Le texte et le yaourt partent ensemble : ${esc((espace.meta.members || MEMBERS).find((m) => m !== espace.me) || '')} pourra chanter dessus.</span></div>
+          <div class="ec-row"><button class="btn" data-e="flux-save">Dans le journal</button><span class="muted small">Le texte et le mumble partent ensemble : ${esc((espace.meta.members || MEMBERS).find((m) => m !== espace.me) || '')} pourra chanter dessus.</span></div>
           <p class="flux-src">Pourquoi : l’écriture en flux contourne le censeur intérieur (Elbow 1973) ; chanter la mélodie et le rythme avant les mots est la méthode de nombreux auteurs-compositeurs (Pattison 2009) ; écrire ce qu’on ressent aide à le traverser (Pennebaker et Beall 1986).</p>
         </section>
         <div class="ec-list"></div>`;
@@ -140,7 +140,7 @@ export default {
           ${l.map((e) => `
             <article class="ec-entry" style="--c:${memberColor(e.author)}" data-id="${esc(e.id)}">
               <header><b>${esc(e.author)}</b><span class="muted small">${ago(e.createdAt)}${e.data?.invite ? ` · « ${esc(e.data.invite)} »` : ''}${e.data?.atelier ? ' · séance d’atelier' : ''}</span></header>
-              ${e.audio ? `<button class="btn small" data-pa="${esc(e.id)}">▶ Le yaourt</button>` : ''}
+              ${e.audio ? `<button class="btn small" data-pa="${esc(e.id)}">▶ Le mumble</button>` : ''}
               ${e.data?.atelier ? (e.data.steps || []).map((st) => `<div class="ec-step"><small>${esc(st.nom)}</small><p>${esc(st.text).replace(/\n/g, '<br>')}</p></div>`).join('') : `<p class="ec-body">${esc(e.body).replace(/\n/g, '<br>')}</p>`}
               <div class="ec-acts">
                 <button class="linklike" data-e="mur">${e.data?.aumur ? 'Au mur ✓' : 'Au mur'}</button>
@@ -174,7 +174,7 @@ export default {
         try {
           const audio = yaourtBlob ? await uploadAudio(yaourtBlob) : null;
           const surQuoi = piecesAvecOreille().find(([id]) => id === sur())[1];
-          await saveEntry({ type: 'texte', title: (text.split('\n')[0] || `Yaourt sur ${surQuoi}`).slice(0, 80), body: text, audio, data: { journal: true, date: today(), invite: `Écrit sur ${surQuoi}`, flux: true, sur: sur(), stage: 0 } });
+          await saveEntry({ type: 'texte', title: (text.split('\n')[0] || `Mumble sur ${surQuoi}`).slice(0, 80), body: text, audio, data: { journal: true, date: today(), invite: `Écrit sur ${surQuoi}`, flux: true, sur: sur(), stage: 0 } });
           ta.value = ''; yaourtBlob = null; el.querySelector('.flux-yaourt').innerHTML = '';
           toast('Dans le journal, avec le yaourt.');
         } catch (err) { toast(err.message); }

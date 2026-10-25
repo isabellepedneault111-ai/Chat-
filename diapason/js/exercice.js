@@ -42,12 +42,12 @@ const joueAccord = (ns) => { const t = audio().currentTime + 0.02; import('./sam
 export function exoMode(id) { return MODES[id] || {}; }
 export const PIANO = Object.keys(MODES).filter((k) => k.startsWith('p-'));
 
-// Le dernier yaourt de Zaza (une page du journal avec un enregistrement), s'il existe.
+// Le dernier mumble de Zaza (une page du journal avec un enregistrement), s'il existe.
 const dernierYaourt = (mem) => espace.entries?.filter((e) => e.author === mem[0] && e.audio && (e.data?.flux || e.data?.journal || e.data?.relais)).sort((a, b) => b.createdAt - a.createdAt)[0];
 function yaourtHTML(mem) {
   const y = dernierYaourt(mem);
-  return y ? `<button class="exo-add3" data-yaourt="${esc(y.id)}">▶ Le dernier yaourt de ${esc(mem[0])} : « ${esc(y.title || 'sans titre')} »</button>`
-    : `<p class="exo-ia">Pas encore de yaourt de ${esc(mem[0])}. Demande-lui : Écrire → Écrire sur le beat → Yaourt.</p>`;
+  return y ? `<button class="exo-add3" data-yaourt="${esc(y.id)}">▶ Le dernier mumble de ${esc(mem[0])} : « ${esc(y.title || 'sans titre')} »</button>`
+    : `<p class="exo-ia">Pas encore de mumble de ${esc(mem[0])}. Demande-lui : Écrire → Écrire sur le beat → Mumble.</p>`;
 }
 
 // garderBoucle : lancé depuis une séance, on garde la grille du jour qui joue déjà.
