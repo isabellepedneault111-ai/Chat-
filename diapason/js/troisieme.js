@@ -1,9 +1,9 @@
 // Le troisième membre : il écoute ce que Zaza chante et ce que Frog joue, puis répond à son tour.
 // Pas une voix de robot ni un texte inventé : il reprend VOTRE phrase et la transforme, comme un musicien
 // qui joue avec le matériau des autres. Et il dit ce qu'il a fait, pour qu'on puisse lui répondre.
-import { pluck, onPitch } from './audio.js';
+import { onPitch } from './audio.js';
+import { notePiano, prechargerSons } from './sampler.js';
 import { onConsole, heldNotes } from './console.js';
-import { mtof } from './music.js';
 
 const GAMME = [0, 2, 4, 5, 7, 9, 11];
 const snap = (m, key) => { let best = m; let d = 99; for (let x = m - 2; x <= m + 2; x++) { if (GAMME.includes(((x - key) % 12 + 12) % 12) && Math.abs(x - m) < d) { d = Math.abs(x - m); best = x; } } return best; };
@@ -20,6 +20,7 @@ const GESTES = [
 const RYTHMES = [[1, 0.5, 0.5, 1, 1, 0.5, 0.5, 1, 2], [0.5, 0.5, 1, 0.5, 0.5, 1, 1.5, 0.5, 2], [1.5, 0.5, 1, 1, 1.5, 0.5, 2], [0.5, 0.5, 0.5, 0.5, 1, 1, 0.5, 0.5, 0.5, 0.5, 2]];
 
 export function troisieme({ key = 0 } = {}) {
+  prechargerSons(['piano']);
   let heard = [];
   let lastVoice = 0; let lastVoiceT = 0;
   const offP = onPitch((p) => {
@@ -49,7 +50,7 @@ export function troisieme({ key = 0 } = {}) {
       const beat = 60 / bpm; let t = when; let total = 0;
       for (let i = 0; i < ryt.length && total < 7.5; i++) {
         const n = notes[i % notes.length];
-        pluck(mtof(n), { when: t, dur: Math.min(1.6, ryt[i] * beat * 1.4), gain: 0.26 });
+        notePiano(n, { when: t, dur: Math.min(1.6, ryt[i] * beat * 1.3), vel: 0.65 });
         t += ryt[i] * beat; total += ryt[i];
       }
       heard = [];

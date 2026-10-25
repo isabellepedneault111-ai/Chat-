@@ -2191,3 +2191,32 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .exo-comp i.sing { background: rgba(127, 177, 240, .55); }
 .exo-comp i.now { background: #efe9dc; transform: scaleY(1.25); }
 .exo-comp i.sing.now { background: #7fb1f0; }
+/* Visite : tout tient dans l'écran, sans défiler */
+.tour { --hmax: 52vh; }
+.tour .t-slide { padding: 12px 20px; }
+.t-logo { height: clamp(44px, min(12vw, 10vh), 120px) !important; margin-bottom: min(26px, 2.5vh) !important; }
+.t-welcome { font-size: clamp(2.2rem, min(11vw, 12vh), 7.5rem) !important; }
+.t-sign { margin-top: min(18px, 1.5vh) !important; }
+.t-huge { font-size: clamp(2.2rem, min(8.4vw, 10.5vh), 7.6rem) !important; }
+.t-shot { gap: min(18px, 2vh) clamp(20px, 3vw, 44px); }
+.t-shot-head h2 { font-size: clamp(1.7rem, min(4.4vw, 6.4vh), 4rem) !important; }
+.t-frames { width: 100%; justify-self: center; }
+.t-caps li { padding: min(10px, 1.2vh) 12px; }
+.mt-stage { height: min(46vh, 520px); }
+.t-montage h2 { font-size: clamp(1.8rem, min(5vw, 7vh), 4.2rem) !important; }
+.t-montage { gap: min(16px, 1.6vh); }
+/* Moins de « style IA » : pas de petites capitales très espacées dans la visite et les exercices */
+.t-kicker, .exo-k { font: italic 500 clamp(.95rem, 1.4vw, 1.1rem) var(--display) !important; letter-spacing: 0 !important; text-transform: none !important; color: #e0b866 !important; margin: 0 0 6px; }
+.t-quand b { font: italic 600 1em var(--display); letter-spacing: 0; text-transform: none; color: #e0b866; }
+@media (max-width: 860px) { .tour { --hmax: 40vh; } }
+@media (max-height: 760px) { .tour { --hmax: 46vh; } .t-caps li { font-size: .95rem; } }
+/* Les deux fils derrière le mot d'accueil (rétablis) */
+.il-fils { position: absolute; left: 50%; top: 50%; width: 140vw; height: 110vh; transform: translate(-50%, -50%); z-index: -1; pointer-events: none; opacity: .9; }
+.t-inner > .il-fils { animation: none; }
+.il-fil { fill: none; stroke-width: 1.6; stroke-dasharray: 1; stroke-dashoffset: 1; animation: ilDraw 3.2s cubic-bezier(.45, .05, .2, 1) .3s forwards, ilBreathe 6s ease-in-out 3.5s infinite; }
+.il-fil.z { stroke: #ec86ad; } .il-fil.f { stroke: #7fb1f0; animation-delay: .55s, 3.75s; }
+.il-knot { fill: #f3c77a; opacity: 0; animation: ilPop .8s ease 3.1s forwards; }
+.il-fils { top: 0 !important; height: 100% !important; transform: translateX(-50%) !important; }
+.tour .t-slide { overflow-x: hidden; }
+.t-frame-f { width: 19% !important; }
+@media (max-width: 700px) { .mt-stage { height: 40vh; } }

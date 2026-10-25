@@ -5,7 +5,7 @@ import { store } from '../ui.js';
 import { embers } from '../rituel.js';
 import { ILLU } from '../illus.js';
 import { VISITE } from '../visite-data.js';
-import { jouer, sonActif, basculerSon } from '../visite-sons.js';
+import { jouer, sonActif, basculerSon, prechargerVisite } from '../visite-sons.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
@@ -35,14 +35,14 @@ export function startTour(preview) {
         ${pts.map(([i, n]) => (d[i] ? `<span class="t-pin" data-n="${n}" style="left:${d[i][0]}%;top:${d[i][1]}%"><b>${n + 1}</b></span>` : '')).join('')}
       </div>
     </div>`;
-  const shot = (n, titre, quand, frames, steps, sons = []) => `
+  const shot = (n, titre, quand, frames, steps, sons = [], r = 1.6) => `
     <div class="t-shot" data-steps="${steps.length}" data-sons="${sons.join(',')}" data-auto="${steps.length * 3400 + 2200}">
       <header class="t-shot-head">
         <p class="t-kicker">${n} / 4</p>
         <h2>${titre}</h2>
         <p class="t-quand"><b>Quand</b> ${quand}</p>
       </header>
-      <div class="t-frames">${frames}</div>
+      <div class="t-frames" style="max-width:calc(var(--hmax) * ${r.toFixed(3)})">${frames}</div>
       <ol class="t-caps">${steps.map((t, i) => `<li data-n="${i}"><b>${i + 1}</b><span>${t}</span></li>`).join('')}</ol>
     </div>`;
   const V = VISITE;
@@ -77,7 +77,7 @@ export function startTour(preview) {
         'Sa voix s’affiche en direct : jaune, c’est dans l’accord.',
         'Le temps passé juste, en pourcentage.',
         'Séance après séance, FLIP retient où sa voix brille.',
-      ], ['accord', 'note', 'note', '', 'carillon']),
+      ], ['piece-0', 'piece-1', 'piece-2', 'piece-3', 'piece-4'], V.voix.w / V.voix.h),
     shot(2, 'À distance, <i>en même temps</i>', 'Chacun chez soi, à la même heure, en appel.',
       frame('z', 'distance-z.jpg', V.distance.pts, [[0, 0], [1, 1], [2, 3]], r(V.distance))
       + frame('f', 'distance-f.jpg', V.distance.fpts, [[0, 2]], `${V.distance.fw} / ${V.distance.fh}`), [
@@ -85,14 +85,14 @@ export function startTour(preview) {
         'Le même minuteur, à la seconde, sur les deux écrans.',
         `Sur le cellulaire de ${esc(f)} : la même séance, au même moment.`,
         'La consigne de l’étape. On joue, on n’organise rien.',
-      ], ['tic', 'tic', 'tic', '']),
+      ], ['distance-0', 'distance-1', 'distance-2', 'distance-3'], V.distance.w / V.distance.h / 0.72),
     shot(3, 'Chacun <i>son temps</i>', 'Une idée à 23 h. L’autre l’écoute le lendemain matin.',
       frame('relais', 'relais.jpg', V.relais.pts, [[0, 0], [1, 1], [2, 2], [3, 3]], r(V.relais)), [
         'Une touche : un son part vers l’autre.',
         'Avec une intention : chante dessus, écris dessus.',
         `${esc(z)} répond par-dessus, quand elle veut.`,
         `${esc(f)} trouve les mots. La chanson grandit par couches.`,
-      ], ['riff', '', 'reponse', 'carillon']),
+      ], ['relais-0', '', 'relais-2', 'relais-3'], V.relais.w / V.relais.h),
     shot(4, 'Rien ne <i>se perd</i>', 'Tout le temps : une idée, même à moitié, va au mur.',
       frame('ciel', 'ciel.jpg', V.ciel.pts, [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]], r(V.ciel)), [
         'Le centre, c’est l’album. Plus une idée avance, plus elle s’en approche.',
@@ -100,7 +100,7 @@ export function startTour(preview) {
         'Le pointillé : une rencontre que FLIP propose entre deux idées.',
         'Avec une consigne concrète pour la tenter.',
         'Un clic, et une nouvelle idée naît des deux.',
-      ], ['', '', 'carillon', '', 'accord']),
+      ], ['', '', 'ciel-2', '', 'ciel-4'], V.ciel.w / V.ciel.h),
     // Le reste du génie, en vitrine : six vrais écrans, un son chacun, presque pas de mots.
     `<div class="t-montage" data-auto="${MONTAGE.length * 3600 + 1500}">
        <header><p class="t-kicker">Et ce n’est pas tout</p><h2>Ce que FLIP <i>permet aussi</i></h2></header>
@@ -115,6 +115,7 @@ export function startTour(preview) {
      </div>`,
   ];
 
+  prechargerVisite(); // les vrais instruments se chargent pendant qu'on lit le mot d'accueil
   const box = document.createElement('div');
   box.className = 'tour';
   box.setAttribute('role', 'dialog');

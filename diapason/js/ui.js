@@ -100,7 +100,7 @@ export function keyboard(host, { from = 48, to = 72, labels = true, playable = t
   const press = (m) => {
     const k = keys.get(m);
     if (!k) return;
-    pluck(mtof(m));
+    import('./sampler.js').then((sp) => sp.notePiano(m, { when: 0 })).catch(() => pluck(mtof(m)));
     k.classList.add('down');
     setTimeout(() => k.classList.remove('down'), 180);
     onPlay?.(m);

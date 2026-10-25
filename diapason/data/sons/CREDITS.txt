@@ -1,0 +1,3 @@
+Échantillons sonores utilisés par FLIP
+- Piano : Salamander Grand Piano, Alexander Holm — Creative Commons Attribution 3.0 (CC BY 3.0).
+- Piano électrique et voix « ooh » : FluidR3 GM, Frank Wen — licence MIT (via midi-js-soundfonts, Benjamin Gleitzman).

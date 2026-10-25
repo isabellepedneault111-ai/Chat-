@@ -37,7 +37,7 @@ const COMPING = [[0, 4, 8, 12], [0, 2, 4, 6, 8, 10, 12, 14], [0, 3, 6, 8, 11, 14
 const CHEMIN = [['Do', [60, 64, 67]], ['Fa', [60, 65, 69]], ['Sol', [59, 62, 67]], ['Do', [60, 64, 67]]];
 const MI = [['Do', [60, 64, 67], 'Mi = la tierce'], ['Lam', [57, 60, 64], 'Mi = la quinte'], ['Mim', [52, 55, 64], 'Mi = la fondamentale'], ['Famaj7', [53, 57, 60, 64], 'Mi = la septième']];
 const nomNote = (m) => FR[mod12(m)];
-const joueAccord = (ns) => { const t = audio().currentTime + 0.02; ns.forEach((n, i) => pluck(mtof(n), { when: t + i * 0.03, dur: 1.6, gain: 0.2 })); };
+const joueAccord = (ns) => { const t = audio().currentTime + 0.02; import('./sampler.js').then((sp) => ns.forEach((n, i) => sp.notePiano(n, { when: t + i * 0.02, dur: 1.8, vel: 0.6 }))); };
 
 export function exoMode(id) { return MODES[id] || {}; }
 export const PIANO = Object.keys(MODES).filter((k) => k.startsWith('p-'));
@@ -52,6 +52,7 @@ function yaourtHTML(mem) {
 
 // garderBoucle : lancé depuis une séance, on garde la grille du jour qui joue déjà.
 export async function faireExercice(id, { garderBoucle = false } = {}) {
+  if (id.startsWith('p-')) import('./sampler.js').then((sp) => sp.prechargerSons(['piano']));
   const ex = EXERCICES[id];
   if (!ex || document.querySelector('.exo')) return;
   const m = MODES[id] || {};
