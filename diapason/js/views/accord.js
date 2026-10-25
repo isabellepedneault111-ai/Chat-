@@ -1,6 +1,7 @@
 // Voix + piano : Frog joue (SV-1 en MIDI, ou le clavier à l'écran), Zaza chante.
 // L'app allume les notes de l'accord dans la tessiture de Zaza, mesure si sa voix tombe dedans
 // et nomme l'intervalle qu'elle chante. Le piano de Frog devient le coach de la voix de Zaza.
+import { grooveHTML, bindGroove } from '../groove.js';
 import { startMic, onPitch, mic } from '../audio.js';
 import { autoCanvas, animate, keyboard, getProfile, toast, css } from '../ui.js';
 import { nameFR, FR, mod12, clamp } from '../music.js';
@@ -94,6 +95,7 @@ export default {
       </div>
       <div class="seg-tabs acc-modes" role="tablist">${MODES.map(([id, l]) => `<button role="tab" data-mode="${id}" aria-selected="${id === mode}">${l}</button>`).join('')}</div>
       <p class="muted small acc-hint"></p>
+      ${grooveHTML()}
       <div class="acc-grid">
         <div class="panel acc-stage screen">
           <canvas class="acc-canvas" aria-label="Les notes de l’accord dans la tessiture, et la voix en direct"></canvas>
@@ -117,6 +119,7 @@ export default {
       </div>`;
 
     const q = (s) => el.querySelector(s);
+    const stopGroove = bindGroove(el);
     const cv = autoCanvas(q('.acc-canvas'));
     const kb = keyboard(q('.kb-host'), { from: 48, to: 72, pcKeys: true, onPlay: (m) => {
       if (screenNotes.has(m)) screenNotes.delete(m); else screenNotes.add(m);
@@ -250,6 +253,7 @@ export default {
     });
     refreshTexts();
     return () => {
+      stopGroove();
       stop(); cv.dispose(); kb.dispose(); offPitch(); offCon(); offEsp(); flush();
       // La pratique laisse sa trace : l'autre en verra des pistes sur son accueil.
       const chords = Object.entries(sess.chords).filter(([, v]) => v.s >= 3).map(([label, v]) => ({ label, j: Math.round((v.j / v.s) * 100) / 100 }));

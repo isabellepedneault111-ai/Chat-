@@ -304,7 +304,7 @@ export default {
           ${pid === 'checkin' || pid === 'cible' ? `<p class="big-cible">Cible : <b>${esc(d.cible)}</b></p><p class="muted">Tonalité ${FR[d.key]} majeur · ${g.nom}</p>${grid}${depuisHTML()}` : ''}
           ${ex ? `
             <div class="exercise">
-              <div class="ex-head"><b>${ex.nom}</b><span class="mono">${ex.duree} min</span><button class="btn small ghost" data-a="reroll">Autre exercice</button></div>
+              <div class="ex-head"><b>${ex.nom}</b><span class="mono">${ex.duree} min</span><button class="btn small primary" data-exo="${esc(exId)}">▶ Le faire</button><button class="btn small ghost" data-a="reroll">Autre exercice</button></div>
               <ol>${ex.comment.map((c) => `<li>${c}</li>`).join('')}</ol>
               <cite>${ex.src}</cite>
               ${exempleHTML(exId, ex.nom)}
@@ -388,6 +388,8 @@ export default {
       if (a === 'sync' && consoleState.bpm) { const b = setTempo(consoleState.bpm); toast(`La boucle suit maintenant ${b} BPM.`); }
       if (a === 'full') { const r = el.querySelector('.run'); if (document.fullscreenElement) document.exitFullscreen(); else r?.requestFullscreen?.(); }
       if (a === 'rec') recordTake(e.target.closest('[data-a]'));
+      const xo = e.target.closest('[data-exo]');
+      if (xo) import('../exercice.js').then((m) => m.faireExercice(xo.dataset.exo, { garderBoucle: true }));
       const feu = e.target.closest('[data-feu]');
       if (feu) {
         const n = +feu.dataset.feu;

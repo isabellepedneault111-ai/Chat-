@@ -127,7 +127,8 @@ micBtn.addEventListener('click', async () => {
 onMicStatus((on, err) => {
   micBtn.classList.toggle('on', on);
   micBtn.setAttribute('aria-pressed', on);
-  micBtn.querySelector('.mic-label').textContent = on ? 'En écoute' : 'Micro';
+  micBtn.querySelector('.mic-label').textContent = on ? 'Micro ouvert' : 'Micro';
+  micBtn.title = on ? 'Le micro est ouvert : Voix, Miroir et Empreinte t’entendent. Touche pour le fermer.' : 'Ouvrir le micro (pour chanter dans Voix, Miroir, Empreinte)';
   if (err) toast('Micro refusé. Autorise-le dans la barre d’adresse du navigateur.');
 });
 onPitch((p, rms) => {

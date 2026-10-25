@@ -202,7 +202,9 @@ details > summary { cursor: pointer; }
 .key.white { position: relative; height: 100%; background: linear-gradient(#f5f4fb, #dcdaea); border-right: 1px solid #b9b6cc; border-radius: 0 0 8px 8px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; }
 .key.white span { font-size: clamp(8px, 1vw, 11px); font-weight: 700; color: #6b6785; pointer-events: none; }
 .key.black { position: absolute; top: 0; height: 60%; background: linear-gradient(#2a2838, #0e0d16); border-radius: 0 0 6px 6px; z-index: 2; box-shadow: 0 3px 6px rgba(0, 0, 0, .6); }
-.key.down, .key.white.k-live, .key.black.k-live { background: var(--cyan) !important; box-shadow: 0 0 22px var(--cyan); }
+/* Touche enfoncée : la blanche s'allume clair, la noire reste sombre avec un liseré, on les distingue toujours. */
+.key.white.down, .key.white.k-live { background: linear-gradient(#e6fbff, #8fe9fa) !important; box-shadow: inset 0 -6px 0 #2bb8d4, 0 0 18px rgba(62, 230, 255, .55); }
+.key.black.down, .key.black.k-live { background: linear-gradient(#0f4f63, #06232d) !important; box-shadow: inset 0 0 0 2px #3ee6ff, 0 0 14px rgba(62, 230, 255, .6); }
 .key.white.k-range { background: linear-gradient(#e9ffd0, #c9f58e); }
 .key.black.k-range { background: linear-gradient(#5f8a1d, #34500a); }
 .key.k-low { background: var(--lime) !important; }
@@ -2055,3 +2057,21 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .exo-ctrl .btn:not(.primary) { background: transparent; color: #efe9dc; border-color: rgba(241, 233, 216, .5); box-shadow: none; }
 .exo-bpm { display: inline-flex; align-items: center; gap: 6px; }
 .exo-bpm .icon-btn { color: #efe9dc; border-color: rgba(241, 233, 216, .4); }
+/* Le beat sous la voix */
+.groove { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 0 0 14px; padding: 10px 14px; border: 1.5px solid var(--rule); border-radius: 8px; background: var(--card); }
+.groove label { display: inline-flex; align-items: center; gap: 6px; font-size: .82rem; font-weight: 700; color: var(--muted); }
+.groove select { padding: 4px 6px; border: 1.5px solid var(--line); border-radius: 6px; background: var(--paper); font: inherit; color: var(--text); }
+.groove.on .groove-play { background: var(--ink); color: var(--paper); }
+.groove-strip { flex: 1 1 100%; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 3px; }
+.groove-strip:empty { display: none; }
+.groove-strip i { height: 18px; border-radius: 3px; background: var(--surface2); transition: background .05s, transform .05s; }
+.groove-strip i.temps { box-shadow: inset 2px 0 0 rgba(27, 25, 21, .25); }
+.groove-strip i.sing { background: color-mix(in srgb, var(--zaza) 55%, var(--card)); }
+.groove-strip i.ecoute { opacity: .45; }
+.groove-strip i.now { background: var(--ink); transform: scaleY(1.25); }
+.groove-strip i.sing.now { background: var(--zaza); }
+.groove-aide { flex: 1 1 100%; margin: 0; }
+/* Le troisième membre */
+.exo-tours b.t3.on { background: #f3c77a; border-color: #f3c77a; color: #1b1915; }
+.exo-add3 { border: 1px dashed rgba(243, 199, 122, .6); background: none; color: #f3c77a; border-radius: 999px; padding: 6px 14px; font: 600 .9rem var(--body); cursor: pointer; }
+.exo-ia { margin: 0; font: italic 500 1.05rem var(--display); color: #f3c77a; min-height: 1.4em; }

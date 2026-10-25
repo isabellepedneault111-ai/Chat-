@@ -28,7 +28,8 @@ const MODES = {
 
 export function exoMode(id) { return MODES[id] || {}; }
 
-export async function faireExercice(id) {
+// garderBoucle : lancé depuis une séance, on garde la grille du jour qui joue déjà.
+export async function faireExercice(id, { garderBoucle = false } = {}) {
   const ex = EXERCICES[id];
   if (!ex || document.querySelector('.exo')) return;
   const m = MODES[id] || {};
@@ -42,7 +43,7 @@ export async function faireExercice(id) {
   box.setAttribute('role', 'dialog');
   box.setAttribute('aria-label', ex.nom);
   const visuel = m.souffle ? '<div class="exo-souffle"><i></i><span>Inspire</span></div>'
-    : m.tours || m.tete ? `<div class="exo-tours">${(m.tete ? ['Dans ta tête', 'Joue-la'] : mem).map((n, i) => `<b data-t="${i}" class="${m.tete ? '' : i ? 'f' : 'z'}">${esc(n)}</b>`).join('')}</div>`
+    : m.tours || m.tete ? `<div class="exo-tours">${(m.tete ? ['Dans ta tête', 'Joue-la'] : mem).map((n, i) => `<b data-t="${i}" class="${m.tete ? '' : i ? 'f' : 'z'}">${esc(n)}</b>`).join('')}${m.tours ? '<b data-t="2" class="t3" hidden>Le troisième</b>' : ''}</div>${m.tours ? '<button class="exo-add3" data-x="trois">+ Inviter le troisième membre</button><p class="exo-ia" hidden></p>' : ''}`
       : m.degres ? `<div class="exo-notes">${[0, 2, 4, 7].map((iv, i) => `<b><small>${[1, 2, 3, 5][i]}</small>${FR[mod12(key + iv)]}</b>`).join('')}</div>`
         : m.notes ? `<div class="exo-notes">${m.notes.map((iv) => `<b>${FR[mod12(key + iv)]}</b>`).join('')}</div>` : '';
   box.innerHTML = `
@@ -69,20 +70,23 @@ export async function faireExercice(id) {
 
   // La boucle d'accords passe par le studio (même son, même horloge MIDI vers le clavier de Frog).
   let studio = null;
-  if (m.boucle) {
+  let boucleAvant = false;
+  if (m.boucle && !garderBoucle) {
     studio = await import('./views/studio.js');
     studio.setLoop(key, { nom: ex.nom, roman: '', chords: m.boucle, usage: m.aide || '' });
     studio.setTempo(bpm);
-    if (!studio.loopPlaying()) studio.toggleLoop();
+    boucleAvant = studio.loopPlaying();
+    if (!boucleAvant) studio.toggleLoop();
   }
   const c = audio();
   let t0 = c.currentTime + 0.1;
+  let trois = null; let troisFait = -1;
   let nextBeat = t0; let beatN = 0; let paused = false; let elapsed = 0; let last = performance.now(); let manual = -1;
   const metroOn = m.metro || m.tours || m.tete;
   const sched = setInterval(() => {
     if (paused || !bpm) return;
     while (nextBeat < c.currentTime + 0.12) {
-      if (metroOn && !m.boucle) drums.hat(nextBeat, beatN % 4 === 0 ? 1 : 0.45);
+      if (metroOn && (!m.boucle || garderBoucle)) drums.hat(nextBeat, beatN % 4 === 0 ? 1 : 0.45);
       nextBeat += 60 / bpm; beatN++;
     }
   }, 25);
@@ -101,7 +105,18 @@ export async function faireExercice(id) {
       const beatLen = 60 / bpm; const pos = (c.currentTime - t0) / beatLen;
       const b = Math.floor(pos);
       box.querySelectorAll('.exo-beats i').forEach((x, i) => x.classList.toggle('on', b >= 0 && b % 4 === i));
-      if (m.tours || m.tete) { const turn = Math.floor(Math.max(0, b) / (4 * (m.tours || 1))) % 2; box.querySelectorAll('.exo-tours b').forEach((x) => x.classList.toggle('on', +x.dataset.t === turn)); }
+      if (m.tours || m.tete) {
+        const n = trois ? 3 : 2; const per = 4 * (m.tours || 1);
+        const cycle = Math.floor(Math.max(0, b) / per); const turn = cycle % n;
+        box.querySelectorAll('.exo-tours b').forEach((x) => x.classList.toggle('on', +x.dataset.t === turn));
+        // Le troisième joue pile au début de son tour : on le programme un temps à l'avance.
+        const nextCycle = cycle + 1;
+        if (trois && nextCycle % 3 === 2 && troisFait !== nextCycle && b % per === per - 1) {
+          troisFait = nextCycle;
+          const quoi = trois.repondre(t0 + nextCycle * per * beatLen, bpm);
+          const ia = q('.exo-ia'); ia.hidden = false; ia.textContent = `Le troisième ${quoi}.`;
+        }
+      }
     }
     if (m.souffle) { const ph = (elapsed % 8) / 8; const sz = ph < 0.5 ? ph * 2 : 2 - ph * 2; q('.exo-souffle i').style.transform = `scale(${0.35 + sz * 0.65})`; q('.exo-souffle span').textContent = ph < 0.5 ? 'Inspire' : 'Expire'; }
     if (left <= 0) { end(true); return; }
@@ -109,8 +124,8 @@ export async function faireExercice(id) {
   };
   raf = requestAnimationFrame(frame);
   function end(done) {
-    cancelAnimationFrame(raf); clearInterval(sched);
-    if (studio?.loopPlaying()) studio.toggleLoop();
+    cancelAnimationFrame(raf); clearInterval(sched); trois?.dispose();
+    if (studio?.loopPlaying() && !boucleAvant) studio.toggleLoop();
     logPractice('exercice', elapsed / 60, { exercice: id, nom: ex.nom });
     box.classList.add('out');
     setTimeout(() => box.remove(), 300);
@@ -122,6 +137,18 @@ export async function faireExercice(id) {
   box.addEventListener('click', (e) => {
     const x = e.target.closest('[data-x]')?.dataset.x;
     if (x === 'end') end(elapsed > 30);
+    if (x === 'trois' && !trois) {
+      // Il écoute la voix (micro) et le clavier (MIDI), puis répond une fois sur trois.
+      import('./audio.js').then((a) => a.startMic()).catch(() => {});
+      import('./console.js').then((cn) => cn.startConsole()).catch(() => {});
+      import('./troisieme.js').then((t) => {
+        trois = t.troisieme({ key });
+        q('.exo-tours .t3').hidden = false;
+        e.target.closest('[data-x]').remove();
+        const ia = q('.exo-ia'); ia.hidden = false; ia.textContent = 'Le troisième écoute. À son tour, il reprend ce qu’il a entendu et le transforme.';
+        t0 = c.currentTime + 0.1; nextBeat = t0; beatN = 0;
+      });
+    }
     if (x === 'next') manual = Math.min(steps.length - 1, Math.max(manual, Math.floor(elapsed / (total / Math.max(1, steps.length)))) + 1);
     if (x === 'pause') {
       paused = !paused; e.target.textContent = paused ? 'Reprendre' : 'Pause';
