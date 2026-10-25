@@ -70,7 +70,7 @@ export function startTour(preview) {
      </div>`,
     `<div class="t-title" data-auto="8000">
        <p class="t-kicker">Ce que j’ai imaginé pour nous deux</p>
-       <h2 class="t-huge">La distance<br>ne crée plus<br><i>de distance.</i></h2>
+       <h2 class="t-huge">L’absence<br>ne crée plus<br><i>de distance.</i></h2>
        <p class="t-line">Dans la même pièce ou loin l’un de l’autre, nos élans ne s’arrêtent plus. Voici comment, sur la vraie app, avec des exemples.</p>
      </div>`,
     shot(1, 'Dans la même <i>pièce</i>', 'Ensemble. Toi au clavier, moi au micro.',
