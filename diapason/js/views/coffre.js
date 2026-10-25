@@ -47,6 +47,7 @@ export default {
               <button class="btn small ghost" data-out="${esc(e.id)}">Sortir du coffre</button>
             </article>`).join('')}
         </div>
+        <p class="cf-cb"><a href="#/corbeille">La corbeille commune${espace.trash.length ? ` (${espace.trash.length})` : ''}</a> : ce qu’on a jeté attend là, et ne s’efface qu’à deux.</p>
         ${perles.length ? '' : '<p class="muted cf-hint">Dans le relais, chaque son et chaque texte a un bouton <b>✦ Au coffre</b>. Ce que vous y déposez apparaît ici.</p>'}`;
     }
     el.addEventListener('click', async (e) => {

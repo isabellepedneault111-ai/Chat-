@@ -2,6 +2,7 @@
 // et qui finit toujours par une prise. Le minuteur est partagé entre les deux appareils.
 import { FLAME } from '../marque.js';
 import { depuisHTML } from '../traces.js';
+import { exempleHTML, bindExemples } from '../exemples.js';
 import { espace, onEspace, saveEntry, uploadAudio, uid } from '../espace.js';
 import { animate, toast } from '../ui.js';
 import { audio, click } from '../audio.js';
@@ -306,6 +307,7 @@ export default {
               <div class="ex-head"><b>${ex.nom}</b><span class="mono">${ex.duree} min</span><button class="btn small ghost" data-a="reroll">Autre exercice</button></div>
               <ol>${ex.comment.map((c) => `<li>${c}</li>`).join('')}</ol>
               <cite>${ex.src}</cite>
+              ${exempleHTML(exId, ex.nom)}
             </div>
             ${['impro', 'developper', 'echauffement', 'solo'].includes(pid) ? `<p class="muted small">Grille du jour (${FR[d.key]}) :</p>${grid}` : ''}` : ''}
           ${extra}
@@ -446,6 +448,7 @@ export default {
       if (e.key.toLowerCase() === 'b') press('[data-a=loop]');
     };
     window.addEventListener('keydown', onKey);
+    bindExemples(el);
     // Une action de l'autre (pause, phase suivante, autre exercice) arrive : on suit.
     const off = onEspace((what) => {
       if (what !== 'entries' && what !== 'meta') return;

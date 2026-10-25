@@ -6,6 +6,8 @@ import { MEMBERS, ROLES, memberColor, STAGES, PLAN, EVAL, NIVEAUX } from '../duo
 import { planContext, currentMonth } from '../plan.js';
 import { intentsHTML } from './relais.js';
 import { impact } from '../impact.js';
+import { jeter } from '../corbeille.js';
+import { projets, projetCourant, setProjet, projetNom, creerProjet } from '../projets.js';
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export function ago(t) {
@@ -95,7 +97,7 @@ export function espaceGate(host, { onReady } = {}) {
 
 const BOARD_TYPES = new Set(['note', 'texte', 'audio', 'essai', 'paroles', 'lien']);
 // Le journal et les séances d'atelier vivent dans « Écrire » ; on les envoie au mur d'un geste.
-const onBoard = (e) => BOARD_TYPES.has(e.type) && !((e.data?.journal || e.data?.atelier) && !e.data?.aumur);
+const onBoard = (e) => BOARD_TYPES.has(e.type) && !e.data?.exemple && !((e.data?.journal || e.data?.atelier) && !e.data?.aumur);
 const URL_RE = /https?:\/\/[^\s<>"]+/i;
 export function linkKind(url) {
   if (/open\.spotify\.com/.test(url)) return 'Spotify';
@@ -167,8 +169,9 @@ export default {
       el.innerHTML = `
         <div class="mod-head">
           <div>
-            <p class="eyebrow">Le mur</p>
-            <h1>Nos idées, et où elles s’en vont</h1>
+            <p class="eyebrow">Le mur${projetCourant() ? ` · ${esc(projetNom(projetCourant()))}` : ''}</p>
+            <h1>${projetCourant() ? esc(projetNom(projetCourant())) : 'Nos idées, et où elles s’en vont'}</h1>
+            <label class="projet-sel"><span>Projet</span><select data-projet><option value="">Tous nos projets</option>${projets().map((p) => `<option value="${esc(p.id)}" ${p.id === projetCourant() ? 'selected' : ''}>${esc(p.nom)}</option>`).join('')}<option value="+">+ Nouveau projet…</option></select></label>
             <p class="muted">Tu es <b style="color:${memberColor(espace.me)}">${esc(espace.me)}</b> · <span class="sync-state">synchronisé</span> · <a href="#/lexique">lexique</a> · <button class="linklike" data-c="share">inviter ${esc(other())}</button></p>
           </div>
           <div class="actions">
@@ -245,6 +248,7 @@ export default {
     function filtered() {
       const qv = (el.querySelector('.search')?.value || '').toLowerCase();
       return espace.entries.filter((e) => !['parcours', 'session', 'profil'].includes(e.type)
+        && (!projetCourant() || e.data?.projet === projetCourant())
         && (!fWho || e.author === fWho)
         && (!fSong || (fSong === '—' ? !songOf(e) : songOf(e) === fSong))
         && (!qv || `${e.title} ${e.body} ${e.author} ${songOf(e)}`.toLowerCase().includes(qv)));
@@ -311,7 +315,7 @@ export default {
       const n = e.data?.replies?.length || 0;
       return `
         <article class="card-mini type-${e.type}" draggable="true" data-card="${e.id}" style="--c:${memberColor(e.author)}">
-          <div class="cm-top"><span class="cm-type">${e.type === 'paroles' ? 'Paroles' : t.label}</span><span class="cm-who">${esc(e.author || '')}</span></div>
+          <div class="cm-top"><span class="cm-type">${e.type === 'paroles' ? 'Paroles' : t.label}${!projetCourant() && e.data?.projet && projetNom(e.data.projet) ? ` · ${esc(projetNom(e.data.projet))}` : ''}</span><span class="cm-who">${esc(e.author || '')}</span></div>
           <b class="cm-title">${esc(e.title || (e.body || '').slice(0, 60) || 'Sans titre')}</b>
           ${e.data?.relais ? `<div class="cm-intents">${intentsHTML(e)}${layersOf(e) > 1 ? `<span class="cm-layers">${layersOf(e)} couches</span>` : ''}</div>` : ''}
           ${songOf(e) && view !== 'morceaux' ? `<span class="cm-song">${esc(songOf(e))}</span>` : ''}
@@ -558,7 +562,7 @@ export default {
         return;
       }
       const del = e.target.closest('[data-del]');
-      if (del && confirm('Supprimer pour vous deux?')) { await deleteEntry(del.dataset.del).catch((err) => toast(err.message)); closeDetail(); return; }
+      if (del) { const en = espace.entries.find((x) => x.id === del.dataset.del); if (en) await jeter(en).catch((err) => toast(err.message)); closeDetail(); return; }
       const card = e.target.closest('[data-card], [data-open]');
       if (card && !e.target.closest('button, a, audio, video')) { openDetail(card.dataset.card || card.dataset.open); return; }
       if (e.target.classList.contains('detail-scrim')) { closeDetail(); return; }
@@ -613,6 +617,16 @@ export default {
           toast('Audio d’accueil enregistré.');
           renderSettings();
         } catch (err) { toast(err.message); }
+      }
+      if (e.target.matches('[data-projet]')) {
+        let v = e.target.value;
+        if (v === '+') {
+          const nom = prompt('Le nom du projet (ex. : Album hiver, Reprises, Forever more) :');
+          if (!nom?.trim()) { e.target.value = projetCourant(); return; }
+          try { await creerProjet(nom.trim()); toast(`Projet « ${nom.trim()} » : ce que vous créez maintenant s’y range tout seul.`); } catch (err) { toast(err.message); }
+        } else setProjet(v);
+        render();
+        return;
       }
       if (e.target.dataset.fsel === 'who') { fWho = e.target.value; renderAll(true); return; }
       if (e.target.dataset.fsel === 'song') { fSong = e.target.value; renderAll(true); return; }

@@ -8,6 +8,7 @@ import { esc, espaceGate, ago, embedHTML } from './carnet.js';
 import { activeSession } from './session.js';
 import { relaisPending, asksOf } from './relais.js';
 import { pendantHTML } from '../traces.js';
+import { enAttenteDeMoi } from '../corbeille.js';
 
 // Où aller : chaque outil rangé par ce qu'on veut faire, pas par son nom.
 const OU_ALLER = [
@@ -36,7 +37,8 @@ export default {
           : r.duo < 2 ? { t: 'Une session duo', d: '60 min', why: `${r.duo} sur 2 cette semaine : courtes et régulières, c’est ce qui fait progresser.`, href: '#/session' }
             : r.ecoute === 0 ? { t: 'Écoute commune', d: '20 min', why: 'Réécouter nos prises et faire avancer les idées sur le mur.', href: '#/session' }
               : { t: 'Voix + piano', d: '10 min', why: 'Frog joue, Zaza chante : la justesse se travaille dans nos vrais accords.', href: '#/accord' };
-      return inviteHTML() + `<a class="today" href="${t.href}"><span class="today-k mono">Aujourd’hui · ${esc(t.d)}</span><b>${esc(t.t)}</b><span class="today-why">${esc(t.why)}</span><span class="today-go">→</span></a>`;
+      const cb = enAttenteDeMoi();
+      return inviteHTML() + (cb.length ? `<a class="cb-notice" href="#/corbeille">${esc(cb[0].data.corbeille.by)} propose d’effacer ${cb.length} élément${cb.length > 1 ? 's' : ''} : ton accord est nécessaire →</a>` : '') + `<a class="today" href="${t.href}"><span class="today-k mono">Aujourd’hui · ${esc(t.d)}</span><b>${esc(t.t)}</b><span class="today-why">${esc(t.why)}</span><span class="today-go">→</span></a>`;
     }
 
     // Tant que l'autre n'est pas entré : le mot secret, prêt en un clic.

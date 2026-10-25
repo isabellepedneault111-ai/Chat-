@@ -11,6 +11,7 @@ export const espace = {
   meta: null,
   rev: '',
   entries: [],
+  trash: [], // la corbeille commune : hors de vue, restaurable, effacée seulement d'un commun accord
   online: true,
   get me() { return store.get('me', ''); },
   set me(v) { store.set('me', String(v).slice(0, 40)); },
@@ -98,7 +99,8 @@ async function refresh(force) {
   const { data } = await api(`/${espace.id}/entries`);
   const before = new Set(espace.entries.map((e) => `${e.id}:${e.updatedAt}`));
   const fresh = data.entries.filter((e) => !before.has(`${e.id}:${e.updatedAt}`) && e.editedBy !== espace.me);
-  espace.entries = data.entries;
+  espace.entries = data.entries.filter((e) => !e.data?.corbeille);
+  espace.trash = data.entries.filter((e) => e.data?.corbeille);
   espace.rev = data.rev;
   // Les réglages (nom, objectif d'album) voyagent avec les entrées.
   if (data.meta && JSON.stringify(data.meta) !== JSON.stringify(espace.meta)) {
@@ -132,15 +134,22 @@ function stopPolling() { clearTimeout(timer); }
 document.addEventListener('visibilitychange', () => { if (!document.hidden && espace.id) { lastChange = Date.now(); startPolling(); } });
 
 // Enregistre une entrée. baseUpdatedAt : version connue, pour détecter un conflit.
+const PROJET_TYPES = new Set(['note', 'texte', 'audio', 'lien', 'essai', 'paroles']);
 export async function saveEntry(entry, { baseUpdatedAt, force } = {}) {
   const id = entry.id || uid();
+  // Une nouvelle création se range dans le projet choisi (s'il y en a un).
+  const proj = store.get('projet', '');
+  if (proj && PROJET_TYPES.has(entry.type) && !espace.entries.some((e) => e.id === id) && !(entry.data && 'projet' in entry.data) && (espace.meta?.projets || []).some((p) => p.id === proj)) {
+    entry = { ...entry, data: { ...(entry.data || {}), projet: proj } };
+  }
   const { status, data } = await api(`/${espace.id}/entries/${id}`, {
     method: 'PUT',
     body: JSON.stringify({ entry: { ...entry, author: entry.author || espace.me }, baseUpdatedAt, force }),
   });
   if (status === 409) return { conflict: true, current: data.current };
-  const i = espace.entries.findIndex((e) => e.id === id);
-  if (i >= 0) espace.entries[i] = data.entry; else espace.entries.unshift(data.entry);
+  espace.entries = espace.entries.filter((e) => e.id !== id);
+  espace.trash = espace.trash.filter((e) => e.id !== id);
+  if (data.entry.data?.corbeille) espace.trash.unshift(data.entry); else espace.entries.unshift(data.entry);
   espace.rev = data.rev;
   lastChange = Date.now();
   emit('entries', { fresh: [] });
@@ -150,6 +159,7 @@ export async function saveEntry(entry, { baseUpdatedAt, force } = {}) {
 export async function deleteEntry(id) {
   const { data } = await api(`/${espace.id}/entries/${id}`, { method: 'DELETE' });
   espace.entries = espace.entries.filter((e) => e.id !== id);
+  espace.trash = espace.trash.filter((e) => e.id !== id);
   espace.rev = data.rev;
   emit('entries', { fresh: [] });
 }

@@ -37,40 +37,6 @@ function bell() {
 }
 
 // ---------- Braises et fumée ----------
-// La lune rendue en volume : éclairage selon la phase réelle (cycle synodique de 29,53 jours),
-// avec quelques mers lunaires et un grain très fin. Peinte une fois, puis réutilisée.
-export function moonPhase(date = new Date()) {
-  const syn = 29.530588853;
-  const age = ((((date - Date.UTC(2000, 0, 6, 18, 14)) / 864e5) % syn) + syn) % syn;
-  return { age, frac: age / syn, lit: (1 - Math.cos((2 * Math.PI * age) / syn)) / 2 };
-}
-function paintMoon(px, r) {
-  const n = Math.max(8, Math.round(px * 2));
-  const cv = document.createElement('canvas'); cv.width = n; cv.height = n;
-  const c = cv.getContext('2d'); const img = c.createImageData(n, n);
-  const { frac, lit } = moonPhase();
-  const ang = 2 * Math.PI * frac;
-  const L = [Math.sin(ang), -0.08, -Math.cos(ang)];
-  const maria = [[-0.25, -0.2, 0.32], [0.18, -0.3, 0.22], [0.05, 0.25, 0.28], [-0.35, 0.3, 0.18], [0.35, 0.05, 0.16]];
-  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) {
-    const x = (i + 0.5) / n * 2 - 1; const y = (j + 0.5) / n * 2 - 1; const d = x * x + y * y;
-    const k = (j * n + i) * 4;
-    if (d > 1) { img.data[k + 3] = 0; continue; }
-    const z = Math.sqrt(1 - d);
-    let b = Math.max(0, x * L[0] + y * L[1] + z * L[2]);
-    b = Math.pow(b, 0.75);
-    let alb = 0.92;
-    for (const [mxx, myy, rr] of maria) { const q = ((x - mxx) ** 2 + (y - myy) ** 2) / (rr * rr); alb -= 0.16 * Math.exp(-q * 2); }
-    alb += (Math.sin(i * 12.9898 + j * 78.233) * 43758.5453 % 1) * 0.03;
-    const earth = 0.05; // lumière cendrée, à peine
-    const v = Math.min(1, b * alb + earth * (1 - b));
-    const edge = Math.min(1, (1 - Math.sqrt(d)) * n * 0.5); // bord adouci
-    img.data[k] = 244 * v; img.data[k + 1] = 239 * v; img.data[k + 2] = 226 * v; img.data[k + 3] = 255 * edge * Math.min(1, 0.35 + v * 1.4);
-  }
-  c.putImageData(img, 0, 0);
-  return { cv, r, lit };
-}
-
 export function embers(cv, { soft = false } = {}) {
   // La nuit et l'eau, avec le feu : étoiles, croissant de lune, eau qui ondule, braises qui montent.
   const ctx = cv.getContext('2d');
@@ -79,45 +45,22 @@ export function embers(cv, { soft = false } = {}) {
   const size = () => { w = cv.clientWidth; h = cv.clientHeight; cv.width = w * dpr; cv.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
   size();
   const P = [];
-  let moonImg = null;
-  const stars = Array.from({ length: 140 }, () => ({ x: Math.random(), y: Math.random() * 0.62, r: 0.4 + Math.random() * 1.1, s: 0.4 + Math.random() * 1.6, p: Math.random() * 6.3 }));
   const spawn = (n, x, y, spread, speed) => { for (let i = 0; i < n; i++) P.push({ x: x + (Math.random() - 0.5) * spread, y, vx: (Math.random() - 0.5) * 0.5, vy: -(0.35 + Math.random() * speed), life: 1, decay: 0.005 + Math.random() * 0.008, s: 0.6 + Math.random() * 1.6, hue: 18 + Math.random() * 28 }); };
   const tick = (now) => {
     raf = requestAnimationFrame(tick);
     const t = now / 1000;
     ctx.globalCompositeOperation = 'source-over';
     ctx.clearRect(0, 0, w, h);
-    // étoiles qui scintillent
-    for (const st of stars) {
-      ctx.globalAlpha = 0.25 + 0.75 * Math.abs(Math.sin(t * st.s + st.p));
-      ctx.fillStyle = '#eef1ff';
-      ctx.beginPath(); ctx.arc(st.x * w, st.y * h, st.r, 0, 6.29); ctx.fill();
+    // deux halos qui dérivent lentement : le feu (ambre) et l'eau (bleu profond), comme des lumières de scène dans la brume
+    const glows = [[0.32 + 0.12 * Math.sin(t * 0.05), 0.62 + 0.06 * Math.cos(t * 0.04), 0.75, '255,120,40', 0.16], [0.72 + 0.1 * Math.cos(t * 0.045), 0.38 + 0.08 * Math.sin(t * 0.035), 0.8, '60,90,180', 0.18]];
+    for (const [gx, gy, gr, col, al] of glows) {
+      const R = gr * Math.max(w, h);
+      const g = ctx.createRadialGradient(gx * w, gy * h, 0, gx * w, gy * h, R);
+      g.addColorStop(0, `rgba(${col},${al})`); g.addColorStop(1, `rgba(${col},0)`);
+      ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
     }
-    // la lune de ce soir, dans sa vraie phase
-    const mx = w * 0.82; const my = h * 0.15; const mr = Math.max(12, Math.min(w, h) * 0.04);
-    if (!moonImg || moonImg.r !== mr) moonImg = paintMoon(mr * dpr, mr);
-    ctx.globalAlpha = 1;
-    const halo = ctx.createRadialGradient(mx, my, mr, mx, my, mr * 2.6);
-    halo.addColorStop(0, `rgba(210,218,245,${0.10 * moonImg.lit})`); halo.addColorStop(1, 'rgba(210,218,245,0)');
-    ctx.fillStyle = halo; ctx.beginPath(); ctx.arc(mx, my, mr * 2.6, 0, 6.29); ctx.fill();
-    ctx.drawImage(moonImg.cv, mx - mr, my - mr, mr * 2, mr * 2);
-    // l'eau : trois nappes qui ondulent, un reflet de lune
-    for (let i = 0; i < 3; i++) {
-      const y0 = h * (0.8 + i * 0.06);
-      const crest = new Path2D();
-      for (let x = -8; x <= w + 8; x += 8) { const yy = y0 + Math.sin(x * 0.006 + t * (0.35 + i * 0.2) + i) * (7 + i * 4) + Math.sin(x * 0.015 - t * 0.6) * 3; if (x < 0) crest.moveTo(x, yy); else crest.lineTo(x, yy); }
-      const body = new Path2D(crest); body.lineTo(w + 8, h + 2); body.lineTo(-8, h + 2); body.closePath();
-      ctx.fillStyle = `rgba(${28 + i * 6},${48 + i * 8},${96 + i * 10},${0.32 + i * 0.12})`; ctx.fill(body);
-      ctx.strokeStyle = 'rgba(170,196,255,0.22)'; ctx.lineWidth = 1; ctx.stroke(crest);
-    }
-    for (let k = 0; k < 6; k++) {
-      ctx.globalAlpha = (0.14 + 0.1 * Math.sin(t * 1.3 + k)) * (0.3 + 0.7 * (moonImg?.lit ?? 1));
-      ctx.fillStyle = '#e8ecff';
-      ctx.fillRect(mx - 30 + Math.sin(t + k) * 12, h * 0.83 + k * 9, 60 - k * 7, 1.5);
-    }
-    ctx.globalAlpha = 1;
     // braises
-    if (Math.random() < (soft ? 0.2 : 0.5)) spawn(1, w / 2, h * 0.86, w * 0.7, soft ? 1 : 1.4);
+    if (Math.random() < (soft ? 0.15 : 0.45)) spawn(1, w / 2, h + 10, w * 0.8, soft ? 1 : 1.4);
     if (burst > 0) { spawn(14, w / 2, h * 0.5, 160, 4); burst--; }
     ctx.globalCompositeOperation = 'lighter';
     for (let i = P.length - 1; i >= 0; i--) {

@@ -3,6 +3,7 @@ import { espace, onEspace, saveEntry, deleteEntry, uid } from '../espace.js';
 import { store, toast } from '../ui.js';
 import { loadLexique, lineSyll, rhymes, synonyms, rimeOf, wordSyll } from '../lexique.js';
 import { esc, ago, espaceGate } from './carnet.js';
+import { jeter } from '../corbeille.js';
 import { SECTION_KINDS } from '../data.js';
 
 const LOCAL = 'parolesLocal';
@@ -31,7 +32,7 @@ const songs = {
     return { entry: saved };
   },
   async remove(id) {
-    if (espace.connected) return deleteEntry(id);
+    if (espace.connected) { const en = espace.entries.find((x) => x.id === id); return en ? jeter(en) : deleteEntry(id); }
     store.set(LOCAL, store.get(LOCAL, []).filter((s) => s.id !== id));
   },
 };

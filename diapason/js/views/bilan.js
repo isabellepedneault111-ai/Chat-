@@ -3,6 +3,7 @@
 import { espace, onEspace, profileOf } from '../espace.js';
 import { PLAN, EXERCICES, MEMBERS, memberColor, FORMATS, RYTHME } from '../duo.js';
 import { FLAME } from '../marque.js';
+import { exempleHTML, bindExemples } from '../exemples.js';
 import { currentMonth, planContext, planStart, weekRhythm } from '../plan.js';
 import { esc, espaceGate } from './carnet.js';
 import { carte, carteHTML, notesMagiques } from './accord.js';
@@ -280,6 +281,7 @@ export default {
               <p class="b-why">${esc(x.why || '')}</p>
               <ol>${(x.comment || []).map((c) => `<li>${esc(c)}</li>`).join('')}</ol>
               <p class="b-foot"><span>${x.duree} min</span><cite>${esc(x.src || '')}</cite></p>
+              ${EXERCICES[x.id] ? exempleHTML(x.id, x.nom) : ''}
               ${x.href ? `<a class="btn small" href="${x.href}">Ouvrir →</a>` : '<a class="btn small" href="#/session">Dans une session →</a>'}
             </article>`).join('')}</div>
         </section>
@@ -304,6 +306,7 @@ export default {
       if (b === 'copy') { await navigator.clipboard?.writeText(el.dataset.text || ''); toast('Bilan copié.'); }
       if (b === 'print') window.print();
     });
+    bindExemples(el);
     const off = onEspace((w) => { if (w === 'entries' || w === 'meta') render(); });
     const onHash = () => { if (location.hash.startsWith('#/bilan')) render(); };
     window.addEventListener('hashchange', onHash);

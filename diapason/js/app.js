@@ -15,6 +15,7 @@ import coffre from './views/coffre.js';
 import lexique from './views/lexique.js';
 import ecrireV from './views/ecrire.js';
 import atelier from './views/atelier.js';
+import corbeille from './views/corbeille.js';
 import { maybeTour } from './views/tour.js';
 import home from './views/home.js';
 import miroir from './views/miroir.js';
@@ -26,7 +27,22 @@ import paroles from './views/paroles.js';
 import carnet from './views/carnet.js';
 import { boot, joinEspace, espace, onEspace } from './espace.js';
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier };
+// Pourquoi chaque page existe, en une ligne, avec ses appuis.
+const APPUIS = {
+  home: ['Séances courtes et régulières plutôt que rares et longues ; une vision commune avant de composer.', 'Rohrer 2004 · Merchán-Sánchez-Jara 2023'],
+  carnet: ['Une idée passe par générer, écouter, construire, fixer, jouer : la rendre visible la fait avancer.', 'Biasutti 2018 · Aslan 2016'],
+  session: ['Exploration, sélection, stabilisation, et toujours une prise ; le debrief nomme l’écart et la prochaine cible.', 'Biasutti 2017 · Montemayor 2014 · Marino 2023'],
+  relais: ['Des contacts créatifs courts et rapprochés soutiennent l’élan mieux que de rares longues séances ; l’appel-réponse construit un vocabulaire commun.', 'Cepeda et al. 2006 · Bertolani 2019'],
+  accord: ['Un retour visuel en temps réel améliore la justesse ; chanter dans de vrais accords entraîne l’oreille harmonique.', 'Welch, Howard & Rush 1989 · Hoppe et al. 2006'],
+  ambiances: ['Partir d’une image concrète guide le timbre et la couleur de la voix ; écrire par les sens donne des images chantables.', 'Biasutti 2017 · MacGlone 2024 · Pattison 2009'],
+  jeux: ['La contrainte libère : moins de choix, plus d’invention.', 'De Bruin 2019 · Merchán-Sánchez-Jara 2023 · Oulipo'],
+  ecrire: ['Écrire régulièrement, sans juger, nourrit la matière ; trier vient après.', 'Pattison 2009'],
+  atelier: ['Écriture libre, puis par les sens, puis sous contrainte, puis tri : de la matière à la ligne qui chante.', 'Pattison 2009 · Breton et Soupault 1919 · Oulipo'],
+  bilan: ['Voir ses progrès et nommer la prochaine cible soutient la motivation et la pratique délibérée.', 'Miksza 2023 · Biasutti 2017'],
+  paroles: ['Les syllabes chantées et la place des rimes font qu’un texte se chante.', 'Pattison 2009'],
+};
+
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille };
 const VOIX = ['accord', 'miroir', 'tessiture', 'gym'];
 const view = $('#view');
 let cleanup = null;
@@ -35,6 +51,12 @@ let currentId = 'home';
 async function route() {
   const id = location.hash.replace(/^#\/?/, '').split(/[?/]/)[0];
   // Lien d'invitation : #/rejoindre/<espace>
+  // Aperçu de la visite de Frog : elle se joue sans être marquée comme vue pour lui.
+  if (id === 'apercu-visite') {
+    location.replace('#/');
+    import('./views/tour.js').then((t) => { const go = (n = 0) => (espace.meta ? t.startTour(true) : n < 40 && setTimeout(() => go(n + 1), 250)); go(); });
+    return;
+  }
   if (id === 'rejoindre') {
     const sid = location.hash.split('/')[2];
     try { await joinEspace(sid); } catch { toast('Ce lien d’espace ne fonctionne pas (ou l’espace a été effacé).'); }
@@ -61,6 +83,8 @@ async function route() {
   view.style.setProperty('--accent', mod ? mod.color : 'var(--rec)');
   currentId = v.id;
   cleanup = v.mount(host) || null;
+  const ap = APPUIS[v.id];
+  if (ap) { const f = document.createElement('p'); f.className = 'appui'; f.innerHTML = `<span>Pourquoi :</span> ${ap[0]} <cite>${ap[1]}</cite>`; view.appendChild(f); }
   const group = VOIX.includes(v.id) ? 'voix' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' ? 'home' : ['jeux', 'paroles', 'atelier', 'ecrire'].includes(v.id) ? 'ecrire' : v.id;
   $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.id === group));
   if (v.id === 'carnet') { unseen = 0; showBadge(); }
