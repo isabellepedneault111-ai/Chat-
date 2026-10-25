@@ -5,7 +5,7 @@ import { store } from '../ui.js';
 import { embers } from '../rituel.js';
 import { ILLU } from '../illus.js';
 import { VISITE } from '../visite-data.js';
-import { jouer, sonActif, basculerSon, prechargerVisite, introStart, introStop } from '../visite-sons.js';
+import { jouer, sonActif, basculerSon, prechargerVisite, bandeStart, bandeSection, bandeStop } from '../visite-sons.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
@@ -136,8 +136,8 @@ export function startTour(preview) {
   const show = () => {
     clearTimeout(auto); clearTimeout(stepT);
     box.querySelector('.t-slide').innerHTML = `<div class="t-inner t-${i}">${slides[i]}</div>`;
-    // Le groove d'entrée joue sous l'accueil et le titre, puis les scènes prennent le relais.
-    if (i <= 1) introStart(); else introStop();
+    // Une seule musique, qui change d'habit : feutrée à l'accueil, groove dans les scènes, piano dans la vitrine.
+    bandeStart(); bandeSection(i <= 1 ? 'accueil' : box.querySelector('.t-montage') ? 'vitrine' : 'scenes');
     const ms = +(box.querySelector('[data-auto]')?.dataset.auto || 0);
     box.querySelectorAll('.t-progress i').forEach((b, k) => { b.classList.toggle('on', k < i || (k === i && !ms)); b.classList.toggle('run', k === i && !!ms); b.style.setProperty('--dur', `${ms}ms`); });
     // Les scènes avancent seules, comme un film ; on peut toujours aller plus vite ou revenir.
@@ -182,7 +182,8 @@ export function startTour(preview) {
     updateEspace({ tour: { ...(espace.meta.tour || {}), [espace.me]: Date.now() } }).catch(() => {});
   };
   const end = (mark = true) => {
-    clearTimeout(auto); clearTimeout(stepT); introStop();
+    clearTimeout(auto); clearTimeout(stepT);
+    if (mark) bandeStop(); // vers le tour de l'app, la musique continue sans couture
     if (mark) marquer();
     player?.pause();
     box.classList.add('out');
@@ -201,7 +202,7 @@ export function startTour(preview) {
     if (t === 'end') { end(); return; }
     // la visite n'est marquée comme vue qu'à la toute fin du tour de l'app
     if (t === 'coach') { end(false); setTimeout(() => import('../coach.js').then((c) => c.coachTour({ premiere: true, apercu: preview, onEnd: marquer })), 400); return; }
-    if (t === 'son') { const v = basculerSon(); e.target.textContent = v ? '♪ Son' : '♪ Muet'; e.target.setAttribute('aria-pressed', v); if (!v) introStop(); else if (i <= 1) introStart(); return; }
+    if (t === 'son') { const v = basculerSon(); e.target.textContent = v ? '♪ Son' : '♪ Muet'; e.target.setAttribute('aria-pressed', v); if (v) bandeStart(i <= 1 ? 'accueil' : 'scenes'); return; }
     // Commencer : la visite prend tout l'écran.
     if (t === 'next' && i === 0 && !document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
     if (t === 'prev') { go(-1); return; }

@@ -21,7 +21,7 @@ const STEPS = [
 const visible = (sel) => sel.split(',').map((x) => x.trim()).flatMap((x) => [...document.querySelectorAll(x)]).find((el) => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.display !== 'none'; });
 
 import { montrerExemples, retirerExemples } from './demo.js';
-import { bedStart, bedCouche, bedStop } from './visite-sons.js';
+import { bandeStart, bandeSection, bandeStop } from './visite-sons.js';
 
 // apercu : Zaza voit exactement le tour de Frog, avec seulement une sortie discrète.
 export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
@@ -33,7 +33,7 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
   document.body.appendChild(box);
   const hole = box.querySelector('.coach-hole');
   const bubble = box.querySelector('.coach-bubble');
-  const end = (go) => { bedStop(); if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {}); retirerExemples(); box.remove(); removeEventListener('resize', place); removeEventListener('keydown', key); onEnd?.(); if (go) location.hash = go; };
+  const end = (go) => { bandeStop(); if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {}); retirerExemples(); box.remove(); removeEventListener('resize', place); removeEventListener('keydown', key); onEnd?.(); if (go) location.hash = go; };
   function place() {
     const s = STEPS[i];
     const el = visible(s.sel);
@@ -63,7 +63,7 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
   }
   function show() {
     const s = STEPS[i];
-    bedCouche(i);
+    bandeSection('coach', i);
     if (location.hash !== s.route && !(s.route === '#/' && (location.hash === '' || location.hash === '#'))) location.hash = s.route;
     bubble.innerHTML = `
       <p class="coach-n">${i + 1} / ${STEPS.length} <span class="coach-demo">exemples fictifs, pour voir le rendu</span></p>
@@ -86,6 +86,6 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
   });
   addEventListener('resize', place);
   addEventListener('keydown', key);
-  bedStart();
+  bandeStart('coach');
   show();
 }
