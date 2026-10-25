@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # L'arbre de l'architecte : la vraie structure de FLIP (dossiers, sous-dossiers, fichiers), pour l'onglet « arbre ».
 # Généré depuis git à chaque construction, donc il grandit avec l'app.
-import json, pathlib, subprocess
+import datetime, json, pathlib, subprocess
 racine = pathlib.Path(__file__).resolve().parent.parent
 fichiers = subprocess.run(['git', 'ls-files'], cwd=racine, capture_output=True, text=True).stdout.split()
 fichiers = [f for f in fichiers if not f.startswith(('dist/', 'package-lock')) and not f.endswith('.png')]
@@ -66,3 +66,16 @@ for ref in git('for-each-ref', '--format=%(refname:short)', 'refs/remotes/origin
 gen = {'lanes': lanes, 'debut': principale[0]['d'] if principale else ''}
 (racine / 'data' / 'genealogie.json').write_text(json.dumps(gen, ensure_ascii=False, separators=(',', ':')))
 print('data/genealogie.json :', len(lanes), 'branches,', sum(len(l['c']) for l in lanes), 'étapes')
+
+# ---------- La cadence : le temps réellement passé, mesuré dans l'historique ----------
+# Depuis la première étape de Diapason : temps total écoulé, et temps actif (on additionne les écarts entre
+# deux étapes quand ils font moins de 90 minutes ; une pause plus longue ne compte pas).
+ts = [int(x) for x in git('log', '--first-parent', '--format=%at', 'HEAD').split()][::-1]
+firsts = [c for c in principale if c['s'].startswith('Diapason :')]
+if firsts:
+    t0 = int(git('log', '-1', '--format=%at', firsts[0]['h']))
+    ts = [t for t in ts if t >= t0]
+    actif = sum(b - a for a, b in zip(ts, ts[1:]) if b - a <= 90 * 60)
+    gen['cadence'] = {'etapes': len(ts), 'heuresActives': round(actif / 3600, 1), 'heuresTotales': round((ts[-1] - ts[0]) / 3600, 1), 'jours': len({datetime.datetime.fromtimestamp(t).date() for t in ts})}
+    (racine / 'data' / 'genealogie.json').write_text(json.dumps(gen, ensure_ascii=False, separators=(',', ':')))
+    print('cadence :', gen['cadence'])

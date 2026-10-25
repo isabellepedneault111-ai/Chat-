@@ -195,6 +195,7 @@ export default {
           <li><b>Conception centrée sur l’usage, évaluée en contexte</b> : chaque version est essayée par son vrai destinataire, et ses retours redirigent la suivante. C’est la logique de la recherche orientée par la conception (<i>design-based research</i> ; Brown, 1992 ; Collins, 1992).</li>
           <li><b>Ancrage empirique</b> : les fonctions pédagogiques s’appuient sur la littérature (pratique distribuée, rétroaction visuelle, verbalisation guidée…), citée dans l’app.</li>
           <li><b>Traçabilité</b> : chaque décision est versionnée (Git). La généalogie ci-dessus en est la trace : <b class="ar-mot-etapes">—</b> étapes, <b class="ar-mot-lignes">—</b> lignes.</li>
+          <li class="ar-cadence"><b>Cadence</b> : <span class="ar-cad">mesurée dans l’historique…</span></li>
           <li><b>Vérification</b> : des tests de bout en bout dans un vrai navigateur (Playwright) avant chaque mise en ligne (Netlify).</li>
           <li><b>Rôle humain</b> : l’intention, le goût, l’éthique (rien de ce qu’on chante ne quitte l’appareil sans qu’on le choisisse) et l’arbitrage final.</li>
         </ul>
@@ -208,15 +209,27 @@ export default {
     fetch('data/arbre.json').then((r) => r.json()).then((data) => {
       const compte = (n) => (n.c ? 1 + n.c.reduce((a, x) => a + compte(x), 0) : 0); const dossiers = compte(data);
       const { svg } = dessinArbre(data);
-      el.querySelector('.ar-mot-lignes').textContent = data.lignes.toLocaleString('fr-CA');
+      el.querySelector('.ar-mot-lignes').textContent = data.lignes.toLocaleString('fr-CA'); cadence();
       el.querySelector('.ar-dessin').innerHTML = svg;
       el.querySelector('.ar-stats').innerHTML = `<b>${data.fichiers}</b> fichiers · <b>${dossiers - 1}</b> dossiers · <b>${data.lignes.toLocaleString('fr-CA')}</b> lignes écrites`;
     }).catch(() => { el.querySelector('.ar-dessin').innerHTML = '<p class="muted">L’arbre n’a pas pu se charger.</p>'; });
+    let gData = null;
     fetch('data/genealogie.json').then((r) => r.json()).then((g) => {
       const host = el.querySelector('.gn-host'); host.innerHTML = dessinGenealogie(g);
       host.scrollLeft = host.scrollWidth; // on arrive sur aujourd'hui ; on remonte le temps en glissant
       const et = el.querySelector('.ar-mot-etapes'); if (et) et.textContent = g.lanes[0].c.length.toLocaleString('fr-CA');
+      // Le temps réellement passé, et un repère du génie logiciel pour situer l'échelle (pas la qualité).
+      gData = g; cadence();
     }).catch(() => { el.querySelector('.gn-host').innerHTML = '<p class="muted">La généalogie n’a pas pu se charger.</p>'; });
+    function cadence() {
+      const g = gData; const cd = g?.cadence; const cad = el.querySelector('.ar-cad');
+      if (cd && cad && /\d/.test(el.querySelector('.ar-mot-lignes').textContent)) {
+        const lignes = +(el.querySelector('.ar-mot-lignes').textContent.replace(/\D/g, '')) || 0;
+        const min = Math.round((cd.heuresActives * 60) / Math.max(1, cd.etapes - 1));
+        const jp = (n) => Math.round(lignes / n);
+        cad.innerHTML = `${cd.etapes} étapes validées en ≈ ${String(cd.heuresActives).replace('.', ',')} h d’activité mesurée, sur ${cd.jours} jours (${String(cd.heuresTotales).replace('.', ',')} h écoulées) : une itération toutes les ${min} minutes environ. Repère : les estimations classiques du génie logiciel comptent de 10 à 50 lignes de code fini par développeur et par jour, conception et tests compris (McConnell, 2004). Sans IA, ce volume représenterait de l’ordre de ${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours-personnes. Le nombre de lignes est une mesure grossière : il situe l’échelle, pas la qualité.`;
+      }
+    }
 
     el.addEventListener('click', (e) => {
       const s = e.target.closest('[data-son]'); if (s) { e.preventDefault(); ecouter(s.dataset.son); return; }
