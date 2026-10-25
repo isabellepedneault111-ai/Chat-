@@ -7,7 +7,7 @@ import { FR, mod12, chordName } from '../music.js';
 import { FORMATS, PHASES, EXERCICES, GRILLES, CIBLES, PLAN, memberColor } from '../duo.js';
 import { currentMonth, weekRhythm } from '../plan.js';
 import { setLoop, toggleLoop, loopPlaying, setTempo } from './studio.js';
-import { startConsole, consoleState, onConsole } from '../console.js';
+import { startConsole, consoleState, onConsole, listOutputs, setClockOutput, clockState, setClockOffset } from '../console.js';
 import { esc, espaceGate, allSongs } from './carnet.js';
 
 const MAX_AGE = 5 * 3600 * 1000;
@@ -90,6 +90,13 @@ export default {
       c.querySelector('.c-transport').textContent = st.on ? (st.transport === 'play' ? '▶ en marche' : '■ arrêté') : '—';
       c.querySelector('.c-prog').textContent = st.program ? `prog. ${st.program.num}` : '—';
       c.querySelector('.c-chord').textContent = st.chord || '—';
+      // Horloge sortante : la liste des sorties MIDI, et celle qui est choisie.
+      const co = c.querySelector('.clock-out');
+      co.hidden = !st.on;
+      const sel = c.querySelector('[data-clock]');
+      const outs = listOutputs();
+      const want = `<option value="">personne</option>${outs.map((o) => `<option value="${esc(o.id)}" ${o.name === clockState.target ? 'selected' : ''}>${esc(o.name)}</option>`).join('')}`;
+      if (sel.dataset.sig !== want) { sel.innerHTML = want; sel.dataset.sig = want; }
     }
     // Les accords et les boutons tournés deviennent des repères seulement pendant une prise (sinon : trop de bruit).
     const offConsole = onConsole((ev) => {
@@ -184,6 +191,10 @@ export default {
               <div class="c-cell"><small>Séquenceur</small><b class="c-transport">—</b></div>
               <div class="c-cell"><small>Son</small><b class="c-prog">—</b></div>
               <div class="c-cell"><small>Accord</small><b class="c-chord">—</b></div>
+            </div>
+            <div class="clock-out" hidden>
+              <label class="field"><span>Envoyer l’horloge de la boucle à</span><select data-clock><option value="">personne</option></select></label>
+              <label class="field"><span>Décalage</span><input type="range" min="-80" max="80" step="1" data-clock-offset value="${clockState.offset}"><b class="mono clock-off">${clockState.offset} ms</b></label>
             </div>
             <form class="marker-form" autocomplete="off"><input class="input" data-m="text" maxlength="160" placeholder="Un repère : « ici la voix décroche »"><button class="btn small" type="submit">⚑ Repère</button></form>
             <ol class="markers"></ol>
@@ -361,8 +372,16 @@ export default {
       }
     });
     el.addEventListener('change', (e) => {
+      if (e.target.matches('[data-clock]')) {
+        setClockOutput(e.target.value);
+        toast(e.target.value ? `${clockState.target} suit maintenant la boucle de Diapason. Mets-le en « MIDI clock : externe ».` : 'Horloge sortante coupée.');
+        if (e.target.value) addMarker('clock', `L’horloge de Diapason pilote ${clockState.target}`);
+      }
       if (e.target.dataset.s === 'song') setup.song = e.target.value;
       if (e.target.dataset.s === 'key') { setup.key = +e.target.value; renderSetup(); }
+    });
+    el.addEventListener('input', (e) => {
+      if (e.target.matches('[data-clock-offset]')) { setClockOffset(+e.target.value); el.querySelector('.clock-off').textContent = `${clockState.offset} ms`; }
     });
     el.addEventListener('submit', async (e) => {
       if (e.target.classList.contains('marker-form')) {

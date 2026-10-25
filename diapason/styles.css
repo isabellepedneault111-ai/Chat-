@@ -1080,6 +1080,11 @@ a.evo-teaser:hover { box-shadow: 4px 4px 0 var(--rule); }
 .c-cell b { font-family: var(--display); font-weight: 800; font-size: 1.7rem; line-height: 1; color: #efe9dc; }
 .c-bpm { color: var(--cyan) !important; }
 .c-cell .btn { justify-self: start; margin-top: 6px; }
+.clock-out { display: flex; gap: 10px 20px; flex-wrap: wrap; align-items: center; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .12); }
+.clock-out .field { color: var(--muted); }
+.clock-out select { background: #22201c; border-color: #3a3630; color: #efe9dc; }
+.clock-out input[type=range] { accent-color: var(--tape); width: 140px; }
+.clock-off { color: var(--tape); min-width: 4em; }
 .marker-form { display: flex; gap: 8px; margin: 12px 0 8px; }
 .marker-form .input { flex: 1; background: #22201c; border-color: #3a3630; color: #efe9dc; }
 .markers, .moments ol, .take-markers { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; font-size: .88rem; }

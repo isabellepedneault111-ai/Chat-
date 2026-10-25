@@ -3,6 +3,7 @@ import { store, keyboard, toast, animate, autoCanvas, getProfile } from '../ui.j
 import { FR, mtof, chordIntervals, chordName, hash, rng, mod12, clamp, nameFR } from '../music.js';
 import { createListener, connectMIDI, chordLabel, estimateKey, suggestNext, diatonic, majorTonic } from '../instrument.js';
 import { DRUM_PRESETS, PROGRESSIONS } from '../data.js';
+import { clockStart, clockStep, clockStop } from '../console.js';
 
 const ROWS = [['k', 'Grosse caisse'], ['s', 'Caisse claire'], ['h', 'Charleston'], ['c', 'Claps']];
 const parse = (p) => Object.fromEntries(ROWS.map(([r]) => [r, p[r].split('').map(Number)]));
@@ -58,6 +59,7 @@ function scheduleStep(step, t) {
   const st = step % 16;
   const bar = Math.floor(step / 16);
   const sixteenth = 60 / S.bpm / 4;
+  clockStep(t, sixteenth); // horloge MIDI vers le matériel de Frog, si choisie
   ROWS.forEach(([r]) => { if (S.grid[r][st]) drums[{ k: 'kick', s: 'snare', h: 'hat', c: 'clap' }[r]](t, st % 4 === 0 ? 1 : 0.8); });
   const ch = chordAt(bar);
   if (st === 0) pad(chordIntervals(ch.qual).map((iv) => mtof(48 + ch.root + iv)), t, sixteenth * 16, 0.045);
@@ -87,10 +89,12 @@ function play() {
   S.playing = true;
   S.step = 0;
   S.nextTime = c.currentTime + 0.08;
+  clockStart(S.nextTime);
   S.timer = setInterval(scheduler, 25);
   scheduler();
 }
 function stopPlay() {
+  if (S.playing) clockStop(S.nextTime); // après la dernière impulsion déjà programmée
   S.playing = false;
   clearInterval(S.timer);
   S.queue = [];

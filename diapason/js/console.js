@@ -1,6 +1,8 @@
 // La console de Frog : Diapason écoute le matériel en MIDI (horloge, transport, sons, boutons, accords)
 // et transforme les moments marquants en repères horodatés.
 import { matchChord, chordLabel } from './instrument.js';
+import { audio } from './audio.js';
+import { store } from './ui.js';
 
 // Noms des contrôleurs les plus courants (CC) : ce que Frog tourne vraiment.
 const CC_NAMES = { 1: 'modulation', 7: 'volume', 10: 'panoramique', 11: 'expression', 64: 'sustain', 71: 'résonance', 72: 'relâche', 73: 'attaque', 74: 'filtre', 91: 'réverbe', 93: 'chorus', 94: 'désaccord', 5: 'portamento' };
@@ -116,6 +118,7 @@ export async function startConsole() {
   consoleState.on = true;
   attach();
   access.addEventListener('statechange', attach);
+  restoreClockOutput();
   emit({ kind: 'status' });
   return consoleState;
 }
@@ -128,3 +131,44 @@ export function stopConsole() {
   consoleState.devices = [];
   emit({ kind: 'status' });
 }
+
+// ---------- Horloge sortante : le matériel de Frog suit la boucle de Diapason ----------
+// 24 impulsions par noire (6 par double-croche), plus Départ / Arrêt, programmées à l'avance
+// avec l'horodatage de Web MIDI : pas de dérive, même si l'onglet est occupé.
+
+let clockOut = null;
+export const clockState = {
+  get target() { return clockOut ? clockOut.name : null; },
+  offset: store.get('clockOffset', 0), // ms : compense la latence de la carte son
+};
+export const listOutputs = () => (access ? [...access.outputs.values()].map((o) => ({ id: o.id, name: o.name })) : []);
+
+export function setClockOutput(id) {
+  clockOut = id && access ? access.outputs.get(id) || null : null;
+  store.set('clockOutName', clockOut ? clockOut.name : null);
+  emit({ kind: 'status' });
+}
+export function setClockOffset(ms) {
+  clockState.offset = Math.max(-80, Math.min(80, Math.round(ms)));
+  store.set('clockOffset', clockState.offset);
+}
+// Au branchement, on retrouve l'appareil choisi la dernière fois.
+export function restoreClockOutput() {
+  const name = store.get('clockOutName', null);
+  const o = name && access && [...access.outputs.values()].find((x) => x.name === name);
+  if (o) clockOut = o;
+}
+
+// Temps audio → temps MIDI. L'horloge audio avance par blocs : la lire telle quelle ferait trembler
+// les impulsions. On ancre donc l'écart entre les deux horloges au départ, puis on le lisse très
+// lentement (1 % par double-croche) : intervalles réguliers, et aucune dérive sur la durée.
+let anchor = null;
+const liveAnchor = () => performance.now() - audio().currentTime * 1000;
+const stamp = (t) => (anchor ?? liveAnchor()) + t * 1000 + clockState.offset;
+export function clockStart(t) { anchor = liveAnchor(); clockOut?.send([0xfa], Math.max(0, stamp(t) - 1)); }
+export function clockStep(t, sixteenth) {
+  if (!clockOut) return;
+  anchor = anchor == null ? liveAnchor() : anchor * 0.99 + liveAnchor() * 0.01;
+  for (let i = 0; i < 6; i++) clockOut.send([0xf8], stamp(t + (i * sixteenth) / 6));
+}
+export function clockStop(t) { clockOut?.send([0xfc], t != null ? stamp(t) : 0); }
