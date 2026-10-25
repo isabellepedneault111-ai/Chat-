@@ -310,7 +310,9 @@ export default {
       box.innerHTML = `
         <p class="rl-label"><b>Prêt à partir</b></p>
         <audio controls src="${pending.url}"></audio>
-        ${pending.base ? '<button class="btn small" data-r="try">▶ Écouter avec sa couche</button>' : ''}
+        ${pending.base ? `<div class="rl-align"><button class="btn small" data-r="try">▶ Écouter avec sa couche</button>
+          <label><span>Décaler ma couche</span><input type="range" min="-300" max="300" step="5" value="0" data-r="nudge"><b class="mono" data-nudge-v>0 ms</b></label>
+          <small>Si ta couche arrive en retard ou en avance, ajuste à l’oreille, puis réécoute.</small></div>` : ''}
         <label class="field"><span>Un titre (facultatif)</span><input class="input" data-r="title" placeholder="${esc(defTitle)}" maxlength="80"></label>
         <div class="rl-intents"></div>
         <div class="rl-send">
@@ -328,7 +330,7 @@ export default {
       try {
         await sendSound(pending.blob, {
           title: box.querySelector('[data-r=title]').value.trim() || box.dataset.def,
-          ...picker.value(), thread: pending.thread, over: pending.base?.id, align: pending.align,
+          ...picker.value(), thread: pending.thread, over: pending.base?.id, align: (pending.align || 0) - (pending.nudge || 0),
           onProgress: (p) => { btn.textContent = `Envoi ${Math.round(p * 100)} %`; },
         });
         toast(`Lancé! ${other()} le verra en ouvrant l’app.`);
@@ -348,7 +350,7 @@ export default {
       if (r === 'send') send();
       if (r === 'redo') { URL.revokeObjectURL(pending.url); const base = pending.base; pending = null; renderReview(); if (base) renderWork(); }
       if (r === 'try' && pending) {
-        const fake = { id: 'pending', _buf: await audio().decodeAudioData(await pending.blob.arrayBuffer()), data: { over: pending.base.id, align: pending.align } };
+        const fake = { id: 'pending', _buf: await audio().decodeAudioData(await pending.blob.arrayBuffer()), data: { over: pending.base.id, align: pending.align - (pending.nudge || 0) } };
         stopPlay();
         const prep = await prepare(chainOf(fake));
         playing = { id: 'pending', stop: playParts(prep, audio().currentTime + 0.05) };
@@ -371,6 +373,7 @@ export default {
       const r = e.target.dataset.r;
       if (r === 'dev') store.set('relaisDev', e.target.value);
       if (r === 'raw') { store.set('relaisRaw', e.target.checked); e.target.closest('details').querySelector('summary').textContent = `Entrée : ${e.target.checked ? 'instrument (son brut)' : 'micro'}`; }
+      if (r === 'nudge' && pending) { pending.nudge = +e.target.value / 1000; el.querySelector('[data-nudge-v]').textContent = `${e.target.value} ms`; }
       if (r === 'file' && e.target.files[0]) {
         const f = e.target.files[0];
         pending = { blob: f, url: URL.createObjectURL(f), file: f.name, thread: work?.kind === 'reply' ? threadOf(work.entry) : undefined };

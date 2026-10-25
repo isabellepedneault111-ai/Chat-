@@ -1802,3 +1802,21 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .lune-form { flex-basis: 100%; display: flex; gap: 6px; padding-left: 28px; }
 .lune-form .input { flex: 1 1 auto; max-width: 480px; padding: 6px 10px; font-size: .9rem; }
 .lune-bilan h2 { display: flex; align-items: center; gap: 8px; }
+.invite-msg { margin: 6px 0 10px; padding: 10px 14px; border-left: 3px solid var(--rec); background: var(--paper); font-size: .95rem; }
+.invite-err { color: var(--rec); font-weight: 700; }
+.rl-align { display: grid; gap: 6px; margin: 8px 0; color: #d9d2c4; }
+.rl-align label { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: .88rem; }
+.rl-align input { flex: 1 1 180px; accent-color: var(--tape); }
+.rl-align small { color: #a8a093; }
+/* Voix + piano : modes en rangée défilable sur cellulaire */
+@media (max-width: 640px) {
+  .acc-modes { display: flex; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+  .acc-modes::-webkit-scrollbar { display: none; }
+  .acc-modes button { flex: none; white-space: nowrap; padding: 9px 14px; }
+}
+/* Cibles tactiles confortables */
+@media (pointer: coarse) { .card-mini .icon-btn.tiny { width: 40px; height: 40px; } }
+.t-start { margin-top: 28px; background: linear-gradient(180deg, #d9b56a, #b08a3e); color: #1b1915; border-color: #4a3818; box-shadow: 0 3px 0 #4a3818; }
+.t-howto { margin: 12px 0 0; color: #a8a093; font-size: .88rem; }
+.t-vwrap { position: relative; }
+.t-unmute { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 14px 22px; border-radius: 999px; border: 1px solid #d9b56a; background: rgba(10, 8, 7, .8); color: #fff; font-weight: 700; font-size: 1.05rem; cursor: pointer; }

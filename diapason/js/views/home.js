@@ -43,16 +43,25 @@ export default {
     }
 
     // Tant que l'autre n'est pas entré : le mot secret, prêt en un clic.
+    // Tant que l'autre n'est pas entré : le mot secret s'active tout seul (bell), et le message est prêt à copier.
+    let secretTry = false; let secretErr = '';
     function inviteHTML() {
       const mem = espace.meta.members || MEMBERS;
       const o = mem.find((x) => x !== espace.me) || 'Frog';
       const came = espace.meta.seen?.[o] || espace.meta.tour?.[o] || espace.entries.some((e) => e.author === o);
       if (came) return '';
+      if (!espace.meta.hasSecret && !secretTry) {
+        secretTry = true;
+        updateEspace({ secret: 'bell' }).catch((err) => { secretErr = err.message; render(); });
+      }
+      const msg = `${o}, notre espace t’attend. Va sur ${location.origin}/ , choisis « ${o} », puis tape le mot secret : bell. La suite démarre toute seule. Prends 3 minutes, avec le son.`;
       return `<section class="invite">
         <p class="invite-k">${esc(o)} n’est pas encore entré</p>
-        ${espace.meta.hasSecret ? `<p>Le mot secret est actif. Dis-lui : <b>l’adresse du site</b>, il choisit « ${esc(o)} », puis tape le mot secret. Sa visite démarre toute seule.</p>`
-          : `<p>Il va sur l’adresse normale, choisit « ${esc(o)} » et tape ce mot : il entre dans votre espace et sa visite démarre.</p>
-        <div class="invite-row"><input class="input" data-h="secret" value="bell" aria-label="Mot secret du duo" autocomplete="off"><button class="btn primary" data-h="set-secret">Activer le mot secret</button></div>`}
+        ${secretErr ? `<p class="invite-err">Le mot secret « bell » n’a pas pu s’activer : ${esc(secretErr)}</p>`
+          : `<p>${espace.meta.hasSecret ? '✓ Le mot secret <b>bell</b> est actif pour votre espace.' : 'Activation du mot secret <b>bell</b>…'} Envoie-lui ce message :</p>
+        <blockquote class="invite-msg">${esc(msg)}</blockquote>
+        <button class="btn primary" data-h="copy-invite" data-msg="${esc(msg)}">Copier le message</button>
+        <p class="muted small">Ce cadre disparaît dès que ${esc(o)} est entré.</p>`}
       </section>`;
     }
 
@@ -222,6 +231,7 @@ export default {
     el.addEventListener('click', async (e) => {
       const a = e.target.closest('[data-h]')?.dataset.h;
       if (a === 'edit') { editingVision = true; render(); }
+      if (a === 'copy-invite') { const m = e.target.closest('[data-msg]').dataset.msg; try { await navigator.clipboard.writeText(m); toast('Message copié : colle-le à Frog.'); } catch { prompt('Copie ce message :', m); } }
       if (a === 'set-secret') {
         try { await updateEspace({ secret: el.querySelector('[data-h=secret]').value }); toast('Mot secret actif.'); } catch (err) { toast(err.message); }
       }

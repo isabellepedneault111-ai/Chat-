@@ -28,9 +28,11 @@ export function startTour(preview) {
        <p class="t-welcome">${esc(welcome).replace(/\n/g, '<br>')}</p>
        <p class="t-sign">— ${esc(from)}</p>
        ${espace.meta.welcome?.audio ? '<button class="t-play" data-t="play">▶ Écouter</button>' : ''}
+       <button class="btn big t-start" data-t="next">Commencer · 3 minutes, avec le son</button>
+       <p class="t-howto">Ensuite, touche la flèche (ou le côté droit de l’écran) pour avancer.</p>
      </div>`,
     `<p class="t-kicker">${esc(me)}, regarde. Une minute.</p>
-     <video class="t-video" src="data/demo-frog.mp4" poster="data/demo-frog.jpg" playsinline controls preload="auto"></video>
+     <div class="t-vwrap"><video class="t-video" src="data/demo-frog.mp4" poster="data/demo-frog.jpg" playsinline controls preload="auto"></video><button class="t-unmute" data-t="unmute" hidden>🔊 Activer le son</button></div>
      <p class="t-src">L’app, filmée telle quelle : tes claviers, ma voix, nos sons qui voyagent entre nous.</p>`,
     `<p class="t-kicker">Le truc qui n’existe pas ailleurs</p>
      <h2>Tu joues un accord.<br><i>Ma voix sait où aller.</i></h2>
@@ -100,7 +102,13 @@ export function startTour(preview) {
     box.querySelector('[data-t=prev]').disabled = i === 0;
     box.querySelector('[data-t=next]').hidden = i === slides.length - 1;
     const v = box.querySelector('.t-video');
-    if (v) { v.muted = false; v.play().catch(() => { v.muted = true; v.play().catch(() => {}); }); }
+    if (v) {
+      const um = box.querySelector('.t-unmute');
+      v.muted = false;
+      v.play().catch(() => { v.muted = true; um.hidden = false; v.play().catch(() => {}); });
+      // à la fin de la vidéo, la visite continue toute seule
+      v.onended = () => { if (box.isConnected && box.querySelector('.t-video') === v) go(1); };
+    }
   };
   const end = () => {
     if (!preview) {
@@ -125,6 +133,7 @@ export function startTour(preview) {
     if (t === 'end') { end(); return; }
     if (t === 'prev') { go(-1); return; }
     if (t === 'next') { go(1); return; }
+    if (t === 'unmute') { const v = box.querySelector('.t-video'); v.muted = false; v.currentTime = 0; v.play(); e.target.hidden = true; return; }
     if (t === 'play') {
       const b = e.target.closest('[data-t]');
       b.textContent = '…';
