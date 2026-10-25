@@ -20,6 +20,9 @@ import corbeille from './views/corbeille.js';
 import etincelles from './views/etincelles.js';
 import oreille from './views/oreille.js';
 import placer from './views/placer.js';
+import ames from './views/ames.js';
+import arbre from './views/arbre.js';
+import { installerGlossaire } from './glossaire.js';
 import { initEtincelle } from './etincelle.js';
 import { maybeTour } from './views/tour.js';
 import home from './views/home.js';
@@ -46,10 +49,11 @@ const APPUIS = {
   atelier: ['Écriture libre, puis par les sens, puis sous contrainte, puis tri : de la matière à la ligne qui chante.', 'Pattison 2009 · Breton et Soupault 1919 · Oulipo'],
   bilan: ['Voir ses progrès et nommer la prochaine cible soutient la motivation et la pratique délibérée.', 'Miksza 2023 · Biasutti 2017'],
   paroles: ['Les syllabes chantées et la place des rimes font qu’un texte se chante.', 'Pattison 2009'],
+  ames: ['Une vision commune avant de composer : savoir ensemble d’où on part et où on va.', 'Merchán-Sánchez-Jara 2023'],
   placer: ['La prosodie : quand les syllabes accentuées tombent sur les temps forts, le texte se chante tout seul ; à côté, il boite.', 'Pattison 2009'],
 };
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer };
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre };
 // Onglet en arrière-plan : le titre compte ce que l'autre vient d'ajouter, « (2) FLIP ». Revenir remet à zéro.
 {
   const base = document.title; let n = 0;
@@ -63,6 +67,7 @@ const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet
 initEtincelle();
 const VOIX = ['accord', 'miroir', 'tessiture', 'gym'];
 const view = $('#view');
+installerGlossaire(view); // les mots de musique s'expliquent au survol
 let cleanup = null;
 let currentId = 'home';
 
@@ -122,7 +127,7 @@ async function route() {
   cleanup = v.mount(host) || null;
   const ap = APPUIS[v.id];
   if (ap) { const f = document.createElement('p'); f.className = 'appui'; f.innerHTML = `<span>Pourquoi :</span> ${ap[0]} <cite>${ap[1]}</cite>`; view.appendChild(f); }
-  const group = VOIX.includes(v.id) ? 'voix' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' ? 'home' : ['jeux', 'paroles', 'atelier', 'ecrire', 'placer'].includes(v.id) ? 'ecrire' : v.id;
+  const group = VOIX.includes(v.id) ? 'voix' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' || v.id === 'ames' || v.id === 'arbre' ? 'home' : ['jeux', 'paroles', 'atelier', 'ecrire', 'placer'].includes(v.id) ? 'ecrire' : v.id;
   $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.id === group));
   if (v.id === 'carnet') { unseen = 0; showBadge(); }
   document.title = mod ? `${mod.name} · FLIP` : 'FLIP · Zaza & Frog';
@@ -225,5 +230,5 @@ onEspace((what, extra) => {
   }
 });
 
-boot().then(() => maybeTour());
+boot().then(() => { maybeTour(); import('./nouveautes.js').then((n) => n.majAvecAmour()); });
 route();

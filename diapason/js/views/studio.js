@@ -4,7 +4,9 @@ import { FR, mtof, chordIntervals, chordName, hash, rng, mod12, clamp, nameFR } 
 import { createListener, connectMIDI, chordLabel, estimateKey, suggestNext, diatonic, majorTonic } from '../instrument.js';
 import { DRUM_PRESETS, PROGRESSIONS, DEFIS_IMPRO } from '../data.js';
 import { clockStart, clockStep, clockStop } from '../console.js';
-import { espace, audioURL, saveEntry, uploadImage } from '../espace.js';
+import { espace, audioURL, saveEntry, uploadImage, uploadAudio } from '../espace.js';
+import { accord as accordPiano, prechargerSons } from '../sampler.js';
+import { chansonTab } from '../chanson.js';
 import { EXERCICES } from '../duo.js';
 import { PIANO } from '../exercice.js';
 
@@ -29,7 +31,8 @@ const S = {
   melody: store.get('melody', []),
   mode: store.get('sceneMode', 'solo'),
   clips: [],
-  custom: store.get('customProg', null),
+  custom: store.get('customProg', null), // la grille de Frog (ou de Zaza), faite à la main
+  seance: store.get('seanceProg', null), // la grille d'une séance guidée, à part pour ne jamais écraser la nôtre
   cur: null,
   filming: false,
   loop: 0, // tours de boucle : le hasard et les défis d'impro avancent avec eux
@@ -48,25 +51,29 @@ const padMidis = () => {
 // Une petite mélodie-modèle (croche, pastille), pour voir et entendre avant de créer.
 const DEMO_MELODY = [[0, 2], [2, 3], [3, 4], [4, 3], [6, 2], [8, 3], [10, 4], [11, 5], [12, 4], [14, 3], [16, 4], [18, 5], [19, 6], [20, 5], [22, 4], [24, 3], [26, 2], [27, 1], [28, 0]];
 let onScene = null;
-const progression = () => (S.prog === 'perso' && S.custom) || PROGRESSIONS.find((p) => p.id === S.prog) || PROGRESSIONS[0];
+const progression = () => (S.prog === 'perso' && S.custom) || (S.prog === 'seance' && S.seance) || PROGRESSIONS.find((p) => p.id === S.prog) || PROGRESSIONS[0];
 // « Le hasard » : quatre accords de la tonalité, retirés à chaque tour (toujours les mêmes pour un même tour).
 const POOL = [[0, 'M'], [2, 'm7'], [4, 'm'], [5, 'maj7'], [7, 'M'], [9, 'm'], [0, 'add9'], [7, 'sus4'], [5, 'M'], [2, 'm']];
 const hasardChords = (loop) => { const r = rng(hash(`hasard${loop}`)); return [[0, 'M'], ...[1, 2, 3].map(() => POOL[Math.floor(r() * POOL.length)])]; };
-const chordAt = (bar) => {
-  const p = progression();
-  const [deg, qual] = (p.hasard ? hasardChords(S.loop) : p.chords)[bar % 4];
-  return { root: mod12(S.key + deg), qual };
-};
+// Chaque accord dure un nombre de temps (4 par défaut = une mesure) : une grille peut avoir 2 à 8 accords de durées libres.
+const accords = () => { const p = progression(); return p.hasard ? hasardChords(S.loop) : p.chords; };
+const tempsDe = (c) => c[2] || 4;
+const pasBoucle = () => Math.max(16, accords().reduce((a, c) => a + tempsDe(c), 0) * 4);
+function chordAtStep(step) {
+  const l = accords(); const st = step % pasBoucle(); let deb = 0;
+  for (let i = 0; i < l.length; i++) { const n = tempsDe(l[i]) * 4; if (st < deb + n) return { root: mod12(S.key + l[i][0]), qual: l[i][1], i, start: deb, len: n }; deb += n; }
+  return { root: mod12(S.key + l[0][0]), qual: l[0][1], i: 0, start: 0, len: tempsDe(l[0]) * 4 };
+}
+const chordAt = (bar) => chordAtStep(bar * 16);
 
 function scheduleStep(step, t) {
   const st = step % 16;
-  const bar = Math.floor(step / 16);
   const sixteenth = 60 / S.bpm / 4;
   clockStep(t, sixteenth); // horloge MIDI vers le matériel de Frog, si choisie
   ROWS.forEach(([r]) => { if (S.grid[r][st]) drums[{ k: 'kick', s: 'snare', h: 'hat', c: 'clap' }[r]](t, st % 4 === 0 ? 1 : 0.8); });
-  const ch = chordAt(bar);
-  if (st === 0) S.padG = pad(chordIntervals(ch.qual).map((iv) => mtof(48 + ch.root + iv)), t, sixteenth * 16, 0.045);
-  if (st === 0 || st === 8 || st === 11) bass(mtof(36 + ch.root), t, sixteenth * (st === 11 ? 2 : 3));
+  const ch = chordAtStep(step); const dans = (step % pasBoucle()) - ch.start;
+  if (dans === 0) S.padG = pad(chordIntervals(ch.qual).map((iv) => mtof(48 + ch.root + iv)), t, sixteenth * ch.len, 0.045);
+  if (dans === 0 || (dans % 16 === 8 && ch.len - dans >= 4) || (dans % 16 === 11 && ch.len - dans >= 2)) bass(mtof(36 + ch.root), t, sixteenth * (dans % 16 === 11 ? 2 : 3));
   if (st % 2 === 0) {
     const slot = (step % 64) >> 1;
     const ms = padMidis();
@@ -91,8 +98,8 @@ function scheduler() {
     scheduleStep(S.step, S.nextTime);
     S.queue.push({ step: S.step, time: S.nextTime });
     S.nextTime += 60 / S.bpm / 4;
-    S.step = (S.step + 1) % 64;
-    if (S.step === 0) { S.loop++; S.onLoop?.(); }
+    S.step = (S.step + 1) % (pasBoucle() * 4); // un multiple de la grille, pour que la mélodie (64 pas) retombe aussi
+    if (S.step % pasBoucle() === 0) { S.loop++; S.onLoop?.(); }
   }
 }
 function play() {
@@ -128,14 +135,17 @@ export default {
       </div>
       <div class="panel transport">
         <button class="play-btn" data-act="play" aria-label="Lecture">▶</button>
-        <label class="field"><span>Tempo</span><input type="range" min="60" max="160" data-in="bpm" aria-label="Tempo"><b class="mono bpm-out"></b></label>
+        <label class="field"><span>Tempo</span><input type="range" min="50" max="200" data-in="bpm" aria-label="Tempo"><b class="mono bpm-out"></b></label>
+        <button class="btn small tap" data-act="tap" title="Tape ce bouton au rythme de ta musique : FLIP en déduit le tempo">Taper le tempo</button>
         <label class="field"><span>Tonalité</span><select data-in="key" aria-label="Tonalité">${FR.map((n, i) => `<option value="${i}">${n} majeur / ${FR[(i + 9) % 12]} mineur</option>`).join('')}</select></label>
         <label class="field"><span>Accords</span><select data-in="prog" aria-label="Progression d’accords"></select></label>
         <button class="rec-btn" data-act="rec" aria-label="Enregistrer une prise">● REC</button>
       </div>
       <div class="chord-row"></div>
+      <div class="panel grille-editeur" hidden></div>
       <div class="tabs" role="tablist">
         <button role="tab" data-tab="beat">Beat</button>
+        <button role="tab" data-tab="chanson">Nos chansons</button>
         <button role="tab" data-tab="voix">Prises de voix</button>
         <button role="tab" data-tab="cover">Pochette</button>
         <button role="tab" data-tab="duo">Scène</button>
@@ -150,7 +160,7 @@ export default {
     q('[data-in=bpm]').value = S.bpm;
     q('[data-in=key]').value = S.key;
     function refreshProgSelect() {
-      const all = [...(S.custom ? [S.custom] : []), ...PROGRESSIONS];
+      const all = [...(S.custom ? [S.custom] : []), ...(S.seance ? [S.seance] : []), ...PROGRESSIONS];
       q('[data-in=prog]').innerHTML = all.map((p) => `<option value="${p.id}">${p.name} · ${p.roman}</option>`).join('');
       q('[data-in=prog]').value = S.prog;
       q('[data-in=key]').value = S.key;
@@ -161,10 +171,9 @@ export default {
       q('[data-act=play]').textContent = S.playing ? '■' : '▶';
       q('[data-act=play]').classList.toggle('on', S.playing);
       q('[data-act=rec]').classList.toggle('on', !!S.recorder);
-      q('.chord-row').innerHTML = [0, 1, 2, 3].map((b) => {
-        const ch = chordAt(b);
-        return `<div class="chord" data-bar="${b}"><small>Mesure ${b + 1}</small><b>${chordName(ch.root, ch.qual)}</b></div>`;
-      }).join('') + `<p class="chord-note muted">${progression().note}</p>
+      const marques = progression().marques || [];
+      q('.chord-row').innerHTML = accords().map((c, i) => `<div class="chord ${marques[i] ? 'ch-debut' : ''}" data-i="${i}" style="flex-grow:${tempsDe(c)}"><small>${marques[i] ? `<b class="ch-marque">${esc(marques[i])}</b> · ` : ''}${tempsDe(c) === 4 ? '1 mesure' : tempsDe(c) === 8 ? '2 mesures' : `${tempsDe(c)} temps`}</small><b>${chordName(mod12(S.key + c[0]), c[1])}</b></div>`).join('')
+        + `<button class="btn small chord-edit" data-act="editer">✎ Mes propres accords</button><p class="chord-note muted">${progression().note || ''}</p>
         <div class="defi-row"><button class="chip ${S.defis ? 'active' : ''}" data-act="defis">${S.defis ? 'Défis d’impro ✓' : 'Défis d’impro'}</button>${S.defis ? `<p class="defi">${DEFIS_IMPRO[Math.floor(S.loop / 2) % DEFIS_IMPRO.length]}<small>un nouveau défi tous les deux tours</small></p>` : ''}</div>`;
     };
 
@@ -193,7 +202,7 @@ export default {
         const type = r.mimeType || 'audio/webm';
         const blob = new Blob(chunks, { type });
         const ext = type.includes('ogg') ? 'ogg' : type.includes('mp4') ? 'm4a' : 'webm';
-        S.takes.unshift({ url: URL.createObjectURL(blob), ext, at: new Date(), bpm: S.bpm, chords: [0, 1, 2, 3].map((b) => { const ch = chordAt(b); return chordName(ch.root, ch.qual); }).join(' – ') });
+        S.takes.unshift({ blob, url: URL.createObjectURL(blob), ext, at: new Date(), bpm: S.bpm, chords: [0, 1, 2, 3].map((b) => { const ch = chordAt(b); return chordName(ch.root, ch.qual); }).join(' – ') });
         try { finalOut().disconnect(dest); } catch { /* déjà déconnecté */ }
         mg.disconnect();
         S.recorder = null;
@@ -215,10 +224,59 @@ export default {
       if (act === 'play') { S.playing ? stopPlay() : play(); syncTop(); onScene?.(); }
       if (act === 'rec') toggleRec();
       if (act === 'defis') { S.defis = !S.defis; store.set('defisImpro', S.defis); syncTop(); }
+      if (act === 'tap') taper();
+      if (act === 'editer') { const box = q('.grille-editeur'); if (!box.hidden) { box.hidden = true; return; } ed = depuisGrille(); rendreEditeur(); box.hidden = false; box.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
     });
     // Changer de style pendant que ça joue : pas de silence, pas de superposition. Le nouveau prend le relais sur le temps.
     function relay() { if (S.playing) S.restart = true; }
     S.onLoop = () => requestAnimationFrame(() => el.isConnected && syncTop());
+
+    // ---------- Mes propres accords ----------
+    // Chaque accord : sa note, sa couleur, sa durée en temps. Tout change en direct, même pendant que ça joue.
+    const TYPES = [['M', 'majeur'], ['m', 'mineur'], ['7', '7 (tension qui veut avancer)'], ['maj7', 'maj7 (rêveur)'], ['m7', 'm7 (doux)'], ['sus2', 'sus2 (ouvert)'], ['sus4', 'sus4 (suspendu)'], ['add9', 'add9 (lumineux)'], ['m9', 'm9 (feutré)'], ['dim', 'dim (tendu, sombre)'], ['5', '5 (puissant, sans tierce)']];
+    const DUREES = [[1, '1 temps'], [2, '2 temps'], [3, '3 temps'], [4, '1 mesure'], [6, '1 mesure ½'], [8, '2 mesures']];
+    let ed = null;
+    const depuisGrille = () => accords().map((c) => ({ r: mod12(S.key + c[0]), q: c[1], b: tempsDe(c) }));
+    function appliquer() {
+      S.custom = { id: 'perso', name: 'Mes accords', roman: ed.map((c) => chordName(c.r, c.q)).join(' – '), chords: ed.map((c) => [mod12(c.r - S.key), c.q, c.b]), note: 'Ta grille à toi : change une note, une couleur ou une durée, ça s’entend au prochain accord.' };
+      store.set('customProg', S.custom); S.prog = 'perso'; save(); refreshProgSelect(); relay(); syncTop(); safeBar = -1;
+    }
+    function rendreEditeur() {
+      const box = q('.grille-editeur');
+      box.innerHTML = `
+        <div class="panel-head"><h2>Mes propres accords</h2><span class="muted small">Choisis chaque accord et combien de temps il dure. ▶ pour l’entendre seul. Tout s’applique en direct.</span></div>
+        <ol class="ge-liste">${ed.map((c, i) => `<li data-i="${i}">
+          <select data-ge="r" aria-label="Note de l’accord ${i + 1}">${FR.map((n, k) => `<option value="${k}" ${k === c.r ? 'selected' : ''}>${n}</option>`).join('')}</select>
+          <select data-ge="q" aria-label="Couleur de l’accord ${i + 1}">${TYPES.map(([v, l]) => `<option value="${v}" ${v === c.q ? 'selected' : ''}>${l}</option>`).join('')}</select>
+          <select data-ge="b" aria-label="Durée de l’accord ${i + 1}">${DUREES.map(([v, l]) => `<option value="${v}" ${v === c.b ? 'selected' : ''}>${l}</option>`).join('')}</select>
+          <b class="ge-nom">${chordName(c.r, c.q)}</b>
+          <button class="icon-btn tiny" data-ge="ecoute" aria-label="Écouter">▶</button>
+          ${ed.length > 1 ? '<button class="icon-btn tiny" data-ge="moins" aria-label="Retirer">✕</button>' : ''}
+        </li>`).join('')}</ol>
+        <div class="ec-row">${ed.length < 8 ? '<button class="btn small" data-ge="plus">+ Ajouter un accord</button>' : ''}<button class="btn small" data-ge="fermer">C’est bon</button>
+        <span class="muted small">La grille fait ${ed.reduce((a, c) => a + c.b, 0)} temps. Elle reste dans « Accords » sous le nom « Mes accords », et dans les séances.</span></div>`;
+    }
+    q('.grille-editeur').addEventListener('change', (e) => {
+      const li = e.target.closest('[data-i]'); const k = e.target.dataset.ge; if (!li || !k) return;
+      const c = ed[+li.dataset.i]; c[k] = k === 'q' ? e.target.value : +e.target.value;
+      appliquer(); rendreEditeur();
+    });
+    q('.grille-editeur').addEventListener('click', (e) => {
+      const k = e.target.closest('[data-ge]')?.dataset.ge; if (!k || e.target.tagName === 'SELECT') return;
+      const li = e.target.closest('[data-i]');
+      if (k === 'ecoute') { const c = ed[+li.dataset.i]; prechargerSons(['piano']); accordPiano('piano', chordIntervals(c.q).map((iv) => 52 + ((c.r + 8) % 12) + iv), { dur: 1.4, vel: 0.6 }); return; }
+      if (k === 'moins') { ed.splice(+li.dataset.i, 1); appliquer(); rendreEditeur(); }
+      if (k === 'plus') { const d = ed[ed.length - 1]; ed.push({ r: mod12(d.r + 5), q: 'M', b: 4 }); appliquer(); rendreEditeur(); }
+      if (k === 'fermer') q('.grille-editeur').hidden = true;
+    });
+    // Taper le tempo : la moyenne des derniers intervalles entre les touches.
+    const taps = [];
+    function taper() {
+      const t = performance.now(); if (taps.length && t - taps[taps.length - 1] > 2000) taps.length = 0;
+      taps.push(t); if (taps.length > 6) taps.shift();
+      if (taps.length >= 3) { const iv = (taps[taps.length - 1] - taps[0]) / (taps.length - 1); S.bpm = Math.max(50, Math.min(200, Math.round(60000 / iv))); q('[data-in=bpm]').value = S.bpm; save(); syncTop(); }
+      q('[data-act=tap]').textContent = taps.length < 3 ? `Encore ${3 - taps.length}…` : `${S.bpm} BPM ✓`;
+    }
 
     // ---------- Onglets ----------
     function renderTab() {
@@ -229,6 +287,16 @@ export default {
       el.querySelectorAll('[data-tab]').forEach((b) => b.setAttribute('aria-selected', b.dataset.tab === tab));
       const body = q('.tab-body');
       if (tab === 'beat') beatTab(body);
+      if (tab === 'chanson') chansonTab(body, {
+        // Une partie ou toute la chanson devient la grille du studio, et ça part avec le beat.
+        jouer(acc, nom, marques) {
+          S.custom = { id: 'perso', name: nom, roman: acc.map(([r, q]) => chordName(r, q)).join(' – '), chords: acc.map(([r, q, b]) => [mod12(r - S.key), q, b]), marques, note: `${nom} : la chanson tourne en boucle avec le beat.` };
+          store.set('customProg', S.custom); S.prog = 'perso'; save(); refreshProgSelect(); relay(); safeBar = -1;
+          if (!S.playing) play(); syncTop();
+          q('.chord-row').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        },
+        actuels: () => accords().map((c) => [mod12(S.key + c[0]), c[1], tempsDe(c)]),
+      });
       if (tab === 'voix') voixTab(body);
       if (tab === 'cover') coverTab(body);
       if (tab === 'duo') duoTab(body);
@@ -246,8 +314,15 @@ export default {
             </div>`).join('')}</div>
         </div>
         <div class="panel">
-          <div class="panel-head"><h2>Notes sûres pour improviser</h2><span class="muted">Brillantes = notes de l’accord en cours · pâles = gamme pentatonique</span></div>
+          <div class="panel-head"><h2>Où improviser sur le clavier</h2><span class="muted">Les couleurs suivent l’accord qui joue.</span></div>
           <div class="kb-host"></div>
+          <ul class="kb-legende">
+            <li><i class="lg-safe"></i><b>L’accord qui joue</b> : ça sonne à 100 %, toujours. Idéal pour finir une phrase.</li>
+            <li><i class="lg-scale"></i><b>La pentatonique</b> : sûr aussi, impossible de « fausser ». Parfait pour improviser.</li>
+            <li><i class="lg-gamme"></i><b>Le reste de la gamme</b> : bien en passant, moins pour s’y arrêter.</li>
+            <li><i class="lg-jazz"></i><b>Couleurs jazz</b> : la 9e, la 6te, la 7e de l’accord. Une note un peu rêveuse, à poser exprès.</li>
+            <li><i class="lg-blue"></i><b>Notes blues</b> : un frottement voulu, qui « pleure ». Glisse vers une note voisine juste après.</li>
+          </ul>
         </div>`;
       kb = keyboard(body.querySelector('.kb-host'), { from: 48, to: 76 });
       paintSafe(0);
@@ -267,15 +342,20 @@ export default {
     }
 
     let safeBar = -1;
-    function paintSafe(bar) {
-      if (!kb || bar === safeBar) return;
-      safeBar = bar;
-      const ch = chordAt(bar);
+    // Les couleurs du clavier, de la plus sûre à la plus audacieuse : l'accord qui joue, la pentatonique,
+    // le reste de la gamme (notes de passage), les couleurs jazz de l'accord (9e, 6te, 7e) et les notes blues du ton.
+    function paintSafe(i) {
+      if (!kb || i === safeBar) return;
+      safeBar = i;
+      const l = accords(); const c = l[i % l.length]; const ch = { root: mod12(S.key + c[0]), qual: c[1] };
       const tones = new Set(chordIntervals(ch.qual).map((iv) => mod12(ch.root + iv)));
       const pent = new Set([0, 2, 4, 7, 9].map((x) => mod12(S.key + x)));
+      const gamme = new Set([0, 2, 4, 5, 7, 9, 11].map((x) => mod12(S.key + x)));
+      const jazz = new Set([2, 9, ch.qual.startsWith('m') ? 10 : 11].map((x) => mod12(ch.root + x)));
+      const blues = new Set([3, 6, 10].map((x) => mod12(S.key + x)));
       kb.keys.forEach((k, m) => {
-        k.classList.toggle('k-safe', tones.has(mod12(m)));
-        k.classList.toggle('k-scale', !tones.has(mod12(m)) && pent.has(mod12(m)));
+        const n = mod12(m); const classe = tones.has(n) ? 'k-safe' : pent.has(n) ? 'k-scale' : jazz.has(n) ? 'k-jazz' : gamme.has(n) ? 'k-gamme' : blues.has(n) ? 'k-blue' : '';
+        ['k-safe', 'k-scale', 'k-jazz', 'k-gamme', 'k-blue'].forEach((x) => k.classList.toggle(x, x === classe));
       });
     }
 
@@ -286,12 +366,26 @@ export default {
           ${S.takes.length ? `<ul class="takes">${S.takes.map((t, i) => `
             <li><div><b>Prise ${S.takes.length - i}</b><span class="muted mono">${t.at.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' })} · ${t.bpm} BPM · ${t.chords}</span></div>
               <audio controls src="${t.url}"></audio>
+              ${espace.connected ? (t.gardee ? '<span class="muted small">Au mur ✓</span>' : `<button class="btn small primary" data-garder="${i}">Garder au mur</button>`) : ''}
               <a class="btn small" href="${t.url}" download="diapason-prise-${S.takes.length - i}.${t.ext}">↓ Télécharger</a></li>`).join('')}</ul>`
-            : '<p class="muted empty">Aucune prise pour l’instant. Les prises restent sur cet appareil jusqu’à ce que tu fermes la page : télécharge celles que tu veux garder.</p>'}
+            : '<p class="muted empty">Aucune prise pour l’instant. Clique ● REC en haut : le beat démarre, ta voix ou ton instrument passe par-dessus.</p>'}
+          <p class="muted small">Une prise gardée part au mur comme idée brute : l’autre l’entend, elle peut monter jusqu’au set, et elle compte dans votre plan. Les autres disparaissent en fermant la page.</p>
           <div class="tip-box"><b>Le réflexe de studio</b><p>Après chaque prise : réécoute, nomme <em>une seule</em> chose à améliorer, et refais-la. C’est exactement comme ça que travaillent les pros.</p></div>
         </div>`;
     }
 
+    // Garder une prise : elle devient une idée du mur, partagée, avec ses accords et son tempo.
+    document.addEventListener('click', async function garderPrise(e) {
+      if (!el.isConnected) { document.removeEventListener('click', garderPrise); return; }
+      const b = e.target.closest('[data-garder]'); if (!b || !el.contains(b)) return;
+      const t = S.takes[+b.dataset.garder]; if (!t || t.gardee) return;
+      b.disabled = true; b.textContent = 'J’envoie…';
+      try {
+        const a = await uploadAudio(t.blob);
+        await saveEntry({ type: 'audio', title: `Prise du studio · ${t.chords}`, audio: a, data: { stage: 0, prise: true, bpm: t.bpm, accords: t.chords } });
+        t.gardee = true; toast('La prise est au mur, comme idée brute.'); if (tab === 'voix') renderTab();
+      } catch (err) { b.disabled = false; b.textContent = 'Garder au mur'; toast(err.message); }
+    });
     function coverTab(body) {
       const c = store.get('cover', { title: '', artist: '', mood: 'Encre et or' });
       // Venue du mur : une image (et peut-être un son ou des mots) à transformer en pochette.
@@ -836,10 +930,10 @@ export default {
       if (!cur) return;
       S.cur = cur;
       const st = cur.step % 16;
-      const bar = Math.floor(cur.step / 16);
+      const bar = chordAtStep(cur.step).i;
       el.querySelectorAll('.cell.now').forEach((c) => c.classList.remove('now'));
       el.querySelectorAll(`[data-cell$=":${st}"]`).forEach((c) => c.classList.add('now'));
-      el.querySelectorAll('.chord').forEach((c) => c.classList.toggle('now', +c.dataset.bar === bar));
+      el.querySelectorAll('.chord').forEach((c) => c.classList.toggle('now', +c.dataset.i === bar));
       paintSafe(bar);
     });
 
@@ -966,10 +1060,10 @@ const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 
 // ---------- Pour la session guidée : la grille du jour en boucle ----------
 export function setLoop(key, grille) {
-  S.custom = { id: 'perso', name: grille.nom, roman: grille.roman, chords: grille.chords, note: grille.usage };
-  store.set('customProg', S.custom);
+  S.seance = { id: 'seance', name: `Séance : ${grille.nom}`, roman: grille.roman, chords: grille.chords, note: grille.usage };
+  store.set('seanceProg', S.seance);
   S.key = key;
-  S.prog = 'perso';
+  S.prog = 'seance';
   save();
 }
 // Venu du labo : les disques deviennent la grille de batterie.
@@ -984,4 +1078,11 @@ export function setTempo(bpm) {
   S.bpm = clamp(Math.round(bpm), 60, 160);
   save();
   return S.bpm;
+}
+// Venue de L'oreille : les accords trouvés dans un enregistrement deviennent « Mes accords » du studio.
+// chords : [[note absolue 0-11, qualité, temps]] ; key : la tonique majeure de la pièce.
+export function chargerGrille(key, chords, nom = 'Mes accords') {
+  S.key = key;
+  S.custom = { id: 'perso', name: nom, roman: chords.map(([r, q]) => chordName(r, q)).join(' – '), chords: chords.map(([r, q, b]) => [mod12(r - key), q, b]), note: 'Les accords trouvés par L’oreille dans ton enregistrement : change-les à ta guise dans « Mes propres accords ».' };
+  store.set('customProg', S.custom); S.prog = 'perso'; save();
 }

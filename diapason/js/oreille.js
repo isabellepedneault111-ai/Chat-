@@ -242,3 +242,43 @@ export async function notesVoix(buf, onStep = () => {}) {
   return { voix: true, notes: bilan, fortes, aTravailler, nNotes: notes.length };
 }
 export const nomNote = (m) => `${NOTES[((m % 12) + 12) % 12]}${Math.floor(m / 12) - 1}`;
+
+// ---------- Les accords d'un enregistrement ----------
+// Temps par temps : les douze notes entendues (chroma), comparées à des gabarits d'accords. On fusionne les temps
+// voisins qui donnent le même accord. Fiable sur un clavier ou une guitare clairs ; moins sous une batterie chargée.
+const GABARITS = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], maj7: [0, 4, 7, 11], m7: [0, 3, 7, 10], sus2: [0, 2, 7], sus4: [0, 5, 7], dim: [0, 3, 6] };
+const SUF = { M: '', m: 'm', 7: '7', maj7: 'maj7', m7: 'm7', sus2: 'sus2', sus4: 'sus4', dim: 'dim' };
+export async function trouverAccords(buf, bpm, onStep = () => {}) {
+  onStep('Je cherche les accords…'); await pause();
+  const { x, sr } = mono(buf);
+  const tempo = bpm < 80 ? bpm * 2 : bpm; const temps = 60 / tempo;
+  const N = 4096; const pasT = Math.max(N, Math.floor(temps * sr));
+  const brut = [];
+  for (let p = 0; p + N < x.length; p += pasT) {
+    const ch = new Float64Array(12); let e = 0;
+    for (let o = 0; o + N <= pasT && p + o + N < x.length; o += N / 2) {
+      const w = new Float32Array(N); for (let i = 0; i < N; i++) { const v = x[p + o + i]; w[i] = v * (0.5 - 0.5 * Math.cos((2 * Math.PI * i) / N)); e += v * v; }
+      const m = fftMag(w);
+      for (let k = 6; k < N / 2; k++) { const f = (k * sr) / N; if (f < 60 || f > 1800) continue; const pc = ((Math.round(12 * Math.log2(f / 261.63)) % 12) + 12) % 12; ch[pc] += m[k] * (f < 300 ? 1.4 : 1); }
+    }
+    let best = null; const tot = ch.reduce((s, v) => s + v, 0) || 1;
+    if (e > 1e-4) {
+      for (let r = 0; r < 12; r++) for (const [q, iv] of Object.entries(GABARITS)) {
+        let dans = 0; iv.forEach((d) => { dans += ch[(r + d) % 12]; });
+        const sc = dans / tot - (iv.length - 3) * 0.035 + (q === 'M' || q === 'm' ? 0.02 : 0);
+        if (!best || sc > best.sc) best = { r, q, sc };
+      }
+    }
+    brut.push(best && best.sc > 0.38 ? best : null);
+    if (brut.length % 40 === 0) await pause();
+  }
+  // Lisser : un accord isolé d'un seul temps entre deux identiques est sans doute une note de passage.
+  for (let i = 1; i < brut.length - 1; i++) { const a = brut[i - 1]; const c = brut[i + 1]; if (a && c && a.r === c.r && a.q === c.q && (!brut[i] || brut[i].r !== a.r || brut[i].q !== a.q)) brut[i] = a; }
+  const segs = [];
+  brut.forEach((b, i) => {
+    const t = (i * pasT) / sr; const last = segs[segs.length - 1];
+    if (b && last && last.r === b.r && last.q === b.q && Math.abs(last.b - t) < 0.01) last.b = t + pasT / sr;
+    else if (b) segs.push({ r: b.r, q: b.q, a: t, b: t + pasT / sr });
+  });
+  return segs.filter((s) => s.b - s.a >= temps * 0.9).map((s) => ({ ...s, nom: NOTES[s.r] + SUF[s.q], temps: Math.round((s.b - s.a) / temps) }));
+}

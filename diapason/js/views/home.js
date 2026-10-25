@@ -1,6 +1,6 @@
 // Accueil = le plan de match de Zaza & Frog : six mois, des idées brutes à 3 à 5 originaux.
 import { espace, onEspace, updateEspace, profileOf } from '../espace.js';
-import { toast } from '../ui.js';
+import { toast, store } from '../ui.js';
 import { MODULES } from '../data.js';
 import { PLAN, RYTHME, VISION_FIELDS, STAGES, MEMBERS, memberColor, ROLES } from '../duo.js';
 import { currentMonth, planContext, planStart, weekRhythm, planAjuste } from '../plan.js';
@@ -13,6 +13,33 @@ import { lune, luneSVG, TEMPS } from '../lune.js';
 import { nouveautesHTML } from '../nouveautes.js';
 
 // Où aller : chaque outil rangé par ce qu'on veut faire, pas par son nom.
+// Par où commencer : trois gestes, dans l'ordre, cochés quand ils sont faits. Disparaît quand tout est fait.
+function commencerHTML() {
+  const mem = espace.meta.members || MEMBERS; const frog = espace.me === mem[1];
+  const ents = espace.entries.filter((e) => !e.demo && !e.data?.demo);
+  const pas = [
+    ['Notre première vraie séance', 'Choisir quoi travailler, la musique part, on suit les étapes, on finit par une prise.', '#/session', ents.some((e) => e.type === 'session' && e.data?.done)],
+    ['Découvrir nos deux âmes', 'Ce que nos deux étapes 1 donnent ensemble, et nos pistes hors sentier.', '#/ames', store.get('amesVu', false)],
+    frog ? ['Monter une chanson et ses accords', 'Studio → Nos chansons : couplet, refrain, pont, chacun avec ses accords. Puis on la joue.', '#/studio?tab=chanson', ents.some((e) => e.type === 'chanson')]
+      : ['Placer tes paroles sur Projet 1', 'Écrire → Placer mes paroles : les syllabes, les accents, la note à chanter.', '#/placer', !!store.get('placerTexte', '')],
+  ];
+  if (pas.every((x) => x[3])) return '';
+  const prochain = pas.findIndex((x) => !x[3]);
+  return `<section class="commencer" aria-label="Par où commencer"><h2>Par où commencer</h2><ol>${pas.map(([t, d, h, ok], i) => `<li class="${ok ? 'fait' : i === prochain ? 'prochain' : ''}"><a href="${h}"><span class="cm-n">${ok ? '✓' : i + 1}</span><b>${t}</b><small>${d}</small>${i === prochain ? '<em>Maintenant →</em>' : ''}</a></li>`).join('')}</ol></section>`;
+}
+// Créer, façonner, produire : où en est notre musique, d'après les étapes du mur, et les outils de chaque moment.
+const PHASES_M = [
+  ['Créer', [0, 1], 'On génère sans juger : impro, mumble, idées brutes.', [['relais', 'Le relais'], ['ecrire', 'Le mumble'], ['labo', 'Le labo'], ['jeux', 'Le grimoire']]],
+  ['Façonner', [2], 'On développe : accords, structure, paroles posées sur la musique.', [['studio?tab=chanson', 'Nos chansons'], ['placer', 'Placer mes paroles'], ['oreille', 'L’oreille'], ['session', 'Une séance']]],
+  ['Produire', [3, 4], 'On fixe et on enregistre : prises propres, passage « spectacle ».', [['studio?tab=voix', 'Prises du studio'], ['session?cible=La%20fin%20d%E2%80%99un%20morceau', 'Séance de prise'], ['coffre', 'Le coffre']]],
+];
+function phasesHTML() {
+  const ents = espace.entries.filter((e) => !e.demo && !e.data?.demo && ['note', 'texte', 'audio', 'essai', 'paroles'].includes(e.type) && !e.data?.journal);
+  const n = PHASES_M.map(([, st]) => ents.filter((e) => st.includes(e.data?.stage || 0)).length);
+  const ici = n.every((x) => !x) ? 0 : n.indexOf(Math.max(...n));
+  return `<section class="phases-m" aria-label="Créer, façonner, produire"><div class="pm-head"><h2>Créer → Façonner → Produire</h2><p class="muted small">D’après notre mur, on est surtout en mode <b>${PHASES_M[ici][0]}</b>. Chaque idée avance à son rythme : glisse-la d’étape au mur.</p></div>
+    <div class="pm-grid">${PHASES_M.map(([t, st, d, l], i) => `<article class="pm ${i === ici ? 'ici' : ''}"><h3><span>${i + 1}</span> ${t} <small>${n[i]} idée${n[i] > 1 ? 's' : ''}</small></h3><p>${d}</p><p class="pm-etapes muted small">Au mur : ${st.map((x) => STAGES[x].label).join(', ')}</p><div>${l.map(([h, x]) => `<a href="#/${h}">${x}</a>`).join('')}</div></article>`).join('')}</div></section>`;
+}
 const OU_ALLER = [
   ['Jouer ensemble', 'Dans la même pièce ou à distance, une séance guidée qui finit par une prise.', [['session', 'Lancer une séance'], ['accord', 'Voix + piano']]],
   ['Entre deux séances', 'Se lancer des sons, répondre par-dessus, garder les perles et les étincelles.', [['relais', 'Le relais'], ['etincelles', 'Nos étincelles'], ['coffre', 'Le coffre']]],
@@ -144,6 +171,8 @@ export default {
       const v = espace.meta.vision || {};
       el.innerHTML = `
         ${head}
+        ${commencerHTML()}
+        <a class="arbre-teaser" href="#/arbre">${espace.me === (espace.meta.members || MEMBERS)[1] ? `Tu as demandé à ${esc((espace.meta.members || MEMBERS)[0])} d’où venaient certains sons et éléments de l’app. <b>Clique ici pour voir son arbre d’architecte d’environnement hybride à l’œuvre →</b>` : '<b>L’arbre de l’architecte</b> : d’où vient chaque son, tout FLIP déplié →'}</a>
         ${luneHTML()}
         ${todayHTML()}
         ${nouveautesHTML()}
@@ -186,6 +215,7 @@ export default {
           const sessions = espace.entries.filter((e) => e.type === 'session' && e.data?.done);
           const mins = sessions.reduce((sum, e) => sum + Math.max(0, Math.min(240, (e.data.doneAt - e.data.startedAt - (e.data.pausedTotal || 0)) / 60000)), 0);
           return `
+          ${mem.every((x) => profileOf(x)?.doneAt) ? `<a class="ames-teaser" href="#/ames"><b>Nos deux âmes</b><span>L’arc et le triskel : ce que nos deux étapes 1 donnent ensemble, nos pistes hors sentier, ce que nos traces disent déjà.</span><em>Voir →</em></a>` : ''}
           <div class="home-trio">
             <section class="panel bravos">
               <div class="panel-head"><h2>Nos bravos</h2><a class="btn small" href="#/carnet">★ En envoyer un</a></div>
@@ -213,6 +243,7 @@ export default {
           <cite>Une vision partagée avant de composer · Merchán-Sánchez-Jara 2023</cite>
         </details>
 
+        ${phasesHTML()}
         <section class="ou-aller" aria-label="Où aller">
           <h2>Où aller</h2>
           <div class="oa-grid">${OU_ALLER.map(([t, why, links]) => `<div class="oa-g"><h3>${t}</h3><p>${why}</p><div>${links.map(([h, l]) => `<a href="#/${h}">${l}</a>`).join('')}</div></div>`).join('')}</div>

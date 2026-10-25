@@ -94,7 +94,7 @@ export default {
           <h1>Notre journal</h1>
           <p class="muted">Écrire chacun de son côté, et se lire. Ce qui a de la vie part au mur ou au coffre d’un geste.</p>
         </div></div>
-        <nav class="ec-chemins" aria-label="Les chemins de l’écriture">${CHEMINS.map(([h, t, d]) => `<a href="#/${h}"><b>${t}</b><small>${d}</small></a>`).join('')}</nav>
+        <nav class="ec-chemins" aria-label="Les chemins de l’écriture">${CHEMINS.map(([h, t, d]) => `<a href="#/${h}"><b>${t}</b><small>${d}</small></a>`).join('')}<button class="ec-chemin-flip" data-e="aller-idees"><b>Nos idées pour FLIP</b><small>Ce qu’on aimerait changer ou ajouter dans l’app : on le note ici, Zaza le transmet.</small></button></nav>
         <section class="ec-new">
           <p class="ec-invite"><small>L’invitation du jour</small>${esc(inviteDu())}</p>
           <textarea class="input ec-text" rows="5" placeholder="Écris ce qui vient. Rien ne sera jugé."></textarea>
@@ -120,11 +120,22 @@ export default {
           <div class="ec-row"><button class="btn" data-e="flux-save">Dans le journal</button><span class="muted small">Le texte et le mumble partent ensemble : ${esc((espace.meta.members || MEMBERS).find((m) => m !== espace.me) || '')} pourra chanter dessus.</span></div>
           <p class="flux-src">Pourquoi : l’écriture en flux contourne le censeur intérieur (Elbow 1973) ; chanter la mélodie et le rythme avant les mots est la méthode de nombreux auteurs-compositeurs (Pattison 2009) ; écrire ce qu’on ressent aide à le traverser (Pennebaker et Beall 1986).</p>
         </section>
-        <div class="ec-list"></div>`;
+        <div class="ec-list"></div>
+        <section class="panel ec-idees" id="idees-flip">
+          <h2>Nos idées pour FLIP</h2>
+          <p class="muted small">Un bouton qu’on cherche, une fonction rêvée, un mot pas clair : chaque idée est gardée ici, datée, et l’app s’améliore à partir de cette liste.</p>
+          <div class="ec-row"><input class="input" data-e="idee-txt" maxlength="300" placeholder="Ex. : pouvoir choisir mes propres accords dans le studio"><button class="btn primary" data-e="idee">Noter l’idée</button></div>
+          <ul class="ec-idees-l"></ul>
+        </section>`;
       stopGroove?.(); stopGroove = bindGroove(el);
       // Venue de l'oreille : la boucle est déjà choisie et prête.
       if (window.__flipFond) { el.querySelector('[data-e=sur]').dispatchEvent(new Event('change', { bubbles: true })); el.querySelector('.ec-flux').scrollIntoView({ block: 'start' }); }
-      list(true);
+      list(true); idees();
+    }
+    function idees() {
+      const ul = el.querySelector('.ec-idees-l'); if (!ul) return;
+      const l = espace.entries.filter((e) => e.data?.etincelle && e.data?.pour === 'app' && !e.demo && !e.data?.demo).sort((a, b) => b.createdAt - a.createdAt);
+      ul.innerHTML = l.map((e) => `<li style="--c:${memberColor(e.author)}"><p>${esc(e.body || e.title)}</p><small><b>${esc(e.author)}</b> · ${ago(e.createdAt)}${e.data?.fait ? ' · <b class="fait">fait ✓</b>' : ''}</small></li>`).join('') || '<li class="muted">Aucune idée notée pour l’instant.</li>';
     }
     function list(force) {
       const host = el.querySelector('.ec-list');
@@ -166,6 +177,12 @@ export default {
       if (pa) { const en = espace.entries.find((x) => x.id === pa.dataset.pa); if (en?.audio) { pa.outerHTML = `<audio controls autoplay src="${await audioURL(en.audio)}"></audio>`; } return; }
       const a = e.target.closest('[data-e]')?.dataset.e;
       if (!a) return;
+      if (a === 'aller-idees') { el.querySelector('#idees-flip').scrollIntoView({ behavior: 'smooth', block: 'start' }); el.querySelector('[data-e=idee-txt]').focus({ preventScroll: true }); return; }
+      if (a === 'idee') {
+        const inp = el.querySelector('[data-e=idee-txt]'); const t = inp.value.trim(); if (!t) { inp.focus(); return; }
+        try { await saveEntry({ type: 'note', title: t.slice(0, 80), body: t, data: { etincelle: true, pour: 'app', stage: 0 } }); inp.value = ''; toast('Idée notée. Merci!'); idees(); } catch (err) { toast(err.message); }
+        return;
+      }
       if (a === 'flux') { if (!flux) startFlux(); return; }
       if (a === 'yaourt') { toggleYaourt(e.target.closest('[data-e]')); return; }
       if (a === 'flux-save') {
@@ -201,7 +218,7 @@ export default {
         if (!r.conflict) toast(en.data?.aumur ? 'Retiré du mur.' : 'Au mur, en idée brute. Il peut maintenant monter d’étape.');
       }
     });
-    const off = onEspace((w) => { if (w === 'entries') list(); if (w === 'meta' && !el.querySelector('.ec-new')) shell(); });
+    const off = onEspace((w) => { if (w === 'entries') { list(); idees(); } if (w === 'meta' && !el.querySelector('.ec-new')) shell(); });
     shell();
     return () => { off(); stopGroove?.(); clearInterval(flux); yaourt?.stop(); el.querySelector('.flux-piece audio')?.pause(); };
   },

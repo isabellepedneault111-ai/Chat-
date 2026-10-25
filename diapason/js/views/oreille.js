@@ -4,7 +4,8 @@ import { audio, out } from '../audio.js';
 import { espace, audioURL, saveEntry, uploadAudio, saveProfile, members } from '../espace.js';
 import { toast, autoCanvas } from '../ui.js';
 import { esc } from './carnet.js';
-import { ecouter, boucler, rendreBoucle, diagnostic, notesVoix, nomNote } from '../oreille.js';
+import { ecouter, boucler, rendreBoucle, diagnostic, notesVoix, nomNote, trouverAccords } from '../oreille.js';
+import { chargerGrille } from './studio.js';
 
 const PIECES = [['data/sons/frog-joywalk-complet.mp3', 'Joy Walk (Frog)'], ['data/sons/frog-visite.mp3', 'Projet 1, après la pause (Frog)']];
 const mmss = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
@@ -12,7 +13,7 @@ const mmss = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart
 export default {
   id: 'oreille',
   mount(el) {
-    let buf = null; let res = null; let nom = ''; let diag = null; let voix = null; let stopBoucle = null; let lecture = null;
+    let buf = null; let res = null; let nom = ''; let diag = null; let voix = null; let accs = null; let rec = null; let stopBoucle = null; let lecture = null;
     const sons = () => (espace.connected ? espace.entries.filter((e) => e.audio && !e.audio.type?.startsWith('video')) : []);
     el.innerHTML = `
       <div class="mod-head"><div>
@@ -22,12 +23,14 @@ export default {
       </div></div>
       <section class="panel or-src">
         <label class="btn primary">Choisir un fichier audio<input type="file" accept="audio/*" data-o="file" hidden></label>
+        <button class="btn" data-o="micro">● Enregistrer mon clavier</button>
         <span class="muted">ou</span>
         <select data-o="choix"><option value="">Une pièce ou un son de l’espace…</option>
           ${PIECES.map(([u, n]) => `<option value="url:${u}">${esc(n)}</option>`).join('')}
           ${sons().map((e) => `<option value="id:${esc(e.id)}">${esc(e.title || 'Son')} (${esc(e.author)})</option>`).join('')}
         </select>
         <p class="or-etat muted small"></p>
+        <p class="muted small or-astuce">Pour trouver les accords d’un bout joué au clavier : enregistre-le ici (micro) ou dépose le fichier. Un son clair, sans batterie, donne le meilleur résultat. Branché en MIDI, le studio les lit encore plus juste, en direct : <a href="#/studio?tab=instrument">Studio → Mon instrument</a>.</p>
       </section>
       <section class="or-res" hidden>
         <h2 class="or-titre"></h2>
@@ -36,6 +39,7 @@ export default {
         <div class="or-diag"></div>
         <div class="or-legende"><span><i class="lg-p"></i>une partie (touche pour l’écouter)</span><span><i class="lg-s"></i>silence</span><span><i class="lg-b"></i>la boucle</span><span><i class="lg-m"></i>le moment fort</span><span><i class="lg-t"></i>à retravailler</span></div>
         <div class="or-voix"></div>
+        <div class="or-accords"></div>
         <div class="or-actions">
           <button class="btn primary" data-o="boucle">▶ Écouter la boucle</button>
           <button class="btn" data-o="fort">▶ Le moment fort</button>
@@ -59,6 +63,8 @@ export default {
         res = await ecouter(buf, etat); diag = diagnostic(res); voix = null;
         etat('');
         montrer();
+        accs = await trouverAccords(buf, res.bpm, etat); etat('');
+        montrerAccords();
         voix = await notesVoix(buf, etat); etat('');
         montrerVoix();
       } catch { etat('Je n’arrive pas à lire ce fichier. Essaie un mp3, un m4a ou un wav.'); }
@@ -99,6 +105,16 @@ export default {
         ${qui.length ? `<p class="or-garder">C’est la voix de : ${qui.map((m) => `<button class="btn small" data-o="garder" data-qui="${esc(m)}">${esc(m)}</button>`).join(' ')} <span class="muted small">FLIP garde ces notes dans son profil et apprend, prise après prise.</span></p>` : ''}
         <p class="or-src-note muted small">Comment : hauteur mesurée 45 fois par seconde par autocorrélation (comme un accordeur) ; une note compte si elle tient au moins 0,14 s. Juste : moins de 12 cents d’écart. Retour visuel et justesse : Welch, Howard et Rush 1989.</p>`;
     }
+    // Les accords trouvés, temps par temps : on les écoute, et on les envoie au studio pour jouer et improviser dessus.
+    function montrerAccords() {
+      const box = q('.or-accords');
+      if (!accs?.length) { box.innerHTML = '<p class="muted small">Accords : rien de clair à reconnaître ici (trop de batterie ou d’effets, ou pas d’accords tenus).</p>'; return; }
+      const ton = res.ton.split(' ou ')[0]; const NOMS = ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
+      box.innerHTML = `<h3>Les accords <small class="muted">${accs.length} changements trouvés · touche un accord pour l’écouter</small></h3>
+        <div class="or-acc-liste">${accs.slice(0, 48).map((a, i) => `<button class="or-acc" data-acc="${i}" title="${mmss(a.a)} · ${a.temps} temps"><b>${esc(a.nom)}</b><small>${mmss(a.a)}</small></button>`).join('')}</div>
+        <div class="ec-row"><button class="btn primary" data-o="studio">Jouer avec ces accords dans le studio →</button><span class="muted small">Les 8 premiers changements, avec leur durée, deviennent « Mes accords ». La tonalité estimée (${esc(ton)}) colore le clavier.</span></div>`;
+      box._noms = NOMS;
+    }
     function dessiner() {
       if (!res) return;
       const { ctx, w, h } = cv;
@@ -126,6 +142,18 @@ export default {
       const c = audio(); const src = c.createBufferSource(); src.buffer = buf; src.connect(out());
       src.start(c.currentTime + 0.05, a, b - a); lecture = src;
     };
+    // Enregistrer son clavier au micro, jusqu'à une minute, puis l'analyser comme un fichier.
+    async function micro(b) {
+      if (rec) { rec.stop(); return; }
+      try {
+        const flux = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+        const morceaux = []; rec = new MediaRecorder(flux);
+        rec.ondataavailable = (ev) => ev.data.size && morceaux.push(ev.data);
+        rec.onstop = async () => { flux.getTracks().forEach((t) => t.stop()); rec = null; b.textContent = '● Enregistrer mon clavier'; b.classList.remove('on'); await analyser(await new Blob(morceaux).arrayBuffer(), 'Mon enregistrement'); };
+        rec.start(); b.textContent = '■ Arrêter et analyser'; b.classList.add('on'); etat('J’écoute… joue ton bout (une minute au plus).');
+        setTimeout(() => rec?.state === 'recording' && rec.stop(), 60000);
+      } catch { toast('Micro refusé : autorise-le dans la barre d’adresse.'); }
+    }
     el.addEventListener('change', async (e) => {
       const o = e.target.dataset.o;
       if (o === 'file' && e.target.files[0]) { const f = e.target.files[0]; await analyser(await f.arrayBuffer(), f.name.replace(/\.[^.]+$/, '')); }
@@ -146,9 +174,20 @@ export default {
     });
     el.addEventListener('click', async (e) => {
       const o = e.target.closest('[data-o]')?.dataset.o;
+      if (o === 'micro') { micro(e.target.closest('[data-o]')); return; }
       const rep = e.target.closest('.or-diag [data-a]');
       if (rep && res) { joueDe(+rep.dataset.a, +rep.dataset.b); return; }
       if (!o || !res) return;
+      const ac = e.target.closest('[data-acc]');
+      if (ac && accs) { const a = accs[+ac.dataset.acc]; joueDe(a.a, a.b); return; }
+      if (o === 'studio' && accs?.length) {
+        const [n, mode] = res.ton.split(' ou ')[0].split(' '); const NOMS = q('.or-accords')._noms; let tonique = NOMS.indexOf(n); if (mode === 'mineur') tonique = (tonique + 3) % 12;
+        const DUR = [1, 2, 3, 4, 6, 8]; const proche = (t) => DUR.reduce((x, y) => (Math.abs(y - t) < Math.abs(x - t) ? y : x));
+        // Si la suite se répète, on n'en garde qu'un tour : la boucle du studio la fera revenir.
+        let tour = accs.length; for (let k = 1; k <= Math.min(8, accs.length / 2); k++) { if (accs.every((x, i) => i + k >= accs.length || x.nom === accs[i + k].nom)) { tour = k; break; } }
+        chargerGrille(tonique, accs.slice(0, Math.min(8, tour)).map((a) => [a.r, a.q, proche(a.temps)]), `Accords de « ${nom.slice(0, 30)} »`);
+        location.hash = '#/studio?tab=beat'; return;
+      }
       if (o === 'garder' && voix?.voix) {
         const qui = e.target.dataset.qui;
         // On cumule, prise après prise : chaque note garde son nombre de fois et son écart moyen.

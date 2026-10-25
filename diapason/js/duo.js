@@ -95,11 +95,11 @@ export const EXERCICES = {
 // Grilles harmoniques (degrés de la gamme majeure) : un socle stable pour voix et guitare,
 // du champ libre pour les textures du clavier.
 export const GRILLES = [
-  { id: 'vamp', nom: 'Vamp diatonique', roman: 'I – IV', chords: [[0, 'M'], [5, 'M'], [0, 'M'], [5, 'M']], usage: 'Le plus simple : la voix est libre, le clavier explore les textures.', src: 'Norgaard 2017' },
-  { id: 'cadence', nom: 'Cadence tonale', roman: 'I – V – I', chords: [[0, 'M'], [7, 'M'], [0, 'M'], [7, '7']], usage: 'Tension, résolution : parfait pour l’appel-réponse.', src: 'Mazurkiewicz 2024' },
-  { id: 'iiVI', nom: 'Boucle ii–V–I', roman: 'ii7 – V7 – Imaj7', chords: [[2, 'm7'], [7, '7'], [0, 'maj7'], [0, 'maj7']], usage: 'Plus coloré : les cellules courtes guident la mélodie.', src: 'McClimon 2017' },
-  { id: 'IIVVI', nom: 'I – IV – V – I', roman: 'I – IV – V – I', chords: [[0, 'M'], [5, 'M'], [7, 'M'], [0, 'M']], usage: 'La grille de la séance type : degrés 1-2-3-5 par-dessus.', src: 'Heil 2017 · Burger 2022' },
-  { id: 'pedale', nom: 'Pédale modale', roman: 'I sus2 – I – I sus2 – Imaj7', chords: [[0, 'sus2'], [0, 'M'], [0, 'sus2'], [0, 'maj7']], usage: 'Une basse qui ne bouge pas : terrain de jeu des timbres et des effets.', src: 'Bian 2023 · Mazurkiewicz 2024' },
+  { id: 'vamp', nom: 'Vamp : deux accords en boucle', roman: 'I – IV', chords: [[0, 'M'], [5, 'M'], [0, 'M'], [5, 'M']], usage: 'Deux accords qui se répondent sans fin. Le plus simple : la voix est libre, le clavier explore les sons.', src: 'Norgaard 2017' },
+  { id: 'cadence', nom: 'Aller-retour (cadence)', roman: 'I – V – I', chords: [[0, 'M'], [7, 'M'], [0, 'M'], [7, '7']], usage: 'On part de la maison, on se tend, on revient. Parfait pour se répondre l’un l’autre.', src: 'Mazurkiewicz 2024' },
+  { id: 'iiVI', nom: 'Boucle jazz', roman: 'ii7 – V7 – Imaj7', chords: [[2, 'm7'], [7, '7'], [0, 'maj7'], [0, 'maj7']], usage: 'Trois accords plus colorés, qui donnent envie de mélodie. Le moteur du jazz.', src: 'McClimon 2017' },
+  { id: 'IIVVI', nom: 'La grille des chansons', roman: 'I – IV – V – I', chords: [[0, 'M'], [5, 'M'], [7, 'M'], [0, 'M']], usage: 'Celle de milliers de chansons pop et folk : solide, facile à chanter dessus.', src: 'Heil 2017 · Burger 2022' },
+  { id: 'pedale', nom: 'Basse immobile (pédale)', roman: 'I sus2 – I – I sus2 – Imaj7', chords: [[0, 'sus2'], [0, 'M'], [0, 'sus2'], [0, 'maj7']], usage: 'La basse reste sur la même note, la couleur change par-dessus : pour les ambiances et les effets.', src: 'Bian 2023 · Mazurkiewicz 2024' },
 ];
 
 // Contraintes surprises (le dé) : la contrainte libère (De Bruin 2019, Merchán-Sánchez-Jara 2023).

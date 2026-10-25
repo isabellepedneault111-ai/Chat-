@@ -3,8 +3,9 @@
 import { FLAME } from '../marque.js';
 import { depuisHTML } from '../traces.js';
 import { exempleHTML, bindExemples } from '../exemples.js';
+import { concretHTML, jouerDemo } from '../concret.js';
 import { espace, onEspace, saveEntry, uploadAudio, uid, profileOf } from '../espace.js';
-import { animate, toast } from '../ui.js';
+import { animate, toast, store } from '../ui.js';
 import { audio, click } from '../audio.js';
 import { FR, mod12, chordName } from '../music.js';
 import { FORMATS, PHASES, EXERCICES, GRILLES, CIBLES, PLAN, memberColor } from '../duo.js';
@@ -35,6 +36,8 @@ const CIBLE_INFO = {
   'Un son d’effet signature': ['le son qui fera reconnaître FLIP : effets du clavier, couleur de la voix.', 'pedale'],
   'La fin d’un morceau': ['comment on termine : ralenti, coupure nette, dernier accord tenu.', 'cadence'],
 };
+// La grille faite à la main dans le studio (« Mes propres accords ») passe en tête, à côté des modèles.
+const grilles = () => { const c = store.get('customProg', null); return c ? [{ id: 'perso', nom: 'Nos accords (studio)', roman: c.roman, chords: c.chords, usage: 'La grille que vous avez faite dans le studio.', perso: true }, ...GRILLES] : GRILLES; };
 const otherOf = () => (espace.meta?.members || ['Zaza', 'Frog']).find((m) => m !== espace.me) || 'l’autre';
 const pick = (arr, not) => { const pool = arr.filter((x) => x !== not); return pool.length ? pool[Math.floor(Math.random() * pool.length)] : arr[0]; };
 
@@ -67,7 +70,7 @@ export default {
     // Venue du plan : la séance arrive déjà préparée (cible, grille, format).
     const hp = new URLSearchParams(location.hash.split('?')[1] || '');
     if (hp.get('cible')) { setup.cible = hp.get('cible'); if (CIBLE_INFO[setup.cible]) setup.grille = CIBLE_INFO[setup.cible][1]; }
-    if (hp.get('grille') && GRILLES.some((g) => g.id === hp.get('grille'))) setup.grille = hp.get('grille');
+    if (hp.get('grille') && grilles().some((g) => g.id === hp.get('grille'))) setup.grille = hp.get('grille');
     if (hp.get('format') && FORMATS.some((f) => f.id === hp.get('format'))) setup.format = hp.get('format');
     let lastPhase = -1;
     let lastSig = '';
@@ -195,13 +198,14 @@ export default {
               <label class="field"><span>Tonalité</span><select data-s="key">${FR.map((n, i) => `<option value="${i}" ${i === setup.key ? 'selected' : ''}>${n} majeur</option>`).join('')}</select></label>
               <p class="ton-aide">La tonalité, c’est la « maison » des accords. <b>Do majeur</b> : les touches blanches, le plus simple au clavier.${conseil.length ? ` D’après la tessiture de ${esc(chanteuse)}, sa voix est à l’aise en ${conseil.map((k) => `<button class="linklike" data-key="${k}">${FR[k]}</button>`).join(', ')}.` : ''}</p>
             </div>
-            <div class="grilles">${GRILLES.map((g) => `<div class="grille ${setup.grille === g.id ? 'on' : ''}" data-g="${g.id}" role="button" tabindex="0">
+            <div class="grilles">${grilles().map((g) => `<div class="grille ${setup.grille === g.id ? 'on' : ''}" data-g="${g.id}" role="button" tabindex="0">
               <div class="grille-top"><b>${g.nom}</b>${CIBLE_INFO[setup.cible]?.[1] === g.id ? '<em>suggérée pour cette cible</em>' : ''}<button class="icon-btn tiny" data-ecoute="${g.id}" aria-label="Écouter ${esc(g.nom)}">▶</button></div>
-              <span class="grille-ch">${g.chords.map(([d, q]) => `<i>${chordName(mod12(setup.key + d), q)}</i>`).join('')}</span><small>${g.usage}</small></div>`).join('')}</div>
+              <span class="grille-ch">${g.chords.map(([d, q]) => `<i>${chordName(mod12(setup.key + d), q)}</i>`).join('<span aria-hidden="true">→</span>')}</span><small>${g.usage}</small></div>`).join('')}</div>
+            <p class="pas-aide">Envie de vos propres accords? <a href="#/studio">Studio → « Mes propres accords »</a> : votre grille apparaîtra ici en premier.</p>
           </li>
         </ol>
         <div class="launch launch-recap">
-          <p class="recap">${esc(LIEUX.find((x) => x[0] === setup.lieu)[1])} · ${esc(FORMATS.find((f) => f.id === setup.format)?.label || '')} · <b>${esc(setup.cible)}</b> · ${FR[setup.key]} majeur · ${esc(GRILLES.find((g) => g.id === setup.grille)?.nom || '')}</p>
+          <p class="recap">${esc(LIEUX.find((x) => x[0] === setup.lieu)[1])} · ${esc(FORMATS.find((f) => f.id === setup.format)?.label || '')} · <b>${esc(setup.cible)}</b> · ${FR[setup.key]} majeur · ${esc(grilles().find((g) => g.id === setup.grille)?.nom || '')}</p>
           <button class="btn primary big" data-a="start">● Lancer la session</button>
           <span class="muted small">${setup.lieu === 'solo' ? 'Ce que tu prépares nourrira votre prochaine séance.' : setup.lieu === 'distance' ? `${esc(otherOf())} verra la même séance, au même moment, sur son appareil.` : 'Un seul écran suffit : mets-le en plein écran pendant la séance.'}</span>
         </div>`;
@@ -210,7 +214,7 @@ export default {
     function renderRunning(s) {
       const d = s.data;
       const f = FORMATS.find((x) => x.id === d.format);
-      const g = GRILLES.find((x) => x.id === d.grille) || GRILLES[0];
+      const g = grilles().find((x) => x.id === d.grille) || GRILLES[0];
       el.innerHTML = `
         <div class="run">
           <header class="run-head">
@@ -323,7 +327,7 @@ export default {
       const P = PHASES[pid];
       const exId = d.ex?.[pid];
       const ex = exId && EXERCICES[exId];
-      const g = GRILLES.find((x) => x.id === d.grille) || GRILLES[0];
+      const g = grilles().find((x) => x.id === d.grille) || GRILLES[0];
       const grid = `<div class="today-grid">${g.chords.map(([dg, q]) => `<span>${chordName(mod12(d.key + dg), q)}</span>`).join('')}</div>`;
       let extra = '';
       if (pid === 'prise' || pid === 'memo') {
@@ -349,6 +353,7 @@ export default {
             <div class="exercise">
               <div class="ex-head"><b>${ex.nom}</b><span class="mono">${ex.duree} min</span><button class="btn small primary" data-exo="${esc(exId)}">▶ Le faire</button><button class="btn small ghost" data-a="reroll">Autre exercice</button></div>
               <ol>${ex.comment.map((c) => `<li>${c}</li>`).join('')}</ol>
+              ${concretHTML(exId)}
               <cite>${ex.src}</cite>
               ${exempleHTML(exId, ex.nom)}
             </div>
@@ -365,7 +370,7 @@ export default {
       f.phases.forEach(([p]) => { if (PHASES[p].pool.length) ex[p] = pick(PHASES[p].pool); });
       // Frog seul au piano : son travail ciblé vient du coin piano.
       if (setup.format === 'solo' && espace.me === (espace.meta.members || ['Zaza', 'Frog'])[1]) ex.solo = pick(Object.keys(EXERCICES).filter((k) => k.startsWith('p-')));
-      const g = GRILLES.find((x) => x.id === setup.grille);
+      const g = grilles().find((x) => x.id === setup.grille);
       setLoop(setup.key, g);
       try {
         await saveEntry({ id: uid(), type: 'session', title: custom || setup.cible, data: { format: setup.format, lieu: setup.lieu, cible: custom || setup.cible, song: setup.song, key: setup.key, grille: setup.grille, ex, startedAt: Date.now(), pausedTotal: 0, pausedAt: null, offset: 0, takes: [] } });
@@ -408,6 +413,7 @@ export default {
     }
 
     el.addEventListener('click', async (e) => {
+      const demo = e.target.closest('[data-demo]'); if (demo) { jouerDemo(demo.dataset.demo); return; }
       const fb = e.target.closest('[data-f]');
       if (fb) { setup.format = fb.dataset.f; if (fb.dataset.f === 'solo') setup.lieu = 'solo'; else if (setup.lieu === 'solo') setup.lieu = 'piece'; renderSetup(); return; }
       const lb = e.target.closest('[data-lieu]');
@@ -417,7 +423,7 @@ export default {
       // Écouter une grille avant de la choisir : les quatre accords, une seconde chacun.
       const ec = e.target.closest('[data-ecoute]');
       if (ec) {
-        const g = GRILLES.find((x) => x.id === ec.dataset.ecoute);
+        const g = grilles().find((x) => x.id === ec.dataset.ecoute);
         const t = audio().currentTime + 0.05;
         g.chords.forEach(([dg, q], i) => pad(chordIntervals(q).map((iv) => mtof(48 + mod12(setup.key + dg) + iv)), t + i * 1.1, 1.05, 0.05));
         setup.grille = g.id;
