@@ -22,7 +22,7 @@ const visible = (sel) => sel.split(',').map((x) => x.trim()).flatMap((x) => [...
 
 import { montrerExemples, retirerExemples } from './demo.js';
 import { espace, saveEntry } from './espace.js';
-import { bandeStart, bandeSection, bandeStop, jouer } from './visite-sons.js';
+import { bandeStart, bandeSection, bandeStop } from './visite-sons.js';
 
 // apercu : Zaza voit exactement le tour de Frog, avec seulement une sortie discrète.
 export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
@@ -65,7 +65,7 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
   function show() {
     const s = STEPS[i];
     bandeSection('coach', i);
-    jouer(s.final ? 'final' : 'etape');
+    // Pas d'effet entre les étapes : la musique de Frog joue d'un bout à l'autre, sans être coupée.
     if (location.hash !== s.route && !(s.route === '#/' && (location.hash === '' || location.hash === '#'))) location.hash = s.route;
     bubble.innerHTML = `
       <p class="coach-n">${i + 1} / ${STEPS.length} <span class="coach-demo">exemples fictifs, pour voir le rendu</span></p>
