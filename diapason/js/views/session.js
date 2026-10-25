@@ -6,7 +6,8 @@ import { audio, click } from '../audio.js';
 import { FR, mod12, chordName } from '../music.js';
 import { FORMATS, PHASES, EXERCICES, GRILLES, CIBLES, PLAN, memberColor } from '../duo.js';
 import { currentMonth, weekRhythm } from '../plan.js';
-import { setLoop, toggleLoop, loopPlaying } from './studio.js';
+import { setLoop, toggleLoop, loopPlaying, setTempo } from './studio.js';
+import { startConsole, consoleState, onConsole } from '../console.js';
 import { esc, espaceGate, allSongs } from './carnet.js';
 
 const MAX_AGE = 5 * 3600 * 1000;
@@ -42,7 +43,60 @@ export default {
     let lastPhase = -1;
     let lastSig = '';
     let recorder = null;
+    let takeStart = 0;
     let stopTick = () => {};
+
+    // ---------- Repères : moments de la séance, horodatés ----------
+    // On les envoie par paquets (toutes les 4 s) pour ne pas bombarder le serveur pendant qu'on joue.
+    let pending = [];
+    let flushT = 0;
+    const allMarkers = () => {
+      const s = activeSession();
+      const seen = new Set();
+      return [...(s?.data.markers || []), ...pending].filter((m) => { const k = `${m.at}|${m.text}`; if (seen.has(k)) return false; seen.add(k); return true; }).sort((a, b) => a.at - b.at);
+    };
+    function addMarker(kind, text) {
+      const s = activeSession();
+      if (!s) return;
+      pending.push({ t: Math.round(phaseAt(s.data).t), at: Date.now(), kind, text: String(text).slice(0, 160), by: espace.me });
+      renderMarkers();
+      clearTimeout(flushT);
+      flushT = setTimeout(flush, 4000);
+    }
+    async function flush() {
+      if (!pending.length) return;
+      const batch = pending;
+      try {
+        await patch((d) => ({ markers: [...(d.markers || []), ...batch].slice(-400) }));
+        pending = pending.filter((m) => !batch.includes(m));
+      } catch { flushT = setTimeout(flush, 6000); }
+    }
+    function renderMarkers() {
+      const box = el.querySelector('.markers');
+      if (!box) return;
+      const list = allMarkers().slice(-8).reverse();
+      box.innerHTML = list.map((m) => `<li><span class="mono">${fmt(m.t)}</span> <b style="color:${memberColor(m.by)}">${esc(m.by)}</b> ${esc(m.text)}</li>`).join('') || '<li class="muted small">Les repères de la séance apparaîtront ici : changements de son, tempo, départs du séquenceur, et ceux que vous posez à la main.</li>';
+    }
+
+    // ---------- La console MIDI ----------
+    function updateConsole() {
+      const c = el.querySelector('.console');
+      if (!c) return;
+      const st = consoleState;
+      c.querySelector('.console-devs').textContent = st.on ? (st.devices.join(' · ') || 'aucun appareil détecté') : '';
+      c.querySelector('[data-a=midi]').hidden = st.on;
+      c.querySelector('.c-bpm').textContent = st.bpm ? Math.round(st.bpm) : '—';
+      c.querySelector('[data-a=sync]').hidden = !st.bpm;
+      c.querySelector('.c-transport').textContent = st.on ? (st.transport === 'play' ? '▶ en marche' : '■ arrêté') : '—';
+      c.querySelector('.c-prog').textContent = st.program ? `prog. ${st.program.num}` : '—';
+      c.querySelector('.c-chord').textContent = st.chord || '—';
+    }
+    // Les accords et les boutons tournés deviennent des repères seulement pendant une prise (sinon : trop de bruit).
+    const offConsole = onConsole((ev) => {
+      updateConsole();
+      if (!ev.text || !activeSession()) return;
+      if (['tempo', 'transport', 'program', 'device'].includes(ev.kind) || (recorder && ['chord', 'cc'].includes(ev.kind))) addMarker(ev.kind, ev.text);
+    });
 
     async function patch(change) {
       const cur = activeSession();
@@ -120,7 +174,23 @@ export default {
             <button class="btn ghost" data-a="full" title="Plein écran pour l’écran partagé">⛶ Plein écran</button>
             <button class="btn danger" data-a="end">Terminer</button>
           </div>
+          <section class="console screen">
+            <div class="console-head">
+              <b>La console de Frog</b><span class="mono console-devs"></span>
+              <button class="btn small" data-a="midi">Brancher le MIDI</button>
+            </div>
+            <div class="console-grid">
+              <div class="c-cell"><small>Tempo</small><b class="c-bpm mono">—</b><button class="btn small" data-a="sync" hidden>Caler la boucle</button></div>
+              <div class="c-cell"><small>Séquenceur</small><b class="c-transport">—</b></div>
+              <div class="c-cell"><small>Son</small><b class="c-prog">—</b></div>
+              <div class="c-cell"><small>Accord</small><b class="c-chord">—</b></div>
+            </div>
+            <form class="marker-form" autocomplete="off"><input class="input" data-m="text" maxlength="160" placeholder="Un repère : « ici la voix décroche »"><button class="btn small" type="submit">⚑ Repère</button></form>
+            <ol class="markers"></ol>
+          </section>
         </div>`;
+      updateConsole();
+      renderMarkers();
       lastPhase = -1;
       lastSig = '';
       lastTickT = 0;
@@ -129,6 +199,7 @@ export default {
     }
 
     let lastTickT = 0;
+    let lastMarkerCount = -1;
     function tick() {
       const now = performance.now();
       if (now - lastTickT < 200) return;
@@ -147,6 +218,8 @@ export default {
         li.classList.toggle('now', i === ph.i);
         if (i === ph.i) li.querySelector('i').style.width = `${(1 - ph.left / ph.dur) * 100}%`;
       });
+      // Des repères posés sur l'autre appareil arrivent : on met la liste à jour.
+      if ((d.markers || []).length !== lastMarkerCount) { lastMarkerCount = (d.markers || []).length; renderMarkers(); }
       // On redessine la phase seulement si elle change (sans effacer un debrief en cours de frappe).
       const sig = `${ph.i}|${JSON.stringify(d.ex || {})}|${(d.takes || []).length}`;
       if (sig !== lastSig) {
@@ -181,6 +254,8 @@ export default {
       }
       if (pid === 'debrief' || pid === 'tri' || pid === 'memo') {
         const db = d.debrief || {};
+        const moments = allMarkers();
+        if (moments.length) extra += `<details class="moments" open><summary>Ce qui s’est passé pendant la séance (${moments.length})</summary><ol>${moments.map((m) => `<li><span class="mono">${fmt(m.t)}</span> <b style="color:${memberColor(m.by)}">${esc(m.by)}</b> ${esc(m.text)}</li>`).join('')}</ol></details>`;
         extra += `
           <form class="debrief">
             ${[['intention', 'Ce qu’on voulait'], ['entendu', 'Ce qu’on a entendu'], ['ecart', 'L’écart'], ['prochaine', 'LA prochaine cible']].map(([k, l]) => `<label class="field col"><span>${l}</span><textarea class="input" rows="2" data-db="${k}">${esc(db[k] || '')}</textarea></label>`).join('')}
@@ -232,16 +307,21 @@ export default {
           btn.classList.remove('on');
           btn.textContent = 'Envoi…';
           const s = activeSession();
+          // Les repères tombés pendant la prise voyagent avec elle, en secondes depuis son début.
+          const end = Date.now();
+          const markers = allMarkers().filter((m) => m.at >= takeStart && m.at <= end).map((m) => ({ t: Math.round((m.at - takeStart) / 100) / 10, text: m.text, by: m.by, kind: m.kind }));
+          addMarker('take', `Prise enregistrée (${fmt((end - takeStart) / 1000)})`);
           try {
             const a = await uploadAudio(blob);
             const id = uid();
-            await saveEntry({ id, type: 'audio', title: `Prise · ${s.data.cible}`, audio: a, data: { stage: 1, song: s.data.song || '', session: s.id } });
+            await saveEntry({ id, type: 'audio', title: `Prise · ${s.data.cible}`, audio: a, data: { stage: 1, song: s.data.song || '', session: s.id, markers } });
             await patch((dd) => ({ takes: [...(dd.takes || []), id] }));
             toast('Prise sur le mur.');
           } catch (err) { toast(err.message); }
           btn.textContent = '● Une autre prise';
         };
         recorder.start();
+        takeStart = Date.now();
         btn.textContent = '■ Arrêter la prise';
         btn.classList.add('on');
       } catch { toast('Micro refusé. Autorise-le dans la barre d’adresse.'); }
@@ -265,9 +345,15 @@ export default {
         if (pid && PHASES[pid].pool.length) await patch((d) => ({ ex: { ...d.ex, [pid]: pick(PHASES[pid].pool, d.ex?.[pid]) } }));
       }
       if (a === 'loop') { toggleLoop(); }
+      if (a === 'midi') {
+        try { await startConsole(); updateConsole(); toast(consoleState.devices.length ? `Console branchée : ${consoleState.devices.join(', ')}` : 'MIDI autorisé, mais aucun appareil détecté. Branche-le : il apparaîtra tout seul.'); } catch (err) { toast(err.message); }
+      }
+      if (a === 'sync' && consoleState.bpm) { const b = setTempo(consoleState.bpm); toast(`La boucle suit maintenant ${b} BPM.`); }
       if (a === 'full') { const r = el.querySelector('.run'); if (document.fullscreenElement) document.exitFullscreen(); else r?.requestFullscreen?.(); }
       if (a === 'rec') recordTake(e.target.closest('[data-a]'));
       if (a === 'end' && confirm('Terminer la session?')) {
+        clearTimeout(flushT);
+        await flush();
         await patch(() => ({ done: true, doneAt: Date.now() }));
         if (loopPlaying()) toggleLoop();
         toast('Session rangée dans votre plan.');
@@ -279,6 +365,13 @@ export default {
       if (e.target.dataset.s === 'key') { setup.key = +e.target.value; renderSetup(); }
     });
     el.addEventListener('submit', async (e) => {
+      if (e.target.classList.contains('marker-form')) {
+        e.preventDefault();
+        const inp = e.target.querySelector('[data-m=text]');
+        addMarker('manual', inp.value.trim() || '⚑ Repère');
+        inp.value = '';
+        return;
+      }
       if (!e.target.classList.contains('debrief')) return;
       e.preventDefault();
       const db = {};
@@ -311,6 +404,6 @@ export default {
       if (s) { lastTickT = 0; tick(); }
     });
     render();
-    return () => { off(); stopTick(); recorder?.stop(); window.removeEventListener('keydown', onKey); };
+    return () => { off(); offConsole(); clearTimeout(flushT); flush(); stopTick(); recorder?.stop(); window.removeEventListener('keydown', onKey); };
   },
 };

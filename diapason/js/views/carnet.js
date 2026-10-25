@@ -329,6 +329,7 @@ export default {
         </div>
         <h2>${esc(e.title || 'Sans titre')}</h2>
         ${e.audio ? `<div class="entry-audio" data-audio="${e.id}"><button class="btn small" data-play="${e.id}">▶ Écouter</button></div>` : ''}
+        ${e.audio && e.data?.markers?.length ? `<ol class="take-markers">${e.data.markers.map((m) => `<li><button class="btn small mono" data-seek="${e.id}:${m.t}">${Math.floor(m.t / 60)}:${String(Math.floor(m.t % 60)).padStart(2, '0')}</button><b style="color:${memberColor(m.by)}">${esc(m.by)}</b> ${esc(m.text)}</li>`).join('')}</ol>` : ''}
         ${e.type === 'lien' ? `${embedHTML(e.data?.url || e.body)}<a class="btn small" href="${esc(e.data?.url || e.body)}" target="_blank" rel="noopener">Ouvrir dans ${esc(e.data?.kind || 'le navigateur')} ↗</a>` : ''}
         ${e.body && e.type !== 'paroles' && e.type !== 'lien' ? `<div class="entry-body">${esc(e.body).replace(/\n/g, '<br>')}</div>` : ''}
         ${e.type === 'paroles' ? `<pre class="lyrics-preview">${esc(e.body || '')}</pre><a class="btn small" href="#/paroles/${e.id}">Ouvrir dans l’atelier</a>` : ''}
@@ -483,6 +484,23 @@ export default {
         const [id, d] = mv.dataset.move.split(':');
         const en = espace.entries.find((x) => x.id === id);
         await patch(en, () => ({ stage: Math.max(0, Math.min(4, stageOf(en) + +d)) })).catch((err) => toast(err.message));
+        return;
+      }
+      // Un repère de la prise : on charge l'audio au besoin, puis on saute au bon moment.
+      const sk = e.target.closest('[data-seek]');
+      if (sk) {
+        const [id, t] = sk.dataset.seek.split(':');
+        const en = espace.entries.find((x) => x.id === id);
+        const box = el.querySelector(`.detail [data-audio="${id}"]`);
+        try {
+          let media = box?.querySelector('audio,video');
+          if (!media && box) {
+            box.innerHTML = `<audio controls src="${await audioURL(en.audio)}"></audio>`;
+            media = box.querySelector('audio');
+          }
+          const go = () => { media.currentTime = Math.max(0, +t - 1); media.play().catch(() => {}); };
+          if (media.readyState >= 1) go(); else media.addEventListener('loadedmetadata', go, { once: true });
+        } catch (err) { toast(err.message); }
         return;
       }
       const pl = e.target.closest('[data-play]');

@@ -148,8 +148,12 @@ export async function connectMIDI({ onNote, onChord }) {
       if (!last || last.root !== m.root || last.qual !== m.qual) { last = m; onChord?.(m, chroma); }
     }
   };
-  const inputs = [...access.inputs.values()];
-  inputs.forEach((i) => { i.onmidimessage = handler; });
-  access.onstatechange = () => [...access.inputs.values()].forEach((i) => { i.onmidimessage = handler; });
-  return { names: inputs.map((i) => i.name), stop() { [...access.inputs.values()].forEach((i) => { i.onmidimessage = null; }); } };
+  // addEventListener (et non onmidimessage) : la console de Frog peut écouter en même temps.
+  const attach = () => [...access.inputs.values()].forEach((i) => { i.removeEventListener('midimessage', handler); i.addEventListener('midimessage', handler); });
+  attach();
+  access.addEventListener('statechange', attach);
+  return {
+    names: [...access.inputs.values()].map((i) => i.name),
+    stop() { access.removeEventListener('statechange', attach); [...access.inputs.values()].forEach((i) => i.removeEventListener('midimessage', handler)); },
+  };
 }

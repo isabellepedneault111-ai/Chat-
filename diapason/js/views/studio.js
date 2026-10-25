@@ -905,3 +905,9 @@ export function toggleLoop() {
   return S.playing;
 }
 export const loopPlaying = () => S.playing;
+// La boucle suit l'horloge MIDI du matériel de Frog.
+export function setTempo(bpm) {
+  S.bpm = clamp(Math.round(bpm), 60, 160);
+  save();
+  return S.bpm;
+}
