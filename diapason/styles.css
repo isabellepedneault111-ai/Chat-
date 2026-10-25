@@ -2220,3 +2220,12 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .tour .t-slide { overflow-x: hidden; }
 .t-frame-f { width: 19% !important; }
 @media (max-width: 700px) { .mt-stage { height: 40vh; } }
+/* À distance : deux ordinateurs côte à côte */
+.t-frames:has(.t-fcol) { display: flex; gap: 2.5%; align-items: flex-start; }
+.t-fcol { flex: 1 1 0; display: grid; gap: 6px; min-width: 0; }
+.t-flabel { margin: 0; font: italic 600 clamp(.95rem, 1.3vw, 1.1rem) var(--display); color: #e0b866; }
+.t-fcol .t-frame { width: 100% !important; position: relative !important; top: auto !important; right: auto !important; bottom: auto !important; border-radius: 10px; box-shadow: 0 0 0 1px rgba(241, 233, 216, .25), 0 30px 60px -30px rgba(0, 0, 0, .8); }
+/* La visite prend l'écran : plus grande, en plein écran */
+.tour { --hmax: 60vh; }
+@media (max-height: 760px) { .tour { --hmax: 54vh; } }
+@media (max-width: 860px) { .tour { --hmax: 40vh; } }

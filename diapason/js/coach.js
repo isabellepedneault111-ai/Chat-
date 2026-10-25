@@ -2,24 +2,26 @@
 // Il finit toujours au même endroit : l'étape 1, le point de départ.
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+// Une idée par étape, des mots simples. Zaza parle (« je », « ma voix »), Frog lit (« tu », « ton clavier »).
 const STEPS = [
-  { route: '#/', sel: '#nav [data-id=home]', t: 'L’accueil', d: 'Chaque jour : le truc à faire, nos séances ensemble, et ce que l’autre a fait pendant ton absence.' },
-  { route: '#/', sel: '.fil', t: 'Ensemble, sans distance', d: 'Dans la même pièce, à distance en même temps, ou chacun son temps : on ne s’arrête plus quand on n’est pas ensemble.' },
-  { route: '#/session', sel: '#nav [data-id=session]', t: 'Session', d: 'Le cœur de FLIP : une séance guidée, ensemble ou à distance. Elle finit toujours par un enregistrement.' },
-  { route: '#/carnet', sel: '.sky-map, #nav [data-id=carnet]', t: 'Le mur', d: 'Nos idées en un ciel : le centre, c’est l’album. Tu cherches un mot, ça s’allume. Et FLIP propose des rencontres entre tes idées et les miennes.' },
-  { route: '#/relais', sel: '#nav [data-id=relais]', t: 'Le relais', d: 'Quand on n’est pas ensemble : un son en une touche. L’autre répond par-dessus, couche après couche.' },
-  { route: '#/ecrire', sel: '#nav [data-id=ecrire]', t: 'Écrire', d: 'Notre journal à deux, les séances d’écriture, le grimoire et nos paroles.' },
-  { route: '#/accord', sel: '#nav [data-id=voix], .tool-voix', t: 'Voix + clavier', d: 'Tu joues un accord sur ton clavier MIDI (Chrome ou Edge). L’app allume les notes que je peux chanter, dans MA tessiture, celle mesurée au test de l’étape 1. Je chante : elle montre en direct si je tombe dans l’accord et quelle note je tiens. Et à chaque séance, elle retient où ma voix brille : nos notes magiques et la carte de nos accords.' },
-  { route: '#/studio', sel: '#nav [data-id=studio]', t: 'Studio', d: 'Beats, grilles d’accords, instrument : pour construire et jouer.' },
-  { route: '#/', sel: '.tool-coffre, .fil-coffre', t: 'Le coffre', d: 'Nos perles : le mot d’accueil, la visite, et tout ce qu’on y dépose d’un geste. Rien ne quitte sa place : le coffre garde une étoile dessus.' },
-  { route: '#/', sel: '.etincelle', t: 'L’étincelle', d: 'Une idée, même à moitié, pour notre musique ou pour l’app? Touche la flamme, sur n’importe quelle page.' },
-  { route: '#/depart', sel: '.mod-head h1, .view h1', t: 'Étape 1 : ton point de départ', d: 'Ce que tu veux, ta voix, tes styles. Cinq minutes. C’est ce qui nourrit notre plan de six mois.', final: true },
+  { route: '#/', sel: '#nav [data-id=home]', t: 'L’accueil', d: 'Ce qu’on fait aujourd’hui, et ce que l’autre a fait depuis ta dernière visite.' },
+  { route: '#/', sel: '.fil', t: 'Toujours ensemble', d: 'Dans la même pièce, à distance, ou chacun son tour : on continue toujours.' },
+  { route: '#/session', sel: '#nav [data-id=session]', t: 'La séance', d: 'Une séance guidée, étape par étape. Elle finit toujours par un enregistrement.' },
+  { route: '#/carnet', sel: '.sky-map, #nav [data-id=carnet]', t: 'Le mur', d: 'Toutes nos idées. Au centre, l’album. Plus une idée avance, plus elle s’en approche.' },
+  { route: '#/relais', sel: '#nav [data-id=relais]', t: 'Le relais', d: 'Tu m’envoies un son. Je chante par-dessus. Tu ajoutes une couche.' },
+  { route: '#/ecrire', sel: '#nav [data-id=ecrire]', t: 'Écrire', d: 'Notre journal, nos paroles, et écrire sur un beat.' },
+  { route: '#/accord', sel: '#nav [data-id=voix], .tool-voix', t: 'Ton clavier, ma voix', d: 'Tu joues un accord. Je chante. L’écran montre si ma voix est juste.' },
+  { route: '#/studio', sel: '#nav [data-id=studio]', t: 'Le studio', d: 'Des beats, des accords, et ton coin piano.' },
+  { route: '#/', sel: '.tool-coffre, .fil-coffre', t: 'Le coffre', d: 'Nos meilleurs moments, gardés à part.' },
+  { route: '#/', sel: '.etincelle', t: 'L’étincelle', d: 'Une idée te vient? Touche la flamme, de n’importe où.' },
+  { route: '#/depart', sel: '.mod-head h1, .view h1', t: 'À toi : l’étape 1', d: 'Tes goûts, ta voix, tes envies. Cinq minutes. Notre plan part de là.', final: true },
 ];
 
 // Les sélecteurs sont essayés dans l'ordre : le premier visible gagne (la carte du mur avant son bouton).
 const visible = (sel) => sel.split(',').map((x) => x.trim()).flatMap((x) => [...document.querySelectorAll(x)]).find((el) => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.display !== 'none'; });
 
 import { montrerExemples, retirerExemples } from './demo.js';
+import { bedStart, bedCouche, bedStop } from './visite-sons.js';
 
 // apercu : Zaza voit exactement le tour de Frog, avec seulement une sortie discrète.
 export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
@@ -31,7 +33,7 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
   document.body.appendChild(box);
   const hole = box.querySelector('.coach-hole');
   const bubble = box.querySelector('.coach-bubble');
-  const end = (go) => { retirerExemples(); box.remove(); removeEventListener('resize', place); removeEventListener('keydown', key); onEnd?.(); if (go) location.hash = go; };
+  const end = (go) => { bedStop(); if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {}); retirerExemples(); box.remove(); removeEventListener('resize', place); removeEventListener('keydown', key); onEnd?.(); if (go) location.hash = go; };
   function place() {
     const s = STEPS[i];
     const el = visible(s.sel);
@@ -61,6 +63,7 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
   }
   function show() {
     const s = STEPS[i];
+    bedCouche(i);
     if (location.hash !== s.route && !(s.route === '#/' && (location.hash === '' || location.hash === '#'))) location.hash = s.route;
     bubble.innerHTML = `
       <p class="coach-n">${i + 1} / ${STEPS.length} <span class="coach-demo">exemples fictifs, pour voir le rendu</span></p>
@@ -83,5 +86,6 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
   });
   addEventListener('resize', place);
   addEventListener('keydown', key);
+  bedStart();
   show();
 }

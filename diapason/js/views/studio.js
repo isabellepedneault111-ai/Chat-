@@ -10,15 +10,6 @@ import { PIANO } from '../exercice.js';
 
 const ROWS = [['k', 'Grosse caisse'], ['s', 'Caisse claire'], ['h', 'Charleston'], ['c', 'Claps']];
 const parse = (p) => Object.fromEntries(ROWS.map(([r]) => [r, p[r].split('').map(Number)]));
-const MOODS = {
-  'Aurore boréale': ['#0b0620', '#3ee6ff', '#9b6bff', '#ff4fb3'],
-  'Néon': ['#05010d', '#ff2d95', '#00f0ff', '#f9f871'],
-  'Forêt boréale': ['#03140e', '#1fd18b', '#b6ff3e', '#e8ffe0'],
-  'Fleuve': ['#020b1c', '#1e6bff', '#3ee6ff', '#c7f4ff'],
-  'Volcan': ['#140303', '#ff3d00', '#ffb43e', '#ffe9a8'],
-  'Cosmos': ['#000000', '#6b5bff', '#ff6bd6', '#ffffff'],
-  'Tempête de neige': ['#0d1b2a', '#8ecae6', '#e0f2ff', '#ffffff'],
-};
 
 // L'état du studio survit au changement de module (le beat continue de jouer).
 const S = {
@@ -301,7 +292,7 @@ export default {
     }
 
     function coverTab(body) {
-      const c = store.get('cover', { title: '', artist: '', mood: 'Aurore boréale' });
+      const c = store.get('cover', { title: '', artist: '', mood: 'Encre et or' });
       // Venue du mur : une image (et peut-être un son ou des mots) à transformer en pochette.
       const hp = new URLSearchParams(location.hash.split('?')[1] || '');
       const byId = (id) => espace.entries?.find((e) => e.id === id);
@@ -332,9 +323,9 @@ export default {
               <label class="field col"><span>Gravé par-dessus</span><select data-c="son"><option value="">Nos accords (dessin calculé)</option>${sons.map((e) => `<option value="${esc(e.id)}" ${c.son === e.id ? 'selected' : ''}>Le son : ${esc(e.title || 'sans titre')} (${esc(e.author)})</option>`).join('')}</select></label>
               <label class="field col"><span>Le son par-dessus l’image</span><input type="range" min="0" max="1" step="0.01" data-c="mix" value="${c.mix ?? 0.5}"></label>
             </div>` : ''}
-            <label class="field col"><span>Couleurs</span><select data-c="mood">${Object.keys(MOODS).map((m) => `<option ${m === c.mood ? 'selected' : ''}>${m}</option>`).join('')}</select></label>
+            <label class="field col"><span>Couleurs</span><select data-c="mood">${Object.keys(PALETTES).map((m) => `<option ${m === c.mood ? 'selected' : ''}>${m}</option>`).join('')}</select></label>
             <div class="row">
-              <button class="btn" data-cv="remix">Variante</button>
+              <button class="btn" data-cv="remix">Autre style</button>
               <button class="btn primary" data-cv="dl">↓ Télécharger (PNG)</button>
               ${espace.connected ? '<button class="btn" data-cv="mur">Au mur</button>' : ''}
             </div>
@@ -860,165 +851,117 @@ export default {
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 // ---------- Pochette générative ----------
+// Les pochettes : trois partis pris graphiques, sobres, comme chez un vrai label.
+// « Crêtes » : le son en lignes empilées. « Soleil » : un aplat et une ligne d'horizon. « Typo » : le titre fait l'image.
+// Avec notre art : l'image en bichromie, du grain, un cadre typographique ; le vrai son en fines lignes.
+// Couleurs : fond, encre, accent.
+const PALETTES = {
+  'Encre et or': ['#141210', '#efe6d2', '#c9a45c'],
+  'Nuit bleue': ['#0e1726', '#e9e4d8', '#6f9fe0'],
+  'Brique': ['#2a1511', '#f2e3cf', '#d4583c'],
+  'Sauge': ['#1c2420', '#e9e7d9', '#93b08e'],
+  'Rose poudre': ['#231a1d', '#f4e7e4', '#da8aa6'],
+  'Papier': ['#ece5d6', '#1b1915', '#d93a24'],
+};
 function drawCover(canvas, { title, artist, mood }, art = {}) {
   const ctx = canvas.getContext('2d');
   const W = canvas.width;
-  const pal = MOODS[mood] || MOODS['Aurore boréale'];
+  const [bg, ink, acc] = PALETTES[mood] || PALETTES['Encre et or'];
   const prog = progression();
   const seed = hash(`${title}|${artist}|${mood}|${S.key}|${prog.id}|${S.variant}`);
   const r = rng(seed);
+  const style = art.img ? 'art' : ['cretes', 'soleil', 'typo'][S.variant % 3];
+  const M = 72; // marge
   ctx.save();
-  ctx.fillStyle = pal[0];
-  ctx.fillRect(0, 0, W, W);
-  const mix = art.img ? (art.mix ?? 0.5) : 1;
-  // Notre art en fond, cadré au carré ; le dessin du son vient s'y poser.
-  if (art.img?.naturalWidth) {
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, W);
+  // Le motif sonore : les crêtes viennent du vrai son si on l'a, sinon des accords.
+  const harm = prog.chords.map(([deg]) => 2 + (mod12(S.key + deg) % 7));
+  const amp = (k, x) => {
+    if (art.peaks) { const i = Math.floor((x / W) * art.peaks.length); return art.peaks[(i + k * 7) % art.peaks.length]; }
+    return harm.reduce((a, hh, j) => a + Math.abs(Math.sin(x * 0.006 * hh + k * 0.5 + j + seed % 5)) / (j + 1), 0) / 2;
+  };
+  if (style === 'art' && art.img?.naturalWidth) {
+    // Bichromie : la luminance de l'image passe du fond à l'encre.
     const iw = art.img.naturalWidth; const ih = art.img.naturalHeight; const k = Math.max(W / iw, W / ih);
     ctx.drawImage(art.img, (W - iw * k) / 2, (W - ih * k) / 2, iw * k, ih * k);
-    ctx.fillStyle = pal[0]; ctx.globalAlpha = 0.25 * mix; ctx.fillRect(0, 0, W, W); ctx.globalAlpha = 1;
-  }
-
-  // Nébuleuses de couleur
-  ctx.filter = 'blur(90px)';
-  for (let i = 0; i < 5; i++) {
-    ctx.globalAlpha = (0.35 + r() * 0.35) * mix * (art.img ? 0.6 : 1);
-    ctx.fillStyle = pal[1 + Math.floor(r() * 3)];
-    ctx.beginPath();
-    ctx.arc(r() * W, r() * W, 120 + r() * 320, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.filter = 'none';
-  ctx.globalAlpha = 1;
-
-  // L'ADN musical : les accords deviennent des harmoniques.
-  const harm = prog.chords.map(([deg]) => 2 + (mod12(S.key + deg) % 7));
-  const layout = Math.floor(r() * 3);
-  ctx.globalCompositeOperation = 'lighter';
-  if (art.peaks) {
-    // Le vrai son, gravé en soleil : chaque rayon est un instant de la prise.
-    const cx = W / 2; const cy = W * 0.42; const base = W * 0.17; const n = art.peaks.length;
-    ctx.lineCap = 'round';
-    for (let i = 0; i < n; i++) {
-      const a = -Math.PI / 2 + (i / n) * Math.PI * 2; const p = art.peaks[i];
-      ctx.globalAlpha = Math.min(1, (0.35 + p * 0.65) * (0.4 + mix));
-      ctx.strokeStyle = pal[1 + (i % 3)];
-      ctx.lineWidth = 2.2;
-      ctx.beginPath();
-      ctx.moveTo(cx + Math.cos(a) * (base - p * 22), cy + Math.sin(a) * (base - p * 22));
-      ctx.lineTo(cx + Math.cos(a) * (base + 8 + p * W * 0.2), cy + Math.sin(a) * (base + 8 + p * W * 0.2));
-      ctx.stroke();
+    const img = ctx.getImageData(0, 0, W, W); const d = img.data;
+    const c0 = hex(bg); const c1 = hex(ink);
+    for (let i = 0; i < d.length; i += 4) {
+      const l = (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) / 255;
+      const t = Math.min(1, Math.max(0, (l - 0.12) / 0.8));
+      d[i] = c0[0] + (c1[0] - c0[0]) * t; d[i + 1] = c0[1] + (c1[1] - c0[1]) * t; d[i + 2] = c0[2] + (c1[2] - c0[2]) * t;
     }
-    ctx.globalAlpha = 0.6 * (0.4 + mix); ctx.strokeStyle = pal[3]; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(cx, cy, base - 30, 0, Math.PI * 2); ctx.stroke();
-  } else if (art.img && mix < 0.05) {
-    // l'image seule
-  } else if (layout === 0) {
-    // Anneaux d'onde
-    const cx = W * (0.3 + r() * 0.4);
-    const cy = W * (0.28 + r() * 0.3);
-    const n = 26 + Math.floor(r() * 18);
-    for (let k = 0; k < n; k++) {
-      ctx.beginPath();
-      const base = 40 + k * (11 + r() * 3);
-      for (let a = 0; a <= Math.PI * 2 + 0.01; a += 0.02) {
-        let rr = base;
-        harm.forEach((hh, j) => { rr += Math.sin(a * hh + k * 0.22 * (j + 1) + seed % 7) * (k * 0.5) / (j + 1); });
-        const x = cx + Math.cos(a) * rr;
-        const y = cy + Math.sin(a) * rr;
-        a ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    ctx.putImageData(img, 0, 0);
+    if (art.peaks && (art.mix ?? 0.5) > 0.05) {
+      // Le son, gravé en fines lignes horizontales dans la partie basse.
+      ctx.strokeStyle = acc; ctx.lineWidth = 2; ctx.globalAlpha = 0.35 + 0.6 * (art.mix ?? 0.5);
+      for (let k = 0; k < 9; k++) {
+        const y0 = W * 0.62 + k * 14; ctx.beginPath();
+        for (let x = M; x <= W - M; x += 4) { const y = y0 - amp(k, x) * 46; x === M ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+        ctx.stroke();
       }
-      ctx.strokeStyle = pal[1 + (k % 3)];
-      ctx.globalAlpha = (0.85 - (k / n) * 0.7) * mix;
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      ctx.globalAlpha = 1;
     }
-  } else if (layout === 1) {
-    // Crêtes empilées (montagnes sonores)
-    const rows = 34;
+  } else if (style === 'cretes') {
+    // Des lignes de crêtes empilées : chaque ligne cache celle de derrière (comme une gravure).
+    const rows = 38; const top = W * 0.16; const h = W * 0.5;
+    ctx.lineWidth = 2.2; ctx.lineJoin = 'round';
     for (let k = 0; k < rows; k++) {
-      const y0 = W * 0.12 + k * (W * 0.62 / rows);
-      ctx.beginPath();
-      for (let x = 0; x <= W; x += 6) {
-        const c = Math.exp(-(((x - W / 2) / (W * 0.18)) ** 2));
-        let off = 0;
-        harm.forEach((hh, j) => { off += Math.sin(x * 0.004 * hh + k * 0.7 + j) * 30 / (j + 1); });
-        const y = y0 - c * (40 + Math.abs(off) * (1.5 + r() * 0.2));
-        x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      const y0 = top + (k / rows) * h; ctx.beginPath();
+      for (let x = M; x <= W - M; x += 5) {
+        const c = Math.exp(-(((x - W / 2) / (W * 0.16)) ** 2));
+        const y = y0 - c * (10 + amp(k, x) * 90) * (0.6 + r() * 0.08);
+        x === M ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
-      ctx.strokeStyle = pal[1 + (k % 3)];
-      ctx.globalAlpha = (0.25 + (k / rows) * 0.6) * mix;
-      ctx.lineWidth = 2.2;
-      ctx.stroke();
+      ctx.lineTo(W - M, y0 + 4); ctx.lineTo(M, y0 + 4); ctx.closePath();
+      ctx.fillStyle = bg; ctx.fill();
+      ctx.strokeStyle = k === Math.floor(rows * 0.62) ? acc : ink; ctx.stroke();
     }
+  } else if (style === 'soleil') {
+    // Un disque plein, une ligne d'horizon, des rayures fines qui le coupent.
+    const cx = W * (0.38 + r() * 0.24); const cy = W * 0.4; const R = W * 0.24;
+    ctx.fillStyle = acc; ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = bg;
+    for (let k = 0; k < 7; k++) { const y = cy + R * 0.15 + k * (R * 0.12) + k * k * 2; ctx.fillRect(cx - R - 2, y, R * 2 + 4, 4 + k * 2.2); }
+    ctx.strokeStyle = ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(M, cy + R * 0.92); ctx.lineTo(W - M, cy + R * 0.92); ctx.stroke();
   } else {
-    // Constellation de pulsations
-    for (let k = 0; k < 140; k++) {
-      const a = r() * Math.PI * 2;
-      const d = (r() ** 0.6) * W * 0.42;
-      const x = W / 2 + Math.cos(a * harm[k % 4]) * d;
-      const y = W * 0.42 + Math.sin(a) * d * 0.8;
-      const s = 2 + r() * 26;
-      ctx.globalAlpha = (0.2 + r() * 0.7) * mix;
-      ctx.strokeStyle = pal[1 + Math.floor(r() * 3)];
-      ctx.lineWidth = 1.5;
-      for (let ring = 1; ring <= 3; ring++) {
-        ctx.beginPath(); ctx.arc(x, y, s * ring, 0, Math.PI * 2); ctx.stroke();
-      }
+    // Le titre fait l'image : énorme, rogné, en contour, avec une seule ligne pleine.
+    const t = (title || 'Sans titre').toUpperCase();
+    ctx.font = `900 ${W * 0.36}px "Literata", serif`;
+    ctx.textBaseline = 'alphabetic';
+    for (let k = 0; k < 3; k++) {
+      ctx.lineWidth = 2; ctx.strokeStyle = k === 1 ? acc : ink; ctx.globalAlpha = k === 1 ? 1 : 0.55;
+      ctx.strokeText(t, M - W * 0.04, W * 0.34 + k * W * 0.2);
     }
+    ctx.globalAlpha = 1;
   }
-  ctx.globalCompositeOperation = 'source-over';
-  ctx.globalAlpha = 1;
-
-  // Grain
-  const img = ctx.getImageData(0, 0, W, W);
-  const d = img.data;
-  for (let i = 0; i < d.length; i += 4) {
-    const n = (r() - 0.5) * 22;
-    d[i] += n; d[i + 1] += n; d[i + 2] += n;
-  }
-  ctx.putImageData(img, 0, 0);
-
-  // Vignette + typo
-  const g = ctx.createLinearGradient(0, W * 0.55, 0, W);
-  g.addColorStop(0, 'rgba(0,0,0,0)');
-  g.addColorStop(1, 'rgba(0,0,0,.75)');
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, W, W);
-  const t = (title || 'Sans titre').toUpperCase();
-  let size = 132;
-  ctx.font = `900 ${size}px "Literata", serif`;
-  const words = t.split(' ');
-  let lines = [];
-  const wrap = () => {
-    lines = [];
-    let line = '';
-    words.forEach((w) => {
-      const test = line ? `${line} ${w}` : w;
-      if (ctx.measureText(test).width > W - 140 && line) { lines.push(line); line = w; } else line = test;
-    });
-    lines.push(line);
-  };
-  wrap();
-  while ((lines.length > 3 || lines.some((l) => ctx.measureText(l).width > W - 140)) && size > 40) {
-    size -= 6;
-    ctx.font = `900 ${size}px "Literata", serif`;
-    wrap();
-  }
-  ctx.fillStyle = '#fff';
-  ctx.textBaseline = 'alphabetic';
-  lines.forEach((l, i) => ctx.fillText(l, 70, W - 130 - (lines.length - 1 - i) * size * 1.02));
-  ctx.font = '600 38px "Atkinson Hyperlegible", sans-serif';
-  ctx.fillStyle = pal[3];
-  ctx.fillText(artist || 'FLIP', 72, W - 70);
+  // Grain fin, partout : c'est ce qui donne la matière d'un vrai tirage.
+  const g = ctx.getImageData(0, 0, W, W); const gd = g.data;
+  for (let i = 0; i < gd.length; i += 4) { const n = (r() - 0.5) * 14; gd[i] += n; gd[i + 1] += n; gd[i + 2] += n; }
+  ctx.putImageData(g, 0, 0);
+  // Cadre typographique : métadonnées en haut, titre et artiste en bas, une règle fine.
+  const txt = style === 'art' ? '#fff' : ink;
+  ctx.fillStyle = txt; ctx.globalAlpha = 0.8;
   ctx.font = '500 22px "Atkinson Hyperlegible", sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,.7)';
-  ctx.textAlign = 'right';
-  ctx.fillText(`${FR[S.key]} · ${S.bpm} BPM · ${prog.roman}`, W - 60, 76);
-  if (art.credit) ctx.fillText(art.credit, W - 60, W - 70);
-  ctx.textAlign = 'left';
-  ctx.fillText('FLIP', 60, 76);
+  ctx.textAlign = 'left'; ctx.fillText('FLIP', M, M);
+  ctx.textAlign = 'right'; ctx.fillText(`${FR[S.key]} · ${S.bpm} BPM`, W - M, M);
+  ctx.globalAlpha = 1;
+  ctx.fillRect(M, M + 16, W - 2 * M, 1.5);
+  if (style !== 'typo') {
+    const t = (title || 'Sans titre');
+    let size = 96; ctx.font = `800 ${size}px "Literata", serif`;
+    while (ctx.measureText(t).width > W - 2 * M && size > 40) { size -= 4; ctx.font = `800 ${size}px "Literata", serif`; }
+    if (style === 'art') { const gr = ctx.createLinearGradient(0, W * 0.7, 0, W); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(0,0,0,.55)'); ctx.fillStyle = gr; ctx.fillRect(0, W * 0.7, W, W * 0.3); }
+    ctx.fillStyle = txt; ctx.textAlign = 'left';
+    ctx.fillText(t, M, W - M - 44);
+  } else { ctx.font = '800 44px "Literata", serif'; ctx.fillStyle = txt; ctx.textAlign = 'left'; ctx.fillText(title || 'Sans titre', M, W - M - 44); }
+  ctx.font = 'italic 500 30px "Literata", serif';
+  ctx.fillStyle = style === 'art' ? '#fff' : acc; ctx.textAlign = 'left';
+  ctx.fillText(artist || 'Zaza & Frog', M, W - M);
+  if (art.credit) { ctx.font = '500 20px "Atkinson Hyperlegible", sans-serif'; ctx.fillStyle = txt; ctx.globalAlpha = 0.75; ctx.textAlign = 'right'; ctx.fillText(art.credit, W - M, W - M); ctx.globalAlpha = 1; }
   ctx.restore();
 }
+const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 
 // ---------- Pour la session guidée : la grille du jour en boucle ----------
 export function setLoop(key, grille) {

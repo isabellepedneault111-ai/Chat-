@@ -5,7 +5,7 @@ import { store } from '../ui.js';
 import { embers } from '../rituel.js';
 import { ILLU } from '../illus.js';
 import { VISITE } from '../visite-data.js';
-import { jouer, sonActif, basculerSon, prechargerVisite } from '../visite-sons.js';
+import { jouer, sonActif, basculerSon, prechargerVisite, introStart, introStop } from '../visite-sons.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
@@ -29,12 +29,12 @@ export function startTour(preview) {
   // Chaque scène : un titre, une phrase, un dessin qui bouge. Le dessin dit ce que les mots ne disent pas.
   // Chaque scène montre la vraie app (avec des exemples fictifs) et l'explique repère par repère.
   // Un repère : [écran, n° du point dans VISITE, phrase]. Le zoom suit le repère actif.
-  const frame = (k, img, d, pts, ratio) => `
+  const frame = (k, img, d, pts, ratio, label = '') => `${label ? `<div class="t-fcol"><p class="t-flabel">${label}</p>` : ''}
     <div class="t-frame t-frame-${k}" style="aspect-ratio:${ratio}">
       <div class="t-zoom"><img src="img/visite/${img}" alt="" draggable="false">
         ${pts.map(([i, n]) => (d[i] ? `<span class="t-pin" data-n="${n}" style="left:${d[i][0]}%;top:${d[i][1]}%"><b>${n + 1}</b></span>` : '')).join('')}
       </div>
-    </div>`;
+    </div>${label ? '</div>' : ''}`;
   const shot = (n, titre, quand, frames, steps, sons = [], r = 1.6) => `
     <div class="t-shot" data-steps="${steps.length}" data-sons="${sons.join(',')}" data-auto="${steps.length * 3400 + 2200}">
       <header class="t-shot-head">
@@ -61,45 +61,45 @@ export function startTour(preview) {
        <img class="t-logo" src="img/flip-creme.svg" alt="FLIP">
        <p class="t-welcome">${esc(welcome).replace(/\n/g, '<br>')}</p>
        <p class="t-sign">— ${esc(from)}</p>
-       <p class="t-auteure">FLIP, un espace imaginé par ${esc(from)}, pour nous deux.</p>
+       <p class="t-auteure">J’ai imaginé FLIP pour nous deux.</p>
        ${espace.meta.welcome?.audio ? '<button class="t-play" data-t="play">▶ Écouter</button>' : ''}
        <button class="btn big t-start" data-t="next">Commencer · 4 minutes, avec le son</button>
      </div>`,
     `<div class="t-title" data-auto="8000">
-       <p class="t-kicker">Ce que ${esc(from)} a imaginé pour nous</p>
+       <p class="t-kicker">Ce que j’ai imaginé pour nous deux</p>
        <h2 class="t-huge">La distance<br>ne crée plus<br><i>de distance.</i></h2>
        <p class="t-line">Dans la même pièce ou loin l’un de l’autre, nos élans ne s’arrêtent plus. Voici comment, sur la vraie app, avec des exemples.</p>
      </div>`,
     shot(1, 'Dans la même <i>pièce</i>', `Ensemble. ${esc(f)} au clavier, ${esc(z)} au micro.`,
       frame('voix', 'voix.jpg', V.voix.pts, [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]], r(V.voix)), [
-        `${esc(f)} joue un accord sur son clavier. FLIP le reconnaît.`,
-        `Les notes que ${esc(z)} peut chanter s’allument, dans sa tessiture.`,
-        'Sa voix s’affiche en direct : jaune, c’est dans l’accord.',
-        'Le temps passé juste, en pourcentage.',
-        'Séance après séance, FLIP retient où sa voix brille.',
+        `${esc(f)} joue un accord. FLIP le nomme.`,
+        `Les notes que ${esc(z)} peut chanter s’allument.`,
+        'Sa voix, en direct. Jaune : c’est juste.',
+        'Combien de temps elle chante juste.',
+        'FLIP retient où sa voix brille.',
       ], ['piece-0', 'piece-1', 'piece-2', 'piece-3', 'piece-4'], V.voix.w / V.voix.h),
     shot(2, 'À distance, <i>en même temps</i>', 'Chacun chez soi, à la même heure, en appel.',
-      frame('z', 'distance-z.jpg', V.distance.pts, [[0, 0], [1, 1], [2, 3]], r(V.distance))
-      + frame('f', 'distance-f.jpg', V.distance.fpts, [[0, 2]], `${V.distance.fw} / ${V.distance.fh}`), [
-        `${esc(z)} lance la séance : des étapes, une cible, une grille d’accords.`,
-        'Le même minuteur, à la seconde, sur les deux écrans.',
-        `Sur le cellulaire de ${esc(f)} : la même séance, au même moment.`,
-        'La consigne de l’étape. On joue, on n’organise rien.',
-      ], ['distance-0', 'distance-1', 'distance-2', 'distance-3'], V.distance.w / V.distance.h / 0.72),
+      frame('z', 'distance-z.jpg', V.distance.pts, [[0, 0], [1, 1], [2, 3]], r(V.distance), `Chez ${esc(z)}`)
+      + frame('f', 'distance-f.jpg', V.distance.fpts, [[0, 2]], `${Math.round(V.distance.fw)} / ${Math.round(V.distance.fh)}`, `Chez ${esc(f)}`), [
+        `${esc(z)} lance la séance.`,
+        'Le même minuteur, à la seconde.',
+        `Chez ${esc(f)} : la même séance, au même moment.`,
+        'La consigne du moment. On joue, c’est tout.',
+      ], ['distance-0', 'distance-1', 'distance-2', 'distance-3'], (V.distance.w / V.distance.h) * 2.1),
     shot(3, 'Chacun <i>son temps</i>', 'Une idée à 23 h. L’autre l’écoute le lendemain matin.',
       frame('relais', 'relais.jpg', V.relais.pts, [[0, 0], [1, 1], [2, 2], [3, 3]], r(V.relais)), [
-        'Une touche : un son part vers l’autre.',
-        'Avec une intention : chante dessus, écris dessus.',
+        'Une touche : le son part vers l’autre.',
+        'Avec un mot d’ordre : « chante dessus ».',
         `${esc(z)} répond par-dessus, quand elle veut.`,
-        `${esc(f)} trouve les mots. La chanson grandit par couches.`,
+        `Couche après couche, la chanson grandit.`,
       ], ['relais-0', '', 'relais-2', 'relais-3'], V.relais.w / V.relais.h),
     shot(4, 'Rien ne <i>se perd</i>', 'Tout le temps : une idée, même à moitié, va au mur.',
       frame('ciel', 'ciel.jpg', V.ciel.pts, [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]], r(V.ciel)), [
-        'Le centre, c’est l’album. Plus une idée avance, plus elle s’en approche.',
-        `Chaque point est une idée. Rose : ${esc(z)}. Bleu : ${esc(f)}.`,
-        'Le pointillé : une rencontre que FLIP propose entre deux idées.',
-        'Avec une consigne concrète pour la tenter.',
-        'Un clic, et une nouvelle idée naît des deux.',
+        'Au centre : l’album.',
+        `Chaque point, une idée. Rose : ${esc(z)}. Bleu : ${esc(f)}.`,
+        'Le pointillé : FLIP propose de marier deux idées.',
+        'Avec une consigne pour l’essayer.',
+        'Un clic : une nouvelle idée naît.',
       ], ['', '', 'ciel-2', '', 'ciel-4'], V.ciel.w / V.ciel.h),
     // Le reste du génie, en vitrine : six vrais écrans, un son chacun, presque pas de mots.
     `<div class="t-montage" data-auto="${MONTAGE.length * 3600 + 1500}">
@@ -136,6 +136,8 @@ export function startTour(preview) {
   const show = () => {
     clearTimeout(auto); clearTimeout(stepT);
     box.querySelector('.t-slide').innerHTML = `<div class="t-inner t-${i}">${slides[i]}</div>`;
+    // Le groove d'entrée joue sous l'accueil et le titre, puis les scènes prennent le relais.
+    if (i <= 1) introStart(); else introStop();
     const ms = +(box.querySelector('[data-auto]')?.dataset.auto || 0);
     box.querySelectorAll('.t-progress i').forEach((b, k) => { b.classList.toggle('on', k < i || (k === i && !ms)); b.classList.toggle('run', k === i && !!ms); b.style.setProperty('--dur', `${ms}ms`); });
     // Les scènes avancent seules, comme un film ; on peut toujours aller plus vite ou revenir.
@@ -180,7 +182,7 @@ export function startTour(preview) {
     updateEspace({ tour: { ...(espace.meta.tour || {}), [espace.me]: Date.now() } }).catch(() => {});
   };
   const end = (mark = true) => {
-    clearTimeout(auto); clearTimeout(stepT);
+    clearTimeout(auto); clearTimeout(stepT); introStop();
     if (mark) marquer();
     player?.pause();
     box.classList.add('out');
@@ -199,7 +201,9 @@ export function startTour(preview) {
     if (t === 'end') { end(); return; }
     // la visite n'est marquée comme vue qu'à la toute fin du tour de l'app
     if (t === 'coach') { end(false); setTimeout(() => import('../coach.js').then((c) => c.coachTour({ premiere: true, apercu: preview, onEnd: marquer })), 400); return; }
-    if (t === 'son') { const v = basculerSon(); e.target.textContent = v ? '♪ Son' : '♪ Muet'; e.target.setAttribute('aria-pressed', v); return; }
+    if (t === 'son') { const v = basculerSon(); e.target.textContent = v ? '♪ Son' : '♪ Muet'; e.target.setAttribute('aria-pressed', v); if (!v) introStop(); else if (i <= 1) introStart(); return; }
+    // Commencer : la visite prend tout l'écran.
+    if (t === 'next' && i === 0 && !document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
     if (t === 'prev') { go(-1); return; }
     if (t === 'next') { go(1); return; }
     if (t === 'play') {
