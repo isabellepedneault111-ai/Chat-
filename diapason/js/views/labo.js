@@ -29,6 +29,9 @@ function intervalName(ratio) {
 }
 const fmtHz = (x) => (x < 10 ? x.toFixed(2) : x.toFixed(x < 100 ? 1 : 0)).replace('.', ',');
 
+// Sur cellulaire : pas de halo (shadowBlur), c'est ce qui faisait ramer l'animation.
+let GLOW = 1;
+
 export default {
   id: 'labo',
   mount(el) {
@@ -70,6 +73,7 @@ export default {
           </div>
           <input type="range" class="big-range" min="0" max="1000" step="1" aria-label="Vitesse, du rythme à la note">
           <div class="range-scale mono"><span>rythme</span><span class="threshold">≈ 20 Hz · le seuil</span><span>note</span></div>
+          <div class="chips scroll-x mobile-presets" role="group" aria-label="Mélanges">${RATIO_PRESETS.map((p) => `<button class="chip" data-preset="${p.id}"><b>${p.label}</b> ${p.name}</button>`).join('')}</div>
           <div class="row">
             <button class="btn primary" data-act="play2">▶ Démarrer</button>
             <button class="btn" data-act="sweep">Glissade ↗</button>
@@ -350,6 +354,13 @@ export default {
     };
 
     let last = performance.now();
+    // Un canevas hors de l'écran n'est pas redessiné : la batterie et la fluidité disent merci.
+    const visible = { radar: true, wave: true };
+    const io = new IntersectionObserver((list) => list.forEach((en) => { visible[en.target.dataset.vis] = en.isIntersecting; }));
+    q('.radar-panel').dataset.vis = 'radar';
+    q('.wave-panel').dataset.vis = 'wave';
+    io.observe(q('.radar-panel'));
+    io.observe(q('.wave-panel'));
     const stop = animate((now) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
@@ -379,9 +390,9 @@ export default {
       const badge = !playing ? '' : slow > 1.05 ? `ralenti ×${Math.round(slow).toLocaleString('fr-CA')}` : 'vitesse réelle';
       const sb = q('.slow-badge');
       if (sb.textContent !== badge) sb.textContent = badge;
-      drawRadar();
-      drawWave();
-      drawStrip();
+      GLOW = window.innerWidth < 760 ? 0 : 1;
+      if (visible.radar) drawRadar();
+      if (visible.wave) { drawWave(); drawStrip(); }
     });
 
     // Les disques tournent comme des vinyles sous une tête de lecture fixe (en haut).
@@ -420,7 +431,7 @@ export default {
       let rad = R;
       if (multi) {
         ctx.shadowColor = '#fff';
-        ctx.shadowBlur = 12;
+        ctx.shadowBlur = GLOW * (12);
         ring(rad, (t) => sumAt(-t), '#fff', 3, 0.95);
         ctx.shadowBlur = 0;
         rad -= gap;
@@ -433,14 +444,14 @@ export default {
           ctx.setLineDash([]);
         } else {
           ctx.shadowColor = col;
-          ctx.shadowBlur = 6 + flashes[i] * 22;
+          ctx.shadowBlur = GLOW * (6 + flashes[i] * 22);
           ring(rad, (u) => shape(-t.n * u), col, 2.5, 0.95);
           ctx.shadowBlur = 0;
           // Éclair sur la tête de lecture à chaque bosse
           const fl = playing && f / tracks[0].n > SPIN_MAX * 1.05 ? 0.5 : flashes[i];
           ctx.fillStyle = col;
           ctx.shadowColor = col;
-          ctx.shadowBlur = 10 + fl * 30;
+          ctx.shadowBlur = GLOW * (10 + fl * 30);
           ctx.beginPath(); ctx.arc(cx, cy - rad - amp, 4 + fl * 8, 0, Math.PI * 2); ctx.fill();
           ctx.shadowBlur = 0;
         }
@@ -484,7 +495,7 @@ export default {
           ctx.strokeStyle = '#fff';
           ctx.lineWidth = 3;
           ctx.shadowColor = '#fff';
-          ctx.shadowBlur = 8;
+          ctx.shadowBlur = GLOW * (8);
           ctx.beginPath();
           cols.forEach((v, j) => { const y = mid - (ids.reduce((a, i) => a + v[i], 0) / ids.length) * amp; j ? ctx.lineTo(j * step, y) : ctx.moveTo(0, y); });
           ctx.stroke();
@@ -535,6 +546,6 @@ export default {
     syncWaveButtons();
     loadPreset(presetId);
     setF(f);
-    return () => { stop(); stopAudio(); radar.dispose(); strip.dispose(); air.dispose(); wave.dispose(); kb.dispose(); };
+    return () => { io.disconnect(); stop(); stopAudio(); radar.dispose(); strip.dispose(); air.dispose(); wave.dispose(); kb.dispose(); };
   },
 };

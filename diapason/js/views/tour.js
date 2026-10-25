@@ -2,7 +2,7 @@
 // Pas des bulles d'aide : des écrans plein format, comme un livret d'album.
 import { espace, audioURL, updateEspace } from '../espace.js';
 import { store } from '../ui.js';
-import { CONTRAINTES, PLAN, STAGES, FORMATS, PHASES } from '../duo.js';
+import { PLAN } from '../duo.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
@@ -21,7 +21,6 @@ export function startTour(preview) {
   const me = preview ? (espace.meta.members || ['Zaza', 'Frog']).find((m) => m !== espace.me) || 'Frog' : espace.me;
   const from = espace.meta.welcome?.by || espace.meta.createdBy || 'Zaza';
   const welcome = espace.meta.welcome?.text || 'Forever more…';
-  const duo60 = FORMATS[0];
   const slides = [
     `<div class="t-open">
        <p class="t-welcome">${esc(welcome).replace(/\n/g, '<br>')}</p>
@@ -29,40 +28,42 @@ export function startTour(preview) {
        ${espace.meta.welcome?.audio ? '<button class="t-play" data-t="play">▶ Écouter</button>' : ''}
      </div>`,
     `<p class="t-kicker">${esc(me)}.</p>
-     <h2>Le son, le MIDI, le piano, la composition : c’est toi.</h2>
-     <p class="t-text">Ton matériel joue déjà très bien, et cette app ne le remplace pas. Elle fait ce qu’aucun pédalier, aucun looper, aucun DAW ne fait pour un duo : <b>elle se souvient de tout ce qu’on essaie, elle range nos idées, et elle nous mène quelque part, ensemble.</b></p>`,
-    `<p class="t-kicker">Étape 1</p>
-     <h2>On part du même endroit.</h2>
-     <p class="t-text">Chacun remplit son point de départ : ce qu’il veut, sa voix ou son instrument, ses styles, les artistes qui l’allument, ce dont il a besoin de l’autre. L’app met nos deux portraits côte à côte et trace le plan à partir de là.</p>`,
+     <h2>Ton SV-1<br>+ ma voix<br>= notre son.</h2>
+     <p class="t-text">Aucun piano, aucun looper, aucun DAW ne fait ça : <b>cette app écoute ton clavier et ma voix en même temps</b>, et elle s’en sert pour nous faire progresser tous les deux. Regarde.</p>`,
+    `<p class="t-kicker">Une minute, en vrai</p>
+     <video class="t-video" src="data/demo-frog.mp4" poster="data/demo-frog.jpg" autoplay muted playsinline loop controls preload="auto"></video>
+     <p class="t-src">L’app, enregistrée telle quelle : ton SV-1 en MIDI, ma voix au micro, une session, le mur.</p>`,
+    `<p class="t-kicker">Le truc qui n’existe pas</p>
+     <h2>Tu joues un accord. Ma voix sait où aller.</h2>
+     <ul class="t-list">
+       <li><b>Les notes que je peux chanter s’allument</b>, dans MA tessiture, pendant que tu joues.</li>
+       <li>L’app me dit si je suis dedans, et laquelle je tiens : <b>la tierce, la quinte</b>…</li>
+       <li><b>Tes sons choisissent l’exercice</b> : un orgue tenu travaille ma stabilité, un piano qui s’éteint ma mémoire de la note, un Rhodes ma douceur.</li>
+     </ul>
+     <div class="t-chords"><span>Do</span><span class="now">Lam</span><span>Fa</span><span>Sol</span></div>`,
+    `<p class="t-kicker">Ton matériel, mémoire du duo</p>
+     <h2>Ce que tu touches devient une trace.</h2>
+     <ul class="t-list">
+       <li>Tempo, départs du séquenceur, changements de son : <b>des repères horodatés</b> dans chaque session.</li>
+       <li>Sur nos prises, on clique « 0:42 » et on réentend <b>le moment où tu as changé de son</b>.</li>
+       <li>L’app peut aussi <b>envoyer son horloge</b> : ta boîte à rythmes suit notre boucle.</li>
+     </ul>`,
     `<p class="t-kicker">Le sens</p>
      <h2>Six mois.<br>Trois à cinq originaux.<br>À deux.</h2>
      <ol class="t-months">${PLAN.map((p) => `<li><span>M${p.n}</span>${esc(p.sortie)}</li>`).join('')}</ol>
-     <p class="t-src">Un plan tiré de la recherche que ${esc(from)} a faite : séances courtes et régulières, improvisation d’abord, composition ensuite.</p>`,
-    `<p class="t-kicker">Une session</p>
-     <h2>60 minutes qui finissent toujours par une prise.</h2>
-     <div class="t-phases">${duo60.phases.map(([p, d], i) => `<i style="flex:${d};animation-delay:${i * 0.18}s"><span>${PHASES[p].titre}</span></i>`).join('')}</div>
-     <p class="t-text">Un exercice à chaque étape, la grille du jour en boucle, la prise directement sur le mur. <b>Le minuteur est partagé</b> : on voit la même chose, chacun sur son écran.</p>`,
-    `<p class="t-kicker">Le mur</p>
-     <h2>Chaque idée a une destination.</h2>
-     <div class="t-stages">${STAGES.map((s, i) => `<div style="animation-delay:${i * 0.2}s"><b>${s.label}</b><small>${s.hint}</small></div>`).join('')}</div>
-     <p class="t-text">Un mémo vocal à 2 h du matin, un riff, un mot : tout atterrit au même endroit, et on voit le global (morceau par morceau) autant que le détail.</p>`,
-    `<p class="t-kicker">Ton instrument</p>
-     <h2>Joue. L’app écoute.</h2>
-     <p class="t-text">Branche ton clavier en MIDI (ou une interface audio) : l’app reconnaît l’accord et la tonalité, propose la suite, les notes que ${esc(from)} peut chanter, et met ta grille en boucle avec le beat.</p>
-     <div class="t-chords"><span>Ré</span><span>La</span><span>Sim</span><span class="now">Sol</span></div>`,
-    `<p class="t-kicker">Les paroles</p>
-     <h2>Des mots qui tiennent dans le temps.</h2>
-     <p class="t-syll">sous la gla·ce le fleu·ve chan·<s>te</s></p>
-     <p class="t-text">Syllabes chantées ligne par ligne, rimes, synonymes, trous et passages incertains marqués. On écrit à deux, en même temps.</p>`,
-    `<p class="t-kicker">Un dernier truc</p>
-     <h2>La contrainte libère.</h2>
-     <p class="t-constraint">« ${esc(CONTRAINTES[Math.floor(Math.random() * CONTRAINTES.length)])} »</p>
-     <p class="t-text">Le petit dé en haut en tire une nouvelle quand vous tournez en rond.</p>`,
-    `<h2>On commence?</h2>
+     <p class="t-src">Un plan tiré de la recherche de ${esc(from)} : séances courtes et régulières, impro d’abord, composition ensuite. Chaque session finit par une prise.</p>`,
+    `<p class="t-kicker">Brancher le SV-1 · 2 minutes</p>
+     <h2>Un câble, et c’est parti.</h2>
+     <ol class="t-steps">
+       <li>La prise <b>MIDI OUT</b> du SV-1 → une interface USB-MIDI → l’ordi.</li>
+       <li>Ouvre l’app dans <b>Chrome ou Edge</b> (pas Safari, pas l’iPhone).</li>
+       <li>Voix → <b>Voix + piano</b> → « Brancher le piano » : joue un accord, il apparaît.</li>
+     </ol>`,
+    `<h2>Tes 3 premiers gestes</h2>
      <div class="t-actions">
-       <a class="btn primary big" href="#/depart" data-t="end">Remplir mon point de départ</a>
-       <a class="btn big" href="#/session" data-t="end">● Notre première session</a>
-       <a class="btn big" href="#/carnet" data-t="end">Voir le mur</a>
+       <a class="btn primary big" href="#/accord" data-t="end">① Brancher le SV-1 et jouer 3 accords pour moi</a>
+       <a class="btn big" href="#/depart" data-t="end">② Ton point de départ (5 min)</a>
+       <a class="btn big" href="#/session" data-t="end">③ Notre première session</a>
        <button class="btn big ghost" data-t="end">Explorer seul</button>
      </div>`,
   ];
@@ -92,6 +93,7 @@ export function startTour(preview) {
       updateEspace({ tour: { ...(espace.meta.tour || {}), [espace.me]: Date.now() } }).catch(() => {});
     }
     player?.pause();
+    box.querySelector('video')?.pause();
     box.classList.add('out');
     setTimeout(() => box.remove(), 350);
     window.removeEventListener('keydown', onKey);
@@ -119,7 +121,7 @@ export function startTour(preview) {
       return;
     }
     // Toucher le côté droit de l'écran avance, comme une story.
-    if (!e.target.closest('a, button')) go(e.clientX > window.innerWidth * 0.35 ? 1 : -1);
+    if (!e.target.closest('a, button, video')) go(e.clientX > window.innerWidth * 0.35 ? 1 : -1);
   });
   window.addEventListener('keydown', onKey);
   show();

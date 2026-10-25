@@ -21,6 +21,8 @@ export const consoleState = {
 };
 
 export const onConsole = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
+// Les notes que Frog tient en ce moment (MIDI), de la plus grave à la plus aiguë.
+export const heldNotes = () => [...held].sort((x, y) => x - y);
 const emit = (ev) => listeners.forEach((fn) => fn(ev, consoleState));
 const MAX_EVENTS = 200;
 
@@ -98,8 +100,8 @@ function handler(e) {
   const ch = (st & 0x0f) + 1;
   if (cmd === 0xc0) { consoleState.program = { ch, num: a + 1 }; push('program', `Changement de son : programme ${a + 1}${ch !== 1 ? ` (canal ${ch})` : ''}`); return; }
   if (cmd === 0xb0) { onCC(ch, a, b); return; }
-  if (cmd === 0x90 && b > 0) { held.add(a); consoleState.notes++; onNotes(); return; }
-  if (cmd === 0x80 || (cmd === 0x90 && b === 0)) { held.delete(a); onNotes(); }
+  if (cmd === 0x90 && b > 0) { held.add(a); consoleState.notes++; onNotes(); emit({ kind: 'notes' }); return; }
+  if (cmd === 0x80 || (cmd === 0x90 && b === 0)) { held.delete(a); onNotes(); emit({ kind: 'notes' }); }
 }
 
 function attach() {

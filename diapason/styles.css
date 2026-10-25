@@ -1114,3 +1114,59 @@ a.evo-teaser:hover { box-shadow: 4px 4px 0 var(--rule); }
   .keys { display: none; }
 }
 .view-carnet .composer { position: static; }
+
+/* Voix + piano */
+.acc-modes { margin-bottom: 6px; }
+.acc-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 18px; align-items: start; }
+.acc-stage { padding: 0; height: min(62vh, 560px); min-height: 340px; overflow: hidden; transition: box-shadow .2s; }
+.acc-stage.lit { box-shadow: 0 0 0 1.5px var(--rule), 0 0 40px -6px var(--tape); }
+.acc-canvas { width: 100%; height: 100%; display: block; }
+.acc-chord { position: absolute; top: 12px; right: 16px; display: grid; text-align: right; }
+.acc-chord small { font-size: .62rem; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; }
+.acc-chord b { font-family: var(--display); font-weight: 900; font-size: clamp(2.6rem, 7vw, 4.4rem); line-height: .9; color: var(--tape); }
+.acc-now { position: absolute; left: 16px; bottom: 14px; right: 16px; font-size: 1.1rem; }
+.acc-now b { color: var(--tape); font-family: var(--display); text-transform: uppercase; font-size: 1.5rem; margin-right: 8px; }
+.acc-now em { color: #fff; background: none; font-style: normal; font-weight: 700; }
+.acc-score, .acc-streak { display: grid; padding: 12px 0; border-bottom: 1px dashed var(--line); }
+.acc-score b, .acc-streak b { font-family: var(--display); font-weight: 900; font-size: 3rem; line-height: 1; }
+.acc-score span, .acc-streak span { color: var(--muted); font-size: .82rem; }
+.acc-why summary { font-weight: 700; margin-top: 10px; }
+@media (max-width: 900px) { .acc-grid { grid-template-columns: 1fr; } .acc-stage { height: 50svh; } }
+
+/* Labo sur cellulaire : disque + vitesse + mélanges sur un seul écran */
+.mobile-presets { display: none; }
+@media (max-width: 760px) {
+  .view-labo .mod-head p { display: none; }
+  .view-labo .mod-head h1 { font-size: 2rem; }
+  .radar-panel { width: min(100%, 46svh) !important; }
+  .ctrl-panel { padding: 12px 14px; }
+  .readouts { gap: 10px; }
+  .num { font-size: 1.3rem; }
+  .mobile-presets { display: flex; margin: 10px -4px 0; }
+  .tracks-panel > .chips { display: none; }
+  .ctrl-panel .row { margin-top: 10px; }
+  .ctrl-panel .row .btn { flex: 1 1 auto; padding: 10px 8px; }
+  .big-range { height: 48px; }
+  .big-range::-webkit-slider-thumb { width: 38px; height: 38px; margin-top: -13px; }
+}
+
+/* Visite : vidéo, listes, étapes */
+.t-video { display: block; width: 100%; max-height: 62svh; border-radius: 10px; background: #000; border: 1px solid rgba(255, 255, 255, .15); }
+.t-list, .t-steps { margin: 0 0 18px; padding-left: 1.2em; font-size: clamp(1.02rem, 2.1vw, 1.25rem); color: #d8d0c1; display: grid; gap: 10px; max-width: 52ch; }
+.t-list b, .t-steps b { color: #fff; }
+.t-list li::marker { color: var(--tape); }
+.t-steps li::marker { color: var(--tape); font-family: var(--mono); }
+.t-actions .btn { white-space: normal; text-align: left; justify-content: flex-start; }
+
+/* Le truc du jour */
+.today { display: grid; grid-template-columns: 1fr auto; gap: 2px 16px; align-items: center; padding: 14px 18px; margin: -6px 0 18px; border: 2px solid var(--rule); border-radius: var(--radius); background: var(--rec); color: #fff; text-decoration: none; box-shadow: 5px 5px 0 var(--ink); transition: transform .12s; }
+.today:hover { transform: translate(-2px, -2px); }
+.today-k { font-size: .68rem; text-transform: uppercase; letter-spacing: .12em; opacity: .85; }
+.today b { font-family: var(--display); font-weight: 900; font-size: clamp(1.8rem, 5vw, 2.6rem); text-transform: uppercase; line-height: .95; }
+.today-why { grid-column: 1; font-size: .95rem; opacity: .92; }
+.today-go { grid-column: 2; grid-row: 1 / 4; font-size: 2.4rem; font-weight: 700; }
+@media (max-width: 760px) {
+  .view-home .masthead { padding: 4px 0 14px; margin-bottom: 16px; }
+  .view-home .display { font-size: 3.6rem; }
+  .view-home .lead { font-size: 1rem; }
+}

@@ -12,6 +12,18 @@ export default {
   mount(el) {
     let editingVision = false;
 
+    // Le truc du jour : UNE action, sa durée, et pourquoi. Toujours tout en haut.
+    function todayHTML() {
+      const live = activeSession();
+      const r = weekRhythm();
+      const t = live ? { t: 'Rejoindre la session', d: 'en cours', why: `${live.author} a lancé « ${live.data.cible} ».`, href: '#/session' }
+        : !profileOf(espace.me)?.doneAt ? { t: 'Ton point de départ', d: '5 min', why: 'Ce que tu veux, ta voix, tes styles : c’est ce qui nourrit notre plan.', href: '#/depart' }
+          : r.duo < 2 ? { t: 'Une session duo', d: '60 min', why: `${r.duo} sur 2 cette semaine : courtes et régulières, c’est ce qui fait progresser.`, href: '#/session' }
+            : r.ecoute === 0 ? { t: 'Écoute commune', d: '20 min', why: 'Réécouter nos prises et faire avancer les idées sur le mur.', href: '#/session' }
+              : { t: 'Voix + piano', d: '10 min', why: 'Frog joue, Zaza chante : la justesse se travaille dans nos vrais accords.', href: '#/accord' };
+      return `<a class="today" href="${t.href}"><span class="today-k mono">Aujourd’hui · ${esc(t.d)}</span><b>${esc(t.t)}</b><span class="today-why">${esc(t.why)}</span><span class="today-go">→</span></a>`;
+    }
+
     function render() {
       if (!espace.connected || !espace.me) {
         el.innerHTML = '<header class="masthead"><h1 class="display">Zaza <i>×</i> Frog</h1><p class="lead">Six mois. Deux musiciens. Des morceaux originaux.</p></header><div class="gate-host"></div>';
@@ -34,7 +46,7 @@ export default {
           <p>Objectifs, voix, styles, besoins : chacun le sien, puis notre portrait commun. C’est lui qui nourrit le plan.</p>
           <span class="e1-who">${portraits.map((x) => `<span style="--c:${memberColor(x.m)}" class="${x.ok ? 'ok' : ''}">${esc(x.m)} ${x.ok ? '✓' : '· à faire'}</span>`).join('')}</span>
         </a>` : '';
-      if (!start && !editingVision) { el.innerHTML = head + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
+      if (!start && !editingVision) { el.innerHTML = todayHTML() + head + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
       if (editingVision) { el.innerHTML = head + setupHTML(!!start); return; }
 
       const m = currentMonth();
@@ -51,6 +63,7 @@ export default {
       const last = espace.entries.filter((e) => e.type === 'session' && e.data?.debrief?.prochaine).sort((a, b) => b.data.doneAt - a.data.doneAt)[0];
       const v = espace.meta.vision || {};
       el.innerHTML = `
+        ${todayHTML()}
         ${head}
         <section class="plan-hero">
           <div class="month-now">
