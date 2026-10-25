@@ -107,7 +107,7 @@ export default {
         <a class="retour-plan" href="#/ecrire">← Écrire</a>
         <p class="eyebrow">Placer mes paroles</p>
         <h1>Tes mots, sur sa musique.</h1>
-        <p class="muted">Écris une ligne : FLIP compte les syllabes chantées, trouve les accents toniques et te montre plusieurs façons de la poser sur le temps. Écoute chaque version sur la pièce, avec la note à chanter sur chaque syllabe.</p>
+        <p class="muted">Écris une ligne : le labo compte les syllabes chantées, trouve les accents toniques et te montre plusieurs façons de la poser sur le temps. Écoute chaque version sur la pièce, avec la note à chanter sur chaque syllabe.</p>
       </div></div>
       <section class="panel pl-top">
         <label class="field"><span>La musique</span><select data-p="piece">${Object.entries(PIECES).map(([k, p]) => `<option value="${k}" ${k === piece ? 'selected' : ''}>${esc(p.nom)}</option>`).join('')}</select></label>

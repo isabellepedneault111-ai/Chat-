@@ -30,7 +30,7 @@ function ouvrir() {
       <textarea class="input et-text" rows="3" placeholder="Un mot, une image, un accord, une idée pour l’app… même à moitié."></textarea>
       <div class="et-pour" role="radiogroup">
         <button type="button" class="chip active" data-pour="musique" aria-checked="true">Pour notre musique</button>
-        <button type="button" class="chip" data-pour="app" aria-checked="false">Pour l’app FLIP</button>
+        <button type="button" class="chip" data-pour="app" aria-checked="false">Pour Diapason Labo</button>
       </div>
       <div class="et-row">
         <button type="button" class="btn primary" data-et="save">Garder</button>
@@ -49,7 +49,7 @@ function ouvrir() {
     if (!text && !audio) { ta.focus(); return; }
     try {
       await saveEntry({ type: audio ? 'audio' : 'note', title: (text.split('\n')[0] || `Étincelle de ${espace.me}`).slice(0, 80), body: text, audio, data: { etincelle: true, pour, stage: 0 } });
-      toast(pour === 'app' ? 'Idée pour FLIP gardée. On la construira.' : 'Étincelle gardée.');
+      toast(pour === 'app' ? 'Idée pour le labo gardée. On la construira.' : 'Étincelle gardée.');
       close();
     } catch (err) { toast(err.message); }
   };

@@ -53,7 +53,7 @@ export function startTour(preview) {
   const V = VISITE;
   // [image, titre, ce qui n'existe nulle part ailleurs, ce que ça change pour nous, son]
   const MONTAGE = [
-    ['m-voix.jpg', 'Placer ma voix dans le groove', 'FLIP joue un rythme (bossa, pop…) et les cases roses montrent où poser mes mots. La syncope devient un jeu.', 'Je chante avec plus de groove, pas seulement plus juste.', 'beat'],
+    ['m-voix.jpg', 'Placer ma voix dans le groove', 'Le labo joue un rythme (bossa, pop…) et les cases roses montrent où poser mes mots. La syncope devient un jeu.', 'Je chante avec plus de groove, pas seulement plus juste.', 'beat'],
     ['m-flux.jpg', 'Écrire sur le beat', 'Je chante des sons sans mots sur le beat (le mumble), et l’enregistrement part avec mon texte.', 'Tu entends la mélodie que j’avais en tête.', 'riff'],
     ['m-labo.jpg', 'Un rythme devient un accord', 'Trois rythmes sur ta musique (6, 7 et 9 coups par mesure) accélèrent jusqu’à chanter : un ré mineur plus sombre, qu’aucun piano ne peut jouer.', 'Des accords introuvables autrement, et qui collent à nos chansons.', 'labo'],
     ['m-trois.jpg', 'Un troisième musicien', 'On joue une phrase. Il l’écoute, la transforme et nous la renvoie, dans notre tonalité. Ici : renversée.', 'Un partenaire d’impro, même quand on est juste deux.', 'trois'],
@@ -81,7 +81,7 @@ export function startTour(preview) {
          <p class="t-kicker">Avant la visite · 4 minutes, avec le son</p>
          <h2>Un mot sur ma façon de faire</h2>
          <p class="tp-mot">Je ne voulais pas une app de plus : je voulais un endroit qui nous ressemble. J’ai lu ce que la recherche sait de la création, de la voix et de la pratique, et je m’en suis servie comme d’un tremplin, jamais comme d’une cage. Chaque idée de Diapason Labo part de là, puis je l’ai tordue pour nous.</p>
-         <div class="tp-src"><p class="tp-src-t">Ce qui a nourri FLIP</p><ul>${SOURCES.map(([t, ref, sens]) => `<li><b>${t}</b> <span>${sens}</span> <small>${ref}</small></li>`).join('')}</ul></div>
+         <div class="tp-src"><p class="tp-src-t">Ce qui a nourri Diapason Labo</p><ul>${SOURCES.map(([t, ref, sens]) => `<li><b>${t}</b> <span>${sens}</span> <small>${ref}</small></li>`).join('')}</ul></div>
          <button class="btn big t-start t-lancer" data-t="lancer">Lancer la flèche →</button>
        </div>
        <div class="tp-tal tp-f">${triskelSVG()}<p>Le tien : le triskel, la spirale qui tourne, revient et grandit.</p></div>
@@ -101,11 +101,11 @@ export function startTour(preview) {
      </div>`,
     shot(1, 'Dans la même <i>pièce</i>', 'Ensemble. Toi au clavier, moi au micro.',
       frame('voix', 'voix.jpg', V.voix.pts, [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]], r(V.voix)), [
-        'Tu joues un accord. FLIP le nomme.',
+        'Tu joues un accord. Le labo le nomme.',
         'Les notes que je peux chanter s’allument.',
         'Ma voix, en direct. Jaune : c’est juste.',
         'Combien de temps je chante juste.',
-        'FLIP retient où ma voix brille.',
+        'Le labo retient où ma voix brille.',
       ], ['piece-0', 'piece-1', 'piece-2', 'piece-3', 'piece-4'], V.voix.w / V.voix.h, 'Ton clavier devient le coach de ma voix, dans ma tessiture à moi.'),
     shot(2, 'À distance, <i>en même temps</i>', 'Chacun chez soi, à la même heure, en appel.',
       frame('z', 'distance-z.jpg', V.distance.pts, [[0, 0], [1, 1], [2, 3]], r(V.distance), 'Chez moi')
@@ -126,7 +126,7 @@ export function startTour(preview) {
       frame('ciel', 'ciel.jpg', V.ciel.pts, [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]], r(V.ciel)), [
         'Au centre : l’album.',
         'Chaque point, une idée. Rose : moi. Bleu : toi.',
-        'Le pointillé : FLIP propose de marier deux idées.',
+        'Le pointillé : le labo propose de marier deux idées.',
         'Avec une consigne pour l’essayer.',
         'Un clic : une nouvelle idée naît.',
       ], ['', '', 'ciel-2', '', 'ciel-4'], V.ciel.w / V.ciel.h, 'Le mur propose lui-même de marier nos idées, avec une consigne.'),

@@ -50,7 +50,7 @@ export default {
             </article>`).join('')}
         </div>
         <p class="cf-cb"><a href="#/corbeille">La corbeille commune${espace.trash.length ? ` (${espace.trash.length})` : ''}</a> : ce qu’on a jeté attend là, et ne s’efface qu’à deux.</p>
-        <p class="muted small cf-credits">Les instruments de FLIP : piano Salamander Grand Piano (Alexander Holm, CC BY 3.0) · piano électrique et voix FluidR3 GM (Frank Wen, MIT).</p>
+        <p class="muted small cf-credits">Les instruments de Diapason Labo : piano Salamander Grand Piano (Alexander Holm, CC BY 3.0) · piano électrique et voix FluidR3 GM (Frank Wen, MIT).</p>
         ${perles.length ? '' : '<p class="muted cf-hint">Dans le relais, chaque son et chaque texte a un bouton <b>✦ Au coffre</b>. Ce que vous y déposez apparaît ici.</p>'}`;
       hydrateImages(el);
     }

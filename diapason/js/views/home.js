@@ -44,7 +44,7 @@ const OU_ALLER = [
   ['Jouer ensemble', 'Dans la même pièce ou à distance, une séance guidée qui finit par une prise.', [['session', 'Lancer une séance'], ['accord', 'Voix + piano']]],
   ['Entre deux séances', 'Se lancer des sons, répondre par-dessus, garder les perles et les étincelles.', [['relais', 'Le relais'], ['etincelles', 'Nos étincelles'], ['coffre', 'Le coffre']]],
   ['Écrire', 'Notre journal, une séance d’atelier, le grimoire, puis sculpter les textes pour qu’ils se chantent.', [['ecrire', 'Notre journal'], ['atelier', 'Séance d’atelier'], ['jeux', 'Le grimoire'], ['paroles', 'Paroles']]],
-  ['Voir le chemin', 'Où on est rendus, ce qui progresse, et ce que la recherche conseille ensuite.', [['bilan', 'Notre bilan'], ['carnet', 'Le mur'], ['evolution', 'Nos courbes'], ['lexique', 'Notre lexique']]],
+  ['Voir le chemin', 'Où on est rendus, ce qui progresse, et ce que la recherche conseille ensuite.', [['bilan', 'Notre bilan'], ['carnet', 'Le mur'], ['evolution', 'Nos courbes'], ['lexique', 'Notre lexique'], ['ames', 'Nos deux âmes'], ['arbre', 'L’arbre de l’architecte']]],
   ['Travailler sa voix, son son', 'Les outils de fond, quand on veut creuser.', [['tessiture', 'Empreinte'], ['gym', 'Gym vocal'], ['miroir', 'Miroir'], ['studio', 'Studio'], ['labo', 'Le labo']]],
 ];
 
@@ -173,7 +173,7 @@ export default {
       el.innerHTML = `
         ${head}
         ${commencerHTML()}
-        <a class="arbre-teaser" href="#/arbre">${espace.me === (espace.meta.members || MEMBERS)[1] ? `Tu as demandé à ${esc((espace.meta.members || MEMBERS)[0])} d’où venaient certains sons et éléments de l’app. <b>Clique ici pour voir son arbre d’architecte d’environnement hybride à l’œuvre →</b>` : '<b>L’arbre de l’architecte</b> : d’où vient chaque son, tout FLIP déplié →'}</a>
+        <a class="arbre-teaser" href="#/arbre">${espace.me === (espace.meta.members || MEMBERS)[1] ? `Tu as demandé à ${esc((espace.meta.members || MEMBERS)[0])} d’où venaient certains sons et éléments de l’app. <b>Clique ici pour voir son arbre d’architecte d’environnement hybride à l’œuvre →</b>` : '<b>L’arbre de l’architecte</b> : toute l’architecture de Diapason Labo, à admirer →'}</a>
         ${luneHTML()}
         ${todayHTML()}
         ${nouveautesHTML()}

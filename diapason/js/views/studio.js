@@ -137,7 +137,7 @@ export default {
       <div class="panel transport">
         <button class="play-btn" data-act="play" aria-label="Lecture">▶</button>
         <label class="field"><span>Tempo</span><input type="range" min="50" max="200" data-in="bpm" aria-label="Tempo"><b class="mono bpm-out"></b></label>
-        <button class="btn small tap" data-act="tap" title="Tape ce bouton au rythme de ta musique : FLIP en déduit le tempo">Taper le tempo</button>
+        <button class="btn small tap" data-act="tap" title="Tape ce bouton au rythme de ta musique : le labo en déduit le tempo">Taper le tempo</button>
         <label class="field"><span>Tonalité</span><select data-in="key" aria-label="Tonalité">${FR.map((n, i) => `<option value="${i}">${n} majeur / ${FR[(i + 9) % 12]} mineur</option>`).join('')}</select></label>
         <label class="field"><span>Accords</span><select data-in="prog" aria-label="Progression d’accords"></select></label>
         <button class="rec-btn" data-act="rec" aria-label="Enregistrer une prise">● REC</button>
@@ -522,7 +522,7 @@ export default {
             </div>
             <div class="panel inst-ideas">
               <p class="tape">Pistes</p>
-              <div class="ideas-body"><p class="muted small">Les suggestions apparaissent dès que FLIP reconnaît quelques accords.</p></div>
+              <div class="ideas-body"><p class="muted small">Les suggestions apparaissent dès que le labo reconnaît quelques accords.</p></div>
             </div>
           </div>
         </div>

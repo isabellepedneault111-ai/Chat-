@@ -14,7 +14,7 @@ const MANDATS = {
   arbre: ['Admirer l’architecture de Diapason Labo.', 'Regarder l’arbre de tous les dossiers et fichiers, et lire d’où vient chaque son.', 'Rien : ici, on ne touche à rien.'],
   depart: ['Dire chacun d’où on part : objectifs, voix, styles, besoins.', 'Remplir ou relire ton étape 1, voir notre portrait commun, poser notre vision.', 'Le plan, la vision, Nos deux âmes, les tonalités conseillées pour la voix.'],
   accord: ['Chanter juste, accompagnée par le clavier.', 'Frog joue un accord, la voix chante : l’écran montre si c’est juste, en direct.', 'La carte de nos accords, le profil de la voix, le plan (la justesse peut devenir la priorité de la semaine).'],
-  tessiture: ['Connaître l’étendue de ta voix.', 'Chanter du plus grave au plus aigu confortable : FLIP mesure et nomme ton type de voix.', 'Les tonalités conseillées, le guide vocal de Placer mes paroles, Nos deux âmes.'],
+  tessiture: ['Connaître l’étendue de ta voix.', 'Chanter du plus grave au plus aigu confortable : le labo mesure et nomme ton type de voix.', 'Les tonalités conseillées, le guide vocal de Placer mes paroles, Nos deux âmes.'],
   gym: ['Échauffer et entraîner la voix.', 'Des exercices courts, adaptés à ta tessiture.', 'Ta voix, séance après séance.'],
   miroir: ['Voir sa voix pendant qu’on chante.', 'Chanter et regarder la hauteur se dessiner.', 'La justesse, par le retour visuel.'],
   labo: ['Entendre comment un rythme devient une note, puis un accord.', 'Faire tourner des disques, accélérer, trouver des accords impossibles au piano.', 'Le studio (un rythme du labo peut devenir la grille de batterie).'],

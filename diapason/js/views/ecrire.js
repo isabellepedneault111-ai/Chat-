@@ -29,7 +29,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 // Écrire sur la musique de Frog : ses pièces, prêtes à recevoir des mots.
 // La boucle trouvée par l'oreille s'ajoute aux choix, le temps de la séance.
 const piecesAvecOreille = () => [...PIECES, ...(window.__flipFond ? [['oreille', window.__flipFond.nom, window.__flipFond.url]] : [])];
-const PIECES = [['beat', 'Un beat de FLIP', ''], ['projet1', 'Projet 1 de Frog, après la pause', 'data/sons/frog-visite.mp3'], ['joywalk', 'Joy Walk de Frog', 'data/sons/frog-joywalk-complet.mp3']];
+const PIECES = [['beat', 'Un beat du labo', ''], ['projet1', 'Projet 1 de Frog, après la pause', 'data/sons/frog-visite.mp3'], ['joywalk', 'Joy Walk de Frog', 'data/sons/frog-joywalk-complet.mp3']];
 const inviteDu = (d = new Date()) => INVITES[Math.floor(d.getTime() / 864e5) % INVITES.length];
 const CHEMINS = [
   ['atelier', 'Une séance d’atelier', '25 min guidées : délier, écrire par les sens, une contrainte, garder ce qui brille.'],

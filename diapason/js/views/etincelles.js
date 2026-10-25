@@ -5,7 +5,7 @@ import { esc, espaceGate, ago } from './carnet.js';
 import { memberColor } from '../duo.js';
 import { jeter } from '../corbeille.js';
 
-// La feuille de route de FLIP : les dix priorités de la revue du panel d'experts, cochées à deux.
+// La feuille de route de Diapason Labo : les dix priorités de la revue du panel d'experts, cochées à deux.
 const FEUILLE = 'jeu-feuille';
 const PRIORITES = [
   ['Enregistrer nos premiers exemples vivants (voix, guitare, claviers)', 'Remplacer tout son synthétique par le nôtre.'],
@@ -17,7 +17,7 @@ const PRIORITES = [
   ['Mesurer la mise en place rythmique à deux', 'Une progression instrumentale visible, comme la voix.'],
   ['Un rituel d’appréciation mensuel', 'Chacun nomme ce que l’autre a apporté.'],
   ['Une IA invitée au relais, sur demande seulement', 'Une contrainte ou une rime proposée, jamais une œuvre signée.'],
-  ['Retirer le bandeau de l’hébergeur (formule payante ou autre hébergeur)', 'Un écran 100 % FLIP.'],
+  ['Retirer le bandeau de l’hébergeur (formule payante ou autre hébergeur)', 'Un écran 100 % Diapason Labo.'],
 ];
 
 export default {
@@ -47,7 +47,7 @@ export default {
         <div class="et-cols">
           ${col('musique', 'Pour notre musique', 'Quand une étincelle prend forme, envoie-la au mur : elle y monte d’étape comme les autres idées.')}
           <div>
-            <section class="feuille"><h2>La feuille de route de FLIP</h2><p class="muted small">Les dix priorités de la revue du panel d’experts. On les coche à deux.</p>
+            <section class="feuille"><h2>La feuille de route de Diapason Labo</h2><p class="muted small">Les dix priorités de la revue du panel d’experts. On les coche à deux.</p>
               <ol>${PRIORITES.map(([t, why], i) => { const f = espace.entries.find((e) => e.id === FEUILLE)?.data?.fait?.[i]; return `<li class="${f ? 'fait' : ''}"><label><input type="checkbox" data-fe="${i}" ${f ? 'checked' : ''}><span><b>${esc(t)}</b><small>${esc(why)}${f ? ` · fait par ${esc(f.by)}` : ''}</small></span></label></li>`; }).join('')}</ol>
             </section>
             ${col('app', 'Nos idées pour l’app', 'Ce que vous voudriez qu’elle fasse. On la construit ensemble.')}
@@ -59,7 +59,7 @@ export default {
       if (i == null) return;
       const apply = (d) => ({ fait: { ...(d?.fait || {}), [i]: e.target.checked ? { by: espace.me, at: Date.now() } : null } });
       const cur = espace.entries.find((x) => x.id === FEUILLE);
-      const r = await saveEntry({ id: FEUILLE, type: 'jeu', title: 'Feuille de route de FLIP', data: apply(cur?.data) }, { baseUpdatedAt: cur?.updatedAt });
+      const r = await saveEntry({ id: FEUILLE, type: 'jeu', title: 'Feuille de route de Diapason Labo', data: apply(cur?.data) }, { baseUpdatedAt: cur?.updatedAt });
       if (r.conflict) await saveEntry({ ...r.current, data: apply(r.current.data) }, { baseUpdatedAt: r.current.updatedAt });
     });
     el.addEventListener('click', async (e) => {

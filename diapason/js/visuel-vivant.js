@@ -68,7 +68,7 @@ export function visuelVivant(cv) {
     const bpm = res.bpm < 80 ? res.bpm * 2 : res.bpm; // l'autocorrélation entend parfois la moitié du tempo
     // Le cadre d'un vrai tirage, avec ce que L'oreille a entendu.
     ctx.fillStyle = ENCRE; ctx.font = `500 ${f(0.026)}px "Atkinson Hyperlegible", sans-serif`; ctx.globalAlpha = 0.8;
-    ctx.textAlign = 'left'; ctx.fillText('FLIP · L’oreille', x0, oy + M + f(0.03));
+    ctx.textAlign = 'left'; ctx.fillText('Diapason Labo · L’oreille', x0, oy + M + f(0.03));
     ctx.textAlign = 'right'; ctx.fillText(`${res.ton.split(' ou ')[0]} · ${bpm} BPM · ${jouees.length} parties`, x1, oy + M + f(0.03));
     ctx.globalAlpha = 1; ctx.fillRect(x0, oy + M + f(0.05), x1 - x0, 1);
     ctx.textAlign = 'left'; ctx.font = `800 ${f(0.08)}px "Literata", Georgia, serif`;
