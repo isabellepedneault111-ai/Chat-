@@ -35,7 +35,7 @@ export function startTour(preview) {
         ${pts.map(([i, n]) => (d[i] ? `<span class="t-pin" data-n="${n}" style="left:${d[i][0]}%;top:${d[i][1]}%"><b>${n + 1}</b></span>` : '')).join('')}
       </div>
     </div>${label ? '</div>' : ''}`;
-  const shot = (n, titre, quand, frames, steps, sons = [], r = 1.6) => `
+  const shot = (n, titre, quand, frames, steps, sons = [], r = 1.6, unique = '') => `
     <div class="t-shot" data-steps="${steps.length}" data-sons="${sons.join(',')}" data-auto="${steps.length * 3400 + 2200}">
       <header class="t-shot-head">
         <p class="t-kicker">${n} / 4</p>
@@ -43,17 +43,22 @@ export function startTour(preview) {
         <p class="t-quand"><b>Quand</b> ${quand}</p>
       </header>
       <div class="t-frames" style="max-width:calc(var(--hmax) * ${r.toFixed(3)})">${frames}</div>
-      <ol class="t-caps">${steps.map((t, i) => `<li data-n="${i}"><b>${i + 1}</b><span>${t}</span></li>`).join('')}</ol>
+      <div class="t-side">
+        ${unique ? `<p class="t-unique"><b>Nulle part ailleurs</b> ${unique}</p>` : ''}
+        <ol class="t-caps">${steps.map((t, i) => `<li data-n="${i}"><b>${i + 1}</b><span>${t}</span></li>`).join('')}</ol>
+      </div>
     </div>`;
   const V = VISITE;
+  // [image, titre, ce qui n'existe nulle part ailleurs, ce que ça change pour nous, son]
   const MONTAGE = [
-    ['m-voix.jpg', 'Un beat sous ta voix', 'Quatorze styles, un phrasé à chanter', 'beat'],
-    ['m-flux.jpg', 'Écrire sur le beat', 'Chanter des sons sans mots, puis y poser les mots', 'riff'],
-    ['m-labo.jpg', 'Un rythme devient une note', 'Accélère… et ça chante', 'labo'],
-    ['m-trois.jpg', 'Un troisième musicien', 'Il reprend votre phrase et la transforme', 'trois'],
-    ['m-grimoire.jpg', 'Le grimoire', 'Tire une carte, écris vrai', 'grimoire'],
-    ['m-pochette.jpg', 'Votre art en pochette', 'Une toile + un vrai son', 'pochette'],
+    ['m-voix.jpg', 'Un beat sous ta voix', 'Le phrasé à chanter s’allume sur le temps', `${esc(z)} joue avec le rythme, pas seulement la justesse`, 'beat'],
+    ['m-flux.jpg', 'Écrire sur le beat', 'Le yaourt chanté part avec le texte', `${esc(f)} joue sur ce que ${esc(z)} a chanté`, 'riff'],
+    ['m-labo.jpg', 'Un rythme devient une note', 'On entend la frontière entre rythme et harmonie', 'Des beats qu’on n’aurait jamais trouvés', 'labo'],
+    ['m-trois.jpg', 'Un troisième musicien', 'Il reprend votre phrase et la transforme', 'Un partenaire d’impro, même à deux', 'trois'],
+    ['m-grimoire.jpg', 'Le grimoire', 'Des cartes pour écrire vrai : arcanes, peurs, contraintes', 'Plus jamais la page blanche', 'grimoire'],
+    ['m-pochette.jpg', 'Notre art en pochette', 'Une toile et un vrai son deviennent une pochette', 'Notre image, notre son, notre album', 'pochette'],
   ];
+
   const r = (d) => `${Math.round(d.w)} / ${Math.round(d.h)}`;
   const slides = [
     `<div class="t-open">
@@ -77,7 +82,7 @@ export function startTour(preview) {
         'Sa voix, en direct. Jaune : c’est juste.',
         'Combien de temps elle chante juste.',
         'FLIP retient où sa voix brille.',
-      ], ['piece-0', 'piece-1', 'piece-2', 'piece-3', 'piece-4'], V.voix.w / V.voix.h),
+      ], ['piece-0', 'piece-1', 'piece-2', 'piece-3', 'piece-4'], V.voix.w / V.voix.h, `Le clavier de ${esc(f)} devient le coach de la voix de ${esc(z)}, dans sa tessiture à elle.`),
     shot(2, 'À distance, <i>en même temps</i>', 'Chacun chez soi, à la même heure, en appel.',
       frame('z', 'distance-z.jpg', V.distance.pts, [[0, 0], [1, 1], [2, 3]], r(V.distance), `Chez ${esc(z)}`)
       + frame('f', 'distance-f.jpg', V.distance.fpts, [[0, 2]], `${Math.round(V.distance.fw)} / ${Math.round(V.distance.fh)}`, `Chez ${esc(f)}`), [
@@ -85,14 +90,14 @@ export function startTour(preview) {
         'Le même minuteur, à la seconde.',
         `Chez ${esc(f)} : la même séance, au même moment.`,
         'La consigne du moment. On joue, c’est tout.',
-      ], ['distance-0', 'distance-1', 'distance-2', 'distance-3'], (V.distance.w / V.distance.h) * 2.1),
+      ], ['distance-0', 'distance-1', 'distance-2', 'distance-3'], (V.distance.w / V.distance.h) * 2.1, 'Une vraie séance guidée, partagée à la seconde près sur deux ordinateurs.'),
     shot(3, 'Chacun <i>son temps</i>', 'Une idée à 23 h. L’autre l’écoute le lendemain matin.',
       frame('relais', 'relais.jpg', V.relais.pts, [[0, 0], [1, 1], [2, 2], [3, 3]], r(V.relais)), [
         'Une touche : le son part vers l’autre.',
         'Avec un mot d’ordre : « chante dessus ».',
         `${esc(z)} répond par-dessus, quand elle veut.`,
         `Couche après couche, la chanson grandit.`,
-      ], ['relais-0', '', 'relais-2', 'relais-3'], V.relais.w / V.relais.h),
+      ], ['relais-0', '', 'relais-2', 'relais-3'], V.relais.w / V.relais.h, 'Chaque son arrive avec ce qu’on attend de l’autre : « chante dessus », « trouve un titre ».'),
     shot(4, 'Rien ne <i>se perd</i>', 'Tout le temps : une idée, même à moitié, va au mur.',
       frame('ciel', 'ciel.jpg', V.ciel.pts, [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]], r(V.ciel)), [
         'Au centre : l’album.',
@@ -100,11 +105,11 @@ export function startTour(preview) {
         'Le pointillé : FLIP propose de marier deux idées.',
         'Avec une consigne pour l’essayer.',
         'Un clic : une nouvelle idée naît.',
-      ], ['', '', 'ciel-2', '', 'ciel-4'], V.ciel.w / V.ciel.h),
+      ], ['', '', 'ciel-2', '', 'ciel-4'], V.ciel.w / V.ciel.h, 'Le mur propose lui-même de marier nos idées, avec une consigne.'),
     // Le reste du génie, en vitrine : six vrais écrans, un son chacun, presque pas de mots.
     `<div class="t-montage" data-auto="${MONTAGE.length * 3600 + 1500}">
        <header><p class="t-kicker">Et ce n’est pas tout</p><h2>Ce que FLIP <i>permet aussi</i></h2></header>
-       <div class="mt-stage">${MONTAGE.map(([img, t, d], i) => `<figure class="mt-tile" data-n="${i}"><div class="mt-img"><img src="img/visite/${img}" alt=""></div><figcaption><b>${t}</b><span>${d}</span></figcaption></figure>`).join('')}</div>
+       <div class="mt-stage">${MONTAGE.map(([img, t, ail, nous], i) => `<figure class="mt-tile" data-n="${i}"><div class="mt-img"><img src="img/visite/${img}" alt=""></div><figcaption><b>${t}</b><span class="mt-ail"><i>Nulle part ailleurs</i> ${ail}</span><span class="mt-nous"><i>Pour nous</i> ${nous}</span></figcaption></figure>`).join('')}</div>
        <div class="mt-dots">${MONTAGE.map((_, i) => `<i data-n="${i}"></i>`).join('')}</div>
      </div>`,
     `<div class="t-title">
@@ -153,11 +158,12 @@ export function startTour(preview) {
         sh.querySelectorAll('.t-frame').forEach((fr) => {
           const pin = fr.querySelector(`.t-pin[data-n="${k}"]`);
           const zm = fr.querySelector('.t-zoom');
-          if (pin) { zm.style.transformOrigin = `${pin.style.left} ${pin.style.top}`; zm.style.transform = 'scale(1.12)'; fr.classList.add('focus'); } else { zm.style.transform = 'scale(1)'; fr.classList.remove('focus'); }
+          // Un projecteur sur le repère : l'image reste entière, rien n'est coupé.
+        if (pin) { fr.style.setProperty('--sx', pin.style.left); fr.style.setProperty('--sy', pin.style.top); fr.classList.add('focus'); } else fr.classList.remove('focus');
         });
         jouer((sh.dataset.sons || '').split(',')[k]);
         if (k < n - 1) stepT = setTimeout(step, 3400);
-        else stepT = setTimeout(() => sh.querySelectorAll('.t-zoom').forEach((zm) => { zm.style.transform = 'scale(1)'; }), 2400);
+        else stepT = setTimeout(() => sh.querySelectorAll('.t-frame').forEach((fr) => fr.classList.remove('focus')), 2400);
       };
       stepT = setTimeout(step, 900);
     }
@@ -168,7 +174,7 @@ export function startTour(preview) {
         if (!mt.isConnected) return;
         k += 1; if (k >= MONTAGE.length) return;
         mt.querySelectorAll('[data-n]').forEach((x) => { x.classList.toggle('on', +x.dataset.n === k); x.classList.toggle('vu', +x.dataset.n < k); });
-        jouer(MONTAGE[k][3]);
+        jouer(MONTAGE[k][4]);
         stepT = setTimeout(next, 3600);
       };
       stepT = setTimeout(next, 700);

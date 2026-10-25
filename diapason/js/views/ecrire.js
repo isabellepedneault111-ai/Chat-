@@ -26,6 +26,8 @@ const INVITES = [
 // Des mots qui tombent pendant le flux : de quoi rebondir sans réfléchir.
 const MOTS_FLUX = ['marée', 'néon', 'genoux', 'braise', 'fenêtre', 'sel', 'autoroute', 'ta voix', 'minuit', 'givre', 'cassé', 'velours', 'le fleuve', 'quai', 'promesse', 'poussière', 'ciel bas', 'mains', 'chaleur', 'radio', 'silence', 'lumière', 'été', 'rouille', 'battement'];
 const today = () => new Date().toISOString().slice(0, 10);
+// Écrire sur la musique de Frog : ses pièces, prêtes à recevoir des mots.
+const PIECES = [['beat', 'Un beat de FLIP', ''], ['projet1', 'Projet 1 de Frog, après la pause', 'data/sons/frog-visite.mp3'], ['joywalk', 'Joy Walk de Frog', 'data/sons/frog-joywalk-complet.mp3']];
 const inviteDu = (d = new Date()) => INVITES[Math.floor(d.getTime() / 864e5) % INVITES.length];
 const CHEMINS = [
   ['atelier', 'Une séance d’atelier', '25 min guidées : délier, écrire par les sens, une contrainte, garder ce qui brille.'],
@@ -40,10 +42,16 @@ export default {
     let sig = '';
     let stopGroove = null;
     let flux = null; let yaourt = null; let yaourtBlob = null;
+    const sur = () => el.querySelector('[data-e=sur]')?.value || 'beat';
+    // Lance le fond choisi : le beat de FLIP, ou une pièce de Frog.
+    const fond = () => {
+      if (sur() === 'beat') { const play = el.querySelector('.groove [data-g=play]'); if (play && !el.querySelector('.groove.on')) play.click(); return; }
+      const a = el.querySelector('.flux-piece audio'); a.loop = true; a.play().catch(() => {});
+    };
+    const coupeFond = () => { el.querySelector('.groove.on [data-g=play]')?.click(); el.querySelector('.flux-piece audio')?.pause(); };
     // Le flux : 5 minutes, un mot qui tombe toutes les 20 secondes, pas d'effacement si on le veut.
     function startFlux() {
-      const play = el.querySelector('.groove [data-g=play]');
-      if (play && !el.querySelector('.groove.on')) play.click();
+      fond();
       const ta = el.querySelector('.flux-text'); ta.focus();
       const t0 = Date.now(); const total = 300;
       const mot = () => { const m = el.querySelector('.flux-mot'); if (m) { m.textContent = MOTS_FLUX[Math.floor(Math.random() * MOTS_FLUX.length)]; m.classList.remove('in'); void m.offsetWidth; m.classList.add('in'); } };
@@ -54,7 +62,7 @@ export default {
         if (!tt) { clearInterval(flux); flux = null; return; }
         tt.textContent = left > 0 ? `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}` : 'fini';
         if (left % 20 === 0) mot();
-        if (left <= 0) { clearInterval(flux); flux = null; el.querySelector('.groove.on [data-g=play]')?.click(); toast('Cinq minutes. Relis-toi : souligne une ligne vraie.'); }
+        if (left <= 0) { clearInterval(flux); flux = null; coupeFond(); toast('Cinq minutes. Relis-toi : souligne une ligne vraie.'); }
       }, 1000);
     }
     async function toggleYaourt(btn) {
@@ -69,8 +77,7 @@ export default {
           btn.textContent = '● Refaire le yaourt'; btn.classList.remove('on');
           el.querySelector('.flux-yaourt').innerHTML = `<audio controls src="${URL.createObjectURL(yaourtBlob)}"></audio><small>Réécoute : quels sons ressemblent déjà à des mots? Écris-les.</small>`;
         };
-        const play = el.querySelector('.groove [data-g=play]');
-        if (play && !el.querySelector('.groove.on')) play.click();
+        fond();
         r.start(); yaourt = r;
         btn.textContent = '■ Arrêter le yaourt'; btn.classList.add('on');
         setTimeout(() => yaourt === r && r.stop(), 90000);
@@ -95,7 +102,9 @@ export default {
             <h2>Écrire sur le beat</h2>
             <p>Pour se découvrir : on ne réfléchit pas, on suit le rythme. D’abord le <b>yaourt</b> (chanter des sons sans mots), puis les mots viennent s’y poser.</p>
           </div>
-          ${grooveHTML()}
+          <label class="flux-sur"><span>Écrire sur</span><select data-e="sur">${PIECES.map(([id, nom]) => `<option value="${id}">${nom}</option>`).join('')}</select></label>
+          <div class="flux-beat">${grooveHTML()}</div>
+          <div class="flux-piece" hidden><audio controls preload="none"></audio><small>La pièce joue en boucle pendant le flux et le yaourt.</small></div>
           <div class="flux-row">
             <button class="btn primary" data-e="flux">▶ 5 minutes de flux</button>
             <button class="btn" data-e="yaourt">● Yaourt : chanter sans mots</button>
@@ -136,6 +145,14 @@ export default {
             </article>`).join('')}
         </section>`).join('');
     }
+    el.addEventListener('change', (e) => {
+      if (e.target.dataset.e !== 'sur') return;
+      const p = PIECES.find(([id]) => id === e.target.value);
+      coupeFond();
+      el.querySelector('.flux-beat').hidden = p[0] !== 'beat';
+      const box = el.querySelector('.flux-piece'); box.hidden = p[0] === 'beat';
+      if (p[2]) box.querySelector('audio').src = p[2];
+    });
     el.addEventListener('keydown', (e) => {
       if (flux && e.target.classList.contains('flux-text') && el.querySelector('[data-e=noback]')?.checked && (e.key === 'Backspace' || e.key === 'Delete')) e.preventDefault();
     });
@@ -152,7 +169,8 @@ export default {
         const b = e.target.closest('[data-e]'); b.disabled = true;
         try {
           const audio = yaourtBlob ? await uploadAudio(yaourtBlob) : null;
-          await saveEntry({ type: 'texte', title: (text.split('\n')[0] || 'Yaourt sur le beat').slice(0, 80), body: text, audio, data: { journal: true, date: today(), invite: 'Écrit sur le beat', flux: true, stage: 0 } });
+          const surQuoi = PIECES.find(([id]) => id === sur())[1];
+          await saveEntry({ type: 'texte', title: (text.split('\n')[0] || `Yaourt sur ${surQuoi}`).slice(0, 80), body: text, audio, data: { journal: true, date: today(), invite: `Écrit sur ${surQuoi}`, flux: true, sur: sur(), stage: 0 } });
           ta.value = ''; yaourtBlob = null; el.querySelector('.flux-yaourt').innerHTML = '';
           toast('Dans le journal, avec le yaourt.');
         } catch (err) { toast(err.message); }
@@ -180,6 +198,6 @@ export default {
     });
     const off = onEspace((w) => { if (w === 'entries') list(); if (w === 'meta' && !el.querySelector('.ec-new')) shell(); });
     shell();
-    return () => { off(); stopGroove?.(); clearInterval(flux); yaourt?.stop(); };
+    return () => { off(); stopGroove?.(); clearInterval(flux); yaourt?.stop(); el.querySelector('.flux-piece audio')?.pause(); };
   },
 };

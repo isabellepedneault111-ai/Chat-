@@ -2229,3 +2229,24 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .tour { --hmax: 60vh; }
 @media (max-height: 760px) { .tour { --hmax: 54vh; } }
 @media (max-width: 860px) { .tour { --hmax: 40vh; } }
+/* Visite : un projecteur plutôt qu'un zoom (l'image reste entière) */
+.t-zoom { transform: none !important; }
+.t-frame::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .6s, background-position .6s; background: radial-gradient(circle at var(--sx, 50%) var(--sy, 50%), rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 9%, rgba(12, 10, 8, .55) 22%); }
+.t-frame.focus::after { opacity: 1; }
+.mt-tile.on .mt-img img { transform: none !important; }
+.t-unique { margin: 4px 0 0; font-size: clamp(.95rem, 1.35vw, 1.1rem); color: #fff; max-width: 70ch; }
+.t-unique b { font: italic 600 1em var(--display); color: #f3c77a; margin-right: 8px; }
+.mt-tile figcaption span { display: block; font-size: clamp(.95rem, 1.4vw, 1.1rem); }
+.mt-ail { color: #fff !important; }
+.mt-nous { color: #cfc6b4 !important; }
+.mt-tile figcaption i { font-style: italic; font-family: var(--display); color: #f3c77a; margin-right: 6px; }
+.flux-sur { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 10px; font-weight: 700; color: #cfc6b4; }
+.flux-sur select { padding: 6px 8px; border-radius: 6px; border: 1.5px solid rgba(241, 233, 216, .3); background: #1b1714; color: #efe9dc; font: 600 .95rem var(--body); }
+.flux-piece { display: grid; gap: 4px; margin: 0 0 12px; } .flux-piece audio { width: 100%; } .flux-piece small { color: #a8a093; }
+.t-side { grid-area: caps; display: grid; gap: 10px; align-self: center; }
+.t-side .t-caps { grid-area: auto; }
+.t-unique { padding: 10px 12px; border-left: 3px solid #f3c77a; background: rgba(243, 199, 122, .08); border-radius: 0 8px 8px 0; }
+.t-unique b { display: block; margin: 0 0 2px; }
+@media (max-width: 860px) { .t-side { grid-area: auto; } .t-unique { font-size: .9rem; padding: 6px 10px; } }
+@media (max-width: 860px) { .tour { --hmax: 30vh; } .t-shot-head h2 { font-size: 1.7rem !important; } .t-quand { font-size: .9rem; } }
+@media (max-width: 860px) { .t-unique { display: none; } }
