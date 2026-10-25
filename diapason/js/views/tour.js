@@ -48,7 +48,7 @@ export function startTour(preview) {
   const V = VISITE;
   const MONTAGE = [
     ['m-voix.jpg', 'Un beat sous ta voix', 'Quatorze styles, un phrasé à chanter', 'beat'],
-    ['m-flux.jpg', 'Écrire sur le beat', 'Le yaourt d’abord, les mots ensuite', 'riff'],
+    ['m-flux.jpg', 'Écrire sur le beat', 'Chanter des sons sans mots, puis y poser les mots', 'riff'],
     ['m-labo.jpg', 'Un rythme devient une note', 'Accélère… et ça chante', 'labo'],
     ['m-trois.jpg', 'Un troisième musicien', 'Il reprend votre phrase et la transforme', 'trois'],
     ['m-grimoire.jpg', 'Le grimoire', 'Tire une carte, écris vrai', 'grimoire'],
