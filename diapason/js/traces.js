@@ -5,7 +5,7 @@ import { MEMBERS } from './duo.js';
 import { nameFR } from './music.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const OUTILS = { accord: 'Voix + piano', ambiance: 'Ambiances', grimoire: 'Le grimoire', gym: 'Gym vocal' };
+const OUTILS = { accord: 'Voix + piano', ambiance: 'Ambiances', grimoire: 'Le grimoire', gym: 'Gym vocal', atelier: 'Séance d’atelier' };
 
 // Une pratique d'au moins une minute devient une trace.
 export function logPractice(outil, minutes, data = {}) {
@@ -29,6 +29,7 @@ function pistes(t) {
     if (d.mode === 'ailleurs') out.push([`${who} explore les 9e et les 13e : propose des accords add9 ou maj7.`, '#/accord']);
   }
   if (d.outil === 'ambiance' && d.lieu) out.push([`${who} était dans « ${d.lieu} » : prolonge cette ambiance avec tes textures, et lance-la au relais.`, '#/ambiances']);
+  if (d.outil === 'atelier') out.push([`${who} a fait une séance d’atelier sur « ${d.mot || ''} » : lis-la dans le journal, et réponds avec un son qui la porte.`, '#/ecrire']);
   if (d.outil === 'grimoire' && d.carte) out.push([`${who} a tiré « ${d.carte} »${d.mot ? ` sur le mot « ${d.mot} »` : ''} : réponds avec un son qui porte ce mot.`, '#/relais']);
   return out.map(([txt, href]) => ({ txt, href }));
 }
@@ -38,13 +39,15 @@ export function pendantHTML() {
   const o = other();
   const recent = espace.entries.filter((e) => e.type === 'trace' && e.author === o && Date.now() - e.createdAt < 7 * 864e5).sort((a, b) => b.createdAt - a.createdAt);
   const solos = espace.entries.filter((e) => e.type === 'session' && e.author === o && e.data?.done && e.data.format === 'solo' && Date.now() - e.data.doneAt < 7 * 864e5);
-  if (!recent.length && !solos.length) return '';
+  const pages = espace.entries.filter((e) => e.type === 'texte' && e.data?.journal && e.author === o && Date.now() - e.createdAt < 7 * 864e5).length;
+  if (!recent.length && !solos.length && !pages) return '';
   const mins = Math.round(recent.reduce((s, e) => s + (e.data?.minutes || 0), 0) + solos.reduce((s, e) => s + Math.max(0, (e.data.doneAt - e.data.startedAt) / 60000), 0));
   const ps = []; const seen = new Set();
   recent.forEach((t) => pistes(t).forEach((p) => { if (!seen.has(p.txt) && ps.length < 3) { seen.add(p.txt); ps.push(p); } }));
   return `<section class="pendant">
     <p class="pendant-k">Pendant ce temps</p>
-    <p class="pendant-what"><b>${esc(o)}</b> a pratiqué en solo <b>${mins} min</b> cette semaine : ${[...new Set(recent.map((e) => OUTILS[e.data?.outil] || e.data?.outil))].concat(solos.length ? ['micro-sessions'] : []).map(esc).join(', ')}.</p>
+    ${mins ? `<p class="pendant-what"><b>${esc(o)}</b> a pratiqué en solo <b>${mins} min</b> cette semaine : ${[...new Set(recent.map((e) => OUTILS[e.data?.outil] || e.data?.outil))].concat(solos.length ? ['micro-sessions'] : []).map(esc).join(', ')}.</p>` : `<p class="pendant-what"><b>${esc(o)}</b> a écrit cette semaine.</p>`}
+    ${pages ? `<p class="pendant-what"><a href="#/ecrire" class="pendant-j">${pages} page${pages > 1 ? 's' : ''} au journal →</a></p>` : ''}
     ${ps.length ? `<ul class="pendant-pistes">${ps.map((p) => `<li><a href="${p.href}">${esc(p.txt)} →</a></li>`).join('')}</ul>` : ''}
     <p class="pendant-note">Visible pour vous deux. Rien à envoyer : la pratique laisse sa trace toute seule.</p>
   </section>`;

@@ -13,6 +13,8 @@ import bilan from './views/bilan.js';
 import jeux from './views/jeux.js';
 import coffre from './views/coffre.js';
 import lexique from './views/lexique.js';
+import ecrireV from './views/ecrire.js';
+import atelier from './views/atelier.js';
 import { maybeTour } from './views/tour.js';
 import home from './views/home.js';
 import miroir from './views/miroir.js';
@@ -24,7 +26,7 @@ import paroles from './views/paroles.js';
 import carnet from './views/carnet.js';
 import { boot, joinEspace, espace, onEspace } from './espace.js';
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique };
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier };
 const VOIX = ['accord', 'miroir', 'tessiture', 'gym'];
 const view = $('#view');
 let cleanup = null;
@@ -59,7 +61,7 @@ async function route() {
   view.style.setProperty('--accent', mod ? mod.color : 'var(--rec)');
   currentId = v.id;
   cleanup = v.mount(host) || null;
-  const group = VOIX.includes(v.id) ? 'voix' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' ? 'home' : v.id === 'jeux' ? 'paroles' : v.id;
+  const group = VOIX.includes(v.id) ? 'voix' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' ? 'home' : ['jeux', 'paroles', 'atelier', 'ecrire'].includes(v.id) ? 'ecrire' : v.id;
   $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.id === group));
   if (v.id === 'carnet') { unseen = 0; showBadge(); }
   document.title = mod ? `${mod.name} · FLIP` : 'FLIP · Zaza & Frog';

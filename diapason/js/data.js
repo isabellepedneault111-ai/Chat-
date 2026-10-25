@@ -16,6 +16,8 @@ export const MODULES = [
   { id: 'jeux', num: '', name: 'Le grimoire', color: 'var(--c-paroles)', tagline: 'Rituels d’écriture : nos mots, une carte tirée dans les braises, le cadavre exquis.' },
   { id: 'coffre', num: '', name: 'Le coffre', color: 'var(--rec)', tagline: 'Nos petites perles : la vidéo, le mot d’accueil, ce qu’on y dépose.' },
   { id: 'lexique', num: '', name: 'Notre lexique', color: 'var(--rec)', tagline: 'Les mots de FLIP, et ce qu’ils font bouger.' },
+  { id: 'ecrire', num: '', name: 'Écrire', color: 'var(--c-paroles)', tagline: 'Notre journal, la séance d’atelier, le grimoire, les paroles.' },
+  { id: 'atelier', num: '', name: 'Séance d’atelier', color: 'var(--c-paroles)', tagline: 'Quatre temps guidés pour écrire.' },
   { id: 'bilan', num: '', name: 'Notre bilan', color: 'var(--rec)', tagline: 'Où on est rendus, et ce que la recherche dit de faire ensuite.' },
   { id: 'session', num: '', name: 'Session', color: 'var(--rec)', tagline: 'La séance guidée, du check-in à la prise.' },
 ];

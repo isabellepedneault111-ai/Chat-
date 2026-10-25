@@ -1673,3 +1673,55 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .lx-moves { display: block; margin-top: 4px; font-weight: 700; color: #9a3a1a; font-size: .92rem; }
 @media (max-width: 640px) { .lx-m { grid-template-columns: 1fr; gap: 4px; } }
 .next-step .btn { background: var(--tape); color: var(--ink); border-color: #000; box-shadow: 0 3px 0 #000; }
+/* Mur calme : un seul point fort */
+.linklike { border: 0; background: none; padding: 0; font: inherit; color: var(--cobalt); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.linklike.strong { font-weight: 700; color: var(--ink); text-decoration-color: var(--rec); text-decoration-thickness: 2px; }
+.cap-more { position: relative; }
+.cap-more summary { list-style: none; }
+.cap-more summary::-webkit-details-marker { display: none; }
+.cap-menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 20; display: grid; gap: 4px; min-width: 220px; padding: 8px; background: var(--card); border: 1.5px solid var(--rule); border-radius: var(--radius); box-shadow: 0 12px 30px rgba(27, 25, 21, .15); }
+.cap-menu .btn { justify-content: flex-start; box-shadow: none; border-color: transparent; }
+.cap-menu .btn:hover { background: var(--surface2); }
+.dir-line { display: flex; flex-wrap: wrap; gap: 6px 22px; align-items: baseline; padding: 4px 2px 14px; color: var(--ink-2); }
+.dir-goal b { font-variant-numeric: tabular-nums; margin-left: 4px; }
+.f-sel { width: auto; padding: 7px 10px; font-size: .9rem; }
+.filters { display: flex; gap: 8px; }
+.cm-intents .rl-ask { background: transparent; color: var(--muted); border: 1px solid var(--line); font-weight: 700; }
+.cm-intents .rl-intent { color: var(--muted); }
+.cm-layers { color: var(--muted); border-color: var(--line); }
+/* Écrire : le journal */
+.ec-chemins { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-bottom: 22px; }
+.ec-chemins a { display: grid; gap: 2px; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: var(--radius); text-decoration: none; background: var(--card); }
+.ec-chemins a:hover { border-color: var(--rule); }
+.ec-chemins b { font-family: var(--display); font-weight: 700; font-size: 1.08rem; }
+.ec-chemins small { color: var(--muted); font-size: .84rem; }
+.ec-new { max-width: 760px; margin-bottom: 28px; }
+.ec-invite { margin: 0 0 10px; font-family: var(--display); font-size: 1.35rem; line-height: 1.25; }
+.ec-invite small { display: block; font-family: var(--body); font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.ec-text { width: 100%; font-size: 1.08rem; line-height: 1.7; background: #fffdf8; }
+.ec-row { display: flex; gap: 12px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+.ec-list { max-width: 760px; }
+.ec-day h2 { font-family: var(--display); font-weight: 700; font-size: 1.15rem; margin: 22px 0 8px; color: var(--muted); }
+.ec-day h2::first-letter { text-transform: uppercase; }
+.ec-entry { padding: 14px 0 14px 16px; border-left: 3px solid var(--c); margin-bottom: 10px; }
+.ec-entry header { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.ec-entry header b { color: var(--c); }
+.ec-body { margin: 6px 0; font-family: var(--display); font-size: 1.12rem; line-height: 1.6; }
+.ec-step { margin: 8px 0; }
+.ec-step small { font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.ec-step p { margin: 2px 0; font-family: var(--display); line-height: 1.55; }
+.ec-acts { display: flex; gap: 16px; font-size: .88rem; }
+.ec-empty { padding: 10px 0; }
+/* Séance d'atelier */
+.at-steps { display: flex; gap: 6px; padding: 0; margin: 0 0 16px; list-style: none; flex-wrap: wrap; }
+.at-steps li { flex: 1 1 140px; padding: 8px 12px; border-top: 4px solid var(--line); font-weight: 700; font-size: .9rem; color: var(--muted); }
+.at-steps li small { display: block; font-weight: 400; }
+.at-steps li.done { border-color: var(--ink); color: var(--ink); }
+.at-steps li.now { border-color: var(--rec); color: var(--ink); }
+.at-prev { margin-bottom: 12px; }
+.at-prev summary { cursor: pointer; font-weight: 700; }
+.at-src { color: var(--muted); font-size: .84rem; font-style: italic; }
+.at-nav { margin: 12px 0 30px; }
+.pendant-j { color: #fff; font-weight: 700; }
+.t-list li:nth-child(4) { animation-delay: 1.4s; }
+.ec-chemins a, .oa-g a { color: var(--ink); }

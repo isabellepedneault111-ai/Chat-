@@ -94,6 +94,8 @@ export function espaceGate(host, { onReady } = {}) {
 }
 
 const BOARD_TYPES = new Set(['note', 'texte', 'audio', 'essai', 'paroles', 'lien']);
+// Le journal et les séances d'atelier vivent dans « Écrire » ; on les envoie au mur d'un geste.
+const onBoard = (e) => BOARD_TYPES.has(e.type) && !((e.data?.journal || e.data?.atelier) && !e.data?.aumur);
 const URL_RE = /https?:\/\/[^\s<>"]+/i;
 export function linkKind(url) {
   if (/open\.spotify\.com/.test(url)) return 'Spotify';
@@ -126,7 +128,7 @@ function nextStep(board) {
 }
 const stageOf = (e) => (e.data && Number.isInteger(e.data.stage) ? e.data.stage : e.type === 'paroles' ? 2 : 0);
 const songOf = (e) => (e.type === 'paroles' ? (e.title || 'Sans titre') : e.data?.song || '');
-export const allSongs = () => [...new Set(espace.entries.filter((e) => BOARD_TYPES.has(e.type)).map(songOf).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
+export const allSongs = () => [...new Set(espace.entries.filter(onBoard).map(songOf).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
 
 export default {
   id: 'carnet',
@@ -167,11 +169,9 @@ export default {
           <div>
             <p class="eyebrow">Le mur</p>
             <h1>Nos idées, et où elles s’en vont</h1>
-            <p class="muted">Tu es <b style="color:${memberColor(espace.me)}">${esc(espace.me)}</b> · <span class="sync-state">synchronisé</span></p>
+            <p class="muted">Tu es <b style="color:${memberColor(espace.me)}">${esc(espace.me)}</b> · <span class="sync-state">synchronisé</span> · <a href="#/lexique">lexique</a> · <button class="linklike" data-c="share">inviter ${esc(other())}</button></p>
           </div>
           <div class="actions">
-            <a class="btn ghost" href="#/lexique">Lexique</a>
-            <button class="btn" data-c="share">Inviter ${esc(other())}</button>
             <button class="btn ghost" data-c="settings" aria-expanded="false">Réglages</button>
           </div>
         </div>
@@ -180,10 +180,14 @@ export default {
         <form class="capture panel" autocomplete="off">
           <input class="input capture-in" data-c="quick" placeholder="Une idée, un accord, un lien Spotify ou YouTube…" aria-label="Idée ou lien">
           <button class="btn primary" type="submit">Ajouter</button>
-          <button class="btn rec" type="button" data-c="rec">● Mémo vocal</button>
-          <label class="btn">Fichier<input type="file" accept="audio/*,video/*" data-c="file" hidden></label>
-          <button class="btn bravo-btn" type="button" data-type="bravo">★ Bravo à ${esc(other())}</button>
-          <button class="btn ghost" type="button" data-c="more">Bilan, évaluation…</button>
+          <details class="cap-more"><summary class="btn ghost">Plus</summary>
+            <div class="cap-menu">
+              <button class="btn ghost" type="button" data-c="rec">● Mémo vocal</button>
+              <label class="btn ghost">Un fichier audio<input type="file" accept="audio/*,video/*" data-c="file" hidden></label>
+              <button class="btn ghost" type="button" data-type="bravo">Un bravo à ${esc(other())}</button>
+              <button class="btn ghost" type="button" data-c="more">Bilan, évaluation…</button>
+            </div>
+          </details>
         </form>
         <div class="composer panel" hidden></div>
 
@@ -258,12 +262,8 @@ export default {
       const songs = allSongs();
       const mem = espace.meta.members || MEMBERS;
       el.querySelector('.filters').innerHTML = `
-        <button class="chip ${!fWho ? 'active' : ''}" data-fw="">Nous deux</button>
-        ${mem.map((m) => `<button class="chip who-chip ${fWho === m ? 'active' : ''}" data-fw="${esc(m)}" style="--c:${memberColor(m)}">${esc(m)}</button>`).join('')}
-        <span class="sep"></span>
-        <button class="chip ${!fSong ? 'active' : ''}" data-fs="">Tous les morceaux</button>
-        ${songs.map((s) => `<button class="chip ${fSong === s ? 'active' : ''}" data-fs="${esc(s)}">${esc(s)}</button>`).join('')}
-        <button class="chip ${fSong === '—' ? 'active' : ''}" data-fs="—">Sans morceau</button>`;
+        <select class="input f-sel" data-fsel="who" aria-label="De qui"><option value="">Nous deux</option>${mem.map((m) => `<option ${fWho === m ? 'selected' : ''}>${esc(m)}</option>`).join('')}</select>
+        <select class="input f-sel" data-fsel="song" aria-label="Morceau"><option value="">Tous les morceaux</option>${songs.map((x) => `<option ${fSong === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}<option value="—" ${fSong === '—' ? 'selected' : ''}>Sans morceau</option></select>`;
       renderDirection();
       const list = filtered();
       const mur = el.querySelector('.mur');
@@ -272,7 +272,7 @@ export default {
         mur.innerHTML = list.length ? `<ol class="feed">${list.map(fullHTML).join('')}</ol>` : emptyHTML();
         return;
       }
-      const board = list.filter((e) => BOARD_TYPES.has(e.type));
+      const board = list.filter(onBoard);
       if (view === 'etapes') {
         mur.innerHTML = `<div class="board">${STAGES.map((st) => {
           const cards = board.filter((e) => stageOf(e) === st.id);
@@ -293,16 +293,16 @@ export default {
     // « Vers où ça nous mène » : l'entonnoir et l'objectif du mois.
     function renderDirection() {
       const box = el.querySelector('.direction');
-      const board = espace.entries.filter((e) => BOARD_TYPES.has(e.type));
+      const board = espace.entries.filter(onBoard);
       const ctx = planContext();
       const m = currentMonth();
       const goal = m ? PLAN[m - 1] : null;
       const done = goal ? goal.mesure(ctx) : 0;
       const next = nextStep(board);
-      box.innerHTML = `
-        ${next ? `<div class="next-step"><p class="ns-k">Le prochain pas pour notre route</p><p class="ns-t"><b>« ${esc(next.e.title || 'Sans titre')} »</b> de ${esc(next.e.author)} a de la vie : ${esc(next.why)}.</p><button class="btn primary" data-promote="${esc(next.e.id)}">La faire monter : ${esc(STAGES[stageOf(next.e) + 1].label)} →</button>${goal ? `<span class="ns-goal">Ça compte pour le mois ${m} : ${esc(goal.sortie)}</span>` : ''}</div>` : ''}
-        <div class="funnel">${STAGES.map((st) => { const n = board.filter((e) => stageOf(e) >= st.id).length; return `<div style="--n:${n}"><b>${n}</b><span>${st.label}</span></div>`; }).join('<i>→</i>')}</div>
-        ${goal ? `<a class="month-goal" href="#/"><span class="mono">Mois ${m}</span> ${esc(goal.sortie)} <b>${Math.min(done, goal.cible)} / ${goal.cible}</b><i style="--p:${Math.min(100, Math.round((done / goal.cible) * 100))}"></i></a>` : '<a class="month-goal" href="#/">Lancer notre plan de six mois →</a>'}`;
+      box.innerHTML = `<div class="dir-line">
+        ${goal ? `<span class="dir-goal">Mois ${m} · ${esc(goal.sortie)} <b>${Math.min(done, goal.cible)} / ${goal.cible}</b></span>` : '<a href="#/">Lancer notre plan de six mois →</a>'}
+        ${next ? `<span class="dir-next">Prochain pas : <b>« ${esc(next.e.title || 'Sans titre')} »</b> a de la vie (${esc(next.why)}). <button class="linklike strong" data-promote="${esc(next.e.id)}">La faire monter →</button></span>` : ''}
+      </div>`;
     }
 
     function cardHTML(e) {
@@ -614,6 +614,8 @@ export default {
           renderSettings();
         } catch (err) { toast(err.message); }
       }
+      if (e.target.dataset.fsel === 'who') { fWho = e.target.value; renderAll(true); return; }
+      if (e.target.dataset.fsel === 'song') { fSong = e.target.value; renderAll(true); return; }
       const en = openId && espace.entries.find((x) => x.id === openId);
       if (en && e.target.dataset.d === 'stage') await setStage(en, +e.target.value);
       if (en && e.target.dataset.d === 'song') {

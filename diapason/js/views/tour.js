@@ -39,12 +39,13 @@ export function startTour(preview) {
        <li>À l’envers : <b>je chante, tu trouves les accords</b>.</li>
      </ul>
      <div class="t-chords"><span>Do</span><span class="now">Lam</span><span>Fa</span><span>Sol</span></div>`,
-    `<p class="t-kicker">Entre deux sessions</p>
-     <h2>On se lance <i>des sons.</i></h2>
+    `<p class="t-kicker">Quand on n’est pas ensemble</p>
+     <h2>L’absence <i>ne freine plus rien.</i></h2>
      <ul class="t-list">
-       <li>Ton riff, <b>une touche</b> : il m’arrive, avec ton intention.</li>
-       <li>Je chante <b>par-dessus</b>. Tu ajoutes une couche. La chanson grandit entre nous.</li>
-       <li>Et quand on veut partir ailleurs : <b>les ambiances, le grimoire</b>.</li>
+       <li><b>Le relais</b> : ton riff, une touche, avec ton intention. Je chante par-dessus, tu ajoutes une couche.</li>
+       <li><b>Pendant ce temps</b> : ce que l’un pratique seul, l’autre le voit, avec des pistes pour continuer.</li>
+       <li><b>Notre journal</b> : on écrit chacun de son côté, et on se lit.</li>
+       <li>Chaque séance commence par <b>tout ce qui s’est passé entre-temps</b>. Rien ne se perd.</li>
      </ul>`,
     `<p class="t-kicker">Brancher tes claviers · 2 minutes</p>
      <h2>Un câble, et c’est parti.</h2>
@@ -57,7 +58,8 @@ export function startTour(preview) {
      <div class="t-actions">
        <a class="btn primary big" href="#/accord" data-t="end">① Brancher un clavier et jouer 3 accords pour moi</a>
        <a class="btn big" href="#/relais" data-t="end">② Me lancer un premier son</a>
-       <a class="btn big" href="#/depart" data-t="end">③ Ton point de départ (5 min)</a>
+       <a class="btn big" href="#/ecrire" data-t="end">③ Une page dans notre journal</a>
+       <a class="btn big" href="#/depart" data-t="end">④ Ton point de départ (5 min)</a>
        <button class="btn big ghost" data-t="end">Explorer seul</button>
      </div>
      <p class="t-src">Cette visite ne reviendra plus. Elle t’attend dans le coffre (l’icône du petit coffre, en haut), avec la vidéo.</p>`,

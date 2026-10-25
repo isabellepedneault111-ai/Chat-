@@ -24,6 +24,8 @@ const MOTS = [
     ['La trace de séance', 'À la fin : le feu (1 à 5 flammes), un mot chacun, le debrief, la prochaine cible.', 'Le bilan de la semaine et la route.', 'bilan/seance'],
   ]],
   ['Écrire', [
+    ['Notre journal', 'Chacun écrit de son côté, avec une invitation du jour commune. On se lit.', 'Une page peut aller au mur (et monter d’étape) ou au coffre.', 'ecrire'],
+    ['La séance d’atelier', 'Quatre temps guidés : délier la main, écrire par les sens, une contrainte, garder ce qui brille.', 'Elle va au journal, et l’autre en reçoit une piste.', 'atelier'],
     ['Le grimoire', 'Le rituel avant d’écrire : notre champ de mots, une carte tirée, le cadavre exquis, tes propres rituels.', 'La matière des textes, sans page blanche.', 'jeux'],
     ['Le champ de mots', 'Les mots qu’on dépose à deux autour d’un thème. Les cartes y puisent.', 'Le vocabulaire commun de l’album.', 'jeux'],
     ['Une ambiance', 'Un lieu qui sonne (fleuve gelé, cuisine à 2 h…), qu’un clavier peut piloter. On écrit et on chante dedans.', 'Une couleur commune pour un morceau.', 'ambiances'],

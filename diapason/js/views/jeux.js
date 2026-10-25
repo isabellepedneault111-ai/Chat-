@@ -12,7 +12,7 @@ import { intentions } from './relais.js';
 import { logPractice } from '../traces.js';
 
 // Le paquet : consignes classiques d'ateliers d'écriture. brise = 1 à 3 minutes pour se délier.
-const CARTES = [
+export const CARTES = [
   { id: 'souviens', nom: 'Je me souviens', brise: true, min: 3, consigne: 'Cinq lignes qui commencent par « Je me souviens », autour du mot. Des souvenirs minuscules et précis.', src: 'Georges Perec, 1978' },
   { id: 'acro', nom: 'Acrostiche', brise: true, min: 3, consigne: 'Écris le mot à la verticale : chaque lettre ouvre une ligne.' },
   { id: 'interdit', nom: 'Le mot interdit', brise: true, min: 2, consigne: 'Décris le mot sans jamais l’écrire. L’autre doit deviner en lisant.' },
