@@ -1,7 +1,10 @@
-// Coquille de l'application : routage, micro global, pistes, défis, mode projecteur.
+// Coquille de l'application de Zaza & Frog : routage, micro, « pourquoi ça marche », contraintes, visite guidée.
 import { $, $$, toast, store } from './ui.js';
 import { toggleMic, onMicStatus, onPitch } from './audio.js';
-import { PISTES, DEFIS_SURPRISE, MODULES } from './data.js';
+import { MODULES } from './data.js';
+import { POURQUOI, CONTRAINTES } from './duo.js';
+import session, { activeSession } from './views/session.js';
+import { maybeTour } from './views/tour.js';
 import home from './views/home.js';
 import miroir from './views/miroir.js';
 import tessiture from './views/tessiture.js';
@@ -12,8 +15,8 @@ import paroles from './views/paroles.js';
 import carnet from './views/carnet.js';
 import { boot, joinEspace, espace, onEspace } from './espace.js';
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet };
-const EXPLORER = ['miroir', 'tessiture', 'gym', 'labo'];
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session };
+const VOIX = ['miroir', 'tessiture', 'gym'];
 const view = $('#view');
 let cleanup = null;
 let currentId = 'home';
@@ -23,8 +26,9 @@ async function route() {
   // Lien d'invitation : #/rejoindre/<espace>
   if (id === 'rejoindre') {
     const sid = location.hash.split('/')[2];
-    try { await joinEspace(sid); toast(`Bienvenue dans « ${espace.meta.name} »!`); } catch { toast('Ce lien d’espace ne fonctionne pas (ou l’espace a été effacé).'); }
-    location.replace('#/carnet');
+    try { await joinEspace(sid); } catch { toast('Ce lien d’espace ne fonctionne pas (ou l’espace a été effacé).'); }
+    location.replace('#/');
+    maybeTour();
     return;
   }
   const v = routes[id] || home;
@@ -34,22 +38,22 @@ async function route() {
   const host = document.createElement('div');
   host.className = `view-${v.id}`;
   view.replaceChildren(host);
-  // Explorer regroupe les 4 modules de découverte : petite barre d'onglets en haut.
-  if (EXPLORER.includes(v.id)) {
+  // Voix regroupe les 3 outils vocaux : petite barre d'onglets en haut.
+  if (VOIX.includes(v.id)) {
     const sub = document.createElement('nav');
     sub.className = 'subnav';
-    sub.setAttribute('aria-label', 'Explorer');
-    sub.innerHTML = EXPLORER.map((m) => { const mm = MODULES.find((x) => x.id === m); return `<a href="#/${m}" class="${m === v.id ? 'active' : ''}" style="--c:${mm.color}"><span class="mono">${mm.num}</span>${mm.name}</a>`; }).join('');
+    sub.setAttribute('aria-label', 'Voix');
+    sub.innerHTML = VOIX.map((m) => { const mm = MODULES.find((x) => x.id === m); return `<a href="#/${m}" class="${m === v.id ? 'active' : ''}" style="--c:${mm.color}"><span class="mono">${mm.num}</span>${mm.name}</a>`; }).join('');
     view.prepend(sub);
   }
   const mod = MODULES.find((m) => m.id === v.id);
   view.style.setProperty('--accent', mod ? mod.color : 'var(--rec)');
   currentId = v.id;
   cleanup = v.mount(host) || null;
-  const group = EXPLORER.includes(v.id) ? 'explorer' : v.id;
+  const group = VOIX.includes(v.id) ? 'voix' : v.id;
   $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.id === group));
   if (v.id === 'carnet') { unseen = 0; showBadge(); }
-  document.title = mod ? `${mod.name} · Diapason` : 'Diapason — le labo où le son devient visible';
+  document.title = mod ? `${mod.name} · Zaza × Frog` : 'Zaza × Frog';
   renderPistes();
   window.scrollTo({ top: 0 });
 }
@@ -71,19 +75,17 @@ onPitch((p, rms) => {
   micBtn.style.setProperty('--lvl', Math.min(1, rms * 12).toFixed(3));
 });
 
-// --- Pistes pédagogiques ---
+// --- Pourquoi ça marche : la recherche, section par section ---
 const drawer = $('#drawer');
 const scrim = $('#scrim');
 function renderPistes() {
-  const p = PISTES[currentId] || PISTES.home;
-  const li = (arr) => arr.map((x) => `<li>${x}</li>`).join('');
+  const key = VOIX.includes(currentId) ? 'voix' : currentId;
+  const p = POURQUOI[key] || POURQUOI.home;
   $('#drawerBody').innerHTML = `
-    <p class="drawer-intro">${p.intro}</p>
-    <h3>Questions pour faire réfléchir</h3><ul class="q-list">${li(p.questions)}</ul>
-    ${p.defis ? `<h3>Défis</h3><ul class="d-list">${li(p.defis)}</ul>` : ''}
-    <h3>Liens avec le programme</h3><ul class="tags">${li(p.liens)}</ul>
-    <div class="hors"><b>En dehors de la boîte</b><p>${p.hors}</p></div>
-    <p class="fineprint">Aucune donnée ne quitte l’appareil : le micro est analysé en direct et les profils restent dans ce navigateur.</p>`;
+    <p class="drawer-intro">${p.titre}</p>
+    <ul class="research">${p.points.map(([t, src]) => `<li><p>${t}</p><cite>${src}</cite></li>`).join('')}</ul>
+    <div class="hors"><b>La source</b><p>La recherche Consensus de Zaza : « deux personnes qui souhaitent jouer de la musique ensemble », de la préparation à la composition originale.</p></div>
+    <p class="fineprint">Le micro est analysé en direct sur l’appareil. Ce que vous ajoutez au mur est stocké dans votre espace à deux.</p>`;
 }
 function openDrawer(open) {
   drawer.classList.toggle('open', open);
@@ -95,12 +97,11 @@ $('#pistesBtn').addEventListener('click', () => openDrawer(!drawer.classList.con
 $('#drawerClose').addEventListener('click', () => openDrawer(false));
 scrim.addEventListener('click', () => openDrawer(false));
 
-// --- Défi surprise ---
+// --- Contrainte surprise : la contrainte libère ---
 const modal = $('#modal');
 let lastDefi = -1;
 function rollDefi() {
-  const p = PISTES[currentId];
-  const pool = [...DEFIS_SURPRISE, ...(p?.defis || [])];
+  const pool = CONTRAINTES;
   let i;
   do { i = Math.floor(Math.random() * pool.length); } while (pool.length > 1 && i === lastDefi);
   lastDefi = i;
@@ -136,12 +137,13 @@ function showBadge() {
   b.textContent = unseen > 9 ? '9+' : unseen;
 }
 onEspace((what, extra) => {
+  if (what === 'entries') $('#nav .nav-session').classList.toggle('live', !!activeSession());
   if (what === 'entries' && extra?.fresh?.length && currentId !== 'carnet') {
     unseen += extra.fresh.length;
     showBadge();
-    if (currentId !== 'paroles' && currentId !== 'home') toast(`${extra.fresh[0].author} a ajouté quelque chose dans le carnet.`);
+    if (!['paroles', 'home', 'session'].includes(currentId) && extra.fresh[0].type !== 'session') toast(`${extra.fresh[0].editedBy || extra.fresh[0].author} a ajouté quelque chose au mur.`);
   }
 });
 
-boot();
+boot().then(() => maybeTour());
 route();

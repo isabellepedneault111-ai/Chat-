@@ -57,8 +57,8 @@ export default {
 
       <section class="panel group-panel">
         <div class="panel-head">
-          <div><h2>Portrait vocal du groupe</h2><p class="muted">Ajoute chaque empreinte : Diapason trouve la zone où <b>tout le monde</b> peut chanter ensemble.</p></div>
-          <button class="btn small" data-act="clear-group">Vider le portrait</button>
+          <div><h2>La zone du duo</h2><p class="muted">Ajoutez vos deux empreintes : la zone où vous chantez <b>tous les deux</b> sans forcer, donc vos tonalités.</p></div>
+          <button class="btn small" data-act="clear-group">Vider</button>
         </div>
         <div class="group-chart"></div>
       </section>`;
@@ -129,7 +129,7 @@ export default {
           <div class="tip-box"><b>Concrètement</b><p>Ton centre de gravité est autour de <b>${nameFR(center)}</b>. Pour une chanson, vise une mélodie qui reste entre <b>${nameFR(recLow + 2)}</b> et <b>${nameFR(recHigh - 2)}</b>. Si c’est trop haut, transpose vers ${pcFR(center - 2)} ou ${pcFR(center - 3)}.</p></div>
           <div class="row">
             <input class="input" data-name placeholder="Prénom ou pseudo" maxlength="20" aria-label="Prénom ou pseudo">
-            <button class="btn primary" data-act="add-group">+ Ajouter au portrait du groupe</button>
+            <button class="btn primary" data-act="add-group">+ Ajouter à la zone du duo</button>
           </div>
           <div class="row">
             <a class="btn" href="#/gym">Aller au Gym vocal (adapté à ta voix) →</a>
@@ -172,10 +172,10 @@ export default {
         group.push({ name, low: recLow, high: recHigh });
         store.set('group', group);
         q('[data-name]').value = '';
-        toast(`${name} ajouté·e au portrait du groupe.`);
+        toast(`${name} ajouté·e à la zone du duo.`);
         renderGroup();
       } else if (act === 'clear-group') {
-        if (confirm('Vider le portrait du groupe sur cet appareil?')) { store.set('group', []); renderGroup(); }
+        if (confirm('Vider la zone du duo sur cet appareil?')) { store.set('group', []); renderGroup(); }
       } else if (act === 'del') {
         const group = store.get('group', []);
         group.splice(+e.target.closest('[data-i]').dataset.i, 1);
@@ -212,7 +212,7 @@ export default {
         <div class="gc-verdict ${hasZone ? 'ok' : 'warn'}">
           ${hasZone
             ? `<b>${group.length} voix · zone commune ${nameFR(cLow)} → ${nameFR(cHigh)}</b> (${spanText(cHigh - cLow)}). Choisissez des chansons dont la mélodie reste dans cette zone, ou transposez-les pour qu’elles y entrent.`
-            : `<b>Pas de zone commune assez large.</b> Excellente nouvelle pour une chorale : séparez le groupe en deux voix (graves et aiguës), ou chantez à l’octave — même note, deux hauteurs.`}
+            : `<b>Pas de zone commune assez large.</b> Une force pour un duo : prenez chacun votre registre (l’un grave, l’autre aigu), ou chantez à l’octave — même note, deux hauteurs.`}
         </div>`;
     }
 

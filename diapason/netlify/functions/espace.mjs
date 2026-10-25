@@ -6,7 +6,7 @@ import { getStore } from '@netlify/blobs';
 export const config = { path: ['/api/espace', '/api/espace/*'] };
 
 const ID = /^[A-Za-z0-9_-]{8,40}$/;
-const TYPES = new Set(['note', 'texte', 'paroles', 'audio', 'bilan', 'evaluation', 'essai', 'parcours', 'lien']);
+const TYPES = new Set(['note', 'texte', 'paroles', 'audio', 'bilan', 'evaluation', 'essai', 'parcours', 'lien', 'session']);
 const MAX_ENTRY = 300 * 1024; // 300 Ko de JSON par entrée
 const MAX_PART = 4 * 1024 * 1024; // morceaux audio de 4 Mo (limite des fonctions : 6 Mo)
 const MAX_PARTS = 25; // ~100 Mo par audio
@@ -41,7 +41,8 @@ export async function handle(req, store) {
     if (m !== 'POST') return fail(405, 'Méthode non permise');
     const body = await req.json().catch(() => ({}));
     const sid = newId(16);
-    const meta = { id: sid, name: clean(body.name, 80) || 'Notre album', createdAt: Date.now() };
+    const members = Array.isArray(body.members) ? body.members.slice(0, 2).map((m) => clean(m, 24)).filter(Boolean) : [];
+    const meta = { id: sid, name: clean(body.name, 80) || 'Zaza × Frog', members: members.length === 2 ? members : ['Zaza', 'Frog'], createdBy: clean(body.createdBy, 24), createdAt: Date.now() };
     await store.setJSON(`${sid}/meta`, meta);
     const rev = await bump(store, sid);
     return json({ meta, rev }, 201);
@@ -58,7 +59,15 @@ export async function handle(req, store) {
     if (m === 'PATCH') {
       const body = await req.json().catch(() => ({}));
       if (body.name != null) meta.name = clean(body.name, 80) || meta.name;
-      if (body.goal != null) meta.goal = JSON.parse(JSON.stringify(body.goal).slice(0, 20000));
+      if (Array.isArray(body.members)) meta.members = body.members.slice(0, 2).map((m) => clean(m, 24)).filter(Boolean);
+      // Réglages libres du duo (objectif, vision, plan, mot d'accueil) : petits objets JSON.
+      for (const k of ['goal', 'vision', 'plan', 'welcome']) {
+        if (body[k] != null) {
+          const txt = JSON.stringify(body[k]);
+          if (txt.length > 20000) return fail(413, 'Réglage trop volumineux');
+          meta[k] = JSON.parse(txt);
+        }
+      }
       await store.setJSON(`${sid}/meta`, meta);
       return json({ meta, rev: await bump(store, sid) });
     }

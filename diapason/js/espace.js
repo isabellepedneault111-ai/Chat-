@@ -34,8 +34,8 @@ export const uid = () => {
   return btoa(String.fromCharCode(...a)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 };
 
-export async function createEspace(name) {
-  const { data } = await api('', { method: 'POST', body: JSON.stringify({ name }) });
+export async function createEspace(name, createdBy) {
+  const { data } = await api('', { method: 'POST', body: JSON.stringify({ name, createdBy, members: ['Zaza', 'Frog'] }) });
   return joinEspace(data.meta.id);
 }
 
@@ -60,6 +60,15 @@ export function leaveEspace() {
   emit('meta');
   emit('entries');
 }
+
+// Met à jour les réglages de l'espace : { name, members, goal, vision, plan, welcome }.
+export async function updateEspace(body) {
+  const { data } = await api(`/${espace.id}`, { method: 'PATCH', body: JSON.stringify(body) });
+  espace.meta = data.meta;
+  espace.rev = data.rev;
+  emit('meta');
+}
+export const members = () => espace.meta?.members || ['Zaza', 'Frog'];
 
 export async function renameEspace(name, goal) {
   const body = {};

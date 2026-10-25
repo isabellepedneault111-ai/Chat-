@@ -1,0 +1,297 @@
+// La session guidée : une séance qui alterne exploration, sélection et stabilisation,
+// et qui finit toujours par une prise. Le minuteur est partagé entre les deux appareils.
+import { espace, onEspace, saveEntry, uploadAudio, uid } from '../espace.js';
+import { animate, toast } from '../ui.js';
+import { audio, click } from '../audio.js';
+import { FR, mod12, chordName } from '../music.js';
+import { FORMATS, PHASES, EXERCICES, GRILLES, CIBLES, PLAN, memberColor } from '../duo.js';
+import { currentMonth, weekRhythm } from '../plan.js';
+import { setLoop, toggleLoop, loopPlaying } from './studio.js';
+import { esc, espaceGate, allSongs } from './carnet.js';
+
+const MAX_AGE = 5 * 3600 * 1000;
+const pick = (arr, not) => { const pool = arr.filter((x) => x !== not); return pool.length ? pool[Math.floor(Math.random() * pool.length)] : arr[0]; };
+
+// Temps écoulé « utile » d'une session : sans les pauses, avec les phases sautées.
+function elapsed(d, now = Date.now()) {
+  const paused = (d.pausedTotal || 0) + (d.pausedAt ? now - d.pausedAt : 0);
+  return Math.max(0, (now - d.startedAt - paused) / 1000 + (d.offset || 0));
+}
+function phaseAt(d, now) {
+  const f = FORMATS.find((x) => x.id === d.format);
+  const t = elapsed(d, now);
+  let acc = 0;
+  for (let i = 0; i < f.phases.length; i++) {
+    const dur = f.phases[i][1] * 60;
+    if (t < acc + dur) return { i, left: acc + dur - t, dur, t, total: f.phases.reduce((s, p) => s + p[1] * 60, 0) };
+    acc += dur;
+  }
+  return { i: f.phases.length, left: 0, dur: 0, t, total: acc };
+}
+const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+
+export const activeSession = () => espace.entries
+  .filter((e) => e.type === 'session' && !e.data?.done && Date.now() - (e.data?.startedAt || 0) < MAX_AGE)
+  .sort((a, b) => b.data.startedAt - a.data.startedAt)[0] || null;
+
+export default {
+  id: 'session',
+  mount(el) {
+    let setup = { format: 'duo60', cible: CIBLES[0], song: '', key: 0, grille: 'vamp' };
+    let lastPhase = -1;
+    let lastSig = '';
+    let recorder = null;
+    let stopTick = () => {};
+
+    async function patch(change) {
+      const cur = activeSession();
+      if (!cur) return;
+      const r = await saveEntry({ ...cur, data: { ...cur.data, ...change(cur.data) } }, { baseUpdatedAt: cur.updatedAt });
+      if (r.conflict) await saveEntry({ ...r.current, data: { ...r.current.data, ...change(r.current.data) } }, { baseUpdatedAt: r.current.updatedAt });
+    }
+
+    function render() {
+      stopTick();
+      if (!espace.connected || !espace.me) { espaceGate(el, { onReady: render }); return; }
+      const s = activeSession();
+      if (s) renderRunning(s); else renderSetup();
+    }
+
+    function renderSetup() {
+      const m = currentMonth();
+      const r = weekRhythm();
+      const songs = allSongs();
+      el.innerHTML = `
+        <div class="mod-head">
+          <div>
+            <p class="eyebrow">Session n° ${r.total + 1}${m ? ` · mois ${m}` : ''}</p>
+            <h1>On joue.</h1>
+            <p class="muted">${m ? `Ce mois-ci : <b>${esc(PLAN[m - 1].titre)}</b>. ` : ''}Cette semaine : ${r.duo} / 2 sessions duo.</p>
+          </div>
+        </div>
+        <div class="setup-steps">
+          <section class="panel">
+            <p class="tape">1 · Le format</p>
+            <div class="formats">${FORMATS.map((f) => `
+              <button class="format ${setup.format === f.id ? 'on' : ''}" data-f="${f.id}">
+                <b>${f.label}</b>
+                <span class="format-bar">${f.phases.map(([p, d]) => `<i style="flex:${d}" title="${PHASES[p].titre} · ${d} min"></i>`).join('')}</span>
+                <small>${f.phases.map(([p]) => PHASES[p].titre).join(' · ')}</small>
+              </button>`).join('')}</div>
+          </section>
+          <section class="panel">
+            <p class="tape">2 · Une seule cible</p>
+            <div class="chips">${CIBLES.map((c) => `<button class="chip ${setup.cible === c ? 'active' : ''}" data-cible="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+            <label class="field col"><span>Ou à vos mots</span><input class="input" data-s="cible" maxlength="80" placeholder="Ex. : trouver l’intro de Fleuve gelé"></label>
+            <label class="field col"><span>Pour quel morceau? (facultatif)</span><select data-s="song"><option value="">Idées libres</option>${songs.map((x) => `<option ${x === setup.song ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></label>
+          </section>
+          <section class="panel">
+            <p class="tape">3 · La grille du jour</p>
+            <label class="field col"><span>Tonalité</span><select data-s="key">${FR.map((n, i) => `<option value="${i}" ${i === setup.key ? 'selected' : ''}>${n} majeur</option>`).join('')}</select></label>
+            <div class="grilles">${GRILLES.map((g) => `<button class="grille ${setup.grille === g.id ? 'on' : ''}" data-g="${g.id}"><b>${g.nom}</b><span class="mono">${g.chords.map(([d, q]) => chordName(mod12(setup.key + d), q)).join(' – ')}</span><small>${g.usage}</small></button>`).join('')}</div>
+          </section>
+        </div>
+        <div class="launch"><button class="btn primary big" data-a="start">● Lancer la session</button><span class="muted small">${espace.meta.members?.find((x) => x !== espace.me) || 'L’autre'} verra la même séance, au même moment, sur son appareil.</span></div>`;
+    }
+
+    function renderRunning(s) {
+      const d = s.data;
+      const f = FORMATS.find((x) => x.id === d.format);
+      const g = GRILLES.find((x) => x.id === d.grille) || GRILLES[0];
+      el.innerHTML = `
+        <div class="run">
+          <header class="run-head">
+            <div>
+              <p class="eyebrow">${esc(f.label)} · lancée par <b style="color:${memberColor(s.author)}">${esc(s.author)}</b></p>
+              <h1 class="run-cible">${esc(d.cible)}</h1>
+              ${d.song ? `<p class="muted">Morceau : <b>${esc(d.song)}</b></p>` : ''}
+            </div>
+            <div class="run-clock screen"><span class="mono run-left">0:00</span><small class="mono run-total"></small></div>
+          </header>
+          <ol class="run-bar">${f.phases.map(([p, dur], i) => `<li style="flex:${dur}" data-i="${i}"><span>${PHASES[p].titre}</span><i></i></li>`).join('')}</ol>
+          <div class="run-body"></div>
+          <div class="run-controls">
+            <button class="btn" data-a="pause">⏸ Pause</button>
+            <button class="btn" data-a="skip">Phase suivante ⏭</button>
+            <span class="spacer"></span>
+            <button class="btn" data-a="loop">▶ Boucle ${esc(g.nom)}</button>
+            <button class="btn danger" data-a="end">Terminer</button>
+          </div>
+        </div>`;
+      lastPhase = -1;
+      lastSig = '';
+      lastTickT = 0;
+      tick();
+      stopTick = animate(() => tick());
+    }
+
+    let lastTickT = 0;
+    function tick() {
+      const now = performance.now();
+      if (now - lastTickT < 200) return;
+      lastTickT = now;
+      const s = activeSession();
+      if (!s || !el.querySelector('.run')) return;
+      const d = s.data;
+      const ph = phaseAt(d);
+      const f = FORMATS.find((x) => x.id === d.format);
+      el.querySelector('.run-left').textContent = ph.i < f.phases.length ? fmt(ph.left) : 'fini';
+      el.querySelector('.run-total').textContent = `${fmt(ph.t)} / ${fmt(ph.total)}${d.pausedAt ? ' · en pause' : ''}`;
+      el.querySelector('[data-a=pause]').textContent = d.pausedAt ? '▶ Reprendre' : '⏸ Pause';
+      el.querySelector('[data-a=loop]').classList.toggle('on', loopPlaying());
+      el.querySelectorAll('.run-bar li').forEach((li, i) => {
+        li.classList.toggle('done', i < ph.i);
+        li.classList.toggle('now', i === ph.i);
+        if (i === ph.i) li.querySelector('i').style.width = `${(1 - ph.left / ph.dur) * 100}%`;
+      });
+      // On redessine la phase seulement si elle change (sans effacer un debrief en cours de frappe).
+      const sig = `${ph.i}|${JSON.stringify(d.ex || {})}|${(d.takes || []).length}`;
+      if (sig !== lastSig) {
+        if (ph.i !== lastPhase && lastPhase >= 0) {
+          click(audio().currentTime, true);
+          click(audio().currentTime + 0.18, true);
+          navigator.vibrate?.(200);
+        }
+        lastPhase = ph.i;
+        lastSig = sig;
+        renderPhase(s, ph.i);
+      }
+    }
+
+    function renderPhase(s, i) {
+      const d = s.data;
+      const f = FORMATS.find((x) => x.id === d.format);
+      const body = el.querySelector('.run-body');
+      if (i >= f.phases.length) {
+        body.innerHTML = `<section class="panel phase-card"><p class="tape red">Fin de la séance</p><h2>Bravo, vous deux.</h2><p>Terminez la session pour la ranger dans votre plan. Le debrief et la prise sont déjà sur le mur.</p><button class="btn primary big" data-a="end">Terminer la session</button></section>`;
+        return;
+      }
+      const [pid] = f.phases[i];
+      const P = PHASES[pid];
+      const exId = d.ex?.[pid];
+      const ex = exId && EXERCICES[exId];
+      const g = GRILLES.find((x) => x.id === d.grille) || GRILLES[0];
+      const grid = `<div class="today-grid">${g.chords.map(([dg, q]) => `<span>${chordName(mod12(d.key + dg), q)}</span>`).join('')}</div>`;
+      let extra = '';
+      if (pid === 'prise' || pid === 'memo') {
+        extra = `<div class="take"><button class="btn rec big" data-a="rec">● Enregistrer la prise</button><p class="muted small take-status">${(d.takes || []).length ? `${d.takes.length} prise(s) déjà sur le mur.` : 'Elle part directement sur le mur, rangée avec la session.'}</p></div>`;
+      }
+      if (pid === 'debrief' || pid === 'tri' || pid === 'memo') {
+        const db = d.debrief || {};
+        extra += `
+          <form class="debrief">
+            ${[['intention', 'Ce qu’on voulait'], ['entendu', 'Ce qu’on a entendu'], ['ecart', 'L’écart'], ['prochaine', 'LA prochaine cible']].map(([k, l]) => `<label class="field col"><span>${l}</span><textarea class="input" rows="2" data-db="${k}">${esc(db[k] || '')}</textarea></label>`).join('')}
+            <button class="btn" type="submit">Enregistrer le debrief</button>
+          </form>`;
+      }
+      body.innerHTML = `
+        <section class="panel phase-card">
+          <p class="tape">${i + 1} / ${f.phases.length} · ${P.titre}</p>
+          <h2>${P.but}</h2>
+          ${pid === 'checkin' || pid === 'cible' ? `<p class="big-cible">Cible : <b>${esc(d.cible)}</b></p><p class="muted">Tonalité ${FR[d.key]} majeur · ${g.nom}</p>${grid}` : ''}
+          ${ex ? `
+            <div class="exercise">
+              <div class="ex-head"><b>${ex.nom}</b><span class="mono">${ex.duree} min</span><button class="btn small ghost" data-a="reroll">Autre exercice</button></div>
+              <ol>${ex.comment.map((c) => `<li>${c}</li>`).join('')}</ol>
+              <cite>${ex.src}</cite>
+            </div>
+            ${['impro', 'developper', 'echauffement', 'solo'].includes(pid) ? `<p class="muted small">Grille du jour (${FR[d.key]}) :</p>${grid}` : ''}` : ''}
+          ${extra}
+          <p class="phase-src mono">${P.src}</p>
+        </section>`;
+    }
+
+    async function start() {
+      const custom = el.querySelector('[data-s=cible]')?.value.trim();
+      const ex = {};
+      const f = FORMATS.find((x) => x.id === setup.format);
+      f.phases.forEach(([p]) => { if (PHASES[p].pool.length) ex[p] = pick(PHASES[p].pool); });
+      const g = GRILLES.find((x) => x.id === setup.grille);
+      setLoop(setup.key, g);
+      try {
+        await saveEntry({ id: uid(), type: 'session', title: custom || setup.cible, data: { format: setup.format, cible: custom || setup.cible, song: setup.song, key: setup.key, grille: setup.grille, ex, startedAt: Date.now(), pausedTotal: 0, pausedAt: null, offset: 0, takes: [] } });
+        render();
+      } catch (err) { toast(err.message); }
+    }
+
+    async function recordTake(btn) {
+      if (recorder) { recorder.stop(); return; }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+        const chunks = [];
+        recorder = new MediaRecorder(stream);
+        recorder.ondataavailable = (ev) => ev.data.size && chunks.push(ev.data);
+        recorder.onstop = async () => {
+          stream.getTracks().forEach((t) => t.stop());
+          const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+          recorder = null;
+          btn.classList.remove('on');
+          btn.textContent = 'Envoi…';
+          const s = activeSession();
+          try {
+            const a = await uploadAudio(blob);
+            const id = uid();
+            await saveEntry({ id, type: 'audio', title: `Prise · ${s.data.cible}`, audio: a, data: { stage: 1, song: s.data.song || '', session: s.id } });
+            await patch((dd) => ({ takes: [...(dd.takes || []), id] }));
+            toast('Prise sur le mur.');
+          } catch (err) { toast(err.message); }
+          btn.textContent = '● Une autre prise';
+        };
+        recorder.start();
+        btn.textContent = '■ Arrêter la prise';
+        btn.classList.add('on');
+      } catch { toast('Micro refusé. Autorise-le dans la barre d’adresse.'); }
+    }
+
+    el.addEventListener('click', async (e) => {
+      const fb = e.target.closest('[data-f]');
+      if (fb) { setup.format = fb.dataset.f; renderSetup(); return; }
+      const cb = e.target.closest('[data-cible]');
+      if (cb) { setup.cible = cb.dataset.cible; renderSetup(); return; }
+      const gb = e.target.closest('[data-g]');
+      if (gb) { setup.grille = gb.dataset.g; renderSetup(); return; }
+      const a = e.target.closest('[data-a]')?.dataset.a;
+      if (a === 'start') start();
+      if (a === 'pause') await patch((d) => (d.pausedAt ? { pausedTotal: (d.pausedTotal || 0) + Date.now() - d.pausedAt, pausedAt: null } : { pausedAt: Date.now() }));
+      if (a === 'skip') { const s = activeSession(); const ph = phaseAt(s.data); await patch((d) => ({ offset: (d.offset || 0) + ph.left + 0.5 })); }
+      if (a === 'reroll') {
+        const s = activeSession();
+        const f = FORMATS.find((x) => x.id === s.data.format);
+        const [pid] = f.phases[phaseAt(s.data).i] || [];
+        if (pid && PHASES[pid].pool.length) await patch((d) => ({ ex: { ...d.ex, [pid]: pick(PHASES[pid].pool, d.ex?.[pid]) } }));
+      }
+      if (a === 'loop') { toggleLoop(); }
+      if (a === 'rec') recordTake(e.target.closest('[data-a]'));
+      if (a === 'end' && confirm('Terminer la session?')) {
+        await patch(() => ({ done: true, doneAt: Date.now() }));
+        if (loopPlaying()) toggleLoop();
+        toast('Session rangée dans votre plan.');
+        location.hash = '#/';
+      }
+    });
+    el.addEventListener('change', (e) => {
+      if (e.target.dataset.s === 'song') setup.song = e.target.value;
+      if (e.target.dataset.s === 'key') { setup.key = +e.target.value; renderSetup(); }
+    });
+    el.addEventListener('submit', async (e) => {
+      if (!e.target.classList.contains('debrief')) return;
+      e.preventDefault();
+      const db = {};
+      e.target.querySelectorAll('[data-db]').forEach((t) => { db[t.dataset.db] = t.value.trim(); });
+      await patch(() => ({ debrief: db })).catch((err) => toast(err.message));
+      toast('Debrief enregistré.');
+    });
+
+    // Une action de l'autre (pause, phase suivante, autre exercice) arrive : on suit.
+    const off = onEspace((what) => {
+      if (what !== 'entries' && what !== 'meta') return;
+      if (el.querySelector('.gate') && espace.connected && espace.me) { render(); return; }
+      const s = activeSession();
+      const running = !!el.querySelector('.run');
+      if (!!s !== running) { render(); return; }
+      if (s) { lastTickT = 0; tick(); }
+    });
+    render();
+    return () => { off(); stopTick(); recorder?.stop(); };
+  },
+};

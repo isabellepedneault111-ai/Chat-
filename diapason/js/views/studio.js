@@ -277,14 +277,14 @@ export default {
           <div class="panel">
             <h2>Pochette générative</h2>
             <p class="muted">L’image est calculée à partir de tes mots, de ta tonalité et de tes accords. Mêmes ingrédients → même pochette. Aucune IA externe, aucune clé, aucune donnée envoyée.</p>
-            <label class="field col"><span>Titre de l’album</span><input class="input" data-c="title" maxlength="40" placeholder="Ex. : Lumières du Saguenay" value="${esc(c.title)}"></label>
-            <label class="field col"><span>Artiste ou groupe</span><input class="input" data-c="artist" maxlength="40" placeholder="Ex. : Les Ondes Courtes" value="${esc(c.artist)}"></label>
+            <label class="field col"><span>Titre de l’album</span><input class="input" data-c="title" maxlength="40" placeholder="Ex. : Forever more" value="${esc(c.title)}"></label>
+            <label class="field col"><span>Artiste</span><input class="input" data-c="artist" maxlength="40" placeholder="Zaza × Frog" value="${esc(c.artist)}"></label>
             <label class="field col"><span>Ambiance</span><select data-c="mood">${Object.keys(MOODS).map((m) => `<option ${m === c.mood ? 'selected' : ''}>${m}</option>`).join('')}</select></label>
             <div class="row">
               <button class="btn" data-cv="remix">Variante</button>
               <button class="btn primary" data-cv="dl">↓ Télécharger (PNG)</button>
             </div>
-            <div class="tip-box"><b>Question</b><p>Que dit ta pochette de ta musique avant même qu’on l’écoute? Montre-la à un ou une camarade et demande-lui d’imaginer le style.</p></div>
+            <div class="tip-box"><b>Question</b><p>Que dit ta pochette de ta musique avant même qu’on l’écoute? Montre-la à quelqu’un sans lui faire écouter : quel style imagine-t-il?</p></div>
           </div>
           <div class="panel cover-wrap"><canvas class="cover" width="1080" height="1080" aria-label="Pochette d’album générée"></canvas></div>
         </div>`;
@@ -451,8 +451,8 @@ export default {
                 <button class="chip" data-mode="duo">Duo · question / réponse</button>
               </div>
               <div class="duo-names" hidden>
-                <input class="input" data-p="0" placeholder="Élève 1 (question)" maxlength="16" aria-label="Élève 1" value="${esc(names[0])}">
-                <input class="input" data-p="1" placeholder="Élève 2 (réponse)" maxlength="16" aria-label="Élève 2" value="${esc(names[1])}">
+                <input class="input" data-p="0" placeholder="Zaza (question)" maxlength="16" aria-label="Qui pose la question" value="${esc(names[0])}">
+                <input class="input" data-p="1" placeholder="Frog (réponse)" maxlength="16" aria-label="Qui répond" value="${esc(names[1])}">
                 <button class="icon-btn" data-sc="swap" title="Échanger les rôles" aria-label="Échanger les rôles">⇄</button>
               </div>
               <p class="scene-how small"></p>
@@ -476,7 +476,7 @@ export default {
           <summary>Pistes pour la scène</summary>
           <div class="duo-roles">
             <div><b>Solo · le looping autonome</b><p>Tu tiens toute la structure : la boucle donne l’harmonie, tes pastilles la mélodie, ta voix le texte (une phrase par mesure = un couplet).</p></div>
-            <div><b>Duo · l’écoute avant tout</b><p>Mesures 1 et 3 : l’élève 1 pose une question musicale. Mesures 2 et 4 : l’élève 2 répond en reprenant <em>une</em> idée de la question (même rythme, ou même note de départ).</p></div>
+            <div><b>Duo · l’écoute avant tout</b><p>Mesures 1 et 3 : Zaza pose une question musicale. Mesures 2 et 4 : Frog répond en reprenant <em>une</em> idée de la question (même rythme, ou même note de départ).</p></div>
             <div><b>Corps</b><p>Mâchoire molle, épaules basses. Si la gorge serre, descends la tonalité en haut de la page.</p></div>
           </div>
         </details>`;
@@ -484,7 +484,7 @@ export default {
       const scv = autoCanvas(body.querySelector('.scene'));
       const padColors = ['#3ee6ff', '#5fb8ff', '#9b6bff', '#d36bff', '#ff4fb3', '#ff8a3d', '#ffb43e', '#b6ff3e'];
       const who = (slot) => (S.mode === 'duo' ? Math.floor(slot / 8) % 2 : 0);
-      const playerName = (i) => body.querySelector(`[data-p="${i}"]`)?.value.trim() || `Élève ${i + 1}`;
+      const playerName = (i) => body.querySelector(`[data-p="${i}"]`)?.value.trim() || ['Zaza', 'Frog'][i];
       const noteColor = (n) => (S.mode === 'duo' ? (who(n.slot) ? '#ff4fb3' : '#3ee6ff') : padColors[n.deg]);
       const bursts = [];
 
@@ -723,7 +723,7 @@ export default {
           ctx.fillText((cov.title || 'Sans titre').toUpperCase(), w * 0.04, h - w * 0.07);
           ctx.font = `500 ${Math.round(w * 0.028)}px "Atkinson Hyperlegible", sans-serif`;
           ctx.fillStyle = 'rgba(255,255,255,.75)';
-          ctx.fillText(`${cov.artist || 'Artiste mystère'} · ${S.bpm} BPM · Diapason`, w * 0.04, h - w * 0.035);
+          ctx.fillText(`${cov.artist || 'Zaza × Frog'} · ${S.bpm} BPM · Diapason`, w * 0.04, h - w * 0.035);
         }
       });
 
@@ -882,7 +882,7 @@ function drawCover(canvas, { title, artist, mood }) {
   lines.forEach((l, i) => ctx.fillText(l, 70, W - 130 - (lines.length - 1 - i) * size * 1.02));
   ctx.font = '600 38px "Atkinson Hyperlegible", sans-serif';
   ctx.fillStyle = pal[3];
-  ctx.fillText(artist || 'Artiste mystère', 72, W - 70);
+  ctx.fillText(artist || 'Zaza × Frog', 72, W - 70);
   ctx.font = '500 22px "IBM Plex Mono", monospace';
   ctx.fillStyle = 'rgba(255,255,255,.7)';
   ctx.textAlign = 'right';
@@ -891,3 +891,17 @@ function drawCover(canvas, { title, artist, mood }) {
   ctx.fillText('DIAPASON', 60, 76);
   ctx.restore();
 }
+
+// ---------- Pour la session guidée : la grille du jour en boucle ----------
+export function setLoop(key, grille) {
+  S.custom = { id: 'perso', name: grille.nom, roman: grille.roman, chords: grille.chords, note: grille.usage };
+  store.set('customProg', S.custom);
+  S.key = key;
+  S.prog = 'perso';
+  save();
+}
+export function toggleLoop() {
+  if (S.playing) stopPlay(); else play();
+  return S.playing;
+}
+export const loopPlaying = () => S.playing;
