@@ -53,7 +53,7 @@ export function startTour(preview) {
     ['m-voix.jpg', 'Placer ma voix dans le groove', 'FLIP joue un rythme (bossa, pop…) et les cases roses montrent où poser mes mots. La syncope devient un jeu.', 'Je chante avec plus de groove, pas seulement plus juste.', 'beat'],
     ['m-flux.jpg', 'Écrire sur le beat', 'Je chante des sons sans mots sur le beat (le mumble), et l’enregistrement part avec mon texte.', 'Tu entends la mélodie que j’avais en tête.', 'riff'],
     ['m-labo.jpg', 'Un rythme devient une note', 'Trois rythmes calés sur ta musique accélèrent… jusqu’à devenir un accord de Fa majeur, dans la tonalité de Projet 1.', 'Tes beats et tes accords viennent de la même source : des idées qu’on n’aurait jamais trouvées.', 'labo'],
-    ['m-trois.jpg', 'Un troisième musicien', 'Il écoute votre phrase, la transforme et vous la renvoie.', 'Un partenaire d’impro, même quand on est juste deux.', 'trois'],
+    ['m-trois.jpg', 'Un troisième musicien', 'Il écoute notre phrase, la transforme et nous la renvoie.', 'Un partenaire d’impro, même quand on est juste deux.', 'trois'],
     ['m-grimoire.jpg', 'Le grimoire', 'Des cartes à tirer pour lancer une chanson : un thème, une peur, une contrainte.', 'Fini la page blanche.', 'grimoire'],
     ['m-pochette.jpg', 'Notre art en pochette', 'Un dessin et un vrai son de nous deviennent la pochette de l’album.', 'Notre image, notre son, notre album.', 'pochette'],
   ];
