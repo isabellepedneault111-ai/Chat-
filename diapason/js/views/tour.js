@@ -27,56 +27,28 @@ export function startTour(preview) {
        <img class="t-logo" src="img/flip-creme.svg" alt="FLIP">
        <p class="t-welcome">${esc(welcome).replace(/\n/g, '<br>')}</p>
        <p class="t-sign">— ${esc(from)}</p>
+       <p class="t-auteure">FLIP, un espace imaginé par ${esc(from)}, pour nous deux.</p>
        ${espace.meta.welcome?.audio ? '<button class="t-play" data-t="play">▶ Écouter</button>' : ''}
        <button class="btn big t-start" data-t="next">Commencer · 3 minutes, avec le son</button>
        <p class="t-howto">Ensuite, touche la flèche (ou le côté droit de l’écran) pour avancer.</p>
      </div>`,
+    `<p class="t-kicker">Ce que ${esc(from)} a imaginé pour nous</p>
+     <h2>Ensemble. <i>Sans distance.</i></h2>
+     <div class="t-modes">
+       <div><b>Dans la même pièce</b><span>On joue, l’app s’efface : une séance guidée sur un seul écran.</span></div>
+       <div><b>À distance, en même temps</b><span>La même séance sur nos deux écrans, qui avance pour les deux.</span></div>
+       <div><b>Chacun son temps</b><span>Un son, une réponse par-dessus, une page au journal.</span></div>
+       <div><b>Seul, pour nous deux</b><span>Ce que l’un pratique, l’autre le voit, avec des pistes.</span></div>
+     </div>
+     <p class="t-soon"><b>Nos élans ne s’arrêtent plus quand on n’est pas ensemble.</b></p>`,
     `<p class="t-kicker">${esc(me)}, regarde. Une minute.</p>
      <div class="t-vwrap"><video class="t-video" src="data/demo-frog.mp4" poster="data/demo-frog.jpg" playsinline controls preload="auto"></video><button class="t-unmute" data-t="unmute" hidden>🔊 Activer le son</button></div>
-     <p class="t-src">L’app, filmée telle quelle : tes claviers, ma voix, nos sons qui voyagent entre nous.</p>`,
-    `<p class="t-kicker">Le truc qui n’existe pas ailleurs</p>
-     <h2>Tu joues un accord.<br><i>Ma voix sait où aller.</i></h2>
-     <ul class="t-list">
-       <li><b>Les notes que je peux chanter s’allument</b> pendant que tu joues.</li>
-       <li><b>Tes sons choisissent mon exercice</b> : orgue, piano, Rhodes.</li>
-       <li>À l’envers : <b>je chante, tu trouves les accords</b>.</li>
-     </ul>
-     <div class="t-chords"><span>Do</span><span class="now">Lam</span><span>Fa</span><span>Sol</span></div>`,
-    `<p class="t-kicker">Quand on n’est pas ensemble</p>
-     <h2>L’absence <i>ne freine plus rien.</i></h2>
-     <ul class="t-list">
-       <li><b>Le relais</b> : ton riff, une touche, avec ton intention. Je chante par-dessus, tu ajoutes une couche.</li>
-       <li><b>Pendant ce temps</b> : ce que l’un pratique seul, l’autre le voit, avec des pistes pour continuer.</li>
-       <li><b>Notre journal</b> : on écrit chacun de son côté, et on se lit.</li>
-       <li>Chaque séance commence par <b>tout ce qui s’est passé entre-temps</b>. Rien ne se perd.</li>
-     </ul>`,
-    `<p class="t-kicker">Tout ce que FLIP fait</p>
-     <h2>Notre atelier, <i>en entier.</i></h2>
-     <div class="t-map">
-       <div><b>Jouer ensemble</b><span>Lancer une séance guidée, dans la même pièce ou chacun chez soi. Elle finit toujours par un enregistrement.</span></div>
-       <div><b>Se répondre à distance</b><span>T’envoyer un son en une touche. Je chante par-dessus, tu ajoutes une couche.</span></div>
-       <div><b>Écrire</b><span>Un journal à deux, des séances d’écriture guidées, des textes qui se chantent.</span></div>
-       <div><b>Faire progresser ma voix</b><span>Ton clavier joue, l’app me montre si je chante juste, et sur quelles notes je brille.</span></div>
-       <div><b>Voir où on en est</b><span>Un bilan après chaque séance, chaque semaine, chaque mois, et ce qu’il faut travailler ensuite.</span></div>
-       <div><b>Ranger par projet</b><span>Un mur d’idées par projet : l’album, des reprises, un morceau.</span></div>
-     </div>
-     <p class="t-soon"><b>Ce qui s’en vient, avec toi :</b> tes propres sons comme exemples, de nouvelles ambiances que ton clavier pilote, des démos à faire écouter. <b>Ce que tu voudrais qu’elle fasse : touche la petite flamme en bas de l’écran, « Pour l’app FLIP ». On le construit ensemble.</b></p>`,
-    `<p class="t-kicker">Brancher tes claviers · 2 minutes</p>
-     <h2>Un câble, et c’est parti.</h2>
-     <ol class="t-steps">
-       <li>N’importe quel clavier MIDI (le SV-1, un contrôleur, un synthé) : <b>USB</b> direct, ou <b>MIDI OUT</b> → une interface USB-MIDI → l’ordi. Pour enregistrer le vrai son : les sorties audio → ta carte son.</li>
-       <li>Ouvre l’app dans <b>Chrome ou Edge</b> sur l’ordi.</li>
-       <li><b>Voix → Voix + piano → Brancher le piano</b> : joue un accord, il apparaît.</li>
-     </ol>`,
-    `<h2>Par où commencer</h2>
-     <div class="t-actions">
-       <a class="btn primary big" href="#/accord" data-t="end">① Brancher un clavier et jouer 3 accords pour moi</a>
-       <a class="btn big" href="#/relais" data-t="end">② Me lancer un premier son</a>
-       <a class="btn big" href="#/ecrire" data-t="end">③ Une page dans notre journal</a>
-       <a class="btn big" href="#/depart" data-t="end">④ Ton point de départ (5 min)</a>
-       <button class="btn big ghost" data-t="end">Explorer seul</button>
-     </div>
-     <p class="t-src">Cette visite ne reviendra plus. Elle t’attend dans le coffre (l’icône du petit coffre, en haut), avec la vidéo.</p>`,
+     <p class="t-src">L’app, filmée telle quelle.${preview ? ' <button class="linklike t-skipv" data-t="next">Passer la vidéo →</button>' : ' La suite arrive toute seule à la fin.'}</p>`,
+    `<p class="t-kicker">Maintenant, à toi</p>
+     <h2>Faisons le tour <i>de l’app.</i></h2>
+     <p class="t-soon">Chaque bouton, un à la fois : ce qu’il y a derrière, en une phrase. On finit par ton étape 1, ton point de départ.</p>
+     <div class="t-actions"><button class="btn primary big" data-t="coach">Faire le tour de l’app →</button></div>
+     <p class="t-src">Cette visite ne reviendra plus. Elle t’attend dans le coffre, avec la vidéo.</p>`,
   ];
 
   const box = document.createElement('div');
@@ -88,7 +60,7 @@ export function startTour(preview) {
     <canvas class="t-embers" aria-hidden="true"></canvas>
     ${preview ? `<p class="t-apercu">Aperçu : tu vois ce que ${esc(me)} verra. Rien n’est marqué pour ${esc(me)}. <button data-t="end">Fermer l’aperçu</button></p>` : ''}
     <div class="t-progress">${slides.map(() => '<i></i>').join('')}</div>
-    <button class="t-skip" data-t="end">Passer</button>
+    ${preview ? '<button class="t-skip" data-t="end">Passer</button>' : ''}
     <div class="t-slide"></div>
     <div class="t-nav"><button data-t="prev" aria-label="Précédent">←</button><button data-t="next" aria-label="Suivant">→</button></div>`;
   document.body.appendChild(box);
@@ -110,11 +82,13 @@ export function startTour(preview) {
       v.onended = () => { if (box.isConnected && box.querySelector('.t-video') === v) go(1); };
     }
   };
-  const end = () => {
-    if (!preview) {
-      store.set(seenKey(), true);
-      updateEspace({ tour: { ...(espace.meta.tour || {}), [espace.me]: Date.now() } }).catch(() => {});
-    }
+  const marquer = () => {
+    if (preview) return;
+    store.set(seenKey(), true);
+    updateEspace({ tour: { ...(espace.meta.tour || {}), [espace.me]: Date.now() } }).catch(() => {});
+  };
+  const end = (mark = true) => {
+    if (mark) marquer();
     player?.pause();
     box.querySelector('video')?.pause();
     box.classList.add('out');
@@ -126,11 +100,13 @@ export function startTour(preview) {
   const onKey = (e) => {
     if (e.key === 'ArrowRight' || e.key === ' ') go(1);
     if (e.key === 'ArrowLeft') go(-1);
-    if (e.key === 'Escape') end();
+    if (e.key === 'Escape' && preview) end();
   };
   box.addEventListener('click', async (e) => {
     const t = e.target.closest('[data-t]')?.dataset.t;
     if (t === 'end') { end(); return; }
+    // la visite n'est marquée comme vue qu'à la toute fin du tour de l'app
+    if (t === 'coach') { end(false); setTimeout(() => import('../coach.js').then((c) => c.coachTour({ premiere: !preview, onEnd: marquer })), 400); return; }
     if (t === 'prev') { go(-1); return; }
     if (t === 'next') { go(1); return; }
     if (t === 'unmute') { const v = box.querySelector('.t-video'); v.muted = false; v.currentTime = 0; v.play(); e.target.hidden = true; return; }

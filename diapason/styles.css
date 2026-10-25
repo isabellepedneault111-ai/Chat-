@@ -1853,3 +1853,33 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .feuille b { display: block; font-size: .95rem; }
 .feuille small { color: var(--muted); }
 .feuille li.fait b { text-decoration: line-through; text-decoration-color: var(--rec); color: var(--muted); }
+/* Visite : ensemble, sans distance */
+.t-modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 8px 0 16px; }
+.t-modes div { padding: 14px; border: 1px solid rgba(201, 164, 92, .4); border-radius: 10px; background: rgba(10, 8, 7, .35); animation: tUp .8s ease both; }
+.t-modes div:nth-child(2) { animation-delay: .15s; } .t-modes div:nth-child(3) { animation-delay: .3s; } .t-modes div:nth-child(4) { animation-delay: .45s; }
+.t-modes b { display: block; color: #ffd36b; margin-bottom: 4px; }
+.t-modes span { color: #d8d0c1; font-size: .92rem; line-height: 1.4; }
+.t-skipv { color: #ffd36b; }
+@media (max-width: 560px) { .t-modes { grid-template-columns: 1fr 1fr; gap: 6px; } .t-modes div { padding: 9px 10px; } .t-modes span { font-size: .8rem; } }
+/* Le tour de l'app : le projecteur */
+.coach { position: fixed; inset: 0; z-index: 95; pointer-events: none; }
+.coach-hole { position: fixed; border-radius: 12px; box-shadow: 0 0 0 200vmax rgba(10, 8, 7, .72), 0 0 0 3px #d9b56a, 0 0 30px rgba(217, 181, 106, .6); transition: all .45s cubic-bezier(.2, .8, .2, 1); pointer-events: none; }
+.coach-bubble { position: fixed; pointer-events: auto; padding: 16px 18px; border-radius: 14px; background: #14100d; color: #f3ead6; border: 1px solid rgba(201, 164, 92, .6); box-shadow: 0 20px 50px rgba(0, 0, 0, .45); transition: top .45s, left .45s, bottom .45s; }
+.coach-n { margin: 0; font-size: .72rem; font-weight: 700; letter-spacing: .16em; color: #c9a45c; }
+.coach-bubble h3 { margin: 4px 0 6px; font-family: var(--display); font-weight: 700; font-size: 1.4rem; }
+.coach-bubble p { margin: 0 0 12px; line-height: 1.45; }
+.coach-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.coach-row .btn.primary { background: linear-gradient(180deg, #d9b56a, #b08a3e); color: #1b1915; border-color: #4a3818; box-shadow: 0 3px 0 #4a3818; }
+.coach-row .btn.ghost { color: #f3ead6; border-color: rgba(201, 164, 92, .5); }
+.coach-skip { margin-left: auto; border: 0; background: none; color: #a8a093; cursor: pointer; text-decoration: underline; font: inherit; font-size: .85rem; }
+.coach { pointer-events: auto; }
+.coach-demo { margin-left: 8px; padding: 1px 8px; border-radius: 999px; background: rgba(217, 181, 106, .18); color: #e8d29c; font-weight: 600; letter-spacing: .02em; text-transform: none; }
+/* Mouvement : entrée de page sobre, une seule fois par page */
+@keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.entering > * { animation: viewIn .46s cubic-bezier(.2, .7, .2, 1) both; }
+.entering > *:nth-child(2) { animation-delay: .05s; } .entering > *:nth-child(3) { animation-delay: .1s; } .entering > *:nth-child(4) { animation-delay: .15s; }
+.entering > *:nth-child(5) { animation-delay: .2s; } .entering > *:nth-child(n+6) { animation-delay: .24s; }
+.btn, .chip, .fil-m, .oa-g, .card-mini, .b-card, .rl-item, .ec-entry, .et-item { transition: transform .18s cubic-bezier(.2, .7, .2, 1), box-shadow .18s, background .15s, border-color .15s; }
+.oa-g:hover, .b-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(27, 25, 21, .08); }
+@media (prefers-reduced-motion: reduce) { .entering > * { animation: none !important; } .oa-g:hover, .b-card:hover { transform: none; } }
+.t-auteure { margin: 14px 0 0; color: #c9a45c; font-size: .95rem; letter-spacing: .04em; }

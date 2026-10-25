@@ -21,6 +21,7 @@ export const espace = {
 
 export const onEspace = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
 const emit = (what, extra) => listeners.forEach((fn) => fn(what, extra));
+export const emitEntries = () => { emit('meta'); emit('entries', { fresh: [] }); };
 
 async function api(path, opts = {}) {
   const r = await fetch(API + path, { ...opts, headers: { 'content-type': 'application/json', ...(opts.headers || {}) } });
@@ -99,12 +100,13 @@ async function refresh(force) {
   const { data } = await api(`/${espace.id}/entries`);
   const before = new Set(espace.entries.map((e) => `${e.id}:${e.updatedAt}`));
   const fresh = data.entries.filter((e) => !before.has(`${e.id}:${e.updatedAt}`) && e.editedBy !== espace.me);
-  espace.entries = data.entries.filter((e) => !e.data?.corbeille);
+  espace.entries = [...data.entries.filter((e) => !e.data?.corbeille), ...(espace.demoEntries || [])];
   espace.trash = data.entries.filter((e) => e.data?.corbeille);
   espace.rev = data.rev;
   // Les réglages (nom, objectif d'album) voyagent avec les entrées.
-  if (data.meta && JSON.stringify(data.meta) !== JSON.stringify(espace.meta)) {
-    espace.meta = data.meta;
+  const merged = data.meta && espace.demoMeta ? { ...data.meta, ...espace.demoMeta } : data.meta;
+  if (merged && JSON.stringify(merged) !== JSON.stringify(espace.meta)) {
+    espace.meta = merged;
     if (!force) emit('meta');
   }
   emit('entries', { fresh: force ? [] : fresh });
@@ -136,6 +138,7 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden && es
 // Enregistre une entrée. baseUpdatedAt : version connue, pour détecter un conflit.
 const PROJET_TYPES = new Set(['note', 'texte', 'audio', 'lien', 'essai', 'paroles']);
 export async function saveEntry(entry, { baseUpdatedAt, force } = {}) {
+  if (entry.demo || entry.data?.demo) return { entry }; // un exemple fictif ne s'enregistre jamais
   const id = entry.id || uid();
   // Une nouvelle création se range dans le projet choisi (s'il y en a un).
   const proj = store.get('projet', '');

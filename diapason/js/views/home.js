@@ -280,6 +280,13 @@ export default {
     };
     raf = requestAnimationFrame(wave);
     render();
+    // Le compteur des séances ensemble monte jusqu'à son chiffre, une seule fois.
+    const cnt = el.querySelector('.ensemble b');
+    if (cnt && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const n = +cnt.textContent; const t0 = performance.now();
+      const step = (t) => { const k = Math.min(1, (t - t0) / 900); cnt.textContent = Math.round(n * (1 - (1 - k) ** 3)); if (k < 1) requestAnimationFrame(step); };
+      if (n > 0) requestAnimationFrame(step);
+    }
     return () => { off(); cancelAnimationFrame(raf); };
   },
 };

@@ -87,6 +87,8 @@ async function route() {
   const mod = MODULES.find((m) => m.id === v.id);
   view.style.setProperty('--accent', mod ? mod.color : 'var(--rec)');
   currentId = v.id;
+  host.classList.add('entering');
+  setTimeout(() => host.classList.remove('entering'), 900);
   cleanup = v.mount(host) || null;
   const ap = APPUIS[v.id];
   if (ap) { const f = document.createElement('p'); f.className = 'appui'; f.innerHTML = `<span>Pourquoi :</span> ${ap[0]} <cite>${ap[1]}</cite>`; view.appendChild(f); }
