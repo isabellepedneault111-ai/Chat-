@@ -130,12 +130,12 @@ function demarrePiste(id) {
   jouePiste(l, 0, c.currentTime + 0.05);
 }
 // La musique se pousse pour laisser passer un effet, puis revient.
-function laissePasser(duree = 2.6) {
+function laissePasser(duree = 2.6, creux = 0.32) {
   if (!lecture) return;
   const c = audio(); const gg = lecture.master.gain; const n = niveau();
   gg.cancelScheduledValues(c.currentTime); gg.setValueAtTime(Math.max(0.0001, gg.value), c.currentTime);
-  gg.linearRampToValueAtTime(n * 0.32, c.currentTime + 0.15);
-  gg.setValueAtTime(n * 0.32, c.currentTime + duree); gg.linearRampToValueAtTime(n, c.currentTime + duree + 0.8);
+  gg.linearRampToValueAtTime(n * creux, c.currentTime + 0.15);
+  gg.setValueAtTime(n * creux, c.currentTime + duree); gg.linearRampToValueAtTime(n, c.currentTime + duree + 0.8);
 }
 function lancerPiste(id) {
   const c = audio();
@@ -188,8 +188,10 @@ export function jouer(nom) {
   try {
     const c = audio();
     let t = c.currentTime + 0.05;
-    if (lecture) { laissePasser(); t += 0.15; } // la musique de Frog se pousse, l'effet passe
-    else if (bande.t) t = bande.t0 + Math.ceil((t - bande.t0) / NOIRE) * NOIRE; // calé sur le temps de la bande
+    // Sur la musique de Frog, pas de mélodie par-dessus (elle ne serait ni dans sa tonalité ni dans son tempo) :
+    // sa pièce respire un instant et un simple balai marque le geste. C'est sa musique qu'on écoute.
+    if (lecture) { laissePasser(1.1, 0.6); drums.hat(t + 0.1, 0.18); return; }
+    if (bande.t) t = bande.t0 + Math.ceil((t - bande.t0) / NOIRE) * NOIRE; // calé sur le temps de la bande
     SONS[nom](t, lecture ? 0.5 : NOIRE);
   } catch { /* le son n'est pas essentiel */ }
 }
