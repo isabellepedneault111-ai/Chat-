@@ -4,11 +4,10 @@
 import { audio, drums, pad, bass, pluck, impulseOsc, out } from '../audio.js';
 import { joue, accord, prechargerSons } from '../sampler.js';
 import { mtof } from '../music.js';
-import { sonsPersoHTML, brancherSonsPerso } from '../sonsperso.js';
 
 const F = 'fabriqué en direct'; const E = 'enregistré'; const C = 'calculé'; const D = 'données';
 // [nom, détail, étiquette, son?, enfants?]
-const ARBRE = ['FLIP · diapason-labo', 'Un environnement hybride : des sons fabriqués en direct par le navigateur, de vrais instruments enregistrés, la musique de Frog, et une oreille qui calcule.', null, null, [
+const ARBRE = ['Diapason Labo', 'Un environnement hybride : des sons fabriqués en direct par le navigateur, de vrais instruments enregistrés, la musique de Frog, et une oreille qui calcule.', null, null, [
   ['Les sons', 'D’où vient tout ce qu’on entend.', null, null, [
     ['La batterie', 'Aucun échantillon : chaque coup est fabriqué au moment où il joue (Web Audio).', F, null, [
       ['Grosse caisse', 'Une onde sinus qui glisse de 160 à 42 Hz en 0,14 s, et s’éteint en 0,4 s. C’est ce glissement vers le grave qui fait le « boum ».', F, 'kick'],
@@ -50,7 +49,7 @@ const ARBRE = ['FLIP · diapason-labo', 'Un environnement hybride : des sons fab
     ['Mur', 'Toutes nos idées, de « idée brute » à « dans le set ».'],
     ['Session', 'Une séance guidée, étape par étape, avec la musique, qui finit par une prise.'],
     ['Relais', 'Un son envoyé, une couche par-dessus, chacun son temps.'],
-    ['Écrire', 'Le journal, le mumble, l’atelier, le grimoire, Placer mes paroles, Nos idées pour FLIP.'],
+    ['Écrire', 'Le journal, le mumble, l’atelier, le grimoire, Placer mes paroles, Nos idées pour le labo.'],
     ['Studio', 'Le beat, Mes propres accords, Nos chansons, les prises, la pochette, la scène, Mon instrument (MIDI).'],
     ['Voix', 'Ton clavier coache ma voix, la tessiture, le gym vocal, le miroir.'],
     ['L’oreille', 'Analyser une pièce, trouver ses accords, mesurer une voix.'],
@@ -93,7 +92,7 @@ const couleur = (n) => (n.c ? COUL.dossier : COUL[(n.n.split('.').pop() || '').t
 function dessinArbre(data) {
   const R = 330; let feuilles = 0; let prof = 0; let dossiers = 0;
   const parcours = (n, d, chemin) => { n.d = d; n.chemin = chemin; prof = Math.max(prof, d); if (n.c) { dossiers++; n.c.forEach((x) => parcours(x, d + 1, `${chemin}/${x.n}`)); } else n.i = feuilles++; };
-  parcours(data, 0, 'FLIP');
+  parcours(data, 0, 'Diapason Labo');
   const angle = (n) => (n.c ? (angle(n.c[0]) + angle(n.c[n.c.length - 1])) / 2 : (n.i / feuilles) * Math.PI * 2 - Math.PI / 2);
   const rayon = (n) => (n.c ? (n.d / prof) * R * 0.92 : R);
   const xy = (a, r) => [500 + r * Math.cos(a), 500 + r * Math.sin(a)];
@@ -116,7 +115,7 @@ function dessinArbre(data) {
     }
   };
   dessine(data);
-  return { svg: `<svg class="ar-radial" viewBox="-40 -40 1080 1080" role="img" aria-label="L’arbre des dossiers et fichiers de FLIP"><g class="ar-liens">${liens}</g>${points}${mots}<text class="ar-centre" x="500" y="506" text-anchor="middle">FLIP</text></svg>`, dossiers };
+  return { svg: `<svg class="ar-radial" viewBox="-40 -40 1080 1080" role="img" aria-label="L’arbre des dossiers et fichiers de Diapason Labo"><g class="ar-liens">${liens}</g>${points}${mots}<text class="ar-centre" x="500" y="494" text-anchor="middle">Diapason</text><text class="ar-centre" x="500" y="528" text-anchor="middle">Labo</text></svg>`, dossiers };
 }
 
 export default {
@@ -126,11 +125,10 @@ export default {
       <div class="mod-head"><div>
         <p class="eyebrow">L’arbre de l’architecte</p>
         <h1>Un environnement hybride, à l’œuvre.</h1>
-        <p class="muted">Tout FLIP, dossier par dossier, fichier par fichier : la vraie structure de l’app, telle qu’elle tourne en ce moment. Passe sur un point pour voir son nom complet.</p>
+        <p class="muted">Tout Diapason Labo, dossier par dossier, fichier par fichier : la vraie structure de l’app, telle qu’elle tourne en ce moment. Ici, on ne touche à rien : on admire. Passe sur un point pour voir son nom complet.</p>
       </div></div>
       <section class="ar-scene no-aide"><div class="ar-stats"></div><div class="ar-dessin"><p class="muted">L’arbre pousse…</p></div>
         <p class="ar-cles"><i style="--c:#e8c27a"></i>dossiers <i style="--c:#ff6fae"></i>code (JavaScript) <i style="--c:#6f9fe0"></i>styles <i style="--c:#b58cf0"></i>sons <i style="--c:#93b08e"></i>données <i style="--c:#f0a36f"></i>images</p></section>
-      <section class="panel ar-nos-sons"><h2>Nos sons de batterie</h2><p class="muted small">Remplace un son par le tien : ● Mon son (tu frappes, FLIP l’enregistre 2 secondes et garde le coup), ou dépose un fichier. Il remplace celui d’origine partout dans l’app, pour nous deux.</p><div class="sp-host">${sonsPersoHTML()}</div></section>
       <details class="panel ar-details"><summary><h2>D’où vient chaque son, en détail</h2></summary>
         <p class="ar-legende"><em class="ar-etq ar-f">${F}</em><em class="ar-etq ar-e">${E}</em><em class="ar-etq ar-c">${C}</em><em class="ar-etq ar-d">${D}</em></p>
         <ul class="arbre no-aide">${noeud(ARBRE, 0)}</ul>
@@ -141,8 +139,7 @@ export default {
       el.querySelector('.ar-dessin').innerHTML = svg;
       el.querySelector('.ar-stats').innerHTML = `<b>${data.fichiers}</b> fichiers · <b>${dossiers - 1}</b> dossiers · <b>${data.lignes.toLocaleString('fr-CA')}</b> lignes écrites`;
     }).catch(() => { el.querySelector('.ar-dessin').innerHTML = '<p class="muted">L’arbre n’a pas pu se charger.</p>'; });
-    const hote = el.querySelector('.sp-host');
-    brancherSonsPerso(hote, () => { hote.innerHTML = sonsPersoHTML(); });
+
     el.addEventListener('click', (e) => {
       const s = e.target.closest('[data-son]'); if (s) { e.preventDefault(); ecouter(s.dataset.son); return; }
       const a = e.target.closest('[data-ar]')?.dataset.ar;

@@ -5,7 +5,7 @@ import json, pathlib, subprocess
 racine = pathlib.Path(__file__).resolve().parent.parent
 fichiers = subprocess.run(['git', 'ls-files'], cwd=racine, capture_output=True, text=True).stdout.split()
 fichiers = [f for f in fichiers if not f.startswith(('dist/', 'package-lock')) and not f.endswith('.png')]
-arbre = {'n': 'FLIP', 'c': {}}
+arbre = {'n': 'Diapason Labo', 'c': {}}
 lignes_total = 0
 for f in fichiers:
     noeud = arbre

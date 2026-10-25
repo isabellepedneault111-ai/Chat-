@@ -94,7 +94,7 @@ export default {
           <h1>Notre journal</h1>
           <p class="muted">Écrire chacun de son côté, et se lire. Ce qui a de la vie part au mur ou au coffre d’un geste.</p>
         </div></div>
-        <nav class="ec-chemins" aria-label="Les chemins de l’écriture">${CHEMINS.map(([h, t, d]) => `<a href="#/${h}"><b>${t}</b><small>${d}</small></a>`).join('')}<button class="ec-chemin-flip" data-e="aller-idees"><b>Nos idées pour FLIP</b><small>Ce qu’on aimerait changer ou ajouter dans l’app : on le note ici, Zaza le transmet.</small></button></nav>
+        <nav class="ec-chemins" aria-label="Les chemins de l’écriture">${CHEMINS.map(([h, t, d]) => `<a href="#/${h}"><b>${t}</b><small>${d}</small></a>`).join('')}<button class="ec-chemin-flip" data-e="aller-idees"><b>Nos idées pour le labo</b><small>Ce qu’on aimerait changer ou ajouter dans l’app : on le note ici, Zaza le transmet.</small></button></nav>
         <section class="ec-new">
           <p class="ec-invite"><small>L’invitation du jour</small>${esc(inviteDu())}</p>
           <textarea class="input ec-text" rows="5" placeholder="Écris ce qui vient. Rien ne sera jugé."></textarea>
@@ -122,7 +122,7 @@ export default {
         </section>
         <div class="ec-list"></div>
         <section class="panel ec-idees" id="idees-flip">
-          <h2>Nos idées pour FLIP</h2>
+          <h2>Nos idées pour le labo</h2>
           <p class="muted small">Un bouton qu’on cherche, une fonction rêvée, un mot pas clair : chaque idée est gardée ici, datée, et l’app s’améliore à partir de cette liste.</p>
           <div class="ec-row"><input class="input" data-e="idee-txt" maxlength="300" placeholder="Ex. : pouvoir choisir mes propres accords dans le studio"><button class="btn primary" data-e="idee">Noter l’idée</button></div>
           <ul class="ec-idees-l"></ul>

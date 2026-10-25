@@ -132,7 +132,7 @@ async function route() {
   const group = VOIX.includes(v.id) ? 'voix' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' || v.id === 'ames' || v.id === 'arbre' ? 'home' : ['jeux', 'paroles', 'atelier', 'ecrire', 'placer'].includes(v.id) ? 'ecrire' : v.id;
   $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.id === group));
   if (v.id === 'carnet') { unseen = 0; showBadge(); }
-  document.title = mod ? `${mod.name} · FLIP` : 'FLIP · Zaza & Frog';
+  document.title = mod ? `${mod.name} · Diapason Labo` : 'Diapason Labo · FLIP';
   renderPistes();
   window.scrollTo({ top: 0 });
 }

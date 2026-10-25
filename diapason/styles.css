@@ -2565,3 +2565,11 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .sommaire button { font: 600 .82rem "Atkinson Hyperlegible", sans-serif; padding: 4px 10px; border-radius: 99px; border: 1px solid #c9bfa9; background: #fffaf0; cursor: pointer; color: inherit; }
 .sommaire button:hover { border-color: #c9a45c; background: #fff3d9; }
 #view h2 { scroll-margin-top: 90px; }
+/* Le mandat de chaque page */
+.mandat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 6px 0 10px; }
+.mandat p { margin: 0; padding: 10px 12px; border-radius: 12px; background: #fffaf0; border: 1px solid var(--line, #d9cfbd); font-size: .9rem; line-height: 1.4; }
+.mandat b { display: block; font: italic 700 .95rem var(--display); color: #8a5a12; margin-bottom: 2px; }
+@media (max-width: 760px) { .mandat { grid-template-columns: 1fr; gap: 6px; } .mandat p { padding: 8px 10px; } }
+.mast-app { margin: 4px 0 0; font: 800 clamp(1.3rem, 2.4vw, 1.8rem) var(--display); letter-spacing: .01em; }
+.mast-app span { font: italic 500 .7em var(--display); color: #8a6a1f; margin-left: 6px; }
+.ar-radial .ar-centre { font-size: 26px; }

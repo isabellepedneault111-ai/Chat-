@@ -80,7 +80,7 @@ export function startTour(preview) {
        <div class="tp-mid">
          <p class="t-kicker">Avant la visite · 4 minutes, avec le son</p>
          <h2>Un mot sur ma façon de faire</h2>
-         <p class="tp-mot">Je ne voulais pas une app de plus : je voulais un endroit qui nous ressemble. J’ai lu ce que la recherche sait de la création, de la voix et de la pratique, et je m’en suis servie comme d’un tremplin, jamais comme d’une cage. Chaque idée de FLIP part de là, puis je l’ai tordue pour nous.</p>
+         <p class="tp-mot">Je ne voulais pas une app de plus : je voulais un endroit qui nous ressemble. J’ai lu ce que la recherche sait de la création, de la voix et de la pratique, et je m’en suis servie comme d’un tremplin, jamais comme d’une cage. Chaque idée de Diapason Labo part de là, puis je l’ai tordue pour nous.</p>
          <div class="tp-src"><p class="tp-src-t">Ce qui a nourri FLIP</p><ul>${SOURCES.map(([t, ref, sens]) => `<li><b>${t}</b> <span>${sens}</span> <small>${ref}</small></li>`).join('')}</ul></div>
          <button class="btn big t-start t-lancer" data-t="lancer">Lancer la flèche →</button>
        </div>
@@ -90,7 +90,7 @@ export function startTour(preview) {
        <img class="t-logo" src="img/flip-creme.svg" alt="FLIP">
        <p class="t-welcome">${esc(welcome).replace(/\n/g, '<br>')}</p>
        <p class="t-sign">— ${esc(from)}</p>
-       <p class="t-auteure">J’ai imaginé FLIP pour nous deux.</p>
+       <p class="t-auteure">J’ai imaginé Diapason Labo pour nous deux : le labo de FLIP.</p>
        ${espace.meta.welcome?.audio ? '<button class="t-play" data-t="play">▶ Écouter</button>' : ''}
        <button class="btn big t-start" data-t="next">Commencer la visite</button>
      </div>`,

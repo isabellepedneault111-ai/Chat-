@@ -50,7 +50,7 @@ const ONGLETS = {
   carnet: 'Le mur : toutes nos idées. Plus une idée avance (brute → en chantier → presque prête → prête), plus elle s’approche du centre.',
   session: 'Une séance guidée, à deux ou seul : étape par étape, avec la musique, et toujours une prise à la fin.',
   relais: 'Le relais : tu envoies un son, l’autre répond par-dessus quand il veut. Couche après couche.',
-  ecrire: 'Écrire : notre journal, les paroles, le grimoire, et placer ses mots sur une musique.',
+  ecrire: 'Écrire : notre journal, les paroles, le grimoire, placer ses mots sur une musique, nos idées pour le labo.',
   studio: 'Le studio : un beat, nos propres accords, où improviser sur le clavier, les prises et la scène.',
   voix: 'La voix : ton clavier coache ma voix, la tessiture, les exercices de justesse.',
 };
@@ -99,7 +99,7 @@ function marquer(racine) {
 
 export function installerGlossaire(vue) {
   let t = 0;
-  const passe = () => { clearTimeout(t); t = setTimeout(() => { try { marquer(vue); } catch { /* le glossaire n'est jamais bloquant */ } }, 250); };
+  const passe = () => { if (!t) t = setTimeout(() => { t = 0; try { marquer(vue); } catch { /* le glossaire n'est jamais bloquant */ } }, 300); };
   new MutationObserver((ms) => { if (ms.some((m) => [...m.addedNodes].some((x) => !(x.classList?.contains('mot-aide'))))) passe(); }).observe(vue, { childList: true, subtree: true });
   passe();
   const sur = (e) => {
