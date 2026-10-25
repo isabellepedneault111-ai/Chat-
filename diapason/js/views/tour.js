@@ -24,7 +24,6 @@ export function startTour(preview) {
   const me = preview ? (espace.meta.members || ['Zaza', 'Frog']).find((m) => m !== espace.me) || 'Frog' : espace.me;
   const from = espace.meta.welcome?.by || espace.meta.createdBy || 'Zaza';
   const welcome = espace.meta.welcome?.text || 'Forever more…';
-  const [z, f] = espace.meta.members || ['Zaza', 'Frog'];
   // Chaque scène : un titre, une phrase, un dessin qui bouge. Le dessin dit ce que les mots ne disent pas.
   // Chaque scène montre la vraie app (avec des exemples fictifs) et l'explique repère par repère.
   // Un repère : [écran, n° du point dans VISITE, phrase]. Le zoom suit le repère actif.
@@ -43,19 +42,19 @@ export function startTour(preview) {
       </header>
       <div class="t-frames" style="max-width:calc(var(--hmax) * ${r.toFixed(3)})">${frames}</div>
       <div class="t-side">
-        ${unique ? `<p class="t-unique"><b>Nulle part ailleurs</b> ${unique}</p>` : ''}
+        ${unique ? `<p class="t-unique"><b>Idée originale : aucune autre app ne fait ça</b> ${unique}</p>` : ''}
         <ol class="t-caps">${steps.map((t, i) => `<li data-n="${i}"><b>${i + 1}</b><span>${t}</span></li>`).join('')}</ol>
       </div>
     </div>`;
   const V = VISITE;
   // [image, titre, ce qui n'existe nulle part ailleurs, ce que ça change pour nous, son]
   const MONTAGE = [
-    ['m-voix.jpg', 'Un beat sous ta voix', 'Le phrasé à chanter s’allume sur le temps', `${esc(z)} joue avec le rythme, pas seulement la justesse`, 'beat'],
-    ['m-flux.jpg', 'Écrire sur le beat', 'Le mumble chanté part avec le texte', `${esc(f)} joue sur ce que ${esc(z)} a chanté`, 'riff'],
-    ['m-labo.jpg', 'Un rythme devient une note', 'On entend la frontière entre rythme et harmonie', 'Des beats qu’on n’aurait jamais trouvés', 'labo'],
-    ['m-trois.jpg', 'Un troisième musicien', 'Il reprend votre phrase et la transforme', 'Un partenaire d’impro, même à deux', 'trois'],
-    ['m-grimoire.jpg', 'Le grimoire', 'Des cartes pour écrire vrai : arcanes, peurs, contraintes', 'Plus jamais la page blanche', 'grimoire'],
-    ['m-pochette.jpg', 'Notre art en pochette', 'Une toile et un vrai son deviennent une pochette', 'Notre image, notre son, notre album', 'pochette'],
+    ['m-voix.jpg', 'Placer ma voix dans le groove', 'FLIP joue un rythme (bossa, pop…) et les cases roses montrent où poser mes mots. La syncope devient un jeu.', 'Je chante avec plus de groove, pas seulement plus juste.', 'beat'],
+    ['m-flux.jpg', 'Écrire sur le beat', 'Je chante des sons sans mots sur le beat (le mumble), et l’enregistrement part avec mon texte.', 'Tu entends la mélodie que j’avais en tête.', 'riff'],
+    ['m-labo.jpg', 'Un rythme devient une note', 'Accélère un rythme : à un moment, il devient une note. On l’entend pour vrai.', 'Des beats qu’on n’aurait jamais trouvés.', 'labo'],
+    ['m-trois.jpg', 'Un troisième musicien', 'Il écoute votre phrase, la transforme et vous la renvoie.', 'Un partenaire d’impro, même quand on est juste deux.', 'trois'],
+    ['m-grimoire.jpg', 'Le grimoire', 'Des cartes à tirer pour lancer une chanson : un thème, une peur, une contrainte.', 'Fini la page blanche.', 'grimoire'],
+    ['m-pochette.jpg', 'Notre art en pochette', 'Un dessin et un vrai son de nous deviennent la pochette de l’album.', 'Notre image, notre son, notre album.', 'pochette'],
   ];
 
   const r = (d) => `${Math.round(d.w)} / ${Math.round(d.h)}`;
@@ -73,42 +72,43 @@ export function startTour(preview) {
        <h2 class="t-huge">La distance<br>ne crée plus<br><i>de distance.</i></h2>
        <p class="t-line">Dans la même pièce ou loin l’un de l’autre, nos élans ne s’arrêtent plus. Voici comment, sur la vraie app, avec des exemples.</p>
      </div>`,
-    shot(1, 'Dans la même <i>pièce</i>', `Ensemble. ${esc(f)} au clavier, ${esc(z)} au micro.`,
+    shot(1, 'Dans la même <i>pièce</i>', 'Ensemble. Toi au clavier, moi au micro.',
       frame('voix', 'voix.jpg', V.voix.pts, [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]], r(V.voix)), [
-        `${esc(f)} joue un accord. FLIP le nomme.`,
-        `Les notes que ${esc(z)} peut chanter s’allument.`,
-        'Sa voix, en direct. Jaune : c’est juste.',
-        'Combien de temps elle chante juste.',
-        'FLIP retient où sa voix brille.',
-      ], ['piece-0', 'piece-1', 'piece-2', 'piece-3', 'piece-4'], V.voix.w / V.voix.h, `Le clavier de ${esc(f)} devient le coach de la voix de ${esc(z)}, dans sa tessiture à elle.`),
+        'Tu joues un accord. FLIP le nomme.',
+        'Les notes que je peux chanter s’allument.',
+        'Ma voix, en direct. Jaune : c’est juste.',
+        'Combien de temps je chante juste.',
+        'FLIP retient où ma voix brille.',
+      ], ['piece-0', 'piece-1', 'piece-2', 'piece-3', 'piece-4'], V.voix.w / V.voix.h, 'Ton clavier devient le coach de ma voix, dans ma tessiture à moi.'),
     shot(2, 'À distance, <i>en même temps</i>', 'Chacun chez soi, à la même heure, en appel.',
-      frame('z', 'distance-z.jpg', V.distance.pts, [[0, 0], [1, 1], [2, 3]], r(V.distance), `Chez ${esc(z)}`)
-      + frame('f', 'distance-f.jpg', V.distance.fpts, [[0, 2]], `${Math.round(V.distance.fw)} / ${Math.round(V.distance.fh)}`, `Chez ${esc(f)}`), [
-        `${esc(z)} lance la séance.`,
+      frame('z', 'distance-z.jpg', V.distance.pts, [[0, 0], [1, 1], [2, 3]], r(V.distance), 'Chez moi')
+      + frame('f', 'distance-f.jpg', V.distance.fpts, [[0, 2]], `${Math.round(V.distance.fw)} / ${Math.round(V.distance.fh)}`, 'Chez toi'), [
+        'Je lance la séance.',
         'Le même minuteur, à la seconde.',
-        `Chez ${esc(f)} : la même séance, au même moment.`,
+        'Chez toi : la même séance, au même moment.',
         'La consigne du moment. On joue, c’est tout.',
       ], ['distance-0', 'distance-1', 'distance-2', 'distance-3'], (V.distance.w / V.distance.h) * 2.1, 'Une vraie séance guidée, partagée à la seconde près sur deux ordinateurs.'),
     shot(3, 'Chacun <i>son temps</i>', 'Une idée à 23 h. L’autre l’écoute le lendemain matin.',
       frame('relais', 'relais.jpg', V.relais.pts, [[0, 0], [1, 1], [2, 2], [3, 3]], r(V.relais)), [
-        'Une touche : le son part vers l’autre.',
+        'Une touche : ton son part vers moi.',
         'Avec un mot d’ordre : « chante dessus ».',
-        `${esc(z)} répond par-dessus, quand elle veut.`,
+        'Je réponds par-dessus, quand je veux.',
         `Couche après couche, la chanson grandit.`,
       ], ['relais-0', '', 'relais-2', 'relais-3'], V.relais.w / V.relais.h, 'Chaque son arrive avec ce qu’on attend de l’autre : « chante dessus », « trouve un titre ».'),
     shot(4, 'Rien ne <i>se perd</i>', 'Tout le temps : une idée, même à moitié, va au mur.',
       frame('ciel', 'ciel.jpg', V.ciel.pts, [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]], r(V.ciel)), [
         'Au centre : l’album.',
-        `Chaque point, une idée. Rose : ${esc(z)}. Bleu : ${esc(f)}.`,
+        'Chaque point, une idée. Rose : moi. Bleu : toi.',
         'Le pointillé : FLIP propose de marier deux idées.',
         'Avec une consigne pour l’essayer.',
         'Un clic : une nouvelle idée naît.',
       ], ['', '', 'ciel-2', '', 'ciel-4'], V.ciel.w / V.ciel.h, 'Le mur propose lui-même de marier nos idées, avec une consigne.'),
     // Le reste du génie, en vitrine : six vrais écrans, un son chacun, presque pas de mots.
-    `<div class="t-montage" data-auto="${MONTAGE.length * 3600 + 1500}">
-       <header><p class="t-kicker">Et ce n’est pas tout</p><h2>Ce que FLIP <i>permet aussi</i></h2></header>
-       <div class="mt-stage">${MONTAGE.map(([img, t, ail, nous], i) => `<figure class="mt-tile" data-n="${i}"><div class="mt-img"><img src="img/visite/${img}" alt=""></div><figcaption><b>${t}</b><span class="mt-ail"><i>Nulle part ailleurs</i> ${ail}</span><span class="mt-nous"><i>Pour nous</i> ${nous}</span></figcaption></figure>`).join('')}</div>
-       <div class="mt-dots">${MONTAGE.map((_, i) => `<i data-n="${i}"></i>`).join('')}</div>
+    // Une idée à la fois, le temps de lire ; la flèche passe à la suivante, rien ne file tout seul hors de l'écran.
+    `<div class="t-montage">
+       <header><p class="t-kicker">Et ce n’est pas tout</p><h2>Six idées <i>originales</i></h2><p class="mt-intro">Aucune autre app au monde ne les fait. Je les ai inventées pour nous.</p></header>
+       <div class="mt-stage">${MONTAGE.map(([img, t, ail, nous], i) => `<figure class="mt-tile" data-n="${i}"><div class="mt-img"><img src="img/visite/${img}" alt=""></div><figcaption><span class="mt-num">${i + 1} / ${MONTAGE.length} · idée originale</span><b>${t}</b><span class="mt-ail">${ail}</span><span class="mt-nous"><i>Pour nous :</i> ${nous}</span></figcaption></figure>`).join('')}</div>
+       <div class="mt-dots">${MONTAGE.map((_, i) => `<button type="button" data-n="${i}" aria-label="Idée ${i + 1}"></button>`).join('')}</div>
      </div>`,
     `<div class="t-title">
        <p class="t-kicker">Maintenant, à toi</p>
@@ -191,14 +191,15 @@ export function startTour(preview) {
     const mt = box.querySelector('.t-montage');
     if (mt) {
       let k = -1;
-      const next = () => {
-        if (!mt.isConnected) return;
-        k += 1; if (k >= MONTAGE.length) return;
+      const montre = (n) => {
+        clearTimeout(stepT); k = n;
         mt.querySelectorAll('[data-n]').forEach((x) => { x.classList.toggle('on', +x.dataset.n === k); x.classList.toggle('vu', +x.dataset.n < k); });
         jouer(MONTAGE[k][4]);
-        stepT = setTimeout(next, 3600);
+        if (k < MONTAGE.length - 1) stepT = setTimeout(() => mt.isConnected && montre(k + 1), 9000);
       };
-      stepT = setTimeout(next, 700);
+      mt.montageSuivant = () => { if (k < MONTAGE.length - 1) { montre(k + 1); return true; } return false; };
+      mt.querySelector('.mt-dots').addEventListener('click', (e) => { const b = e.target.closest('[data-n]'); if (b) montre(+b.dataset.n); });
+      stepT = setTimeout(() => montre(0), 700);
     }
     box.querySelector('.t-nav [data-t=prev]').disabled = i === 0;
     box.querySelector('.t-nav [data-t=next]').hidden = i === 0 || i === slides.length - 1;
@@ -220,7 +221,7 @@ export function startTour(preview) {
   };
   const go = (d) => { i = Math.max(0, Math.min(slides.length - 1, i + d)); show(); };
   const onKey = (e) => {
-    if ((e.key === 'ArrowRight' || e.key === ' ') && i < slides.length - 1 && i > 0) go(1);
+    if ((e.key === 'ArrowRight' || e.key === ' ') && i < slides.length - 1 && i > 0) { if (!box.querySelector('.t-montage')?.montageSuivant?.()) go(1); }
     if (e.key === 'ArrowLeft') go(-1);
     if (e.key === 'Escape' && preview) end();
   };
@@ -233,7 +234,7 @@ export function startTour(preview) {
     // Commencer : la visite prend tout l'écran.
     if (t === 'next' && i === 0 && !document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
     if (t === 'prev') { go(-1); return; }
-    if (t === 'next') { go(1); return; }
+    if (t === 'next') { if (!box.querySelector('.t-montage')?.montageSuivant?.()) go(1); return; }
     if (t === 'play') {
       const b = e.target.closest('[data-t]');
       b.textContent = '…';

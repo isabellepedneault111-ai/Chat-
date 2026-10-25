@@ -2278,3 +2278,27 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .tour.slide0 > .t-fils-bg { opacity: 1; }
 .t-fils-bg path { fill: none; stroke-width: 2; stroke-linecap: round; }
 .t-fils-bg .fil-z { stroke: #ec86ad; } .t-fils-bg .fil-f { stroke: #7fb1f0; }
+/* Six idées originales : une à la fois, le temps de lire. */
+.mt-intro { margin: 4px 0 0; color: #f1e9d8; font-size: clamp(1rem, 1.5vw, 1.2rem); }
+.mt-tile { grid-template-columns: minmax(0, 1.5fr) minmax(260px, 1fr); grid-template-rows: 1fr; align-items: center; gap: clamp(16px, 3vw, 40px); }
+.mt-tile figcaption { gap: 10px; }
+.mt-num { font: italic 600 1rem var(--display); color: #f3c77a !important; }
+.mt-tile figcaption .mt-ail { font-size: clamp(1.05rem, 1.6vw, 1.3rem); line-height: 1.4; }
+.mt-tile figcaption .mt-nous { padding-top: 8px; border-top: 1px solid rgba(243, 199, 122, .3); }
+.mt-dots button { width: 34px; height: 6px; padding: 0; border: 0; border-radius: 3px; background: rgba(241, 233, 216, .2); cursor: pointer; transition: background .4s; }
+.mt-dots button.vu { background: rgba(243, 199, 122, .5); } .mt-dots button.on { background: #f3c77a; }
+@media (max-width: 860px) { .mt-tile { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; gap: 10px; } .mt-tile figcaption .mt-ail { font-size: 1rem; } }
+.t-montage header { position: relative; z-index: 1; }
+@media (max-width: 700px) { .mt-intro { font-size: .9rem; line-height: 1.35; } .t-montage .mt-stage { height: 50svh; } }
+@media (max-width: 700px) {
+  .t-montage .mt-stage { height: calc(100svh - 330px); }
+  .mt-tile { align-items: stretch; }
+  .mt-tile figcaption { gap: 4px; }
+  .mt-tile figcaption b { font-size: 1.3rem; }
+  .mt-tile figcaption .mt-ail, .mt-tile figcaption .mt-nous { font-size: .92rem; line-height: 1.35; }
+  .mt-tile figcaption .mt-nous { padding-top: 4px; }
+}
+.mt-tile { grid-template-rows: minmax(0, 1fr); height: 100%; }
+.mt-img { height: 100%; min-height: 0; }
+.mt-tile figcaption { text-align: left; }
+@media (max-width: 860px) { .mt-tile { grid-template-rows: minmax(0, 1fr) auto; } .mt-tile figcaption { text-align: center; } }
