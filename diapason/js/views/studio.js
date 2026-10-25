@@ -1,6 +1,6 @@
-import { audio, drums, pad, bass, mic, startMic, finalOut, click } from '../audio.js';
-import { store, keyboard, toast, animate } from '../ui.js';
-import { FR, mtof, chordIntervals, chordName, hash, rng, mod12 } from '../music.js';
+import { audio, drums, pad, bass, mic, startMic, finalOut, pluck } from '../audio.js';
+import { store, keyboard, toast, animate, autoCanvas } from '../ui.js';
+import { FR, mtof, chordIntervals, chordName, hash, rng, mod12, clamp } from '../music.js';
 import { DRUM_PRESETS, PROGRESSIONS } from '../data.js';
 
 const ROWS = [['k', 'Grosse caisse'], ['s', 'Caisse claire'], ['h', 'Charleston'], ['c', 'Claps']];
@@ -29,8 +29,23 @@ const S = {
   takes: [],
   recorder: null,
   variant: 0,
+  // Scène : mélodie de la boucle (32 croches sur 4 mesures), mode solo/duo, clips filmés.
+  melody: store.get('melody', []),
+  mode: store.get('sceneMode', 'solo'),
+  clips: [],
+  cur: null,
+  filming: false,
 };
 const save = () => { store.set('grid', S.grid); store.set('bpm', S.bpm); store.set('key', S.key); store.set('prog', S.prog); };
+const saveMelody = () => store.set('melody', S.melody.map(({ slot, deg, who }) => ({ slot, deg, who })));
+// 8 pastilles : la pentatonique de la tonalité, dans un registre confortable pour la voix.
+const padMidis = () => {
+  const base = 60 + S.key - (S.key >= 7 ? 12 : 0);
+  return [0, 2, 4, 7, 9, 12, 14, 16].map((x) => base + x);
+};
+// Une petite mélodie-modèle (croche, pastille), pour voir et entendre avant de créer.
+const DEMO_MELODY = [[0, 2], [2, 3], [3, 4], [4, 3], [6, 2], [8, 3], [10, 4], [11, 5], [12, 4], [14, 3], [16, 4], [18, 5], [19, 6], [20, 5], [22, 4], [24, 3], [26, 2], [27, 1], [28, 0]];
+let onScene = null;
 const progression = () => PROGRESSIONS.find((p) => p.id === S.prog) || PROGRESSIONS[0];
 const chordAt = (bar) => {
   const [deg, qual] = progression().chords[bar % 4];
@@ -45,6 +60,15 @@ function scheduleStep(step, t) {
   const ch = chordAt(bar);
   if (st === 0) pad(chordIntervals(ch.qual).map((iv) => mtof(48 + ch.root + iv)), t, sixteenth * 16, 0.045);
   if (st === 0 || st === 8 || st === 11) bass(mtof(36 + ch.root), t, sixteenth * (st === 11 ? 2 : 3));
+  if (st % 2 === 0) {
+    const slot = (step % 64) >> 1;
+    const ms = padMidis();
+    S.melody.forEach((n) => {
+      if (n.slot !== slot) return;
+      if (n.skip) { n.skip = false; return; }
+      pluck(mtof(ms[n.deg]), { when: t, gain: 0.3, dur: sixteenth * 6 });
+    });
+  }
 }
 function scheduler() {
   const c = audio();
@@ -68,6 +92,7 @@ function stopPlay() {
   S.playing = false;
   clearInterval(S.timer);
   S.queue = [];
+  S.cur = null;
 }
 
 export default {
@@ -94,7 +119,7 @@ export default {
         <button role="tab" data-tab="beat">🥁 Beat</button>
         <button role="tab" data-tab="voix">🎙️ Prises de voix</button>
         <button role="tab" data-tab="cover">💿 Pochette</button>
-        <button role="tab" data-tab="duo">🤝 Solo / Duo</button>
+        <button role="tab" data-tab="duo">🎬 Scène · Solo / Duo</button>
       </div>
       <div class="tab-body"></div>`;
 
@@ -160,7 +185,7 @@ export default {
       const t = e.target.closest('[data-tab]');
       if (t) { tab = t.dataset.tab; store.set('studioTab', tab); renderTab(); return; }
       const act = e.target.closest('[data-act]')?.dataset.act;
-      if (act === 'play') { S.playing ? stopPlay() : play(); syncTop(); }
+      if (act === 'play') { S.playing ? stopPlay() : play(); syncTop(); onScene?.(); }
       if (act === 'rec') toggleRec();
     });
 
@@ -280,60 +305,302 @@ export default {
       document.fonts.load('900 80px Unbounded').finally(draw);
     }
 
+    // ---------- Scène : concevoir, entendre, voir (solo ou duo) ----------
     function duoTab(body) {
-      const tonic = FR[S.key];
-      const pent = [0, 2, 4, 7, 9].map((x) => FR[mod12(S.key + x)]).join(', ');
-      const chords = [0, 1, 2, 3].map((b) => { const ch = chordAt(b); return chordName(ch.root, ch.qual); }).join(' – ');
+      const names = store.get('duoNames', ['', '']);
       body.innerHTML = `
-        <div class="duo-grid">
-          <div class="panel role" style="--c:var(--cyan)">
-            <p class="eyebrow">Solo · Le looping autonome</p>
-            <h2>Tu tiens toute la structure</h2>
-            <ol class="steps">
-              <li><b>L’harmonie</b> — lance la boucle <b>${chords}</b> à ${S.bpm} BPM.</li>
-              <li><b>La mélodie</b> — improvise avec seulement <b>${pent}</b> (pentatonique). Aucune fausse note possible!</li>
-              <li><b>Le texte</b> — chante une phrase par mesure. 4 mesures = un couplet.</li>
-            </ol>
-            <div class="tip-box"><b>Corps</b><p>Mâchoire molle, épaules basses. Si la gorge serre, recule d’un ton dans la tonalité.</p></div>
+        <div class="scene-grid">
+          <div class="panel scene-panel">
+            <canvas class="scene" aria-label="Ta boucle de 4 mesures : chaque point est une note de ta mélodie"></canvas>
+            <div class="scene-rec mono" hidden>● REC CLIP</div>
           </div>
-          <div class="panel role" style="--c:var(--pink)">
-            <p class="eyebrow">Duo · Question / Réponse</p>
-            <h2>L’écoute avant tout</h2>
-            <div class="row"><input class="input" data-p="a" placeholder="Élève 1" maxlength="16" aria-label="Élève 1"><input class="input" data-p="b" placeholder="Élève 2" maxlength="16" aria-label="Élève 2"><button class="btn small" data-duo="shuffle">🎲 Rôles</button></div>
-            <div class="duo-roles">
-              <div><b class="r1">Musicien·ne 1 · L’ancrage</b><p>Une seule note : <b>${tonic}</b>, en rythme syncopé. Tu ne bouges pas : tu laisses de l’espace.</p></div>
-              <div><b class="r2">Musicien·ne 2 · L’exploration</b><p>Tu improvises avec <b>${pent}</b> dans les « trous » laissés par l’ancrage.</p></div>
+          <div class="scene-side">
+            <div class="panel">
+              <div class="seg mode-seg" role="group" aria-label="Mode">
+                <button class="chip" data-mode="solo">🎤 Solo</button>
+                <button class="chip" data-mode="duo">🤝 Duo · Question / Réponse</button>
+              </div>
+              <div class="duo-names" hidden>
+                <input class="input" data-p="0" placeholder="Élève 1 (question)" maxlength="16" aria-label="Élève 1" value="${esc(names[0])}">
+                <input class="input" data-p="1" placeholder="Élève 2 (réponse)" maxlength="16" aria-label="Élève 2" value="${esc(names[1])}">
+                <button class="icon-btn" data-sc="swap" title="Échanger les rôles" aria-label="Échanger les rôles">🔁</button>
+              </div>
+              <p class="scene-how small"></p>
+              <div class="pads" role="group" aria-label="Notes de ta mélodie (gamme pentatonique)"></div>
+              <div class="row">
+                <button class="btn primary" data-sc="play">▶ Lancer la boucle</button>
+                <button class="btn" data-sc="undo" title="Annuler la dernière note">↶</button>
+                <button class="btn" data-sc="clear" title="Tout effacer">🗑</button>
+                <button class="btn" data-sc="demo">✨ Exemple</button>
+              </div>
             </div>
-            <div class="timer"><span class="mono t-out">5:00</span><button class="btn" data-duo="timer">▶ 5 minutes</button></div>
+            <div class="panel clip-panel">
+              <div class="panel-head"><h2>🎬 Ton clip</h2><span class="muted small">2 tours de boucle, image + son</span></div>
+              <button class="btn primary big clip-btn" data-sc="clip">● Tourner le clip</button>
+              <ul class="clips"></ul>
+              <p class="muted small">Le titre vient de l’onglet 💿 Pochette. Allume le micro et chante pendant le tournage : ta voix est dans le clip.</p>
+            </div>
           </div>
-        </div>`;
-      let left = 300;
-      let iv = 0;
-      const out = body.querySelector('.t-out');
+        </div>
+        <details class="panel scene-tips">
+          <summary>Pistes pour la scène</summary>
+          <div class="duo-roles">
+            <div><b>Solo · le looping autonome</b><p>Tu tiens toute la structure : la boucle donne l’harmonie, tes pastilles la mélodie, ta voix le texte (une phrase par mesure = un couplet).</p></div>
+            <div><b>Duo · l’écoute avant tout</b><p>Mesures 1 et 3 : l’élève 1 pose une question musicale. Mesures 2 et 4 : l’élève 2 répond en reprenant <em>une</em> idée de la question (même rythme, ou même note de départ).</p></div>
+            <div><b>Corps</b><p>Mâchoire molle, épaules basses. Si la gorge serre, descends la tonalité en haut de la page.</p></div>
+          </div>
+        </details>`;
+
+      const scv = autoCanvas(body.querySelector('.scene'));
+      const padColors = ['#3ee6ff', '#5fb8ff', '#9b6bff', '#d36bff', '#ff4fb3', '#ff8a3d', '#ffb43e', '#b6ff3e'];
+      const who = (slot) => (S.mode === 'duo' ? Math.floor(slot / 8) % 2 : 0);
+      const playerName = (i) => body.querySelector(`[data-p="${i}"]`)?.value.trim() || `Élève ${i + 1}`;
+      const noteColor = (n) => (S.mode === 'duo' ? (who(n.slot) ? '#ff4fb3' : '#3ee6ff') : padColors[n.deg]);
+      const bursts = [];
+
+      function renderPads() {
+        body.querySelector('.pads').innerHTML = padMidis().map((m, i) => `
+          <button class="pad" data-pad="${i}" style="--c:${padColors[i]}" aria-label="${FR[mod12(m)]}"><b>${FR[mod12(m)]}</b><kbd>${i + 1}</kbd></button>`).join('');
+      }
+      function sync() {
+        el.querySelectorAll('[data-mode]').forEach((b) => b.classList.toggle('active', b.dataset.mode === S.mode));
+        body.querySelector('.duo-names').hidden = S.mode !== 'duo';
+        body.querySelector('[data-sc=play]').textContent = S.playing ? '■ Arrêter' : '▶ Lancer la boucle';
+        body.querySelector('.scene-how').innerHTML = S.mode === 'duo'
+          ? '<b>Mesures 1 et 3</b> : question (cyan) · <b>2 et 4</b> : réponse (rose). Lance la boucle et tapez chacun votre tour : vos notes restent dans la boucle.'
+          : '<b>1.</b> Lance la boucle <b>2.</b> Tape les pastilles en rythme : chaque note reste dans la boucle <b>3.</b> Allume le micro et chante par-dessus.';
+        body.querySelector('.clips').innerHTML = S.clips.map((c, i) => `
+          <li><video src="${c.url}" controls playsinline></video><a class="btn small" href="${c.url}" download="diapason-clip-${S.clips.length - i}.${c.ext}">⬇ Télécharger</a></li>`).join('');
+      }
+
+      // Une tape pendant la boucle = une note déposée sur la croche la plus proche.
+      function hitPad(i) {
+        const midi = padMidis()[i];
+        pluck(mtof(midi), { gain: 0.32 });
+        const pad = body.querySelector(`[data-pad="${i}"]`);
+        pad?.classList.add('down');
+        setTimeout(() => pad?.classList.remove('down'), 160);
+        if (!S.playing || !S.cur) return;
+        const sixteenth = 60 / S.bpm / 4;
+        const pos = (S.cur.step + (audio().currentTime - S.cur.time) / sixteenth) / 2;
+        const slot = ((Math.round(pos) % 32) + 32) % 32;
+        // Déjà jouée maintenant : on évite qu'elle sonne une 2e fois si la croche arrondie est juste devant.
+        const skip = Math.round(pos) > pos;
+        S.melody = S.melody.filter((n) => !(n.slot === slot && n.deg === i));
+        S.melody.push({ slot, deg: i, who: who(slot), skip });
+        saveMelody();
+        bursts.push({ slot, deg: i, t: performance.now() });
+      }
+
       body.addEventListener('click', (e) => {
-        const a = e.target.closest('[data-duo]')?.dataset.duo;
-        if (a === 'shuffle') {
-          const n = [body.querySelector('[data-p=a]').value || 'Élève 1', body.querySelector('[data-p=b]').value || 'Élève 2'];
-          if (Math.random() < 0.5) n.reverse();
-          body.querySelector('.r1').textContent = `${n[0]} · L’ancrage`;
-          body.querySelector('.r2').textContent = `${n[1]} · L’exploration`;
+        const pd = e.target.closest('[data-pad]');
+        if (pd) return;
+        const md = e.target.closest('[data-mode]');
+        if (md) { S.mode = md.dataset.mode; store.set('sceneMode', S.mode); sync(); return; }
+        const a = e.target.closest('[data-sc]')?.dataset.sc;
+        if (a === 'play') { S.playing ? stopPlay() : play(); syncTop(); sync(); }
+        if (a === 'undo') { S.melody.pop(); saveMelody(); }
+        if (a === 'clear') { S.melody = []; saveMelody(); }
+        if (a === 'demo') {
+          S.melody = DEMO_MELODY.map(([slot, deg]) => ({ slot, deg, who: who(slot) }));
+          saveMelody();
+          if (!S.playing) { play(); syncTop(); sync(); }
+          toast('✨ Écoute et regarde la mélodie tourner… puis efface-la et fais la tienne!');
         }
-        if (a === 'timer') {
-          if (iv) { clearInterval(iv); iv = 0; e.target.textContent = '▶ Reprendre'; return; }
-          e.target.textContent = '⏸ Pause';
-          iv = setInterval(() => {
-            left--;
-            out.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
-            if (left <= 0) {
-              clearInterval(iv); iv = 0; left = 300;
-              click(audio().currentTime, true);
-              toast('⏰ Temps! Échangez les rôles.');
-              e.target.textContent = '▶ 5 minutes';
-            }
-          }, 1000);
+        if (a === 'swap') {
+          const [x, y] = [body.querySelector('[data-p="0"]'), body.querySelector('[data-p="1"]')];
+          [x.value, y.value] = [y.value, x.value];
+          store.set('duoNames', [x.value, y.value]);
+        }
+        if (a === 'clip') recordClip();
+      });
+      // pointerdown : réaction immédiate au doigt, essentiel pour taper en rythme.
+      body.addEventListener('pointerdown', (e) => {
+        const pd = e.target.closest('[data-pad]');
+        if (pd) { e.preventDefault(); hitPad(+pd.dataset.pad); }
+      });
+      body.addEventListener('input', (e) => {
+        if (e.target.dataset.p != null) store.set('duoNames', [0, 1].map((i) => body.querySelector(`[data-p="${i}"]`).value));
+      });
+      const onKey = (e) => {
+        if (e.repeat || e.metaKey || e.ctrlKey || e.target.closest('input,textarea,select')) return;
+        const i = '12345678'.indexOf(e.key);
+        if (i >= 0) hitPad(i);
+      };
+      window.addEventListener('keydown', onKey);
+
+      // Le clip : la scène filmée (canvas) + le mixage final, pendant 2 tours de boucle.
+      let rec = null;
+      async function recordClip() {
+        if (rec) return;
+        const canvas = body.querySelector('.scene');
+        const types = ['video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm'];
+        const type = window.MediaRecorder && types.find((t) => MediaRecorder.isTypeSupported(t));
+        if (!canvas.captureStream || !type) { toast('Ce navigateur ne sait pas filmer la scène. Essaie Chrome, Edge ou Safari récent.'); return; }
+        const c = audio();
+        const dest = c.createMediaStreamDestination();
+        finalOut().connect(dest);
+        let mg = null;
+        if (mic.active) { mg = c.createGain(); mic.source.connect(mg).connect(dest); }
+        const stream = canvas.captureStream(30);
+        dest.stream.getAudioTracks().forEach((t) => stream.addTrack(t));
+        const chunks = [];
+        rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 4e6 });
+        rec.ondataavailable = (ev) => ev.data.size && chunks.push(ev.data);
+        rec.onstop = () => {
+          try { finalOut().disconnect(dest); } catch { /* déjà déconnecté */ }
+          mg?.disconnect();
+          stream.getVideoTracks().forEach((t) => t.stop());
+          const blob = new Blob(chunks, { type: type.split(';')[0] });
+          S.clips.unshift({ url: URL.createObjectURL(blob), ext: type.includes('mp4') ? 'mp4' : 'webm' });
+          rec = null;
+          S.filming = false;
+          body.querySelector('.scene-rec').hidden = true;
+          body.querySelector('.clip-btn').disabled = false;
+          sync();
+          toast('🎬 Clip prêt! Regarde-le, puis télécharge-le.');
+        };
+        if (!S.playing) { play(); syncTop(); }
+        S.filming = true;
+        body.querySelector('.scene-rec').hidden = false;
+        body.querySelector('.clip-btn').disabled = true;
+        rec.start();
+        setTimeout(() => rec?.state === 'recording' && rec.stop(), 2 * 16 * (60 / S.bpm) * 1000 + 300);
+        sync();
+      }
+
+      // Dessin de la scène
+      const stopScene = animate((now) => {
+        const { ctx, w, h } = scv;
+        if (!w) return;
+        const cx = w / 2;
+        const cy = h / 2;
+        const R = Math.min(w, h) * 0.4;
+        ctx.fillStyle = 'rgba(7,6,15,0.4)';
+        ctx.fillRect(0, 0, w, h);
+        const sixteenth = 60 / S.bpm / 4;
+        const pos = S.playing && S.cur ? ((S.cur.step + Math.max(0, audio().currentTime - S.cur.time) / sixteenth) / 2) % 32 : -1;
+        const ang = (slot) => (slot / 32) * Math.PI * 2 - Math.PI / 2;
+        const rad = (deg) => R * (0.42 + (deg / 7) * 0.5);
+        const curBar = pos < 0 ? -1 : Math.floor(pos / 8);
+
+        // Les 4 mesures : arcs + nom de l'accord
+        for (let b = 0; b < 4; b++) {
+          const col = S.mode === 'duo' ? (b % 2 ? '#ff4fb3' : '#3ee6ff') : '#ffffff';
+          const on = b === curBar;
+          ctx.strokeStyle = col;
+          ctx.globalAlpha = on ? 0.9 : 0.25;
+          ctx.lineWidth = on ? 6 : 3;
+          ctx.beginPath(); ctx.arc(cx, cy, R * 1.02, ang(b * 8) + 0.04, ang(b * 8 + 8) - 0.04); ctx.stroke();
+          const ch = chordAt(b);
+          const mid = ang(b * 8 + 4);
+          ctx.globalAlpha = on ? 1 : 0.55;
+          ctx.fillStyle = col;
+          ctx.font = `800 ${Math.round(R * (on ? 0.13 : 0.1))}px Unbounded, sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(chordName(ch.root, ch.qual), cx + Math.cos(mid) * R * 1.17, cy + Math.sin(mid) * R * 1.17);
+        }
+        ctx.globalAlpha = 1;
+        // Croches et temps
+        for (let s = 0; s < 32; s++) {
+          const a = ang(s);
+          const big = s % 2 === 0;
+          ctx.strokeStyle = 'rgba(255,255,255,' + (big ? 0.28 : 0.1) + ')';
+          ctx.lineWidth = big ? 2 : 1;
+          ctx.beginPath();
+          ctx.moveTo(cx + Math.cos(a) * R * 0.36, cy + Math.sin(a) * R * 0.36);
+          ctx.lineTo(cx + Math.cos(a) * R * 0.95, cy + Math.sin(a) * R * 0.95);
+          ctx.stroke();
+        }
+        // La mélodie : une constellation (contour mélodique) qui tourne avec la boucle
+        const notes = [...S.melody].sort((x, y) => x.slot - y.slot || x.deg - y.deg);
+        if (notes.length > 1) {
+          ctx.strokeStyle = 'rgba(255,255,255,.25)';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          notes.forEach((n, i) => {
+            const x = cx + Math.cos(ang(n.slot)) * rad(n.deg);
+            const y = cy + Math.sin(ang(n.slot)) * rad(n.deg);
+            i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+          });
+          ctx.stroke();
+        }
+        notes.forEach((n) => {
+          const x = cx + Math.cos(ang(n.slot)) * rad(n.deg);
+          const y = cy + Math.sin(ang(n.slot)) * rad(n.deg);
+          let d = pos < 0 ? 9 : (pos - n.slot + 32) % 32;
+          const lit = d < 1.2 ? 1 - d / 1.2 : 0;
+          const col = noteColor(n);
+          ctx.fillStyle = col;
+          ctx.shadowColor = col;
+          ctx.shadowBlur = 8 + lit * 40;
+          ctx.beginPath(); ctx.arc(x, y, R * (0.035 + lit * 0.04), 0, Math.PI * 2); ctx.fill();
+        });
+        ctx.shadowBlur = 0;
+        // Éclats quand on dépose une note
+        for (let i = bursts.length - 1; i >= 0; i--) {
+          const bu = bursts[i];
+          const k = (now - bu.t) / 600;
+          if (k > 1) { bursts.splice(i, 1); continue; }
+          ctx.strokeStyle = padColors[bu.deg];
+          ctx.globalAlpha = 1 - k;
+          ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.arc(cx + Math.cos(ang(bu.slot)) * rad(bu.deg), cy + Math.sin(ang(bu.slot)) * rad(bu.deg), R * (0.04 + k * 0.25), 0, Math.PI * 2); ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+        // Tête de lecture + ta voix (si le micro est allumé)
+        if (pos >= 0) {
+          const a = ang(pos);
+          const grad = ctx.createLinearGradient(cx, cy, cx + Math.cos(a) * R, cy + Math.sin(a) * R);
+          grad.addColorStop(0, 'rgba(255,255,255,0)');
+          grad.addColorStop(1, 'rgba(255,255,255,.9)');
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); ctx.stroke();
+          const v = mic.current;
+          if (v) {
+            const ms = padMidis();
+            const deg = clamp(((v.midi - ms[0]) / (ms[7] - ms[0])) * 7, -0.5, 7.5);
+            ctx.fillStyle = '#fff';
+            ctx.shadowColor = '#b6ff3e';
+            ctx.shadowBlur = 30;
+            ctx.beginPath(); ctx.arc(cx + Math.cos(a) * rad(deg), cy + Math.sin(a) * rad(deg), R * 0.05, 0, Math.PI * 2); ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+        }
+        // Centre : l'accord en cours, et à qui le tour
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#fff';
+        const bar = curBar < 0 ? 0 : curBar;
+        const ch = chordAt(bar);
+        ctx.font = `900 ${Math.round(R * 0.2)}px Unbounded, sans-serif`;
+        ctx.fillText(chordName(ch.root, ch.qual), cx, cy - R * 0.05);
+        ctx.font = `600 ${Math.round(R * 0.075)}px "Space Grotesk", sans-serif`;
+        ctx.fillStyle = S.mode === 'duo' ? (bar % 2 ? '#ff4fb3' : '#3ee6ff') : 'rgba(255,255,255,.7)';
+        const line = S.mode === 'duo'
+          ? `${bar % 2 ? 'Réponse' : 'Question'} : ${playerName(bar % 2)}`
+          : (S.playing ? `Mesure ${bar + 1} / 4` : 'Lance la boucle');
+        ctx.fillText(line, cx, cy + R * 0.15);
+        // Titre incrusté dans le clip
+        if (S.filming) {
+          const cov = store.get('cover', {});
+          ctx.textAlign = 'left';
+          ctx.textBaseline = 'alphabetic';
+          ctx.fillStyle = '#fff';
+          ctx.font = `800 ${Math.round(w * 0.04)}px Unbounded, sans-serif`;
+          ctx.fillText((cov.title || 'Sans titre').toUpperCase(), w * 0.04, h - w * 0.07);
+          ctx.font = `500 ${Math.round(w * 0.028)}px "Space Grotesk", sans-serif`;
+          ctx.fillStyle = 'rgba(255,255,255,.75)';
+          ctx.fillText(`${cov.artist || 'Artiste mystère'} · ${S.bpm} BPM · Diapason`, w * 0.04, h - w * 0.035);
         }
       });
-      disposeTab = () => clearInterval(iv);
+
+      renderPads();
+      sync();
+      onScene = sync;
+      disposeTab = () => { stopScene(); scv.dispose(); window.removeEventListener('keydown', onKey); onScene = null; if (rec?.state === 'recording') rec.stop(); };
     }
 
     // Suivi visuel du pas courant.
@@ -343,6 +610,7 @@ export default {
       let cur = null;
       while (S.queue.length && S.queue[0].time <= now) cur = S.queue.shift();
       if (!cur) return;
+      S.cur = cur;
       const st = cur.step % 16;
       const bar = Math.floor(cur.step / 16);
       el.querySelectorAll('.cell.now').forEach((c) => c.classList.remove('now'));

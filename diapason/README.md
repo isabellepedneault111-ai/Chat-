@@ -7,8 +7,8 @@ Refonte complète de « Musiqu-Action Studio ». *Diapason* veut dire à la fois
 1. **Miroir** — ta voix tracée en direct, note-cible à atteindre, aiguille de justesse, spectre.
 2. **Empreinte** — test d'étendue guidé (voix synthétique fr-CA) + **portrait vocal du groupe** qui calcule la zone où toute la classe peut chanter.
 3. **Gym vocal** — 6 exercices transposés à ta voix, cibles qui défilent, montée par demi-tons, score et records.
-4. **Rythme ↔ Note** — un train d'impulsions de 0,5 à 880 Hz : 2 : 3 est une hémiole quand c'est lent, une quinte quand c'est rapide. « Grande glissade » de 20 s et tap tempo.
-5. **Studio** — séquenceur 16 pas, 6 progressions dans 12 tonalités, « notes sûres » pour improviser, prise de voix mixée sur le beat (téléchargeable), pochette générative, fiches Solo/Duo avec minuterie.
+4. **Rythme ↔ Note** — des disques qui tournent comme des vinyles : leur contour *est* l'onde (n bosses = n clics par tour), la ligne blanche est leur somme. Jusqu'à 6 disques ajoutables (1 à 16 bosses, coupables), clavier avec notes fantômes (×2 = une octave), oscilloscope au ralenti, particules d'air, ligne du temps. 2 : 3 est une hémiole quand c'est lent, une quinte quand c'est rapide.
+5. **Studio** — séquenceur 16 pas, 6 progressions dans 12 tonalités, « notes sûres » pour improviser, prise de voix mixée sur le beat (téléchargeable), pochette générative, et la **Scène** : 8 pastilles pentatoniques pour composer une mélodie qui reste dans la boucle, visible comme une constellation qui tourne, en solo ou en duo question/réponse, exportable en **clip vidéo** (image + son + voix).
 
 Partout : 💡 pistes pédagogiques (questions, défis, liens PFEQ et compétence numérique), 🎲 défi surprise, ⛶ mode projecteur.
 

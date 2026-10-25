@@ -9,13 +9,26 @@ let noiseBuf = null;
 export function audio() {
   if (!ctx) {
     const C = window.AudioContext || window.webkitAudioContext;
+    // iPhone : sans ça, le bouton « silencieux » coupe tout le son de l'app.
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch { /* non pris en charge */ }
     ctx = new C({ latencyHint: 'interactive' });
+    // Compresseur doux + gain de rattrapage + limiteur : plus fort, sans saturer
+    // (les haut-parleurs de cellulaire en ont besoin).
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -20;
+    comp.knee.value = 12;
+    comp.ratio.value = 3;
+    const makeup = ctx.createGain();
+    makeup.gain.value = 2;
     bus = ctx.createDynamicsCompressor();
-    bus.threshold.value = -12;
-    bus.ratio.value = 4;
+    bus.threshold.value = -3;
+    bus.knee.value = 0;
+    bus.ratio.value = 20;
+    bus.attack.value = 0.002;
+    bus.release.value = 0.12;
     master = ctx.createGain();
-    master.gain.value = 0.9;
-    master.connect(bus);
+    master.gain.value = 1;
+    master.connect(comp).connect(makeup).connect(bus);
     bus.connect(ctx.destination);
   }
   if (ctx.state === 'suspended') ctx.resume();

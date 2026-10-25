@@ -15,6 +15,8 @@ export function autoCanvas(canvas) {
   const fit = () => {
     const r = canvas.getBoundingClientRect();
     const dpr = Math.min(2, window.devicePixelRatio || 1);
+    // Réassigner canvas.width efface le dessin : on ne le fait que si la taille change vraiment.
+    if (Math.abs(r.width - s.w) < 1 && Math.abs(r.height - s.h) < 1 && canvas.width === Math.max(1, Math.round(r.width * dpr))) return;
     s.w = r.width;
     s.h = r.height;
     canvas.width = Math.max(1, Math.round(r.width * dpr));

@@ -7,158 +7,240 @@ const FMIN = 0.5;
 const FMAX = 880;
 const toF = (v) => FMIN * (FMAX / FMIN) ** (v / 1000);
 const toV = (f) => (Math.log(f / FMIN) / Math.log(FMAX / FMIN)) * 1000;
-const COLORS = ['--cyan', '--violet', '--pink', '--amber', '--lime'];
+const COLORS = ['--cyan', '--violet', '--pink', '--amber', '--lime', '--orange'];
+const MAX_TRACKS = 6;
+const MAX_N = 16;
 const KB_FROM = 24; // Do1
 const KB_TO = 96; // Do7
-const WAVE_SPEED = 0.8; // périodes visibles par seconde, au maximum
+const SPIN_MAX = 1.2; // tours de disque visibles par seconde, au maximum (au-delà : ralenti)
 
 // Nombre de « ×2 » pour amener une fréquence sur le clavier (une octave = doubler).
 const octavesUp = (fr) => Math.max(0, Math.ceil(Math.log2(mtof(KB_FROM - 0.5) / fr)));
+const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+const INTERVALS = ['Unisson', 'Seconde mineure', 'Seconde majeure', 'Tierce mineure', 'Tierce majeure', 'Quarte', 'Triton', 'Quinte', 'Sixte mineure', 'Sixte majeure', 'Septième mineure', 'Septième majeure', 'Octave'];
+function intervalName(ratio) {
+  const semis = 12 * Math.log2(ratio);
+  const s = Math.round(semis);
+  const rem = ((s % 12) + 12) % 12;
+  const oct = Math.floor(s / 12) - (rem === 0 && s > 0 ? 1 : 0);
+  const name = rem === 0 && s > 0 ? INTERVALS[12] : INTERVALS[rem];
+  const cents = Math.round((semis - s) * 100);
+  return `${name}${oct > 0 ? ` + ${oct} oct.` : ''} <small class="mono">${cents >= 0 ? '+' : ''}${cents}¢</small>`;
+}
+const fmtHz = (x) => (x < 10 ? x.toFixed(2) : x.toFixed(x < 100 ? 1 : 0)).replace('.', ',');
 
 export default {
   id: 'labo',
   mount(el) {
-    let preset = RATIO_PRESETS[2];
-    let f = 1.5;
+    let presetId = 'quinte';
+    let tracks = [];
+    let f = 1.5; // fréquence du disque 1
     let playing = false;
     let nodes = null;
     let sweep = null;
-    const taps = [];
     let waveMode = 'sin';
-    let wavePhase = 0;
+    let spin = 0; // tours affichés (vitesse réelle, ou ralenti)
+    let realPhase = []; // phase réelle de chaque disque, pour la ligne du temps
+    let hits = [];
+    let flashes = [];
+    let clock = 0;
+    const taps = [];
 
     el.innerHTML = `
       <div class="mod-head">
         <div>
           <p class="eyebrow">04 · Rythme ↔ Note</p>
           <h1>Accélère un rythme… jusqu’à ce qu’il chante</h1>
-          <p class="muted">Chaque disque frappe un clic à chaque tour. Au-delà d’environ 20 clics par seconde, ton cerveau ne compte plus : il entend une <em>note</em>.</p>
+          <p class="muted">Chaque bosse d’un disque est un clic. Au-delà de ~20 clics par seconde, ton cerveau entend une <em>note</em>.</p>
         </div>
       </div>
-      <div class="chips" role="group" aria-label="Rapports">
-        ${RATIO_PRESETS.map((p) => `<button class="chip" data-preset="${p.id}"><b>${p.label}</b> ${p.name}</button>`).join('')}
-      </div>
-      <div class="labo-grid">
+      <div class="labo-layout">
         <div class="panel radar-panel">
-          <canvas class="radar" aria-label="Disques qui tournent selon les rapports choisis"></canvas>
+          <canvas class="radar" aria-label="Disques qui tournent : chaque bosse est un clic, la ligne blanche est leur somme"></canvas>
           <div class="zone-tag"></div>
+          <div class="slow-badge mono"></div>
+          <div class="notes-out"></div>
           <button class="play-orb" data-act="play" aria-label="Démarrer">▶</button>
         </div>
-        <div class="labo-side">
-          <div class="panel readouts">
-            <div><span class="muted">Vitesse</span><input class="num mono" data-in="hz" inputmode="decimal" aria-label="Fréquence en hertz"><span class="unit">Hz</span></div>
-            <div><span class="muted">Tempo</span><input class="num mono" data-in="bpm" inputmode="numeric" aria-label="Tempo en battements par minute"><span class="unit">BPM</span></div>
-            <div class="notes-out"></div>
+
+        <div class="panel ctrl-panel">
+          <div class="readouts">
+            <label><span class="muted">Disque 1</span><input class="num mono" data-in="hz" inputmode="decimal" aria-label="Fréquence du disque 1 en hertz"><span class="unit">Hz</span></label>
+            <label><span class="muted">Tempo</span><input class="num mono" data-in="bpm" inputmode="numeric" aria-label="Tempo en battements par minute"><span class="unit">BPM</span></label>
           </div>
-          <div class="panel explain"></div>
-        </div>
-      </div>
-      <div class="panel">
-        <input type="range" class="big-range" min="0" max="1000" step="1" aria-label="Vitesse, du rythme à la note">
-        <div class="range-scale mono"><span>0,5 Hz · rythme lent</span><span class="threshold">≈ 20 Hz · le seuil</span><span>880 Hz · note aiguë</span></div>
-        <div class="row">
-          <button class="btn primary" data-act="play2">▶ Démarrer</button>
-          <button class="btn" data-act="sweep">🚀 La grande glissade (20 s)</button>
-          <button class="btn" data-act="tap">👆 Tape le tempo</button>
-        </div>
-        <canvas class="strip" aria-label="Ligne du temps des clics de chaque disque"></canvas>
-      </div>
-      <div class="panel wave-panel">
-        <div class="wave-head">
-          <div>
-            <p class="eyebrow">L’onde, au ralenti</p>
-            <p class="muted small wave-caption"></p>
-          </div>
-          <div class="seg" role="group" aria-label="Forme de l’onde">
-            <button class="chip" data-wave="sin">〰 Vague pure</button>
-            <button class="chip" data-wave="click">⚡ Clics réels</button>
+          <input type="range" class="big-range" min="0" max="1000" step="1" aria-label="Vitesse, du rythme à la note">
+          <div class="range-scale mono"><span>rythme</span><span class="threshold">≈ 20 Hz · le seuil</span><span>note</span></div>
+          <div class="row">
+            <button class="btn primary" data-act="play2">▶ Démarrer</button>
+            <button class="btn" data-act="sweep">🚀 Glissade</button>
+            <button class="btn" data-act="tap">👆 Tape</button>
           </div>
         </div>
-        <canvas class="air" aria-label="Particules d’air poussées par l’onde"></canvas>
-        <canvas class="wave" aria-label="Forme de l’onde de chaque disque et leur somme"></canvas>
-        <div class="slow-tag mono"></div>
-      </div>
-      <div class="panel kb-panel">
-        <p class="eyebrow">Sur le clavier</p>
-        <p class="muted small kb-caption"></p>
-        <div class="kb-host big"></div>
-        <p class="muted small">Touche une note : la vitesse saute directement à sa fréquence.</p>
+
+        <div class="panel kb-panel">
+          <p class="kb-caption small"></p>
+          <div class="kb-host"></div>
+        </div>
+
+        <div class="panel tracks-panel">
+          <div class="panel-head"><h2>Tes disques</h2><span class="muted small cycle-info"></span></div>
+          <div class="chips scroll-x" role="group" aria-label="Mélanges prêts à essayer">
+            ${RATIO_PRESETS.map((p) => `<button class="chip" data-preset="${p.id}"><b>${p.label}</b> ${p.name}</button>`).join('')}
+            <button class="chip" data-preset="random">🎲 Surprise</button>
+          </div>
+          <ul class="tracks"></ul>
+          <button class="btn add-track" data-act="add">＋ Ajouter un disque</button>
+        </div>
+
+        <div class="panel wave-panel">
+          <div class="wave-head">
+            <p class="eyebrow">L’onde</p>
+            <div class="seg" role="group" aria-label="Forme de l’onde">
+              <button class="chip" data-wave="sin">〰 Vague pure</button>
+              <button class="chip" data-wave="click">⚡ Clics réels</button>
+            </div>
+          </div>
+          <canvas class="air" aria-label="Particules d’air poussées par l’onde"></canvas>
+          <canvas class="wave" aria-label="Forme de l’onde de chaque disque et leur somme"></canvas>
+          <canvas class="strip" aria-label="Ligne du temps : chaque clic de chaque disque, en vitesse réelle"></canvas>
+          <p class="muted small wave-caption"></p>
+        </div>
+
+        <details class="panel explain-panel">
+          <summary>Pourquoi ça marche?</summary>
+          <div class="explain"></div>
+        </details>
       </div>`;
 
     const q = (s) => el.querySelector(s);
     const radar = autoCanvas(q('.radar'));
     const strip = autoCanvas(q('.strip'));
-    const range = q('.big-range');
     const air = autoCanvas(q('.air'));
     const wave = autoCanvas(q('.wave'));
-    const kb = keyboard(q('.kb-host'), { from: KB_FROM, to: KB_TO, onPlay: (m) => { sweep = null; setF(mtof(m)); } });
+    const range = q('.big-range');
     const colors = COLORS.map(css);
-    const voices = () => preset.ratios.map((r) => (r / preset.ratios[0]));
-    let phases = [];
-    let flashes = [];
-    let hits = [];
+    const kb = keyboard(q('.kb-host'), { from: KB_FROM, to: KB_TO, onPlay: (m) => { sweep = null; setF(mtof(m)); } });
 
-    function resetVoices() {
-      phases = preset.ratios.map(() => 0);
-      flashes = preset.ratios.map(() => 0);
-      hits = preset.ratios.map(() => []);
+    // On ne touche au DOM que si le contenu change : pas de saccades pendant la glissade.
+    const memo = new Map();
+    const setHTML = (sel, html) => {
+      if (memo.get(sel) === html) return;
+      memo.set(sel, html);
+      q(sel).innerHTML = html;
+    };
+
+    const ratio = (i) => tracks[i].n / tracks[0].n;
+    const freqOf = (i) => f * ratio(i);
+    const live = () => tracks.map((t, i) => i).filter((i) => !tracks[i].muted);
+
+    function loadPreset(id) {
+      presetId = id;
+      if (id === 'random') {
+        const k = 2 + Math.floor(Math.random() * 3);
+        const set = new Set();
+        while (set.size < k) set.add(1 + Math.floor(Math.random() * 9));
+        tracks = [...set].sort((a, b) => a - b).map((n) => ({ n, muted: false }));
+      } else {
+        tracks = RATIO_PRESETS.find((p) => p.id === id).ratios.map((n) => ({ n, muted: false }));
+      }
+      tracksChanged();
+    }
+
+    function tracksChanged() {
+      realPhase = tracks.map(() => 0);
+      hits = tracks.map(() => []);
+      flashes = tracks.map(() => 0);
+      if (playing) { stopAudio(); startAudio(); }
+      renderTracks();
+      updateText(true);
+    }
+
+    function renderTracks() {
+      q('.tracks').innerHTML = tracks.map((t, i) => `
+        <li class="track ${t.muted ? 'muted' : ''}" style="--c:${colors[i]}">
+          <span class="track-dot"></span>
+          <span class="track-name">Disque ${i + 1}</span>
+          <span class="stepper">
+            <button class="icon-btn tiny" data-tr="minus" data-i="${i}" aria-label="Moins de bosses">−</button>
+            <b class="mono" aria-label="${t.n} bosses par tour">${t.n}</b>
+            <button class="icon-btn tiny" data-tr="plus" data-i="${i}" aria-label="Plus de bosses">+</button>
+          </span>
+          <button class="icon-btn tiny" data-tr="mute" data-i="${i}" aria-pressed="${t.muted}" aria-label="${t.muted ? 'Réactiver' : 'Couper'} le disque ${i + 1}">${t.muted ? '🔇' : '🔊'}</button>
+          <button class="icon-btn tiny" data-tr="del" data-i="${i}" aria-label="Retirer le disque ${i + 1}" ${tracks.length < 2 ? 'disabled' : ''}>✕</button>
+        </li>`).join('');
+      q('.add-track').disabled = tracks.length >= MAX_TRACKS;
+      el.querySelectorAll('[data-preset]').forEach((b) => b.classList.toggle('active', b.dataset.preset === presetId));
     }
 
     function setF(nf, fromInput) {
       f = clamp(nf, FMIN, FMAX);
       if (fromInput !== 'range') range.value = toV(f);
-      if (fromInput !== 'hz') q('[data-in=hz]').value = f < 10 ? f.toFixed(2).replace('.', ',') : f.toFixed(1).replace('.', ',');
+      if (fromInput !== 'hz') q('[data-in=hz]').value = fmtHz(f);
       if (fromInput !== 'bpm') q('[data-in=bpm]').value = Math.round(f * 60);
       if (nodes) {
         const c = audio();
-        voices().forEach((r, i) => nodes.oscs[i].frequency.setTargetAtTime(f * r, c.currentTime, 0.03));
+        tracks.forEach((t, i) => nodes.oscs[i].frequency.setTargetAtTime(freqOf(i), c.currentTime, 0.03));
         nodes.gain.gain.setTargetAtTime(gainFor(f), c.currentTime, 0.05);
       }
       updateText();
     }
-    const gainFor = (fr) => clamp(0.4 / Math.sqrt(Math.max(1, fr / 2)), 0.035, 0.4);
+    // Plus fort qu'avant : le compresseur de sortie protège des pics.
+    const gainFor = (fr) => clamp(1 / Math.sqrt(Math.max(1, fr / 6)), 0.2, 1);
 
-    function updateText() {
+    let lastText = 0;
+    function updateText(force) {
+      const now = performance.now();
+      if (!force && now - lastText < 90) return;
+      lastText = now;
       const zone = f < 8 ? 'rythme' : f < 20 ? 'flou' : 'note';
       const tag = q('.zone-tag');
-      tag.dataset.zone = zone;
-      tag.textContent = zone === 'rythme' ? 'Tu entends un RYTHME' : zone === 'flou' ? 'Zone floue : ni rythme, ni note…' : 'Tu entends une NOTE';
-      q('.notes-out').innerHTML = zone === 'note'
-        ? voices().map((r, i) => {
-          const m = ftom(f * r);
-          const cents = Math.round((m - Math.round(m)) * 100);
-          return `<span class="note-chip" style="--c:${colors[i]}">${nameFR(m)}<small>${cents >= 0 ? '+' : ''}${cents}¢</small></span>`;
-        }).join('')
-        : `<span class="muted">Les noms de notes apparaissent au-delà de 20 Hz.</span>`;
-      q('.explain').innerHTML = `
-        <p class="eyebrow">${preset.label} · ${preset.name}</p>
-        <div class="ex-two">
-          <div class="${zone === 'rythme' ? 'on' : ''}"><b>Lent → en rythme</b><p>${preset.rhythm}</p></div>
-          <div class="${zone === 'note' ? 'on' : ''}"><b>Rapide → en harmonie</b><p>${preset.pitch}</p></div>
-        </div>
-        <p class="muted small">Même rapport, deux sensations. C’est la même fraction qui se cache dans le rythme et dans l’accord.</p>`;
-      el.querySelectorAll('[data-preset]').forEach((b) => b.classList.toggle('active', b.dataset.preset === preset.id));
+      if (tag.dataset.zone !== zone) {
+        tag.dataset.zone = zone;
+        tag.textContent = zone === 'rythme' ? 'Tu entends un RYTHME' : zone === 'flou' ? 'Zone floue…' : 'Tu entends une NOTE';
+      }
+      setHTML('.notes-out', zone === 'note'
+        ? tracks.map((t, i) => (t.muted ? '' : `<span class="note-chip" style="--c:${colors[i]}">${nameFR(ftom(freqOf(i)))}</span>`)).join('')
+        : '');
+      const g = tracks.reduce((a, t) => gcd(a, t.n), 0);
+      setHTML('.cycle-info', tracks.length > 1 ? `Tous ensemble ${g > 1 ? `${g} fois` : '1 fois'} par tour` : '');
       updateKeyboard(zone);
+      updateExplain();
     }
 
     // Allume la touche de chaque disque. Sous le seuil, on « monte » le rythme
     // d'octave en octave (×2) jusqu'au clavier : sa note fantôme apparaît.
+    let kbKey = '';
     function updateKeyboard(zone) {
+      const ids = live();
+      const n = ids.length ? octavesUp(Math.min(...ids.map(freqOf))) : 0;
+      const marks = ids.map((i) => [clamp(Math.round(ftom(freqOf(i) * 2 ** n)), KB_FROM, KB_TO), i]);
+      const key = `${n}|${marks.join(';')}|${zone}`;
+      if (key === kbKey) return;
+      kbKey = key;
       kb.keys.forEach((k) => { k.classList.remove('k-lit', 'k-ghost'); k.style.removeProperty('--lc'); });
-      const n = octavesUp(f * Math.min(...voices()));
-      const lines = [];
-      voices().forEach((r, i) => {
-        const m = Math.round(ftom(f * r * 2 ** n));
-        const k = kb.keys.get(clamp(m, KB_FROM, KB_TO));
-        if (!k) return;
+      marks.forEach(([m, i]) => {
+        const k = kb.keys.get(m);
         k.classList.add(n ? 'k-ghost' : 'k-lit');
         k.style.setProperty('--lc', colors[i]);
-        lines.push(`<b style="color:${colors[i]}">${nameFR(m)}</b>`);
       });
-      const fmt = (x) => (x < 10 ? x.toFixed(2) : x.toFixed(0)).replace('.', ',');
-      q('.kb-caption').innerHTML = n === 0
-        ? `Ce que tu entends : ${lines.join(' + ')}.`
-        : `Trop lent pour être une note… mais double-le ${n} fois (×2${n > 1 ? `<sup>${n}</sup> = ×${2 ** n}` : ''}) : ${fmt(f)} Hz devient ${fmt(f * 2 ** n)} Hz, et ce rythme <em>est</em> ${lines.join(' + ')}, ${n} octave${n > 1 ? 's' : ''} plus bas. Les touches pointillées sont ses notes fantômes.${zone === 'flou' ? ' Accélère encore un peu…' : ''}`;
+      const names = marks.map(([m, i]) => `<b style="color:${colors[i]}">${nameFR(m)}</b>`).join(' + ');
+      setHTML('.kb-caption', n === 0
+        ? `🎹 Tu entends : ${names}`
+        : `🎹 Trop lent pour être une note… double-le ${n} fois (×${2 ** n}) et ce rythme <em>est</em> ${names}. Touches pointillées = notes fantômes.`);
+    }
+
+    function updateExplain() {
+      const p = RATIO_PRESETS.find((x) => x.id === presetId);
+      const ids = live();
+      const label = tracks.map((t) => t.n).join(' : ');
+      const rows = ids.slice(1).map((i) => `<li><span style="color:${colors[i]}">${tracks[i].n}/${tracks[0].n}</span> → ${intervalName(ratio(i))}</li>`).join('');
+      setHTML('.explain', `
+        <p class="eyebrow">${label}${p ? ` · ${p.name}` : ' · Ton mélange'}</p>
+        <div class="ex-two">
+          <div><b>Lent → en rythme</b><p>${p ? p.rhythm : `Un polyrythme ${label} : chaque disque frappe ${tracks.map((t) => t.n).join(', ')} fois par tour.`}</p></div>
+          <div><b>Rapide → en harmonie</b><p>${p ? p.pitch : 'Les mêmes fractions deviennent des intervalles :'}</p>${rows ? `<ul class="iv-list">${rows}</ul>` : ''}</div>
+        </div>
+        <p class="muted small">Même fraction, deux sensations. Les petites fractions (2/1, 3/2, 4/3) sonnent « simples » dans les deux mondes.</p>`);
     }
 
     function startAudio() {
@@ -168,15 +250,26 @@ export default {
       gain.gain.setTargetAtTime(gainFor(f), c.currentTime, 0.05);
       const lp = c.createBiquadFilter();
       lp.type = 'lowpass';
-      lp.frequency.value = 5000;
+      lp.frequency.value = 6000;
       gain.connect(lp).connect(out());
-      const oscs = voices().map((r) => {
-        const o = impulseOsc(f * r);
-        o.connect(gain);
+      const per = 1 / Math.sqrt(Math.max(1, live().length));
+      const tg = [];
+      const oscs = tracks.map((t, i) => {
+        const o = impulseOsc(freqOf(i));
+        const g = c.createGain();
+        g.gain.value = t.muted ? 0 : per;
+        o.connect(g).connect(gain);
         o.start();
+        tg.push(g);
         return o;
       });
-      nodes = { gain, oscs, lp };
+      nodes = { gain, oscs, lp, tg };
+    }
+    function updateMutes() {
+      if (!nodes) return;
+      const c = audio();
+      const per = 1 / Math.sqrt(Math.max(1, live().length));
+      tracks.forEach((t, i) => nodes.tg[i].gain.setTargetAtTime(t.muted ? 0 : per, c.currentTime, 0.02));
     }
     function stopAudio() {
       if (!nodes) return;
@@ -188,7 +281,7 @@ export default {
     }
     function setPlaying(on) {
       playing = on;
-      if (on) { resetVoices(); startAudio(); } else { stopAudio(); sweep = null; }
+      if (on) { realPhase = tracks.map(() => 0); spin = 0; startAudio(); } else { stopAudio(); sweep = null; }
       q('.play-orb').hidden = on;
       q('[data-act=play2]').textContent = on ? '■ Arrêter' : '▶ Démarrer';
     }
@@ -197,15 +290,27 @@ export default {
       const wb = e.target.closest('[data-wave]');
       if (wb) { waveMode = wb.dataset.wave; syncWaveButtons(); return; }
       const pb = e.target.closest('[data-preset]');
-      if (pb) {
-        preset = RATIO_PRESETS.find((p) => p.id === pb.dataset.preset);
-        if (playing) { stopAudio(); startAudio(); }
-        resetVoices();
-        updateText();
+      if (pb) { loadPreset(pb.dataset.preset); return; }
+      const tb = e.target.closest('[data-tr]');
+      if (tb) {
+        const i = +tb.dataset.i;
+        const t = tracks[i];
+        const a = tb.dataset.tr;
+        if (a === 'mute') { t.muted = !t.muted; renderTracks(); updateMutes(); updateText(true); return; }
+        if (a === 'plus') t.n = Math.min(MAX_N, t.n + 1);
+        if (a === 'minus') t.n = Math.max(1, t.n - 1);
+        if (a === 'del' && tracks.length > 1) tracks.splice(i, 1);
+        presetId = 'custom';
+        tracksChanged();
         return;
       }
       const act = e.target.closest('[data-act]')?.dataset.act;
       if (act === 'play' || act === 'play2') setPlaying(!playing);
+      if (act === 'add' && tracks.length < MAX_TRACKS) {
+        tracks.push({ n: Math.min(MAX_N, Math.max(...tracks.map((t) => t.n)) + 1), muted: false });
+        presetId = 'custom';
+        tracksChanged();
+      }
       if (act === 'sweep') {
         if (!playing) setPlaying(true);
         sweep = { t0: performance.now(), from: 1, to: 220, dur: 20000 };
@@ -223,122 +328,138 @@ export default {
     });
     function syncWaveButtons() {
       el.querySelectorAll('[data-wave]').forEach((b) => b.classList.toggle('active', b.dataset.wave === waveMode));
+      q('.wave-caption').textContent = waveMode === 'sin'
+        ? 'Chaque couleur, un disque dessiné comme une vague. En blanc, leur somme : ce que ton tympan reçoit. En bas, la ligne du temps en vitesse réelle : quand les traits se collent, c’est une note.'
+        : 'La vraie forme du son ici : un pic à chaque bosse. Même fréquence, autre forme : c’est ce qui change le timbre.';
     }
-    syncWaveButtons();
-
     range.addEventListener('input', () => { sweep = null; setF(toF(+range.value), 'range'); });
     q('[data-in=hz]').addEventListener('change', (e) => { const v = parseFloat(e.target.value.replace(',', '.')); if (v > 0) setF(v, 'hz'); });
     q('[data-in=bpm]').addEventListener('change', (e) => { const v = parseFloat(e.target.value); if (v > 0) setF(v / 60, 'bpm'); });
 
+    // Forme d'un disque à la phase ph (en bosses). En mode « clics », une impulsion
+    // étroite par bosse : la ligne se brise en pics.
+    const shape = (ph) => {
+      if (waveMode === 'sin') return Math.cos(ph * Math.PI * 2);
+      const d = ph - Math.round(ph);
+      return Math.exp(-((d / 0.035) ** 2)) * 1.6 - 0.6;
+    };
+    const sumAt = (turns) => {
+      const ids = live();
+      if (!ids.length) return 0;
+      return ids.reduce((s, i) => s + shape(tracks[i].n * turns), 0) / ids.length;
+    };
+
     let last = performance.now();
-    let clock = 0;
     const stop = animate((now) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       if (sweep) {
         const k = Math.min(1, (now - sweep.t0) / sweep.dur);
         setF(sweep.from * (sweep.to / sweep.from) ** k);
-        if (k >= 1) sweep = null;
+        if (k >= 1) { sweep = null; updateText(true); }
       }
-      const vs = voices();
+      const turnRate = f / tracks[0].n; // tours réels par seconde
+      const shown = Math.min(turnRate, SPIN_MAX);
       if (playing) {
         clock += dt;
-        vs.forEach((r, i) => {
-          const before = phases[i];
-          phases[i] += f * r * dt;
-          const wraps = Math.floor(phases[i]) - Math.floor(before);
-          if (wraps > 0) {
-            flashes[i] = 1;
-            for (let k = 0; k < Math.min(wraps, 40); k++) hits[i].push(clock);
-          }
-          flashes[i] *= 0.86;
+        const before = spin;
+        spin += shown * dt;
+        tracks.forEach((t, i) => {
+          if (Math.floor(spin * t.n) > Math.floor(before * t.n)) flashes[i] = 1;
+          flashes[i] *= 0.84;
+          const pb = realPhase[i];
+          realPhase[i] += freqOf(i) * dt;
+          const wraps = Math.floor(realPhase[i]) - Math.floor(pb);
+          for (let k = 0; k < Math.min(wraps, 40); k++) hits[i].push(clock);
           while (hits[i].length && hits[i][0] < clock - 3) hits[i].shift();
           if (hits[i].length > 1200) hits[i].splice(0, hits[i].length - 1200);
         });
-        // L'onde avance au ralenti : jamais plus de WAVE_SPEED périodes par seconde.
-        wavePhase += Math.min(f, WAVE_SPEED) * dt;
       }
-      drawWave(vs);
-
-      // Radar, avec persistance rétinienne simulée (on efface partiellement).
-      const { ctx, w, h } = radar;
-      if (w) {
-        ctx.fillStyle = 'rgba(8,7,16,0.24)';
-        ctx.fillRect(0, 0, w, h);
-        const cx = w / 2;
-        const cy = h / 2;
-        const R = Math.min(w, h) * 0.44;
-        vs.forEach((r, i) => {
-          const rad = R * (1 - i * (0.62 / Math.max(1, vs.length)));
-          const col = colors[i];
-          const fr = f * r;
-          ctx.strokeStyle = 'rgba(255,255,255,.1)';
-          ctx.lineWidth = 1;
-          ctx.beginPath(); ctx.arc(cx, cy, rad, 0, Math.PI * 2); ctx.stroke();
-          if (!playing) return;
-          const sweepFrac = fr * dt;
-          const a1 = phases[i] * Math.PI * 2 - Math.PI / 2;
-          ctx.fillStyle = col;
-          if (sweepFrac >= 1) {
-            ctx.globalAlpha = 0.18;
-            ctx.beginPath(); ctx.arc(cx, cy, rad, 0, Math.PI * 2); ctx.fill();
-          } else {
-            const a0 = a1 - sweepFrac * Math.PI * 2;
-            ctx.globalAlpha = clamp(0.06 / Math.max(0.01, sweepFrac), 0.12, 0.9);
-            ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, rad, a0, a1); ctx.closePath(); ctx.fill();
-            ctx.globalAlpha = 1;
-            ctx.strokeStyle = col;
-            ctx.lineWidth = 3;
-            ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a1) * rad, cy + Math.sin(a1) * rad); ctx.stroke();
-          }
-          ctx.globalAlpha = 1;
-          // Point de frappe en haut du disque
-          const fl = sweepFrac > 0.3 ? 0.6 : flashes[i];
-          ctx.shadowColor = col;
-          ctx.shadowBlur = 10 + fl * 30;
-          ctx.fillStyle = col;
-          ctx.beginPath(); ctx.arc(cx, cy - rad, 5 + fl * 7, 0, Math.PI * 2); ctx.fill();
-          ctx.shadowBlur = 0;
-        });
-        ctx.fillStyle = '#fff';
-        ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI * 2); ctx.fill();
-      }
-
-      // Bande de temps : chaque clic, chaque disque.
-      const s = strip;
-      if (s.w) {
-        const c2 = s.ctx;
-        c2.clearRect(0, 0, s.w, s.h);
-        const rowH = s.h / Math.max(1, vs.length);
-        vs.forEach((r, i) => {
-          c2.fillStyle = 'rgba(255,255,255,.04)';
-          c2.fillRect(0, i * rowH + 2, s.w, rowH - 4);
-          c2.fillStyle = colors[i];
-          for (const t of hits[i]) {
-            const x = s.w - ((clock - t) / 3) * s.w;
-            c2.fillRect(x, i * rowH + 4, 2, rowH - 8);
-          }
-        });
-      }
+      const slow = turnRate / SPIN_MAX;
+      const badge = !playing ? '' : slow > 1.05 ? `ralenti ×${Math.round(slow).toLocaleString('fr-CA')}` : 'vitesse réelle';
+      const sb = q('.slow-badge');
+      if (sb.textContent !== badge) sb.textContent = badge;
+      drawRadar();
+      drawWave();
+      drawStrip();
     });
 
-    // Forme d'un disque à la phase ph (en tours). En mode « clics », une impulsion
-    // étroite à chaque tour : c'est la vraie forme du son qu'on entend ici.
-    const shape = (ph) => {
-      if (waveMode === 'sin') return Math.sin(ph * Math.PI * 2);
-      const d = ph - Math.round(ph);
-      return Math.exp(-((d / 0.035) ** 2)) * 1.6 - 0.6;
-    };
+    // Les disques tournent comme des vinyles sous une tête de lecture fixe (en haut).
+    // Leur contour EST l'onde : n bosses = n clics par tour.
+    function drawRadar() {
+      const { ctx, w, h } = radar;
+      if (!w) return;
+      ctx.fillStyle = 'rgba(8,7,16,0.35)';
+      ctx.fillRect(0, 0, w, h);
+      const cx = w / 2;
+      const cy = h / 2 + 8;
+      const R = Math.min(w, h) * 0.42;
+      const multi = live().length > 1;
+      const rings = tracks.length + (multi ? 1 : 0);
+      const gap = (R * 0.78) / Math.max(1, rings);
+      const amp = Math.min(gap * 0.42, R * 0.08);
+      const rot = spin * Math.PI * 2;
+      const steps = 360;
+      const ring = (rad, fn, color, width, alpha) => {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        for (let s = 0; s <= steps; s++) {
+          const th = (s / steps) * Math.PI * 2;
+          const r = rad + fn((th - rot) / (Math.PI * 2)) * amp;
+          const x = cx + Math.sin(th) * r;
+          const y = cy - Math.cos(th) * r;
+          s ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.closePath();
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      };
+      // Anneau extérieur blanc : la somme, la ligne qui se « brise » quand les disques se combinent.
+      let rad = R;
+      if (multi) {
+        ctx.shadowColor = '#fff';
+        ctx.shadowBlur = 12;
+        ring(rad, (t) => sumAt(-t), '#fff', 3, 0.95);
+        ctx.shadowBlur = 0;
+        rad -= gap;
+      }
+      tracks.forEach((t, i) => {
+        const col = colors[i];
+        if (t.muted) {
+          ctx.setLineDash([3, 6]);
+          ring(rad, () => 0, col, 1.5, 0.35);
+          ctx.setLineDash([]);
+        } else {
+          ctx.shadowColor = col;
+          ctx.shadowBlur = 6 + flashes[i] * 22;
+          ring(rad, (u) => shape(-t.n * u), col, 2.5, 0.95);
+          ctx.shadowBlur = 0;
+          // Éclair sur la tête de lecture à chaque bosse
+          const fl = playing && f / tracks[0].n > SPIN_MAX * 1.05 ? 0.5 : flashes[i];
+          ctx.fillStyle = col;
+          ctx.shadowColor = col;
+          ctx.shadowBlur = 10 + fl * 30;
+          ctx.beginPath(); ctx.arc(cx, cy - rad - amp, 4 + fl * 8, 0, Math.PI * 2); ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+        rad -= gap;
+      });
+      // Tête de lecture
+      ctx.strokeStyle = 'rgba(255,255,255,.55)';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(cx, cy - R - amp - 16); ctx.lineTo(cx, cy - rad + gap * 0.3); ctx.stroke();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.moveTo(cx - 7, cy - R - amp - 22); ctx.lineTo(cx + 7, cy - R - amp - 22); ctx.lineTo(cx, cy - R - amp - 12); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI * 2); ctx.fill();
+    }
 
-    function drawWave(vs) {
-      const slow = f / WAVE_SPEED;
-      q('.slow-tag').textContent = !playing ? 'en pause' : slow > 1.05 ? `ralenti ×${Math.round(slow).toLocaleString('fr-CA')}` : 'vitesse réelle';
-      q('.wave-caption').textContent = waveMode === 'sin'
-        ? 'Chaque couleur, un disque dessiné comme une vague. En blanc, leur somme : ce que ton tympan reçoit. Regarde le motif se répéter.'
-        : 'La vraie forme ici : un pic à chaque tour de disque. Même fréquence, autre forme : c’est ce qui change le timbre.';
-      const periods = 4; // la fenêtre montre 4 tours du premier disque
-      const val = (x, w) => vs.map((r) => shape((wavePhase - (x / w) * periods) * r));
+    function drawWave() {
+      const periods = 2; // la fenêtre montre 2 tours de disque
       const { ctx, w, h } = wave;
+      const ids = live();
+      const val = (x, ww) => tracks.map((t) => shape(t.n * (spin - (x / ww) * periods)));
       if (w) {
         ctx.clearRect(0, 0, w, h);
         const mid = h / 2;
@@ -349,42 +470,42 @@ export default {
         const step = 2;
         const cols = [];
         for (let x = 0; x <= w; x += step) cols.push(val(x, w));
-        vs.forEach((_, i) => {
+        const multi = ids.length > 1;
+        ids.forEach((i) => {
           ctx.strokeStyle = colors[i];
-          ctx.globalAlpha = vs.length > 1 ? 0.55 : 1;
+          ctx.globalAlpha = multi ? 0.5 : 1;
           ctx.lineWidth = 2;
           ctx.beginPath();
-          cols.forEach((v, j) => { const y = mid - v[i] * amp * (vs.length > 1 ? 0.5 : 1); j ? ctx.lineTo(j * step, y) : ctx.moveTo(0, y); });
+          cols.forEach((v, j) => { const y = mid - v[i] * amp * (multi ? 0.5 : 1); j ? ctx.lineTo(j * step, y) : ctx.moveTo(0, y); });
           ctx.stroke();
         });
         ctx.globalAlpha = 1;
-        if (vs.length > 1) {
+        if (multi) {
           ctx.strokeStyle = '#fff';
           ctx.lineWidth = 3;
           ctx.shadowColor = '#fff';
           ctx.shadowBlur = 8;
           ctx.beginPath();
-          cols.forEach((v, j) => { const y = mid - (v.reduce((a, b) => a + b, 0) / vs.length) * amp; j ? ctx.lineTo(j * step, y) : ctx.moveTo(0, y); });
+          cols.forEach((v, j) => { const y = mid - (ids.reduce((a, i) => a + v[i], 0) / ids.length) * amp; j ? ctx.lineTo(j * step, y) : ctx.moveTo(0, y); });
           ctx.stroke();
           ctx.shadowBlur = 0;
         }
       }
-      // L'air : chaque particule est poussée puis tirée par l'onde. Les zones
-      // serrées sont les compressions qui voyagent jusqu'à l'oreille.
+      // L'air : chaque particule est poussée puis tirée par l'onde.
       const a = air;
       if (a.w) {
         a.ctx.clearRect(0, 0, a.w, a.h);
-        const gap = 14;
-        const rows = Math.max(1, Math.floor(a.h / gap));
+        const gapPx = 14;
+        const rows = Math.max(1, Math.floor(a.h / gapPx));
         a.ctx.fillStyle = '#fff';
-        for (let x = gap / 2; x < a.w; x += gap) {
-          const v = val(x, a.w).reduce((s2, b) => s2 + b, 0) / vs.length;
-          const dx = (playing ? v : 0) * gap * 0.7;
+        for (let x = gapPx / 2; x < a.w; x += gapPx) {
+          const v = sumAt(spin - (x / a.w) * periods);
+          const dx = (playing ? v : 0) * gapPx * 0.7;
           for (let r = 0; r < rows; r++) {
             const jitter = ((x * 7 + r * 13) % 5) - 2;
             a.ctx.globalAlpha = 0.35 + 0.5 * clamp((v + 1) / 2, 0, 1);
             a.ctx.beginPath();
-            a.ctx.arc(x + dx, gap / 2 + r * gap + jitter, 2.2, 0, Math.PI * 2);
+            a.ctx.arc(x + dx, gapPx / 2 + r * gapPx + jitter, 2.2, 0, Math.PI * 2);
             a.ctx.fill();
           }
         }
@@ -392,7 +513,27 @@ export default {
       }
     }
 
-    resetVoices();
+    // Ligne du temps en vitesse réelle : chaque clic, chaque disque.
+    function drawStrip() {
+      const s = strip;
+      if (!s.w) return;
+      const c2 = s.ctx;
+      c2.clearRect(0, 0, s.w, s.h);
+      const rowH = s.h / Math.max(1, tracks.length);
+      tracks.forEach((t, i) => {
+        c2.fillStyle = 'rgba(255,255,255,.04)';
+        c2.fillRect(0, i * rowH + 1, s.w, rowH - 2);
+        if (t.muted) return;
+        c2.fillStyle = colors[i];
+        for (const ht of hits[i]) {
+          const x = s.w - ((clock - ht) / 3) * s.w;
+          c2.fillRect(x, i * rowH + 2, 2, rowH - 4);
+        }
+      });
+    }
+
+    syncWaveButtons();
+    loadPreset(presetId);
     setF(f);
     return () => { stop(); stopAudio(); radar.dispose(); strip.dispose(); air.dispose(); wave.dispose(); kb.dispose(); };
   },
