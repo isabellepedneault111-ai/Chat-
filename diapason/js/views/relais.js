@@ -7,6 +7,7 @@ import { toast, store } from '../ui.js';
 import { esc, ago, espaceGate } from './carnet.js';
 import { memberColor, MEMBERS } from '../duo.js';
 import { ecrire } from '../ecrire.js';
+import { togglePerle } from './coffre.js';
 
 // Les intentions : ce qu'on aimerait que l'autre en fasse. On peut en choisir plusieurs, et l'écrire.
 export const GROUPES = [
@@ -197,11 +198,13 @@ export default {
           <h3>${esc(e.title)}</h3>
           ${base ? `<p class="muted small">${e.audio ? 'Posé sur' : 'Écrit sur'} « ${esc(base.title)} » de ${esc(base.author)}</p>` : ''}
           ${e.type === 'note' && e.body ? `<blockquote class="rl-words">${esc(e.body).replace(/\n/g, '<br>')}</blockquote>` : ''}
+          ${e.audio ? '' : `<div class="rl-acts"><button class="btn small ghost ${e.data?.perle ? 'on' : ''}" data-r="perle">${e.data?.perle ? '✦ Dans le coffre' : '✦ Au coffre'}</button></div>`}
           ${e.audio ? `<div class="rl-acts">
             <button class="btn small ${isPlaying ? 'on' : ''}" data-r="play">${isPlaying ? '■ Arrêter' : layers > 1 ? `▶ Les ${layers} couches ensemble` : '▶ Écouter'}</button>
             <button class="btn small" data-r="over">● Par-dessus</button>
             <button class="btn small" data-r="write">✎ Écrire dessus</button>
             <button class="btn small ghost" data-r="reply">↩ Renvoyer un son</button>
+            <button class="btn small ghost ${e.data?.perle ? 'on' : ''}" data-r="perle">${e.data?.perle ? '✦ Dans le coffre' : '✦ Au coffre'}</button>
           </div>` : ''}
         </article>`;
     }
@@ -340,6 +343,7 @@ export default {
       if (!r) return;
       const item = e.target.closest('.rl-item');
       const entry = item && espace.entries.find((x) => x.id === item.dataset.id);
+      if (r === 'perle' && entry) { await togglePerle(entry); return; }
       if (r === 'rec') startRec();
       if (r === 'send') send();
       if (r === 'redo') { URL.revokeObjectURL(pending.url); const base = pending.base; pending = null; renderReview(); if (base) renderWork(); }

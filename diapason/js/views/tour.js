@@ -59,7 +59,7 @@ export function startTour(preview) {
        <a class="btn big" href="#/depart" data-t="end">③ Ton point de départ (5 min)</a>
        <button class="btn big ghost" data-t="end">Explorer seul</button>
      </div>
-     <p class="t-src">Cette visite ne reviendra plus. Elle reste dans le Mur → Réglages.</p>`,
+     <p class="t-src">Cette visite ne reviendra plus. Elle t’attend dans le coffre (l’icône du petit coffre, en haut), avec la vidéo.</p>`,
   ];
 
   const box = document.createElement('div');

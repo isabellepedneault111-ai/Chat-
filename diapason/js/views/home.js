@@ -43,6 +43,22 @@ export default {
       </section>`;
     }
 
+    // Notre fil : de la même pièce à chacun de son côté, le mouvement ne s'arrête jamais.
+    function filHTML() {
+      const last = (f) => Math.max(0, ...espace.entries.filter(f).map((e) => e.data?.doneAt || e.createdAt));
+      const live = activeSession();
+      const modes = [
+        ['Dans la même pièce', 'Session duo, grand texte, raccourcis clavier : l’app s’efface, on joue.', '#/session', last((e) => e.type === 'session' && e.data?.format?.startsWith('duo') && e.data?.done)],
+        ['À distance, en même temps', 'La même session sur deux écrans, synchronisée : pause, phases, prises.', '#/session', live ? Date.now() : 0],
+        ['À distance, chacun son temps', 'Le relais : un son, une couche par-dessus, des mots, un cadavre exquis.', '#/relais', last((e) => e.data?.relais || (e.type === 'jeu' && e.data?.kind === 'cadavre'))],
+        ['Seul, pour nous deux', 'Micro-session, ambiances, grimoire : ce qu’on fait seul nourrit le duo.', '#/ambiances', last((e) => (e.type === 'session' && e.data?.format === 'solo') || e.type === 'paroles')],
+      ];
+      return `<section class="fil" aria-label="Notre fil">
+        <p class="fil-k">Notre fil <span>en présence · à distance · en même temps · chacun son temps</span><a class="fil-coffre" href="#/coffre">✦ Le coffre</a></p>
+        <div class="fil-row">${modes.map(([t, d, h, at], i) => `<a class="fil-m ${at && Date.now() - at < 7 * 864e5 ? 'warm' : ''}" href="${h}"><span class="fil-n">${i + 1}</span><b>${t}</b><small>${d}</small><em>${live && i === 1 ? 'en ce moment' : at ? ago(at) : 'pas encore'}</em></a>`).join('<i class="fil-link" aria-hidden="true"></i>')}</div>
+      </section>`;
+    }
+
     function render() {
       if (espace.connected && espace.me && !espace.meta.seen?.[espace.me]) updateEspace({ seen: { ...(espace.meta.seen || {}), [espace.me]: Date.now() } }).catch(() => {});
       if (!espace.connected || !espace.me) {
@@ -66,7 +82,7 @@ export default {
           <p>Objectifs, voix, styles, besoins : chacun le sien, puis notre portrait commun. C’est lui qui nourrit le plan.</p>
           <span class="e1-who">${portraits.map((x) => `<span style="--c:${memberColor(x.m)}" class="${x.ok ? 'ok' : ''}">${esc(x.m)} ${x.ok ? '✓' : '· à faire'}</span>`).join('')}</span>
         </a>` : '';
-      if (!start && !editingVision) { el.innerHTML = todayHTML() + head + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
+      if (!start && !editingVision) { el.innerHTML = todayHTML() + filHTML() + head + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
       if (editingVision) { el.innerHTML = head + setupHTML(!!start); return; }
 
       const m = currentMonth();
@@ -84,6 +100,7 @@ export default {
       const v = espace.meta.vision || {};
       el.innerHTML = `
         ${todayHTML()}
+        ${filHTML()}
         ${head}
         <section class="plan-hero">
           <div class="month-now">

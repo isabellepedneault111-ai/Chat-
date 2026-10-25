@@ -15,9 +15,11 @@ const MODES = [
   ['libre', 'Dans l’accord', 'Chante n’importe quelle note de l’accord de Frog.'],
   ['note', 'Frog donne la note', 'Frog joue UNE note : Zaza la reprend, à l’octave qui lui va.'],
   ['harmonie', 'Harmonie', 'Chante une note de l’accord… mais pas celle du dessus que joue Frog : vous voilà à deux voix.'],
+  ['ailleurs', 'Hors des sentiers', 'Les notes de couleur : la 9e, la 11e, la 13e. Ça frotte, ça brille : c’est souvent là qu’une mélodie devient la vôtre.'],
   ['duel', 'Duel inversé', 'Zaza chante une mélodie, Frog cherche les accords qui la portent. Cette fois, le score est pour lui.'],
 ];
 const QUAL = { M: '', m: 'm' };
+const COULEUR = { 2: '9e', 5: '11e', 6: '11e augmentée', 9: '13e' };
 // Les accords (majeurs et mineurs) qui contiennent une note : elle y est fondamentale, tierce ou quinte.
 function chordsWith(pc) {
   return [[pc, 'M'], [mod12(pc - 4), 'M'], [mod12(pc - 7), 'M'], [pc, 'm'], [mod12(pc - 3), 'm'], [mod12(pc - 7), 'm']].map(([r, q]) => FR[r] + QUAL[q]);
@@ -128,6 +130,8 @@ export default {
       if (!ci) return [];
       if (mode === 'note') return [mod12(ci.top)];
       if (mode === 'duel') return ci.pcs;
+      // 9e, 11e (augmentée si l'accord est majeur), 13e : hors de l'accord, mais dans sa couleur.
+      if (mode === 'ailleurs') { const minor = ci.pcs.includes(mod12(ci.root + 3)) && !ci.pcs.includes(mod12(ci.root + 4)); return [2, minor ? 5 : 6, 9].map((iv) => mod12(ci.root + iv)).filter((p) => !ci.pcs.includes(p)); }
       if (mode === 'harmonie') return ci.pcs.filter((p) => p !== mod12(ci.top));
       return ci.pcs;
     }
@@ -158,10 +162,10 @@ export default {
       if (p && tg.length) {
         const pc = mod12(p.midi);
         const cents = (p.midi - Math.round(p.midi)) * 100;
-        if (tg.includes(pc) && Math.abs(cents) <= 35) hit = { pc, role: ROLE[mod12(pc - ci.root)] };
+        if (tg.includes(pc) && Math.abs(cents) <= 35) hit = { pc, role: mode === 'ailleurs' ? COULEUR[mod12(pc - ci.root)] : ROLE[mod12(pc - ci.root)] };
       }
       // Carte : temps chanté et temps juste, accord par accord (pas en duel : là, c'est Frog qu'on évalue).
-      if (p && ci && mode !== 'duel') { const k = ci.label; pend[k] = pend[k] || { s: 0, j: 0 }; pend[k].s += dt; if (hit) pend[k].j += dt; }
+      if (p && ci && mode !== 'duel' && mode !== 'ailleurs') { const k = ci.label; pend[k] = pend[k] || { s: 0, j: 0 }; pend[k].s += dt; if (hit) pend[k].j += dt; }
       if (now - lastFlush > 20000 && Object.keys(pend).length) flush();
       if (p) {
         voicedTime += dt;
@@ -183,6 +187,8 @@ export default {
         q('.acc-now').innerHTML = sung == null ? '<span>Zaza, chante ta mélodie…</span>'
           : hit ? `<b>Ton accord porte sa note</b> : son ${FR[sung]} est la <em>${hit.role}</em> de ${FR[ci.root]}`
             : `<span>Sa note : <b>${FR[sung]}</b>. Essaie ${chordsWith(sung).slice(0, 4).join(', ')}</span>`;
+      } else if (mode === 'ailleurs') {
+        q('.acc-now').innerHTML = hit ? `<b>Hors des sentiers</b> : tu tiens la <em>${hit.role}</em> de ${FR[ci.root]}` : p ? `<span>${nameFR(p.midi)} · cherche une note allumée</span>` : (ci ? '<span>Va chercher la couleur…</span>' : '<span>En attente d’un accord de Frog…</span>');
       } else q('.acc-now').innerHTML = hit ? `<b>Dans l’accord</b> tu tiens la <em>${hit.role}</em> de ${FR[ci.root]}` : p ? `<span>${nameFR(p.midi)}</span>` : (ci ? '<span>Chante!</span>' : '<span>En attente d’un accord de Frog…</span>');
       q('.acc-stage').classList.toggle('lit', !!hit);
 
@@ -200,7 +206,7 @@ export default {
         if (target || m % 12 === 0) {
           ctx.fillStyle = target ? '#f1cf4e' : 'rgba(255,255,255,.35)';
           ctx.font = `${target ? 600 : 500} 11px "Atkinson Hyperlegible", sans-serif`;
-          ctx.fillText(`${nameFR(m)}${target && ci ? ` · ${ROLE[mod12(m - ci.root)]}` : ''}`, 8, y(m) + 4);
+          ctx.fillText(`${nameFR(m)}${target && ci ? ` · ${(mode === 'ailleurs' ? COULEUR : ROLE)[mod12(m - ci.root)]}` : ''}`, 8, y(m) + 4);
         }
       }
       ctx.lineWidth = 4;

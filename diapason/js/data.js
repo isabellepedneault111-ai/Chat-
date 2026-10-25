@@ -14,6 +14,7 @@ export const MODULES = [
   { id: 'relais', num: '', name: 'Relais', color: 'var(--rec)', tagline: 'Se lancer des sons entre deux sessions, et répondre par-dessus.' },
   { id: 'ambiances', num: '', name: 'Ambiances', color: 'var(--rec)', tagline: 'Partir ailleurs avant d’écrire ou de chanter.' },
   { id: 'jeux', num: '', name: 'Le grimoire', color: 'var(--c-paroles)', tagline: 'Rituels d’écriture : nos mots, une carte tirée dans les braises, le cadavre exquis.' },
+  { id: 'coffre', num: '', name: 'Le coffre', color: 'var(--rec)', tagline: 'Nos petites perles : la vidéo, le mot d’accueil, ce qu’on y dépose.' },
   { id: 'bilan', num: '', name: 'Notre bilan', color: 'var(--rec)', tagline: 'Où on est rendus, et ce que la recherche dit de faire ensuite.' },
   { id: 'session', num: '', name: 'Session', color: 'var(--rec)', tagline: 'La séance guidée, du check-in à la prise.' },
 ];
