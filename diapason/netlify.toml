@@ -1,6 +1,10 @@
-# Site 100 % statique : aucune étape de build.
+# Site statique (aucune étape de build) + une fonction pour l'espace partagé du duo.
 [build]
   publish = "."
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 [[headers]]
   for = "/*"
@@ -13,3 +17,8 @@
   for = "/js/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/data/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

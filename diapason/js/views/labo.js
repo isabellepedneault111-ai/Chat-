@@ -72,8 +72,8 @@ export default {
           <div class="range-scale mono"><span>rythme</span><span class="threshold">≈ 20 Hz · le seuil</span><span>note</span></div>
           <div class="row">
             <button class="btn primary" data-act="play2">▶ Démarrer</button>
-            <button class="btn" data-act="sweep">🚀 Glissade</button>
-            <button class="btn" data-act="tap">👆 Tape</button>
+            <button class="btn" data-act="sweep">Glissade ↗</button>
+            <button class="btn" data-act="tap">Tape le tempo</button>
           </div>
         </div>
 
@@ -86,7 +86,7 @@ export default {
           <div class="panel-head"><h2>Tes disques</h2><span class="muted small cycle-info"></span></div>
           <div class="chips scroll-x" role="group" aria-label="Mélanges prêts à essayer">
             ${RATIO_PRESETS.map((p) => `<button class="chip" data-preset="${p.id}"><b>${p.label}</b> ${p.name}</button>`).join('')}
-            <button class="chip" data-preset="random">🎲 Surprise</button>
+            <button class="chip" data-preset="random">Surprise</button>
           </div>
           <ul class="tracks"></ul>
           <button class="btn add-track" data-act="add">＋ Ajouter un disque</button>
@@ -96,8 +96,8 @@ export default {
           <div class="wave-head">
             <p class="eyebrow">L’onde</p>
             <div class="seg" role="group" aria-label="Forme de l’onde">
-              <button class="chip" data-wave="sin">〰 Vague pure</button>
-              <button class="chip" data-wave="click">⚡ Clics réels</button>
+              <button class="chip" data-wave="sin">Vague pure</button>
+              <button class="chip" data-wave="click">Clics réels</button>
             </div>
           </div>
           <canvas class="air" aria-label="Particules d’air poussées par l’onde"></canvas>
@@ -165,8 +165,8 @@ export default {
             <b class="mono" aria-label="${t.n} bosses par tour">${t.n}</b>
             <button class="icon-btn tiny" data-tr="plus" data-i="${i}" aria-label="Plus de bosses">+</button>
           </span>
-          <button class="icon-btn tiny" data-tr="mute" data-i="${i}" aria-pressed="${t.muted}" aria-label="${t.muted ? 'Réactiver' : 'Couper'} le disque ${i + 1}">${t.muted ? '🔇' : '🔊'}</button>
-          <button class="icon-btn tiny" data-tr="del" data-i="${i}" aria-label="Retirer le disque ${i + 1}" ${tracks.length < 2 ? 'disabled' : ''}>✕</button>
+          <button class="icon-btn tiny" data-tr="mute" data-i="${i}" aria-pressed="${t.muted}" aria-label="${t.muted ? 'Réactiver' : 'Couper'} le disque ${i + 1}">M</button>
+          <button class="icon-btn tiny" data-tr="del" data-i="${i}" aria-label="Retirer le disque ${i + 1}" ${tracks.length < 2 ? 'disabled' : ''}>×</button>
         </li>`).join('');
       q('.add-track').disabled = tracks.length >= MAX_TRACKS;
       el.querySelectorAll('[data-preset]').forEach((b) => b.classList.toggle('active', b.dataset.preset === presetId));
@@ -225,8 +225,8 @@ export default {
       });
       const names = marks.map(([m, i]) => `<b style="color:${colors[i]}">${nameFR(m)}</b>`).join(' + ');
       setHTML('.kb-caption', n === 0
-        ? `🎹 Tu entends : ${names}`
-        : `🎹 Trop lent pour être une note… double-le ${n} fois (×${2 ** n}) et ce rythme <em>est</em> ${names}. Touches pointillées = notes fantômes.`);
+        ? `Tu entends : ${names}`
+        : `Trop lent pour être une note… double-le ${n} fois (×${2 ** n}) et ce rythme <em>est</em> ${names}. Touches pointillées = notes fantômes.`);
     }
 
     function updateExplain() {

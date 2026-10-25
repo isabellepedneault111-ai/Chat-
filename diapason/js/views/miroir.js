@@ -15,8 +15,8 @@ export default {
           <p class="muted">Chante un « ahhh », siffle, fredonne, parle. La ligne, c’est toi.</p>
         </div>
         <div class="actions">
-          <button class="btn primary" data-act="mic">🎙️ Allumer le micro</button>
-          <button class="btn" data-act="target">🎯 Note-cible</button>
+          <button class="btn primary" data-act="mic">● Allumer le micro</button>
+          <button class="btn" data-act="target">◎ Note-cible</button>
           <button class="btn" data-act="freeze" aria-pressed="false">⏸ Figer</button>
           <button class="btn" data-act="clear">↺ Effacer</button>
         </div>
@@ -25,7 +25,7 @@ export default {
         <div class="panel stage">
           <canvas class="trail" aria-label="Tracé de la hauteur de la voix dans le temps"></canvas>
           <div class="stage-empty">
-            <div class="pulse-mic">🎙️</div>
+            <div class="pulse-mic">●</div>
             <p>Allume le micro et chante.<br><span class="muted">Le tracé défile de droite à gauche.</span></p>
           </div>
           <div class="target-badge" hidden></div>
@@ -63,7 +63,7 @@ export default {
     const now = () => (performance.now() - t0) / 1000;
 
     const setMicBtn = () => {
-      q('[data-act=mic]').textContent = mic.active ? '🎙️ Micro actif' : '🎙️ Allumer le micro';
+      q('[data-act=mic]').textContent = mic.active ? '● Micro actif' : '● Allumer le micro';
       q('.stage-empty').hidden = mic.active;
     };
     setMicBtn();
@@ -96,7 +96,7 @@ export default {
           const pct = Math.min(1, targetHold / 1.2);
           q('.target-badge').style.setProperty('--p', pct);
           if (pct >= 1) {
-            toast(`🎯 Dans le mille : ${nameFR(target)}!`);
+            toast(`Dans le mille : ${nameFR(target)}!`);
             q('.stage').classList.add('flash');
             setTimeout(() => q('.stage').classList.remove('flash'), 600);
             pickTarget();
@@ -181,7 +181,7 @@ export default {
         }
         if (!isBlack(m) && bh > 9) {
           ctx.fillStyle = m % 12 === 0 ? 'rgba(255,255,255,.75)' : 'rgba(255,255,255,.35)';
-          ctx.font = `${Math.min(12, bh * 0.8)}px "JetBrains Mono", monospace`;
+          ctx.font = `${Math.min(12, bh * 0.8)}px "IBM Plex Mono", monospace`;
           ctx.textBaseline = 'middle';
           ctx.fillText(nameFR(m), w - 56, yy);
         }

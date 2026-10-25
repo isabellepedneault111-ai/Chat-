@@ -205,7 +205,7 @@ export default {
               <span class="gc-name">${g.name.replace(/[<>&]/g, '')}</span>
               <div class="gc-track"><div class="gc-bar" style="left:${pct(g.low)}%;width:${pct(g.high) - pct(g.low)}%">
                 <small>${nameFR(g.low)}</small><small>${nameFR(g.high)}</small></div></div>
-              <button class="icon-btn tiny" data-act="del" aria-label="Retirer ${g.name.replace(/[<>&"]/g, '')}">✕</button>
+              <button class="icon-btn tiny" data-act="del" aria-label="Retirer ${g.name.replace(/[<>&"]/g, '')}">×</button>
             </div>`).join('')}
           <div class="gc-ticks">${ticks.join('')}</div>
         </div>

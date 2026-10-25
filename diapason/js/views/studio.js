@@ -1,6 +1,7 @@
 import { audio, drums, pad, bass, mic, startMic, finalOut, pluck } from '../audio.js';
-import { store, keyboard, toast, animate, autoCanvas } from '../ui.js';
-import { FR, mtof, chordIntervals, chordName, hash, rng, mod12, clamp } from '../music.js';
+import { store, keyboard, toast, animate, autoCanvas, getProfile } from '../ui.js';
+import { FR, mtof, chordIntervals, chordName, hash, rng, mod12, clamp, nameFR } from '../music.js';
+import { createListener, connectMIDI, chordLabel, estimateKey, suggestNext, diatonic, majorTonic } from '../instrument.js';
 import { DRUM_PRESETS, PROGRESSIONS } from '../data.js';
 
 const ROWS = [['k', 'Grosse caisse'], ['s', 'Caisse claire'], ['h', 'Charleston'], ['c', 'Claps']];
@@ -33,6 +34,7 @@ const S = {
   melody: store.get('melody', []),
   mode: store.get('sceneMode', 'solo'),
   clips: [],
+  custom: store.get('customProg', null),
   cur: null,
   filming: false,
 };
@@ -46,7 +48,7 @@ const padMidis = () => {
 // Une petite mélodie-modèle (croche, pastille), pour voir et entendre avant de créer.
 const DEMO_MELODY = [[0, 2], [2, 3], [3, 4], [4, 3], [6, 2], [8, 3], [10, 4], [11, 5], [12, 4], [14, 3], [16, 4], [18, 5], [19, 6], [20, 5], [22, 4], [24, 3], [26, 2], [27, 1], [28, 0]];
 let onScene = null;
-const progression = () => PROGRESSIONS.find((p) => p.id === S.prog) || PROGRESSIONS[0];
+const progression = () => (S.prog === 'perso' && S.custom) || PROGRESSIONS.find((p) => p.id === S.prog) || PROGRESSIONS[0];
 const chordAt = (bar) => {
   const [deg, qual] = progression().chords[bar % 4];
   return { root: mod12(S.key + deg), qual };
@@ -98,7 +100,7 @@ function stopPlay() {
 export default {
   id: 'studio',
   mount(el) {
-    let tab = store.get('studioTab', 'beat');
+    let tab = (location.hash.match(/[?&]tab=(\w+)/) || [])[1] || store.get('studioTab', 'beat');
     el.innerHTML = `
       <div class="mod-head">
         <div>
@@ -111,15 +113,16 @@ export default {
         <button class="play-btn" data-act="play" aria-label="Lecture">▶</button>
         <label class="field"><span>Tempo</span><input type="range" min="60" max="160" data-in="bpm" aria-label="Tempo"><b class="mono bpm-out"></b></label>
         <label class="field"><span>Tonalité</span><select data-in="key" aria-label="Tonalité">${FR.map((n, i) => `<option value="${i}">${n} majeur / ${FR[(i + 9) % 12]} mineur</option>`).join('')}</select></label>
-        <label class="field"><span>Accords</span><select data-in="prog" aria-label="Progression d’accords">${PROGRESSIONS.map((p) => `<option value="${p.id}">${p.name} · ${p.roman}</option>`).join('')}</select></label>
+        <label class="field"><span>Accords</span><select data-in="prog" aria-label="Progression d’accords"></select></label>
         <button class="rec-btn" data-act="rec" aria-label="Enregistrer une prise">● REC</button>
       </div>
       <div class="chord-row"></div>
       <div class="tabs" role="tablist">
-        <button role="tab" data-tab="beat">🥁 Beat</button>
-        <button role="tab" data-tab="voix">🎙️ Prises de voix</button>
-        <button role="tab" data-tab="cover">💿 Pochette</button>
-        <button role="tab" data-tab="duo">🎬 Scène · Solo / Duo</button>
+        <button role="tab" data-tab="beat">Beat</button>
+        <button role="tab" data-tab="voix">Prises de voix</button>
+        <button role="tab" data-tab="cover">Pochette</button>
+        <button role="tab" data-tab="duo">Scène</button>
+        <button role="tab" data-tab="instrument">Mon instrument</button>
       </div>
       <div class="tab-body"></div>`;
 
@@ -129,7 +132,13 @@ export default {
 
     q('[data-in=bpm]').value = S.bpm;
     q('[data-in=key]').value = S.key;
-    q('[data-in=prog]').value = S.prog;
+    function refreshProgSelect() {
+      const all = [...(S.custom ? [S.custom] : []), ...PROGRESSIONS];
+      q('[data-in=prog]').innerHTML = all.map((p) => `<option value="${p.id}">${p.name} · ${p.roman}</option>`).join('');
+      q('[data-in=prog]').value = S.prog;
+      q('[data-in=key]').value = S.key;
+    }
+    refreshProgSelect();
     const syncTop = () => {
       q('.bpm-out').textContent = S.bpm;
       q('[data-act=play]').textContent = S.playing ? '■' : '▶';
@@ -201,6 +210,7 @@ export default {
       if (tab === 'voix') voixTab(body);
       if (tab === 'cover') coverTab(body);
       if (tab === 'duo') duoTab(body);
+      if (tab === 'instrument') instrumentTab(body);
     }
 
     function beatTab(body) {
@@ -254,7 +264,7 @@ export default {
           ${S.takes.length ? `<ul class="takes">${S.takes.map((t, i) => `
             <li><div><b>Prise ${S.takes.length - i}</b><span class="muted mono">${t.at.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' })} · ${t.bpm} BPM · ${t.chords}</span></div>
               <audio controls src="${t.url}"></audio>
-              <a class="btn small" href="${t.url}" download="diapason-prise-${S.takes.length - i}.${t.ext}">⬇ Télécharger</a></li>`).join('')}</ul>`
+              <a class="btn small" href="${t.url}" download="diapason-prise-${S.takes.length - i}.${t.ext}">↓ Télécharger</a></li>`).join('')}</ul>`
             : '<p class="muted empty">Aucune prise pour l’instant. Les prises restent sur cet appareil jusqu’à ce que tu fermes la page : télécharge celles que tu veux garder.</p>'}
           <div class="tip-box"><b>Le réflexe de studio</b><p>Après chaque prise : réécoute, nomme <em>une seule</em> chose à améliorer, et refais-la. C’est exactement comme ça que travaillent les pros.</p></div>
         </div>`;
@@ -271,8 +281,8 @@ export default {
             <label class="field col"><span>Artiste ou groupe</span><input class="input" data-c="artist" maxlength="40" placeholder="Ex. : Les Ondes Courtes" value="${esc(c.artist)}"></label>
             <label class="field col"><span>Ambiance</span><select data-c="mood">${Object.keys(MOODS).map((m) => `<option ${m === c.mood ? 'selected' : ''}>${m}</option>`).join('')}</select></label>
             <div class="row">
-              <button class="btn" data-cv="remix">🔀 Variante</button>
-              <button class="btn primary" data-cv="dl">⬇ Télécharger (PNG)</button>
+              <button class="btn" data-cv="remix">Variante</button>
+              <button class="btn primary" data-cv="dl">↓ Télécharger (PNG)</button>
             </div>
             <div class="tip-box"><b>Question</b><p>Que dit ta pochette de ta musique avant même qu’on l’écoute? Montre-la à un ou une camarade et demande-lui d’imaginer le style.</p></div>
           </div>
@@ -302,7 +312,127 @@ export default {
           });
         }
       });
-      document.fonts.load('900 80px Unbounded').finally(draw);
+      document.fonts.load('900 80px "Big Shoulders Display"').finally(draw);
+    }
+
+    // ---------- Mon instrument : Diapason écoute, reconnaît, propose ----------
+    function instrumentTab(body) {
+      body.innerHTML = `
+        <div class="inst-grid">
+          <div class="panel inst-screen screen">
+            <div class="inst-now"><small class="mono">accord entendu</small><b class="inst-chord">—</b><span class="inst-key mono">tonalité : à l’écoute…</span></div>
+            <div class="chroma" aria-hidden="true">${FR.map((n) => `<div><i></i><span>${n}</span></div>`).join('')}</div>
+            <ol class="inst-timeline" aria-label="Accords joués"></ol>
+          </div>
+          <div class="inst-side">
+            <div class="panel">
+              <p class="tape">Brancher</p>
+              <label class="field col"><span>Entrée audio (micro, interface, guitare)</span><select data-i="device"><option value="">Micro par défaut</option></select></label>
+              <div class="row">
+                <button class="btn primary" data-i="listen">● Écouter mon instrument</button>
+                <button class="btn" data-i="midi">Clavier MIDI</button>
+              </div>
+              <p class="muted small inst-status">Joue des accords tenus, un à la fois. Guitare, piano, ukulélé : tout ce qui fait des accords.</p>
+            </div>
+            <div class="panel inst-ideas">
+              <p class="tape">Pistes</p>
+              <div class="ideas-body"><p class="muted small">Les suggestions apparaissent dès que Diapason reconnaît quelques accords.</p></div>
+            </div>
+          </div>
+        </div>`;
+      let listener = null;
+      let midi = null;
+      const timeline = [];
+      const sel = body.querySelector('[data-i=device]');
+      navigator.mediaDevices?.enumerateDevices?.().then((ds) => {
+        ds.filter((d) => d.kind === 'audioinput' && d.deviceId && d.deviceId !== 'default').forEach((d, i) => {
+          sel.insertAdjacentHTML('beforeend', `<option value="${d.deviceId}">${esc(d.label || `Entrée ${i + 1}`)}</option>`);
+        });
+      });
+      const bars = [...body.querySelectorAll('.chroma i')];
+      const showChroma = (c) => { const mx = Math.max(...c) || 1; bars.forEach((b, i) => { b.style.transform = `scaleY(${(c[i] / mx).toFixed(3)})`; }); };
+
+      function onChord(ch) {
+        body.querySelector('.inst-chord').textContent = chordLabel(ch);
+        if (!timeline.length || chordLabel(timeline.at(-1)) !== chordLabel(ch)) timeline.push(ch);
+        if (timeline.length > 16) timeline.shift();
+        body.querySelector('.inst-timeline').innerHTML = timeline.map((c, i) => `<li class="${i === timeline.length - 1 ? 'now' : ''}">${chordLabel(c)}</li>`).join('');
+        renderIdeas();
+      }
+      function sessionKey() {
+        const ses = listener?.state.session || timeline.reduce((acc, c) => { chordIntervals(c.qual).forEach((iv) => { acc[mod12(c.root + iv)] += 1; }); acc[c.root] += 0.5; return acc; }, new Array(12).fill(0));
+        return estimateKey(ses);
+      }
+      function renderIdeas() {
+        if (timeline.length < 2) return;
+        const key = sessionKey();
+        body.querySelector('.inst-key').textContent = `tonalité : ${FR[key.tonic]} ${key.mode}`;
+        const last = timeline.at(-1);
+        const next = suggestNext(key, last).filter(Boolean);
+        const dia = diatonic(key);
+        const prof = getProfile();
+        const tones = chordIntervals(last.qual).map((iv) => mod12(last.root + iv));
+        const loop = [];
+        for (let i = timeline.length - 1; i >= 0 && loop.length < 4; i--) if (!loop.some((c) => chordLabel(c) === chordLabel(timeline[i]))) loop.unshift(timeline[i]);
+        body.querySelector('.ideas-body').innerHTML = `
+          <h4>Après ${chordLabel(last)}, essaie…</h4>
+          <div class="chips-w">${next.map((c) => `<button class="word-chip" data-chord="${c.root}:${c.qual}">${chordLabel(c)} <small>${c.roman}</small></button>`).join('')}</div>
+          <h4>Les accords de ta tonalité</h4>
+          <div class="chips-w">${dia.map((c) => `<button class="word-chip" data-chord="${c.root}:${c.qual}">${chordLabel(c)} <small>${c.roman}</small></button>`).join('')}</div>
+          <h4>Pour chanter dessus</h4>
+          <p class="small">Notes sûres sur ${chordLabel(last)} : <b>${tones.map((t) => FR[t]).join(', ')}</b>. ${prof ? `Dans ta zone (${nameFR(prof.low)}–${nameFR(prof.high)}), vise ${FR[tones[1] ?? tones[0]]} : ton duo peut prendre ${FR[tones[2] ?? tones[0]]}, une tierce au-dessus.` : 'En duo : l’un chante la 1<sup>re</sup> note, l’autre la 2<sup>e</sup>. Vous voilà en harmonie.'}</p>
+          <p class="small">Ligne de basse : ${timeline.slice(-4).map((c) => FR[c.root]).join(' → ')}</p>
+          ${loop.length >= 2 ? `<button class="btn primary" data-i="send">Envoyer ${loop.map(chordLabel).join(' – ')} au Studio</button>` : ''}`;
+        body._loop = loop;
+        body._key = key;
+      }
+
+      body.addEventListener('click', async (e) => {
+        const ch = e.target.closest('[data-chord]');
+        if (ch) {
+          const [root, qual] = ch.dataset.chord.split(':');
+          pad(chordIntervals(qual).map((iv) => mtof(48 + +root + iv)), audio().currentTime, 1.2, 0.06);
+          return;
+        }
+        const a = e.target.closest('[data-i]')?.dataset.i;
+        if (a === 'listen') {
+          if (listener) { listener.stop(); listener = null; e.target.textContent = '● Écouter mon instrument'; return; }
+          listener = createListener({ deviceId: sel.value, onFrame: (c) => showChroma(c), onChord });
+          try {
+            await listener.start();
+            e.target.textContent = '■ Arrêter l’écoute';
+            body.querySelector('.inst-status').textContent = 'À l’écoute. Laisse sonner chaque accord une seconde.';
+          } catch { listener = null; toast('Accès au micro refusé.'); }
+        }
+        if (a === 'midi') {
+          try {
+            midi = await connectMIDI({
+              onNote: (n, v, on) => { if (on) pluck(mtof(n), { gain: 0.15 + v / 400 }); },
+              onChord: (m, chroma) => { showChroma(chroma); onChord(m); },
+            });
+            body.querySelector('.inst-status').textContent = midi.names.length ? `MIDI branché : ${midi.names.join(', ')}. Joue des accords!` : 'Aucun clavier MIDI détecté. Branche-le, puis réessaie.';
+          } catch (err) { toast(err.message); }
+        }
+        if (a === 'send' && body._loop) {
+          const key = body._key;
+          const t = majorTonic(key);
+          const chords = body._loop.map((c) => [mod12(c.root - t), c.qual]);
+          while (chords.length < 4) chords.push(chords[chords.length % body._loop.length]);
+          S.custom = { id: 'perso', name: 'Tes accords', roman: body._loop.map(chordLabel).join(' – '), chords: chords.slice(0, 4), note: 'Les accords que tu as joués, maintenant en boucle avec le beat.' };
+          store.set('customProg', S.custom);
+          S.key = t;
+          S.prog = 'perso';
+          save();
+          refreshProgSelect();
+          syncTop();
+          tab = 'beat';
+          store.set('studioTab', tab);
+          renderTab();
+          if (!S.playing) { play(); syncTop(); }
+          toast('Tes accords tournent maintenant avec le beat. Ajoute ta voix!');
+        }
+      });
+      disposeTab = () => { listener?.stop(); midi?.stop(); };
     }
 
     // ---------- Scène : concevoir, entendre, voir (solo ou duo) ----------
@@ -317,28 +447,28 @@ export default {
           <div class="scene-side">
             <div class="panel">
               <div class="seg mode-seg" role="group" aria-label="Mode">
-                <button class="chip" data-mode="solo">🎤 Solo</button>
-                <button class="chip" data-mode="duo">🤝 Duo · Question / Réponse</button>
+                <button class="chip" data-mode="solo">Solo</button>
+                <button class="chip" data-mode="duo">Duo · question / réponse</button>
               </div>
               <div class="duo-names" hidden>
                 <input class="input" data-p="0" placeholder="Élève 1 (question)" maxlength="16" aria-label="Élève 1" value="${esc(names[0])}">
                 <input class="input" data-p="1" placeholder="Élève 2 (réponse)" maxlength="16" aria-label="Élève 2" value="${esc(names[1])}">
-                <button class="icon-btn" data-sc="swap" title="Échanger les rôles" aria-label="Échanger les rôles">🔁</button>
+                <button class="icon-btn" data-sc="swap" title="Échanger les rôles" aria-label="Échanger les rôles">⇄</button>
               </div>
               <p class="scene-how small"></p>
               <div class="pads" role="group" aria-label="Notes de ta mélodie (gamme pentatonique)"></div>
               <div class="row">
                 <button class="btn primary" data-sc="play">▶ Lancer la boucle</button>
                 <button class="btn" data-sc="undo" title="Annuler la dernière note">↶</button>
-                <button class="btn" data-sc="clear" title="Tout effacer">🗑</button>
-                <button class="btn" data-sc="demo">✨ Exemple</button>
+                <button class="btn" data-sc="clear" title="Tout effacer">Effacer</button>
+                <button class="btn" data-sc="demo">Exemple</button>
               </div>
             </div>
             <div class="panel clip-panel">
-              <div class="panel-head"><h2>🎬 Ton clip</h2><span class="muted small">2 tours de boucle, image + son</span></div>
+              <div class="panel-head"><h2>Ton clip</h2><span class="muted small">2 tours de boucle, image + son</span></div>
               <button class="btn primary big clip-btn" data-sc="clip">● Tourner le clip</button>
               <ul class="clips"></ul>
-              <p class="muted small">Le titre vient de l’onglet 💿 Pochette. Allume le micro et chante pendant le tournage : ta voix est dans le clip.</p>
+              <p class="muted small">Le titre vient de l’onglet Pochette. Allume le micro et chante pendant le tournage : ta voix est dans le clip.</p>
             </div>
           </div>
         </div>
@@ -370,7 +500,7 @@ export default {
           ? '<b>Mesures 1 et 3</b> : question (cyan) · <b>2 et 4</b> : réponse (rose). Lance la boucle et tapez chacun votre tour : vos notes restent dans la boucle.'
           : '<b>1.</b> Lance la boucle <b>2.</b> Tape les pastilles en rythme : chaque note reste dans la boucle <b>3.</b> Allume le micro et chante par-dessus.';
         body.querySelector('.clips').innerHTML = S.clips.map((c, i) => `
-          <li><video src="${c.url}" controls playsinline></video><a class="btn small" href="${c.url}" download="diapason-clip-${S.clips.length - i}.${c.ext}">⬇ Télécharger</a></li>`).join('');
+          <li><video src="${c.url}" controls playsinline></video><a class="btn small" href="${c.url}" download="diapason-clip-${S.clips.length - i}.${c.ext}">↓ Télécharger</a></li>`).join('');
       }
 
       // Une tape pendant la boucle = une note déposée sur la croche la plus proche.
@@ -405,7 +535,7 @@ export default {
           S.melody = DEMO_MELODY.map(([slot, deg]) => ({ slot, deg, who: who(slot) }));
           saveMelody();
           if (!S.playing) { play(); syncTop(); sync(); }
-          toast('✨ Écoute et regarde la mélodie tourner… puis efface-la et fais la tienne!');
+          toast('Écoute et regarde la mélodie tourner… puis efface-la et fais la tienne!');
         }
         if (a === 'swap') {
           const [x, y] = [body.querySelector('[data-p="0"]'), body.querySelector('[data-p="1"]')];
@@ -458,7 +588,7 @@ export default {
           body.querySelector('.scene-rec').hidden = true;
           body.querySelector('.clip-btn').disabled = false;
           sync();
-          toast('🎬 Clip prêt! Regarde-le, puis télécharge-le.');
+          toast('Clip prêt! Regarde-le, puis télécharge-le.');
         };
         if (!S.playing) { play(); syncTop(); }
         S.filming = true;
@@ -496,7 +626,7 @@ export default {
           const mid = ang(b * 8 + 4);
           ctx.globalAlpha = on ? 1 : 0.55;
           ctx.fillStyle = col;
-          ctx.font = `800 ${Math.round(R * (on ? 0.13 : 0.1))}px Unbounded, sans-serif`;
+          ctx.font = `800 ${Math.round(R * (on ? 0.13 : 0.1))}px Big Shoulders Display, sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           ctx.fillText(chordName(ch.root, ch.qual), cx + Math.cos(mid) * R * 1.17, cy + Math.sin(mid) * R * 1.17);
@@ -575,9 +705,9 @@ export default {
         ctx.fillStyle = '#fff';
         const bar = curBar < 0 ? 0 : curBar;
         const ch = chordAt(bar);
-        ctx.font = `900 ${Math.round(R * 0.2)}px Unbounded, sans-serif`;
+        ctx.font = `900 ${Math.round(R * 0.2)}px Big Shoulders Display, sans-serif`;
         ctx.fillText(chordName(ch.root, ch.qual), cx, cy - R * 0.05);
-        ctx.font = `600 ${Math.round(R * 0.075)}px "Space Grotesk", sans-serif`;
+        ctx.font = `600 ${Math.round(R * 0.075)}px "Atkinson Hyperlegible", sans-serif`;
         ctx.fillStyle = S.mode === 'duo' ? (bar % 2 ? '#ff4fb3' : '#3ee6ff') : 'rgba(255,255,255,.7)';
         const line = S.mode === 'duo'
           ? `${bar % 2 ? 'Réponse' : 'Question'} : ${playerName(bar % 2)}`
@@ -589,9 +719,9 @@ export default {
           ctx.textAlign = 'left';
           ctx.textBaseline = 'alphabetic';
           ctx.fillStyle = '#fff';
-          ctx.font = `800 ${Math.round(w * 0.04)}px Unbounded, sans-serif`;
+          ctx.font = `800 ${Math.round(w * 0.04)}px Big Shoulders Display, sans-serif`;
           ctx.fillText((cov.title || 'Sans titre').toUpperCase(), w * 0.04, h - w * 0.07);
-          ctx.font = `500 ${Math.round(w * 0.028)}px "Space Grotesk", sans-serif`;
+          ctx.font = `500 ${Math.round(w * 0.028)}px "Atkinson Hyperlegible", sans-serif`;
           ctx.fillStyle = 'rgba(255,255,255,.75)';
           ctx.fillText(`${cov.artist || 'Artiste mystère'} · ${S.bpm} BPM · Diapason`, w * 0.04, h - w * 0.035);
         }
@@ -729,7 +859,7 @@ function drawCover(canvas, { title, artist, mood }) {
   ctx.fillRect(0, 0, W, W);
   const t = (title || 'Sans titre').toUpperCase();
   let size = 132;
-  ctx.font = `900 ${size}px Unbounded, sans-serif`;
+  ctx.font = `900 ${size}px Big Shoulders Display, sans-serif`;
   const words = t.split(' ');
   let lines = [];
   const wrap = () => {
@@ -744,16 +874,16 @@ function drawCover(canvas, { title, artist, mood }) {
   wrap();
   while ((lines.length > 3 || lines.some((l) => ctx.measureText(l).width > W - 140)) && size > 40) {
     size -= 6;
-    ctx.font = `900 ${size}px Unbounded, sans-serif`;
+    ctx.font = `900 ${size}px Big Shoulders Display, sans-serif`;
     wrap();
   }
   ctx.fillStyle = '#fff';
   ctx.textBaseline = 'alphabetic';
   lines.forEach((l, i) => ctx.fillText(l, 70, W - 130 - (lines.length - 1 - i) * size * 1.02));
-  ctx.font = '600 38px "Space Grotesk", sans-serif';
+  ctx.font = '600 38px "Atkinson Hyperlegible", sans-serif';
   ctx.fillStyle = pal[3];
   ctx.fillText(artist || 'Artiste mystère', 72, W - 70);
-  ctx.font = '500 22px "JetBrains Mono", monospace';
+  ctx.font = '500 22px "IBM Plex Mono", monospace';
   ctx.fillStyle = 'rgba(255,255,255,.7)';
   ctx.textAlign = 'right';
   ctx.fillText(`${FR[S.key]} · ${S.bpm} BPM · ${prog.roman}`, W - 60, 76);

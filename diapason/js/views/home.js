@@ -1,86 +1,147 @@
-import { MODULES } from '../data.js';
-import { mic } from '../audio.js';
-import { autoCanvas, animate, keyboard, getProfile } from '../ui.js';
-import { nameFR } from '../music.js';
+// Accueil = le parcours du duo vers son album : objectif, étapes datées, prochaine action.
+import { espace, onEspace, renameEspace, saveEntry } from '../espace.js';
+import { store, getProfile, toast } from '../ui.js';
+import { MODULES, ALBUM_STYLES, buildSteps } from '../data.js';
+import { esc } from './carnet.js';
+
+const STATE_ID = 'parcours-etat';
+const DAY = 86400000;
 
 export default {
   id: 'home',
   mount(el) {
-    const profile = getProfile();
-    el.innerHTML = `
-      <section class="hero">
-        <canvas class="hero-wave" aria-hidden="true"></canvas>
-        <div class="hero-inner">
-          <p class="eyebrow">Labo sonore · pour la classe</p>
-          <h1 class="display">Diapa<span>son</span></h1>
-          <p class="lead">Le labo où le son devient <em>visible</em>. Chante, frappe, compose&nbsp;: chaque vibration se dessine en direct.</p>
-          <div class="hero-cta">
-            <a class="btn primary big" href="#/miroir">Commencer par ma voix →</a>
-            <a class="btn ghost big" href="#/labo">Voir un rythme devenir une note</a>
+    const getGoal = () => (espace.connected ? espace.meta.goal : store.get('goal', null));
+    const getDone = () => (espace.connected ? espace.entries.find((e) => e.id === STATE_ID)?.data?.done || {} : store.get('done', {}));
+    let editing = false;
+
+    async function setGoal(goal) {
+      if (espace.connected) await renameEspace(goal.album || null, goal);
+      else store.set('goal', goal);
+    }
+    async function toggleDone(id) {
+      const done = { ...getDone() };
+      if (done[id]) delete done[id]; else done[id] = { by: espace.me || 'moi', at: Date.now() };
+      if (espace.connected) {
+        const cur = espace.entries.find((e) => e.id === STATE_ID);
+        await saveEntry({ id: STATE_ID, type: 'parcours', title: 'Parcours', data: { done } }, { baseUpdatedAt: cur?.updatedAt, force: true });
+      } else store.set('done', done);
+      render();
+    }
+
+    function setupHTML(g = {}) {
+      const soon = new Date(Date.now() + 70 * DAY).toISOString().slice(0, 10);
+      return `
+        <section class="panel setup">
+          <p class="tape">Étape zéro</p>
+          <h2>Quel album voulez-vous faire?</h2>
+          <p class="muted">Diapason trace ensuite votre chemin, étape par étape, jusqu’à l’écoute de lancement.</p>
+          <div class="setup-grid">
+            <label class="field col"><span>Titre de travail de l’album</span><input class="input" data-g="album" maxlength="80" value="${esc(g.album || espace.meta?.name || '')}" placeholder="Ex. : Lumières du Nord"></label>
+            <label class="field col"><span>Nombre de chansons</span><select data-g="songs">${[1, 2, 3, 4, 5, 6].map((n) => `<option ${n === (g.songs || 3) ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
+            <label class="field col"><span>Date de l’écoute de lancement</span><input class="input" type="date" data-g="deadline" value="${g.deadline || soon}"></label>
+            <label class="field col"><span>Couleur musicale</span><select data-g="style">${ALBUM_STYLES.map((s) => `<option ${s === g.style ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
+            <label class="field col wide"><span>Pourquoi cet album? Ce que vous voulez que les gens ressentent</span><textarea class="input" data-g="why" rows="2" maxlength="400" placeholder="Ex. : Raconter l’hiver de notre ville, avec de l’espoir dedans.">${esc(g.why || '')}</textarea></label>
           </div>
-          ${profile ? `<p class="profile-chip">Ton empreinte&nbsp;: <b>${profile.type}</b> · ${nameFR(profile.low)} → ${nameFR(profile.high)}</p>` : '<p class="hint">Allume le micro en haut à droite : les vagues vont réagir à ta voix.</p>'}
-        </div>
-      </section>
+          <div class="row"><button class="btn primary" data-h="save-goal">Tracer notre parcours</button>${g.album ? '<button class="btn ghost" data-h="cancel">Annuler</button>' : ''}</div>
+          ${espace.connected ? '' : '<p class="fineprint">Vous travaillez à deux? <a href="#/carnet">Créez d’abord votre espace partagé</a> : le parcours sera commun.</p>'}
+        </section>`;
+    }
 
-      <section class="cards" aria-label="Modules">
-        ${MODULES.map((m) => `
-          <a class="card" href="#/${m.id}" style="--c:${m.color}">
-            <span class="card-num">${m.num}</span>
-            <h2>${m.name}</h2>
-            <p>${m.tagline}</p>
-            <p class="card-q">« ${m.question} »</p>
-            <span class="card-go" aria-hidden="true">→</span>
-          </a>`).join('')}
-      </section>
+    function render() {
+      const goal = getGoal();
+      const profile = getProfile();
+      const head = `
+        <header class="masthead">
+          <p class="eyebrow">${espace.connected ? `Espace · ${esc(espace.meta.name)}` : 'Labo sonore · pour la classe'}</p>
+          <h1 class="display">Diapason</h1>
+          <p class="lead">Du premier « ahhh » à l’écoute de lancement : le carnet de route de votre album.</p>
+        </header>`;
+      if (!goal || editing) {
+        el.innerHTML = `${head}${setupHTML(goal || {})}${modulesHTML()}`;
+        return;
+      }
+      const steps = buildSteps(goal);
+      const done = getDone();
+      if (profile && !done['p-voix']) done['p-voix'] = { by: 'auto', at: Date.now() };
+      const start = goal.createdAt || Date.now();
+      const end = new Date(`${goal.deadline}T12:00`).getTime();
+      const totalW = steps.reduce((s, x) => s + x.weight, 0);
+      let acc = 0;
+      steps.forEach((s) => { acc += s.weight; s.due = start + ((end - start) * acc) / totalW; });
+      const next = steps.find((s) => !done[s.id]);
+      const nDone = steps.filter((s) => done[s.id]).length;
+      const pct = Math.round((nDone / steps.length) * 100);
+      const daysLeft = Math.ceil((end - Date.now()) / DAY);
+      const late = next && next.due < Date.now();
+      let face = '';
+      el.innerHTML = `
+        ${head}
+        <section class="album-hero">
+          <div class="album-sleeve">
+            <div class="vinyl" style="--p:${pct}"><span>${pct}<small>%</small></span></div>
+            <div>
+              <p class="tape">L’album</p>
+              <h2>${esc(goal.album || 'Sans titre')}</h2>
+              <p class="muted">${goal.songs} chanson${goal.songs > 1 ? 's' : ''} · ${esc(goal.style)} · ${daysLeft >= 0 ? `lancement dans <b>${daysLeft} jour${daysLeft > 1 ? 's' : ''}</b>` : 'date de lancement passée'}</p>
+              ${goal.why ? `<p class="why">« ${esc(goal.why)} »</p>` : ''}
+              <button class="btn small ghost" data-h="edit">Modifier l’objectif</button>
+            </div>
+          </div>
+          ${next ? `
+          <div class="next-card ${late ? 'late' : ''}">
+            <p class="tape red">Prochaine étape</p>
+            <h3>${esc(next.title)}</h3>
+            <p>${next.why}</p>
+            <p class="muted small">${late ? 'Prévue pour le ' : 'Visée : '}${new Date(next.due).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' })}${late ? ' — on rattrape?' : ''}</p>
+            <div class="row"><a class="btn primary" href="${next.href}">${next.cta}</a><button class="btn" data-done="${next.id}">C’est fait</button></div>
+          </div>` : `<div class="next-card"><p class="tape red">Bravo</p><h3>Votre album est terminé.</h3><p>Écoutez-le ensemble, puis gardez une trace dans le carnet : qu’est-ce que vous referiez autrement?</p></div>`}
+        </section>
 
-      <section class="panel kb-panel">
-        <div class="panel-head">
-          <h2>Clavier libre</h2>
-          <span class="muted">Souris, doigt, ou touches <kbd>A</kbd> <kbd>W</kbd> <kbd>S</kbd> <kbd>E</kbd> <kbd>D</kbd> … <kbd>K</kbd></span>
-        </div>
-        <div class="kb-host"></div>
-      </section>
+        <section class="tracklist panel">
+          <div class="panel-head"><h2>Votre parcours</h2><span class="muted small">${nDone} / ${steps.length} étapes</span></div>
+          <ol>${steps.map((s, i) => {
+            const d = done[s.id];
+            const sep = s.face !== face ? `<li class="face">${esc((face = s.face))}</li>` : '';
+            return `${sep}<li class="step ${d ? 'done' : ''} ${s === next ? 'current' : ''}">
+              <button class="check" data-done="${s.id}" aria-pressed="${!!d}" aria-label="${d ? 'Marquer à faire' : 'Marquer fait'} : ${esc(s.title)}"></button>
+              <span class="num mono">${String(i + 1).padStart(2, '0')}</span>
+              <a href="${s.href}" class="step-title">${esc(s.title)}</a>
+              <span class="step-meta mono">${d ? `fait${d.by && d.by !== 'auto' ? ` · ${esc(d.by)}` : ''}` : new Date(s.due).toLocaleDateString('fr-CA', { day: 'numeric', month: 'short' })}</span>
+            </li>`;
+          }).join('')}</ol>
+        </section>
+        ${modulesHTML()}`;
+    }
 
-      <section class="manifest">
-        <div><b>Et si</b> on évaluait la justesse avec les yeux avant les oreilles?</div>
-        <div><b>Et si</b> les fractions s’entendaient?</div>
-        <div><b>Et si</b> chaque élève sortait de la période avec sa pochette d’album?</div>
-      </section>`;
+    function modulesHTML() {
+      return `
+        <section class="modules">
+          <p class="tape">L’atelier</p>
+          <div class="mod-grid">
+            ${MODULES.map((m) => `<a class="mod-card" href="#/${m.id}" style="--c:${m.color}"><span class="mono">${m.num}</span><b>${m.name}</b><small>${m.tagline}</small></a>`).join('')}
+          </div>
+        </section>`;
+    }
 
-    const kb = keyboard(el.querySelector('.kb-host'), { from: 48, to: 76, pcKeys: true });
-
-    // Vagues du héros : réagissent à la souris et au micro.
-    const cv = autoCanvas(el.querySelector('.hero-wave'));
-    let mx = 0.5;
-    let lvl = 0;
-    const onMove = (e) => { mx = e.clientX / window.innerWidth; };
-    window.addEventListener('pointermove', onMove);
-    const colors = ['#3ee6ff', '#9b6bff', '#ff4fb3', '#b6ff3e'];
-    const stop = animate((t) => {
-      const { ctx, w, h } = cv;
-      if (!w) return;
-      ctx.clearRect(0, 0, w, h);
-      lvl += ((mic.active ? Math.min(1, mic.level * 14) : 0.12) - lvl) * 0.08;
-      const pitch = mic.current ? (mic.current.midi - 40) / 40 : mx;
-      colors.forEach((c, i) => {
-        ctx.beginPath();
-        const amp = h * (0.06 + lvl * 0.28) * (1 - i * 0.15);
-        const k = 0.004 + pitch * 0.012 + i * 0.0015;
-        for (let x = 0; x <= w; x += 4) {
-          const y = h * 0.62 + Math.sin(x * k + t * 0.0012 * (i + 1) + i) * amp * Math.sin((x / w) * Math.PI);
-          x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
-        }
-        ctx.strokeStyle = c;
-        ctx.globalAlpha = 0.55 - i * 0.1;
-        ctx.lineWidth = 2.2;
-        ctx.shadowColor = c;
-        ctx.shadowBlur = 18;
-        ctx.stroke();
-      });
-      ctx.globalAlpha = 1;
-      ctx.shadowBlur = 0;
+    el.addEventListener('click', async (e) => {
+      const d = e.target.closest('[data-done]');
+      if (d) { await toggleDone(d.dataset.done).catch((err) => toast(err.message)); return; }
+      const a = e.target.closest('[data-h]')?.dataset.h;
+      if (a === 'edit') { editing = true; render(); }
+      if (a === 'cancel') { editing = false; render(); }
+      if (a === 'save-goal') {
+        const v = (k) => el.querySelector(`[data-g=${k}]`).value.trim();
+        const prev = getGoal();
+        const goal = { album: v('album'), songs: +v('songs'), deadline: v('deadline'), style: v('style'), why: v('why'), createdAt: prev?.createdAt || Date.now() };
+        if (!goal.deadline || new Date(goal.deadline) < new Date(Date.now() - DAY)) { toast('Choisis une date de lancement à venir.'); return; }
+        try { await setGoal(goal); } catch (err) { toast(err.message); return; }
+        editing = false;
+        render();
+        toast('Parcours tracé. Première étape en haut!');
+      }
     });
-
-    return () => { stop(); cv.dispose(); kb.dispose(); window.removeEventListener('pointermove', onMove); };
+    const off = onEspace((what) => { if ((what === 'entries' || what === 'meta') && !editing) render(); });
+    render();
+    return () => off();
   },
 };

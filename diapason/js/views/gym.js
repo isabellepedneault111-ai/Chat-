@@ -53,8 +53,8 @@ export default {
           <label class="switch"><input type="checkbox" data-opt="guide" ${guide ? 'checked' : ''}><span></span> Le piano chante avec moi</label>
           <label class="switch"><input type="checkbox" data-opt="oct" ${octaveFree ? 'checked' : ''}><span></span> Toutes les octaves comptent</label>
           <div class="spacer"></div>
-          <button class="btn" data-act="listen">👂 Écouter</button>
-          <button class="btn primary" data-act="sing">🎙️ Chanter</button>
+          <button class="btn" data-act="listen">Écouter</button>
+          <button class="btn primary" data-act="sing">● Chanter</button>
         </div>
         <div class="gym-canvas-wrap">
           <canvas class="gym-canvas" aria-label="Notes cibles qui défilent et tracé de ta voix"></canvas>
@@ -86,7 +86,7 @@ export default {
     function refresh() {
       q('.base-note').textContent = nameFR(base);
       q('.reps').textContent = reps;
-      q('.gym-tip').innerHTML = `<b>💡 ${ex.name}</b><p>${ex.tip}</p>`;
+      q('.gym-tip').innerHTML = `<b>${ex.name}</b><p>${ex.tip}</p>`;
       el.querySelectorAll('.ex-card').forEach((c) => c.classList.toggle('active', c.dataset.ex === ex.id));
     }
 
@@ -136,7 +136,7 @@ export default {
       const best = store.get('best', {});
       const record = best[ex.id] == null || pct > best[ex.id];
       if (record) { best[ex.id] = pct; store.set('best', best); }
-      const msg = pct >= 85 ? 'Précision chirurgicale. 🔥'
+      const msg = pct >= 85 ? 'Précision chirurgicale.'
         : pct >= 65 ? 'Très solide! Ta voix sait où elle va.'
           : pct >= 40 ? 'Bonne base. Écoute une fois, puis rechante.'
             : 'Échauffement fait! Essaie « Écouter » d’abord, ou baisse la note de départ.';
@@ -150,7 +150,7 @@ export default {
           ${record && pct > 0 ? '<p class="badge-new">Nouveau record!</p>' : ''}
           ${worst && worst.hits / worst.frames < 0.6 ? `<p class="muted">La note la plus coriace : <b>${nameFR(worst.midi)}</b>.</p>` : ''}
           <div class="row center">
-            <button class="btn" data-act="listen">👂 Réécouter</button>
+            <button class="btn" data-act="listen">Réécouter</button>
             <button class="btn primary" data-act="sing">↻ Rechanter</button>
             <button class="btn" data-act="harder">Monter d’un cran ↗</button>
           </div>
@@ -241,7 +241,7 @@ export default {
         ctx.shadowBlur = 0;
         if (x1 - x0 > 26 && laneH > 10) {
           ctx.fillStyle = active || past ? '#0b0a14' : 'rgba(255,255,255,.75)';
-          ctx.font = `600 ${Math.min(12, laneH * 0.6)}px "Space Grotesk", sans-serif`;
+          ctx.font = `600 ${Math.min(12, laneH * 0.6)}px "Atkinson Hyperlegible", sans-serif`;
           ctx.textBaseline = 'middle';
           ctx.fillText(nameFR(n.midi), x0 + 8, yy);
         }

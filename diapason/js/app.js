@@ -8,14 +8,25 @@ import tessiture from './views/tessiture.js';
 import gym from './views/gym.js';
 import labo from './views/labo.js';
 import studio from './views/studio.js';
+import paroles from './views/paroles.js';
+import carnet from './views/carnet.js';
+import { boot, joinEspace, espace, onEspace } from './espace.js';
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio };
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet };
+const EXPLORER = ['miroir', 'tessiture', 'gym', 'labo'];
 const view = $('#view');
 let cleanup = null;
 let currentId = 'home';
 
-function route() {
+async function route() {
   const id = location.hash.replace(/^#\/?/, '').split(/[?/]/)[0];
+  // Lien d'invitation : #/rejoindre/<espace>
+  if (id === 'rejoindre') {
+    const sid = location.hash.split('/')[2];
+    try { await joinEspace(sid); toast(`Bienvenue dans « ${espace.meta.name} »!`); } catch { toast('Ce lien d’espace ne fonctionne pas (ou l’espace a été effacé).'); }
+    location.replace('#/carnet');
+    return;
+  }
   const v = routes[id] || home;
   cleanup?.();
   cleanup = null;
@@ -23,11 +34,21 @@ function route() {
   const host = document.createElement('div');
   host.className = `view-${v.id}`;
   view.replaceChildren(host);
+  // Explorer regroupe les 4 modules de découverte : petite barre d'onglets en haut.
+  if (EXPLORER.includes(v.id)) {
+    const sub = document.createElement('nav');
+    sub.className = 'subnav';
+    sub.setAttribute('aria-label', 'Explorer');
+    sub.innerHTML = EXPLORER.map((m) => { const mm = MODULES.find((x) => x.id === m); return `<a href="#/${m}" class="${m === v.id ? 'active' : ''}" style="--c:${mm.color}"><span class="mono">${mm.num}</span>${mm.name}</a>`; }).join('');
+    view.prepend(sub);
+  }
   const mod = MODULES.find((m) => m.id === v.id);
-  view.style.setProperty('--accent', mod ? mod.color : 'var(--violet)');
+  view.style.setProperty('--accent', mod ? mod.color : 'var(--rec)');
   currentId = v.id;
   cleanup = v.mount(host) || null;
-  $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.id === v.id));
+  const group = EXPLORER.includes(v.id) ? 'explorer' : v.id;
+  $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.id === group));
+  if (v.id === 'carnet') { unseen = 0; showBadge(); }
   document.title = mod ? `${mod.name} · Diapason` : 'Diapason — le labo où le son devient visible';
   renderPistes();
   window.scrollTo({ top: 0 });
@@ -107,4 +128,20 @@ function setProj(on) {
 projBtn.addEventListener('click', () => setProj(!document.documentElement.classList.contains('projector')));
 setProj(store.get('projector', false));
 
+// Pastille « nouveau » sur Carnet quand le duo ajoute quelque chose ailleurs dans l'app.
+let unseen = 0;
+function showBadge() {
+  const b = $('#nav [data-id=carnet] .badge');
+  b.hidden = !unseen;
+  b.textContent = unseen > 9 ? '9+' : unseen;
+}
+onEspace((what, extra) => {
+  if (what === 'entries' && extra?.fresh?.length && currentId !== 'carnet') {
+    unseen += extra.fresh.length;
+    showBadge();
+    if (currentId !== 'paroles' && currentId !== 'home') toast(`${extra.fresh[0].author} a ajouté quelque chose dans le carnet.`);
+  }
+});
+
+boot();
 route();

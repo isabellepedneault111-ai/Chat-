@@ -4,29 +4,39 @@
 
 export const MODULES = [
   {
-    id: 'miroir', num: '01', name: 'Miroir', color: 'var(--cyan)',
+    id: 'miroir', num: '01', name: 'Miroir', color: 'var(--c-miroir)',
     tagline: 'Ta voix, dessinée en direct.',
     question: 'Ta voix est-elle une ligne droite… ou une montagne?',
   },
   {
-    id: 'tessiture', num: '02', name: 'Empreinte', color: 'var(--lime)',
+    id: 'tessiture', num: '02', name: 'Empreinte', color: 'var(--c-empreinte)',
     tagline: 'Trouve l’étendue de ta voix — et celle du groupe.',
     question: 'Dans quelle tonalité toute la classe peut-elle chanter sans forcer?',
   },
   {
-    id: 'gym', num: '03', name: 'Gym vocal', color: 'var(--amber)',
+    id: 'gym', num: '03', name: 'Gym vocal', color: 'var(--c-gym)',
     tagline: 'Échauffements sur mesure, notés en direct.',
     question: 'Peut-on « voir » qu’on chante faux avant de l’entendre?',
   },
   {
-    id: 'labo', num: '04', name: 'Rythme ↔ Note', color: 'var(--violet)',
+    id: 'labo', num: '04', name: 'Rythme ↔ Note', color: 'var(--c-labo)',
     tagline: 'Accélère un rythme… jusqu’à ce qu’il chante.',
     question: 'Un accord majeur, est-ce juste un polyrythme très rapide?',
   },
   {
-    id: 'studio', num: '05', name: 'Studio', color: 'var(--pink)',
+    id: 'studio', num: '05', name: 'Studio', color: 'var(--c-studio)',
     tagline: 'Beat, accords, prise de voix et pochette d’album.',
     question: 'Que manque-t-il à une chanson quand on enlève la batterie?',
+  },
+  {
+    id: 'paroles', num: '06', name: 'Paroles', color: 'var(--c-paroles)',
+    tagline: 'Syllabes, rimes, synonymes : écrire pour être chanté.',
+    question: 'Pourquoi un refrain se retient-il mieux qu’un couplet?',
+  },
+  {
+    id: 'carnet', num: '07', name: 'Carnet', color: 'var(--c-carnet)',
+    tagline: 'Vos écrits, audios, bilans et évaluations, à deux.',
+    question: 'Qu’est-ce qu’un essai raté nous apprend?',
   },
 ];
 
@@ -202,6 +212,37 @@ export const PISTES = {
   },
 };
 
+PISTES.paroles = {
+  intro: 'L’atelier fait le pont entre le français et la musique : on écrit pour la voix. Les syllabes, le e muet et la rime deviennent des outils de création, pas des règles à réciter.',
+  questions: [
+    'Pourquoi le e muet se chante-t-il parfois, et parfois non?',
+    'Un refrain qui marche : qu’est-ce qui le rend facile à retenir?',
+    'Rime riche ou assonance : laquelle sonne le plus « chanson »? Le plus « rap »?',
+    'Que faire d’un trou dans le texte : le combler tout de suite, ou le laisser mûrir?',
+  ],
+  defis: [
+    'Écris un refrain de 4 lignes de 8 syllabes chacune, avec un schéma AABB.',
+    'Remplace 3 mots par des synonymes plus imagés.',
+    'Échange ton couplet avec ton duo : chacun marque un passage [? incertain ?] chez l’autre.',
+  ],
+  liens: ['Français — Écrire des textes variés (poésie, chanson)', 'Musique — Inventer (texte et mélodie)', 'CCN — Collaborer à l’aide du numérique'],
+  hors: 'Lisez le refrain à voix haute en tapant le rythme dans les mains : là où ça accroche, il y a une syllabe de trop.',
+};
+PISTES.carnet = {
+  intro: 'Le carnet garde la trace de la démarche : essais, prises, bilans, évaluations. C’est la mémoire du duo, et une matière riche pour l’évaluation de la compétence.',
+  questions: [
+    'Qu’est-ce qu’un essai raté vous a appris cette semaine?',
+    'Relisez vos trois derniers bilans : qu’est-ce qui revient?',
+    'Votre autoévaluation et celle de votre partenaire se ressemblent-elles? Pourquoi?',
+  ],
+  defis: [
+    'Faites un bilan de 3 minutes à la fin de chaque séance, sans exception, pendant 2 semaines.',
+    'Déposez un mémo vocal de 20 secondes : l’idée la plus folle de la journée.',
+  ],
+  liens: ['Musique — Apprécier ses réalisations et celles de ses pairs', 'CCN — Collaborer à l’aide du numérique', 'CCN — Développer et mobiliser ses habiletés technologiques'],
+  hors: 'Projetez le carnet d’un duo (avec son accord) et faites deviner aux autres la prochaine étape de leur chanson.',
+};
+
 export const DEFIS_SURPRISE = [
   'Chante ton prénom sur 3 notes différentes. Le groupe doit les reproduire.',
   'Fais une « conversation » avec ta voix sans aucun mot : seulement des montagnes et des vallées.',
@@ -214,3 +255,73 @@ export const DEFIS_SURPRISE = [
   'Un ou une élève chante une note, la classe doit tenir la même note pendant 5 secondes en écoutant.',
   'Choisis une pochette générée au hasard et invente le titre de la chanson qui va avec.',
 ];
+
+// ---------- Carnet partagé ----------
+export const CARNET_TYPES = [
+  { id: 'note', label: 'Note', aide: 'Une idée, un lien, une consigne, un mot pour ton duo.', placeholder: 'Ex. : Idée de titre pour la chanson 2' },
+  { id: 'texte', label: 'Écrit', aide: 'Un brouillon, un poème, un bout de texte à proposer. Pour écrire une chanson complète, utilise l’atelier de paroles.', placeholder: 'Ex. : Premier jet du couplet' },
+  { id: 'audio', label: 'Audio', aide: 'Un mémo vocal du cellulaire, une prise d’instrument, une idée de mélodie. Ton duo peut l’écouter tout de suite.', placeholder: 'Ex. : Riff de guitare pour le refrain' },
+  { id: 'essai', label: 'Essai', aide: 'Ce que vous avez tenté : ce qui a marché, ce qui n’a pas marché. Les essais ratés sont précieux.', placeholder: 'Ex. : Refrain une octave plus haut' },
+  { id: 'bilan', label: 'Bilan', aide: 'À la fin de chaque séance : 3 minutes, à deux, pour garder la trace et décider de la suite.', placeholder: 'Bilan du jour' },
+  { id: 'evaluation', label: 'Évaluation', aide: 'Autoévaluation, évaluation par le ou la partenaire ou par l’enseignant·e, sur les mêmes critères.', placeholder: 'Ex. : Évaluation de mi-étape' },
+];
+
+// Le bilan de séance : on regarde le produit ET la collaboration.
+export const BILAN_QUESTIONS = [
+  'Qu’avons-nous créé ou appris aujourd’hui?',
+  'Un moment où on s’est vraiment écoutés',
+  'Ce qui a bloqué (et comment on s’en est sortis)',
+  'Notre prochaine étape, concrètement',
+];
+
+export const EVAL_CRITERES = [
+  { label: 'Justesse et contrôle vocal', aide: 'Je tiens mes notes, je respire, je ne force pas.' },
+  { label: 'Rythme et synchronisation', aide: 'On reste ensemble sur le tempo.' },
+  { label: 'Écoute mutuelle', aide: 'Je laisse de l’espace, je réponds à ce que j’entends.' },
+  { label: 'Invention', aide: 'J’ose des idées, je les transforme.' },
+  { label: 'Texte', aide: 'Les mots servent l’émotion et entrent dans la musique.' },
+  { label: 'Démarche', aide: 'On fait des essais, on garde des traces, on s’améliore.' },
+];
+
+// ---------- Atelier de paroles ----------
+export const SECTION_KINDS = [
+  { id: 'intro', label: 'Intro', hint: 'Quelques mots pour installer l’ambiance (ou rien du tout!)' },
+  { id: 'couplet', label: 'Couplet', numbered: true, hint: 'Le couplet raconte : un lieu, un moment, un détail concret.' },
+  { id: 'precouplet', label: 'Pré-refrain', hint: 'La montée : on prépare le refrain, la tension grandit.' },
+  { id: 'refrain', label: 'Refrain', hint: 'La phrase que tout le monde va chanter. Courte, répétable, vraie.' },
+  { id: 'pont', label: 'Pont', hint: 'Un changement de point de vue, une surprise avant le dernier refrain.' },
+  { id: 'outro', label: 'Outro', hint: 'Comment on quitte la chanson.' },
+];
+
+// ---------- Parcours album ----------
+export const ALBUM_STYLES = ['Pop', 'Hip-hop / rap', 'Folk / chanson', 'Rock', 'Électro', 'R&B / soul', 'Trad québécois', 'Mélange / à découvrir'];
+
+// Les étapes du parcours, générées selon l'objectif du duo. weight = temps relatif prévu.
+export function buildSteps(goal) {
+  const steps = [
+    { id: 'p-pacte', face: 'Face A · Accorder le duo', title: 'Le pacte du duo', why: 'Avant la musique, l’entente : comment on s’écoute, qui fait quoi, que fait-on en cas de désaccord. Écrivez 3 règles dans le carnet.', href: '#/carnet', cta: 'Écrire notre pacte', weight: 1 },
+    { id: 'p-voix', face: 'Face A · Accorder le duo', title: 'Chacun son empreinte vocale', why: 'Chaque voix a son terrain confortable. Faites le test chacun votre tour.', href: '#/tessiture', cta: 'Faire mon empreinte', weight: 1 },
+    { id: 'p-zone', face: 'Face A · Accorder le duo', title: 'Trouver notre zone commune', why: 'Ajoutez vos deux empreintes au portrait : Diapason trouve la zone où vous chantez ensemble sans forcer, donc vos tonalités.', href: '#/tessiture', cta: 'Voir notre zone', weight: 1 },
+    { id: 'p-rituel', face: 'Face A · Accorder le duo', title: 'Notre rituel d’échauffement', why: 'Choisissez 2 exercices à faire au début de chaque séance. Le rituel rend la voix (et le duo) prêt.', href: '#/gym', cta: 'Essayer le gym vocal', weight: 1 },
+  ];
+  for (let k = 1; k <= (goal.songs || 1); k++) {
+    const f = `Chanson ${k}`;
+    steps.push(
+      { id: `s${k}-idee`, face: f, title: `${f} · l’idée et le titre`, why: 'Une émotion, une image, une histoire vraie. Déposez vos idées (écrits, mémos vocaux) dans le carnet et choisissez-en une.', href: '#/carnet', cta: 'Déposer nos idées', weight: 1 },
+      { id: `s${k}-refrain`, face: f, title: `${f} · le refrain`, why: 'Le cœur de la chanson. Court, répétable, chantable : visez des lignes de même longueur.', href: '#/paroles', cta: 'Écrire le refrain', weight: 2 },
+      { id: `s${k}-melodie`, face: f, title: `${f} · la mélodie du refrain`, why: 'Sur la boucle de la Scène, tapez puis chantez la mélodie. Question / réponse si vous êtes deux.', href: '#/studio?tab=duo', cta: 'Ouvrir la Scène', weight: 2 },
+      { id: `s${k}-beat`, face: f, title: `${f} · beat et accords`, why: 'Choisissez tempo, tonalité (dans votre zone commune!) et accords. Ou jouez-les à l’instrument : Diapason les reconnaît.', href: '#/studio?tab=beat', cta: 'Construire le beat', weight: 2 },
+      { id: `s${k}-couplets`, face: f, title: `${f} · couplets et pont`, why: 'Les couplets racontent, le pont surprend. Marquez les passages incertains et les trous : vous y reviendrez à deux.', href: '#/paroles', cta: 'Écrire les couplets', weight: 3 },
+      { id: `s${k}-prise`, face: f, title: `${f} · première prise`, why: 'Enregistrez, réécoutez, nommez UNE chose à améliorer, refaites. Déposez la meilleure prise dans le carnet.', href: '#/studio?tab=voix', cta: 'Enregistrer', weight: 2 },
+      { id: `s${k}-bilan`, face: f, title: `${f} · bilan et évaluation croisée`, why: 'Chacun évalue la chanson et la collaboration sur les mêmes critères. Comparez : où êtes-vous d’accord?', href: '#/carnet', cta: 'Faire le bilan', weight: 1 },
+    );
+  }
+  steps.push(
+    { id: 'a-ordre', face: 'Face B · Sortir l’album', title: 'L’ordre des pistes et le titre final', why: 'Quelle chanson ouvre l’album? Laquelle le ferme? L’ordre raconte aussi une histoire.', href: '#/carnet', cta: 'Décider ensemble', weight: 1 },
+    { id: 'a-pochette', face: 'Face B · Sortir l’album', title: 'La pochette', why: 'Générée à partir de vos mots, de votre tonalité et de vos accords.', href: '#/studio?tab=cover', cta: 'Créer la pochette', weight: 1 },
+    { id: 'a-clip', face: 'Face B · Sortir l’album', title: 'Le clip', why: 'Filmez la Scène pendant que vous chantez : un clip par chanson, ou un seul pour l’album.', href: '#/studio?tab=duo', cta: 'Tourner le clip', weight: 1 },
+    { id: 'a-lancement', face: 'Face B · Sortir l’album', title: 'L’écoute de lancement', why: 'Présentez l’album au groupe : une phrase par chanson, puis on écoute.', href: '#/carnet', cta: 'Préparer le lancement', weight: 1 },
+    { id: 'a-bilan', face: 'Face B · Sortir l’album', title: 'Le bilan final', why: 'Qu’avez-vous appris, sur la musique et sur le travail à deux? Qu’est-ce que vous referiez autrement?', href: '#/carnet', cta: 'Écrire le bilan final', weight: 1 },
+  );
+  return steps;
+}
