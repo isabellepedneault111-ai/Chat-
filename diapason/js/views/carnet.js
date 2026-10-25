@@ -2,7 +2,7 @@
 import { espace, onEspace, createEspace, joinEspace, leaveEspace, deleteEspace, updateEspace, saveEntry, deleteEntry, uploadAudio, audioURL } from '../espace.js';
 import { toast, store } from '../ui.js';
 import { CARNET_TYPES, BILAN_QUESTIONS, EVAL_CRITERES } from '../data.js';
-import { MEMBERS, ROLES, memberColor, STAGES, PLAN } from '../duo.js';
+import { MEMBERS, ROLES, memberColor, STAGES, PLAN, EVAL, NIVEAUX } from '../duo.js';
 import { planContext, currentMonth } from '../plan.js';
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -82,7 +82,24 @@ export function espaceGate(host, { onReady } = {}) {
   });
 }
 
-const BOARD_TYPES = new Set(['note', 'texte', 'audio', 'essai', 'paroles']);
+const BOARD_TYPES = new Set(['note', 'texte', 'audio', 'essai', 'paroles', 'lien']);
+const URL_RE = /https?:\/\/[^\s<>"]+/i;
+export function linkKind(url) {
+  if (/open\.spotify\.com/.test(url)) return 'Spotify';
+  if (/youtu\.?be/.test(url)) return 'YouTube';
+  if (/soundcloud\.com/.test(url)) return 'SoundCloud';
+  if (/bandcamp\.com/.test(url)) return 'Bandcamp';
+  return 'Lien';
+}
+// Lecteur intégré quand le service le permet ; sinon un simple lien.
+export function embedHTML(url) {
+  let m = url.match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?(track|album|playlist|artist|episode|show)\/([A-Za-z0-9]+)/);
+  if (m) return `<iframe class="embed spotify" src="https://open.spotify.com/embed/${m[1]}/${m[2]}" height="${m[1] === 'track' || m[1] === 'episode' ? 152 : 352}" loading="lazy" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" title="Lecteur Spotify"></iframe>`;
+  m = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+  if (m) return `<iframe class="embed yt" src="https://www.youtube-nocookie.com/embed/${m[1]}" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen title="Vidéo YouTube"></iframe>`;
+  if (/soundcloud\.com/.test(url)) return `<iframe class="embed sc" height="166" loading="lazy" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23d93a24" title="Lecteur SoundCloud"></iframe>`;
+  return '';
+}
 const stageOf = (e) => (e.data && Number.isInteger(e.data.stage) ? e.data.stage : e.type === 'paroles' ? 2 : 0);
 const songOf = (e) => (e.type === 'paroles' ? (e.title || 'Sans titre') : e.data?.song || '');
 export const allSongs = () => [...new Set(espace.entries.filter((e) => BOARD_TYPES.has(e.type)).map(songOf).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
@@ -97,6 +114,7 @@ export default {
     let recorder = null;
     let pendingAudio = null;
     let openId = null;
+    let detailVersion = 0;
 
     // Enregistre une modification d'entrée en fusionnant si l'autre a modifié entre-temps.
     async function patch(entry, change) {
@@ -126,10 +144,11 @@ export default {
         <div class="panel settings" hidden></div>
 
         <form class="capture panel" autocomplete="off">
-          <input class="input capture-in" data-c="quick" placeholder="Une idée, vite : un titre, une image, un accord…" aria-label="Idée rapide">
+          <input class="input capture-in" data-c="quick" placeholder="Une idée, un accord, un lien Spotify ou YouTube…" aria-label="Idée ou lien">
           <button class="btn primary" type="submit">Ajouter</button>
           <button class="btn rec" type="button" data-c="rec">● Mémo vocal</button>
           <label class="btn">Fichier<input type="file" accept="audio/*,video/*" data-c="file" hidden></label>
+          <button class="btn bravo-btn" type="button" data-type="bravo">★ Bravo à ${esc(other())}</button>
           <button class="btn ghost" type="button" data-c="more">Bilan, évaluation…</button>
         </form>
         <div class="composer panel" hidden></div>
@@ -149,7 +168,8 @@ export default {
         <div class="detail-scrim" hidden></div>
         <aside class="detail panel" hidden></aside>`;
       renderSettings();
-      renderAll();
+      lastSig = '';
+      renderAll(true);
     }
     const other = () => (espace.meta.members || MEMBERS).find((m) => m !== espace.me) || 'l’autre';
 
@@ -183,14 +203,20 @@ export default {
 
     function filtered() {
       const qv = (el.querySelector('.search')?.value || '').toLowerCase();
-      return espace.entries.filter((e) => e.type !== 'parcours' && e.type !== 'session'
+      return espace.entries.filter((e) => !['parcours', 'session', 'profil'].includes(e.type)
         && (!fWho || e.author === fWho)
         && (!fSong || (fSong === '—' ? !songOf(e) : songOf(e) === fSong))
         && (!qv || `${e.title} ${e.body} ${e.author} ${songOf(e)}`.toLowerCase().includes(qv)));
     }
 
-    function renderAll() {
+    // Signature de ce qui est visible : si rien de visible n'a changé, on ne touche pas au DOM
+    // (un lecteur intégré continue de jouer, une saisie n'est pas perdue).
+    let lastSig = '';
+    function renderAll(force) {
       if (!el.querySelector('.mur')) return;
+      const sig = JSON.stringify([view, fWho, fSong, el.querySelector('.search')?.value, espace.meta.plan, filtered().map((e) => [e.id, e.title, e.author, e.data?.stage, e.data?.song, e.data?.replies?.length, e.audio?.id, e.type === 'paroles' ? '' : e.body])]);
+      if (!force && sig === lastSig) return;
+      lastSig = sig;
       el.querySelectorAll('[data-v]').forEach((b) => b.setAttribute('aria-selected', b.dataset.v === view));
       const songs = allSongs();
       const mem = espace.meta.members || MEMBERS;
@@ -252,6 +278,7 @@ export default {
           ${view === 'morceaux' ? `<span class="cm-song">${STAGES[st].label}</span>` : ''}
           <div class="cm-bottom">
             ${e.audio ? `<button class="icon-btn tiny" data-play="${e.id}" aria-label="Écouter">▶</button>` : ''}
+            ${e.type === 'lien' ? `<a class="cm-link" href="${esc(e.data?.url || e.body)}" target="_blank" rel="noopener">${esc(e.data?.kind || 'Lien')} ↗</a>` : ''}
             ${n ? `<span class="cm-replies">${n} réponse${n > 1 ? 's' : ''}</span>` : ''}
             <span class="spacer"></span>
             <button class="icon-btn tiny" data-move="${e.id}:-1" aria-label="Étape précédente" ${st === 0 ? 'disabled' : ''}>←</button>
@@ -266,9 +293,10 @@ export default {
       if (e.type === 'bilan' && e.data?.answers) {
         extra = `<dl class="bilan">${BILAN_QUESTIONS.map((qq, i) => (e.data.answers[i] ? `<dt>${qq}</dt><dd>${esc(e.data.answers[i])}</dd>` : '')).join('')}${e.data.energie ? `<dt>Énergie</dt><dd>${'▮'.repeat(e.data.energie)}${'▯'.repeat(5 - e.data.energie)}</dd>` : ''}</dl>`;
       }
-      if (e.type === 'evaluation' && e.data?.scores) {
-        extra = `<p class="eval-mode">${esc(e.data.mode || '')}</p><ul class="eval-bars">${EVAL_CRITERES.map((c, i) => (e.data.scores[i] ? `<li><span>${c.label}</span><i style="--v:${e.data.scores[i]}"></i><b>${['', 'Début', 'En route', 'Solide', 'Wow'][e.data.scores[i]]}</b></li>` : '')).join('')}</ul>`;
+      if (e.type === 'evaluation' && e.data?.v === 2) {
+        extra = `<ul class="eval-bars10">${EVAL.map((c) => (e.data.scores[c.id] ? `<li><span>${c.label}</span><i style="--v:${e.data.scores[c.id]}"></i><b class="mono">${e.data.scores[c.id]}</b></li>` : '')).join('')}</ul>${e.data.fierte ? `<p class="fierte">Fierté : ${esc(e.data.fierte)}</p>` : ''}`;
       }
+      if (e.type === 'bravo') extra = `<p class="bravo-to">pour <b style="color:${memberColor(e.data?.to)}">${esc(e.data?.to || '')}</b></p>`;
       return `
         <li class="entry type-${e.type}" data-open="${e.id}" style="--c:${memberColor(e.author)}">
           <div class="entry-head">
@@ -278,7 +306,7 @@ export default {
           ${e.title ? `<h3>${esc(e.title)}</h3>` : ''}
           ${e.audio ? `<div class="entry-audio" data-audio="${e.id}"><button class="btn small" data-play="${e.id}">▶ Écouter</button></div>` : ''}
           ${extra}
-          ${e.body ? `<div class="entry-body">${esc(e.body).replace(/\n/g, '<br>')}</div>` : ''}
+          ${e.type === 'lien' ? `${embedHTML(e.data?.url || e.body)}<a class="btn small" href="${esc(e.data?.url || e.body)}" target="_blank" rel="noopener">Ouvrir dans ${esc(e.data?.kind || 'le navigateur')} ↗</a>` : e.body ? `<div class="entry-body">${esc(e.body).replace(/\n/g, '<br>')}</div>` : ''}
           ${e.data?.replies?.length ? `<p class="muted small">${e.data.replies.length} réponse(s) · touche pour voir</p>` : ''}
         </li>`;
     }
@@ -290,6 +318,7 @@ export default {
       const d = el.querySelector('.detail');
       if (!e) { closeDetail(); return; }
       openId = id;
+      detailVersion = e.updatedAt;
       const songs = allSongs();
       const mine = e.author === espace.me;
       d.innerHTML = `
@@ -300,7 +329,8 @@ export default {
         </div>
         <h2>${esc(e.title || 'Sans titre')}</h2>
         ${e.audio ? `<div class="entry-audio" data-audio="${e.id}"><button class="btn small" data-play="${e.id}">▶ Écouter</button></div>` : ''}
-        ${e.body && e.type !== 'paroles' ? `<div class="entry-body">${esc(e.body).replace(/\n/g, '<br>')}</div>` : ''}
+        ${e.type === 'lien' ? `${embedHTML(e.data?.url || e.body)}<a class="btn small" href="${esc(e.data?.url || e.body)}" target="_blank" rel="noopener">Ouvrir dans ${esc(e.data?.kind || 'le navigateur')} ↗</a>` : ''}
+        ${e.body && e.type !== 'paroles' && e.type !== 'lien' ? `<div class="entry-body">${esc(e.body).replace(/\n/g, '<br>')}</div>` : ''}
         ${e.type === 'paroles' ? `<pre class="lyrics-preview">${esc(e.body || '')}</pre><a class="btn small" href="#/paroles/${e.id}">Ouvrir dans l’atelier</a>` : ''}
         ${BOARD_TYPES.has(e.type) ? `
         <div class="detail-fields">
@@ -331,10 +361,18 @@ export default {
         fields = BILAN_QUESTIONS.map((qq, i) => `<label class="field col"><span>${qq}</span><textarea class="input" data-b="${i}" rows="2"></textarea></label>`).join('')
           + `<div class="scale-row"><span>Énergie du duo</span>${[1, 2, 3, 4, 5].map((n) => `<label><input type="radio" name="energie" value="${n}"><span>${n}</span></label>`).join('')}</div>`;
       } else if (type === 'evaluation') {
-        fields = `<table class="eval-table"><thead><tr><th>Critère</th>${['Début', 'En route', 'Solide', 'Wow'].map((x) => `<th>${x}</th>`).join('')}</tr></thead><tbody>
-          ${EVAL_CRITERES.map((c, i) => `<tr><th scope="row">${c.label}<small>${c.aide}</small></th>${[1, 2, 3, 4].map((n) => `<td><label><input type="radio" name="crit${i}" value="${n}"><span class="sr">${n}</span></label></td>`).join('')}</tr>`).join('')}
-          </tbody></table>
-          <label class="field col"><span>Qui évalue?</span><select data-e="mode"><option>Autoévaluation</option><option>Évaluation de mon partenaire</option><option>Évaluation à deux</option></select></label>`;
+        fields = `
+          <div class="eval-mode-pick" role="group" aria-label="Qui évalue-t-on?">
+            <button type="button" class="chip active" data-about="${esc(espace.me)}">Moi</button>
+            <button type="button" class="chip" data-about="${esc(other())}">${esc(other())}</button>
+            <button type="button" class="chip" data-about="duo">Nous deux</button>
+          </div>
+          <div class="sliders">${EVAL.map((c) => `
+            <label class="slide"><span class="sl-top"><b>${c.label}</b><small>${c.aide}</small></span>
+              <input type="range" min="1" max="10" value="5" data-score="${c.id}" style="--v:5">
+              <span class="sl-val"><em class="mono">5</em><i>${NIVEAUX[5]}</i></span></label>`).join('')}</div>
+          <label class="field col"><span>Ma fierté de la semaine</span><input class="input" data-e="fierte" maxlength="200" placeholder="Ex. : j’ai tenu le refrain sans forcer"></label>
+          <label class="field col"><span>Un bravo pour ${esc(other())}</span><input class="input" data-e="bravo" maxlength="300" placeholder="Ce qu’il ou elle a fait de bien, précisément"></label>`;
       }
       box.innerHTML = `
         <div class="type-tabs" role="tablist">${CARNET_TYPES.filter((x) => x.id !== 'audio').map((x) => `<button role="tab" data-type="${x.id}" aria-selected="${x.id === type}">${x.label}</button>`).join('')}<button class="icon-btn tiny" data-c="close-composer" aria-label="Fermer">×</button></div>
@@ -355,10 +393,22 @@ export default {
         if (!title) entry.title = `Bilan du ${new Date().toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' })}`;
       }
       if (composing === 'evaluation') {
-        entry.data = { scores: EVAL_CRITERES.map((_, i) => +(box.querySelector(`[name=crit${i}]:checked`)?.value || 0)), mode: box.querySelector('[data-e=mode]').value };
+        const about = box.querySelector('[data-about].active')?.dataset.about || espace.me;
+        entry.data = { v: 2, about, scores: Object.fromEntries([...box.querySelectorAll('[data-score]')].map((r) => [r.dataset.score, +r.value])), fierte: box.querySelector('[data-e=fierte]').value.trim() };
+        if (!entry.title) entry.title = `${about === 'duo' ? 'Nous deux' : about} · ${new Date().toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' })}`;
+      }
+      if (composing === 'bravo') {
+        entry.data = { to: other() };
+        if (!entry.title) entry.title = `Bravo ${other()}!`;
       }
       if (!entry.title && !entry.body) { toast('Quelques mots d’abord!'); return; }
-      try { await saveEntry(entry); toast(`Sur le mur. ${other()} le voit déjà.`); openComposer(null); } catch (err) { toast(err.message); }
+      try {
+        await saveEntry(entry);
+        const bravo = composing === 'evaluation' && box.querySelector('[data-e=bravo]').value.trim();
+        if (bravo) await saveEntry({ type: 'bravo', title: `Bravo ${other()}!`, body: bravo, data: { to: other() } });
+        toast(`Sur le mur. ${other()} le voit déjà.`);
+        openComposer(null);
+      } catch (err) { toast(err.message); }
     }
 
     async function postAudio(blob, title) {
@@ -399,7 +449,12 @@ export default {
         const v = inp.value.trim();
         if (!v) return;
         inp.value = '';
-        try { await saveEntry({ type: 'note', title: v, data: { stage: 0, song: fSong && fSong !== '—' ? fSong : '' } }); } catch (err) { toast(err.message); inp.value = v; }
+        const url = (v.match(URL_RE) || [])[0];
+        const label = url ? v.replace(url, '').trim() : '';
+        const entry = url
+          ? { type: 'lien', title: label || `${linkKind(url)} · ${new URL(url).hostname.replace('www.', '')}`, body: url, data: { url, kind: linkKind(url), stage: 0, song: fSong && fSong !== '—' ? fSong : '' } }
+          : { type: 'note', title: v, data: { stage: 0, song: fSong && fSong !== '—' ? fSong : '' } };
+        try { await saveEntry(entry); if (url) toast(`Lien partagé. ${other()} peut l’écouter.`); } catch (err) { toast(err.message); inp.value = v; }
       }
       if (e.target.classList.contains('reply-form')) {
         const inp = e.target.querySelector('[data-d=reply]');
@@ -414,11 +469,13 @@ export default {
 
     el.addEventListener('click', async (e) => {
       const v = e.target.closest('[data-v]');
-      if (v) { view = v.dataset.v; store.set('murView', view); renderAll(); return; }
+      if (v) { view = v.dataset.v; store.set('murView', view); renderAll(true); return; }
       const fw = e.target.closest('[data-fw]');
-      if (fw) { fWho = fw.dataset.fw; renderAll(); return; }
+      if (fw) { fWho = fw.dataset.fw; renderAll(true); return; }
       const fs = e.target.closest('[data-fs]');
-      if (fs) { fSong = fs.dataset.fs; renderAll(); return; }
+      if (fs) { fSong = fs.dataset.fs; renderAll(true); return; }
+      const ab = e.target.closest('[data-about]');
+      if (ab) { el.querySelectorAll('[data-about]').forEach((x) => x.classList.toggle('active', x === ab)); return; }
       const tt = e.target.closest('[data-type]');
       if (tt) { openComposer(tt.dataset.type); return; }
       const mv = e.target.closest('[data-move]');
@@ -501,7 +558,16 @@ export default {
         openDetail(openId);
       }
     });
-    el.addEventListener('input', (e) => { if (e.target.classList.contains('search')) renderAll(); });
+    el.addEventListener('input', (e) => {
+      if (e.target.classList.contains('search')) renderAll();
+      if (e.target.dataset.score) {
+        const v = +e.target.value;
+        e.target.style.setProperty('--v', v);
+        const out = e.target.parentElement.querySelector('.sl-val');
+        out.innerHTML = `<em class="mono">${v}</em><i>${NIVEAUX[v]}</i>`;
+        out.classList.toggle('hot', v >= 9);
+      }
+    });
 
     // Glisser-déposer d'une carte vers une autre colonne (étape ou morceau).
     el.addEventListener('dragstart', (e) => { const c = e.target.closest('[data-card]'); if (c) { e.dataTransfer.setData('text/plain', c.dataset.card); c.classList.add('dragging'); } });
@@ -522,7 +588,8 @@ export default {
     const offEsp = onEspace((what, extra) => {
       if (what === 'entries') {
         renderAll();
-        if (openId) openDetail(openId);
+        const oe = openId && espace.entries.find((x) => x.id === openId);
+        if (openId && (!oe || oe.updatedAt !== detailVersion)) openDetail(openId);
         extra?.fresh?.forEach((x) => toast(`${x.editedBy || x.author} : ${x.title || 'nouvelle entrée'}`));
       }
       if (what === 'online') {

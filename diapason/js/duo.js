@@ -2,7 +2,7 @@
 // (« deux personnes qui souhaitent jouer de la musique ensemble »). Chaque élément garde ses sources.
 
 export const MEMBERS = ['Zaza', 'Frog'];
-export const ROLES = { Zaza: 'voix + guitare', Frog: 'piano + effets' };
+export const ROLES = { Zaza: 'voix · guitare · interprète', Frog: 'son · MIDI · piano · composition' };
 export const memberColor = (name) => (name === MEMBERS[1] ? 'var(--frog)' : 'var(--zaza)');
 
 // Le pipeline d'une idée : générer → écouter et évaluer → construire → fixer → jouer (Biasutti 2018, Aslan 2016).
@@ -157,3 +157,31 @@ export const POURQUOI = {
     ['Au-delà d’environ 20 événements par seconde, l’oreille entend une hauteur.', 'Psychoacoustique'],
   ] },
 };
+
+// ---------- Étape 1 : notre point de départ ----------
+export const OBJECTIFS = ['Finir 3 à 5 originaux', 'Jouer devant du monde', 'Une démo dont on est fiers', 'Composer vraiment à deux', 'Développer ma voix', 'Sculpter notre son', 'Écrire de meilleurs textes', 'Du plaisir, sans pression', 'Trouver notre son à nous', 'Apprendre de l’autre'];
+export const STYLES = ['Folk', 'Pop', 'Électro', 'Ambient', 'Rock', 'Indie', 'Soul / R&B', 'Jazz', 'Trip-hop', 'Chanson française', 'Trad québécois', 'Hip-hop', 'Musique de film', 'Expérimental'];
+export const BESOINS = [
+  ['cadre', 'Un cadre clair', 'De la liberté'],
+  ['parole', 'On en parle avant', 'On joue, on verra'],
+  ['rythme', 'Lentement, en profondeur', 'Vite, plein d’idées'],
+  ['seul', 'Préparer seul d’abord', 'Tout créer ensemble'],
+  ['retour', 'Des retours doux', 'Des retours directs'],
+];
+export const MOTS = [
+  ['apporte', 'Ce que j’apporte au duo'],
+  ['bloque', 'Ce qui me bloque parfois'],
+  ['besoin', 'Ce dont j’ai besoin de toi'],
+  ['fierte', 'Dans six mois, je serai fier·e si…'],
+];
+
+// Autoévaluation : curseurs de 1 à 10 avec une étiquette qui vit.
+export const EVAL = [
+  { id: 'voix', label: 'Ma voix ou mon jeu', aide: 'Justesse, contrôle, son' },
+  { id: 'ensemble', label: 'Être ensemble', aide: 'Synchro, entrées, écoute' },
+  { id: 'invention', label: 'Oser inventer', aide: 'Idées, risques, surprises' },
+  { id: 'son', label: 'Notre son', aide: 'Timbres, mix, effets, couleur' },
+  { id: 'texte', label: 'Les mots', aide: 'Paroles, images, hooks' },
+  { id: 'plaisir', label: 'Le plaisir', aide: 'Est-ce qu’on a eu du fun?' },
+];
+export const NIVEAUX = ['', 'Pas encore', 'Pas encore', 'Ça germe', 'Ça germe', 'En route', 'En route', 'Solide', 'Solide', 'Wow', 'Feu sacré'];

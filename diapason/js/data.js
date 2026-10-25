@@ -95,6 +95,7 @@ export const CARNET_TYPES = [
   { id: 'audio', label: 'Audio', aide: 'Un mémo vocal du cellulaire, une prise d’instrument, une idée de mélodie. Ton duo peut l’écouter tout de suite.', placeholder: 'Ex. : Riff de guitare pour le refrain' },
   { id: 'essai', label: 'Essai', aide: 'Ce que vous avez tenté : ce qui a marché, ce qui n’a pas marché. Les essais ratés sont précieux.', placeholder: 'Ex. : Refrain une octave plus haut' },
   { id: 'bilan', label: 'Bilan', aide: 'À la fin de chaque séance : 3 minutes, à deux, pour garder la trace et décider de la suite.', placeholder: 'Bilan du jour' },
+  { id: 'bravo', label: 'Bravo', aide: 'Un mot positif pour l’autre : ce qu’il ou elle a fait de bien, précisément. Ça compte.', placeholder: 'Ex. : ton intro au Rhodes, wow' },
   { id: 'evaluation', label: 'Évaluation', aide: 'Chacun évalue sur les mêmes critères : comparez, c’est là que ça parle.', placeholder: 'Ex. : Bilan du mois 1' },
 ];
 

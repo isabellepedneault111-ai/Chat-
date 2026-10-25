@@ -10,6 +10,7 @@ import { setLoop, toggleLoop, loopPlaying } from './studio.js';
 import { esc, espaceGate, allSongs } from './carnet.js';
 
 const MAX_AGE = 5 * 3600 * 1000;
+const otherOf = () => (espace.meta?.members || ['Zaza', 'Frog']).find((m) => m !== espace.me) || 'l’autre';
 const pick = (arr, not) => { const pool = arr.filter((x) => x !== not); return pool.length ? pool[Math.floor(Math.random() * pool.length)] : arr[0]; };
 
 // Temps écoulé « utile » d'une session : sans les pauses, avec les phases sautées.
@@ -110,11 +111,13 @@ export default {
           </header>
           <ol class="run-bar">${f.phases.map(([p, dur], i) => `<li style="flex:${dur}" data-i="${i}"><span>${PHASES[p].titre}</span><i></i></li>`).join('')}</ol>
           <div class="run-body"></div>
+          <p class="keys muted small"><kbd>espace</kbd> pause · <kbd>→</kbd> phase suivante · <kbd>R</kbd> prise · <kbd>B</kbd> boucle</p>
           <div class="run-controls">
             <button class="btn" data-a="pause">⏸ Pause</button>
             <button class="btn" data-a="skip">Phase suivante ⏭</button>
             <span class="spacer"></span>
             <button class="btn" data-a="loop">▶ Boucle ${esc(g.nom)}</button>
+            <button class="btn ghost" data-a="full" title="Plein écran pour l’écran partagé">⛶ Plein écran</button>
             <button class="btn danger" data-a="end">Terminer</button>
           </div>
         </div>`;
@@ -181,6 +184,7 @@ export default {
         extra += `
           <form class="debrief">
             ${[['intention', 'Ce qu’on voulait'], ['entendu', 'Ce qu’on a entendu'], ['ecart', 'L’écart'], ['prochaine', 'LA prochaine cible']].map(([k, l]) => `<label class="field col"><span>${l}</span><textarea class="input" rows="2" data-db="${k}">${esc(db[k] || '')}</textarea></label>`).join('')}
+            <label class="field col wide"><span>Un bravo pour ${esc(otherOf())}</span><input class="input" data-db="bravo" maxlength="300" placeholder="Ce qu’il ou elle a fait de bien aujourd’hui"></label>
             <button class="btn" type="submit">Enregistrer le debrief</button>
           </form>`;
       }
@@ -261,6 +265,7 @@ export default {
         if (pid && PHASES[pid].pool.length) await patch((d) => ({ ex: { ...d.ex, [pid]: pick(PHASES[pid].pool, d.ex?.[pid]) } }));
       }
       if (a === 'loop') { toggleLoop(); }
+      if (a === 'full') { const r = el.querySelector('.run'); if (document.fullscreenElement) document.exitFullscreen(); else r?.requestFullscreen?.(); }
       if (a === 'rec') recordTake(e.target.closest('[data-a]'));
       if (a === 'end' && confirm('Terminer la session?')) {
         await patch(() => ({ done: true, doneAt: Date.now() }));
@@ -278,10 +283,24 @@ export default {
       e.preventDefault();
       const db = {};
       e.target.querySelectorAll('[data-db]').forEach((t) => { db[t.dataset.db] = t.value.trim(); });
+      const bravo = db.bravo;
+      delete db.bravo;
       await patch(() => ({ debrief: db })).catch((err) => toast(err.message));
-      toast('Debrief enregistré.');
+      if (bravo) await saveEntry({ type: 'bravo', title: `Bravo ${otherOf()}!`, body: bravo, data: { to: otherOf() } }).catch(() => {});
+      e.target.querySelector('[data-db=bravo]').value = '';
+      toast(bravo ? `Debrief enregistré, et bravo envoyé à ${otherOf()}.` : 'Debrief enregistré.');
     });
 
+    // Ensemble dans la même pièce : on pilote au clavier sans viser les boutons.
+    const onKey = (e) => {
+      if (!el.querySelector('.run') || e.target.closest('input, textarea, select')) return;
+      const press = (sel) => { e.preventDefault(); el.querySelector(sel)?.click(); };
+      if (e.key === ' ') press('[data-a=pause]');
+      if (e.key === 'ArrowRight') press('[data-a=skip]');
+      if (e.key.toLowerCase() === 'r') press('[data-a=rec]');
+      if (e.key.toLowerCase() === 'b') press('[data-a=loop]');
+    };
+    window.addEventListener('keydown', onKey);
     // Une action de l'autre (pause, phase suivante, autre exercice) arrive : on suit.
     const off = onEspace((what) => {
       if (what !== 'entries' && what !== 'meta') return;
@@ -292,6 +311,6 @@ export default {
       if (s) { lastTickT = 0; tick(); }
     });
     render();
-    return () => { off(); stopTick(); recorder?.stop(); };
+    return () => { off(); stopTick(); recorder?.stop(); window.removeEventListener('keydown', onKey); };
   },
 };

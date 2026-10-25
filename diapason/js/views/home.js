@@ -1,10 +1,10 @@
 // Accueil = le plan de match de Zaza & Frog : six mois, des idées brutes à 3 à 5 originaux.
-import { espace, onEspace, updateEspace } from '../espace.js';
+import { espace, onEspace, updateEspace, profileOf } from '../espace.js';
 import { toast } from '../ui.js';
 import { MODULES } from '../data.js';
 import { PLAN, RYTHME, VISION_FIELDS, STAGES, MEMBERS, memberColor, ROLES } from '../duo.js';
 import { currentMonth, planContext, planStart, weekRhythm } from '../plan.js';
-import { esc, espaceGate, ago } from './carnet.js';
+import { esc, espaceGate, ago, embedHTML } from './carnet.js';
 import { activeSession } from './session.js';
 
 export default {
@@ -25,7 +25,17 @@ export default {
           <p class="lead">Six mois. Deux musiciens. Des morceaux originaux.</p>
           <p class="duo-line">${(espace.meta.members || MEMBERS).map((m) => `<span style="--c:${memberColor(m)}"><b>${esc(m)}</b> ${esc(ROLES[m] || '')}</span>`).join('')}</p>
         </header>`;
-      if (!start || editingVision) { el.innerHTML = head + setupHTML(!!start); return; }
+      const mem0 = espace.meta.members || MEMBERS;
+      const portraits = mem0.map((m) => ({ m, ok: !!profileOf(m)?.doneAt }));
+      const etape1 = portraits.some((x) => !x.ok) ? `
+        <a class="etape1" href="#/depart">
+          <p class="tape red">Étape 1</p>
+          <h2>Notre point de départ</h2>
+          <p>Objectifs, voix, styles, besoins : chacun le sien, puis notre portrait commun. C’est lui qui nourrit le plan.</p>
+          <span class="e1-who">${portraits.map((x) => `<span style="--c:${memberColor(x.m)}" class="${x.ok ? 'ok' : ''}">${esc(x.m)} ${x.ok ? '✓' : '· à faire'}</span>`).join('')}</span>
+        </a>` : '';
+      if (!start && !editingVision) { el.innerHTML = head + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
+      if (editingVision) { el.innerHTML = head + setupHTML(!!start); return; }
 
       const m = currentMonth();
       const ctx = planContext();
@@ -59,6 +69,33 @@ export default {
           </a>
         </section>
 
+        ${etape1}
+        ${(() => {
+          const bravos = espace.entries.filter((e) => e.type === 'bravo').slice(0, 3);
+          const links = espace.entries.filter((e) => e.type === 'lien').slice(0, 4);
+          const arts = mem.flatMap((x) => (profileOf(x)?.artistes || []).filter((a) => a?.nom).map((a) => ({ ...a, by: x })));
+          const sessions = espace.entries.filter((e) => e.type === 'session' && e.data?.done);
+          const mins = sessions.reduce((sum, e) => sum + Math.max(0, Math.min(240, (e.data.doneAt - e.data.startedAt - (e.data.pausedTotal || 0)) / 60000)), 0);
+          return `
+          <div class="home-trio">
+            <section class="panel bravos">
+              <div class="panel-head"><h2>Nos bravos</h2><a class="btn small" href="#/carnet">★ En envoyer un</a></div>
+              ${bravos.length ? `<ul>${bravos.map((b) => `<li style="--c:${memberColor(b.author)}"><p>${esc(b.body || b.title)}</p><small><b>${esc(b.author)}</b> → ${esc(b.data?.to || '')} · ${ago(b.createdAt)}</small></li>`).join('')}</ul>` : '<p class="muted small">Le premier bravo est le plus dur. Ce que l’autre a fait de bien, précisément.</p>'}
+            </section>
+            <section class="panel inspi">
+              <div class="panel-head"><h2>Ce qui nous inspire</h2><a class="btn small" href="#/carnet">+ Un lien</a></div>
+              ${links[0] ? embedHTML(links[0].data?.url || links[0].body) : ''}
+              <ul class="inspi-list">${links.slice(links[0] && embedHTML(links[0].data?.url || links[0].body) ? 1 : 0).map((l) => `<li style="--c:${memberColor(l.author)}"><a href="${esc(l.data?.url || l.body)}" target="_blank" rel="noopener">${esc(l.title)} ↗</a></li>`).join('')}
+                ${arts.map((a) => `<li style="--c:${memberColor(a.by)}">${a.lien ? `<a href="${esc(a.lien)}" target="_blank" rel="noopener">${esc(a.nom)} ↗</a>` : esc(a.nom)}</li>`).join('')}</ul>
+              ${!links.length && !arts.length ? '<p class="muted small">Collez un lien Spotify ou YouTube dans la capture du mur : il apparaît ici, prêt à écouter.</p>' : ''}
+            </section>
+            <a class="panel evo-teaser" href="#/evolution">
+              <h2>Notre évolution</h2>
+              <div class="mini-stats"><div><b>${Math.floor(mins / 60)} h ${String(Math.round(mins % 60)).padStart(2, '0')}</b><span>jouées</span></div><div><b>${sessions.length}</b><span>sessions</span></div><div><b>${espace.entries.filter((e) => e.type === 'evaluation').length}</b><span>autoévaluations</span></div></div>
+              <span class="btn small">Voir nos courbes →</span>
+            </a>
+          </div>`;
+        })()}
         <section class="panel months">
           <div class="panel-head"><h2>Les six mois</h2><span class="muted small">Départ : ${new Date(start).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric' })}</span></div>
           <ol>${PLAN.map((p) => {
@@ -126,7 +163,15 @@ export default {
         render();
       }
     });
-    const off = onEspace((what) => { if ((what === 'entries' || what === 'meta') && !editingVision && !el.querySelector('.setup')) render(); });
+    // On ne redessine que si ce que l'accueil montre a changé (un lecteur Spotify en cours ne repart pas à zéro).
+    let lastSig = '';
+    const sig = () => JSON.stringify([espace.meta, espace.me, espace.entries.filter((e) => e.type !== 'paroles').map((e) => [e.id, e.updatedAt]), espace.entries.filter((e) => e.type === 'paroles').map((e) => [e.id, e.data?.stage])]);
+    const off = onEspace((what) => {
+      if ((what === 'entries' || what === 'meta') && !editingVision && !el.querySelector('.setup')) {
+        const now = sig();
+        if (now !== lastSig || el.querySelector('.gate')) { lastSig = now; render(); }
+      }
+    });
     render();
     return () => off();
   },

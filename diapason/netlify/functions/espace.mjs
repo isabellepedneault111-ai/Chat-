@@ -6,7 +6,7 @@ import { getStore } from '@netlify/blobs';
 export const config = { path: ['/api/espace', '/api/espace/*'] };
 
 const ID = /^[A-Za-z0-9_-]{8,40}$/;
-const TYPES = new Set(['note', 'texte', 'paroles', 'audio', 'bilan', 'evaluation', 'essai', 'parcours', 'lien', 'session']);
+const TYPES = new Set(['note', 'texte', 'paroles', 'audio', 'bilan', 'evaluation', 'essai', 'parcours', 'lien', 'session', 'profil', 'bravo']);
 const MAX_ENTRY = 300 * 1024; // 300 Ko de JSON par entrée
 const MAX_PART = 4 * 1024 * 1024; // morceaux audio de 4 Mo (limite des fonctions : 6 Mo)
 const MAX_PARTS = 25; // ~100 Mo par audio
@@ -61,7 +61,7 @@ export async function handle(req, store) {
       if (body.name != null) meta.name = clean(body.name, 80) || meta.name;
       if (Array.isArray(body.members)) meta.members = body.members.slice(0, 2).map((m) => clean(m, 24)).filter(Boolean);
       // Réglages libres du duo (objectif, vision, plan, mot d'accueil) : petits objets JSON.
-      for (const k of ['goal', 'vision', 'plan', 'welcome']) {
+      for (const k of ['goal', 'vision', 'plan', 'welcome', 'tour']) {
         if (body[k] != null) {
           const txt = JSON.stringify(body[k]);
           if (txt.length > 20000) return fail(413, 'Réglage trop volumineux');

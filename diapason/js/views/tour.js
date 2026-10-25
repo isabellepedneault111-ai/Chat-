@@ -1,16 +1,18 @@
 // La visite guidée : la première fois que Frog entre, Zaza l'accueille, puis l'app montre son sens.
 // Pas des bulles d'aide : des écrans plein format, comme un livret d'album.
-import { espace, audioURL } from '../espace.js';
+import { espace, audioURL, updateEspace } from '../espace.js';
 import { store } from '../ui.js';
 import { CONTRAINTES, PLAN, STAGES, FORMATS, PHASES } from '../duo.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
+// Vue une fois pour toutes, sur n'importe quel appareil : retenu dans l'espace.
+const seenInSpace = () => !!espace.meta?.tour?.[espace.me];
 
 export function maybeTour() {
   if (!espace.connected || !espace.me) return;
   if (espace.meta.createdBy && espace.me === espace.meta.createdBy) return; // celle qui a créé l'espace n'a pas besoin de la visite
-  if (store.get(seenKey(), false)) return;
+  if (store.get(seenKey(), false) || seenInSpace()) return;
   startTour(false);
 }
 
@@ -27,8 +29,11 @@ export function startTour(preview) {
        ${espace.meta.welcome?.audio ? '<button class="t-play" data-t="play">▶ Écouter</button>' : ''}
      </div>`,
     `<p class="t-kicker">${esc(me)}.</p>
-     <h2>Ton matériel joue déjà très bien.</h2>
-     <p class="t-text">Cette app ne le remplace pas. Elle fait ce qu’aucun pédalier, aucun looper, aucun clavier ne fait : <b>elle se souvient, elle organise, et elle nous mène quelque part.</b></p>`,
+     <h2>Le son, le MIDI, le piano, la composition : c’est toi.</h2>
+     <p class="t-text">Ton matériel joue déjà très bien, et cette app ne le remplace pas. Elle fait ce qu’aucun pédalier, aucun looper, aucun DAW ne fait pour un duo : <b>elle se souvient de tout ce qu’on essaie, elle range nos idées, et elle nous mène quelque part, ensemble.</b></p>`,
+    `<p class="t-kicker">Étape 1</p>
+     <h2>On part du même endroit.</h2>
+     <p class="t-text">Chacun remplit son point de départ : ce qu’il veut, sa voix ou son instrument, ses styles, les artistes qui l’allument, ce dont il a besoin de l’autre. L’app met nos deux portraits côte à côte et trace le plan à partir de là.</p>`,
     `<p class="t-kicker">Le sens</p>
      <h2>Six mois.<br>Trois à cinq originaux.<br>À deux.</h2>
      <ol class="t-months">${PLAN.map((p) => `<li><span>M${p.n}</span>${esc(p.sortie)}</li>`).join('')}</ol>
@@ -43,7 +48,7 @@ export function startTour(preview) {
      <p class="t-text">Un mémo vocal à 2 h du matin, un riff, un mot : tout atterrit au même endroit, et on voit le global (morceau par morceau) autant que le détail.</p>`,
     `<p class="t-kicker">Ton instrument</p>
      <h2>Joue. L’app écoute.</h2>
-     <p class="t-text">Branche le piano en MIDI ou joue devant le micro : l’app reconnaît l’accord et la tonalité, propose la suite, les notes que ${esc(from)} peut chanter, et met ta grille en boucle avec le beat.</p>
+     <p class="t-text">Branche ton clavier en MIDI (ou une interface audio) : l’app reconnaît l’accord et la tonalité, propose la suite, les notes que ${esc(from)} peut chanter, et met ta grille en boucle avec le beat.</p>
      <div class="t-chords"><span>Ré</span><span>La</span><span>Sim</span><span class="now">Sol</span></div>`,
     `<p class="t-kicker">Les paroles</p>
      <h2>Des mots qui tiennent dans le temps.</h2>
@@ -55,7 +60,8 @@ export function startTour(preview) {
      <p class="t-text">Le petit dé en haut en tire une nouvelle quand vous tournez en rond.</p>`,
     `<h2>On commence?</h2>
      <div class="t-actions">
-       <a class="btn primary big" href="#/session" data-t="end">● Notre première session</a>
+       <a class="btn primary big" href="#/depart" data-t="end">Remplir mon point de départ</a>
+       <a class="btn big" href="#/session" data-t="end">● Notre première session</a>
        <a class="btn big" href="#/carnet" data-t="end">Voir le mur</a>
        <button class="btn big ghost" data-t="end">Explorer seul</button>
      </div>`,
@@ -81,7 +87,10 @@ export function startTour(preview) {
     box.querySelector('[data-t=next]').hidden = i === slides.length - 1;
   };
   const end = () => {
-    if (!preview) store.set(seenKey(), true);
+    if (!preview) {
+      store.set(seenKey(), true);
+      updateEspace({ tour: { ...(espace.meta.tour || {}), [espace.me]: Date.now() } }).catch(() => {});
+    }
     player?.pause();
     box.classList.add('out');
     setTimeout(() => box.remove(), 350);

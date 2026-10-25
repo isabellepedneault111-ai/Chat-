@@ -4,6 +4,8 @@ import { toggleMic, onMicStatus, onPitch } from './audio.js';
 import { MODULES } from './data.js';
 import { POURQUOI, CONTRAINTES } from './duo.js';
 import session, { activeSession } from './views/session.js';
+import depart from './views/depart.js';
+import evolution from './views/evolution.js';
 import { maybeTour } from './views/tour.js';
 import home from './views/home.js';
 import miroir from './views/miroir.js';
@@ -15,7 +17,7 @@ import paroles from './views/paroles.js';
 import carnet from './views/carnet.js';
 import { boot, joinEspace, espace, onEspace } from './espace.js';
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session };
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution };
 const VOIX = ['miroir', 'tessiture', 'gym'];
 const view = $('#view');
 let cleanup = null;

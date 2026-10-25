@@ -2,6 +2,7 @@ import { mic, onPitch, startMic, stopMic } from '../audio.js';
 import { keyboard, store, getProfile, toast, ring } from '../ui.js';
 import { nameFR, nameEN, spanText, pcFR } from '../music.js';
 import { VOICE_TYPES } from '../data.js';
+import { espace, profileOf, saveProfile } from '../espace.js';
 
 const FROM = 36;
 const TO = 88;
@@ -143,6 +144,11 @@ export default {
       const types = classify(recLow, recHigh);
       result = { types };
       store.set('profile', { low: recLow, high: recHigh, type: types[0].name, at: Date.now() });
+      // Dans l'espace du duo : la voix de chacun, et son évolution.
+      if (espace.connected && espace.me) {
+        const v = { low: recLow, high: recHigh, type: types[0].name, at: Date.now() };
+        saveProfile((d) => ({ voix: v, voixHist: [...(d.voixHist || []), v].slice(-40) })).catch(() => {});
+      }
       step = 'result';
       stopMic();
       speak(`Voilà ton empreinte. Famille ${types[0].name}, de ${nameFR(recLow)} à ${nameFR(recHigh)}.`);
@@ -185,7 +191,9 @@ export default {
     });
 
     function renderGroup() {
-      const group = store.get('group', []);
+      // Connectés : les deux voix viennent de l'espace partagé ; sinon, ce qu'on a ajouté sur cet appareil.
+      const shared = espace.connected ? (espace.meta.members || []).map((n) => ({ name: n, ...(profileOf(n)?.voix || {}) })).filter((g) => g.low != null) : [];
+      const group = shared.length ? shared : store.get('group', []);
       const host = q('.group-chart');
       if (!group.length) {
         host.innerHTML = '<p class="muted empty">Aucune empreinte pour l’instant. Fais le test, puis ajoute-toi au portrait.</p>';
@@ -205,7 +213,7 @@ export default {
               <span class="gc-name">${g.name.replace(/[<>&]/g, '')}</span>
               <div class="gc-track"><div class="gc-bar" style="left:${pct(g.low)}%;width:${pct(g.high) - pct(g.low)}%">
                 <small>${nameFR(g.low)}</small><small>${nameFR(g.high)}</small></div></div>
-              <button class="icon-btn tiny" data-act="del" aria-label="Retirer ${g.name.replace(/[<>&"]/g, '')}">×</button>
+              ${shared.length ? '<span></span>' : `<button class="icon-btn tiny" data-act="del" aria-label="Retirer ${g.name.replace(/[<>&"]/g, '')}">×</button>`}
             </div>`).join('')}
           <div class="gc-ticks">${ticks.join('')}</div>
         </div>

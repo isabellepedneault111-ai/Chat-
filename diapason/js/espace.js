@@ -183,3 +183,15 @@ export async function boot() {
   if (!espace.id) return;
   try { await joinEspace(espace.id); } catch (e) { if (e.status === 404) leaveEspace(); }
 }
+
+// ---------- Profils : chacun écrit le sien (aucun conflit possible entre les deux) ----------
+export const profileId = (name) => `profil-${String(name).replace(/[^A-Za-z0-9_-]/g, '').slice(0, 30) || 'x'}`;
+export const profileOf = (name) => espace.entries.find((e) => e.id === profileId(name))?.data || null;
+export async function saveProfile(change, name = espace.me) {
+  const id = profileId(name);
+  const cur = espace.entries.find((e) => e.id === id);
+  const data = { ...(cur?.data || {}), ...change(cur?.data || {}) };
+  const r = await saveEntry({ id, type: 'profil', title: `Point de départ · ${name}`, data, author: name }, { baseUpdatedAt: cur?.updatedAt });
+  if (r.conflict) return saveEntry({ ...r.current, data: { ...r.current.data, ...change(r.current.data || {}) } }, { baseUpdatedAt: r.current.updatedAt });
+  return r;
+}
