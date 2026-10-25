@@ -21,7 +21,8 @@ const visible = (sel) => sel.split(',').map((x) => x.trim()).flatMap((x) => [...
 
 import { montrerExemples, retirerExemples } from './demo.js';
 
-export function coachTour({ onEnd, premiere = false } = {}) {
+// apercu : Zaza voit exactement le tour de Frog, avec seulement une sortie discrète.
+export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
   let i = 0;
   montrerExemples();
   const box = document.createElement('div');
@@ -67,12 +68,12 @@ export function coachTour({ onEnd, premiere = false } = {}) {
       <p>${esc(s.d)}</p>
       <div class="coach-row">
         ${s.final ? '<button class="btn primary big" data-c="go">Commencer l’étape 1</button>' : `${i ? '<button class="btn ghost small" data-c="prev">←</button>' : ''}<button class="btn primary" data-c="next">Suivant →</button>`}
-        ${premiere ? '' : `<button class="coach-skip" data-c="skip">${s.final ? 'Plus tard' : 'Passer le tour'}</button>`}
+        ${apercu ? '<button class="coach-skip" data-c="skip">Fermer l’aperçu</button>' : premiere ? '' : `<button class="coach-skip" data-c="skip">${s.final ? 'Plus tard' : 'Passer le tour'}</button>`}
       </div>`;
     setTimeout(place, 380);
     setTimeout(place, 900);
   }
-  function key(e) { if (e.key === 'ArrowRight' && !STEPS[i].final) { i++; show(); } if (e.key === 'ArrowLeft' && i) { i--; show(); } if (e.key === 'Escape' && !premiere) end(); }
+  function key(e) { if (e.key === 'ArrowRight' && !STEPS[i].final) { i++; show(); } if (e.key === 'ArrowLeft' && i) { i--; show(); } if (e.key === 'Escape' && (!premiere || apercu)) end(); }
   bubble.addEventListener('click', (e) => {
     const c = e.target.closest('[data-c]')?.dataset.c;
     if (c === 'next') { i = Math.min(STEPS.length - 1, i + 1); show(); }

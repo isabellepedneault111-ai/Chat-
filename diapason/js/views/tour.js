@@ -4,6 +4,7 @@ import { espace, audioURL, updateEspace } from '../espace.js';
 import { store } from '../ui.js';
 import { embers } from '../rituel.js';
 import { ILLU } from '../illus.js';
+import { VISITE } from '../visite-data.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
@@ -25,20 +26,26 @@ export function startTour(preview) {
   const welcome = espace.meta.welcome?.text || 'Forever more…';
   const [z, f] = espace.meta.members || ['Zaza', 'Frog'];
   // Chaque scène : un titre, une phrase, un dessin qui bouge. Le dessin dit ce que les mots ne disent pas.
-  // Quand, ce qu'on fait, ce que FLIP fait : du concret, pas une promesse.
-  const scene = (n, titre, { quand, vous, flip }, svg) => `
-    <div class="t-scene" data-auto="13000">
-      <div class="t-words">
+  // Chaque scène montre la vraie app (avec des exemples fictifs) et l'explique repère par repère.
+  // Un repère : [écran, n° du point dans VISITE, phrase]. Le zoom suit le repère actif.
+  const frame = (k, img, d, pts, ratio) => `
+    <div class="t-frame t-frame-${k}" style="aspect-ratio:${ratio}">
+      <div class="t-zoom"><img src="img/visite/${img}" alt="" draggable="false">
+        ${pts.map(([i, n]) => (d[i] ? `<span class="t-pin" data-n="${n}" style="left:${d[i][0]}%;top:${d[i][1]}%"><b>${n + 1}</b></span>` : '')).join('')}
+      </div>
+    </div>`;
+  const shot = (n, titre, quand, frames, steps) => `
+    <div class="t-shot" data-steps="${steps.length}" data-auto="${steps.length * 3400 + 2200}">
+      <header class="t-shot-head">
         <p class="t-kicker">${n} / 4</p>
         <h2>${titre}</h2>
-        <dl class="t-how">
-          <div><dt>Quand</dt><dd>${quand}</dd></div>
-          <div><dt>Nous</dt><dd>${vous}</dd></div>
-          <div><dt>FLIP</dt><dd>${flip}</dd></div>
-        </dl>
-      </div>
-      <figure class="t-illu" aria-hidden="true">${svg}</figure>
+        <p class="t-quand"><b>Quand</b> ${quand}</p>
+      </header>
+      <div class="t-frames">${frames}</div>
+      <ol class="t-caps">${steps.map((t, i) => `<li data-n="${i}"><b>${i + 1}</b><span>${t}</span></li>`).join('')}</ol>
     </div>`;
+  const V = VISITE;
+  const r = (d) => `${Math.round(d.w)} / ${Math.round(d.h)}`;
   const slides = [
     `<div class="t-open">
        ${ILLU.fils}
@@ -52,28 +59,39 @@ export function startTour(preview) {
     `<div class="t-title" data-auto="8000">
        <p class="t-kicker">Ce que ${esc(from)} a imaginé pour nous</p>
        <h2 class="t-huge">La distance<br>ne crée plus<br><i>de distance.</i></h2>
-       <p class="t-line">Dans la même pièce ou loin l’un de l’autre, nos élans ne s’arrêtent plus. Voici comment, en quatre façons d’être ensemble.</p>
+       <p class="t-line">Dans la même pièce ou loin l’un de l’autre, nos élans ne s’arrêtent plus. Voici comment, sur la vraie app, avec des exemples.</p>
      </div>`,
-    scene(1, 'Dans la même <i>pièce</i>', {
-      quand: 'On est ensemble, chez l’un ou chez l’autre.',
-      vous: `${esc(f)} branche son clavier et joue. ${esc(z)} chante.`,
-      flip: `Allume les notes de l’accord que ${esc(z)} peut chanter, dans sa tessiture mesurée à l’étape 1, et montre en direct si sa voix tombe dedans. À chaque séance, il retient où sa voix brille.`,
-    }, ILLU.piece(z, f)),
-    scene(2, 'À distance, <i>en même temps</i>', {
-      quand: 'Chacun chez soi, à la même heure.',
-      vous: 'On lance la même séance, au téléphone ou en visio.',
-      flip: 'Affiche la même étape sur nos deux écrans. Le minuteur avance pour les deux, à la même seconde.',
-    }, ILLU.distance(z, f)),
-    scene(3, 'Chacun <i>son temps</i>', {
-      quand: 'Une idée à 23 h. L’autre l’écoute le lendemain matin.',
-      vous: 'Un son en une touche, avec une intention : « chante par-dessus », « trouve un titre ».',
-      flip: 'Le montre à l’autre dès qu’il ouvre l’app. Sa réponse s’enregistre par-dessus, et les couches s’empilent.',
-    }, ILLU.relais(z, f)),
-    scene(4, 'Rien ne <i>se perd</i>', {
-      quand: 'Tout le temps.',
-      vous: 'Une idée, même à moitié, va au mur d’un geste.',
-      flip: 'La place dans notre ciel selon son étape, la retrouve d’un mot, et propose des rencontres entre nos idées.',
-    }, ILLU.ciel()),
+    shot(1, 'Dans la même <i>pièce</i>', `Ensemble. ${esc(f)} au clavier, ${esc(z)} au micro.`,
+      frame('voix', 'voix.jpg', V.voix.pts, [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]], r(V.voix)), [
+        `${esc(f)} joue un accord sur son clavier. FLIP le reconnaît.`,
+        `Les notes que ${esc(z)} peut chanter s’allument, dans sa tessiture.`,
+        'Sa voix s’affiche en direct : jaune, c’est dans l’accord.',
+        'Le temps passé juste, en pourcentage.',
+        'Séance après séance, FLIP retient où sa voix brille.',
+      ]),
+    shot(2, 'À distance, <i>en même temps</i>', 'Chacun chez soi, à la même heure, en appel.',
+      frame('z', 'distance-z.jpg', V.distance.pts, [[0, 0], [1, 1], [2, 3]], r(V.distance))
+      + frame('f', 'distance-f.jpg', V.distance.fpts, [[0, 2]], `${V.distance.fw} / ${V.distance.fh}`), [
+        `${esc(z)} lance la séance : des étapes, une cible, une grille d’accords.`,
+        'Le même minuteur, à la seconde, sur les deux écrans.',
+        `Sur le cellulaire de ${esc(f)} : la même séance, au même moment.`,
+        'La consigne de l’étape. On joue, on n’organise rien.',
+      ]),
+    shot(3, 'Chacun <i>son temps</i>', 'Une idée à 23 h. L’autre l’écoute le lendemain matin.',
+      frame('relais', 'relais.jpg', V.relais.pts, [[0, 0], [1, 1], [2, 2], [3, 3]], r(V.relais)), [
+        'Une touche : un son part vers l’autre.',
+        'Avec une intention : chante dessus, écris dessus.',
+        `${esc(z)} répond par-dessus, quand elle veut.`,
+        `${esc(f)} trouve les mots. La chanson grandit par couches.`,
+      ]),
+    shot(4, 'Rien ne <i>se perd</i>', 'Tout le temps : une idée, même à moitié, va au mur.',
+      frame('ciel', 'ciel.jpg', V.ciel.pts, [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4]], r(V.ciel)), [
+        'Le centre, c’est l’album. Plus une idée avance, plus elle s’en approche.',
+        `Chaque point est une idée. Rose : ${esc(z)}. Bleu : ${esc(f)}.`,
+        'Le pointillé : une rencontre que FLIP propose entre deux idées.',
+        'Avec une consigne concrète pour la tenter.',
+        'Un clic, et une nouvelle idée naît des deux.',
+      ]),
     `<div class="t-title">
        <p class="t-kicker">Maintenant, à toi</p>
        <h2 class="t-huge">Faisons le tour<br><i>de l’app.</i></h2>
@@ -97,13 +115,32 @@ export function startTour(preview) {
   let i = 0;
   let player = null;
   let auto = null;
+  let stepT = null;
   const show = () => {
-    clearTimeout(auto);
+    clearTimeout(auto); clearTimeout(stepT);
     box.querySelector('.t-slide').innerHTML = `<div class="t-inner t-${i}">${slides[i]}</div>`;
     const ms = +(box.querySelector('[data-auto]')?.dataset.auto || 0);
     box.querySelectorAll('.t-progress i').forEach((b, k) => { b.classList.toggle('on', k < i || (k === i && !ms)); b.classList.toggle('run', k === i && !!ms); b.style.setProperty('--dur', `${ms}ms`); });
     // Les scènes avancent seules, comme un film ; on peut toujours aller plus vite ou revenir.
     if (ms) auto = setTimeout(() => box.isConnected && go(1), ms);
+    // Les repères s'allument un à un ; le cadre s'approche du repère actif.
+    const sh = box.querySelector('.t-shot');
+    if (sh) {
+      const n = +sh.dataset.steps; let k = -1;
+      const step = () => {
+        if (!sh.isConnected) return;
+        k = Math.min(n - 1, k + 1);
+        sh.querySelectorAll('[data-n]').forEach((x) => { const j = +x.dataset.n; x.classList.toggle('on', j === k); x.classList.toggle('vu', j < k); });
+        sh.querySelectorAll('.t-frame').forEach((fr) => {
+          const pin = fr.querySelector(`.t-pin[data-n="${k}"]`);
+          const zm = fr.querySelector('.t-zoom');
+          if (pin) { zm.style.transformOrigin = `${pin.style.left} ${pin.style.top}`; zm.style.transform = 'scale(1.12)'; fr.classList.add('focus'); } else { zm.style.transform = 'scale(1)'; fr.classList.remove('focus'); }
+        });
+        if (k < n - 1) stepT = setTimeout(step, 3400);
+        else stepT = setTimeout(() => sh.querySelectorAll('.t-zoom').forEach((zm) => { zm.style.transform = 'scale(1)'; }), 2400);
+      };
+      stepT = setTimeout(step, 900);
+    }
     box.querySelector('.t-nav [data-t=prev]').disabled = i === 0;
     box.querySelector('.t-nav [data-t=next]').hidden = i === 0 || i === slides.length - 1;
   };
@@ -113,7 +150,7 @@ export function startTour(preview) {
     updateEspace({ tour: { ...(espace.meta.tour || {}), [espace.me]: Date.now() } }).catch(() => {});
   };
   const end = (mark = true) => {
-    clearTimeout(auto);
+    clearTimeout(auto); clearTimeout(stepT);
     if (mark) marquer();
     player?.pause();
     box.classList.add('out');
@@ -131,7 +168,7 @@ export function startTour(preview) {
     const t = e.target.closest('[data-t]')?.dataset.t;
     if (t === 'end') { end(); return; }
     // la visite n'est marquée comme vue qu'à la toute fin du tour de l'app
-    if (t === 'coach') { end(false); setTimeout(() => import('../coach.js').then((c) => c.coachTour({ premiere: !preview, onEnd: marquer })), 400); return; }
+    if (t === 'coach') { end(false); setTimeout(() => import('../coach.js').then((c) => c.coachTour({ premiere: true, apercu: preview, onEnd: marquer })), 400); return; }
     if (t === 'prev') { go(-1); return; }
     if (t === 'next') { go(1); return; }
     if (t === 'play') {
