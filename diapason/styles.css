@@ -2302,3 +2302,14 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .mt-img { height: 100%; min-height: 0; }
 .mt-tile figcaption { text-align: left; }
 @media (max-width: 860px) { .mt-tile { grid-template-rows: minmax(0, 1fr) auto; } .mt-tile figcaption { text-align: center; } }
+/* Le mot de la fin de la visite : la question de Zaza. */
+.coach-fin { display: grid; place-items: center; padding: 16px; background: radial-gradient(ellipse at 50% 40%, #2a1c18 0%, #12110f 70%); color: #efe9dc; animation: tourin .9s ease; }
+.cq { max-width: 760px; text-align: center; display: grid; gap: 14px; justify-items: center; }
+.cq-1 { margin: 0; font: italic 500 clamp(1.4rem, 3vw, 2rem) var(--display); color: #f3c77a; opacity: 0; animation: cqin 1.2s ease .6s forwards; }
+.cq-2 { margin: 0; font: 800 clamp(2.2rem, 6.4vw, 4.6rem)/1.05 var(--display); color: #fff; opacity: 0; animation: cqin 1.2s ease 2.6s forwards; }
+.cq-sign { margin: 0; font: italic 500 1.1rem var(--display); color: #cfc6b4; opacity: 0; animation: cqin 1s ease 3.4s forwards; }
+.cq-rep { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 18px; opacity: 0; animation: cqin 1s ease 4.4s forwards; }
+.cq-mots { display: flex; gap: 8px; width: min(460px, 100%); opacity: 0; animation: cqin 1s ease 4.8s forwards; }
+.cq-mots input { flex: 1; min-width: 0; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(241, 233, 216, .25); background: rgba(255, 255, 255, .06); color: #fff; font: inherit; }
+.cq-ok { margin: 0; font: italic 500 1.2rem var(--display); color: #f3c77a; }
+@keyframes cqin { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }

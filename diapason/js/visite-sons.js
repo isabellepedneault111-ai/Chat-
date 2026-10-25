@@ -209,3 +209,17 @@ export function jouer(nom) {
     SONS[nom](t, lecture ? 0.5 : NOIRE);
   } catch (e) { console.debug('accent', e); } // le son n'est pas essentiel
 }
+
+// La vraie voix de Zaza, posée sur un temps de Projet 1 (sa ligne do#-ré-mi-fa est en ré mineur, comme la pièce).
+let voixBuf = null;
+export async function voixDeZaza() {
+  if (!sonActif()) return;
+  try {
+    const c = audio();
+    if (!voixBuf) voixBuf = await fetch('data/sons/zaza-voix.mp3').then((r) => r.arrayBuffer()).then((b) => c.decodeAudioData(b));
+    let t = c.currentTime + 0.1;
+    if (lecture && lecture.id === 'projet1') { t = prochainTemps(t); laissePasser(voixBuf.duration, 0.5); }
+    const src = c.createBufferSource(); const g = c.createGain(); g.gain.value = 1.1;
+    src.buffer = voixBuf; src.connect(g).connect(out()); src.start(t);
+  } catch (e) { console.debug('voix', e); }
+}

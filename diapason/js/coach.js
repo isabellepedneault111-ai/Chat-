@@ -21,7 +21,8 @@ const STEPS = [
 const visible = (sel) => sel.split(',').map((x) => x.trim()).flatMap((x) => [...document.querySelectorAll(x)]).find((el) => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.display !== 'none'; });
 
 import { montrerExemples, retirerExemples } from './demo.js';
-import { bandeStart, bandeSection, bandeStop, jouer } from './visite-sons.js';
+import { espace, saveEntry } from './espace.js';
+import { bandeStart, bandeSection, bandeStop, jouer, voixDeZaza } from './visite-sons.js';
 
 // apercu : Zaza voit exactement le tour de Frog, avec seulement une sortie discrète.
 export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
@@ -77,13 +78,42 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
     setTimeout(place, 380);
     setTimeout(place, 900);
   }
+  // Le mot de la fin : Projet 1 revient, la vraie voix de Zaza passe, puis sa question. La réponse de Frog lui arrive.
+  function question() {
+    removeEventListener('keydown', key);
+    bandeSection('accueil');
+    setTimeout(voixDeZaza, 1500);
+    const de = espace.meta?.welcome?.by || espace.meta?.createdBy || 'Zaza';
+    box.classList.add('coach-fin');
+    box.innerHTML = `<div class="cq" role="dialog" aria-live="polite">
+      <p class="cq-1">Et puis…</p>
+      <p class="cq-2">Ai-je réussi à te séduire ? ;P</p>
+      <p class="cq-sign">— ${esc(de)}</p>
+      <div class="cq-rep">
+        <button class="btn primary" data-r="Oui.">Oui.</button>
+        <button class="btn" data-r="Complètement.">Complètement.</button>
+        <button class="btn" data-r="Pas encore… continue.">Pas encore… continue.</button>
+      </div>
+      <form class="cq-mots"><input name="mots" maxlength="280" placeholder="Ou dis-le avec tes mots…" autocomplete="off"><button class="btn small">Envoyer</button></form>
+    </div>`;
+    const repondre = async (r, mots = '') => {
+      box.querySelector('.cq-rep').innerHTML = `<p class="cq-ok">${apercu ? 'Aperçu : sa réponse t’arrivera dans le journal.' : `Ta réponse part vers ${esc(de)}.`}</p>`;
+      box.querySelector('.cq-mots').remove();
+      if (!apercu) {
+        try { await saveEntry({ type: 'texte', title: `Ai-je réussi à te séduire ? ${r || `« ${mots} »`}`.slice(0, 80), body: mots, data: { journal: true, date: new Date().toISOString().slice(0, 10), reponseVisite: true, stage: 0 } }); } catch { /* elle la verra au prochain essai */ }
+      }
+      setTimeout(() => end('#/depart'), 2200);
+    };
+    box.querySelector('.cq-rep').addEventListener('click', (e) => { const b = e.target.closest('[data-r]'); if (b) repondre(b.dataset.r); });
+    box.querySelector('.cq-mots').addEventListener('submit', (e) => { e.preventDefault(); const m = e.target.mots.value.trim(); if (m) repondre('', m); });
+  }
   function key(e) { if (e.key === 'ArrowRight' && !STEPS[i].final) { i++; show(); } if (e.key === 'ArrowLeft' && i) { i--; show(); } if (e.key === 'Escape' && (!premiere || apercu)) end(); }
   bubble.addEventListener('click', (e) => {
     const c = e.target.closest('[data-c]')?.dataset.c;
     if (c === 'next') { i = Math.min(STEPS.length - 1, i + 1); show(); }
     if (c === 'prev') { i = Math.max(0, i - 1); show(); }
     if (c === 'skip') end(STEPS[i].final ? '#/' : null);
-    if (c === 'go') end('#/depart');
+    if (c === 'go') question();
   });
   addEventListener('resize', place);
   addEventListener('keydown', key);
