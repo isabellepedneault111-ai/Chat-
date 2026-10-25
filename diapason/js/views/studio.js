@@ -4,6 +4,7 @@ import { FR, mtof, chordIntervals, chordName, hash, rng, mod12, clamp, nameFR } 
 import { createListener, connectMIDI, chordLabel, estimateKey, suggestNext, diatonic, majorTonic } from '../instrument.js';
 import { DRUM_PRESETS, PROGRESSIONS, DEFIS_IMPRO } from '../data.js';
 import { clockStart, clockStep, clockStop } from '../console.js';
+import { espace, audioURL, saveEntry, uploadImage } from '../espace.js';
 
 const ROWS = [['k', 'Grosse caisse'], ['s', 'Caisse claire'], ['h', 'Charleston'], ['c', 'Claps']];
 const parse = (p) => Object.fromEntries(ROWS.map(([r]) => [r, p[r].split('').map(Number)]));
@@ -126,9 +127,9 @@ export default {
     el.innerHTML = `
       <div class="mod-head">
         <div>
-          <p class="eyebrow">05 · Studio</p>
-          <h1>Fais ta première chanson</h1>
-          <p class="muted">Un beat, quatre accords, ta voix, une pochette. C’est tout ce qu’il faut.</p>
+          <p class="eyebrow">Studio</p>
+          <h1>Construire, jouer, improviser</h1>
+          <p class="muted">Un beat, des accords qui changent sans couper, des défis d’impro, et une pochette faite de notre art.</p>
         </div>
       </div>
       <div class="panel transport">
@@ -299,44 +300,111 @@ export default {
 
     function coverTab(body) {
       const c = store.get('cover', { title: '', artist: '', mood: 'Aurore boréale' });
+      // Venue du mur : une image (et peut-être un son ou des mots) à transformer en pochette.
+      const hp = new URLSearchParams(location.hash.split('?')[1] || '');
+      const byId = (id) => espace.entries?.find((e) => e.id === id);
+      if (hp.get('img')) {
+        c.img = hp.get('img');
+        const avec = byId(hp.get('avec'));
+        c.son = avec?.audio ? avec.id : '';
+        if (avec?.title) c.title = avec.title.slice(0, 40);
+        c.mix = c.mix ?? 0.5;
+      }
+      const images = espace.connected ? espace.entries.filter((e) => e.image && !e.data?.corbeille) : [];
+      const sons = espace.connected ? espace.entries.filter((e) => e.audio && !e.audio.type?.startsWith('video')) : [];
       body.innerHTML = `
         <div class="cover-grid">
           <div class="panel">
-            <h2>Pochette générative</h2>
-            <p class="muted">L’image est calculée à partir de tes mots, de ta tonalité et de tes accords. Mêmes ingrédients → même pochette. Aucune IA externe, aucune clé, aucune donnée envoyée.</p>
-            <label class="field col"><span>Titre de l’album</span><input class="input" data-c="title" maxlength="40" placeholder="Ex. : Forever more" value="${esc(c.title)}"></label>
-            <label class="field col"><span>Artiste</span><input class="input" data-c="artist" maxlength="40" placeholder="FLIP" value="${esc(c.artist)}"></label>
-            <label class="field col"><span>Ambiance</span><select data-c="mood">${Object.keys(MOODS).map((m) => `<option ${m === c.mood ? 'selected' : ''}>${m}</option>`).join('')}</select></label>
+            <h2>Pochette</h2>
+            <p class="muted">Votre art en fond, votre son gravé par-dessus, ou une image calculée à partir de vos accords. Rien n’est envoyé ailleurs.</p>
+            <label class="field col"><span>Titre</span><input class="input" data-c="title" maxlength="40" placeholder="Ex. : Forever more" value="${esc(c.title || '')}"></label>
+            <label class="field col"><span>Artiste</span><input class="input" data-c="artist" maxlength="40" placeholder="FLIP" value="${esc(c.artist || '')}"></label>
+            ${espace.connected ? `
+            <div class="cov-art">
+              <span class="cov-lbl">Notre art en fond</span>
+              <div class="cov-thumbs">
+                <button class="cov-none ${c.img ? '' : 'on'}" data-pick="">Aucune</button>
+                ${images.map((e) => `<button class="cov-thumb ${c.img === e.id ? 'on' : ''}" data-pick="${esc(e.id)}" title="${esc(e.title)}"><span data-img="${esc(e.id)}"></span></button>`).join('')}
+              </div>
+              ${images.length ? '' : '<p class="muted small">Ajoute une photo, un dessin ou une toile au mur : elle apparaîtra ici.</p>'}
+              <label class="field col"><span>Gravé par-dessus</span><select data-c="son"><option value="">Nos accords (dessin calculé)</option>${sons.map((e) => `<option value="${esc(e.id)}" ${c.son === e.id ? 'selected' : ''}>Le son : ${esc(e.title || 'sans titre')} (${esc(e.author)})</option>`).join('')}</select></label>
+              <label class="field col"><span>Le son par-dessus l’image</span><input type="range" min="0" max="1" step="0.01" data-c="mix" value="${c.mix ?? 0.5}"></label>
+            </div>` : ''}
+            <label class="field col"><span>Couleurs</span><select data-c="mood">${Object.keys(MOODS).map((m) => `<option ${m === c.mood ? 'selected' : ''}>${m}</option>`).join('')}</select></label>
             <div class="row">
               <button class="btn" data-cv="remix">Variante</button>
               <button class="btn primary" data-cv="dl">↓ Télécharger (PNG)</button>
+              ${espace.connected ? '<button class="btn" data-cv="mur">Au mur</button>' : ''}
             </div>
             <div class="tip-box"><b>Question</b><p>Que dit ta pochette de ta musique avant même qu’on l’écoute? Montre-la à quelqu’un sans lui faire écouter : quel style imagine-t-il?</p></div>
           </div>
-          <div class="panel cover-wrap"><canvas class="cover" width="1080" height="1080" aria-label="Pochette d’album générée"></canvas></div>
+          <div class="panel cover-wrap"><canvas class="cover" width="1080" height="1080" aria-label="Pochette"></canvas></div>
         </div>`;
+      body.querySelectorAll('[data-img]').forEach(async (sp) => { const e = byId(sp.dataset.img); if (e) sp.style.backgroundImage = `url("${await audioURL(e.image)}")`; });
       const cv = body.querySelector('.cover');
-      const draw = () => {
-        const v = {
-          title: body.querySelector('[data-c=title]').value,
-          artist: body.querySelector('[data-c=artist]').value,
-          mood: body.querySelector('[data-c=mood]').value,
-        };
+      const art = { img: null, imgId: '', peaks: null, sonId: '' };
+      // Charge l'image et le son choisis une seule fois ; le son devient 720 crêtes (son vrai visage).
+      async function loadArt(v) {
+        if (v.img !== art.imgId) {
+          art.imgId = v.img; art.img = null;
+          const e = byId(v.img);
+          if (e?.image) { const im = new Image(); im.src = await audioURL(e.image); await im.decode().catch(() => {}); if (art.imgId === v.img) art.img = im; }
+        }
+        if (v.son !== art.sonId) {
+          art.sonId = v.son; art.peaks = null;
+          const e = byId(v.son);
+          if (e?.audio) {
+            try {
+              const buf = await audio().decodeAudioData(await (await fetch(await audioURL(e.audio))).arrayBuffer());
+              const ch = buf.getChannelData(0); const n = 720; const step = Math.floor(ch.length / n); const pk = new Float32Array(n);
+              for (let i = 0; i < n; i++) { let m = 0; for (let j = i * step; j < (i + 1) * step; j += 16) m = Math.max(m, Math.abs(ch[j])); pk[i] = m; }
+              const top = Math.max(...pk) || 1; pk.forEach((x, i) => { pk[i] = x / top; });
+              if (art.sonId === v.son) art.peaks = pk;
+            } catch { toast('Ce son ne se laisse pas dessiner.'); }
+          }
+        }
+      }
+      const val = () => ({
+        title: body.querySelector('[data-c=title]').value,
+        artist: body.querySelector('[data-c=artist]').value,
+        mood: body.querySelector('[data-c=mood]').value,
+        img: body.querySelector('.cov-thumbs .on')?.dataset.pick || '',
+        son: body.querySelector('[data-c=son]')?.value || '',
+        mix: +(body.querySelector('[data-c=mix]')?.value ?? 0.5),
+      });
+      const credit = (v) => { const a = byId(v.img); const b = byId(v.son); return [a && `image : ${a.author}`, b && `son : ${b.author}`].filter(Boolean).join(' · '); };
+      const draw = async () => {
+        const v = val();
         store.set('cover', v);
-        drawCover(cv, v);
+        await loadArt(v);
+        drawCover(cv, v, { img: art.img, peaks: art.peaks, mix: v.mix, credit: credit(v) });
       };
       let t = 0;
       body.addEventListener('input', () => { clearTimeout(t); t = setTimeout(draw, 120); });
-      body.addEventListener('click', (e) => {
+      body.addEventListener('change', (e) => { if (e.target.dataset.c === 'son') draw(); });
+      body.addEventListener('click', async (e) => {
+        const pk = e.target.closest('[data-pick]');
+        if (pk) { body.querySelectorAll('[data-pick]').forEach((x) => x.classList.toggle('on', x === pk)); draw(); return; }
         const a = e.target.closest('[data-cv]')?.dataset.cv;
         if (a === 'remix') { S.variant++; draw(); }
         if (a === 'dl') {
           cv.toBlob((b) => {
             const a2 = document.createElement('a');
             a2.href = URL.createObjectURL(b);
-            a2.download = `pochette-${(body.querySelector('[data-c=title]').value || 'diapason').toLowerCase().replace(/[^a-z0-9]+/gi, '-')}.png`;
+            a2.download = `pochette-${(body.querySelector('[data-c=title]').value || 'flip').toLowerCase().replace(/[^a-z0-9]+/gi, '-')}.png`;
             a2.click();
           });
+        }
+        if (a === 'mur') {
+          const btn = e.target.closest('[data-cv]'); btn.disabled = true;
+          try {
+            const v = val();
+            const blob = await new Promise((r) => cv.toBlob(r, 'image/jpeg', 0.9));
+            const image = await uploadImage(blob);
+            await saveEntry({ type: 'image', title: `Pochette · ${v.title || 'sans titre'}`, image, data: { stage: 1, pochette: true, rencontre: [v.img, v.son].filter(Boolean).length === 2 ? [v.img, v.son] : undefined } });
+            toast('La pochette est sur le mur.');
+          } catch (err) { toast(err.message); }
+          btn.disabled = false;
         }
       });
       document.fonts.load('900 80px "Literata"').finally(draw);
@@ -785,7 +853,7 @@ export default {
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 // ---------- Pochette générative ----------
-function drawCover(canvas, { title, artist, mood }) {
+function drawCover(canvas, { title, artist, mood }, art = {}) {
   const ctx = canvas.getContext('2d');
   const W = canvas.width;
   const pal = MOODS[mood] || MOODS['Aurore boréale'];
@@ -795,11 +863,18 @@ function drawCover(canvas, { title, artist, mood }) {
   ctx.save();
   ctx.fillStyle = pal[0];
   ctx.fillRect(0, 0, W, W);
+  const mix = art.img ? (art.mix ?? 0.5) : 1;
+  // Notre art en fond, cadré au carré ; le dessin du son vient s'y poser.
+  if (art.img?.naturalWidth) {
+    const iw = art.img.naturalWidth; const ih = art.img.naturalHeight; const k = Math.max(W / iw, W / ih);
+    ctx.drawImage(art.img, (W - iw * k) / 2, (W - ih * k) / 2, iw * k, ih * k);
+    ctx.fillStyle = pal[0]; ctx.globalAlpha = 0.25 * mix; ctx.fillRect(0, 0, W, W); ctx.globalAlpha = 1;
+  }
 
   // Nébuleuses de couleur
   ctx.filter = 'blur(90px)';
   for (let i = 0; i < 5; i++) {
-    ctx.globalAlpha = 0.35 + r() * 0.35;
+    ctx.globalAlpha = (0.35 + r() * 0.35) * mix * (art.img ? 0.6 : 1);
     ctx.fillStyle = pal[1 + Math.floor(r() * 3)];
     ctx.beginPath();
     ctx.arc(r() * W, r() * W, 120 + r() * 320, 0, Math.PI * 2);
@@ -812,7 +887,25 @@ function drawCover(canvas, { title, artist, mood }) {
   const harm = prog.chords.map(([deg]) => 2 + (mod12(S.key + deg) % 7));
   const layout = Math.floor(r() * 3);
   ctx.globalCompositeOperation = 'lighter';
-  if (layout === 0) {
+  if (art.peaks) {
+    // Le vrai son, gravé en soleil : chaque rayon est un instant de la prise.
+    const cx = W / 2; const cy = W * 0.42; const base = W * 0.17; const n = art.peaks.length;
+    ctx.lineCap = 'round';
+    for (let i = 0; i < n; i++) {
+      const a = -Math.PI / 2 + (i / n) * Math.PI * 2; const p = art.peaks[i];
+      ctx.globalAlpha = Math.min(1, (0.35 + p * 0.65) * (0.4 + mix));
+      ctx.strokeStyle = pal[1 + (i % 3)];
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(a) * (base - p * 22), cy + Math.sin(a) * (base - p * 22));
+      ctx.lineTo(cx + Math.cos(a) * (base + 8 + p * W * 0.2), cy + Math.sin(a) * (base + 8 + p * W * 0.2));
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 0.6 * (0.4 + mix); ctx.strokeStyle = pal[3]; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(cx, cy, base - 30, 0, Math.PI * 2); ctx.stroke();
+  } else if (art.img && mix < 0.05) {
+    // l'image seule
+  } else if (layout === 0) {
     // Anneaux d'onde
     const cx = W * (0.3 + r() * 0.4);
     const cy = W * (0.28 + r() * 0.3);
@@ -828,7 +921,7 @@ function drawCover(canvas, { title, artist, mood }) {
         a ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
       }
       ctx.strokeStyle = pal[1 + (k % 3)];
-      ctx.globalAlpha = 0.85 - (k / n) * 0.7;
+      ctx.globalAlpha = (0.85 - (k / n) * 0.7) * mix;
       ctx.lineWidth = 2;
       ctx.stroke();
     }
@@ -846,7 +939,7 @@ function drawCover(canvas, { title, artist, mood }) {
         x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
       }
       ctx.strokeStyle = pal[1 + (k % 3)];
-      ctx.globalAlpha = 0.25 + (k / rows) * 0.6;
+      ctx.globalAlpha = (0.25 + (k / rows) * 0.6) * mix;
       ctx.lineWidth = 2.2;
       ctx.stroke();
     }
@@ -858,7 +951,7 @@ function drawCover(canvas, { title, artist, mood }) {
       const x = W / 2 + Math.cos(a * harm[k % 4]) * d;
       const y = W * 0.42 + Math.sin(a) * d * 0.8;
       const s = 2 + r() * 26;
-      ctx.globalAlpha = 0.2 + r() * 0.7;
+      ctx.globalAlpha = (0.2 + r() * 0.7) * mix;
       ctx.strokeStyle = pal[1 + Math.floor(r() * 3)];
       ctx.lineWidth = 1.5;
       for (let ring = 1; ring <= 3; ring++) {
@@ -914,8 +1007,9 @@ function drawCover(canvas, { title, artist, mood }) {
   ctx.fillStyle = 'rgba(255,255,255,.7)';
   ctx.textAlign = 'right';
   ctx.fillText(`${FR[S.key]} · ${S.bpm} BPM · ${prog.roman}`, W - 60, 76);
+  if (art.credit) ctx.fillText(art.credit, W - 60, W - 70);
   ctx.textAlign = 'left';
-  ctx.fillText('DIAPASON', 60, 76);
+  ctx.fillText('FLIP', 60, 76);
   ctx.restore();
 }
 

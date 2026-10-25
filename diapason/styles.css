@@ -2046,3 +2046,10 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .cm-img { max-height: 170px; }
 .detail-img { background-size: contain; background-color: #14120f; max-height: 60vh; }
 .lg.img { border-radius: 1px; transform: rotate(45deg); width: 8px; height: 8px; background: var(--sky-ink); }
+.ren-acts { display: flex; gap: 8px; flex-wrap: wrap; }
+.cov-art { display: grid; gap: 10px; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 6px 0 10px; }
+.cov-lbl { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+.cov-thumbs { display: flex; gap: 8px; flex-wrap: wrap; }
+.cov-thumb, .cov-none { width: 64px; height: 64px; padding: 0; border: 2px solid var(--line); border-radius: 6px; background: var(--surface2); cursor: pointer; overflow: hidden; font: 600 .75rem var(--body); color: var(--muted); }
+.cov-thumb span { display: block; width: 100%; height: 100%; background: center / cover no-repeat; }
+.cov-thumb.on, .cov-none.on { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent); }

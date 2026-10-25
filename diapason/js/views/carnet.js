@@ -347,7 +347,7 @@ export default {
               <div class="ren-pair">${idea(p.a)}<span class="ren-x" aria-hidden="true">×</span>${idea(p.b)}</div>
               <p class="ren-why">${esc(p.why.join(' · '))}</p>
               <p class="ren-do">${esc(p.consigne)}</p>
-              <button class="btn small primary" data-ren="${i}">Les faire se rencontrer</button>
+              <div class="ren-acts"><button class="btn small primary" data-ren="${i}">Les faire se rencontrer</button>${p.a.image || p.b.image ? `<a class="btn small" href="#/studio?tab=cover&img=${esc((p.a.image ? p.a : p.b).id)}&avec=${esc((p.a.image ? p.b : p.a).id)}">En faire une pochette</a>` : ''}</div>
             </article>`).join('') || '<p class="muted small">Il faut au moins trois ou quatre idées pour que le ciel propose des rencontres.</p>'}
           ${pairs.length ? '<button class="linklike" data-c="ren-next">D’autres rencontres ↻</button>' : ''}
           ${dorment.length ? `<h2 class="sky-h">Elles dorment</h2><p class="muted small">Pas touchées depuis trois semaines ou plus. Une écoute suffit parfois à les réveiller.</p><div class="sky-dort">${dorment.map(idea).join('')}</div>` : ''}
@@ -461,6 +461,7 @@ export default {
         <h4>Réponses</h4>
         <ol class="replies">${(e.data?.replies || []).map((r) => `<li style="--c:${memberColor(r.by)}"><b>${esc(r.by)}</b> <span class="muted small">${ago(r.at)}</span><p>${esc(r.text)}</p></li>`).join('') || '<li class="muted small">Pas encore de réponse.</li>'}</ol>
         <form class="reply-form"><input class="input" data-d="reply" placeholder="Répondre à ${esc(e.author === espace.me ? other() : e.author)}…" aria-label="Réponse"><button class="btn small" type="submit">Envoyer</button></form>
+        ${e.image && !e.data?.pochette ? `<a class="btn small" href="#/studio?tab=cover&img=${esc(e.id)}">En faire une pochette</a>` : ''}
         <div class="row"><button class="btn small" data-perle="${esc(e.id)}">${e.data?.perle ? 'Dans le coffre ✦ (l’en sortir)' : '✦ Au coffre'}</button>${mine ? `<button class="btn small danger" data-del="${e.id}">Supprimer</button>` : ''}</div>
         <p class="muted small">Le coffre garde une étoile sur l’idée : elle reste ici, à sa place.</p>`;
       d.hidden = false;
