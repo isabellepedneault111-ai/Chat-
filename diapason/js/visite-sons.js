@@ -239,3 +239,10 @@ export function laboAccord() {
   return info;
 }
 export const horloge = () => audio().currentTime;
+
+// Une oreille branchée sur la pièce de Frog qui joue : le visuel de la chanson se dessine avec son vrai son.
+export function analyseur() {
+  if (!lecture) return null;
+  if (!lecture.an) { const a = audio().createAnalyser(); a.fftSize = 1024; a.smoothingTimeConstant = 0.6; lecture.master.connect(a); lecture.an = a; }
+  return lecture.an;
+}

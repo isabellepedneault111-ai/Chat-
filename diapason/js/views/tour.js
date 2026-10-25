@@ -6,6 +6,7 @@ import { embers } from '../rituel.js';
 import { VISITE } from '../visite-data.js';
 import { jouer, sonActif, basculerSon, prechargerVisite, bandeStart, bandeSection, bandeStop } from '../visite-sons.js';
 import { laboVivant } from '../labo-vivant.js';
+import { visuelVivant } from '../visuel-vivant.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
@@ -55,7 +56,7 @@ export function startTour(preview) {
     ['m-labo.jpg', 'Un rythme devient une note', 'Trois rythmes calés sur ta musique accélèrent… jusqu’à devenir un accord de Fa majeur, dans la tonalité de Projet 1.', 'Tes beats et tes accords viennent de la même source : des idées qu’on n’aurait jamais trouvées.', 'labo'],
     ['m-trois.jpg', 'Un troisième musicien', 'Il écoute notre phrase, la transforme et nous la renvoie.', 'Un partenaire d’impro, même quand on est juste deux.', 'trois'],
     ['m-grimoire.jpg', 'Le grimoire', 'Des cartes à tirer pour lancer une chanson : un thème, une peur, une contrainte.', 'Fini la page blanche.', 'grimoire'],
-    ['m-pochette.jpg', 'Notre art en pochette', 'Un dessin et un vrai son de nous deviennent la pochette de l’album.', 'Notre image, notre son, notre album.', 'pochette'],
+    ['m-pochette.jpg', 'Le visuel de notre chanson', 'Le vrai son d’une chanson ou d’un groove dessine son image, en direct. Ici : ta musique, en ce moment.', 'Notre son a enfin un visage : pour une pochette, une vidéo, une story.', 'pochette'],
   ];
 
   const r = (d) => `${Math.round(d.w)} / ${Math.round(d.h)}`;
@@ -108,7 +109,7 @@ export function startTour(preview) {
     // Une idée à la fois, le temps de lire ; la flèche passe à la suivante, rien ne file tout seul hors de l'écran.
     `<div class="t-montage">
        <header><p class="t-kicker">Et ce n’est pas tout</p><h2>Six idées <i>originales</i></h2><p class="mt-intro">Aucune autre app au monde ne les fait. Je les ai inventées pour nous.</p></header>
-       <div class="mt-stage">${MONTAGE.map(([img, t, ail, nous], i) => `<figure class="mt-tile" data-n="${i}"><div class="mt-img">${img === 'm-labo.jpg' ? '<canvas class="mt-live" aria-label="Trois disques qui accélèrent jusqu’à chanter Fa majeur"></canvas>' : `<img src="img/visite/${img}" alt="">`}</div><figcaption><span class="mt-num">${i + 1} / ${MONTAGE.length} · idée originale</span><b>${t}</b><span class="mt-ail">${ail}</span><span class="mt-nous"><i>Pour nous :</i> ${nous}</span></figcaption></figure>`).join('')}</div>
+       <div class="mt-stage">${MONTAGE.map(([img, t, ail, nous], i) => `<figure class="mt-tile" data-n="${i}"><div class="mt-img">${img === 'm-labo.jpg' ? '<canvas class="mt-live" data-live="labo" aria-label="Trois disques qui accélèrent jusqu’à chanter Fa majeur"></canvas>' : img === 'm-pochette.jpg' ? '<canvas class="mt-live" data-live="visuel" aria-label="Le son de la musique qui joue, dessiné en crêtes"></canvas>' : `<img src="img/visite/${img}" alt="">`}</div><figcaption><span class="mt-num">${i + 1} / ${MONTAGE.length} · idée originale</span><b>${t}</b><span class="mt-ail">${ail}</span><span class="mt-nous"><i>Pour nous :</i> ${nous}</span></figcaption></figure>`).join('')}</div>
        <div class="mt-dots">${MONTAGE.map((_, i) => `<button type="button" data-n="${i}" aria-label="Idée ${i + 1}"></button>`).join('')}</div>
      </div>`,
     `<div class="t-title">
@@ -197,9 +198,9 @@ export function startTour(preview) {
         clearTimeout(stepT); k = n; stopLive?.(); stopLive = null;
         mt.querySelectorAll('[data-n]').forEach((x) => { x.classList.toggle('on', +x.dataset.n === k); x.classList.toggle('vu', +x.dataset.n < k); });
         const live = mt.querySelector(`.mt-tile[data-n="${k}"] .mt-live`);
-        if (live) stopLive = laboVivant(live); else jouer(MONTAGE[k][4]);
+        if (live?.dataset.live === 'labo') stopLive = laboVivant(live); else if (live) stopLive = visuelVivant(live); else jouer(MONTAGE[k][4]); // le visuel : pas d'effet, on regarde sa musique telle quelle
         // Après la dernière idée, la visite continue d'elle-même (la flèche reste là pour aller plus vite).
-        stepT = setTimeout(() => mt.isConnected && (k < MONTAGE.length - 1 ? montre(k + 1) : go(1)), live ? 11500 : 9000);
+        stepT = setTimeout(() => mt.isConnected && (k < MONTAGE.length - 1 ? montre(k + 1) : go(1)), live?.dataset.live === 'labo' ? 11500 : 9000);
       };
       mt.montageSuivant = () => { if (k < MONTAGE.length - 1) { montre(k + 1); return true; } return false; };
       mt.querySelector('.mt-dots').addEventListener('click', (e) => { const b = e.target.closest('[data-n]'); if (b) montre(+b.dataset.n); });
