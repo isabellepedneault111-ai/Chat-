@@ -2578,3 +2578,17 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .ar-mot p { margin: 0 0 10px; font: 500 1.05rem/1.55 var(--display); max-width: 70ch; } .ar-mot b { color: #f3c77a; }
 .ar-mot-sign { font-style: italic; color: #f3c77a; margin: 0; }
 .ar-radial .ar-dos { font-size: 13px; }
+/* La généalogie */
+.ar-genea { margin: 0 0 16px; padding: 18px; border-radius: 18px; background: #12110f; color: #efe9dc; }
+.ar-genea h2 { margin: 0 0 4px; font: italic 700 1.4rem var(--display); color: #f3c77a; } .ar-genea .muted { color: #a99f8c; }
+.gn-host { overflow-x: auto; padding-bottom: 6px; }
+.gn-svg { display: block; }
+.gn-tronc { stroke: #e8c27a; stroke-width: 2.5; fill: none; }
+.gn-br { stroke: #6d655a; stroke-width: 1.6; fill: none; } .gn-fusion { stroke: #a99f8c; stroke-dasharray: 3 3; }
+.gn-pt-autre { fill: #8a7f6c; }
+.gn-fus { stroke: #fff; stroke-width: 1.2; }
+.gn-ere { font: 700 9px "Atkinson Hyperlegible", sans-serif; fill: #12110f; }
+.gn-lane { font: italic 600 10px "Literata", serif; fill: #a99f8c; }
+.gn-jour { font: 500 9px "Atkinson Hyperlegible", sans-serif; fill: #a99f8c; }
+.gn-note { font: italic 600 10px "Literata", serif; fill: #f3c77a; }
+.gn-cles { color: #cfc6b4; }

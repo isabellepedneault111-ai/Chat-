@@ -137,6 +137,39 @@ function dessinArbre(data) {
   return { svg: `<svg class="ar-radial" viewBox="-40 -40 1080 1080" role="img" aria-label="L’arbre des dossiers et fichiers de Diapason Labo"><g class="ar-liens">${liens}</g>${points}${mots}<text class="ar-centre" x="500" y="494" text-anchor="middle">Diapason</text><text class="ar-centre" x="500" y="528" text-anchor="middle">Labo</text></svg>`, dossiers };
 }
 
+// La généalogie : chaque étape du projet (un point), chaque branche de travail (une ligne), les fusions.
+const ERE_COUL = { Diapason: '#6f9fe0', 'Zaza × Frog': '#93b08e', FLIP: '#e8c27a', 'La visite': '#ff6fae', 'Version 0.5': '#b58cf0', 'Diapason Labo': '#f3c77a' };
+function dessinGenealogie(g) {
+  const tous = g.lanes.flatMap((l, li) => l.c.map((c, k) => ({ ...c, li, k })));
+  tous.sort((a, b) => (a.d < b.d ? -1 : a.d > b.d ? 1 : a.li - b.li || a.k - b.k));
+  let x = 40; let jour = ''; const pos = {}; const jours = [];
+  tous.forEach((c) => { if (c.d !== jour) { if (jour) x += 26; jour = c.d; jours.push([c.d, x]); } pos[c.h] = x; x += 7; });
+  const W = x + 40; const Y = (li) => (li === 0 ? 90 : 90 + li * 34); const H = Y(g.lanes.length - 1) + 50;
+  const lignee = g.lanes[0];
+  let svg = '';
+  // Les bandes des époques, au-dessus de la lignée.
+  let eDeb = null; let eNom = null;
+  const fermer = (fin) => { if (eNom) svg += `<rect x="${eDeb - 4}" y="34" width="${fin - eDeb + 8}" height="14" rx="7" fill="${ERE_COUL[eNom] || '#888'}" opacity=".85"><title>${eNom}</title></rect>${fin - eDeb + 8 >= eNom.length * 5.4 ? `<text x="${(eDeb + fin) / 2}" y="44.5" text-anchor="middle" class="gn-ere">${eNom}</text>` : ''}`; };
+  lignee.c.forEach((c) => { if (c.e !== eNom) { fermer(pos[lignee.c[lignee.c.indexOf(c) - 1]?.h] ?? pos[c.h]); eNom = c.e; eDeb = pos[c.h]; } });
+  fermer(pos[lignee.c[lignee.c.length - 1].h]);
+  // Les branches : elles partent de la lignée et y reviennent quand elles ont été fusionnées.
+  g.lanes.forEach((l, li) => {
+    if (!li) return;
+    const y = Y(li); const premier = pos[l.c[0].h]; const dernier = pos[l.c[l.c.length - 1].h];
+    const depart = l.base && pos[Object.keys(pos).find((h) => l.base.startsWith(h))] !== undefined ? pos[Object.keys(pos).find((h) => l.base.startsWith(h))] : pos[lignee.c[1]?.h] || 40;
+    svg += `<path d="M${depart} ${Y(0)} C${depart} ${y}, ${premier - 20} ${y}, ${premier} ${y}" class="gn-br"/><path d="M${premier} ${y} H${dernier}" class="gn-br"/>`;
+    // Chaque groupe d'étapes revient dans la lignée au moment de sa fusion.
+    if (l.c[0].vers) { const fins = {}; l.c.forEach((c) => { fins[c.vers] = Math.max(fins[c.vers] || 0, pos[c.h]); }); Object.entries(fins).forEach(([vh, xf]) => { const v = pos[vh]; svg += `<path d="M${xf} ${y} C${xf + 12} ${y}, ${v} ${y + 4}, ${v} ${Y(0)}" class="gn-br gn-fusion"/>`; }); }
+    l.c.forEach((c) => { svg += `<circle cx="${pos[c.h]}" cy="${y}" r="2.6" class="gn-pt-autre"><title>${c.d} · ${l.nom}</title></circle>`; });
+    svg += `<text x="${premier}" y="${y - 7}" class="gn-lane">${l.nom} · ${l.c.length} étapes</text>`;
+  });
+  svg += `<path d="M${pos[lignee.c[0].h]} ${Y(0)} H${pos[lignee.c[lignee.c.length - 1].h]}" class="gn-tronc"/>`;
+  lignee.c.forEach((c) => { svg += `<circle cx="${pos[c.h]}" cy="${Y(0)}" r="${c.f ? 4.5 : 3.4}" fill="${ERE_COUL[c.e] || '#cfc6b4'}" class="${c.f ? 'gn-fus' : ''}"><title>${c.d} · ${c.s.replace(/[<&]/g, '')}</title></circle>`; });
+  jours.forEach(([d, xx], i) => { if (i % 1 === 0) svg += `<text x="${xx}" y="${H - 14}" class="gn-jour" transform="rotate(-35 ${xx} ${H - 14})">${new Date(`${d}T12:00`).toLocaleDateString('fr-CA', { day: 'numeric', month: 'short', year: d < '2026' ? 'numeric' : undefined })}</text>`; });
+  svg += `<text x="${pos[lignee.c[0].h]}" y="${Y(0) + 22}" class="gn-note">« Create Flip » : le premier geste</text>`;
+  return `<svg class="gn-svg" viewBox="0 0 ${W} ${H + 20}" width="${W}" height="${H + 20}" role="img" aria-label="La généalogie du projet, branche par branche">${svg}</svg>`;
+}
+
 export default {
   id: 'arbre',
   mount(el) {
@@ -148,6 +181,12 @@ export default {
       </div></div>
       <section class="ar-scene no-aide"><div class="ar-stats"></div><div class="ar-dessin"><p class="muted">L’arbre pousse…</p></div>
         <p class="ar-cles"><i style="--c:#e8c27a"></i>dossiers <i style="--c:#ff6fae"></i>code (JavaScript) <i style="--c:#6f9fe0"></i>styles <i style="--c:#b58cf0"></i>sons <i style="--c:#93b08e"></i>données <i style="--c:#f0a36f"></i>images</p></section>
+      <section class="ar-genea no-aide">
+        <h2>La généalogie</h2>
+        <p class="muted small">Chaque point est une étape du projet, chaque ligne une branche de travail avec Claude. Tout commence le 13 août 2025 par « Create Flip ». Les branches qui reviennent dans la lignée ont été fusionnées ; les autres sont d’autres chantiers, dessinés sans leur contenu. Passe sur un point pour lire l’étape.</p>
+        <div class="gn-host"><p class="muted">La généalogie se dessine…</p></div>
+        <p class="ar-cles gn-cles">${Object.entries(ERE_COUL).map(([k, c]) => `<i style="--c:${c}"></i>${k}`).join(' ')} <i style="--c:#6d655a"></i>autres chantiers</p>
+      </section>
       <section class="ar-mot">
         <h2>Un mot sur ma façon de faire</h2>
         <p>Je ne code pas. J’imagine, je teste, je ressens, je dis ce qui cloche et ce qui manque, et je recommence. L’IA écrit le code ; moi, je tiens la vision, le goût et le sens.</p>
@@ -167,6 +206,10 @@ export default {
       el.querySelector('.ar-dessin').innerHTML = svg;
       el.querySelector('.ar-stats').innerHTML = `<b>${data.fichiers}</b> fichiers · <b>${dossiers - 1}</b> dossiers · <b>${data.lignes.toLocaleString('fr-CA')}</b> lignes écrites`;
     }).catch(() => { el.querySelector('.ar-dessin').innerHTML = '<p class="muted">L’arbre n’a pas pu se charger.</p>'; });
+    fetch('data/genealogie.json').then((r) => r.json()).then((g) => {
+      const host = el.querySelector('.gn-host'); host.innerHTML = dessinGenealogie(g);
+      host.scrollLeft = host.scrollWidth; // on arrive sur aujourd'hui ; on remonte le temps en glissant
+    }).catch(() => { el.querySelector('.gn-host').innerHTML = '<p class="muted">La généalogie n’a pas pu se charger.</p>'; });
 
     el.addEventListener('click', (e) => {
       const s = e.target.closest('[data-son]'); if (s) { e.preventDefault(); ecouter(s.dataset.son); return; }

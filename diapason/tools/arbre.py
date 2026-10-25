@@ -24,3 +24,45 @@ def liste(n):
 out = liste(arbre); out['fichiers'] = len(fichiers); out['lignes'] = lignes_total
 (racine / 'data' / 'arbre.json').write_text(json.dumps(out, ensure_ascii=False, separators=(',', ':')))
 print('data/arbre.json :', len(fichiers), 'fichiers,', lignes_total, 'lignes')
+
+# ---------- La généalogie : d'où vient l'app, branche par branche ----------
+# Les branches de travail (avec Claude), les fusions, et la lignée qui mène à Diapason Labo.
+# Les chantiers hors musique restent anonymes : on montre leur forme, pas leur contenu.
+def git(*a):
+    return subprocess.run(['git', *a], cwd=racine, capture_output=True, text=True).stdout.strip()
+def commits(spec, *opts):
+    out = []
+    for l in git('log', '--format=%h|%ad|%P|%s', '--date=short', *opts, spec).splitlines():
+        h, d, p, s = l.split('|', 3)
+        out.append({'h': h, 'd': d, 'p': p.split(), 's': s})
+    return out[::-1]
+ERES = [('Diapason :', 'Diapason'), ('Zaza × Frog', 'Zaza × Frog'), ('FLIP', 'FLIP'), ('Visite', 'La visite'), ('labo 0.5', 'Version 0.5'), ('Diapason Labo', 'Diapason Labo')]
+def ere(s):
+    for k, v in ERES:
+        if s.startswith(k): return v
+    return None
+principale = commits('HEAD', '--first-parent')
+fusionnes = []
+for c in principale:
+    if len(c['p']) > 1:
+        for x in commits(f"{c['p'][0]}..{c['p'][1]}"):
+            fusionnes.append({**x, 'vers': c['h']})
+lanes = [{'id': 'lignee', 'nom': 'La lignée de Diapason Labo', 'musique': True, 'c': []}]
+derniere = None
+for c in principale:
+    e = ere(c['s']) or (derniere if c['d'] >= '2026-10-24' else None)
+    if c['d'] >= '2026-10-24' and not e: e = 'Diapason'
+    derniere = e or derniere
+    lanes[0]['c'].append({'d': c['d'], 'h': c['h'], 's': c['s'] if c['d'] >= '2026-10-24' or c['s'].startswith('Create Flip') else ('Fusion d’un autre chantier' if len(c['p']) > 1 else 'Le tout premier dépôt'), 'e': e, 'f': len(c['p']) > 1})
+if fusionnes:
+    lanes.append({'id': 'fusion', 'nom': 'Un chantier fusionné', 'musique': False, 'c': [{'d': x['d'], 'h': x['h'], 'vers': x['vers']} for x in fusionnes]})
+dans = set(git('rev-list', 'HEAD').split())
+for ref in git('for-each-ref', '--format=%(refname:short)', 'refs/remotes/origin').splitlines():
+    if ref.endswith(('HEAD', 'improve-google-app-t8pfyj', '/main')): continue
+    propres = [c for c in commits(f'HEAD..{ref}')]
+    if not propres: continue
+    base = git('merge-base', 'HEAD', ref)[:7]
+    lanes.append({'id': ref.split('/')[-1], 'nom': 'Un autre chantier', 'musique': False, 'base': base, 'c': [{'d': c['d'], 'h': c['h']} for c in propres]})
+gen = {'lanes': lanes, 'debut': principale[0]['d'] if principale else ''}
+(racine / 'data' / 'genealogie.json').write_text(json.dumps(gen, ensure_ascii=False, separators=(',', ':')))
+print('data/genealogie.json :', len(lanes), 'branches,', sum(len(l['c']) for l in lanes), 'étapes')
