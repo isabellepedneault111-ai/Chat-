@@ -188,11 +188,17 @@ export default {
         <p class="ar-cles gn-cles">${Object.entries(ERE_COUL).map(([k, c]) => `<i style="--c:${c}"></i>${k}`).join(' ')} <i style="--c:#6d655a"></i>autres chantiers</p>
       </section>
       <section class="ar-mot">
-        <h2>Un mot sur ma façon de faire</h2>
-        <p>Je ne code pas. J’imagine, je teste, je ressens, je dis ce qui cloche et ce qui manque, et je recommence. L’IA écrit le code ; moi, je tiens la vision, le goût et le sens.</p>
-        <p>Chaque branche de cet arbre est née d’une phrase que j’ai dite, d’un essai que j’ai refusé, d’une idée qu’on a poussée plus loin ensemble. <b class="ar-mot-lignes">15 000</b> lignes, écrites en conversation, pour nous deux.</p>
-        <p>Une façon de créer que je n’ai vue nulle part ailleurs : une architecte qui bâtit avec sa voix.</p>
-        <p class="ar-mot-sign">— ${esc((espace.meta?.members || ['Zaza'])[0])}</p>
+        <h2>Ma façon de faire : la conception dirigée, en dialogue avec un agent d’IA</h2>
+        <p class="ar-def"><b>Définition.</b> Une pratique de conception logicielle où une conceptrice qui ne programme pas orchestre, en langage naturel, un <i>agent</i> d’IA capable d’agir dans un environnement de développement : lire et modifier le code, l’exécuter, le tester, le versionner et le mettre en ligne. Elle formule l’intention, les contraintes et les critères de qualité ; l’agent les traduit en code, vérifie par des tests automatisés et rend compte ; elle juge le résultat en situation réelle et réoriente. On parle d’<i>ingénierie logicielle agentique</i> (<i>agentic coding</i>). Elle se distingue du <i>vibe coding</i> (Karpathy, 2025), où l’on accepte le code sans le regarder : ici, le jugement, la vérification et les choix de conception restent humains et explicites.</p>
+        <ul class="ar-traits">
+          <li><b>Spécification en langage naturel, par itérations courtes</b> : une demande, une modification, des tests, une mise en ligne, en quelques minutes.</li>
+          <li><b>Conception centrée sur l’usage, évaluée en contexte</b> : chaque version est essayée par son vrai destinataire, et ses retours redirigent la suivante. C’est la logique de la recherche orientée par la conception (<i>design-based research</i> ; Brown, 1992 ; Collins, 1992).</li>
+          <li><b>Ancrage empirique</b> : les fonctions pédagogiques s’appuient sur la littérature (pratique distribuée, rétroaction visuelle, verbalisation guidée…), citée dans l’app.</li>
+          <li><b>Traçabilité</b> : chaque décision est versionnée (Git). La généalogie ci-dessus en est la trace : <b class="ar-mot-etapes">—</b> étapes, <b class="ar-mot-lignes">—</b> lignes.</li>
+          <li><b>Vérification</b> : des tests de bout en bout dans un vrai navigateur (Playwright) avant chaque mise en ligne (Netlify).</li>
+          <li><b>Rôle humain</b> : l’intention, le goût, l’éthique (rien de ce qu’on chante ne quitte l’appareil sans qu’on le choisisse) et l’arbitrage final.</li>
+        </ul>
+        <p class="ar-mot-sign">— ${esc((espace.meta?.members || ['Zaza'])[0])}, conceptrice · l’agent : Claude (Anthropic), via Claude Code</p>
       </section>
       <details class="panel ar-details" open><summary><h2>D’où vient chaque son : piano, batterie, voix…</h2></summary>
         <p class="ar-legende"><em class="ar-etq ar-f">${F}</em><em class="ar-etq ar-e">${E}</em><em class="ar-etq ar-c">${C}</em><em class="ar-etq ar-d">${D}</em></p>
@@ -209,6 +215,7 @@ export default {
     fetch('data/genealogie.json').then((r) => r.json()).then((g) => {
       const host = el.querySelector('.gn-host'); host.innerHTML = dessinGenealogie(g);
       host.scrollLeft = host.scrollWidth; // on arrive sur aujourd'hui ; on remonte le temps en glissant
+      const et = el.querySelector('.ar-mot-etapes'); if (et) et.textContent = g.lanes[0].c.length.toLocaleString('fr-CA');
     }).catch(() => { el.querySelector('.gn-host').innerHTML = '<p class="muted">La généalogie n’a pas pu se charger.</p>'; });
 
     el.addEventListener('click', (e) => {
