@@ -3,6 +3,7 @@
 import { espace, audioURL, updateEspace } from '../espace.js';
 import { store } from '../ui.js';
 import { embers } from '../rituel.js';
+import { ILLU } from '../illus.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
@@ -22,33 +23,63 @@ export function startTour(preview) {
   const me = preview ? (espace.meta.members || ['Zaza', 'Frog']).find((m) => m !== espace.me) || 'Frog' : espace.me;
   const from = espace.meta.welcome?.by || espace.meta.createdBy || 'Zaza';
   const welcome = espace.meta.welcome?.text || 'Forever more…';
+  const [z, f] = espace.meta.members || ['Zaza', 'Frog'];
+  // Chaque scène : un titre, une phrase, un dessin qui bouge. Le dessin dit ce que les mots ne disent pas.
+  // Quand, ce qu'on fait, ce que FLIP fait : du concret, pas une promesse.
+  const scene = (n, titre, { quand, vous, flip }, svg) => `
+    <div class="t-scene" data-auto="13000">
+      <div class="t-words">
+        <p class="t-kicker">${n} / 4</p>
+        <h2>${titre}</h2>
+        <dl class="t-how">
+          <div><dt>Quand</dt><dd>${quand}</dd></div>
+          <div><dt>Nous</dt><dd>${vous}</dd></div>
+          <div><dt>FLIP</dt><dd>${flip}</dd></div>
+        </dl>
+      </div>
+      <figure class="t-illu" aria-hidden="true">${svg}</figure>
+    </div>`;
   const slides = [
     `<div class="t-open">
+       ${ILLU.fils}
        <img class="t-logo" src="img/flip-creme.svg" alt="FLIP">
        <p class="t-welcome">${esc(welcome).replace(/\n/g, '<br>')}</p>
        <p class="t-sign">— ${esc(from)}</p>
        <p class="t-auteure">FLIP, un espace imaginé par ${esc(from)}, pour nous deux.</p>
        ${espace.meta.welcome?.audio ? '<button class="t-play" data-t="play">▶ Écouter</button>' : ''}
-       <button class="btn big t-start" data-t="next">Commencer · 3 minutes, avec le son</button>
-       <p class="t-howto">Ensuite, touche la flèche (ou le côté droit de l’écran) pour avancer.</p>
+       <button class="btn big t-start" data-t="next">Commencer · 3 minutes</button>
      </div>`,
-    `<p class="t-kicker">Ce que ${esc(from)} a imaginé pour nous</p>
-     <h2>Ensemble. <i>Sans distance.</i></h2>
-     <div class="t-modes">
-       <div><b>Dans la même pièce</b><span>On joue, l’app s’efface : une séance guidée sur un seul écran.</span></div>
-       <div><b>À distance, en même temps</b><span>La même séance sur nos deux écrans, qui avance pour les deux.</span></div>
-       <div><b>Chacun son temps</b><span>Un son, une réponse par-dessus, une page au journal.</span></div>
-       <div><b>Seul, pour nous deux</b><span>Ce que l’un pratique, l’autre le voit, avec des pistes.</span></div>
-     </div>
-     <p class="t-soon"><b>Nos élans ne s’arrêtent plus quand on n’est pas ensemble.</b></p>`,
-    `<p class="t-kicker">${esc(me)}, regarde. Une minute.</p>
-     <div class="t-vwrap"><video class="t-video" src="data/demo-frog.mp4" poster="data/demo-frog.jpg" playsinline controls preload="auto"></video><button class="t-unmute" data-t="unmute" hidden>🔊 Activer le son</button></div>
-     <p class="t-src">L’app, filmée telle quelle.${preview ? ' <button class="linklike t-skipv" data-t="next">Passer la vidéo →</button>' : ' La suite arrive toute seule à la fin.'}</p>`,
-    `<p class="t-kicker">Maintenant, à toi</p>
-     <h2>Faisons le tour <i>de l’app.</i></h2>
-     <p class="t-soon">Chaque bouton, un à la fois : ce qu’il y a derrière, en une phrase. On finit par ton étape 1, ton point de départ.</p>
-     <div class="t-actions"><button class="btn primary big" data-t="coach">Faire le tour de l’app →</button></div>
-     <p class="t-src">Cette visite ne reviendra plus. Elle t’attend dans le coffre, avec la vidéo.</p>`,
+    `<div class="t-title" data-auto="8000">
+       <p class="t-kicker">Ce que ${esc(from)} a imaginé pour nous</p>
+       <h2 class="t-huge">La distance<br>ne crée plus<br><i>de distance.</i></h2>
+       <p class="t-line">Dans la même pièce ou loin l’un de l’autre, nos élans ne s’arrêtent plus. Voici comment, en quatre façons d’être ensemble.</p>
+     </div>`,
+    scene(1, 'Dans la même <i>pièce</i>', {
+      quand: 'On est ensemble, chez l’un ou chez l’autre.',
+      vous: `${esc(f)} branche son clavier et joue. ${esc(z)} chante.`,
+      flip: `Allume les notes de l’accord que ${esc(z)} peut chanter, dans sa tessiture mesurée à l’étape 1, et montre en direct si sa voix tombe dedans. À chaque séance, il retient où sa voix brille.`,
+    }, ILLU.piece(z, f)),
+    scene(2, 'À distance, <i>en même temps</i>', {
+      quand: 'Chacun chez soi, à la même heure.',
+      vous: 'On lance la même séance, au téléphone ou en visio.',
+      flip: 'Affiche la même étape sur nos deux écrans. Le minuteur avance pour les deux, à la même seconde.',
+    }, ILLU.distance(z, f)),
+    scene(3, 'Chacun <i>son temps</i>', {
+      quand: 'Une idée à 23 h. L’autre l’écoute le lendemain matin.',
+      vous: 'Un son en une touche, avec une intention : « chante par-dessus », « trouve un titre ».',
+      flip: 'Le montre à l’autre dès qu’il ouvre l’app. Sa réponse s’enregistre par-dessus, et les couches s’empilent.',
+    }, ILLU.relais(z, f)),
+    scene(4, 'Rien ne <i>se perd</i>', {
+      quand: 'Tout le temps.',
+      vous: 'Une idée, même à moitié, va au mur d’un geste.',
+      flip: 'La place dans notre ciel selon son étape, la retrouve d’un mot, et propose des rencontres entre nos idées.',
+    }, ILLU.ciel()),
+    `<div class="t-title">
+       <p class="t-kicker">Maintenant, à toi</p>
+       <h2 class="t-huge">Faisons le tour<br><i>de l’app.</i></h2>
+       <p class="t-line">Chaque bouton, un à la fois, avec des exemples pour voir le rendu. On finit par ton étape 1, ton point de départ.</p>
+       <div class="t-actions"><button class="btn primary big" data-t="coach">Faire le tour de l’app →</button></div>
+     </div>`,
   ];
 
   const box = document.createElement('div');
@@ -58,29 +89,23 @@ export function startTour(preview) {
   box.setAttribute('aria-label', 'Visite guidée');
   box.innerHTML = `
     <canvas class="t-embers" aria-hidden="true"></canvas>
-    ${preview ? `<p class="t-apercu">Aperçu : tu vois ce que ${esc(me)} verra. Rien n’est marqué pour ${esc(me)}. <button data-t="end">Fermer l’aperçu</button></p>` : ''}
     <div class="t-progress">${slides.map(() => '<i></i>').join('')}</div>
-    ${preview ? '<button class="t-skip" data-t="end">Passer</button>' : ''}
     <div class="t-slide"></div>
-    <div class="t-nav"><button data-t="prev" aria-label="Précédent">←</button><button data-t="next" aria-label="Suivant">→</button></div>`;
+    <div class="t-nav"><button data-t="prev" aria-label="Précédent">←</button>${preview ? `<p class="t-apercu">Aperçu : exactement ce que ${esc(me)} verra. Rien n’est marqué pour lui. <button data-t="end">Fermer l’aperçu</button></p>` : '<span></span>'}<button data-t="next" aria-label="Suivant">→</button></div>`;
   document.body.appendChild(box);
   const fx = matchMedia('(prefers-reduced-motion: reduce)').matches ? null : embers(box.querySelector('.t-embers'), { soft: true });
   let i = 0;
   let player = null;
+  let auto = null;
   const show = () => {
-    box.querySelectorAll('video').forEach((x) => x.pause());
+    clearTimeout(auto);
     box.querySelector('.t-slide').innerHTML = `<div class="t-inner t-${i}">${slides[i]}</div>`;
-    box.querySelectorAll('.t-progress i').forEach((b, k) => b.classList.toggle('on', k <= i));
-    box.querySelector('[data-t=prev]').disabled = i === 0;
-    box.querySelector('[data-t=next]').hidden = i === slides.length - 1;
-    const v = box.querySelector('.t-video');
-    if (v) {
-      const um = box.querySelector('.t-unmute');
-      v.muted = false;
-      v.play().catch(() => { v.muted = true; um.hidden = false; v.play().catch(() => {}); });
-      // à la fin de la vidéo, la visite continue toute seule
-      v.onended = () => { if (box.isConnected && box.querySelector('.t-video') === v) go(1); };
-    }
+    const ms = +(box.querySelector('[data-auto]')?.dataset.auto || 0);
+    box.querySelectorAll('.t-progress i').forEach((b, k) => { b.classList.toggle('on', k < i || (k === i && !ms)); b.classList.toggle('run', k === i && !!ms); b.style.setProperty('--dur', `${ms}ms`); });
+    // Les scènes avancent seules, comme un film ; on peut toujours aller plus vite ou revenir.
+    if (ms) auto = setTimeout(() => box.isConnected && go(1), ms);
+    box.querySelector('.t-nav [data-t=prev]').disabled = i === 0;
+    box.querySelector('.t-nav [data-t=next]').hidden = i === 0 || i === slides.length - 1;
   };
   const marquer = () => {
     if (preview) return;
@@ -88,9 +113,9 @@ export function startTour(preview) {
     updateEspace({ tour: { ...(espace.meta.tour || {}), [espace.me]: Date.now() } }).catch(() => {});
   };
   const end = (mark = true) => {
+    clearTimeout(auto);
     if (mark) marquer();
     player?.pause();
-    box.querySelector('video')?.pause();
     box.classList.add('out');
     fx?.stop();
     setTimeout(() => box.remove(), 350);
@@ -98,7 +123,7 @@ export function startTour(preview) {
   };
   const go = (d) => { i = Math.max(0, Math.min(slides.length - 1, i + d)); show(); };
   const onKey = (e) => {
-    if (e.key === 'ArrowRight' || e.key === ' ') go(1);
+    if ((e.key === 'ArrowRight' || e.key === ' ') && i < slides.length - 1 && i > 0) go(1);
     if (e.key === 'ArrowLeft') go(-1);
     if (e.key === 'Escape' && preview) end();
   };
@@ -109,7 +134,6 @@ export function startTour(preview) {
     if (t === 'coach') { end(false); setTimeout(() => import('../coach.js').then((c) => c.coachTour({ premiere: !preview, onEnd: marquer })), 400); return; }
     if (t === 'prev') { go(-1); return; }
     if (t === 'next') { go(1); return; }
-    if (t === 'unmute') { const v = box.querySelector('.t-video'); v.muted = false; v.currentTime = 0; v.play(); e.target.hidden = true; return; }
     if (t === 'play') {
       const b = e.target.closest('[data-t]');
       b.textContent = '…';
@@ -122,7 +146,7 @@ export function startTour(preview) {
       return;
     }
     // Toucher le côté droit de l'écran avance, comme une story.
-    if (!e.target.closest('a, button, video')) go(e.clientX > window.innerWidth * 0.35 ? 1 : -1);
+    if (!e.target.closest('a, button, video, .t-apercu') && i > 0 && i < slides.length - 1) go(e.clientX > window.innerWidth * 0.35 ? 1 : -1);
   });
   window.addEventListener('keydown', onKey);
   show();

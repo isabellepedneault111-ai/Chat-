@@ -5,6 +5,7 @@ import { esc, espaceGate, ago } from './carnet.js';
 import { memberColor } from '../duo.js';
 import { intentsHTML } from './relais.js';
 import { toast } from '../ui.js';
+import { hydrateImages } from './carnet.js';
 
 export async function togglePerle(e) {
   const r = await saveEntry({ ...e, data: { ...(e.data || {}), perle: !e.data?.perle } }, { baseUpdatedAt: e.updatedAt });
@@ -28,7 +29,7 @@ export default {
         <div class="cf-grid">
           <article class="cf-perle cf-video">
             <p class="cf-k">La première fois</p>
-            <video src="data/demo-frog.mp4" poster="data/demo-frog.jpg" controls playsinline preload="none"></video>
+            <p class="cf-body">Les quatre façons d’être ensemble, puis le tour de l’app avec des exemples.</p>
             <button class="btn small" data-c="tour">Revoir la visite guidée</button>
           </article>
           <article class="cf-perle cf-mot">
@@ -42,6 +43,7 @@ export default {
               <p class="cf-k">${esc(e.author)} · ${ago(e.createdAt)}</p>
               <h3>${esc(e.title)}</h3>
               <div class="cf-tags">${intentsHTML(e)}</div>
+              ${e.image ? `<div class="entry-img" data-img="${esc(e.id)}" style="aspect-ratio:${e.image.w || 4} / ${e.image.h || 3}"></div>` : ''}
               ${e.body ? `<p class="cf-body">${esc(e.body).replace(/\n/g, '<br>')}</p>` : ''}
               ${e.audio ? `<div data-audio="${esc(e.id)}"><button class="btn small" data-play="${esc(e.id)}">▶ Écouter</button></div>` : ''}
               <button class="btn small ghost" data-out="${esc(e.id)}">Sortir du coffre</button>
@@ -49,6 +51,7 @@ export default {
         </div>
         <p class="cf-cb"><a href="#/corbeille">La corbeille commune${espace.trash.length ? ` (${espace.trash.length})` : ''}</a> : ce qu’on a jeté attend là, et ne s’efface qu’à deux.</p>
         ${perles.length ? '' : '<p class="muted cf-hint">Dans le relais, chaque son et chaque texte a un bouton <b>✦ Au coffre</b>. Ce que vous y déposez apparaît ici.</p>'}`;
+      hydrateImages(el);
     }
     el.addEventListener('click', async (e) => {
       const c = e.target.closest('[data-c]')?.dataset.c;

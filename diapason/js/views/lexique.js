@@ -18,7 +18,7 @@ const MOTS = [
     ['Pendant ce temps', 'Ce que l’un pratique seul laisse une trace toute seule, avec des pistes pour l’autre.', 'Ce qu’on fait seul nourrit le duo.', ''],
     ['Une étincelle', 'Une idée embryonnaire déposée en trois secondes grâce à la petite flamme en bas de l’écran : pour notre musique, ou pour l’app.', 'Une étincelle pour la musique peut aller au mur et monter d’étape ; une idée pour l’app nourrit ce qu’on construit ensuite.', 'etincelles'],
     ['La corbeille commune', 'Ce qu’on jette attend ici, restaurable. L’effacer pour de bon demande l’accord de l’autre.', 'Rien ne disparaît sur un coup de tête.', 'corbeille'],
-    ['Le coffre, une perle', 'Les petits endroits précieux : la vidéo, le mot d’accueil, ce qu’on y dépose d’un geste.', 'Une perle remonte dans « Depuis la dernière fois ».', 'coffre'],
+    ['Le coffre, une perle', 'Les petits endroits précieux : le mot d’accueil, la visite, ce qu’on y dépose d’un geste. L’original reste à sa place.', 'Une perle remonte dans « Depuis la dernière fois ».', 'coffre'],
   ]],
   ['Les séances', [
     ['Une séance', 'Ensemble dans la pièce, à distance en même temps, ou seul. Guidée, elle finit toujours par une prise.', 'Le compteur des séances ensemble, le rythme de la semaine.', 'session'],

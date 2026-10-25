@@ -195,6 +195,7 @@ export function pad(freqs, t, dur, gain = 0.05) {
       o.start(t); o.stop(t + dur + 0.02);
     });
   });
+  return g; // pour l'éteindre en douceur quand un autre accord prend le relais
 }
 
 export function bass(freq, t, dur = 0.35) {

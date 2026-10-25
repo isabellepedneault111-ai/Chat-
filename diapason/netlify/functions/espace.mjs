@@ -6,7 +6,7 @@ import { getStore } from '@netlify/blobs';
 export const config = { path: ['/api/espace', '/api/espace/*'] };
 
 const ID = /^[A-Za-z0-9_-]{8,40}$/;
-const TYPES = new Set(['carte', 'jeu', 'trace', 'note', 'texte', 'paroles', 'audio', 'bilan', 'evaluation', 'essai', 'parcours', 'lien', 'session', 'profil', 'bravo']);
+const TYPES = new Set(['carte', 'jeu', 'trace', 'note', 'texte', 'paroles', 'audio', 'bilan', 'evaluation', 'essai', 'parcours', 'lien', 'session', 'profil', 'bravo', 'image']);
 const MAX_ENTRY = 300 * 1024; // 300 Ko de JSON par entrée
 const MAX_PART = 4 * 1024 * 1024; // morceaux audio de 4 Mo (limite des fonctions : 6 Mo)
 const MAX_PARTS = 25; // ~100 Mo par audio
@@ -149,6 +149,8 @@ export async function handle(req, store) {
         tags: Array.isArray(e.tags) ? e.tags.slice(0, 12).map((t) => clean(t, 30)) : [],
         data: e.data && typeof e.data === 'object' ? e.data : null,
         audio: e.audio && ID.test(e.audio.id || '') ? { id: e.audio.id, type: clean(e.audio.type, 60), parts: Math.min(MAX_PARTS, +e.audio.parts || 1), size: +e.audio.size || 0, duration: +e.audio.duration || 0 } : null,
+        // Une image (photo, dessin, toile) : même rangement en morceaux que les audios.
+        image: e.image && ID.test(e.image.id || '') && /^image\//.test(e.image.type || '') ? { id: e.image.id, type: clean(e.image.type, 60), parts: Math.min(MAX_PARTS, +e.image.parts || 1), size: +e.image.size || 0, w: +e.image.w || 0, h: +e.image.h || 0 } : null,
         createdAt: prev?.createdAt || now,
         updatedAt: now,
         editedBy: clean(e.author, 40),
@@ -158,8 +160,8 @@ export async function handle(req, store) {
     }
     if (m === 'DELETE') {
       const e = await store.get(k, { type: 'json' });
-      if (e?.audio) {
-        const { blobs } = await store.list({ prefix: `${sid}/a/${e.audio.id}/` });
+      for (const f of [e?.audio, e?.image].filter(Boolean)) {
+        const { blobs } = await store.list({ prefix: `${sid}/a/${f.id}/` });
         await Promise.all(blobs.map((b) => store.delete(b.key)));
       }
       await store.delete(k);

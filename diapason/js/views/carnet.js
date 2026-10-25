@@ -1,5 +1,5 @@
 // Carnet partagé du duo : écrits, audios, bilans, évaluations, essais — un seul fil, synchronisé.
-import { espace, onEspace, createEspace, joinEspace, findEspace, leaveEspace, deleteEspace, updateEspace, saveEntry, deleteEntry, uploadAudio, audioURL } from '../espace.js';
+import { espace, onEspace, createEspace, joinEspace, findEspace, leaveEspace, deleteEspace, updateEspace, saveEntry, deleteEntry, uploadAudio, uploadImage, audioURL } from '../espace.js';
 import { toast, store } from '../ui.js';
 import { CARNET_TYPES, BILAN_QUESTIONS, EVAL_CRITERES } from '../data.js';
 import { MEMBERS, ROLES, memberColor, STAGES, PLAN, EVAL, NIVEAUX } from '../duo.js';
@@ -7,7 +7,9 @@ import { planContext, currentMonth } from '../plan.js';
 import { intentsHTML } from './relais.js';
 import { impact } from '../impact.js';
 import { jeter } from '../corbeille.js';
+import { togglePerle } from './coffre.js';
 import { projets, projetCourant, setProjet, projetNom, creerProjet } from '../projets.js';
+import { skyHTML, rencontres, matches, kindOf, sleepingDays } from '../constellation.js';
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export function ago(t) {
@@ -95,7 +97,18 @@ export function espaceGate(host, { onReady } = {}) {
   });
 }
 
-const BOARD_TYPES = new Set(['note', 'texte', 'audio', 'essai', 'paroles', 'lien']);
+const BOARD_TYPES = new Set(['note', 'texte', 'audio', 'essai', 'paroles', 'lien', 'image']);
+const typeLabel = (e) => (e.type === 'paroles' ? 'Paroles' : e.type === 'image' ? 'Image' : CARNET_TYPES.find((x) => x.id === e.type)?.label || e.type);
+// Les images arrivent après le dessin : on les charge une fois, puis elles restent en cache.
+export function hydrateImages(root) {
+  root.querySelectorAll('[data-img]:not(.loaded)').forEach(async (box) => {
+    const en = espace.entries.find((x) => x.id === box.dataset.img);
+    if (!en?.image) return;
+    box.classList.add('loaded');
+    try { box.style.backgroundImage = `url("${await audioURL(en.image)}")`; } catch { box.classList.add('broken'); }
+  });
+}
+const imgBox = (e, cls) => (e.image ? `<div class="${cls}" data-img="${esc(e.id)}" style="aspect-ratio:${e.image.w && e.image.h ? `${e.image.w} / ${e.image.h}` : '4 / 3'}" role="img" aria-label="${esc(e.title || 'Image')}"></div>` : '');
 // Le journal et les séances d'atelier vivent dans « Écrire » ; on les envoie au mur d'un geste.
 const onBoard = (e) => BOARD_TYPES.has(e.type) && !e.data?.exemple && !((e.data?.journal || e.data?.atelier || e.data?.etincelle) && !e.data?.aumur);
 const URL_RE = /https?:\/\/[^\s<>"]+/i;
@@ -135,9 +148,14 @@ export const allSongs = () => [...new Set(espace.entries.filter(onBoard).map(son
 export default {
   id: 'carnet',
   mount(el) {
-    let view = store.get('murView', 'etapes');
+    let view = store.get('murVue', 'ciel');
     let fSong = '';
     let fWho = '';
+    let fKind = '';
+    let fWhen = '';
+    let seed = 0; // « D'autres rencontres » fait tourner le ciel
+    let focus = ''; // la rencontre mise en lumière
+    let pairs = [];
     let composing = null; // type du composeur complet ouvert, ou null
     let recorder = null;
     let pendingAudio = null;
@@ -187,6 +205,7 @@ export default {
             <div class="cap-menu">
               <button class="btn ghost" type="button" data-c="rec">● Mémo vocal</button>
               <label class="btn ghost">Un fichier audio<input type="file" accept="audio/*,video/*" data-c="file" hidden></label>
+              <label class="btn ghost">Une image : photo, dessin, toile<input type="file" accept="image/*" data-c="image" multiple hidden></label>
               <button class="btn ghost" type="button" data-type="bravo">Un bravo à ${esc(other())}</button>
               <button class="btn ghost" type="button" data-c="more">Bilan, évaluation…</button>
             </div>
@@ -198,12 +217,13 @@ export default {
 
         <div class="mur-tools">
           <div class="seg-tabs" role="tablist" aria-label="Vue">
+            <button role="tab" data-v="ciel">Le ciel</button>
             <button role="tab" data-v="etapes">Étapes</button>
             <button role="tab" data-v="morceaux">Morceaux</button>
             <button role="tab" data-v="fil">Fil</button>
           </div>
           <div class="filters"></div>
-          <input class="input search" type="search" placeholder="Chercher" aria-label="Chercher">
+          <input class="input search" type="search" placeholder="Retrouver : un mot, un accord, un nom…" aria-label="Retrouver une idée">
         </div>
         <div class="mur"></div>
         <div class="detail-scrim" hidden></div>
@@ -245,13 +265,17 @@ export default {
         </div>`;
     }
 
-    function filtered() {
-      const qv = (el.querySelector('.search')?.value || '').toLowerCase();
+    // withQuery = false : le ciel garde toutes les idées et met seulement en lumière celles qu'on cherche.
+    function filtered(withQuery = true) {
+      const qv = withQuery ? (el.querySelector('.search')?.value || '') : '';
+      const since = { semaine: 7, mois: 31 }[fWhen];
       return espace.entries.filter((e) => !['parcours', 'session', 'profil'].includes(e.type)
         && (!projetCourant() || e.data?.projet === projetCourant())
         && (!fWho || e.author === fWho)
         && (!fSong || (fSong === '—' ? !songOf(e) : songOf(e) === fSong))
-        && (!qv || `${e.title} ${e.body} ${e.author} ${songOf(e)}`.toLowerCase().includes(qv)));
+        && (!fKind || kindOf(e) === fKind)
+        && (!since || Date.now() - e.createdAt < since * 864e5) && (fWhen !== 'dort' || sleepingDays(e) >= 21)
+        && matches(e, qv));
     }
 
     // Signature de ce qui est visible : si rien de visible n'a changé, on ne touche pas au DOM
@@ -259,7 +283,7 @@ export default {
     let lastSig = '';
     function renderAll(force) {
       if (!el.querySelector('.mur')) return;
-      const sig = JSON.stringify([view, fWho, fSong, el.querySelector('.search')?.value, espace.meta.plan, filtered().map((e) => [e.id, e.title, e.author, e.data?.stage, e.data?.song, e.data?.replies?.length, e.audio?.id, e.type === 'paroles' ? '' : e.body])]);
+      const sig = JSON.stringify([view, fWho, fSong, fKind, fWhen, seed, focus, innerWidth < 700, el.querySelector('.search')?.value, espace.meta.plan, filtered(view !== 'ciel').map((e) => [e.id, e.title, e.author, e.data?.stage, e.data?.song, e.data?.replies?.length, e.data?.perle, e.audio?.id, e.image?.id, e.type === 'paroles' ? '' : e.body])]);
       if (!force && sig === lastSig) return;
       lastSig = sig;
       el.querySelectorAll('[data-v]').forEach((b) => b.setAttribute('aria-selected', b.dataset.v === view));
@@ -267,15 +291,19 @@ export default {
       const mem = espace.meta.members || MEMBERS;
       el.querySelector('.filters').innerHTML = `
         <select class="input f-sel" data-fsel="who" aria-label="De qui"><option value="">Nous deux</option>${mem.map((m) => `<option ${fWho === m ? 'selected' : ''}>${esc(m)}</option>`).join('')}</select>
-        <select class="input f-sel" data-fsel="song" aria-label="Morceau"><option value="">Tous les morceaux</option>${songs.map((x) => `<option ${fSong === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}<option value="—" ${fSong === '—' ? 'selected' : ''}>Sans morceau</option></select>`;
+        <select class="input f-sel" data-fsel="song" aria-label="Morceau"><option value="">Tous les morceaux</option>${songs.map((x) => `<option ${fSong === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}<option value="—" ${fSong === '—' ? 'selected' : ''}>Sans morceau</option></select>
+        <select class="input f-sel" data-fsel="kind" aria-label="Quoi"><option value="">Sons, mots, images</option>${[['son', 'Des sons'], ['mots', 'Des mots'], ['image', 'Des images'], ['lien', 'Des écoutes']].map(([v, l]) => `<option value="${v}" ${fKind === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
+        <select class="input f-sel" data-fsel="when" aria-label="Quand"><option value="">Depuis toujours</option>${[['semaine', 'Cette semaine'], ['mois', 'Ce mois-ci'], ['dort', 'Celles qui dorment']].map(([v, l]) => `<option value="${v}" ${fWhen === v ? 'selected' : ''}>${l}</option>`).join('')}</select>`;
       renderDirection();
       const list = filtered();
       const mur = el.querySelector('.mur');
       mur.className = `mur view-${view}`;
       if (view === 'fil') {
         mur.innerHTML = list.length ? `<ol class="feed">${list.map(fullHTML).join('')}</ol>` : emptyHTML();
+        hydrateImages(mur);
         return;
       }
+      if (view === 'ciel') { renderSky(mur); hydrateImages(mur); return; }
       const board = list.filter(onBoard);
       if (view === 'etapes') {
         mur.innerHTML = `<div class="board">${STAGES.map((st) => {
@@ -292,6 +320,50 @@ export default {
             <div class="cards">${cards.map(cardHTML).join('')}</div></section>`;
         }).join('') || emptyHTML()}</div>`;
       }
+      hydrateImages(mur);
+    }
+
+    // Le ciel : retrouver (on cherche, ça s'allume) et provoquer (des rencontres que personne n'a encore faites).
+    function renderSky(mur) {
+      const qv = el.querySelector('.search')?.value || '';
+      const sky = filtered(false).filter(onBoard);
+      if (!sky.length) { mur.innerHTML = emptyHTML(); return; }
+      pairs = rencontres(sky, { seed: seed + Math.floor(Date.now() / 864e5) });
+      const found = qv ? sky.filter((e) => matches(e, qv)) : [];
+      const dorment = sky.filter((e) => stageOf(e) < 3 && sleepingDays(e) >= 21).sort((a, b) => a.updatedAt - b.updatedAt).slice(0, 3);
+      const idea = (x) => `<button class="ren-idea" data-open-id="${esc(x.id)}" style="--c:${memberColor(x.author)}"><small>${esc(x.author)} · ${esc(STAGES[stageOf(x)].label)}</small>${esc(x.title || 'Sans titre')}</button>`;
+      const mem = espace.meta.members || MEMBERS;
+      mur.innerHTML = `<div class="sky">
+        <div class="sky-map">
+          ${skyHTML(sky, { query: qv, pairs, focus, narrow: innerWidth < 700 })}
+          <p class="sky-legend"><span><i class="lg z"></i>${esc(mem[0])}</span><span><i class="lg f"></i>${esc(mem[1])}</span><span><i class="lg son"></i>un son</span><span><i class="lg lien"></i>une écoute</span><span><i class="lg img"></i>une image</span><span>✦ au coffre</span><span><i class="lg pair"></i>une rencontre possible</span></p>
+          ${qv ? `<p class="sky-found">${found.length ? `${found.length} idée${found.length > 1 ? 's' : ''} retrouvée${found.length > 1 ? 's' : ''} : ${found.slice(0, 5).map((x) => `<button class="linklike" data-open-id="${esc(x.id)}">« ${esc(x.title || 'Sans titre')} »</button>`).join(', ')}` : 'Rien encore avec ces mots. Essaie un accord, un nom, un mot du texte.'}</p>` : ''}
+        </div>
+        <aside class="sky-side">
+          <h2 class="sky-h">Rencontres possibles</h2>
+          <p class="muted small">Des idées qui ne se sont jamais croisées. Le pointillé les relie sur la carte.</p>
+          ${pairs.map((p, i) => `
+            <article class="ren${focus === String(i) ? ' on' : ''}" data-ren-i="${i}">
+              <div class="ren-pair">${idea(p.a)}<span class="ren-x" aria-hidden="true">×</span>${idea(p.b)}</div>
+              <p class="ren-why">${esc(p.why.join(' · '))}</p>
+              <p class="ren-do">${esc(p.consigne)}</p>
+              <button class="btn small primary" data-ren="${i}">Les faire se rencontrer</button>
+            </article>`).join('') || '<p class="muted small">Il faut au moins trois ou quatre idées pour que le ciel propose des rencontres.</p>'}
+          ${pairs.length ? '<button class="linklike" data-c="ren-next">D’autres rencontres ↻</button>' : ''}
+          ${dorment.length ? `<h2 class="sky-h">Elles dorment</h2><p class="muted small">Pas touchées depuis trois semaines ou plus. Une écoute suffit parfois à les réveiller.</p><div class="sky-dort">${dorment.map(idea).join('')}</div>` : ''}
+        </aside>
+      </div>`;
+    }
+
+    // Une rencontre devient une idée brute : elle garde la mémoire de ses deux parents.
+    async function meet(p) {
+      if (p.a.demo || p.b.demo) { toast('C’est un exemple : avec vos vraies idées, la rencontre arrive sur le mur.'); return; }
+      try {
+        const r = await saveEntry({ type: 'note', title: `${p.a.title || 'Sans titre'} × ${p.b.title || 'Sans titre'}`.slice(0, 200), body: p.consigne, data: { stage: 0, rencontre: [p.a.id, p.b.id], song: songOf(p.a) || songOf(p.b) || '' } });
+        focus = '';
+        toast(`Une nouvelle idée est née. ${other()} la voit déjà.`);
+        if (r.entry) openDetail(r.entry.id);
+      } catch (err) { toast(err.message); }
     }
 
     // « Vers où ça nous mène » : l'entonnoir et l'objectif du mois.
@@ -315,7 +387,8 @@ export default {
       const n = e.data?.replies?.length || 0;
       return `
         <article class="card-mini type-${e.type}" draggable="true" data-card="${e.id}" style="--c:${memberColor(e.author)}">
-          <div class="cm-top"><span class="cm-type">${e.type === 'paroles' ? 'Paroles' : t.label}${!projetCourant() && e.data?.projet && projetNom(e.data.projet) ? ` · ${esc(projetNom(e.data.projet))}` : ''}</span><span class="cm-who">${esc(e.author || '')}</span></div>
+          <div class="cm-top"><span class="cm-type">${typeLabel(e)}${!projetCourant() && e.data?.projet && projetNom(e.data.projet) ? ` · ${esc(projetNom(e.data.projet))}` : ''}</span><span class="cm-who">${esc(e.author || '')}</span></div>
+          ${imgBox(e, 'cm-img')}
           <b class="cm-title">${esc(e.title || (e.body || '').slice(0, 60) || 'Sans titre')}</b>
           ${e.data?.relais ? `<div class="cm-intents">${intentsHTML(e)}${layersOf(e) > 1 ? `<span class="cm-layers">${layersOf(e)} couches</span>` : ''}</div>` : ''}
           ${songOf(e) && view !== 'morceaux' ? `<span class="cm-song">${esc(songOf(e))}</span>` : ''}
@@ -344,10 +417,11 @@ export default {
       return `
         <li class="entry type-${e.type}" data-open="${e.id}" style="--c:${memberColor(e.author)}">
           <div class="entry-head">
-            <span class="entry-type">${t.label}</span>
+            <span class="entry-type">${typeLabel(e)}</span>
             <span class="entry-who"><b>${esc(e.author || '?')}</b> · ${ago(e.createdAt)}${songOf(e) ? ` · ${esc(songOf(e))}` : ''}</span>
           </div>
           ${e.title ? `<h3>${esc(e.title)}</h3>` : ''}
+          ${imgBox(e, 'entry-img')}
           ${e.audio ? `<div class="entry-audio" data-audio="${e.id}"><button class="btn small" data-play="${e.id}">▶ Écouter</button></div>` : ''}
           ${extra}
           ${e.type === 'lien' ? `${embedHTML(e.data?.url || e.body)}<a class="btn small" href="${esc(e.data?.url || e.body)}" target="_blank" rel="noopener">Ouvrir dans ${esc(e.data?.kind || 'le navigateur')} ↗</a>` : e.body ? `<div class="entry-body">${esc(e.body).replace(/\n/g, '<br>')}</div>` : ''}
@@ -367,11 +441,13 @@ export default {
       const mine = e.author === espace.me;
       d.innerHTML = `
         <div class="detail-head">
-          <span class="entry-type">${e.type === 'paroles' ? 'Paroles' : (CARNET_TYPES.find((x) => x.id === e.type)?.label || e.type)}</span>
+          <span class="entry-type">${typeLabel(e)}</span>
           <span class="entry-who"><b style="color:${memberColor(e.author)}">${esc(e.author)}</b> · ${ago(e.createdAt)}</span>
           <button class="icon-btn tiny" data-c="close" aria-label="Fermer">×</button>
         </div>
         <h2>${esc(e.title || 'Sans titre')}</h2>
+        ${originHTML(e)}
+        ${imgBox(e, 'detail-img')}
         ${e.audio ? `<div class="entry-audio" data-audio="${e.id}"><button class="btn small" data-play="${e.id}">▶ Écouter</button></div>` : ''}
         ${e.audio && e.data?.markers?.length ? `<ol class="take-markers">${e.data.markers.map((m) => `<li><button class="btn small mono" data-seek="${e.id}:${m.t}">${Math.floor(m.t / 60)}:${String(Math.floor(m.t % 60)).padStart(2, '0')}</button><b style="color:${memberColor(m.by)}">${esc(m.by)}</b> ${esc(m.text)}</li>`).join('')}</ol>` : ''}
         ${e.type === 'lien' ? `${embedHTML(e.data?.url || e.body)}<a class="btn small" href="${esc(e.data?.url || e.body)}" target="_blank" rel="noopener">Ouvrir dans ${esc(e.data?.kind || 'le navigateur')} ↗</a>` : ''}
@@ -385,9 +461,17 @@ export default {
         <h4>Réponses</h4>
         <ol class="replies">${(e.data?.replies || []).map((r) => `<li style="--c:${memberColor(r.by)}"><b>${esc(r.by)}</b> <span class="muted small">${ago(r.at)}</span><p>${esc(r.text)}</p></li>`).join('') || '<li class="muted small">Pas encore de réponse.</li>'}</ol>
         <form class="reply-form"><input class="input" data-d="reply" placeholder="Répondre à ${esc(e.author === espace.me ? other() : e.author)}…" aria-label="Réponse"><button class="btn small" type="submit">Envoyer</button></form>
-        ${mine ? `<div class="row"><button class="btn small danger" data-del="${e.id}">Supprimer</button></div>` : ''}`;
+        <div class="row"><button class="btn small" data-perle="${esc(e.id)}">${e.data?.perle ? 'Dans le coffre ✦ (l’en sortir)' : '✦ Au coffre'}</button>${mine ? `<button class="btn small danger" data-del="${e.id}">Supprimer</button>` : ''}</div>
+        <p class="muted small">Le coffre garde une étoile sur l’idée : elle reste ici, à sa place.</p>`;
       d.hidden = false;
       el.querySelector('.detail-scrim').hidden = false;
+      hydrateImages(d);
+    }
+    // D'où vient une idée, et ce qu'elle a fait naître : on remonte le fil sans jamais se perdre.
+    function originHTML(e) {
+      const t = (id) => { const x = espace.entries.find((y) => y.id === id); return x ? `<button class="linklike" data-open-id="${esc(id)}">« ${esc(x.title || 'Sans titre')} »</button>` : 'une idée jetée depuis'; };
+      const enfants = espace.entries.filter((x) => x.data?.rencontre?.includes(e.id));
+      return `${e.data?.rencontre?.length === 2 ? `<p class="ren-origin">Née de la rencontre de ${t(e.data.rencontre[0])} et ${t(e.data.rencontre[1])}.</p>` : ''}${enfants.length ? `<p class="ren-origin">A fait naître ${enfants.map((x) => t(x.id)).join(', ')}.</p>` : ''}`;
     }
     function closeDetail() {
       openId = null;
@@ -467,6 +551,26 @@ export default {
       btn.textContent = '● Mémo vocal';
     }
 
+    // Notre art sur le mur : une photo, un dessin, une toile. Elle entre comme idée brute et peut monter d'étape.
+    async function postImage(file) {
+      if (!file?.type?.startsWith('image/')) return;
+      toast('Envoi de l’image…');
+      try {
+        const image = await uploadImage(file);
+        const inp = el.querySelector('[data-c=quick]');
+        const words = inp?.value.trim();
+        if (inp) inp.value = '';
+        await saveEntry({ type: 'image', title: words || (file.name && !/^image\.|^IMG_|^\d/.test(file.name) ? file.name.replace(/\.[^.]+$/, '') : `Image de ${espace.me}`), image, data: { stage: 0, song: fSong && fSong !== '—' ? fSong : '' } });
+        toast(`Sur le mur. ${other()} la voit déjà.`);
+      } catch (err) { toast(err.message || 'Image impossible à lire.'); }
+    }
+    // Coller une image (capture d'écran, photo copiée) ou la glisser sur la barre d'ajout.
+    el.addEventListener('paste', (e) => {
+      if (!e.target.closest('.capture')) return;
+      const f = [...(e.clipboardData?.files || [])].find((x) => x.type.startsWith('image/'));
+      if (f) { e.preventDefault(); postImage(f); }
+    });
+
     async function toggleRec(btn, onDone) {
       if (recorder) { recorder.stop(); return; }
       try {
@@ -514,7 +618,14 @@ export default {
 
     el.addEventListener('click', async (e) => {
       const v = e.target.closest('[data-v]');
-      if (v) { view = v.dataset.v; store.set('murView', view); renderAll(true); return; }
+      if (v) { view = v.dataset.v; store.set('murVue', view); renderAll(true); return; }
+      const oid = e.target.closest('[data-open-id]');
+      if (oid) { openDetail(oid.dataset.openId); return; }
+      const rn = e.target.closest('[data-ren]');
+      if (rn) { const p = pairs[+rn.dataset.ren]; if (p) await meet(p); return; }
+      const pp = e.target.closest('[data-pair]');
+      if (pp) { focus = focus === pp.dataset.pair ? '' : pp.dataset.pair; renderAll(true); el.querySelector(`[data-ren-i="${focus}"]`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
+      if (e.target.closest('[data-c=ren-next]')) { seed++; focus = ''; renderAll(true); return; }
       const fw = e.target.closest('[data-fw]');
       if (fw) { fWho = fw.dataset.fw; renderAll(true); return; }
       const fs = e.target.closest('[data-fs]');
@@ -561,6 +672,8 @@ export default {
         } catch (err) { toast(err.message); pl.textContent = '▶'; }
         return;
       }
+      const pe = e.target.closest('[data-perle]');
+      if (pe) { const en = espace.entries.find((x) => x.id === pe.dataset.perle); if (en) await togglePerle(en).catch((err) => toast(err.message)); return; }
       const del = e.target.closest('[data-del]');
       if (del) { const en = espace.entries.find((x) => x.id === del.dataset.del); if (en) await jeter(en).catch((err) => toast(err.message)); closeDetail(); return; }
       const card = e.target.closest('[data-card], [data-open]');
@@ -610,6 +723,7 @@ export default {
 
     el.addEventListener('change', async (e) => {
       if (e.target.dataset.c === 'file' && e.target.files[0]) postAudio(e.target.files[0], e.target.files[0].name.replace(/\.[^.]+$/, ''));
+      if (e.target.dataset.c === 'image' && e.target.files.length) { for (const f of e.target.files) await postImage(f); e.target.value = ''; }
       if (e.target.dataset.s === 'welcome-audio' && e.target.files[0]) {
         try {
           const audio = await uploadAudio(e.target.files[0]);
@@ -630,6 +744,8 @@ export default {
       }
       if (e.target.dataset.fsel === 'who') { fWho = e.target.value; renderAll(true); return; }
       if (e.target.dataset.fsel === 'song') { fSong = e.target.value; renderAll(true); return; }
+      if (e.target.dataset.fsel === 'kind') { fKind = e.target.value; renderAll(true); return; }
+      if (e.target.dataset.fsel === 'when') { fWhen = e.target.value; renderAll(true); return; }
       const en = openId && espace.entries.find((x) => x.id === openId);
       if (en && e.target.dataset.d === 'stage') await setStage(en, +e.target.value);
       if (en && e.target.dataset.d === 'song') {
@@ -650,12 +766,21 @@ export default {
       }
     });
 
+    // Survoler une rencontre allume son fil sur la carte ; Entrée sur une étoile l'ouvre.
+    el.addEventListener('mouseover', (e) => { const r = e.target.closest('[data-ren-i]'); el.querySelectorAll('.sky-pair').forEach((p) => p.classList.toggle('hover', !!r && p.dataset.pair === r.dataset.renI)); });
+    el.addEventListener('keydown', (e) => { const n = e.target.closest?.('.sky-node'); if (n && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openDetail(n.dataset.card); } });
+    let rz;
+    const onResize = () => { clearTimeout(rz); rz = setTimeout(() => view === 'ciel' && renderAll(), 200); };
+    addEventListener('resize', onResize);
+
     // Glisser-déposer d'une carte vers une autre colonne (étape ou morceau).
     el.addEventListener('dragstart', (e) => { const c = e.target.closest('[data-card]'); if (c) { e.dataTransfer.setData('text/plain', c.dataset.card); c.classList.add('dragging'); } });
     el.addEventListener('dragend', (e) => e.target.closest?.('[data-card]')?.classList.remove('dragging'));
-    el.addEventListener('dragover', (e) => { const col = e.target.closest('.board-col'); if (col) { e.preventDefault(); col.classList.add('over'); } });
+    el.addEventListener('dragover', (e) => { if (e.dataTransfer?.types?.includes('Files')) { e.preventDefault(); return; } const col = e.target.closest('.board-col'); if (col) { e.preventDefault(); col.classList.add('over'); } });
     el.addEventListener('dragleave', (e) => e.target.closest?.('.board-col')?.classList.remove('over'));
     el.addEventListener('drop', async (e) => {
+      const imgs = [...(e.dataTransfer?.files || [])].filter((x) => x.type.startsWith('image/'));
+      if (imgs.length) { e.preventDefault(); for (const f of imgs) await postImage(f); return; }
       const col = e.target.closest('.board-col');
       if (!col) return;
       e.preventDefault();
@@ -681,6 +806,6 @@ export default {
     });
 
     render();
-    return () => { offEsp(); recorder?.stop(); };
+    return () => { offEsp(); recorder?.stop(); removeEventListener('resize', onResize); };
   },
 };

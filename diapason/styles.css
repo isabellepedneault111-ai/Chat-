@@ -1883,3 +1883,166 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .oa-g:hover, .b-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(27, 25, 21, .08); }
 @media (prefers-reduced-motion: reduce) { .entering > * { animation: none !important; } .oa-g:hover, .b-card:hover { transform: none; } }
 .t-auteure { margin: 14px 0 0; color: #c9a45c; font-size: .95rem; letter-spacing: .04em; }
+
+/* Le ciel du mur : une carte gravée, encre de nuit et traits ivoire. Le centre, c'est le set. */
+.sky { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 14px; align-items: start; }
+.sky-map { --sky-z: #ec86ad; --sky-f: #7fb1f0; --sky-core: #f3c77a; --sky-ink: #f1e9d8; position: relative; background: radial-gradient(120% 90% at 50% 52%, #24201a 0%, #161410 62%, #100e0b 100%); border-radius: 10px; padding: 10px 10px 8px; color: var(--sky-ink); box-shadow: inset 0 0 0 1px rgba(241, 233, 216, .08), 0 18px 40px -24px rgba(16, 14, 11, .7); overflow: hidden; }
+.sky-svg { display: block; width: 100%; height: auto; }
+.sky-ring { fill: none; stroke: var(--sky-ink); stroke-opacity: .13; stroke-width: 1; }
+.sky-ring.s0 { stroke-dasharray: 2 5; }
+.sky-ring.s4 { stroke-opacity: .32; }
+.sky-spoke { stroke: var(--sky-ink); stroke-opacity: .07; stroke-width: 1; }
+.sky-rl { fill: var(--sky-ink); fill-opacity: .42; font: 500 10.5px var(--body); letter-spacing: .14em; text-transform: uppercase; text-anchor: middle; }
+.sky-rl.center { fill: var(--sky-core); fill-opacity: .9; letter-spacing: .1em; }
+.sky-song { fill: var(--sky-ink); fill-opacity: .72; font: italic 500 14px var(--display); }
+.sky-link { fill: none; stroke: var(--sky-ink); stroke-opacity: .35; stroke-width: 1.1; }
+.sky-link.ren { stroke: var(--sky-core); stroke-opacity: .55; }
+.sky-pair { fill: none; stroke: var(--sky-core); stroke-width: 1.4; stroke-dasharray: 3 6; stroke-linecap: round; opacity: .55; cursor: pointer; animation: skyDraw 1.6s cubic-bezier(.2, .7, .2, 1) both; animation-delay: var(--d); transition: opacity .2s, stroke-width .2s; }
+.sky-pair.hover, .sky-pair.on, .sky-pair:hover { opacity: 1; stroke-width: 2.2; }
+.sky-node { cursor: pointer; animation: skyIn .7s cubic-bezier(.2, .7, .2, 1) both; animation-delay: var(--d); transition: opacity .25s; outline: none; }
+.sky-hit { fill: transparent; }
+.sky-dot { fill: var(--c); stroke: #100e0b; stroke-width: 1.2; transition: transform .2s; transform-box: fill-box; transform-origin: center; }
+.sky-dot.hollow { fill: #161410; stroke: var(--c); stroke-width: 1.8; }
+.sky-orbit { fill: none; stroke: var(--c); stroke-opacity: .55; stroke-width: 1; }
+.sky-perle { fill: var(--sky-core); }
+.sky-label { fill: var(--sky-ink); fill-opacity: .82; font: 500 12px var(--body); paint-order: stroke; stroke: #161410; stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.sky-node:hover .sky-dot, .sky-node:focus-visible .sky-dot { transform: scale(1.35); }
+.sky-node:focus-visible .sky-hit { stroke: var(--sky-core); stroke-width: 1; }
+.sky-node.asleep .sky-dot { fill-opacity: .45; }
+.sky-node.dim { opacity: .14; }
+.sky-node.hit .sky-dot { stroke: var(--sky-core); stroke-width: 2; }
+.sky-node.hit .sky-label { fill-opacity: 1; }
+.sky-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 4px 6px 2px; font-size: .78rem; color: rgba(241, 233, 216, .62); }
+.sky-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.lg { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+.lg.z { background: var(--sky-z); } .lg.f { background: var(--sky-f); }
+.lg.son { background: var(--sky-ink); box-shadow: 0 0 0 2px #161410, 0 0 0 3px rgba(241, 233, 216, .6); }
+.lg.lien { border: 1.6px solid var(--sky-ink); }
+.lg.pair { width: 18px; height: 0; border-radius: 0; border-top: 1.6px dashed var(--sky-core); }
+.sky-found { margin: 6px 6px 2px; font-size: .88rem; color: var(--sky-ink); }
+.sky-found .linklike { color: var(--sky-core); }
+.sky-side { display: grid; gap: 10px; }
+.sky-h { font-family: var(--display); font-size: 1.2rem; margin: 4px 0 0; }
+.ren { border: 1.5px solid var(--rule); border-radius: 8px; padding: 10px; background: var(--card); display: grid; gap: 6px; transition: transform .2s, box-shadow .2s; }
+.ren:hover, .ren.on { transform: translateY(-1px); box-shadow: 0 10px 22px -16px rgba(27, 25, 21, .55); }
+.ren.on { border-color: var(--accent); }
+.ren-pair { display: grid; grid-template-columns: 1fr auto 1fr; gap: 6px; align-items: stretch; }
+.ren-x { align-self: center; font-family: var(--display); font-size: 1.2rem; color: var(--muted); }
+.ren-idea { text-align: left; background: color-mix(in srgb, var(--c) 9%, var(--card)); border: 0; border-left: 3px solid var(--c); border-radius: 4px; padding: 6px 8px; font: 600 .86rem/1.25 var(--body); color: var(--text); cursor: pointer; }
+.ren-idea small { display: block; font-weight: 500; font-size: .72rem; color: var(--muted); margin-bottom: 2px; }
+.ren-why { margin: 0; font-size: .8rem; color: var(--muted); }
+.ren-do { margin: 0; font-family: var(--display); font-style: italic; font-size: .95rem; line-height: 1.35; }
+.ren .btn { justify-self: start; }
+.sky-dort { display: grid; gap: 6px; }
+.ren-origin { margin: -4px 0 8px; font-size: .88rem; color: var(--muted); }
+@keyframes skyIn { from { opacity: 0; transform-origin: center; } to { opacity: 1; } }
+@keyframes skyDraw { from { stroke-dashoffset: 120; opacity: 0; } to { stroke-dashoffset: 0; } }
+@media (max-width: 900px) { .sky { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .sky-node, .sky-pair { animation: none; } }
+
+/* Visite, version film : plein écran, un grand titre par scène, un dessin qui bouge. */
+.tour .t-inner { max-width: min(1240px, 100%); }
+.t-open { position: relative; max-width: 900px; margin: 0 auto; }
+.il-fils { position: absolute; left: 50%; top: 50%; width: 140vw; height: 110vh; transform: translate(-50%, -50%); z-index: -1; pointer-events: none; opacity: .9; }
+.t-open > *:not(.il-fils) { position: relative; }
+.il-fil { fill: none; stroke-width: 1.6; stroke-dasharray: 1; stroke-dashoffset: 1; animation: ilDraw 3.2s cubic-bezier(.45, .05, .2, 1) .3s forwards, ilBreathe 6s ease-in-out 3.5s infinite; }
+.il-fil.z { stroke: #ec86ad; } .il-fil.f { stroke: #7fb1f0; animation-delay: .55s, 3.75s; }
+.il-knot { fill: #f3c77a; opacity: 0; animation: ilPop .8s ease 3.1s forwards; }
+.t-title { max-width: 1040px; margin: 0 auto; text-align: center; }
+.t-title .t-line { margin-left: auto; margin-right: auto; }
+.t-title .t-actions { margin: 26px auto 0; justify-items: center; }
+.t-huge { font-size: clamp(3rem, 8.4vw, 7.6rem) !important; line-height: .92 !important; letter-spacing: -.01em; }
+.t-line { font-size: clamp(1.08rem, 1.7vw, 1.4rem); color: #d8d0c1; max-width: 48ch; line-height: 1.45; }
+.t-scene { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: clamp(24px, 5vw, 72px); align-items: center; min-height: min(70svh, 640px); }
+.t-scene h2 { font-size: clamp(2.6rem, 5.2vw, 5rem) !important; }
+.t-how { display: grid; gap: 14px; margin: 8px 0 0; }
+.t-how div { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: baseline; padding-top: 12px; border-top: 1px solid rgba(241, 233, 216, .14); animation: tUp .8s cubic-bezier(.2, .8, .2, 1) both; }
+.t-how div:nth-child(1) { animation-delay: .5s; } .t-how div:nth-child(2) { animation-delay: .9s; } .t-how div:nth-child(3) { animation-delay: 1.3s; }
+.t-how dt { font-size: .7rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: #c9a45c; }
+.t-how dd { margin: 0; font-size: clamp(1rem, 1.45vw, 1.2rem); line-height: 1.45; color: #e6dfd0; }
+.t-how div:last-child dd { color: #fff; font-weight: 600; }
+.t-illu { margin: 0; animation: tUp 1s cubic-bezier(.2, .8, .2, 1) .2s both; }
+.il { display: block; width: 100%; height: auto; overflow: visible; }
+.t-progress i { position: relative; overflow: hidden; }
+.t-progress i.run::after { content: ''; position: absolute; inset: 0; background: var(--tape); transform-origin: left; animation: tFill var(--dur) linear forwards; }
+.t-nav { align-items: center; gap: 12px; }
+.t-nav .t-apercu { position: static; transform: none; white-space: normal; text-align: center; }
+@media (max-width: 860px) {
+  .t-scene { grid-template-columns: 1fr; gap: 10px; min-height: 0; }
+  .t-illu { order: -1; max-width: 460px; margin: 0 auto; width: 100%; }
+  .t-how { gap: 8px; } .t-how div { padding-top: 8px; grid-template-columns: 54px 1fr; }
+}
+
+/* Les traits */
+.il-name { font: italic 600 15px var(--display); }
+.il-name.z, .il-ini.z { fill: #ec86ad; } .il-name.f, .il-ini.f { fill: #7fb1f0; }
+.il-small { font: 500 12px var(--body); fill: rgba(241, 233, 216, .62); letter-spacing: .04em; }
+.il-gold { font: 700 11.5px var(--body); fill: #f3c77a; letter-spacing: .2em; text-transform: uppercase; }
+.il-key { fill: rgba(241, 233, 216, .04); stroke: rgba(241, 233, 216, .5); stroke-width: 1.2; }
+.il-bkey { fill: #0e0c0a; stroke: rgba(241, 233, 216, .5); stroke-width: 1.2; }
+.il-lit { fill: #7fb1f0; opacity: 0; animation: ilLit 8s ease infinite; animation-delay: calc(var(--g) * 2s); }
+.il-wave { fill: none; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: ilDraw 2.4s ease .4s forwards, ilBreathe 5s ease-in-out 3s infinite; }
+.il-wave.z { stroke: #ec86ad; }
+.il-note { opacity: 0; animation: ilLit 8s ease infinite; animation-delay: calc(var(--g) * 2s + .25s); }
+.il-guide { stroke: rgba(241, 233, 216, .35); stroke-dasharray: 2 4; }
+.il-voice { fill: #ec86ad; }
+.il-ring { fill: none; stroke: #f3c77a; stroke-width: 1.5; transform-box: fill-box; transform-origin: center; animation: ilRing 2s ease-out infinite; }
+.il-juste { font: 700 11px var(--body); fill: #f3c77a; letter-spacing: .16em; text-transform: uppercase; }
+.il-screen { fill: rgba(241, 233, 216, .04); stroke: rgba(241, 233, 216, .55); stroke-width: 1.3; }
+.il-bar, .il-stand { stroke: rgba(241, 233, 216, .4); stroke-width: 1.3; stroke-linecap: round; }
+.il-step { fill: rgba(241, 233, 216, .12); }
+.il-fill { transform-box: fill-box; transform-origin: left; animation: ilGrow 9s linear infinite; opacity: .85; }
+.il-fill.z, .il-dot.z, .il-node.z, .il-bars.z, .il-pulse.z { fill: #ec86ad; } .il-fill.f, .il-dot.f { fill: #7fb1f0; }
+.il-dot { animation: ilSlide 9s linear infinite; }
+.il-arc { fill: none; stroke: rgba(241, 233, 216, .22); stroke-width: 1.2; stroke-dasharray: 3 5; }
+.il-pulse { fill: none !important; stroke: #f3c77a; stroke-width: 3; stroke-linecap: round; stroke-dasharray: .07 1; stroke-dashoffset: .07; animation: ilTravel 1.8s cubic-bezier(.5, 0, .5, 1) infinite; }
+.il-pulse.back { animation-delay: .9s; }
+.il-ground { stroke: rgba(241, 233, 216, .18); stroke-width: 1; }
+.il-node { fill: none !important; stroke-width: 1.6; } .il-node.z { stroke: #ec86ad; } .il-node.f { stroke: #7fb1f0; }
+.il-ini { font: 700 16px var(--display); }
+.il-relais .il-pulse { opacity: 0; animation: ilTravelOnce 10s cubic-bezier(.5, 0, .5, 1) infinite; }
+.il-relais .il-pulse.z { stroke: #ec86ad; } .il-relais .il-pulse.f { stroke: #7fb1f0; }
+.il-relais .t2 { animation-delay: 3s; } .il-relais .t3 { animation-delay: 6s; }
+.il-bars { fill: none !important; stroke-width: 3; stroke-linecap: round; } .il-bars.z { stroke: #ec86ad; } .il-bars.f { stroke: #7fb1f0; opacity: .9; }
+.il-layer { opacity: 0; animation: ilLayer 10s ease infinite; }
+.il-layer.l1 { animation-delay: 0s; --on: 25%; } .il-layer.l2 { animation-delay: 0s; animation-name: ilLayer2; } .il-layer.l3 { animation-name: ilLayer3; }
+.il-mots { font: italic 500 17px var(--display); fill: #f1e9d8; }
+.il-ring-sky { fill: none; stroke: rgba(241, 233, 216, .16); stroke-width: 1; } .il-ring-sky.core { stroke: rgba(243, 199, 122, .6); }
+.il-glow { animation: ilBreathe 5s ease-in-out infinite; }
+.il-star { opacity: 0; animation: ilStar 11s cubic-bezier(.3, 0, .2, 1) infinite; animation-delay: calc(var(--k) * .35s); }
+.il-star.z { fill: #ec86ad; } .il-star.f { fill: #7fb1f0; }
+.il-meet { fill: none; stroke: #f3c77a; stroke-width: 1.6; stroke-dasharray: .015 .02; stroke-dashoffset: 1; opacity: 0; animation: ilMeet 11s ease infinite; }
+.il-meet-t { opacity: 0; animation: ilMeetT 11s ease infinite; fill: #f3c77a; }
+@keyframes ilDraw { to { stroke-dashoffset: 0; } }
+@keyframes ilBreathe { 0%, 100% { opacity: .75; } 50% { opacity: 1; } }
+@keyframes ilPop { from { opacity: 0; r: 0; } to { opacity: 1; r: 5; } }
+@keyframes ilLit { 0% { opacity: 0; } 4%, 22% { opacity: .85; } 26%, 100% { opacity: 0; } }
+@keyframes ilRing { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(2.4); opacity: 0; } }
+@keyframes ilGrow { 0% { transform: scaleX(0); } 85%, 100% { transform: scaleX(1); } }
+@keyframes ilSlide { 0% { transform: translateX(0); } 85%, 100% { transform: translateX(162px); } }
+@keyframes ilTravel { from { stroke-dashoffset: .07; } to { stroke-dashoffset: -1; } }
+@keyframes ilTravelOnce { 0% { stroke-dashoffset: .07; opacity: 1; } 22% { stroke-dashoffset: -1; opacity: 1; } 23%, 100% { stroke-dashoffset: -1; opacity: 0; } }
+@keyframes ilLayer { 0%, 22% { opacity: 0; } 28%, 92% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes ilLayer2 { 0%, 52% { opacity: 0; } 58%, 92% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes ilLayer3 { 0%, 80% { opacity: 0; } 84%, 92% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes ilStar { 0% { opacity: 0; transform: translate(0, 0); } 8% { opacity: 1; } 70% { opacity: 1; transform: translate(var(--tx), var(--ty)); } 92% { opacity: 1; transform: translate(var(--tx), var(--ty)); } 100% { opacity: 0; transform: translate(var(--tx), var(--ty)); } }
+@keyframes ilMeet { 0%, 40% { opacity: 0; stroke-dashoffset: 1; } 45% { opacity: 1; } 70%, 90% { opacity: 1; stroke-dashoffset: 0; } 100% { opacity: 0; stroke-dashoffset: 0; } }
+@keyframes ilMeetT { 0%, 60% { opacity: 0; } 68%, 90% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes tFill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { .il *, .il-fils * { animation: none !important; opacity: 1 !important; stroke-dashoffset: 0 !important; } }
+.t-inner > .il-fils { animation: none; }
+@media (max-width: 860px) { .t-illu { max-width: 340px; } .t-scene h2 { font-size: 2.3rem !important; } }
+.sky-svg.narrow .sky-label { font-size: 17px; stroke-width: 4px; }
+.sky-svg.narrow .sky-rl { font-size: 14px; }
+.sky-svg.narrow .sky-song { font-size: 19px; }
+.mur-tools .filters { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+@media (max-width: 700px) { .mur-tools .filters .f-sel { flex: 1 1 45%; min-width: 0; } }
+.defi-row { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+.defi { margin: 0; font-family: var(--display); font-style: italic; font-size: 1.15rem; animation: tUp .6s ease both; }
+.defi small { display: block; font-family: var(--body); font-style: normal; font-size: .75rem; color: var(--muted); }
+/* Notre art sur le mur */
+.cm-img, .entry-img, .detail-img { width: 100%; max-height: 340px; border-radius: 5px; background: var(--surface2) center / cover no-repeat; margin: 6px 0; transition: opacity .4s; }
+.cm-img:not(.loaded), .entry-img:not(.loaded), .detail-img:not(.loaded) { opacity: .5; }
+.cm-img { max-height: 170px; }
+.detail-img { background-size: contain; background-color: #14120f; max-height: 60vh; }
+.lg.img { border-radius: 1px; transform: rotate(45deg); width: 8px; height: 8px; background: var(--sky-ink); }

@@ -14,7 +14,7 @@ export const MODULES = [
   { id: 'relais', num: '', name: 'Relais', color: 'var(--rec)', tagline: 'Se lancer des sons entre deux sessions, et répondre par-dessus.' },
   { id: 'ambiances', num: '', name: 'Ambiances', color: 'var(--rec)', tagline: 'Partir ailleurs avant d’écrire ou de chanter.' },
   { id: 'jeux', num: '', name: 'Le grimoire', color: 'var(--c-paroles)', tagline: 'Rituels d’écriture : nos mots, une carte tirée dans les braises, le cadavre exquis.' },
-  { id: 'coffre', num: '', name: 'Le coffre', color: 'var(--rec)', tagline: 'Nos petites perles : la vidéo, le mot d’accueil, ce qu’on y dépose.' },
+  { id: 'coffre', num: '', name: 'Le coffre', color: 'var(--rec)', tagline: 'Nos petites perles : le mot d’accueil, la visite, ce qu’on y dépose.' },
   { id: 'lexique', num: '', name: 'Notre lexique', color: 'var(--rec)', tagline: 'Les mots de FLIP, et ce qu’ils font bouger.' },
   { id: 'ecrire', num: '', name: 'Écrire', color: 'var(--c-paroles)', tagline: 'Notre journal, la séance d’atelier, le grimoire, les paroles.' },
   { id: 'atelier', num: '', name: 'Séance d’atelier', color: 'var(--c-paroles)', tagline: 'Quatre temps guidés pour écrire.' },
@@ -74,6 +74,33 @@ export const PROGRESSIONS = [
   { id: 'jazz', name: 'Jazz feutré', roman: 'ii7 – V7 – Imaj7 – Imaj7', chords: [[2, 'm7'], [7, '7'], [0, 'maj7'], [0, 'maj7']], note: 'Le moteur du jazz : tension → résolution.' },
   { id: 'reve', name: 'Rêverie', roman: 'Imaj7 – IVmaj7', chords: [[0, 'maj7'], [5, 'maj7'], [0, 'maj7'], [5, 'maj7']], note: 'Deux accords qui flottent. Parfait pour improviser sans peur.' },
   { id: 'andalouse', name: 'Cadence andalouse', roman: 'vi – V – IV – III', chords: [[9, 'm'], [7, 'M'], [5, 'M'], [4, 'M']], note: 'Flamenco, rock, musique de film : une descente dramatique.' },
+  // Pour improviser : peu d'accords, une couleur forte, rien à suivre.
+  { id: 'bourdon', name: 'Impro · Bourdon', roman: 'I5 en boucle', impro: true, chords: [[0, '5'], [0, '5'], [0, '5'], [0, '5']], note: 'Une seule couleur, sans fin. L’impro la plus libre : rien à suivre, tout à écouter.' },
+  { id: 'dorien', name: 'Impro · Vamp dorien', roman: 'ii7 – V', impro: true, chords: [[2, 'm7'], [7, 'M'], [2, 'm7'], [7, 'M']], note: 'Le vamp du funk et de « So What » : deux accords, une gamme, impossible de se tromper.' },
+  { id: 'suspendu', name: 'Impro · Jamais résolu', roman: 'Isus2 – IVsus2 – Vsus4 – visus2', impro: true, chords: [[0, 'sus2'], [5, 'sus2'], [7, 'sus4'], [9, 'sus2']], note: 'Rien ne se pose : idéal pour une voix qui cherche sa phrase.' },
+  { id: 'quartes', name: 'Impro · Accords en quartes', roman: 'ii – I – vi – V en quartes', impro: true, chords: [[2, 'q'], [0, 'q'], [9, 'q'], [7, 'q']], note: 'Ni majeur ni mineur : l’impro devient un paysage (McCoy Tyner, musiques de film).' },
+  { id: 'hasard', name: 'Impro · Le hasard', roman: 'change à chaque tour', impro: true, hasard: true, chords: [[0, 'M'], [9, 'm'], [5, 'M'], [7, 'M']], note: 'La boucle se réinvente à chaque tour, dans la tonalité. L’impro ne s’endort jamais.' },
+  // Hors des sentiers battus
+  { id: 'lydien', name: 'Lydien rêveur', roman: 'Imaj7 – II', chords: [[0, 'maj7'], [2, 'M'], [0, 'maj7'], [2, 'M']], note: 'La couleur des films qui s’envolent : la quarte augmentée tire vers le haut.' },
+  { id: 'phrygien', name: 'Phrygien', roman: 'iii – IV', chords: [[4, 'm'], [5, 'M'], [4, 'm'], [5, 'M']], note: 'Le demi-ton qui frissonne : flamenco, désert, métal.' },
+  { id: 'mixo', name: 'Mixolydien', roman: 'I – ♭VII – IV – I', chords: [[0, 'M'], [10, 'M'], [5, 'M'], [0, 'M']], note: 'Le ♭VII qui ne demande pas la permission : folk, rock de grange.' },
+  { id: 'neosoul', name: 'Néo-soul', roman: 'IVmaj7 – iii7 – ii9 – Iadd9', chords: [[5, 'maj7'], [4, 'm7'], [2, 'm9'], [0, 'add9']], note: 'Une descente moelleuse, accords enrichis (D’Angelo, Erykah Badu).' },
+  { id: 'gospel', name: 'Descente gospel', roman: 'IV – iii – ii – I', chords: [[5, 'M'], [4, 'm'], [2, 'm'], [0, 'M']], note: 'Chaque accord, une marche plus bas, jusqu’à la maison.' },
+];
+// Des défis pour improviser : un nouveau tous les deux tours de boucle.
+export const DEFIS_IMPRO = [
+  'Une seule note. Trois rythmes différents.',
+  'Chante seulement sur les temps faibles.',
+  'Réponds à la phrase d’avant, comme une conversation.',
+  'Une langue inventée : des sons, pas de mots.',
+  'Imite un instrument : une trompette, un violoncelle.',
+  'Chuchote ce tour-ci, chante fort le suivant.',
+  'Commence chaque phrase par la même note.',
+  'Laisse un tour entier de silence. Puis reviens.',
+  'Monte, toujours monter, jusqu’au bout du tour.',
+  'Trois mots seulement, répétés autrement à chaque fois.',
+  'Joue en retard sur le temps, exprès.',
+  'Une phrase triste sur des accords joyeux.',
 ];
 
 // Grilles de 16 pas : k = grosse caisse, s = caisse claire, h = charleston, c = claps
@@ -83,6 +110,14 @@ export const DRUM_PRESETS = {
   'Dembow': { k: '1000100010001000', s: '0001001000010010', h: '1111111111111111', c: '0000000000000000' },
   'House': { k: '1000100010001000', s: '0000000000000000', h: '0010001000100010', c: '0000100000001000' },
   'Ballade': { k: '1000000000100000', s: '0000000010000000', h: '1000100010001000', c: '0000000000000000' },
+  'Bossa': { k: '1000001010000010', s: '1001001000101000', h: '1010101010101010', c: '0000000000000000' },
+  'Afrobeat': { k: '1000001010000100', s: '0000100000001010', h: '1011101110111011', c: '0000000000000000' },
+  'One drop': { k: '0000000010000000', s: '0000000010000000', h: '0010001000100010', c: '0000000000000000' },
+  'Breakbeat': { k: '1000001000100000', s: '0000100100001000', h: '1010101010101010', c: '0000000000000000' },
+  'Motorik': { k: '1000100010001000', s: '0000100000001000', h: '1111111111111111', c: '0000000000000000' },
+  'Trap lent': { k: '1000000000100100', s: '0000000010000000', h: '1010101011101010', c: '0000000000000000' },
+  'Clave 3-2': { k: '1000000010000000', s: '0000000000000000', h: '0000000000000000', c: '1001001000101000' },
+  'Cœur qui bat': { k: '1100000011000000', s: '0000000000000000', h: '0000000000000000', c: '0000000000000000' },
   'Vide': { k: '0000000000000000', s: '0000000000000000', h: '0000000000000000', c: '0000000000000000' },
 };
 

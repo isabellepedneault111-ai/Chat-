@@ -2,7 +2,7 @@ import { audio, drums, pad, bass, mic, startMic, finalOut, pluck } from '../audi
 import { store, keyboard, toast, animate, autoCanvas, getProfile } from '../ui.js';
 import { FR, mtof, chordIntervals, chordName, hash, rng, mod12, clamp, nameFR } from '../music.js';
 import { createListener, connectMIDI, chordLabel, estimateKey, suggestNext, diatonic, majorTonic } from '../instrument.js';
-import { DRUM_PRESETS, PROGRESSIONS } from '../data.js';
+import { DRUM_PRESETS, PROGRESSIONS, DEFIS_IMPRO } from '../data.js';
 import { clockStart, clockStep, clockStop } from '../console.js';
 
 const ROWS = [['k', 'Grosse caisse'], ['s', 'Caisse claire'], ['h', 'Charleston'], ['c', 'Claps']];
@@ -38,6 +38,11 @@ const S = {
   custom: store.get('customProg', null),
   cur: null,
   filming: false,
+  loop: 0, // tours de boucle : le hasard et les défis d'impro avancent avec eux
+  restart: false, // un autre style prend le relais au prochain temps
+  padG: null,
+  defis: store.get('defisImpro', false),
+  onLoop: null,
 };
 const save = () => { store.set('grid', S.grid); store.set('bpm', S.bpm); store.set('key', S.key); store.set('prog', S.prog); };
 const saveMelody = () => store.set('melody', S.melody.map(({ slot, deg, who }) => ({ slot, deg, who })));
@@ -50,8 +55,12 @@ const padMidis = () => {
 const DEMO_MELODY = [[0, 2], [2, 3], [3, 4], [4, 3], [6, 2], [8, 3], [10, 4], [11, 5], [12, 4], [14, 3], [16, 4], [18, 5], [19, 6], [20, 5], [22, 4], [24, 3], [26, 2], [27, 1], [28, 0]];
 let onScene = null;
 const progression = () => (S.prog === 'perso' && S.custom) || PROGRESSIONS.find((p) => p.id === S.prog) || PROGRESSIONS[0];
+// « Le hasard » : quatre accords de la tonalité, retirés à chaque tour (toujours les mêmes pour un même tour).
+const POOL = [[0, 'M'], [2, 'm7'], [4, 'm'], [5, 'maj7'], [7, 'M'], [9, 'm'], [0, 'add9'], [7, 'sus4'], [5, 'M'], [2, 'm']];
+const hasardChords = (loop) => { const r = rng(hash(`hasard${loop}`)); return [[0, 'M'], ...[1, 2, 3].map(() => POOL[Math.floor(r() * POOL.length)])]; };
 const chordAt = (bar) => {
-  const [deg, qual] = progression().chords[bar % 4];
+  const p = progression();
+  const [deg, qual] = (p.hasard ? hasardChords(S.loop) : p.chords)[bar % 4];
   return { root: mod12(S.key + deg), qual };
 };
 
@@ -62,7 +71,7 @@ function scheduleStep(step, t) {
   clockStep(t, sixteenth); // horloge MIDI vers le matériel de Frog, si choisie
   ROWS.forEach(([r]) => { if (S.grid[r][st]) drums[{ k: 'kick', s: 'snare', h: 'hat', c: 'clap' }[r]](t, st % 4 === 0 ? 1 : 0.8); });
   const ch = chordAt(bar);
-  if (st === 0) pad(chordIntervals(ch.qual).map((iv) => mtof(48 + ch.root + iv)), t, sixteenth * 16, 0.045);
+  if (st === 0) S.padG = pad(chordIntervals(ch.qual).map((iv) => mtof(48 + ch.root + iv)), t, sixteenth * 16, 0.045);
   if (st === 0 || st === 8 || st === 11) bass(mtof(36 + ch.root), t, sixteenth * (st === 11 ? 2 : 3));
   if (st % 2 === 0) {
     const slot = (step % 64) >> 1;
@@ -77,10 +86,19 @@ function scheduleStep(step, t) {
 function scheduler() {
   const c = audio();
   while (S.nextTime < c.currentTime + 0.12) {
+    // Relais : sur le prochain temps, l'accord qui sonnait s'efface et le nouveau style repart du début.
+    if (S.restart && S.step % 4 === 0) {
+      S.restart = false;
+      S.step = 0;
+      S.padG?.gain.cancelScheduledValues(S.nextTime);
+      S.padG?.gain.setTargetAtTime(0.0001, S.nextTime, 0.04);
+      S.onLoop?.();
+    }
     scheduleStep(S.step, S.nextTime);
     S.queue.push({ step: S.step, time: S.nextTime });
     S.nextTime += 60 / S.bpm / 4;
     S.step = (S.step + 1) % 64;
+    if (S.step === 0) { S.loop++; S.onLoop?.(); }
   }
 }
 function play() {
@@ -151,7 +169,8 @@ export default {
       q('.chord-row').innerHTML = [0, 1, 2, 3].map((b) => {
         const ch = chordAt(b);
         return `<div class="chord" data-bar="${b}"><small>Mesure ${b + 1}</small><b>${chordName(ch.root, ch.qual)}</b></div>`;
-      }).join('') + `<p class="chord-note muted">${progression().note}</p>`;
+      }).join('') + `<p class="chord-note muted">${progression().note}</p>
+        <div class="defi-row"><button class="chip ${S.defis ? 'active' : ''}" data-act="defis">${S.defis ? 'Défis d’impro ✓' : 'Défis d’impro'}</button>${S.defis ? `<p class="defi">${DEFIS_IMPRO[Math.floor(S.loop / 2) % DEFIS_IMPRO.length]}<small>un nouveau défi tous les deux tours</small></p>` : ''}</div>`;
     };
 
     el.addEventListener('input', (e) => {
@@ -160,8 +179,8 @@ export default {
     });
     el.addEventListener('change', (e) => {
       const k = e.target.dataset.in;
-      if (k === 'key') { S.key = +e.target.value; save(); syncTop(); renderTab(); }
-      if (k === 'prog') { S.prog = e.target.value; save(); syncTop(); renderTab(); }
+      if (k === 'key') { S.key = +e.target.value; save(); relay(); syncTop(); renderTab(); }
+      if (k === 'prog') { S.prog = e.target.value; save(); relay(); syncTop(); renderTab(); }
     });
 
     async function toggleRec() {
@@ -200,7 +219,11 @@ export default {
       const act = e.target.closest('[data-act]')?.dataset.act;
       if (act === 'play') { S.playing ? stopPlay() : play(); syncTop(); onScene?.(); }
       if (act === 'rec') toggleRec();
+      if (act === 'defis') { S.defis = !S.defis; store.set('defisImpro', S.defis); syncTop(); }
     });
+    // Changer de style pendant que ça joue : pas de silence, pas de superposition. Le nouveau prend le relais sur le temps.
+    function relay() { if (S.playing) S.restart = true; }
+    S.onLoop = () => requestAnimationFrame(() => el.isConnected && syncTop());
 
     // ---------- Onglets ----------
     function renderTab() {
@@ -244,7 +267,7 @@ export default {
           save();
         }
         const d = e.target.closest('[data-drum]');
-        if (d) { S.grid = parse(DRUM_PRESETS[d.dataset.drum]); save(); renderTab(); }
+        if (d) { S.grid = parse(DRUM_PRESETS[d.dataset.drum]); save(); relay(); renderTab(); }
       });
     }
 
@@ -755,7 +778,7 @@ export default {
 
     syncTop();
     renderTab();
-    return () => { stop(); disposeTab(); kb?.dispose(); };
+    return () => { stop(); disposeTab(); kb?.dispose(); S.onLoop = null; };
   },
 };
 

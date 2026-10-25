@@ -60,6 +60,12 @@ const QUALITY = {
   m7: { iv: [0, 3, 7, 10], suf: 'm7' },
   maj7: { iv: [0, 4, 7, 11], suf: 'maj7' },
   sus2: { iv: [0, 2, 7], suf: 'sus2' },
+  sus4: { iv: [0, 5, 7], suf: 'sus4' },
+  dim: { iv: [0, 3, 6], suf: 'dim' },
+  add9: { iv: [0, 4, 7, 14], suf: 'add9' },
+  m9: { iv: [0, 3, 7, 10, 14], suf: 'm9' },
+  5: { iv: [0, 7, 12], suf: '5' },
+  q: { iv: [0, 5, 10, 15], suf: ' en quartes' },
 };
 export const chordIntervals = (q) => QUALITY[q].iv;
 export const chordName = (root, q) => FR[mod12(root)] + QUALITY[q].suf;

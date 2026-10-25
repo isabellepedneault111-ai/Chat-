@@ -6,17 +6,18 @@ const STEPS = [
   { route: '#/', sel: '#nav [data-id=home]', t: 'L’accueil', d: 'Chaque jour : le truc à faire, nos séances ensemble, et ce que l’autre a fait pendant ton absence.' },
   { route: '#/', sel: '.fil', t: 'Ensemble, sans distance', d: 'Dans la même pièce, à distance en même temps, ou chacun son temps : on ne s’arrête plus quand on n’est pas ensemble.' },
   { route: '#/session', sel: '#nav [data-id=session]', t: 'Session', d: 'Le cœur de FLIP : une séance guidée, ensemble ou à distance. Elle finit toujours par un enregistrement.' },
-  { route: '#/carnet', sel: '#nav [data-id=carnet]', t: 'Le mur', d: 'Toutes nos idées au même endroit. Chacune monte d’étape, jusqu’à devenir un morceau de l’album.' },
+  { route: '#/carnet', sel: '.sky-map, #nav [data-id=carnet]', t: 'Le mur', d: 'Nos idées en un ciel : le centre, c’est l’album. Tu cherches un mot, ça s’allume. Et FLIP propose des rencontres entre tes idées et les miennes.' },
   { route: '#/relais', sel: '#nav [data-id=relais]', t: 'Le relais', d: 'Quand on n’est pas ensemble : un son en une touche. L’autre répond par-dessus, couche après couche.' },
   { route: '#/ecrire', sel: '#nav [data-id=ecrire]', t: 'Écrire', d: 'Notre journal à deux, les séances d’écriture, le grimoire et nos paroles.' },
-  { route: '#/accord', sel: '#nav [data-id=voix], .tool-voix', t: 'Voix', d: 'Branche ton clavier MIDI (Chrome ou Edge) : tu joues, et l’app montre en direct si ma voix est juste dans tes accords.' },
+  { route: '#/accord', sel: '#nav [data-id=voix], .tool-voix', t: 'Voix + clavier', d: 'Tu joues un accord sur ton clavier MIDI (Chrome ou Edge). L’app allume les notes que je peux chanter, dans MA tessiture, celle mesurée au test de l’étape 1. Je chante : elle montre en direct si je tombe dans l’accord et quelle note je tiens. Et à chaque séance, elle retient où ma voix brille : nos notes magiques et la carte de nos accords.' },
   { route: '#/studio', sel: '#nav [data-id=studio]', t: 'Studio', d: 'Beats, grilles d’accords, instrument : pour construire et jouer.' },
-  { route: '#/', sel: '.tool-coffre, .fil-coffre', t: 'Le coffre', d: 'Nos perles : la vidéo, le mot d’accueil, ce qu’on veut garder précieusement.' },
+  { route: '#/', sel: '.tool-coffre, .fil-coffre', t: 'Le coffre', d: 'Nos perles : le mot d’accueil, la visite, et tout ce qu’on y dépose d’un geste. Rien ne quitte sa place : le coffre garde une étoile dessus.' },
   { route: '#/', sel: '.etincelle', t: 'L’étincelle', d: 'Une idée, même à moitié, pour notre musique ou pour l’app? Touche la flamme, sur n’importe quelle page.' },
   { route: '#/depart', sel: '.mod-head h1, .view h1', t: 'Étape 1 : ton point de départ', d: 'Ce que tu veux, ta voix, tes styles. Cinq minutes. C’est ce qui nourrit notre plan de six mois.', final: true },
 ];
 
-const visible = (sel) => [...document.querySelectorAll(sel)].find((el) => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.display !== 'none'; });
+// Les sélecteurs sont essayés dans l'ordre : le premier visible gagne (la carte du mur avant son bouton).
+const visible = (sel) => sel.split(',').map((x) => x.trim()).flatMap((x) => [...document.querySelectorAll(x)]).find((el) => { const r = el.getBoundingClientRect(); const cs = getComputedStyle(el); return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.display !== 'none'; });
 
 import { montrerExemples, retirerExemples } from './demo.js';
 

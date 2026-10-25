@@ -184,6 +184,19 @@ export async function uploadAudio(blob, onProgress) {
   return { id, type: blob.type, parts, size: blob.size };
 }
 
+// Une image avant l'envoi : réduite à 1800 px au plus long côté, en JPEG. Une photo de cellulaire passe de 5 Mo à ~400 Ko.
+export async function uploadImage(file, onProgress) {
+  const bmp = await createImageBitmap(file);
+  const k = Math.min(1, 1800 / Math.max(bmp.width, bmp.height));
+  const w = Math.round(bmp.width * k); const h = Math.round(bmp.height * k);
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  cv.getContext('2d').drawImage(bmp, 0, 0, w, h);
+  const keepPng = file.type === 'image/png' && file.size < 1.5e6; // un dessin net reste net
+  const blob = keepPng ? file : await new Promise((r) => cv.toBlob(r, 'image/jpeg', 0.86));
+  const up = await uploadAudio(blob, onProgress);
+  return { ...up, type: blob.type || 'image/jpeg', w, h };
+}
+
 export async function audioURL(audio) {
   if (audioCache.has(audio.id)) return audioCache.get(audio.id);
   const p = (async () => {
