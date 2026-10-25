@@ -1,10 +1,10 @@
 // L'oreille : on dépose une pièce, FLIP l'écoute et la découpe pour nous. On gagne des heures :
 // on sait où sont les silences, les parties, le moment fort, et on a une boucle prête à recevoir des mots.
 import { audio, out } from '../audio.js';
-import { espace, audioURL, saveEntry, uploadAudio } from '../espace.js';
+import { espace, audioURL, saveEntry, uploadAudio, saveProfile, members } from '../espace.js';
 import { toast, autoCanvas } from '../ui.js';
 import { esc } from './carnet.js';
-import { ecouter, boucler, rendreBoucle } from '../oreille.js';
+import { ecouter, boucler, rendreBoucle, diagnostic, notesVoix, nomNote } from '../oreille.js';
 
 const PIECES = [['data/sons/frog-joywalk-complet.mp3', 'Joy Walk (Frog)'], ['data/sons/frog-visite.mp3', 'Projet 1, après la pause (Frog)']];
 const mmss = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
@@ -12,7 +12,7 @@ const mmss = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart
 export default {
   id: 'oreille',
   mount(el) {
-    let buf = null; let res = null; let nom = ''; let stopBoucle = null; let lecture = null;
+    let buf = null; let res = null; let nom = ''; let diag = null; let voix = null; let stopBoucle = null; let lecture = null;
     const sons = () => (espace.connected ? espace.entries.filter((e) => e.audio && !e.audio.type?.startsWith('video')) : []);
     el.innerHTML = `
       <div class="mod-head"><div>
@@ -33,7 +33,9 @@ export default {
         <h2 class="or-titre"></h2>
         <div class="or-faits"></div>
         <div class="or-carte"><canvas class="or-canvas" aria-label="La pièce, ses parties, ses silences et sa boucle"></canvas></div>
-        <div class="or-legende"><span><i class="lg-p"></i>une partie (touche pour l’écouter)</span><span><i class="lg-s"></i>silence</span><span><i class="lg-b"></i>la boucle</span><span><i class="lg-m"></i>le moment fort</span></div>
+        <div class="or-diag"></div>
+        <div class="or-legende"><span><i class="lg-p"></i>une partie (touche pour l’écouter)</span><span><i class="lg-s"></i>silence</span><span><i class="lg-b"></i>la boucle</span><span><i class="lg-m"></i>le moment fort</span><span><i class="lg-t"></i>à retravailler</span></div>
+        <div class="or-voix"></div>
         <div class="or-actions">
           <button class="btn primary" data-o="boucle">▶ Écouter la boucle</button>
           <button class="btn" data-o="fort">▶ Le moment fort</button>
@@ -44,6 +46,8 @@ export default {
       </section>`;
     const q = (s) => el.querySelector(s);
     const cv = autoCanvas(q('.or-canvas'));
+    // Redessiner quand la carte prend sa taille (elle apparaît seulement après l'écoute).
+    const roC = new ResizeObserver(() => requestAnimationFrame(dessiner)); roC.observe(q('.or-canvas'));
     const etat = (t) => { q('.or-etat').textContent = t; };
     const arrete = () => { stopBoucle?.(); stopBoucle = null; lecture?.stop?.(); lecture = null; q('[data-o=boucle]').textContent = '▶ Écouter la boucle'; };
 
@@ -52,9 +56,11 @@ export default {
       try {
         etat('Je décode la pièce…');
         buf = await audio().decodeAudioData(arrayBuffer);
-        res = await ecouter(buf, etat);
+        res = await ecouter(buf, etat); diag = diagnostic(res); voix = null;
         etat('');
         montrer();
+        voix = await notesVoix(buf, etat); etat('');
+        montrerVoix();
       } catch { etat('Je n’arrive pas à lire ce fichier. Essaie un mp3, un m4a ou un wav.'); }
     }
     function montrer() {
@@ -68,7 +74,30 @@ export default {
         + (res.boucle ? `<p class="or-boucle">Boucle trouvée : de <b>${mmss(res.boucle.a)}</b> à <b>${mmss(res.boucle.b)}</b> (${Math.round(res.boucle.b - res.boucle.a)} s), ressemblance ${Math.round(res.boucle.qualite * 100)} %.</p>` : '<p class="or-boucle">Pas de passage assez long pour une boucle.</p>');
       q('[data-o=boucle]').disabled = !res.boucle; q('[data-o=ecrire]').disabled = !res.boucle;
       const rel = q('[data-o=relais]'); if (rel) rel.disabled = !res.boucle;
+      // Ce que FLIP entend : ce qui brille déjà, ce qui est à retravailler. Chaque repère se touche pour l'écouter.
+      const item = (o, cl) => `<li class="${cl}" ${o.a != null ? `data-a="${o.a}" data-b="${o.b}" role="button" tabindex="0"` : ''}><b>${esc(o.titre)}</b><span>${esc(o.quoi)}</span>${o.a != null ? '<small>▶ écouter ce passage</small>' : ''}</li>`;
+      q('.or-diag').innerHTML = `
+        <div class="or-col or-bien"><h3>Ce qui brille déjà</h3><ul>${diag.brille.map((o) => item(o, 'ok')).join('')}</ul></div>
+        <div class="or-col or-trav"><h3>À retravailler</h3><ul>${diag.travail.map((o) => item(o, 'tr')).join('') || '<li class="vide"><span>Rien de flagrant dans l’énergie ni la forme. Fiez-vous à vos oreilles pour le reste.</span></li>'}</ul></div>`;
+      q('.or-voix').innerHTML = '';
       dessiner();
+    }
+    // Sur une voix seule : les meilleures notes, celles à travailler, et l'exercice qui va avec.
+    function montrerVoix() {
+      const box = q('.or-voix');
+      if (!voix?.voix) { box.innerHTML = '<p class="muted small">Notes de la voix : pour les mesurer, dépose un enregistrement de voix seule (un mumble, une prise a cappella). Dans un mélange d’instruments, la mesure ne serait pas fiable.</p>'; return; }
+      const puce = (b) => { const c = Math.round(b.cents); const k = Math.abs(c) < 12 ? 'j' : Math.abs(c) < 20 ? 'p' : 'f'; return `<span class="or-note ${k}" title="${b.n} fois, ${c > 0 ? '+' : ''}${c} cents en moyenne">${nomNote(b.m)}<small>${c > 0 ? '+' : ''}${c}¢</small></span>`; };
+      const qui = espace.connected ? members() : [];
+      box.innerHTML = `
+        <h3>Les notes de la voix <small class="muted">${voix.nNotes} notes tenues mesurées</small></h3>
+        <div class="or-notes">${voix.notes.map(puce).join('')}</div>
+        <div class="or-col-2">
+          <div><h4>Les meilleures notes</h4><p>${voix.fortes.length ? voix.fortes.map((b) => `<b>${nomNote(b.m)}</b>`).join(', ') + ' : justes et stables. C’est là que la voix est chez elle ; une mélodie qui s’y pose sonnera.' : 'Pas encore assez de notes répétées pour le dire.'}</p></div>
+          <div><h4>À travailler</h4><p>${voix.aTravailler.length ? voix.aTravailler.map((b) => `<b>${nomNote(b.m)}</b> (${b.cents > 0 ? 'un peu haut' : 'un peu bas'}, ${Math.round(Math.abs(b.cents))} cents)`).join(', ') : 'Aucune note nettement à côté. Bravo.'}</p>
+          ${voix.aTravailler.length ? '<a class="btn small" href="#/accord">Voix + piano : les retravailler avec le clavier →</a>' : ''}</div>
+        </div>
+        ${qui.length ? `<p class="or-garder">C’est la voix de : ${qui.map((m) => `<button class="btn small" data-o="garder" data-qui="${esc(m)}">${esc(m)}</button>`).join(' ')} <span class="muted small">FLIP garde ces notes dans son profil et apprend, prise après prise.</span></p>` : ''}
+        <p class="or-src-note muted small">Comment : hauteur mesurée 45 fois par seconde par autocorrélation (comme un accordeur) ; une note compte si elle tient au moins 0,14 s. Juste : moins de 12 cents d’écart. Retour visuel et justesse : Welch, Howard et Rush 1989.</p>`;
     }
     function dessiner() {
       if (!res) return;
@@ -77,6 +106,13 @@ export default {
       ctx.clearRect(0, 0, w, h);
       res.parties.forEach((p, i) => { ctx.fillStyle = p.silence ? 'rgba(27,25,21,.06)' : i % 2 ? 'rgba(42,111,196,.10)' : 'rgba(184,51,106,.10)'; ctx.fillRect(X(p.a), 0, X(p.b) - X(p.a), h); });
       if (res.boucle) { ctx.fillStyle = 'rgba(201,164,92,.28)'; ctx.fillRect(X(res.boucle.a), 0, X(res.boucle.b) - X(res.boucle.a), h); }
+      // À retravailler : hachuré, pour qu'on le voie sans le confondre avec les parties.
+      (diag?.travail || []).filter((o) => o.a != null && o.b - o.a < res.duree * 0.6).forEach((o) => {
+        ctx.save(); ctx.beginPath(); ctx.rect(X(o.a), 0, X(o.b) - X(o.a), h); ctx.clip();
+        ctx.strokeStyle = 'rgba(217,58,36,.45)'; ctx.lineWidth = 1.5;
+        for (let x = X(o.a) - h; x < X(o.b); x += 8) { ctx.beginPath(); ctx.moveTo(x, h); ctx.lineTo(x + h, 0); ctx.stroke(); }
+        ctx.restore();
+      });
       const lo = Math.max(...res.db) - 50;
       ctx.beginPath(); ctx.moveTo(0, h);
       for (let i = 0; i < res.db.length; i += 2) ctx.lineTo((i / res.db.length) * w, h - Math.max(0, (res.db[i] - lo) / 50) * (h - 16));
@@ -110,7 +146,22 @@ export default {
     });
     el.addEventListener('click', async (e) => {
       const o = e.target.closest('[data-o]')?.dataset.o;
+      const rep = e.target.closest('.or-diag [data-a]');
+      if (rep && res) { joueDe(+rep.dataset.a, +rep.dataset.b); return; }
       if (!o || !res) return;
+      if (o === 'garder' && voix?.voix) {
+        const qui = e.target.dataset.qui;
+        // On cumule, prise après prise : chaque note garde son nombre de fois et son écart moyen.
+        try {
+          await saveProfile((d) => {
+            const acc = { ...(d.notesVoix || {}) };
+            voix.notes.forEach((b) => { const o2 = acc[b.m] || { n: 0, cents: 0 }; acc[b.m] = { n: o2.n + b.n, cents: (o2.cents * o2.n + b.cents * b.n) / (o2.n + b.n) }; });
+            return { ...d, notesVoix: acc, notesVoixMaj: Date.now() };
+          }, qui);
+          toast(`Gardé dans le profil de ${qui}.`); e.target.closest('.or-garder').innerHTML = `<span class="muted small">Gardé dans le profil de ${esc(qui)} ✓</span>`;
+        } catch (err) { toast(err.message); }
+        return;
+      }
       if (o === 'boucle') {
         if (stopBoucle) { arrete(); return; }
         arrete(); stopBoucle = boucler(audio(), buf, res.boucle, out()); e.target.textContent = '■ Arrêter la boucle';
@@ -134,6 +185,6 @@ export default {
       }
     });
     addEventListener('resize', dessiner);
-    return () => { arrete(); removeEventListener('resize', dessiner); cv.dispose?.(); };
+    return () => { arrete(); removeEventListener('resize', dessiner); roC.disconnect(); cv.dispose?.(); };
   },
 };

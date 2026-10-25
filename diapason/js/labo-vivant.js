@@ -1,9 +1,9 @@
 // Le labo en direct dans la visite : trois disques comme dans la vraie app, synchronisés au son.
-// Lents, on voit chaque bosse frapper sous la flèche ; en accélérant, ils passent en ralenti et finissent par chanter Fa majeur.
+// Lents, on voit chaque bosse frapper sous la flèche ; en accélérant, ils passent en ralenti et finissent par chanter un accord.
 import { laboAccord, horloge, LABO } from './visite-sons.js';
 
 const COUL = ['#3fd7f2', '#9a6bff', '#ff6fae'];
-const NOTES = ['Fa', 'La', 'Do'];
+const NOTES = ['Ré', 'Fa −33¢', 'La'];
 const SPIN_MAX = 1.1; // tours visibles par seconde, au-delà : ralenti
 
 export function laboVivant(cv) {
@@ -54,18 +54,18 @@ export function laboVivant(cv) {
     const clics = w * LABO.n[0];
     ctx.font = '600 13px "Atkinson Hyperlegible", sans-serif'; ctx.textBaseline = 'top';
     ctx.fillStyle = clics < 20 ? '#3fd7f2' : '#ff6fae';
-    ctx.fillText(clics < 20 ? 'Tu entends un RYTHME' : 'Tu entends une NOTE', 14, 14);
+    ctx.fillText(clics < 20 ? 'Tu entends un RYTHME' : 'Tu entends un ACCORD', 14, 14);
     if (w > SPIN_MAX) { ctx.fillStyle = '#f3c77a'; ctx.textAlign = 'right'; ctx.fillText(`ralenti ×${Math.round(w / SPIN_MAX)}`, W - 14, 14); ctx.textAlign = 'left'; }
     ctx.textAlign = 'center';
     if (!chante) {
       ctx.fillStyle = '#efe9dc'; ctx.font = '600 15px "Atkinson Hyperlegible", sans-serif';
-      ctx.fillText(tau < mesure ? '4, 5 et 6 frappes, sur le temps de ta musique' : `${Math.round(clics)} frappes par seconde`, cx, H - 30);
+      ctx.fillText(tau < mesure ? '6, 7 et 9 frappes par mesure, sur le temps de ta musique' : `${Math.round(clics)} frappes par seconde`, cx, H - 30);
     } else {
       ctx.fillStyle = '#fff'; ctx.font = `italic 700 ${Math.round(R * 0.32)}px "Literata", Georgia, serif`; ctx.textBaseline = 'middle';
       ctx.globalAlpha = Math.min(1, (tau - fin) * 2); ctx.fillText('Ça chante.', cx, cy);
       ctx.font = '700 15px "Atkinson Hyperlegible", sans-serif'; ctx.textBaseline = 'top';
-      NOTES.forEach((nm, i) => { ctx.fillStyle = COUL[i]; ctx.fillText(nm, cx + (i - 1) * 52, H - 50); });
-      ctx.fillStyle = '#efe9dc'; ctx.fillText('= Fa majeur', cx, H - 28);
+      NOTES.forEach((nm, i) => { ctx.fillStyle = COUL[i]; ctx.fillText(nm, cx + (i - 1) * 70, H - 50); });
+      ctx.fillStyle = '#efe9dc'; ctx.fillText('Un ré mineur qu’aucun piano ne peut jouer', cx, H - 28);
       ctx.globalAlpha = 1;
     }
     ctx.textAlign = 'left';

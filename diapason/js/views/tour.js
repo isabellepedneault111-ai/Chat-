@@ -8,6 +8,7 @@ import { jouer, sonActif, basculerSon, prechargerVisite, bandeStart, bandeSectio
 import { laboVivant } from '../labo-vivant.js';
 import { visuelVivant, preparerPortrait } from '../visuel-vivant.js';
 import { arcSVG, triskelSVG } from '../talismans.js';
+import { troisVivant } from '../trois-vivant.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
@@ -54,8 +55,8 @@ export function startTour(preview) {
   const MONTAGE = [
     ['m-voix.jpg', 'Placer ma voix dans le groove', 'FLIP joue un rythme (bossa, pop…) et les cases roses montrent où poser mes mots. La syncope devient un jeu.', 'Je chante avec plus de groove, pas seulement plus juste.', 'beat'],
     ['m-flux.jpg', 'Écrire sur le beat', 'Je chante des sons sans mots sur le beat (le mumble), et l’enregistrement part avec mon texte.', 'Tu entends la mélodie que j’avais en tête.', 'riff'],
-    ['m-labo.jpg', 'Un rythme devient une note', 'Trois rythmes en même temps, sur ta musique : 4, 5 et 6 coups par mesure. Ils accélèrent : chacun devient une note, et les trois ensemble, un accord de Fa majeur.', 'Le rythme et l’harmonie sortent de la même source : des accords qu’on n’aurait jamais trouvés autrement.', 'labo'],
-    ['m-trois.jpg', 'Un troisième musicien', 'Il écoute notre phrase, la transforme et nous la renvoie.', 'Un partenaire d’impro, même quand on est juste deux.', 'trois'],
+    ['m-labo.jpg', 'Un rythme devient un accord', 'Trois rythmes sur ta musique (6, 7 et 9 coups par mesure) accélèrent jusqu’à chanter : un ré mineur plus sombre, qu’aucun piano ne peut jouer.', 'Des accords introuvables autrement, et qui collent à nos chansons.', 'labo'],
+    ['m-trois.jpg', 'Un troisième musicien', 'On joue une phrase. Il l’écoute, la transforme et nous la renvoie, dans notre tonalité. Ici : renversée.', 'Un partenaire d’impro, même quand on est juste deux.', 'trois'],
     ['m-grimoire.jpg', 'Le grimoire', 'Des cartes à tirer pour lancer une chanson : un thème, une peur, une contrainte.', 'Fini la page blanche.', 'grimoire'],
     ['m-pochette.jpg', 'Le portrait de notre chanson', 'L’oreille écoute toute la chanson et dessine son portrait : ses parties, son moment fort, sa boucle. Ici : Projet 1, analysé à l’instant, et le trait d’or suit la musique.', 'On voit d’un coup d’œil ce qui brille déjà dans nos chansons, et où on veut les retravailler.', 'pochette'],
   ];
@@ -133,7 +134,7 @@ export function startTour(preview) {
     // Une idée à la fois, le temps de lire ; la flèche passe à la suivante, rien ne file tout seul hors de l'écran.
     `<div class="t-montage">
        <header><p class="t-kicker">Et ce n’est pas tout</p><h2>Six idées <i>originales</i></h2><p class="mt-intro">Aucune autre app au monde ne les fait. Je les ai inventées pour nous.</p></header>
-       <div class="mt-stage">${MONTAGE.map(([img, t, ail, nous], i) => `<figure class="mt-tile" data-n="${i}"><div class="mt-img">${img === 'm-labo.jpg' ? '<canvas class="mt-live" data-live="labo" aria-label="Trois disques qui accélèrent jusqu’à chanter Fa majeur"></canvas>' : img === 'm-pochette.jpg' ? '<canvas class="mt-live" data-live="visuel" aria-label="Le portrait de Projet 1 : ses parties, son moment fort et sa boucle"></canvas>' : `<img src="img/visite/${img}" alt="">`}</div><figcaption><span class="mt-num">${i + 1} / ${MONTAGE.length} · idée originale</span><b>${t}</b><span class="mt-ail">${ail}</span><span class="mt-nous"><i>Pour nous :</i> ${nous}</span></figcaption></figure>`).join('')}</div>
+       <div class="mt-stage">${MONTAGE.map(([img, t, ail, nous], i) => `<figure class="mt-tile" data-n="${i}"><div class="mt-img">${img === 'm-labo.jpg' ? '<canvas class="mt-live" data-live="labo" aria-label="Trois disques qui accélèrent jusqu’à chanter Fa majeur"></canvas>' : img === 'm-trois.jpg' ? '<canvas class="mt-live" data-live="trois" aria-label="Notre phrase, puis la réponse du troisième musicien, renversée"></canvas>' : img === 'm-pochette.jpg' ? '<canvas class="mt-live" data-live="visuel" aria-label="Le portrait de Projet 1 : ses parties, son moment fort et sa boucle"></canvas>' : `<img src="img/visite/${img}" alt="">`}</div><figcaption><span class="mt-num">${i + 1} / ${MONTAGE.length} · idée originale</span><b>${t}</b><span class="mt-ail">${ail}</span><span class="mt-nous"><i>Pour nous :</i> ${nous}</span></figcaption></figure>`).join('')}</div>
        <div class="mt-dots">${MONTAGE.map((_, i) => `<button type="button" data-n="${i}" aria-label="Idée ${i + 1}"></button>`).join('')}</div>
      </div>`,
     `<div class="t-title">
@@ -223,7 +224,8 @@ export function startTour(preview) {
         clearTimeout(stepT); k = n; stopLive?.(); stopLive = null;
         mt.querySelectorAll('[data-n]').forEach((x) => { x.classList.toggle('on', +x.dataset.n === k); x.classList.toggle('vu', +x.dataset.n < k); });
         const live = mt.querySelector(`.mt-tile[data-n="${k}"] .mt-live`);
-        if (live?.dataset.live === 'labo') stopLive = laboVivant(live); else if (live) stopLive = visuelVivant(live); else jouer(MONTAGE[k][4]); // le visuel : pas d'effet, on regarde sa musique telle quelle
+        const vivants = { labo: laboVivant, trois: troisVivant, visuel: visuelVivant };
+        if (live) stopLive = vivants[live.dataset.live](live); else jouer(MONTAGE[k][4]); // le visuel : pas d'effet, on regarde sa musique telle quelle
         // Après la dernière idée, la visite continue d'elle-même (la flèche reste là pour aller plus vite).
         stepT = setTimeout(() => mt.isConnected && (k < MONTAGE.length - 1 ? montre(k + 1) : go(1)), live?.dataset.live === 'labo' ? 11500 : 9000);
       };

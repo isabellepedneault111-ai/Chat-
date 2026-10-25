@@ -210,9 +210,10 @@ export function jouer(nom) {
   } catch (e) { console.debug('accent', e); } // le son n'est pas essentiel
 }
 
-// « Un rythme devient une note », sur la pièce de Frog : trois disques à 4, 5 et 6 frappes par mesure,
-// calés sur son temps, accélèrent ensemble jusqu'à devenir Fa, La, Do (4:5:6, l'accord majeur), en ré mineur comme Projet 1.
-export const LABO = { n: [4, 5, 6], monte: 3.6, tient: 2.2, fin: 174.61 / 4 }; // fin : tours par seconde où le disque à 4 bosses chante Fa3
+// « Un rythme devient un accord », sur la pièce de Frog : trois disques à 6, 7 et 9 frappes par mesure, calés sur son temps,
+// accélèrent ensemble jusqu'à chanter Ré, Fa et La dans le rapport 6:7:9. C'est un ré mineur plus sombre, à la tierce
+// 33 cents plus basse que celle du piano : un accord qu'aucun clavier ne peut jouer, dans la tonalité de Projet 1.
+export const LABO = { n: [6, 7, 9], monte: 3.6, tient: 2.6, fin: 146.83 / 6 }; // fin : tours par seconde où le disque à 6 bosses chante Ré3
 export function laboAccord() {
   const c = audio();
   let t = c.currentTime + 0.15; let mesure = 2;
@@ -224,7 +225,7 @@ export function laboAccord() {
     if (lecture) laissePasser(mesure + LABO.monte + LABO.tient, 0.3);
     const kit = ['kick', 'hat', 'clap'];
     LABO.n.forEach((n, i) => {
-      for (let k = 0; k < n; k++) drums[kit[i]](t + (k * mesure) / n, [0.55, 0.3, 0.22][i]);
+      for (let k = 0; k < n; k++) drums[kit[i]](t + (k * mesure) / n, [0.5, 0.26, 0.18][i]);
       const o = impulseOsc(n / mesure); const lp = c.createBiquadFilter(); const g = c.createGain();
       lp.type = 'lowpass'; lp.frequency.value = 2600;
       const f1 = n * LABO.fin; const fin = t + mesure + LABO.monte + LABO.tient;
@@ -234,7 +235,6 @@ export function laboAccord() {
       g.gain.linearRampToValueAtTime(0.07, t + mesure + LABO.monte); g.gain.setValueAtTime(0.07, fin - 0.6); g.gain.linearRampToValueAtTime(0.0001, fin);
       o.connect(lp).connect(g).connect(out()); o.start(t); o.stop(fin + 0.05);
     });
-    accord('piano', [65, 69, 72], { when: t + mesure + LABO.monte + 0.05, dur: LABO.tient - 0.3, vel: 0.35 }); // le vrai Fa majeur répond
   } catch (e) { console.debug('labo', e); }
   return info;
 }
@@ -247,4 +247,22 @@ export function positionPiste() {
   const t = audio().currentTime;
   const p = [...lecture.pos].reverse().find((x) => x.when <= t) || lecture.pos[0];
   return { id: lecture.id, s: p.offset + (t - p.when) };
+}
+
+// Le troisième musicien, sur la pièce de Frog : notre phrase (Ré Fa Sol La), puis sa réponse, la même renversée
+// autour du Ré (Ré Si♭ La Sol : ce qui montait descend), toutes deux dans le ré mineur de Projet 1 et sur son temps.
+export const TROIS = { a: [62, 65, 67, 69], b: [62, 58, 57, 55], ryt: [1, 1, 1, 2], pause: 1 };
+export function troisReponse() {
+  const c = audio(); let t = c.currentTime + 0.15; let noire = 0.5;
+  const son = sonActif() && c.state === 'running';
+  if (son && lecture) { t = prochainTemps(t); noire = 60 / PISTES[lecture.id].bpm; }
+  const info = { t0: t, noire, son };
+  if (!son) return info;
+  try {
+    const long = TROIS.ryt.reduce((a, b) => a + b, 0);
+    if (lecture) laissePasser((2 * long + TROIS.pause) * noire + 0.5, 0.4);
+    const phrase = (notes, debut) => { let w = debut; notes.forEach((m, i) => { joue('piano', m, { when: w, dur: TROIS.ryt[i] * noire * 0.95, vel: 0.62 }); w += TROIS.ryt[i] * noire; }); };
+    phrase(TROIS.a, t); phrase(TROIS.b, t + (long + TROIS.pause) * noire);
+  } catch (e) { console.debug('trois', e); }
+  return info;
 }

@@ -2368,3 +2368,23 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 @media (max-height: 700px) and (min-width: 861px) { .tp-mid { gap: 6px; } .tp-mot { line-height: 1.35; } .t-lancer { margin-top: 0; } }
 .cq-tal { display: flex; gap: 28px; justify-content: center; opacity: 0; animation: cqin 1.2s ease .1s forwards; }
 .cq-tal .tal { width: clamp(54px, 9vh, 84px); height: auto; }
+/* L'oreille : ce qui brille, ce qui est à retravailler, les notes de la voix. */
+.or-diag { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 14px 0; }
+.or-col h3 { margin: 0 0 8px; font: 700 1.15rem var(--display); }
+.or-bien h3 { color: #8a6a1f; } .or-trav h3 { color: #b8331f; }
+.or-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.or-col li { padding: 10px 12px; border-radius: 10px; background: var(--panel, #fffaf0); border-left: 3px solid #c9a45c; display: grid; gap: 2px; }
+.or-col li.tr { border-left-color: #d93a24; }
+.or-col li[data-a] { cursor: pointer; } .or-col li[data-a]:hover { box-shadow: 0 0 0 2px rgba(201, 164, 92, .4); }
+.or-col li span { font-size: .93rem; line-height: 1.4; } .or-col li small { color: #8a6a1f; font-size: .8rem; }
+.or-col li.vide { border-left-color: #aaa; }
+.or-legende .lg-t { background: repeating-linear-gradient(45deg, rgba(217, 58, 36, .5) 0 2px, transparent 2px 6px); }
+.or-voix { margin-top: 18px; display: grid; gap: 10px; }
+.or-voix h3 { margin: 0; font: 700 1.15rem var(--display); }
+.or-notes { display: flex; flex-wrap: wrap; gap: 6px; }
+.or-note { display: inline-grid; justify-items: center; padding: 6px 10px; border-radius: 8px; font-weight: 700; border: 1.5px solid; }
+.or-note small { font-weight: 500; font-size: .72rem; }
+.or-note.j { border-color: #c9a45c; background: rgba(201, 164, 92, .18); } .or-note.p { border-color: #b8a88a; } .or-note.f { border-color: #d93a24; background: rgba(217, 58, 36, .08); }
+.or-col-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; } .or-col-2 h4 { margin: 0 0 4px; }
+@media (max-width: 700px) { .or-diag, .or-col-2 { grid-template-columns: 1fr; } }
+.mt-tile figcaption { min-height: 0; overflow: hidden; }

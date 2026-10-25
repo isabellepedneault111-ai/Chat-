@@ -155,3 +155,90 @@ function wav(buf) {
   for (let i = 0; i < n; i++) for (let c = 0; c < ch; c++) { data.setInt16(o, Math.max(-1, Math.min(1, chs[c][i])) * 32767, true); o += 2; }
   return new Blob([data], { type: 'audio/wav' });
 }
+
+// ---------- Ce qui brille, ce qui est à retravailler ----------
+// Des repères tirés du son, pas des jugements de goût : l'énergie qui retombe, une longue partie sans relief,
+// un groove régulier, des parties qui contrastent. À vous de décider quoi en faire.
+const mmss = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+export function diagnostic(res) {
+  const { db, parties, duree } = res; const nE = db.length;
+  const moy = (a, b) => { let s = 0; let c = 0; for (let i = Math.max(0, a); i < Math.min(nE, b); i++) { s += db[i]; c++; } return c ? s / c : -99; };
+  const brille = []; const travail = [];
+  const jouees = parties.filter((p) => !p.silence);
+  brille.push({ a: res.momentFort[0], b: res.momentFort[1], titre: `Le moment fort, à ${mmss(res.momentFort[0])}`, quoi: 'Les 10 secondes les plus intenses : c’est là que la chanson frappe. Une bonne place pour le refrain ou le titre.' });
+  if (res.boucle?.qualite >= 0.85) brille.push({ a: res.boucle.a, b: res.boucle.b, titre: 'Un passage qui tourne tout seul', quoi: `De ${mmss(res.boucle.a)} à ${mmss(res.boucle.b)}, il s’enchaîne sans couture (${Math.round(res.boucle.qualite * 100)} %) : parfait pour écrire ou improviser dessus.` });
+  // La régularité du groove : les attaques reviennent-elles au même endroit, mesure après mesure?
+  const on = new Float32Array(nE); for (let i = 1; i < nE; i++) on[i] = Math.max(0, db[i] - db[i - 1]);
+  const lag = Math.round((20 * 60) / res.bpm); let sl = 0; let sm = 0; let c = 0;
+  for (let i = 0; i + lag < nE; i++) { sl += on[i] * on[i + lag]; sm += on[i] * on[Math.min(nE - 1, i + Math.round(lag * 0.62))]; c++; }
+  if (c && sl > sm * 1.35) brille.push({ titre: 'Un groove régulier', quoi: `Les attaques reviennent à leur place, autour de ${res.bpm < 80 ? res.bpm * 2 : res.bpm} BPM : la pulsion tient la route.` });
+  // Le contraste se mesure entre de vraies parties : pas l'intro qui s'allume ni la fin qui s'éteint.
+  const vraies = jouees.filter((p) => p.b - p.a >= 12 && !(p.b > duree - 1 && p.b - p.a < 20) && !(p.a < 1 && p.b - p.a < 12));
+  if (vraies.length >= 2) {
+    // Le haut de chaque partie (90e centile) : une partie qui s'éteint en fondu n'a pas l'air « douce » pour autant.
+    const haut = (p) => { const v = Array.from(db.subarray(Math.floor(p.a * 20), Math.floor(p.b * 20))).sort((x, y) => x - y); return v[Math.floor(v.length * 0.9)] ?? -99; };
+    const nv = vraies.map(haut); const ecart = Math.max(...nv) - Math.min(...nv);
+    if (ecart >= 4) { const f = vraies[nv.indexOf(Math.max(...nv))]; const d = vraies[nv.indexOf(Math.min(...nv))]; brille.push({ titre: 'Des parties qui contrastent', quoi: `La partie de ${mmss(d.a)} est plus douce, celle de ${mmss(f.a)} plus pleine (${Math.round(ecart)} dB d’écart) : l’oreille sent le chemin.` }); }
+    else travail.push({ titre: 'Des parties qui se ressemblent', quoi: `À peine ${Math.round(ecart)} dB d’écart entre les parties : un couplet plus dépouillé ou un refrain plus plein ferait sentir le chemin.` });
+  }
+  // L'énergie qui retombe au milieu d'une partie (pas à ses bords, pas dans la fin qui s'éteint).
+  jouees.forEach((p) => {
+    if (p.b - p.a < 14) return;
+    const m = moy(p.a * 20, p.b * 20); let deb = -1;
+    for (let t = p.a + 3; t <= p.b - 3; t += 1) {
+      const bas = t < p.b - 4 && t < duree - 8 && moy(t * 20, (t + 4) * 20) < m - 6;
+      if (bas && deb < 0) deb = t;
+      if (!bas && deb >= 0) { if (t - deb >= 3) travail.push({ a: deb, b: t + 3, titre: `L’énergie retombe à ${mmss(deb)}`, quoi: `Pendant ${Math.round(t + 3 - deb)} s, le son baisse nettement au milieu d’une partie. Voulu? Sinon : une couche, une voix, ou couper plus court.` }); deb = -1; }
+    }
+    // Une longue partie au même niveau, sans relief.
+    if (p.b - p.a > 60) {
+      const pts = []; for (let t = p.a; t < p.b - 4; t += 4) pts.push(moy(t * 20, (t + 4) * 20));
+      const mu = pts.reduce((s, v) => s + v, 0) / pts.length; const sd = Math.sqrt(pts.reduce((s, v) => s + (v - mu) ** 2, 0) / pts.length);
+      if (sd < 1.6) travail.push({ a: p.a, b: p.b, titre: `${Math.round(p.b - p.a)} s au même niveau`, quoi: `De ${mmss(p.a)} à ${mmss(p.b)}, l’énergie ne bouge presque pas. Un break, un pont ou une entrée de voix relancerait l’écoute.` });
+    }
+  });
+  return { brille, travail };
+}
+
+// ---------- Les notes d'une voix seule ----------
+// Hauteur par autocorrélation normalisée (comme un accordeur), note par note. Seulement si l'enregistrement est
+// surtout une voix seule : dans un mélange d'instruments, la mesure ne serait pas fiable, et on le dit.
+export async function notesVoix(buf, onStep = () => {}) {
+  onStep('J’écoute les notes de la voix…'); await pause();
+  const sr0 = buf.sampleRate; const k = Math.max(1, Math.floor(sr0 / 11025)); const sr = sr0 / k;
+  const chs = [...Array(buf.numberOfChannels)].map((_, c) => buf.getChannelData(c));
+  const n = Math.min(Math.floor(buf.length / k), Math.floor(sr * 120)); const x = new Float32Array(n);
+  for (let i = 0; i < n; i++) { let s = 0; for (const ch of chs) for (let j = 0; j < k; j++) s += ch[i * k + j] || 0; x[i] = s / (chs.length * k); }
+  const L = 512; const hop = 256; const lmin = Math.floor(sr / 1000); const lmax = Math.floor(sr / 75);
+  let peak = 0; for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(x[i]));
+  const fr = []; let actives = 0; let claires = 0;
+  for (let p = 0; p + L + lmax < n; p += hop) {
+    let e = 0; for (let i = 0; i < L; i++) e += x[p + i] * x[p + i];
+    if (Math.sqrt(e / L) < peak * 0.04) { fr.push(null); continue; }
+    actives++;
+    let best = 0; let bl = 0; const r = new Float32Array(lmax + 2);
+    for (let l = lmin; l <= lmax + 1; l++) { let s = 0; let e2 = 0; for (let i = 0; i < L; i++) { s += x[p + i] * x[p + i + l]; e2 += x[p + i + l] * x[p + i + l]; } r[l] = s / Math.sqrt(e * e2 + 1e-12); }
+    for (let l = lmin + 1; l <= lmax; l++) if (r[l] > best && r[l] >= r[l - 1] && r[l] >= r[l + 1]) { best = r[l]; bl = l; }
+    // Le premier pic presque aussi haut que le meilleur : sinon on entendrait la note une octave trop bas.
+    for (let l = lmin + 1; l < bl; l++) if (r[l] >= best * 0.93 && r[l] >= r[l - 1] && r[l] >= r[l + 1]) { bl = l; best = r[l]; break; }
+    if (best < 0.86) { fr.push(null); continue; }
+    claires++;
+    const d = (r[bl - 1] - r[bl + 1]) / (2 * (r[bl - 1] - 2 * r[bl] + r[bl + 1]) || 1); // interpolation parabolique
+    const f = sr / (bl + d); const midi = 69 + 12 * Math.log2(f / 440);
+    fr.push(midi);
+    if (fr.length % 200 === 0) await pause();
+  }
+  if (actives < 40 || claires / actives < 0.45) return { voix: false };
+  // Des notes : au moins ~140 ms sur le même demi-ton.
+  const notes = []; let cur = null;
+  const fin = () => { if (cur && cur.v.length >= 6) { const cents = cur.v.map((m) => (m - cur.m) * 100); const mu = cents.reduce((s, v) => s + v, 0) / cents.length; notes.push({ m: cur.m, t: cur.t, cents: mu, sd: Math.sqrt(cents.reduce((s, v) => s + (v - mu) ** 2, 0) / cents.length) }); } cur = null; };
+  fr.forEach((m, i) => { if (m == null) { fin(); return; } const r = Math.round(m); if (cur && cur.m === r) cur.v.push(m); else { fin(); cur = { m: r, t: (i * hop) / sr, v: [m] }; } });
+  fin();
+  const parNote = {};
+  notes.forEach((o) => { (parNote[o.m] ||= []).push(o); });
+  const bilan = Object.entries(parNote).map(([m, l]) => ({ m: +m, n: l.length, cents: l.reduce((s, o) => s + o.cents, 0) / l.length, sd: l.reduce((s, o) => s + o.sd, 0) / l.length })).sort((a, b) => a.m - b.m);
+  const fortes = bilan.filter((b) => b.n >= 2 && Math.abs(b.cents) < 12 && b.sd < 22).sort((a, b) => b.n - a.n).slice(0, 4);
+  const aTravailler = bilan.filter((b) => b.n >= 2 && Math.abs(b.cents) >= 20).sort((a, b) => Math.abs(b.cents) - Math.abs(a.cents)).slice(0, 4);
+  return { voix: true, notes: bilan, fortes, aTravailler, nNotes: notes.length };
+}
+export const nomNote = (m) => `${NOTES[((m % 12) + 12) % 12]}${Math.floor(m / 12) - 1}`;
