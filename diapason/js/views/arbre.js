@@ -4,12 +4,14 @@
 import { audio, drums, pad, bass, pluck, impulseOsc, out } from '../audio.js';
 import { joue, accord, prechargerSons } from '../sampler.js';
 import { mtof } from '../music.js';
+import { espace } from '../espace.js';
+const esc = (x) => String(x ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 const F = 'fabriqué en direct'; const E = 'enregistré'; const C = 'calculé'; const D = 'données';
 // [nom, détail, étiquette, son?, enfants?]
 const ARBRE = ['Diapason Labo', 'Un environnement hybride : des sons fabriqués en direct par le navigateur, de vrais instruments enregistrés, la musique de Frog, et une oreille qui calcule.', null, null, [
   ['Les sons', 'D’où vient tout ce qu’on entend.', null, null, [
-    ['La batterie', 'Aucun échantillon : chaque coup est fabriqué au moment où il joue (Web Audio).', F, null, [
+    ['La batterie', 'Aucun échantillon : chaque coup est fabriqué au moment où il joue (Web Audio). Dans l’arbre : js/audio.js.', F, null, [
       ['Grosse caisse', 'Une onde sinus qui glisse de 160 à 42 Hz en 0,14 s, et s’éteint en 0,4 s. C’est ce glissement vers le grave qui fait le « boum ».', F, 'kick'],
       ['Caisse claire', 'Du bruit blanc filtré au-dessus de 1 400 Hz (le « tchak »), plus une onde triangle qui tombe de 220 à 150 Hz (le corps).', F, 'snare'],
       ['Charley', 'Du bruit filtré au-dessus de 7 500 Hz, 50 millisecondes. Rien d’autre.', F, 'hat'],
@@ -21,9 +23,9 @@ const ARBRE = ['Diapason Labo', 'Un environnement hybride : des sons fabriqués 
       ['La note pincée', 'Le petit son de secours, quand le vrai piano n’est pas encore chargé.', F, 'pluck'],
     ]],
     ['Les vrais instruments', 'Enregistrés note par note, puis accordés à la bonne hauteur (data/sons/).', E, null, [
-      ['Piano à queue', 'Salamander Grand Piano, par Alexander Holm (licence CC BY 3.0). 17 notes enregistrées, de Do2 à Do6.', E, 'piano'],
-      ['Piano électrique', 'Rhodes du jeu FluidR3, par Frank Wen (licence MIT). 9 notes.', E, 'rhodes'],
-      ['Voix « ooh »', 'Chœur du jeu FluidR3 (licence MIT) : c’est le guide vocal de Placer mes paroles.', E, 'voix'],
+      ['Piano à queue', 'Salamander Grand Piano, par Alexander Holm (licence CC BY 3.0). 17 notes enregistrées, de Do2 à Do6. Dans l’arbre : data/sons/piano-….mp3.', E, 'piano'],
+      ['Piano électrique', 'Rhodes du jeu FluidR3, par Frank Wen (licence MIT). 9 notes. Dans l’arbre : data/sons/rhodes-….mp3.', E, 'rhodes'],
+      ['Voix « ooh »', 'Chœur du jeu FluidR3 (licence MIT) : c’est le guide vocal de Placer mes paroles. Dans l’arbre : data/sons/voix-….mp3.', E, 'voix'],
     ]],
     ['La musique de Frog', 'Tes propres pièces, utilisées dans la visite et pour écrire dessus.', E, null, [
       ['Projet 1, après la pause', 'Ré mineur, 120 BPM. La boucle va de 0:34,5 à 1:55,5.', E, 'projet1'],
@@ -88,11 +90,28 @@ function ecouter(son) {
 
 // Le grand dessin : l'arbre radial de la vraie structure (data/arbre.json, généré à chaque construction).
 const COUL = { dossier: '#e8c27a', js: '#ff6fae', mjs: '#ff6fae', css: '#6f9fe0', html: '#9fe0c3', mp3: '#b58cf0', json: '#93b08e', tsv: '#93b08e', jpg: '#f0a36f', mp4: '#f0a36f', svg: '#f0a36f', py: '#e9e4d8', sh: '#e9e4d8', toml: '#e9e4d8', md: '#e9e4d8', txt: '#e9e4d8' };
+// D'où vient un fichier, en une phrase : affiché en passant dessus dans l'arbre.
+const ORIGINE = (nom) => (/^piano-/.test(nom) ? 'Piano à queue Salamander, enregistré par Alexander Holm (CC BY 3.0)'
+  : /^rhodes-/.test(nom) ? 'Piano électrique Rhodes du jeu FluidR3, par Frank Wen (MIT)'
+    : /^voix-/.test(nom) ? 'Voix « ooh » du jeu FluidR3 (MIT) : le guide vocal'
+      : /^frog-/.test(nom) ? 'La musique de Frog'
+        : nom === 'audio.js' ? 'Ici naissent la batterie, la basse et les nappes, fabriquées en direct'
+          : nom === 'sampler.js' ? 'Ici jouent les vrais instruments enregistrés (piano, Rhodes, voix)'
+            : nom === 'lexique-fr.tsv' ? 'Lexique 3.83 (New et Pallier, CC BY-SA 4.0) : les syllabes et les rimes'
+              : nom === 'oreille.js' ? 'Ici, l’app écoute : tempo, tonalité, accords, justesse' : '');
 const couleur = (n) => (n.c ? COUL.dossier : COUL[(n.n.split('.').pop() || '').toLowerCase()] || '#cfc6b4');
 function dessinArbre(data) {
   const R = 330; let feuilles = 0; let prof = 0; let dossiers = 0;
+  // Démêler : les fichiers de base vont dans leur propre branche, et un dossier qui ne contient qu'un dossier
+  // se lit d'un trait (« netlify/functions ») au lieu de faire un nœud serré près du centre.
+  const fusion = (n) => { if (!n.c) return n; n.c = n.c.map(fusion); if (n.c.length === 1 && n.c[0].c && n.d !== 0) return { n: `${n.n}/${n.c[0].n}`, c: n.c[0].c }; return n; };
+  data = { ...data, c: data.c.map(fusion) };
+  const base = data.c.filter((x) => !x.c);
+  if (base.length) data.c = [...data.c.filter((x) => x.c), { n: 'la base', c: base }];
   const parcours = (n, d, chemin) => { n.d = d; n.chemin = chemin; prof = Math.max(prof, d); if (n.c) { dossiers++; n.c.forEach((x) => parcours(x, d + 1, `${chemin}/${x.n}`)); } else n.i = feuilles++; };
-  parcours(data, 0, 'Diapason Labo');
+  // Un peu d'air entre les grandes branches : trois places vides entre chaque dossier du premier niveau.
+  data.c.forEach((x, k) => { if (k) feuilles += 3; parcours(x, 1, `Diapason Labo/${x.n}`); });
+  data.d = 0; dossiers++; feuilles += 3;
   const angle = (n) => (n.c ? (angle(n.c[0]) + angle(n.c[n.c.length - 1])) / 2 : (n.i / feuilles) * Math.PI * 2 - Math.PI / 2);
   const rayon = (n) => (n.c ? (n.d / prof) * R * 0.92 : R);
   const xy = (a, r) => [500 + r * Math.cos(a), 500 + r * Math.sin(a)];
@@ -106,10 +125,10 @@ function dessinArbre(data) {
         liens += `<path d="M${x.toFixed(1)} ${y.toFixed(1)}C${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="${couleur(ch)}" style="--d:${(n.d * 0.35 + k * 0.01).toFixed(2)}s"/>`;
         dessine(ch);
       });
-      if (n.d > 0) { points += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${Math.max(3, 7 - n.d)}" fill="${COUL.dossier}"><title>${n.chemin} · ${n.c.length} éléments</title></circle>`; mots += `<text class="ar-dos" x="${x.toFixed(1)}" y="${(y - 9).toFixed(1)}" text-anchor="middle">${n.n}</text>`; }
+      if (n.d > 0) { points += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${Math.max(3, 7 - n.d)}" fill="${COUL.dossier}"><title>${n.chemin} · ${n.c.length} éléments</title></circle>`; const [lx, ly] = xy(a, r + 16); mots += `<text class="ar-dos" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" dominant-baseline="middle">${n.n}</text>`; }
     } else {
       const deg = (a * 180) / Math.PI; const gauche = deg > 90 && deg < 270;
-      points += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.2" fill="${couleur(n)}"><title>${n.chemin}${n.l ? ` · ${n.l} lignes` : ''}</title></circle>`;
+      points += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.2" fill="${couleur(n)}"><title>${n.chemin}${n.l ? ` · ${n.l} lignes` : ''}${ORIGINE(n.n) ? `\n${ORIGINE(n.n)}` : ''}</title></circle>`;
       const [tx, ty] = xy(a, R + 6);
       mots += `<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" transform="rotate(${gauche ? deg - 180 : deg} ${tx.toFixed(1)} ${ty.toFixed(1)})" text-anchor="${gauche ? 'end' : 'start'}" dominant-baseline="middle" fill="${couleur(n)}">${n.n}</text>`;
     }
@@ -129,13 +148,22 @@ export default {
       </div></div>
       <section class="ar-scene no-aide"><div class="ar-stats"></div><div class="ar-dessin"><p class="muted">L’arbre pousse…</p></div>
         <p class="ar-cles"><i style="--c:#e8c27a"></i>dossiers <i style="--c:#ff6fae"></i>code (JavaScript) <i style="--c:#6f9fe0"></i>styles <i style="--c:#b58cf0"></i>sons <i style="--c:#93b08e"></i>données <i style="--c:#f0a36f"></i>images</p></section>
-      <details class="panel ar-details"><summary><h2>D’où vient chaque son, en détail</h2></summary>
+      <section class="ar-mot">
+        <h2>Un mot sur ma façon de faire</h2>
+        <p>Je ne code pas. J’imagine, je teste, je ressens, je dis ce qui cloche et ce qui manque, et je recommence. L’IA écrit le code ; moi, je tiens la vision, le goût et le sens.</p>
+        <p>Chaque branche de cet arbre est née d’une phrase que j’ai dite, d’un essai que j’ai refusé, d’une idée qu’on a poussée plus loin ensemble. <b class="ar-mot-lignes">15 000</b> lignes, écrites en conversation, pour nous deux.</p>
+        <p>Une façon de créer que je n’ai vue nulle part ailleurs : une architecte qui bâtit avec sa voix.</p>
+        <p class="ar-mot-sign">— ${esc((espace.meta?.members || ['Zaza'])[0])}</p>
+      </section>
+      <details class="panel ar-details" open><summary><h2>D’où vient chaque son : piano, batterie, voix…</h2></summary>
         <p class="ar-legende"><em class="ar-etq ar-f">${F}</em><em class="ar-etq ar-e">${E}</em><em class="ar-etq ar-c">${C}</em><em class="ar-etq ar-d">${D}</em></p>
         <ul class="arbre no-aide">${noeud(ARBRE, 0)}</ul>
         <p class="ec-row"><button class="btn small" data-ar="ouvrir">Tout déplier</button><button class="btn small" data-ar="fermer">Tout replier</button></p>
       </details>`;
     fetch('data/arbre.json').then((r) => r.json()).then((data) => {
-      const { svg, dossiers } = dessinArbre(data);
+      const compte = (n) => (n.c ? 1 + n.c.reduce((a, x) => a + compte(x), 0) : 0); const dossiers = compte(data);
+      const { svg } = dessinArbre(data);
+      el.querySelector('.ar-mot-lignes').textContent = data.lignes.toLocaleString('fr-CA');
       el.querySelector('.ar-dessin').innerHTML = svg;
       el.querySelector('.ar-stats').innerHTML = `<b>${data.fichiers}</b> fichiers · <b>${dossiers - 1}</b> dossiers · <b>${data.lignes.toLocaleString('fr-CA')}</b> lignes écrites`;
     }).catch(() => { el.querySelector('.ar-dessin').innerHTML = '<p class="muted">L’arbre n’a pas pu se charger.</p>'; });

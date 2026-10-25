@@ -2573,3 +2573,8 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .mast-app { margin: 4px 0 0; font: 800 clamp(1.3rem, 2.4vw, 1.8rem) var(--display); letter-spacing: .01em; }
 .mast-app span { font: italic 500 .7em var(--display); color: #8a6a1f; margin-left: 6px; }
 .ar-radial .ar-centre { font-size: 26px; }
+.ar-mot { margin: 0 0 16px; padding: 22px 26px; border-radius: 18px; background: #1b1915; color: #efe9dc; border-left: 4px solid #e8c27a; }
+.ar-mot h2 { margin: 0 0 8px; font: italic 700 1.4rem var(--display); color: #f3c77a; }
+.ar-mot p { margin: 0 0 10px; font: 500 1.05rem/1.55 var(--display); max-width: 70ch; } .ar-mot b { color: #f3c77a; }
+.ar-mot-sign { font-style: italic; color: #f3c77a; margin: 0; }
+.ar-radial .ar-dos { font-size: 13px; }
