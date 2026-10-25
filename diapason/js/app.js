@@ -18,6 +18,7 @@ import ecrireV from './views/ecrire.js';
 import atelier from './views/atelier.js';
 import corbeille from './views/corbeille.js';
 import etincelles from './views/etincelles.js';
+import oreille from './views/oreille.js';
 import { initEtincelle } from './etincelle.js';
 import { maybeTour } from './views/tour.js';
 import home from './views/home.js';
@@ -38,6 +39,7 @@ const APPUIS = {
   relais: ['Des contacts créatifs courts et rapprochés soutiennent l’élan mieux que de rares longues séances ; l’appel-réponse construit un vocabulaire commun.', 'Cepeda et al. 2006 · Bertolani 2019'],
   accord: ['Un retour visuel en temps réel améliore la justesse ; chanter dans de vrais accords entraîne l’oreille harmonique.', 'Welch, Howard & Rush 1989 · Hoppe et al. 2006'],
   ambiances: ['Partir d’une image concrète guide le timbre et la couleur de la voix ; écrire par les sens donne des images chantables.', 'Biasutti 2017 · MacGlone 2024 · Pattison 2009'],
+  oreille: ['Savoir où sont les parties, le tempo et la tonalité d’une pièce fait gagner des heures : on passe tout de suite à créer.', 'Krumhansl et Kessler 1982 · Müller 2015'],
   jeux: ['La contrainte libère : moins de choix, plus d’invention.', 'De Bruin 2019 · Merchán-Sánchez-Jara 2023 · Oulipo'],
   ecrire: ['Écrire régulièrement, sans juger, nourrit la matière ; trier vient après.', 'Pattison 2009'],
   atelier: ['Écriture libre, puis par les sens, puis sous contrainte, puis tri : de la matière à la ligne qui chante.', 'Pattison 2009 · Breton et Soupault 1919 · Oulipo'],
@@ -45,7 +47,7 @@ const APPUIS = {
   paroles: ['Les syllabes chantées et la place des rimes font qu’un texte se chante.', 'Pattison 2009'],
 };
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles };
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille };
 // Onglet en arrière-plan : le titre compte ce que l'autre vient d'ajouter, « (2) FLIP ». Revenir remet à zéro.
 {
   const base = document.title; let n = 0;

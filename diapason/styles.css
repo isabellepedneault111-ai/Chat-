@@ -2250,3 +2250,21 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 @media (max-width: 860px) { .t-side { grid-area: auto; } .t-unique { font-size: .9rem; padding: 6px 10px; } }
 @media (max-width: 860px) { .tour { --hmax: 30vh; } .t-shot-head h2 { font-size: 1.7rem !important; } .t-quand { font-size: .9rem; } }
 @media (max-width: 860px) { .t-unique { display: none; } }
+/* L'oreille */
+.or-src { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.or-src select { padding: 8px; border: 1.5px solid var(--rule); border-radius: 6px; background: var(--paper); font: 600 .95rem var(--body); max-width: 100%; }
+.or-etat { flex: 1 1 100%; margin: 0; }
+.or-res { margin-top: 18px; display: grid; gap: 14px; }
+.or-titre { margin: 0; font-family: var(--display); font-size: clamp(1.4rem, 3vw, 2rem); }
+.or-faits { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+.or-faits div { padding: 10px 12px; border-left: 3px solid var(--ink); background: var(--card); }
+.or-faits small { display: block; font-size: .8rem; color: var(--muted); font-weight: 700; }
+.or-faits b { font: 800 1.4rem var(--display); }
+.or-boucle { grid-column: 1 / -1; margin: 0; font-size: .95rem; }
+.or-carte { border: 1.5px solid var(--rule); border-radius: 8px; background: var(--card); padding: 8px; }
+.or-canvas { display: block; width: 100%; height: 180px; cursor: pointer; }
+.or-legende { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .82rem; color: var(--muted); }
+.or-legende span { display: inline-flex; align-items: center; gap: 6px; }
+.or-legende i { display: inline-block; width: 14px; height: 10px; border-radius: 2px; }
+.lg-p { background: rgba(184, 51, 106, .25); } .lg-s { background: rgba(27, 25, 21, .1); } .lg-b { background: rgba(201, 164, 92, .55); } .lg-m { background: #d93a24; border-radius: 50% !important; width: 10px !important; }
+.or-actions { display: flex; flex-wrap: wrap; gap: 10px; }

@@ -27,6 +27,8 @@ const INVITES = [
 const MOTS_FLUX = ['marée', 'néon', 'genoux', 'braise', 'fenêtre', 'sel', 'autoroute', 'ta voix', 'minuit', 'givre', 'cassé', 'velours', 'le fleuve', 'quai', 'promesse', 'poussière', 'ciel bas', 'mains', 'chaleur', 'radio', 'silence', 'lumière', 'été', 'rouille', 'battement'];
 const today = () => new Date().toISOString().slice(0, 10);
 // Écrire sur la musique de Frog : ses pièces, prêtes à recevoir des mots.
+// La boucle trouvée par l'oreille s'ajoute aux choix, le temps de la séance.
+const piecesAvecOreille = () => [...PIECES, ...(window.__flipFond ? [['oreille', window.__flipFond.nom, window.__flipFond.url]] : [])];
 const PIECES = [['beat', 'Un beat de FLIP', ''], ['projet1', 'Projet 1 de Frog, après la pause', 'data/sons/frog-visite.mp3'], ['joywalk', 'Joy Walk de Frog', 'data/sons/frog-joywalk-complet.mp3']];
 const inviteDu = (d = new Date()) => INVITES[Math.floor(d.getTime() / 864e5) % INVITES.length];
 const CHEMINS = [
@@ -102,7 +104,7 @@ export default {
             <h2>Écrire sur le beat</h2>
             <p>Pour se découvrir : on ne réfléchit pas, on suit le rythme. D’abord le <b>yaourt</b> (chanter des sons sans mots), puis les mots viennent s’y poser.</p>
           </div>
-          <label class="flux-sur"><span>Écrire sur</span><select data-e="sur">${PIECES.map(([id, nom]) => `<option value="${id}">${nom}</option>`).join('')}</select></label>
+          <label class="flux-sur"><span>Écrire sur</span><select data-e="sur">${piecesAvecOreille().map(([id, nom]) => `<option value="${id}" ${window.__flipFond && id === 'oreille' ? 'selected' : ''}>${esc(nom)}</option>`).join('')}</select></label>
           <div class="flux-beat">${grooveHTML()}</div>
           <div class="flux-piece" hidden><audio controls preload="none"></audio><small>La pièce joue en boucle pendant le flux et le yaourt.</small></div>
           <div class="flux-row">
@@ -119,6 +121,8 @@ export default {
         </section>
         <div class="ec-list"></div>`;
       stopGroove?.(); stopGroove = bindGroove(el);
+      // Venue de l'oreille : la boucle est déjà choisie et prête.
+      if (window.__flipFond) { el.querySelector('[data-e=sur]').dispatchEvent(new Event('change', { bubbles: true })); el.querySelector('.ec-flux').scrollIntoView({ block: 'start' }); }
       list(true);
     }
     function list(force) {
@@ -147,7 +151,7 @@ export default {
     }
     el.addEventListener('change', (e) => {
       if (e.target.dataset.e !== 'sur') return;
-      const p = PIECES.find(([id]) => id === e.target.value);
+      const p = piecesAvecOreille().find(([id]) => id === e.target.value);
       coupeFond();
       el.querySelector('.flux-beat').hidden = p[0] !== 'beat';
       const box = el.querySelector('.flux-piece'); box.hidden = p[0] === 'beat';
@@ -169,7 +173,7 @@ export default {
         const b = e.target.closest('[data-e]'); b.disabled = true;
         try {
           const audio = yaourtBlob ? await uploadAudio(yaourtBlob) : null;
-          const surQuoi = PIECES.find(([id]) => id === sur())[1];
+          const surQuoi = piecesAvecOreille().find(([id]) => id === sur())[1];
           await saveEntry({ type: 'texte', title: (text.split('\n')[0] || `Yaourt sur ${surQuoi}`).slice(0, 80), body: text, audio, data: { journal: true, date: today(), invite: `Écrit sur ${surQuoi}`, flux: true, sur: sur(), stage: 0 } });
           ta.value = ''; yaourtBlob = null; el.querySelector('.flux-yaourt').innerHTML = '';
           toast('Dans le journal, avec le yaourt.');
