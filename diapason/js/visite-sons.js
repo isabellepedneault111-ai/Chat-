@@ -198,8 +198,9 @@ export function bandeStop() { clearInterval(bande.t); bande.t = 0; bande.couche 
 
 export const sonActif = () => store.get('visiteSon', true);
 export function basculerSon() { const v = !sonActif(); store.set('visiteSon', v); if (!v) bandeStop(); return v; }
-export const prechargerVisite = () => { chargePiste('projet1'); chargePiste('joywalk'); return prechargerSons(['piano', 'rhodes', 'voix']); };
+export const prechargerVisite = () => { chargePiste('projet1'); chargePiste('joywalk'); chargeVoix().catch(() => {}); return prechargerSons(['piano', 'rhodes', 'voix']); };
 export function jouer(nom) {
+  if (nom === 'zaza') { voixDeZaza(); return; } // la vraie voix de Zaza, pas un échantillon
   if (!nom || !sonActif() || !SONS[nom]) return;
   try {
     const c = audio();
@@ -211,12 +212,13 @@ export function jouer(nom) {
 }
 
 // La vraie voix de Zaza, posée sur un temps de Projet 1 (sa ligne do#-ré-mi-fa est en ré mineur, comme la pièce).
-let voixBuf = null;
+let voixBuf = null; let voixP = null;
+const chargeVoix = () => (voixP ||= fetch('data/sons/zaza-voix.mp3').then((r) => r.arrayBuffer()).then((b) => audio().decodeAudioData(b)).catch(() => { voixP = null; throw new Error('voix'); }));
 export async function voixDeZaza() {
   if (!sonActif()) return;
   try {
     const c = audio();
-    if (!voixBuf) voixBuf = await fetch('data/sons/zaza-voix.mp3').then((r) => r.arrayBuffer()).then((b) => c.decodeAudioData(b));
+    if (!voixBuf) voixBuf = await chargeVoix();
     let t = c.currentTime + 0.1;
     if (lecture && lecture.id === 'projet1') { t = prochainTemps(t); laissePasser(voixBuf.duration, 0.5); }
     const src = c.createBufferSource(); const g = c.createGain(); g.gain.value = 1.1;

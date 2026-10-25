@@ -80,7 +80,7 @@ export function startTour(preview) {
         'Ma voix, en direct. Jaune : c’est juste.',
         'Combien de temps je chante juste.',
         'FLIP retient où ma voix brille.',
-      ], ['piece-0', 'piece-1', 'piece-2', 'piece-3', 'piece-4'], V.voix.w / V.voix.h, 'Ton clavier devient le coach de ma voix, dans ma tessiture à moi.'),
+      ], ['piece-0', 'piece-1', 'zaza', '', 'piece-4'], V.voix.w / V.voix.h, 'Ton clavier devient le coach de ma voix, dans ma tessiture à moi.'),
     shot(2, 'À distance, <i>en même temps</i>', 'Chacun chez soi, à la même heure, en appel.',
       frame('z', 'distance-z.jpg', V.distance.pts, [[0, 0], [1, 1], [2, 3]], r(V.distance), 'Chez moi')
       + frame('f', 'distance-f.jpg', V.distance.fpts, [[0, 2]], `${Math.round(V.distance.fw)} / ${Math.round(V.distance.fh)}`, 'Chez toi'), [
@@ -198,7 +198,8 @@ export function startTour(preview) {
         mt.querySelectorAll('[data-n]').forEach((x) => { x.classList.toggle('on', +x.dataset.n === k); x.classList.toggle('vu', +x.dataset.n < k); });
         const live = mt.querySelector(`.mt-tile[data-n="${k}"] .mt-live`);
         if (live) stopLive = laboVivant(live); else jouer(MONTAGE[k][4]);
-        if (k < MONTAGE.length - 1) stepT = setTimeout(() => mt.isConnected && montre(k + 1), live ? 11500 : 9000);
+        // Après la dernière idée, la visite continue d'elle-même (la flèche reste là pour aller plus vite).
+        stepT = setTimeout(() => mt.isConnected && (k < MONTAGE.length - 1 ? montre(k + 1) : go(1)), live ? 11500 : 9000);
       };
       mt.montageSuivant = () => { if (k < MONTAGE.length - 1) { montre(k + 1); return true; } return false; };
       mt.querySelector('.mt-dots').addEventListener('click', (e) => { const b = e.target.closest('[data-n]'); if (b) montre(+b.dataset.n); });
