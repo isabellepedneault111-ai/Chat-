@@ -925,7 +925,9 @@ a.next-card:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(
 @media (max-width: 760px) {
   .nav-voix { display: none !important; }
   .tool-voix { display: grid; }
-  .tool-proj, .tool-labo { display: none; }
+  .tool-proj { display: none; }
+  .tool-labo { height: 36px; padding: 0 8px; font-size: 0; gap: 0; }
+  .tool-labo span { font-size: 1.3rem; }
   .nav .nav-session { margin: 0; padding: 6px 12px; transform: translateY(-14px); background: var(--rec); color: #fff; border-color: var(--rule); box-shadow: 0 3px 0 var(--rule); }
   .nav .nav-session .rec-dot { width: 14px; height: 14px; }
   .brand-names { font-size: 1.35rem; }
