@@ -3,7 +3,7 @@ import { espace, onEspace, updateEspace, profileOf } from '../espace.js';
 import { toast } from '../ui.js';
 import { MODULES } from '../data.js';
 import { PLAN, RYTHME, VISION_FIELDS, STAGES, MEMBERS, memberColor, ROLES } from '../duo.js';
-import { currentMonth, planContext, planStart, weekRhythm } from '../plan.js';
+import { currentMonth, planContext, planStart, weekRhythm, planAjuste } from '../plan.js';
 import { esc, espaceGate, ago, embedHTML } from './carnet.js';
 import { activeSession } from './session.js';
 import { relaisPending, asksOf } from './relais.js';
@@ -166,6 +166,18 @@ export default {
           </a>
         </section>
 
+        ${(() => {
+          const aj = planAjuste(PLAN);
+          return aj.length ? `<section class="ajuste">
+            <div class="ajuste-head"><h2>Le plan s’ajuste à vous</h2><p class="muted small">Le cap des six mois reste. Le chemin suit ce que vous faites : vos séances, vos écrits, votre mur.</p></div>
+            <div class="ajuste-grid">${aj.map((a) => `<article class="aj">
+              <p class="aj-fait">${esc(a.fait)}</p>
+              <h3>${esc(a.titre)}</h3>
+              ${a.plan ? `<button class="btn small primary" data-plan="${a.plan}">${esc(a.action)}</button>` : `<a class="btn small primary" href="${a.href}">${esc(a.action)} →</a>`}
+              ${a.src ? `<cite>${esc(a.src)}</cite>` : ''}
+            </article>`).join('')}</div>
+          </section>` : '';
+        })()}
         ${etape1}
         ${(() => {
           const bravos = espace.entries.filter((e) => e.type === 'bravo').slice(0, 3);
@@ -233,6 +245,15 @@ export default {
       try { await updateEspace({ lune: { cycle: l.cycle, intentions: { ...cur.intentions, [espace.me]: v } } }); toast('Intention posée pour ce cycle.'); } catch (err) { toast(err.message); }
     });
     el.addEventListener('click', async (e) => {
+      // Le plan bouge avec vous : avancer d'un mois, ou prendre deux semaines de plus.
+      const pl = e.target.closest('[data-plan]');
+      if (pl) {
+        const st = planStart(); const m = currentMonth();
+        const start = pl.dataset.plan === 'avance' ? Date.now() - m * 30.44 * 864e5 + 864e5 : st + 14 * 864e5;
+        await updateEspace({ plan: { ...(espace.meta.plan || {}), start: new Date(start).toISOString().slice(0, 10), ajuste: [...(espace.meta.plan?.ajuste || []), { quoi: pl.dataset.plan, at: Date.now(), by: espace.me }].slice(-12) } }).catch((err) => toast(err.message));
+        toast(pl.dataset.plan === 'avance' ? `Mois ${m + 1} : en avant.` : 'Deux semaines de plus pour ce mois.');
+        return;
+      }
       const a = e.target.closest('[data-h]')?.dataset.h;
       if (a === 'edit') { editingVision = true; render(); }
       if (a === 'copy-invite') { const m = e.target.closest('[data-msg]').dataset.msg; try { await navigator.clipboard.writeText(m); toast('Message copié : colle-le à Frog.'); } catch { prompt('Copie ce message :', m); } }

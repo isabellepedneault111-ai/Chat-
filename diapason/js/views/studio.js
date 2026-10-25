@@ -5,6 +5,8 @@ import { createListener, connectMIDI, chordLabel, estimateKey, suggestNext, diat
 import { DRUM_PRESETS, PROGRESSIONS, DEFIS_IMPRO } from '../data.js';
 import { clockStart, clockStep, clockStop } from '../console.js';
 import { espace, audioURL, saveEntry, uploadImage } from '../espace.js';
+import { EXERCICES } from '../duo.js';
+import { PIANO } from '../exercice.js';
 
 const ROWS = [['k', 'Grosse caisse'], ['s', 'Caisse claire'], ['h', 'Charleston'], ['c', 'Claps']];
 const parse = (p) => Object.fromEntries(ROWS.map(([r]) => [r, p[r].split('').map(Number)]));
@@ -431,10 +433,15 @@ export default {
             </div>
             <div class="panel inst-ideas">
               <p class="tape">Pistes</p>
-              <div class="ideas-body"><p class="muted small">Les suggestions apparaissent dès que Diapason reconnaît quelques accords.</p></div>
+              <div class="ideas-body"><p class="muted small">Les suggestions apparaissent dès que FLIP reconnaît quelques accords.</p></div>
             </div>
           </div>
-        </div>`;
+        </div>
+        <section class="panel coin-piano">
+          <div class="panel-head"><h2>Le coin piano</h2><span class="muted small">Apprendre et créer, toujours au service de la voix</span></div>
+          <div class="cp-grid">${PIANO.map((id) => `<button class="cp-card" data-exo="${id}"><b>${EXERCICES[id].nom}</b><small>${EXERCICES[id].duree} min · ${EXERCICES[id].src}</small><span>▶ Le faire</span></button>`).join('')}</div>
+        </section>`;
+      body.querySelector('.coin-piano').addEventListener('click', (e) => { const b = e.target.closest('[data-exo]'); if (b) import('../exercice.js').then((m) => m.faireExercice(b.dataset.exo)); });
       let listener = null;
       let midi = null;
       const timeline = [];

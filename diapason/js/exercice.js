@@ -1,9 +1,9 @@
 // Faire l'exercice : il se joue au lieu de se lire. Un minuteur, la consigne du moment en grand,
 // et ce dont l'exercice a besoin : un métronome, une boucle d'accords, le tour de parole, un souffle à suivre.
-import { audio, drums } from './audio.js';
+import { audio, drums, pluck } from './audio.js';
 import { EXERCICES, MEMBERS } from './duo.js';
 import { espace } from './espace.js';
-import { FR, mod12 } from './music.js';
+import { FR, mod12, mtof } from './music.js';
 import { logPractice } from './traces.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -24,9 +24,31 @@ const MODES = {
   'i-theme': { aide: 'Jouez-le sans en parler. Comparez ensuite.' },
   'i-libre': { aide: 'Sans plan. Laissez de l’espace à l’autre.' },
   'a-fragment': { aide: 'Trois variations du même fragment : nuances, accents, densité.' },
+  'p-renv': { bpm: 76, boucle: [[0, 'M'], [5, 'M'], [7, 'M'], [0, 'M']], renv: true, aide: 'Touche un accord pour l’entendre. Le chemin le plus court entre les accords, c’est celui où les doigts bougent le moins.' },
+  'p-harmo': { yaourt: true, aide: 'La mélodie de Zaza d’abord, tes accords ensuite.' },
+  'p-comping': { bpm: 84, boucle: VAMP, comping: true, aide: 'La bande montre où frapper : elle change à chaque consigne.' },
+  'p-couleurs': { bpm: 72, boucle: [[0, 'sus2'], [2, 'sus2'], [5, 'sus2'], [7, 'sus2']], notes: [0, 7, 2], aide: 'Quinte et neuvième, sans tierce : ni joyeux ni triste, ouvert.' },
+  'p-basse': { bpm: 80, metro: true, notes: [0, 11, 9, 7], aide: 'La basse descend d’un pas par mesure : la main droite fait ce qu’elle veut.' },
+  'p-reharmo': { reharmo: true, aide: 'La même note, quatre couleurs. Touche chaque accord, chante Mi par-dessus.' },
 };
+// Les quatre façons d'accompagner, en doubles-croches : où frapper dans la mesure.
+const COMPING = [[0, 4, 8, 12], [0, 2, 4, 6, 8, 10, 12, 14], [0, 3, 6, 8, 11, 14], [0]];
+// Do, Fa, Sol, Do : le chemin le plus court (conduite des voix) en notes MIDI.
+const CHEMIN = [['Do', [60, 64, 67]], ['Fa', [60, 65, 69]], ['Sol', [59, 62, 67]], ['Do', [60, 64, 67]]];
+const MI = [['Do', [60, 64, 67], 'Mi = la tierce'], ['Lam', [57, 60, 64], 'Mi = la quinte'], ['Mim', [52, 55, 64], 'Mi = la fondamentale'], ['Famaj7', [53, 57, 60, 64], 'Mi = la septième']];
+const nomNote = (m) => FR[mod12(m)];
+const joueAccord = (ns) => { const t = audio().currentTime + 0.02; ns.forEach((n, i) => pluck(mtof(n), { when: t + i * 0.03, dur: 1.6, gain: 0.2 })); };
 
 export function exoMode(id) { return MODES[id] || {}; }
+export const PIANO = Object.keys(MODES).filter((k) => k.startsWith('p-'));
+
+// Le dernier yaourt de Zaza (une page du journal avec un enregistrement), s'il existe.
+const dernierYaourt = (mem) => espace.entries?.filter((e) => e.author === mem[0] && e.audio && (e.data?.flux || e.data?.journal || e.data?.relais)).sort((a, b) => b.createdAt - a.createdAt)[0];
+function yaourtHTML(mem) {
+  const y = dernierYaourt(mem);
+  return y ? `<button class="exo-add3" data-yaourt="${esc(y.id)}">▶ Le dernier yaourt de ${esc(mem[0])} : « ${esc(y.title || 'sans titre')} »</button>`
+    : `<p class="exo-ia">Pas encore de yaourt de ${esc(mem[0])}. Demande-lui : Écrire → Écrire sur le beat → Yaourt.</p>`;
+}
 
 // garderBoucle : lancé depuis une séance, on garde la grille du jour qui joue déjà.
 export async function faireExercice(id, { garderBoucle = false } = {}) {
@@ -45,7 +67,11 @@ export async function faireExercice(id, { garderBoucle = false } = {}) {
   const visuel = m.souffle ? '<div class="exo-souffle"><i></i><span>Inspire</span></div>'
     : m.tours || m.tete ? `<div class="exo-tours">${(m.tete ? ['Dans ta tête', 'Joue-la'] : mem).map((n, i) => `<b data-t="${i}" class="${m.tete ? '' : i ? 'f' : 'z'}">${esc(n)}</b>`).join('')}${m.tours ? '<b data-t="2" class="t3" hidden>Le troisième</b>' : ''}</div>${m.tours ? '<button class="exo-add3" data-x="trois">+ Inviter le troisième membre</button><p class="exo-ia" hidden></p>' : ''}`
       : m.degres ? `<div class="exo-notes">${[0, 2, 4, 7].map((iv, i) => `<b><small>${[1, 2, 3, 5][i]}</small>${FR[mod12(key + iv)]}</b>`).join('')}</div>`
-        : m.notes ? `<div class="exo-notes">${m.notes.map((iv) => `<b>${FR[mod12(key + iv)]}</b>`).join('')}</div>` : '';
+        : m.notes ? `<div class="exo-notes">${m.notes.map((iv) => `<b>${FR[mod12(key + iv)]}</b>`).join('')}</div>`
+          : m.renv ? `<div class="exo-chemin">${CHEMIN.map(([n, ns], i) => `<button class="exo-acc" data-acc="${ns.join(',')}"><small>${n}</small>${ns.map(nomNote).join(' ')}</button>${i < CHEMIN.length - 1 ? '<span>→</span>' : ''}`).join('')}</div>`
+            : m.reharmo ? `<div class="exo-chemin">${MI.map(([n, ns, r]) => `<button class="exo-acc" data-acc="${ns.join(',')}"><small>${r}</small>${n}</button>`).join('')}</div><button class="exo-add3" data-acc="64">▶ Mi seul</button>`
+              : m.comping ? '<div class="exo-comp groove-strip">' + Array.from({ length: 16 }, (_, i) => `<i class="${i % 4 === 0 ? 'temps' : ''}"></i>`).join('') + '</div>'
+                : m.yaourt ? yaourtHTML(mem) : '';
   box.innerHTML = `
     <div class="exo-in">
       <header><p class="exo-k">${ex.duree} min · ${esc(ex.src || '')}</p><h2>${esc(ex.nom)}</h2><p class="exo-aide">${esc(m.aide || '')}</p></header>
@@ -105,6 +131,11 @@ export async function faireExercice(id, { garderBoucle = false } = {}) {
       const beatLen = 60 / bpm; const pos = (c.currentTime - t0) / beatLen;
       const b = Math.floor(pos);
       box.querySelectorAll('.exo-beats i').forEach((x, i) => x.classList.toggle('on', b >= 0 && b % 4 === i));
+      if (m.comping) {
+        const pat = COMPING[Math.min(COMPING.length - 1, Math.max(manual, Math.floor(elapsed / (total / COMPING.length))))] || COMPING[0];
+        const six = Math.floor(pos * 4); const cur = six >= 0 ? six % 16 : -1;
+        box.querySelectorAll('.exo-comp i').forEach((x, i) => { x.classList.toggle('sing', pat.includes(i)); x.classList.toggle('now', i === cur); });
+      }
       if (m.tours || m.tete) {
         const n = trois ? 3 : 2; const per = 4 * (m.tours || 1);
         const cycle = Math.floor(Math.max(0, b) / per); const turn = cycle % n;
@@ -137,6 +168,10 @@ export async function faireExercice(id, { garderBoucle = false } = {}) {
   box.addEventListener('click', (e) => {
     const x = e.target.closest('[data-x]')?.dataset.x;
     if (x === 'end') end(elapsed > 30);
+    const acc = e.target.closest('[data-acc]');
+    if (acc) joueAccord(acc.dataset.acc.split(',').map(Number));
+    const yb = e.target.closest('[data-yaourt]');
+    if (yb) { const y = espace.entries.find((z) => z.id === yb.dataset.yaourt); import('./espace.js').then(async ({ audioURL }) => { const a = new Audio(await audioURL(y.audio)); a.play(); }); }
     if (x === 'trois' && !trois) {
       // Il écoute la voix (micro) et le clavier (MIDI), puis répond une fois sur trois.
       import('./audio.js').then((a) => a.startMic()).catch(() => {});

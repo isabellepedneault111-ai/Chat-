@@ -2163,3 +2163,31 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .mt-dots i.vu { background: rgba(243, 199, 122, .5); } .mt-dots i.on { background: #f3c77a; }
 @media (max-width: 700px) { .mt-stage { height: 62svh; } }
 .tour > .t-son { position: absolute !important; top: 24px; right: 16px; width: auto; grid-row: 1; justify-self: end; }
+/* Le plan s'ajuste */
+.ajuste { margin: 18px 0; }
+.ajuste-head h2 { margin: 0; font-family: var(--display); font-size: clamp(1.4rem, 2.6vw, 1.9rem); }
+.ajuste-head p { margin: 2px 0 12px; }
+.ajuste-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.aj { display: grid; gap: 8px; align-content: start; padding: 16px; border: 1.5px solid var(--rule); border-radius: 10px; background: var(--card); }
+.aj-fait { margin: 0; font-size: .85rem; color: var(--muted); padding-left: 10px; border-left: 3px solid var(--tape); }
+.aj h3 { margin: 0; font-family: var(--display); font-size: 1.2rem; line-height: 1.2; }
+.aj .btn { justify-self: start; }
+.aj cite { font-size: .75rem; color: var(--muted); }
+/* Coin piano */
+.coin-piano { margin-top: 16px; }
+.cp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.cp-card { display: grid; gap: 4px; text-align: left; padding: 14px; border: 1.5px solid var(--rule); border-radius: 8px; background: var(--paper); cursor: pointer; font: inherit; color: var(--text); transition: transform .15s, box-shadow .15s; }
+.cp-card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -14px rgba(27, 25, 21, .6); }
+.cp-card b { font-family: var(--display); font-size: 1.1rem; }
+.cp-card small { color: var(--muted); }
+.cp-card span { color: var(--frog); font-weight: 700; font-size: .85rem; }
+.exo-chemin { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
+.exo-chemin span { color: #c9a45c; }
+.exo-acc { display: grid; gap: 2px; padding: 10px 14px; border-radius: 8px; border: 1.5px solid rgba(127, 177, 240, .5); background: rgba(127, 177, 240, .08); color: #fff; font: 700 1.05rem var(--display); cursor: pointer; }
+.exo-acc small { font: 600 .7rem var(--body); color: #9cc4f3; }
+.exo-acc:active { background: rgba(127, 177, 240, .3); }
+.exo-comp { width: min(520px, 100%); }
+.exo-comp i { background: rgba(241, 233, 216, .12); height: 22px; }
+.exo-comp i.sing { background: rgba(127, 177, 240, .55); }
+.exo-comp i.now { background: #efe9dc; transform: scaleY(1.25); }
+.exo-comp i.sing.now { background: #7fb1f0; }

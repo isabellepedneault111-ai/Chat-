@@ -237,8 +237,10 @@ export default {
       if (just == null || just < 0.65) picks.push('x-accord');
       if (now - lastRelais > 5 * DAY) picks.push('x-relais');
       if (m >= 4 && ctx.paroles < 3) picks.push('x-objet');
+      // Frog au piano : un exercice du coin piano, différent chaque semaine.
+      if (espace.me === (espace.meta.members || ['Zaza', 'Frog'])[1]) { const pn = Object.keys(EXERCICES).filter((k) => k.startsWith('p-')); picks.push(pn[Math.floor(now / (7 * DAY)) % pn.length]); }
       for (const id of MONTH_EX[m || 1]) if (picks.length < 3 && !picks.includes(id)) picks.push(id);
-      const ex = picks.slice(0, 3).map((id) => (APP_EX[id] ? { id, ...APP_EX[id] } : { id, ...EXERCICES[id], why: WHY[id] }));
+      const ex = picks.slice(0, 3).map((id) => (APP_EX[id] ? { id, ...APP_EX[id] } : { id, ...EXERCICES[id], why: WHY[id] || (id.startsWith('p-') ? 'Pour toi au piano : la voix de Zaza au centre, cette semaine.' : '') }));
 
       el.innerHTML = `
         <div class="mod-head">

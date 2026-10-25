@@ -64,6 +64,11 @@ export default {
   id: 'session',
   mount(el) {
     let setup = { format: 'duo60', cible: CIBLES[0], song: '', key: 0, grille: 'vamp', lieu: 'piece' };
+    // Venue du plan : la séance arrive déjà préparée (cible, grille, format).
+    const hp = new URLSearchParams(location.hash.split('?')[1] || '');
+    if (hp.get('cible')) { setup.cible = hp.get('cible'); if (CIBLE_INFO[setup.cible]) setup.grille = CIBLE_INFO[setup.cible][1]; }
+    if (hp.get('grille') && GRILLES.some((g) => g.id === hp.get('grille'))) setup.grille = hp.get('grille');
+    if (hp.get('format') && FORMATS.some((f) => f.id === hp.get('format'))) setup.format = hp.get('format');
     let lastPhase = -1;
     let lastSig = '';
     let recorder = null;
@@ -358,6 +363,8 @@ export default {
       const ex = {};
       const f = FORMATS.find((x) => x.id === setup.format);
       f.phases.forEach(([p]) => { if (PHASES[p].pool.length) ex[p] = pick(PHASES[p].pool); });
+      // Frog seul au piano : son travail ciblé vient du coin piano.
+      if (setup.format === 'solo' && espace.me === (espace.meta.members || ['Zaza', 'Frog'])[1]) ex.solo = pick(Object.keys(EXERCICES).filter((k) => k.startsWith('p-')));
       const g = GRILLES.find((x) => x.id === setup.grille);
       setLoop(setup.key, g);
       try {
