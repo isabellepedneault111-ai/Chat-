@@ -97,7 +97,7 @@ export function espaceGate(host, { onReady } = {}) {
 
 const BOARD_TYPES = new Set(['note', 'texte', 'audio', 'essai', 'paroles', 'lien']);
 // Le journal et les séances d'atelier vivent dans « Écrire » ; on les envoie au mur d'un geste.
-const onBoard = (e) => BOARD_TYPES.has(e.type) && !e.data?.exemple && !((e.data?.journal || e.data?.atelier) && !e.data?.aumur);
+const onBoard = (e) => BOARD_TYPES.has(e.type) && !e.data?.exemple && !((e.data?.journal || e.data?.atelier || e.data?.etincelle) && !e.data?.aumur);
 const URL_RE = /https?:\/\/[^\s<>"]+/i;
 export function linkKind(url) {
   if (/open\.spotify\.com/.test(url)) return 'Spotify';

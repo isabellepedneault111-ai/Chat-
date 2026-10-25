@@ -60,7 +60,7 @@ export function startTour(preview) {
        <div><b>Voir où on en est</b><span>Un bilan après chaque séance, chaque semaine, chaque mois, et ce qu’il faut travailler ensuite.</span></div>
        <div><b>Ranger par projet</b><span>Un mur d’idées par projet : l’album, des reprises, un morceau.</span></div>
      </div>
-     <p class="t-soon"><b>Ce qui s’en vient, avec toi :</b> tes propres sons comme exemples, de nouvelles ambiances que ton clavier pilote, des démos à faire écouter. <b>Ce que tu voudrais qu’elle fasse, dis-le-moi au relais : on le construit ensemble.</b></p>`,
+     <p class="t-soon"><b>Ce qui s’en vient, avec toi :</b> tes propres sons comme exemples, de nouvelles ambiances que ton clavier pilote, des démos à faire écouter. <b>Ce que tu voudrais qu’elle fasse : touche la petite flamme en bas de l’écran, « Pour l’app FLIP ». On le construit ensemble.</b></p>`,
     `<p class="t-kicker">Brancher tes claviers · 2 minutes</p>
      <h2>Un câble, et c’est parti.</h2>
      <ol class="t-steps">

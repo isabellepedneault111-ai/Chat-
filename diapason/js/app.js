@@ -16,6 +16,8 @@ import lexique from './views/lexique.js';
 import ecrireV from './views/ecrire.js';
 import atelier from './views/atelier.js';
 import corbeille from './views/corbeille.js';
+import etincelles from './views/etincelles.js';
+import { initEtincelle } from './etincelle.js';
 import { maybeTour } from './views/tour.js';
 import home from './views/home.js';
 import miroir from './views/miroir.js';
@@ -42,7 +44,8 @@ const APPUIS = {
   paroles: ['Les syllabes chantées et la place des rimes font qu’un texte se chante.', 'Pattison 2009'],
 };
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille };
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles };
+initEtincelle();
 const VOIX = ['accord', 'miroir', 'tessiture', 'gym'];
 const view = $('#view');
 let cleanup = null;

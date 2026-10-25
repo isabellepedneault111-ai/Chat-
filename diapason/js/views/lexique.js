@@ -16,6 +16,7 @@ const MOTS = [
     ['Une couche', 'Un enregistrement posé par-dessus un autre, calé automatiquement. On écoute toutes les couches ensemble.', 'Une idée avec des couches est une idée vivante : le mur la suggère.', 'relais'],
     ['Une intention', 'Ce qu’on aimerait que l’autre en fasse : chante dessus, habille-le de sons, trouve-lui un titre… ou avec ses mots.', 'Elle guide la réponse et s’affiche partout où la note voyage.', 'relais'],
     ['Pendant ce temps', 'Ce que l’un pratique seul laisse une trace toute seule, avec des pistes pour l’autre.', 'Ce qu’on fait seul nourrit le duo.', ''],
+    ['Une étincelle', 'Une idée embryonnaire déposée en trois secondes grâce à la petite flamme en bas de l’écran : pour notre musique, ou pour l’app.', 'Une étincelle pour la musique peut aller au mur et monter d’étape ; une idée pour l’app nourrit ce qu’on construit ensuite.', 'etincelles'],
     ['La corbeille commune', 'Ce qu’on jette attend ici, restaurable. L’effacer pour de bon demande l’accord de l’autre.', 'Rien ne disparaît sur un coup de tête.', 'corbeille'],
     ['Le coffre, une perle', 'Les petits endroits précieux : la vidéo, le mot d’accueil, ce qu’on y dépose d’un geste.', 'Une perle remonte dans « Depuis la dernière fois ».', 'coffre'],
   ]],
