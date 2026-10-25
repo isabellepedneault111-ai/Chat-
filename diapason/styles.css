@@ -1641,3 +1641,35 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .screen .depuis, .phase-card .depuis { color: var(--ink); }
 .mast-wave { display: block; width: 100%; height: 56px; margin: -6px 0 8px; }
 @media (max-width: 760px) { .mast-wave { height: 34px; margin: -2px 0 4px; } }
+/* L'impact d'une montée d'étape */
+.impact { position: fixed; left: 50%; bottom: 96px; z-index: 120; display: flex; gap: 14px; align-items: center; max-width: min(560px, calc(100vw - 32px)); padding: 16px 20px; border-radius: 14px; background: linear-gradient(135deg, #14100d, #22160e); color: #f3ead6; box-shadow: 0 20px 50px rgba(0, 0, 0, .4), 0 0 0 1px rgba(201, 164, 92, .5); transform: translate(-50%, 30px); opacity: 0; transition: transform .5s cubic-bezier(.2, 1.2, .3, 1), opacity .4s; cursor: pointer; }
+.impact.in { transform: translate(-50%, 0); opacity: 1; }
+.impact.big { box-shadow: 0 20px 60px rgba(0, 0, 0, .45), 0 0 0 2px #d9b56a, 0 0 60px rgba(255, 150, 60, .35); }
+.im-flame { flex: none; width: 44px; height: 52px; color: #e3501f; animation: imRise 1.4s cubic-bezier(.2, .8, .2, 1) both; filter: drop-shadow(0 0 14px rgba(255, 140, 40, .6)); }
+@keyframes imRise { from { transform: translateY(14px) scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+.im-k { margin: 0; font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: #c9a45c; font-weight: 700; }
+.im-k b { color: #ffd36b; }
+.im-t { margin: 2px 0; font-family: var(--display); font-weight: 700; font-size: 1.2rem; }
+.im-goal { margin: 4px 0; } .im-goal b { color: #ffd36b; }
+.im-next { margin: 4px 0 0; font-size: .88rem; color: #cfc7b8; }
+/* Mur : le prochain pas, intentions et couches */
+.next-step { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 14px 16px; margin-bottom: 12px; border-radius: var(--radius); background: var(--ink); color: var(--paper); }
+.ns-k { flex-basis: 100%; margin: 0; font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--tape); }
+.ns-t { margin: 0; flex: 1 1 320px; }
+.ns-goal { flex-basis: 100%; font-size: .84rem; color: #cfc7b8; }
+.cm-intents { display: flex; flex-wrap: wrap; gap: 3px; margin: 4px 0; }
+.cm-intents .rl-ask { font-size: .66rem; padding: 0 7px; }
+.cm-intents .rl-intent { font-size: .78rem; }
+.cm-layers { font-size: .68rem; font-weight: 700; padding: 0 7px; border-radius: 999px; border: 1px solid var(--rule); }
+.lg-up { width: 16px !important; height: 16px !important; border-radius: 50%; background: #d9b56a; color: #1b1915; font-style: normal; font-size: .7rem; font-weight: 700; display: inline-grid !important; place-items: center; }
+/* Lexique */
+.lx-search { max-width: 420px; margin-bottom: 18px; }
+.lx-g h2 { font-family: var(--display); font-weight: 700; font-size: 1.5rem; margin: 18px 0 8px; }
+.lx-g dl { margin: 0; display: grid; gap: 8px; }
+.lx-m { display: grid; grid-template-columns: 220px 1fr; gap: 14px; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: var(--radius); background: var(--card); }
+.lx-m dt { font-family: var(--display); font-weight: 700; font-size: 1.1rem; }
+.lx-m dt a { color: inherit; text-decoration-color: var(--tape); text-decoration-thickness: 3px; }
+.lx-m dd { margin: 0; }
+.lx-moves { display: block; margin-top: 4px; font-weight: 700; color: #9a3a1a; font-size: .92rem; }
+@media (max-width: 640px) { .lx-m { grid-template-columns: 1fr; gap: 4px; } }
+.next-step .btn { background: var(--tape); color: var(--ink); border-color: #000; box-shadow: 0 3px 0 #000; }

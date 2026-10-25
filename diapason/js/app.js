@@ -12,6 +12,7 @@ import ambiances from './views/ambiances.js';
 import bilan from './views/bilan.js';
 import jeux from './views/jeux.js';
 import coffre from './views/coffre.js';
+import lexique from './views/lexique.js';
 import { maybeTour } from './views/tour.js';
 import home from './views/home.js';
 import miroir from './views/miroir.js';
@@ -23,7 +24,7 @@ import paroles from './views/paroles.js';
 import carnet from './views/carnet.js';
 import { boot, joinEspace, espace, onEspace } from './espace.js';
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre };
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique };
 const VOIX = ['accord', 'miroir', 'tessiture', 'gym'];
 const view = $('#view');
 let cleanup = null;

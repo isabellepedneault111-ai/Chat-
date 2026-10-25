@@ -105,6 +105,7 @@ function semaineHTML(mem) {
 }
 
 // ---------- Notre route : chaque action laisse sa marque sur le chemin vers l'album ----------
+const STAGES_LBL = ['Idée brute', 'À creuser', 'En chantier', 'Fixé', 'Dans le set'];
 const KINDS = [
   ['session', 'Séance', (e) => e.type === 'session' && e.data?.done],
   ['relais', 'Son ou mots au relais', (e) => e.data?.relais],
@@ -143,13 +144,18 @@ function routeHTML(start, mem) {
       marks.push(`<g>${shape}<title>${k[1]} · ${esc(e.author)} · ${fmt(t)}</title></g>`);
     }
   });
+  // les idées qui montent d'étape : une marque dorée sur la route
+  espace.entries.forEach((e) => (e.data?.moves || []).filter((mv) => mv.to > mv.from && mv.at >= start && mv.at <= end).forEach((mv) => {
+    const [x, y] = pt((mv.at - start) / (end - start));
+    marks.push(`<g><circle cx="${x}" cy="${y}" r="9" fill="#d9b56a" stroke="var(--paper)" stroke-width="2"/><path d="M${x},${y - 5}l4,5h-2.5v4h-3v-4h-2.5z" fill="#1b1915"/><title>« ${esc(e.title || '')} » monte : ${esc(STAGES_LBL[mv.to])} · ${fmt(mv.at)}</title></g>`);
+  }));
   const months = Array.from({ length: 7 }, (_, i) => { const [x, y] = pt(i / 6); return `<line x1="${x}" x2="${x}" y1="${y - 8}" y2="${y + 8}" class="rt-tick"/><text x="${x}" y="${H - 6}" class="rt-m" text-anchor="middle">${i === 0 ? 'Départ' : i === 6 ? 'Album' : `M${i}`}</text>`; }).join('');
   const [nx, ny] = pt(fNow);
   return `<svg viewBox="0 0 ${W} ${H}" class="route" role="img" aria-label="Notre route : chaque action placée dans le temps">
       <path d="${path(0, 1)}" class="rt-future"/><path d="${path(0, fNow)}" class="rt-done"/>${months}${marks.join('')}
       <g transform="translate(${nx},${ny})"><circle r="11" class="rt-now"/><text y="${ny > 125 ? 34 : -22}" text-anchor="middle" class="rt-today">Aujourd’hui</text></g>
     </svg>
-    <div class="rt-legend"><span><i class="lg-flame">${FLAME()}</i>Séance (plus grosse si le feu était fort)</span><span><i class="lg-dot"></i>Son au relais</span><span><i class="lg-sq"></i>Idée au mur</span><span><i class="lg-dia"></i>Chanson</span><span><i class="lg-star">★</i>Bravo</span><span><i class="lg-tri"></i>Jeu d’écriture</span><span class="muted">${esc(mem[0])} au-dessus de la route, ${esc(mem[1])} en dessous</span></div>`;
+    <div class="rt-legend"><span><i class="lg-flame">${FLAME()}</i>Séance (plus grosse si le feu était fort)</span><span><i class="lg-dot"></i>Son au relais</span><span><i class="lg-sq"></i>Idée au mur</span><span><i class="lg-dia"></i>Chanson</span><span><i class="lg-star">★</i>Bravo</span><span><i class="lg-tri"></i>Jeu d’écriture</span><span><i class="lg-up">↑</i>Une idée qui monte d’étape</span><span class="muted">${esc(mem[0])} au-dessus de la route, ${esc(mem[1])} en dessous</span></div>`;
 }
 const DONNEES = [
   ['Séances', 'durée, format, cible, flammes et mot de chacun, debrief, repères du matériel', 'le rythme de la semaine, le feu, la route'],

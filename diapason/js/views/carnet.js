@@ -4,6 +4,8 @@ import { toast, store } from '../ui.js';
 import { CARNET_TYPES, BILAN_QUESTIONS, EVAL_CRITERES } from '../data.js';
 import { MEMBERS, ROLES, memberColor, STAGES, PLAN, EVAL, NIVEAUX } from '../duo.js';
 import { planContext, currentMonth } from '../plan.js';
+import { intentsHTML } from './relais.js';
+import { impact } from '../impact.js';
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export function ago(t) {
@@ -109,6 +111,19 @@ export function embedHTML(url) {
   if (/soundcloud\.com/.test(url)) return `<iframe class="embed sc" height="166" loading="lazy" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23d93a24" title="Lecteur SoundCloud"></iframe>`;
   return '';
 }
+// Une idée vit quand on lui répond : couches et réponses au relais, réponses au mur, bravos.
+const layersOf = (e) => espace.entries.filter((x) => x.id === e.id || x.data?.thread === (e.data?.thread || e.id)).length;
+function nextStep(board) {
+  const scored = board.filter((e) => stageOf(e) < 3 && e.type !== 'paroles').map((e) => {
+    const layers = e.data?.relais ? layersOf(e) - 1 : 0;
+    const replies = e.data?.replies?.length || 0;
+    const perle = e.data?.perle ? 1 : 0;
+    const score = layers * 2 + replies + perle * 2 + (stageOf(e) ? 0.5 : 0);
+    const why = [layers ? `${layers} réponse${layers > 1 ? 's' : ''} au relais` : '', replies ? `${replies} commentaire${replies > 1 ? 's' : ''}` : '', perle ? 'elle est au coffre' : ''].filter(Boolean).join(', ');
+    return { e, score, why };
+  }).filter((x) => x.score >= 1).sort((a, b) => b.score - a.score);
+  return scored[0] || null;
+}
 const stageOf = (e) => (e.data && Number.isInteger(e.data.stage) ? e.data.stage : e.type === 'paroles' ? 2 : 0);
 const songOf = (e) => (e.type === 'paroles' ? (e.title || 'Sans titre') : e.data?.song || '');
 export const allSongs = () => [...new Set(espace.entries.filter((e) => BOARD_TYPES.has(e.type)).map(songOf).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
@@ -136,6 +151,15 @@ export default {
       return r;
     }
 
+    // Une idée change d'étape : on garde la trace (elle s'inscrit sur Notre route) et on montre ce que ça fait bouger.
+    async function setStage(en, stage) {
+      const from = stageOf(en);
+      if (stage === from) return;
+      const before = planContext();
+      await patch(en, (d) => ({ stage, moves: [...(d.moves || []), { from, to: stage, at: Date.now(), by: espace.me }].slice(-20) })).catch((err) => toast(err.message));
+      if (stage > from) impact(en, from, stage, before);
+    }
+
     function render() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: render }); return; }
       el.innerHTML = `
@@ -146,6 +170,7 @@ export default {
             <p class="muted">Tu es <b style="color:${memberColor(espace.me)}">${esc(espace.me)}</b> · <span class="sync-state">synchronisé</span></p>
           </div>
           <div class="actions">
+            <a class="btn ghost" href="#/lexique">Lexique</a>
             <button class="btn" data-c="share">Inviter ${esc(other())}</button>
             <button class="btn ghost" data-c="settings" aria-expanded="false">Réglages</button>
           </div>
@@ -273,7 +298,9 @@ export default {
       const m = currentMonth();
       const goal = m ? PLAN[m - 1] : null;
       const done = goal ? goal.mesure(ctx) : 0;
+      const next = nextStep(board);
       box.innerHTML = `
+        ${next ? `<div class="next-step"><p class="ns-k">Le prochain pas pour notre route</p><p class="ns-t"><b>« ${esc(next.e.title || 'Sans titre')} »</b> de ${esc(next.e.author)} a de la vie : ${esc(next.why)}.</p><button class="btn primary" data-promote="${esc(next.e.id)}">La faire monter : ${esc(STAGES[stageOf(next.e) + 1].label)} →</button>${goal ? `<span class="ns-goal">Ça compte pour le mois ${m} : ${esc(goal.sortie)}</span>` : ''}</div>` : ''}
         <div class="funnel">${STAGES.map((st) => { const n = board.filter((e) => stageOf(e) >= st.id).length; return `<div style="--n:${n}"><b>${n}</b><span>${st.label}</span></div>`; }).join('<i>→</i>')}</div>
         ${goal ? `<a class="month-goal" href="#/"><span class="mono">Mois ${m}</span> ${esc(goal.sortie)} <b>${Math.min(done, goal.cible)} / ${goal.cible}</b><i style="--p:${Math.min(100, Math.round((done / goal.cible) * 100))}"></i></a>` : '<a class="month-goal" href="#/">Lancer notre plan de six mois →</a>'}`;
     }
@@ -286,6 +313,7 @@ export default {
         <article class="card-mini type-${e.type}" draggable="true" data-card="${e.id}" style="--c:${memberColor(e.author)}">
           <div class="cm-top"><span class="cm-type">${e.type === 'paroles' ? 'Paroles' : t.label}</span><span class="cm-who">${esc(e.author || '')}</span></div>
           <b class="cm-title">${esc(e.title || (e.body || '').slice(0, 60) || 'Sans titre')}</b>
+          ${e.data?.relais ? `<div class="cm-intents">${intentsHTML(e)}${layersOf(e) > 1 ? `<span class="cm-layers">${layersOf(e)} couches</span>` : ''}</div>` : ''}
           ${songOf(e) && view !== 'morceaux' ? `<span class="cm-song">${esc(songOf(e))}</span>` : ''}
           ${view === 'morceaux' ? `<span class="cm-song">${STAGES[st].label}</span>` : ''}
           <div class="cm-bottom">
@@ -491,11 +519,13 @@ export default {
       if (ab) { el.querySelectorAll('[data-about]').forEach((x) => x.classList.toggle('active', x === ab)); return; }
       const tt = e.target.closest('[data-type]');
       if (tt) { openComposer(tt.dataset.type); return; }
+      const pr = e.target.closest('[data-promote]');
+      if (pr) { const en = espace.entries.find((x) => x.id === pr.dataset.promote); if (en) await setStage(en, Math.min(4, stageOf(en) + 1)); return; }
       const mv = e.target.closest('[data-move]');
       if (mv) {
         const [id, d] = mv.dataset.move.split(':');
         const en = espace.entries.find((x) => x.id === id);
-        await patch(en, () => ({ stage: Math.max(0, Math.min(4, stageOf(en) + +d)) })).catch((err) => toast(err.message));
+        await setStage(en, Math.max(0, Math.min(4, stageOf(en) + +d)));
         return;
       }
       // Un repère de la prise : on charge l'audio au besoin, puis on saute au bon moment.
@@ -585,7 +615,7 @@ export default {
         } catch (err) { toast(err.message); }
       }
       const en = openId && espace.entries.find((x) => x.id === openId);
-      if (en && e.target.dataset.d === 'stage') await patch(en, () => ({ stage: +e.target.value })).catch((err) => toast(err.message));
+      if (en && e.target.dataset.d === 'stage') await setStage(en, +e.target.value);
       if (en && e.target.dataset.d === 'song') {
         let v = e.target.value;
         if (v === '__new') v = (prompt('Nom du nouveau morceau?') || '').trim().slice(0, 60);
@@ -616,7 +646,7 @@ export default {
       col.classList.remove('over');
       const en = espace.entries.find((x) => x.id === e.dataTransfer.getData('text/plain'));
       if (!en) return;
-      if (col.dataset.stage != null) await patch(en, () => ({ stage: +col.dataset.stage })).catch((err) => toast(err.message));
+      if (col.dataset.stage != null) await setStage(en, +col.dataset.stage);
       if (col.dataset.song != null && en.type !== 'paroles') await patch(en, () => ({ song: col.dataset.song === '—' ? '' : col.dataset.song })).catch((err) => toast(err.message));
     });
 
