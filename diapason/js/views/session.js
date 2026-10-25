@@ -3,7 +3,7 @@
 import { FLAME } from '../marque.js';
 import { depuisHTML } from '../traces.js';
 import { exempleHTML, bindExemples } from '../exemples.js';
-import { espace, onEspace, saveEntry, uploadAudio, uid } from '../espace.js';
+import { espace, onEspace, saveEntry, uploadAudio, uid, profileOf } from '../espace.js';
 import { animate, toast } from '../ui.js';
 import { audio, click } from '../audio.js';
 import { FR, mod12, chordName } from '../music.js';
@@ -12,8 +12,29 @@ import { currentMonth, weekRhythm } from '../plan.js';
 import { setLoop, toggleLoop, loopPlaying, setTempo } from './studio.js';
 import { startConsole, consoleState, onConsole, listOutputs, setClockOutput, clockState, setClockOffset } from '../console.js';
 import { esc, espaceGate, allSongs } from './carnet.js';
+import { keysFor } from './depart.js';
+import { pad } from '../audio.js';
+import { mtof, chordIntervals } from '../music.js';
 
 const MAX_AGE = 5 * 3600 * 1000;
+const pic = (inner) => `<svg viewBox="0 0 120 64" class="lieu-pic" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+// Les trois façons d'être en séance, chacune avec son petit dessin.
+const LIEUX = [
+  ['piece', 'Ensemble, dans la même pièce', 'Un seul écran, en grand. Frog au clavier, Zaza au micro : l’app s’efface.', pic('<rect x="24" y="44" width="72" height="14" rx="2"/><path d="M33 44v8M42 44v8M60 44v8M69 44v8M78 44v8"/><circle cx="44" cy="18" r="7" class="pz"/><path d="M32 38c2-9 22-9 24 0" class="pz"/><circle cx="76" cy="18" r="7" class="pf"/><path d="M64 38c2-9 22-9 24 0" class="pf"/>')],
+  ['distance', 'À distance, en même temps', 'Chacun chez soi, en appel. La séance avance pour les deux, à la seconde.', pic('<rect x="4" y="18" width="36" height="26" rx="3"/><path d="M14 50h16"/><rect x="80" y="18" width="36" height="26" rx="3"/><path d="M90 50h16"/><path d="M40 28Q60 2 80 28" stroke-dasharray="3 5" class="pg"/><circle cx="22" cy="31" r="5" class="pz"/><circle cx="98" cy="31" r="5" class="pf"/>')],
+  ['solo', 'Seul, pour nous deux', 'Une micro-séance de 25 min. Ce que tu prépares nourrit la prochaine séance à deux.', pic('<circle cx="60" cy="20" r="8" class="pz"/><path d="M47 44c2-11 24-11 26 0" class="pz"/><path d="M50 20a10 10 0 0 1 20 0" /><path d="M84 18l6-4v14" class="pg"/><circle cx="87" cy="29" r="3" class="pg"/>')],
+];
+// Chaque cible en clair, et la grille qui lui va le mieux.
+const CIBLE_INFO = {
+  'Un groove': ['un rythme qui tient tout seul, sans paroles. Frog pose la boucle, Zaza cherche où placer sa voix.', 'vamp'],
+  'Un refrain': ['la partie qu’on chante fort et qu’on retient : une mélodie et des mots qui reviennent.', 'IIVVI'],
+  'Une ambiance': ['une couleur, une texture, un lieu. Pas de structure : on cherche un son.', 'pedale'],
+  'Une transition': ['comment on quitte une partie et comment on arrive dans la suivante.', 'iiVI'],
+  'Les entrées ensemble': ['commencer et finir pile ensemble : signaux, regards, décomptes.', 'cadence'],
+  'Le texte d’un couplet': ['écrire et chanter les mots d’un couplet sur une boucle simple.', 'vamp'],
+  'Un son d’effet signature': ['le son qui fera reconnaître FLIP : effets du clavier, couleur de la voix.', 'pedale'],
+  'La fin d’un morceau': ['comment on termine : ralenti, coupure nette, dernier accord tenu.', 'cadence'],
+};
 const otherOf = () => (espace.meta?.members || ['Zaza', 'Frog']).find((m) => m !== espace.me) || 'l’autre';
 const pick = (arr, not) => { const pool = arr.filter((x) => x !== not); return pool.length ? pool[Math.floor(Math.random() * pool.length)] : arr[0]; };
 
@@ -126,6 +147,9 @@ export default {
       const m = currentMonth();
       const r = weekRhythm();
       const songs = allSongs();
+      const chanteuse = (espace.meta.members || ['Zaza'])[0];
+      const vx = profileOf(chanteuse)?.voix;
+      const conseil = vx ? keysFor(vx.low, vx.high).slice(0, 3) : [];
       el.innerHTML = `
         <div class="mod-head">
           <div>
@@ -135,37 +159,47 @@ export default {
           </div>
         </div>
         ${depuisHTML()}
-        <section class="lieux" aria-label="Où êtes-vous?">
-          <p class="lieux-q">Où êtes-vous?</p>
-          <div class="lieux-row">
-            <button class="lieu ${setup.lieu === 'piece' ? 'on' : ''}" data-lieu="piece"><b>Ensemble, dans la même pièce</b><small>Un seul écran suffit. Grand texte et raccourcis clavier : l’app s’efface.</small></button>
-            <button class="lieu ${setup.lieu === 'distance' ? 'on' : ''}" data-lieu="distance"><b>À distance, en même temps</b><small>Chacun sur son appareil : la séance avance pour les deux à la fois.</small></button>
-            <button class="lieu ${setup.lieu === 'solo' ? 'on' : ''}" data-lieu="solo"><b>Seul, pour nous deux</b><small>Micro-session de 25 min : ce que tu prépares nourrit la prochaine séance.</small></button>
-          </div>
-        </section>
-        <div class="setup-steps">
-          <section class="panel">
-            <p class="tape">1 · Le format</p>
-            <div class="formats">${FORMATS.map((f) => `
+        <ol class="pas-a-pas">
+          <li class="pas">
+            <h2><span>1</span> Où êtes-vous?</h2>
+            <div class="lieux-row">${LIEUX.map(([id, t, d, pic]) => `<button class="lieu ${setup.lieu === id ? 'on' : ''}" data-lieu="${id}">${pic}<b>${t}</b><small>${d}</small></button>`).join('')}</div>
+          </li>
+          <li class="pas">
+            <h2><span>2</span> Combien de temps?</h2>
+            <div class="formats">${FORMATS.filter((f) => (setup.lieu === 'solo') === (f.id === 'solo') || f.id === 'ecoute').map((f) => `
               <button class="format ${setup.format === f.id ? 'on' : ''}" data-f="${f.id}">
                 <b>${f.label}</b>
                 <span class="format-bar">${f.phases.map(([p, d]) => `<i style="flex:${d}" title="${PHASES[p].titre} · ${d} min"></i>`).join('')}</span>
-                <small>${f.phases.map(([p]) => PHASES[p].titre).join(' · ')}</small>
+                <small>${f.phases.map(([p, d]) => `${PHASES[p].titre} ${d}′`).join(' → ')}</small>
               </button>`).join('')}</div>
-          </section>
-          <section class="panel">
-            <p class="tape">2 · Une seule cible</p>
+          </li>
+          <li class="pas">
+            <h2><span>3</span> Sur quoi on travaille?</h2>
+            <p class="pas-aide">Une seule cible par séance : c’est ce qui fait avancer (Biasutti 2017).</p>
             <div class="chips">${CIBLES.map((c) => `<button class="chip ${setup.cible === c ? 'active' : ''}" data-cible="${esc(c)}">${esc(c)}</button>`).join('')}</div>
-            <label class="field col"><span>Ou à vos mots</span><input class="input" data-s="cible" maxlength="80" placeholder="Ex. : trouver l’intro de Fleuve gelé"></label>
-            <label class="field col"><span>Pour quel morceau? (facultatif)</span><select data-s="song"><option value="">Idées libres</option>${songs.map((x) => `<option ${x === setup.song ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></label>
-          </section>
-          <section class="panel">
-            <p class="tape">3 · La grille du jour</p>
-            <label class="field col"><span>Tonalité</span><select data-s="key">${FR.map((n, i) => `<option value="${i}" ${i === setup.key ? 'selected' : ''}>${n} majeur</option>`).join('')}</select></label>
-            <div class="grilles">${GRILLES.map((g) => `<button class="grille ${setup.grille === g.id ? 'on' : ''}" data-g="${g.id}"><b>${g.nom}</b><span class="mono">${g.chords.map(([d, q]) => chordName(mod12(setup.key + d), q)).join(' – ')}</span><small>${g.usage}</small></button>`).join('')}</div>
-          </section>
-        </div>
-        <div class="launch"><button class="btn primary big" data-a="start">● Lancer la session</button><span class="muted small">${espace.meta.members?.find((x) => x !== espace.me) || 'L’autre'} verra la même séance, au même moment, sur son appareil.</span></div>`;
+            ${CIBLE_INFO[setup.cible] ? `<p class="cible-info"><b>${esc(setup.cible)} :</b> ${CIBLE_INFO[setup.cible][0]}</p>` : ''}
+            <div class="pas-row">
+              <label class="field col"><span>Ou à vos mots</span><input class="input" data-s="cible" maxlength="80" placeholder="Ex. : trouver l’intro de Fleuve gelé"></label>
+              <label class="field col"><span>Pour quel morceau? (facultatif)</span><select data-s="song"><option value="">Idées libres</option>${songs.map((x) => `<option ${x === setup.song ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></label>
+            </div>
+          </li>
+          <li class="pas">
+            <h2><span>4</span> Sur quels accords?</h2>
+            <p class="pas-aide">La boucle qui jouera pendant la séance. Touche ▶ pour l’entendre avant de choisir.</p>
+            <div class="ton">
+              <label class="field"><span>Tonalité</span><select data-s="key">${FR.map((n, i) => `<option value="${i}" ${i === setup.key ? 'selected' : ''}>${n} majeur</option>`).join('')}</select></label>
+              <p class="ton-aide">La tonalité, c’est la « maison » des accords. <b>Do majeur</b> : les touches blanches, le plus simple au clavier.${conseil.length ? ` D’après la tessiture de ${esc(chanteuse)}, sa voix est à l’aise en ${conseil.map((k) => `<button class="linklike" data-key="${k}">${FR[k]}</button>`).join(', ')}.` : ''}</p>
+            </div>
+            <div class="grilles">${GRILLES.map((g) => `<div class="grille ${setup.grille === g.id ? 'on' : ''}" data-g="${g.id}" role="button" tabindex="0">
+              <div class="grille-top"><b>${g.nom}</b>${CIBLE_INFO[setup.cible]?.[1] === g.id ? '<em>suggérée pour cette cible</em>' : ''}<button class="icon-btn tiny" data-ecoute="${g.id}" aria-label="Écouter ${esc(g.nom)}">▶</button></div>
+              <span class="grille-ch">${g.chords.map(([d, q]) => `<i>${chordName(mod12(setup.key + d), q)}</i>`).join('')}</span><small>${g.usage}</small></div>`).join('')}</div>
+          </li>
+        </ol>
+        <div class="launch launch-recap">
+          <p class="recap">${esc(LIEUX.find((x) => x[0] === setup.lieu)[1])} · ${esc(FORMATS.find((f) => f.id === setup.format)?.label || '')} · <b>${esc(setup.cible)}</b> · ${FR[setup.key]} majeur · ${esc(GRILLES.find((g) => g.id === setup.grille)?.nom || '')}</p>
+          <button class="btn primary big" data-a="start">● Lancer la session</button>
+          <span class="muted small">${setup.lieu === 'solo' ? 'Ce que tu prépares nourrira votre prochaine séance.' : setup.lieu === 'distance' ? `${esc(otherOf())} verra la même séance, au même moment, sur son appareil.` : 'Un seul écran suffit : mets-le en plein écran pendant la séance.'}</span>
+        </div>`;
     }
 
     function renderRunning(s) {
@@ -180,7 +214,7 @@ export default {
               <h1 class="run-cible">${esc(d.cible)}</h1>
               ${d.song ? `<p class="muted">Morceau : <b>${esc(d.song)}</b></p>` : ''}
             </div>
-            <div class="run-clock screen"><span class="mono run-left">0:00</span><small class="mono run-total"></small></div>
+            <div class="run-clock screen"><small class="run-now"></small><span class="mono run-left">0:00</span><small class="mono run-total"></small><small class="run-next"></small></div>
           </header>
           <ol class="run-bar">${f.phases.map(([p, dur], i) => `<li style="flex:${dur}" data-i="${i}"><span>${PHASES[p].titre}</span><i></i></li>`).join('')}</ol>
           <div class="run-body"></div>
@@ -234,6 +268,10 @@ export default {
       const f = FORMATS.find((x) => x.id === d.format);
       el.querySelector('.run-left').textContent = ph.i < f.phases.length ? fmt(ph.left) : 'fini';
       el.querySelector('.run-total').textContent = `${fmt(ph.t)} / ${fmt(ph.total)}${d.pausedAt ? ' · en pause' : ''}`;
+      // Où on est, où on va : toujours lisible d'un coup d'œil.
+      const nx = f.phases[ph.i + 1];
+      el.querySelector('.run-now').textContent = ph.i < f.phases.length ? `Maintenant : ${PHASES[f.phases[ph.i][0]].titre}` : '';
+      el.querySelector('.run-next').textContent = nx ? `Ensuite : ${PHASES[nx[0]].titre} · ${nx[1]} min` : ph.i < f.phases.length ? 'Ensuite : on range la séance' : '';
       el.querySelector('[data-a=pause]').textContent = d.pausedAt ? '▶ Reprendre' : '⏸ Pause';
       el.querySelector('[data-a=loop]').classList.toggle('on', loopPlaying());
       el.querySelectorAll('.run-bar li').forEach((li, i) => {
@@ -368,7 +406,19 @@ export default {
       const lb = e.target.closest('[data-lieu]');
       if (lb) { setup.lieu = lb.dataset.lieu; if (setup.lieu === 'solo') setup.format = 'solo'; else if (setup.format === 'solo') setup.format = 'duo60'; renderSetup(); return; }
       const cb = e.target.closest('[data-cible]');
-      if (cb) { setup.cible = cb.dataset.cible; renderSetup(); return; }
+      if (cb) { setup.cible = cb.dataset.cible; if (CIBLE_INFO[setup.cible]) setup.grille = CIBLE_INFO[setup.cible][1]; renderSetup(); return; }
+      // Écouter une grille avant de la choisir : les quatre accords, une seconde chacun.
+      const ec = e.target.closest('[data-ecoute]');
+      if (ec) {
+        const g = GRILLES.find((x) => x.id === ec.dataset.ecoute);
+        const t = audio().currentTime + 0.05;
+        g.chords.forEach(([dg, q], i) => pad(chordIntervals(q).map((iv) => mtof(48 + mod12(setup.key + dg) + iv)), t + i * 1.1, 1.05, 0.05));
+        setup.grille = g.id;
+        renderSetup();
+        return;
+      }
+      const kk = e.target.closest('[data-key]');
+      if (kk) { setup.key = +kk.dataset.key; renderSetup(); return; }
       const gb = e.target.closest('[data-g]');
       if (gb) { setup.grille = gb.dataset.g; renderSetup(); return; }
       const a = e.target.closest('[data-a]')?.dataset.a;

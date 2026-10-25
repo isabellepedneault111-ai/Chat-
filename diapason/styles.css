@@ -2075,3 +2075,39 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .exo-tours b.t3.on { background: #f3c77a; border-color: #f3c77a; color: #1b1915; }
 .exo-add3 { border: 1px dashed rgba(243, 199, 122, .6); background: none; color: #f3c77a; border-radius: 999px; padding: 6px 14px; font: 600 .9rem var(--body); cursor: pointer; }
 .exo-ia { margin: 0; font: italic 500 1.05rem var(--display); color: #f3c77a; min-height: 1.4em; }
+/* Séance : préparer en 4 questions */
+.pas-a-pas { list-style: none; margin: 18px 0; padding: 0; display: grid; gap: 22px; }
+.pas { padding: 18px 20px 20px; border: 1.5px solid var(--rule); border-radius: 10px; background: var(--card); }
+.pas h2 { display: flex; align-items: center; gap: 12px; margin: 0 0 12px; font-family: var(--display); font-size: clamp(1.3rem, 2.4vw, 1.7rem); }
+.pas h2 span { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--paper); font: 800 1rem var(--body); flex: none; }
+.pas-aide { margin: -6px 0 12px; color: var(--muted); font-size: .92rem; }
+.pas .lieux-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.pas .lieu { display: grid; gap: 6px; justify-items: start; text-align: left; padding: 14px; }
+.lieu-pic { width: 120px; height: 64px; color: var(--muted); }
+.lieu-pic .pz { stroke: var(--zaza); } .lieu-pic .pf { stroke: var(--frog); } .lieu-pic .pg { stroke: #c9a45c; }
+.lieu.on .lieu-pic { color: currentColor; }
+.cible-info { margin: 12px 0 0; padding: 10px 14px; border-left: 3px solid var(--accent); background: var(--paper); font-size: .95rem; }
+.pas-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.ton { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 12px; }
+.ton-aide { flex: 1 1 320px; margin: 0; font-size: .92rem; color: var(--muted); }
+.pas .grilles { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.pas .grille { display: grid; gap: 6px; padding: 12px; border: 1.5px solid var(--line); border-radius: 8px; cursor: pointer; background: var(--paper); text-align: left; }
+.pas .grille.on { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink), 0 8px 18px -12px rgba(27, 25, 21, .5); background: var(--card); color: var(--text); }
+.pas .grille.on .grille-ch i { background: var(--tape); color: var(--ink); }
+.pas .grille.on small { color: var(--muted); }
+.grille-top { display: flex; align-items: center; gap: 8px; }
+.grille-top b { font-family: var(--display); font-size: 1.1rem; }
+.grille-top em { font-style: normal; font-size: .7rem; font-weight: 700; color: var(--sage); text-transform: uppercase; letter-spacing: .06em; }
+.grille-top .icon-btn { margin-left: auto; }
+.grille-ch { display: flex; gap: 4px; }
+.grille-ch i { font-style: normal; font: 700 .95rem var(--display); padding: 2px 8px; border-radius: 4px; background: var(--surface2); }
+.launch-recap { position: sticky; bottom: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 14px 18px; background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: blur(6px); border-top: 1.5px solid var(--rule); }
+.recap { flex: 1 1 100%; margin: 0; font-size: .95rem; }
+@media (max-width: 640px) { .pas-row { grid-template-columns: 1fr; } }
+/* Séance en cours : maintenant / ensuite */
+.run-clock .run-now, .run-clock .run-next { display: block; font-size: .75rem; letter-spacing: .06em; color: rgba(241, 233, 216, .7); }
+.run-clock .run-now { color: #f1cf4e; text-transform: uppercase; font-weight: 700; }
+/* Toujours un retour au plan */
+.retour-plan { display: inline-block; margin: 0 0 10px; font-size: .85rem; font-weight: 700; color: var(--muted); text-decoration: none; }
+.retour-plan span { font-weight: 500; }
+.retour-plan:hover { color: var(--text); }

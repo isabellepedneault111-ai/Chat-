@@ -2,7 +2,8 @@
 import { $, $$, toast, store } from './ui.js';
 import { toggleMic, onMicStatus, onPitch } from './audio.js';
 import { MODULES } from './data.js';
-import { POURQUOI, CONTRAINTES } from './duo.js';
+import { POURQUOI, CONTRAINTES, PLAN } from './duo.js';
+import { currentMonth } from './plan.js';
 import session, { activeSession } from './views/session.js';
 import depart from './views/depart.js';
 import evolution from './views/evolution.js';
@@ -61,6 +62,14 @@ const view = $('#view');
 let cleanup = null;
 let currentId = 'home';
 
+function majRetour() {
+  const back = document.querySelector('.retour-plan');
+  if (!back) return;
+  const m = espace.meta?.plan ? currentMonth() : 0; const goal = m ? PLAN[m - 1] : null;
+  back.innerHTML = `← Notre plan de match${goal ? ` <span>· mois ${m} : ${goal.titre}</span>` : ''}`;
+}
+onEspace((w) => { if (w === 'meta') majRetour(); });
+
 async function route() {
   const id = location.hash.replace(/^#\/?/, '').split(/[?/]/)[0];
   // Lien d'invitation : #/rejoindre/<espace>
@@ -93,6 +102,13 @@ async function route() {
     sub.setAttribute('aria-label', 'Voix');
     sub.innerHTML = VOIX.map((m) => { const mm = MODULES.find((x) => x.id === m); return `<a href="#/${m}" class="${m === v.id ? 'active' : ''}" style="--c:${mm.color}"><span class="mono">${mm.num}</span>${mm.name}</a>`; }).join('');
     view.prepend(sub);
+  }
+  // Un fil pour ne jamais se perdre : partout, un retour au plan de match, avec le cap du mois.
+  if (v.id !== 'home') {
+    const back = document.createElement('a');
+    back.className = 'retour-plan'; back.href = '#/';
+    view.prepend(back);
+    majRetour();
   }
   const mod = MODULES.find((m) => m.id === v.id);
   view.style.setProperty('--accent', mod ? mod.color : 'var(--rec)');
