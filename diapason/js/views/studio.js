@@ -1021,6 +1021,8 @@ export function setLoop(key, grille) {
   S.prog = 'perso';
   save();
 }
+// Venu du labo : les disques deviennent la grille de batterie.
+export function setGrid(g) { S.grid = g; save(); }
 export function toggleLoop() {
   if (S.playing) stopPlay(); else play();
   return S.playing;

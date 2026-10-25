@@ -207,6 +207,7 @@ export default {
               <label class="btn ghost">Un fichier audio<input type="file" accept="audio/*,video/*" data-c="file" hidden></label>
               <label class="btn ghost">Une image : photo, dessin, toile<input type="file" accept="image/*" data-c="image" multiple hidden></label>
               <button class="btn ghost" type="button" data-type="bravo">Un bravo à ${esc(other())}</button>
+              <a class="btn ghost" href="#/studio?tab=cover">Faire une pochette</a>
               <button class="btn ghost" type="button" data-c="more">Bilan, évaluation…</button>
             </div>
           </details>

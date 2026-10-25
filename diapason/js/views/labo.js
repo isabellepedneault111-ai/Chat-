@@ -1,4 +1,4 @@
-import { audio, out, impulseOsc } from '../audio.js';
+import { audio, out, impulseOsc, drums } from '../audio.js';
 import { autoCanvas, animate, css, keyboard } from '../ui.js';
 import { nameFR, ftom, mtof, clamp } from '../music.js';
 import { RATIO_PRESETS } from '../data.js';
@@ -12,6 +12,13 @@ const MAX_TRACKS = 6;
 const MAX_N = 16;
 const KB_FROM = 24; // Do1
 const KB_TO = 96; // Do7
+// Chaque disque peut être une pièce de batterie : en lent, un vrai groove polyrythmique ;
+// en accélérant, la batterie s'efface et la même fraction devient un accord.
+const INSTS = [['kick', 'Grosse caisse'], ['snare', 'Caisse claire'], ['hat', 'Charley'], ['clap', 'Claps'], ['clic', 'Clic']];
+const KIT = ['kick', 'clap', 'hat', 'snare', 'clic', 'clic'];
+const ROW = { kick: 'k', snare: 's', hat: 'h', clap: 'c', clic: 'h' };
+// n frappes réparties au mieux sur 16 pas (rythme euclidien, Toussaint 2005).
+const euclid = (n, len = 16) => Array.from({ length: len }, (_, i) => (Math.floor((i * n) / len) !== Math.floor(((i - 1) * n) / len) || i === 0 ? 1 : 0));
 const SPIN_MAX = 1.2; // tours de disque visibles par seconde, au maximum (au-delà : ralenti)
 
 // Nombre de « ×2 » pour amener une fréquence sur le clavier (une octave = doubler).
@@ -40,6 +47,7 @@ export default {
     let f = 1.5; // fréquence du disque 1
     let playing = false;
     let nodes = null;
+    let nextHit = []; let drumT = 0;
     let sweep = null;
     let waveMode = 'sin';
     let spin = 0; // tours affichés (vitesse réelle, ou ralenti)
@@ -52,7 +60,7 @@ export default {
     el.innerHTML = `
       <div class="mod-head">
         <div>
-          <p class="eyebrow">04 · Rythme ↔ Note</p>
+          <p class="eyebrow">Le labo · rythme ↔ note</p>
           <h1>Accélère un rythme… jusqu’à ce qu’il chante</h1>
           <p class="muted">Chaque bosse d’un disque est un clic. Au-delà de ~20 clics par seconde, ton cerveau entend une <em>note</em>.</p>
         </div>
@@ -61,6 +69,7 @@ export default {
         <div class="panel radar-panel">
           <canvas class="radar" aria-label="Disques qui tournent : chaque bosse est un clic, la ligne blanche est leur somme"></canvas>
           <div class="zone-tag"></div>
+          <div class="seuil-flash" aria-hidden="true">Ça chante.</div>
           <div class="slow-badge mono"></div>
           <div class="notes-out"></div>
           <button class="play-orb" data-act="play" aria-label="Démarrer">▶</button>
@@ -94,6 +103,8 @@ export default {
           </div>
           <ul class="tracks"></ul>
           <button class="btn add-track" data-act="add">＋ Ajouter un disque</button>
+          <button class="btn primary labo-beat" data-act="beat">Faire un beat de ces disques → Studio</button>
+          <p class="muted small">Chaque disque devient une ligne de batterie, ses frappes réparties au mieux sur la mesure (rythme euclidien, Toussaint 2005).</p>
         </div>
 
         <div class="panel wave-panel">
@@ -143,9 +154,9 @@ export default {
         const k = 2 + Math.floor(Math.random() * 3);
         const set = new Set();
         while (set.size < k) set.add(1 + Math.floor(Math.random() * 9));
-        tracks = [...set].sort((a, b) => a - b).map((n) => ({ n, muted: false }));
+        tracks = [...set].sort((a, b) => a - b).map((n, i) => ({ n, muted: false, inst: KIT[i] }));
       } else {
-        tracks = RATIO_PRESETS.find((p) => p.id === id).ratios.map((n) => ({ n, muted: false }));
+        tracks = RATIO_PRESETS.find((p) => p.id === id).ratios.map((n, i) => ({ n, muted: false, inst: KIT[i] }));
       }
       tracksChanged();
     }
@@ -164,6 +175,7 @@ export default {
         <li class="track ${t.muted ? 'muted' : ''}" style="--c:${colors[i]}">
           <span class="track-dot"></span>
           <span class="track-name">Disque ${i + 1}</span>
+          <select class="track-inst" data-inst="${i}" aria-label="Son du disque ${i + 1}">${INSTS.map(([v, l]) => `<option value="${v}" ${(t.inst || 'clic') === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
           <span class="stepper">
             <button class="icon-btn tiny" data-tr="minus" data-i="${i}" aria-label="Moins de bosses">−</button>
             <b class="mono" aria-label="${t.n} bosses par tour">${t.n}</b>
@@ -185,6 +197,7 @@ export default {
         const c = audio();
         tracks.forEach((t, i) => nodes.oscs[i].frequency.setTargetAtTime(freqOf(i), c.currentTime, 0.03));
         nodes.gain.gain.setTargetAtTime(gainFor(f), c.currentTime, 0.05);
+        updateMutes();
       }
       updateText();
     }
@@ -199,6 +212,13 @@ export default {
       const zone = f < 8 ? 'rythme' : f < 20 ? 'flou' : 'note';
       const tag = q('.zone-tag');
       if (tag.dataset.zone !== zone) {
+        // Le passage du seuil, c'est LE moment : le rythme devient une note, et on le voit.
+        const rp = q('.radar-panel');
+        rp.classList.toggle('zone-note', zone === 'note');
+        if (zone === 'note' && tag.dataset.zone && playing) {
+          rp.classList.remove('seuil'); void rp.offsetWidth; rp.classList.add('seuil');
+          setTimeout(() => rp.classList.remove('seuil'), 1800);
+        }
         tag.dataset.zone = zone;
         tag.textContent = zone === 'rythme' ? 'Tu entends un RYTHME' : zone === 'flou' ? 'Zone floue…' : 'Tu entends une NOTE';
       }
@@ -261,21 +281,36 @@ export default {
       const oscs = tracks.map((t, i) => {
         const o = impulseOsc(freqOf(i));
         const g = c.createGain();
-        g.gain.value = t.muted ? 0 : per;
+        g.gain.value = t.muted ? 0 : per * oscMix(i);
         o.connect(g).connect(gain);
         o.start();
         tg.push(g);
         return o;
       });
       nodes = { gain, oscs, lp, tg };
+      // Les frappes de batterie, programmées un peu à l'avance pour tomber juste.
+      nextHit = tracks.map(() => c.currentTime + 0.05);
+      drumT = setInterval(() => {
+        const now = audio().currentTime;
+        tracks.forEach((t, i) => {
+          const fr = freqOf(i);
+          if (t.muted || (t.inst || 'clic') === 'clic' || fr >= 20) { nextHit[i] = now + 0.02; return; }
+          const vel = 1 - smooth(fr);
+          while (nextHit[i] < now + 0.08) { if (vel > 0.02) drums[t.inst](nextHit[i], vel * (i ? 0.8 : 1)); nextHit[i] += 1 / fr; }
+        });
+      }, 20);
     }
+    // 0 sous 8 Hz (on entend la batterie), 1 au-delà de 20 Hz (on entend la note).
+    function smooth(fr) { const x = clamp((fr - 8) / 12, 0, 1); return x * x * (3 - 2 * x); }
+    function oscMix(i) { return (tracks[i].inst || 'clic') === 'clic' ? 1 : smooth(freqOf(i)); }
     function updateMutes() {
       if (!nodes) return;
       const c = audio();
       const per = 1 / Math.sqrt(Math.max(1, live().length));
-      tracks.forEach((t, i) => nodes.tg[i].gain.setTargetAtTime(t.muted ? 0 : per, c.currentTime, 0.02));
+      tracks.forEach((t, i) => nodes.tg[i].gain.setTargetAtTime(t.muted ? 0 : per * oscMix(i), c.currentTime, 0.02));
     }
     function stopAudio() {
+      clearInterval(drumT);
       if (!nodes) return;
       const c = audio();
       const n = nodes;
@@ -290,6 +325,10 @@ export default {
       q('[data-act=play2]').textContent = on ? '■ Arrêter' : '▶ Démarrer';
     }
 
+    el.addEventListener('change', (e) => {
+      const si = e.target.closest('[data-inst]');
+      if (si) { tracks[+si.dataset.inst].inst = si.value; updateMutes(); }
+    });
     el.addEventListener('click', (e) => {
       const wb = e.target.closest('[data-wave]');
       if (wb) { waveMode = wb.dataset.wave; syncWaveButtons(); return; }
@@ -309,9 +348,15 @@ export default {
         return;
       }
       const act = e.target.closest('[data-act]')?.dataset.act;
+      if (act === 'beat') {
+        const g = { k: Array(16).fill(0), s: Array(16).fill(0), h: Array(16).fill(0), c: Array(16).fill(0) };
+        tracks.filter((t) => !t.muted).forEach((t) => { const row = ROW[t.inst || 'clic']; euclid(Math.min(16, t.n)).forEach((v, j) => { if (v) g[row][j] = 1; }); });
+        import('./studio.js').then((m) => { m.setGrid(g); location.hash = '#/studio?tab=beat'; });
+        return;
+      }
       if (act === 'play' || act === 'play2') setPlaying(!playing);
       if (act === 'add' && tracks.length < MAX_TRACKS) {
-        tracks.push({ n: Math.min(MAX_N, Math.max(...tracks.map((t) => t.n)) + 1), muted: false });
+        tracks.push({ n: Math.min(MAX_N, Math.max(...tracks.map((t) => t.n)) + 1), muted: false, inst: KIT[tracks.length] || 'clic' });
         presetId = 'custom';
         tracksChanged();
       }

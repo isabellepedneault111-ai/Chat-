@@ -2111,3 +2111,35 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .retour-plan { display: inline-block; margin: 0 0 10px; font-size: .85rem; font-weight: 700; color: var(--muted); text-decoration: none; }
 .retour-plan span { font-weight: 500; }
 .retour-plan:hover { color: var(--text); }
+/* Labo : le seuil où le rythme devient une note */
+.radar-panel { position: relative; transition: box-shadow 1.2s ease; }
+.radar-panel.zone-note { box-shadow: 0 0 0 1px rgba(255, 79, 179, .35), 0 0 60px -10px rgba(155, 107, 255, .55); }
+.seuil-flash { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; font: italic 800 clamp(2.4rem, 6vw, 4.6rem) var(--display); color: #fff; text-shadow: 0 0 40px rgba(255, 79, 179, .9), 0 0 80px rgba(62, 230, 255, .6); opacity: 0; transform: scale(.85); }
+.radar-panel.seuil .seuil-flash { animation: seuil 1.8s cubic-bezier(.2, .8, .2, 1) both; }
+.radar-panel.seuil::after { content: ''; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, .35), transparent 60%); animation: seuilFlash 1.2s ease-out both; pointer-events: none; }
+@keyframes seuil { 0% { opacity: 0; transform: scale(.85); letter-spacing: .3em; } 25% { opacity: 1; transform: scale(1); letter-spacing: 0; } 75% { opacity: 1; } 100% { opacity: 0; transform: scale(1.04); } }
+@keyframes seuilFlash { from { opacity: 1; } to { opacity: 0; } }
+.track-inst { padding: 3px 4px; border: 1.5px solid var(--line); border-radius: 6px; background: var(--paper); font: 600 .8rem var(--body); color: var(--text); max-width: 120px; }
+.labo-beat { width: 100%; margin-top: 8px; }
+@media (prefers-reduced-motion: reduce) { .radar-panel.seuil .seuil-flash, .radar-panel.seuil::after { animation: none; } }
+.track { flex-wrap: wrap; row-gap: 6px; }
+.track .track-inst { order: 9; flex: 1 1 100%; max-width: none; }
+/* Écrire sur le beat */
+.ec-flux { margin: 22px 0; padding: 20px; border-radius: 10px; background: linear-gradient(160deg, #1b1714, #0f0d0b); color: #efe9dc; }
+.ec-flux-head h2 { margin: 0 0 4px; font-family: var(--display); font-size: clamp(1.5rem, 3vw, 2.1rem); }
+.ec-flux-head p { margin: 0 0 14px; color: #cfc6b4; max-width: 62ch; }
+.ec-flux .groove { background: rgba(241, 233, 216, .06); border-color: rgba(241, 233, 216, .2); }
+.ec-flux .groove label, .ec-flux .groove-aide { color: #cfc6b4; }
+.ec-flux .groove select { background: #1b1714; color: #efe9dc; border-color: rgba(241, 233, 216, .25); }
+.ec-flux .groove-strip i { background: rgba(241, 233, 216, .1); }
+.ec-flux .groove-strip i.now { background: #efe9dc; }
+.flux-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.ec-flux .btn:not(.primary) { background: transparent; color: #efe9dc; border-color: rgba(241, 233, 216, .5); box-shadow: none; }
+.ec-flux .btn.on { border-color: #ff6b5a; color: #ff6b5a; }
+.flux-time { margin-left: auto; font-size: 1.4rem; color: #f3c77a; }
+.flux-mot { min-height: 2.2em; margin: 12px 0 6px; font: italic 700 clamp(1.6rem, 4vw, 2.4rem) var(--display); color: #f3c77a; }
+.flux-mot.in { animation: tUp .7s cubic-bezier(.2, .8, .2, 1) both; }
+.flux-text { width: 100%; background: rgba(241, 233, 216, .06); color: #fff; border-color: rgba(241, 233, 216, .25); font: 1.15rem/1.6 var(--display); }
+.flux-yaourt { display: grid; gap: 4px; margin: 10px 0; } .flux-yaourt small { color: #cfc6b4; }
+.ec-flux .ec-row .muted { color: #a8a093; }
+.flux-src { margin: 12px 0 0; font-size: .8rem; color: #a8a093; }
