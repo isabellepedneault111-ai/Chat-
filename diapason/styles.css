@@ -2268,3 +2268,13 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .or-legende i { display: inline-block; width: 14px; height: 10px; border-radius: 2px; }
 .lg-p { background: rgba(184, 51, 106, .25); } .lg-s { background: rgba(27, 25, 21, .1); } .lg-b { background: rgba(201, 164, 92, .55); } .lg-m { background: #d93a24; border-radius: 50% !important; width: 10px !important; }
 .or-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+/* Les deux fils de l'accueil : en fond de tout l'écran, jamais rognés */
+.tour > .t-fils-bg { position: absolute !important; inset: 0; z-index: 0 !important; pointer-events: none; opacity: 0; transition: opacity .8s; }
+.tour.slide0 > .t-fils-bg { opacity: 1; }
+.t-fils-bg .il-fils { position: absolute !important; left: 0 !important; top: 12% !important; width: 100% !important; height: 76% !important; transform: none !important; z-index: 0; overflow: visible; }
+.t-fils-bg .il-fil { stroke-width: 2; }
+/* Les deux fils : vivants sur tout l'écran ; en filigrane pendant le reste de la visite */
+.tour > .t-fils-bg { width: 100%; height: 100%; opacity: .22; transition: opacity 1.2s; }
+.tour.slide0 > .t-fils-bg { opacity: 1; }
+.t-fils-bg path { fill: none; stroke-width: 2; stroke-linecap: round; }
+.t-fils-bg .fil-z { stroke: #ec86ad; } .t-fils-bg .fil-f { stroke: #7fb1f0; }

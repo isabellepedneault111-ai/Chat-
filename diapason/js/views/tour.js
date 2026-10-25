@@ -3,7 +3,6 @@
 import { espace, audioURL, updateEspace } from '../espace.js';
 import { store } from '../ui.js';
 import { embers } from '../rituel.js';
-import { ILLU } from '../illus.js';
 import { VISITE } from '../visite-data.js';
 import { jouer, sonActif, basculerSon, prechargerVisite, bandeStart, bandeSection, bandeStop } from '../visite-sons.js';
 
@@ -62,7 +61,6 @@ export function startTour(preview) {
   const r = (d) => `${Math.round(d.w)} / ${Math.round(d.h)}`;
   const slides = [
     `<div class="t-open">
-       ${ILLU.fils}
        <img class="t-logo" src="img/flip-creme.svg" alt="FLIP">
        <p class="t-welcome">${esc(welcome).replace(/\n/g, '<br>')}</p>
        <p class="t-sign">— ${esc(from)}</p>
@@ -128,12 +126,34 @@ export function startTour(preview) {
   box.setAttribute('aria-label', 'Visite guidée');
   box.innerHTML = `
     <canvas class="t-embers" aria-hidden="true"></canvas>
+    <svg class="t-fils-bg" aria-hidden="true"><path class="fil-z"/><path class="fil-f"/></svg>
     <div class="t-progress">${slides.map(() => '<i></i>').join('')}</div>
     <button class="t-son" data-t="son" aria-pressed="${sonActif()}">${sonActif() ? '♪ Son' : '♪ Muet'}</button>
     <div class="t-slide"></div>
     <div class="t-nav"><button data-t="prev" aria-label="Précédent">←</button>${preview ? `<p class="t-apercu">Aperçu : exactement ce que ${esc(me)} verra. Rien n’est marqué pour lui. <button data-t="end">Fermer l’aperçu</button></p>` : '<span></span>'}<button data-t="next" aria-label="Suivant">→</button></div>`;
   document.body.appendChild(box);
-  const fx = matchMedia('(prefers-reduced-motion: reduce)').matches ? null : embers(box.querySelector('.t-embers'), { soft: true });
+  const calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fx = calme ? null : embers(box.querySelector('.t-embers'), { soft: true });
+  // Deux fils, rose et bleu, qui ondulent sans fin d'un bord à l'autre et se rejoignent au centre.
+  const fils = box.querySelector('.t-fils-bg');
+  let filsRaf = 0;
+  const onde = (now) => {
+    const W = fils.clientWidth; const H = fils.clientHeight; const cx = W / 2; const cy = H * 0.5;
+    const t = calme ? 0 : now / 1000;
+    const trace = (ph, sens) => {
+      let d = '';
+      for (let x = -40; x <= W + 40; x += 16) {
+        const u = Math.abs(x - cx) / cx; const A = H * (0.06 + 0.16 * u);
+        const y = cy + sens * A * Math.sin(x / (W * 0.16) + t * 0.55 + ph) + H * 0.03 * Math.sin(x / (W * 0.07) - t * 0.8 + ph);
+        d += `${x < -30 ? 'M' : 'L'}${x.toFixed(0)} ${y.toFixed(1)}`;
+      }
+      return d;
+    };
+    fils.querySelector('.fil-z').setAttribute('d', trace(0, 1));
+    fils.querySelector('.fil-f').setAttribute('d', trace(Math.PI, 1));
+    if (!calme && box.isConnected) filsRaf = requestAnimationFrame(onde);
+  };
+  filsRaf = requestAnimationFrame(onde);
   let i = 0;
   let player = null;
   let auto = null;
@@ -141,6 +161,7 @@ export function startTour(preview) {
   const show = () => {
     clearTimeout(auto); clearTimeout(stepT);
     box.querySelector('.t-slide').innerHTML = `<div class="t-inner t-${i}">${slides[i]}</div>`;
+    box.classList.toggle('slide0', i === 0); // les deux fils traversent tout l'écran d'accueil
     // Une seule musique, qui change d'habit : feutrée à l'accueil, groove dans les scènes, piano dans la vitrine.
     bandeStart(); bandeSection(i <= 1 ? 'accueil' : box.querySelector('.t-montage') ? 'vitrine' : 'scenes');
     const ms = +(box.querySelector('[data-auto]')?.dataset.auto || 0);
@@ -188,7 +209,7 @@ export function startTour(preview) {
     updateEspace({ tour: { ...(espace.meta.tour || {}), [espace.me]: Date.now() } }).catch(() => {});
   };
   const end = (mark = true) => {
-    clearTimeout(auto); clearTimeout(stepT);
+    clearTimeout(auto); clearTimeout(stepT); cancelAnimationFrame(filsRaf);
     if (mark) bandeStop(); // vers le tour de l'app, la musique continue sans couture
     if (mark) marquer();
     player?.pause();
