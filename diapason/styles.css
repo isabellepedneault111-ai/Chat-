@@ -2143,3 +2143,23 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .flux-yaourt { display: grid; gap: 4px; margin: 10px 0; } .flux-yaourt small { color: #cfc6b4; }
 .ec-flux .ec-row .muted { color: #a8a093; }
 .flux-src { margin: 12px 0 0; font-size: .8rem; color: #a8a093; }
+/* Visite : la vitrine */
+.t-son { position: absolute; top: 24px; right: 16px; z-index: 3; border: 1px solid rgba(241, 233, 216, .3); background: none; color: #cfc6b4; border-radius: 999px; padding: 4px 12px; font: 600 .78rem var(--body); cursor: pointer; }
+.t-son[aria-pressed="false"] { opacity: .6; }
+.tour .t-inner:has(.t-montage) { max-width: min(1200px, 100%); }
+.t-montage { display: grid; gap: 16px; justify-items: center; text-align: center; }
+.t-montage h2 { font-size: clamp(2.2rem, 5vw, 4.2rem) !important; margin: 0 !important; }
+.mt-stage { position: relative; width: 100%; height: min(58svh, 560px); }
+.mt-tile { position: absolute; inset: 0; margin: 0; display: grid; grid-template-rows: 1fr auto; gap: 14px; opacity: 0; transform: translateY(14px) scale(.98); transition: opacity .7s ease, transform .9s cubic-bezier(.2, .8, .2, 1); pointer-events: none; }
+.mt-tile.on { opacity: 1; transform: none; }
+.mt-img { position: relative; overflow: hidden; border-radius: 12px; box-shadow: 0 0 0 1px rgba(241, 233, 216, .2), 0 40px 80px -40px rgba(0, 0, 0, .9); background: #0e0c0a; }
+.mt-img img { width: 100%; height: 100%; object-fit: contain; transform: scale(1); transition: transform 3.6s linear; }
+.mt-tile.on .mt-img img { transform: scale(1.06); }
+.mt-tile figcaption { display: grid; gap: 2px; }
+.mt-tile figcaption b { font: 800 clamp(1.5rem, 3.2vw, 2.4rem) var(--display); color: #fff; }
+.mt-tile figcaption span { color: #f3c77a; font-size: clamp(1rem, 1.6vw, 1.2rem); }
+.mt-dots { display: flex; gap: 8px; }
+.mt-dots i { width: 28px; height: 3px; border-radius: 2px; background: rgba(241, 233, 216, .2); transition: background .4s; }
+.mt-dots i.vu { background: rgba(243, 199, 122, .5); } .mt-dots i.on { background: #f3c77a; }
+@media (max-width: 700px) { .mt-stage { height: 62svh; } }
+.tour > .t-son { position: absolute !important; top: 24px; right: 16px; width: auto; grid-row: 1; justify-self: end; }

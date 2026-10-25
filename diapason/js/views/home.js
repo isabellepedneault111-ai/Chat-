@@ -55,7 +55,7 @@ export default {
         secretTry = true;
         updateEspace({ secret: 'bell' }).catch((err) => { secretErr = err.message; render(); });
       }
-      const msg = `${o}, notre espace t’attend. Va sur ${location.origin}/ , choisis « ${o} », puis tape le mot secret : bell. La suite démarre toute seule. Prends 3 minutes.`;
+      const msg = `${o}, notre espace t’attend. Va sur ${location.origin}/ , choisis « ${o} », puis tape le mot secret : bell. La suite démarre toute seule. Prends 4 minutes, avec le son.`;
       return `<section class="invite">
         <p class="invite-k">${esc(o)} n’est pas encore entré</p>
         ${secretErr ? `<p class="invite-err">Le mot secret « bell » n’a pas pu s’activer : ${esc(secretErr)}</p>`
