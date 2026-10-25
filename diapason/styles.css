@@ -2559,3 +2559,9 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .sp { display: grid; gap: 4px; padding: 10px; border-radius: 10px; border: 1px solid var(--line, #d9cfbd); background: #fffaf0; }
 .sp b { font: 700 1rem var(--display); } .sp small { color: #8a6a1f; } .sp span { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .sp-studio summary { cursor: pointer; list-style: none; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; } .sp-studio summary h2 { margin: 0; } .sp-studio .sp-host { margin-top: 10px; }
+/* Sur cette page */
+.sommaire { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0 18px; padding: 8px 10px; border-radius: 12px; background: rgba(201, 164, 92, .1); border: 1px solid rgba(201, 164, 92, .35); }
+.sommaire span { font: italic 600 .9rem var(--display); color: #8a5a12; margin-right: 4px; }
+.sommaire button { font: 600 .82rem "Atkinson Hyperlegible", sans-serif; padding: 4px 10px; border-radius: 99px; border: 1px solid #c9bfa9; background: #fffaf0; cursor: pointer; color: inherit; }
+.sommaire button:hover { border-color: #c9a45c; background: #fff3d9; }
+#view h2 { scroll-margin-top: 90px; }

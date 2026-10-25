@@ -23,6 +23,7 @@ import placer from './views/placer.js';
 import ames from './views/ames.js';
 import arbre from './views/arbre.js';
 import { installerGlossaire } from './glossaire.js';
+import { installerSommaire } from './sommaire.js';
 import { initEtincelle } from './etincelle.js';
 import { maybeTour } from './views/tour.js';
 import home from './views/home.js';
@@ -68,6 +69,7 @@ initEtincelle();
 const VOIX = ['accord', 'miroir', 'tessiture', 'gym'];
 const view = $('#view');
 installerGlossaire(view); // les mots de musique s'expliquent au survol
+installerSommaire(view); // en haut de chaque page : tout ce qu'on peut y faire
 let cleanup = null;
 let currentId = 'home';
 
