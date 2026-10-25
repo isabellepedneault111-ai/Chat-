@@ -81,7 +81,7 @@ export function startTour(preview) {
          <p class="t-kicker">Avant la visite · 4 minutes, avec le son</p>
          <h2>Un mot sur ma façon de faire</h2>
          <p class="tp-mot">Je ne voulais pas une app de plus : je voulais un endroit qui nous ressemble. J’ai lu ce que la recherche sait de la création, de la voix et de la pratique, et je m’en suis servie comme d’un tremplin, jamais comme d’une cage. Chaque idée de FLIP part de là, puis je l’ai tordue pour nous.</p>
-         <details class="tp-src"${innerWidth > 860 ? ' open' : ''}><summary>Ce qui a nourri FLIP</summary><ul>${SOURCES.map(([t, ref, sens]) => `<li><b>${t}</b> <span>${sens}</span> <small>${ref}</small></li>`).join('')}</ul></details>
+         <div class="tp-src"><p class="tp-src-t">Ce qui a nourri FLIP</p><ul>${SOURCES.map(([t, ref, sens]) => `<li><b>${t}</b> <span>${sens}</span> <small>${ref}</small></li>`).join('')}</ul></div>
          <button class="btn big t-start t-lancer" data-t="lancer">Lancer la flèche →</button>
        </div>
        <div class="tp-tal tp-f">${triskelSVG()}<p>Le tien : le triskel, la spirale qui tourne, revient et grandit.</p></div>

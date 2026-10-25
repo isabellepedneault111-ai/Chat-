@@ -34,6 +34,7 @@ const inviteDu = (d = new Date()) => INVITES[Math.floor(d.getTime() / 864e5) % I
 const CHEMINS = [
   ['atelier', 'Une séance d’atelier', '25 min guidées : délier, écrire par les sens, une contrainte, garder ce qui brille.'],
   ['jeux', 'Le grimoire', 'Notre champ de mots, une carte tirée, le cadavre exquis.'],
+  ['placer', 'Placer mes paroles', 'Sur une pièce de Frog : où mettre les accents, combien de syllabes, quelle note chanter.'],
   ['paroles', 'Nos paroles', 'Sculpter les textes pour qu’ils se chantent : syllabes, rimes.'],
   ['ambiances', 'Une ambiance', 'Partir ailleurs avant d’écrire.'],
 ];
@@ -102,7 +103,7 @@ export default {
         <section class="ec-flux">
           <div class="ec-flux-head">
             <h2>Écrire sur le beat</h2>
-            <p>Pour se découvrir : on ne réfléchit pas, on suit le rythme. D’abord le <b>mumble</b> (chanter des sons sans mots, comme en studio), puis les mots viennent s’y poser.</p>
+            <p>Pour trouver la mélodie avant les mots, comme en studio : <b>1.</b> la musique joue, tu chantes des sons sans mots (le <b>mumble</b>) ; <b>2.</b> tu réécoutes : certains sons ressemblent déjà à des mots ; <b>3.</b> tu écris de vrais mots qui gardent ce rythme. Pour poser une ligne déjà écrite sur la musique : <a href="#/placer">Placer mes paroles →</a></p>
           </div>
           <label class="flux-sur"><span>Écrire sur</span><select data-e="sur">${piecesAvecOreille().map(([id, nom]) => `<option value="${id}" ${window.__flipFond && id === 'oreille' ? 'selected' : ''}>${esc(nom)}</option>`).join('')}</select></label>
           <div class="flux-beat">${grooveHTML()}</div>
