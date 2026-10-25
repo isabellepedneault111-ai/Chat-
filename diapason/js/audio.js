@@ -169,6 +169,18 @@ export const drums = {
     });
   },
 };
+// Nos propres sons : un son enregistré par Frog (ou Zaza) remplace celui d'origine partout dans l'app.
+export const sonsPerso = {};
+for (const nom of ['kick', 'snare', 'hat', 'clap']) {
+  const origine = drums[nom];
+  drums[nom] = (t, v = 1) => {
+    const b = sonsPerso[nom];
+    if (!b) { origine(t, v); return; }
+    const c = audio(); const src = c.createBufferSource(); const g = c.createGain();
+    src.buffer = b; g.gain.value = v; src.connect(g).connect(out()); src.start(Math.max(t, c.currentTime));
+  };
+  drums[`${nom}Origine`] = origine;
+}
 
 export function pad(freqs, t, dur, gain = 0.05) {
   const c = audio();

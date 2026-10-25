@@ -3,6 +3,7 @@
 # (utile pour l'import Netlify par URL, ou pour envoyer l'app par courriel/clé USB).
 set -euo pipefail
 cd "$(dirname "$0")/.."
+python3 tools/arbre.py
 tmp=$(mktemp -d)
 npx -y esbuild@0.24.2 js/app.js --bundle --format=iife --minify --target=es2020 --outfile="$tmp/app.js"
 npx -y esbuild@0.24.2 styles.css --minify --outfile="$tmp/styles.css"

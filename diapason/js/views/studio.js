@@ -7,6 +7,7 @@ import { clockStart, clockStep, clockStop } from '../console.js';
 import { espace, audioURL, saveEntry, uploadImage, uploadAudio } from '../espace.js';
 import { accord as accordPiano, prechargerSons } from '../sampler.js';
 import { chansonTab } from '../chanson.js';
+import { sonsPersoHTML, brancherSonsPerso } from '../sonsperso.js';
 import { EXERCICES } from '../duo.js';
 import { PIANO } from '../exercice.js';
 
@@ -313,6 +314,7 @@ export default {
               <div class="seq-cells">${S.grid[r].map((v, i) => `<button class="cell ${v ? 'on' : ''} ${i % 4 === 0 ? 'beat' : ''}" data-cell="${r}:${i}" aria-label="${label}, pas ${i + 1}" aria-pressed="${!!v}"></button>`).join('')}</div>
             </div>`).join('')}</div>
         </div>
+        <details class="panel sp-studio"><summary><h2>Nos sons de batterie</h2><span class="muted small">Remplace un son par le tien : enregistré au micro ou un fichier.</span></summary><div class="sp-host">${sonsPersoHTML()}</div></details>
         <div class="panel">
           <div class="panel-head"><h2>Où improviser sur le clavier</h2><span class="muted">Les couleurs suivent l’accord qui joue.</span></div>
           <div class="kb-host"></div>
@@ -326,6 +328,7 @@ export default {
         </div>`;
       kb = keyboard(body.querySelector('.kb-host'), { from: 48, to: 76 });
       paintSafe(0);
+      const hote = body.querySelector('.sp-host'); brancherSonsPerso(hote, () => { hote.innerHTML = sonsPersoHTML(); });
       body.addEventListener('click', (e) => {
         const c = e.target.closest('[data-cell]');
         if (c) {

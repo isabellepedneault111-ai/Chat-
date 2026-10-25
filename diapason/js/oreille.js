@@ -146,7 +146,7 @@ export async function rendreBoucle(buf, { a, b }, tours = 4, xf = 0.12) {
   const r = await off.startRendering();
   return wav(r);
 }
-function wav(buf) {
+export function wav(buf) {
   const ch = buf.numberOfChannels; const n = buf.length; const data = new DataView(new ArrayBuffer(44 + n * ch * 2));
   const w = (o, s) => [...s].forEach((c, i) => data.setUint8(o + i, c.charCodeAt(0)));
   w(0, 'RIFF'); data.setUint32(4, 36 + n * ch * 2, true); w(8, 'WAVEfmt '); data.setUint32(16, 16, true); data.setUint16(20, 1, true); data.setUint16(22, ch, true);

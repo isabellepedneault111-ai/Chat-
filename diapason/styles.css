@@ -2541,3 +2541,21 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .ar-son { margin-left: 6px; vertical-align: middle; }
 .ar-legende { display: flex; gap: 6px; flex-wrap: wrap; } .ar-legende .ar-etq { margin-left: 0; }
 .arbre .ar-son { display: inline-grid; width: 24px; height: 24px; }
+/* L'arbre radial */
+.ar-scene { border-radius: 18px; background: radial-gradient(circle at 50% 50%, #221a16, #0d0c0b 75%); color: #efe9dc; padding: 16px; margin-bottom: 16px; }
+.ar-stats { text-align: center; font: italic 500 1.05rem var(--display); color: #f1e3c8; } .ar-stats b { font-style: normal; color: #f3c77a; }
+.ar-radial { display: block; width: min(100%, 900px); margin: 0 auto; height: auto; }
+.ar-radial text { font: 500 8.5px "Atkinson Hyperlegible", sans-serif; }
+.ar-radial .ar-dos { font: 700 12px "Literata", serif; fill: #fff; paint-order: stroke; stroke: #0d0c0b; stroke-width: 3px; }
+.ar-radial .ar-centre { font: 900 34px "Literata", serif; fill: #fff; }
+.ar-liens path { fill: none; stroke-width: 1.1; opacity: .75; stroke-dasharray: 600; stroke-dashoffset: 600; animation: arPousse 1.6s ease-out forwards; animation-delay: var(--d); }
+@keyframes arPousse { to { stroke-dashoffset: 0; } }
+@media (prefers-reduced-motion: reduce) { .ar-liens path { animation: none; stroke-dashoffset: 0; } }
+.ar-cles { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; font-size: .85rem; color: #cfc6b4; margin: 6px 0 0; }
+.ar-cles i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--c); margin-right: 4px; }
+.ar-nos-sons, .ar-details { margin-bottom: 14px; } .ar-details summary { cursor: pointer; list-style: none; } .ar-details summary h2 { display: inline; }
+/* Nos sons de batterie */
+.sons-perso { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+.sp { display: grid; gap: 4px; padding: 10px; border-radius: 10px; border: 1px solid var(--line, #d9cfbd); background: #fffaf0; }
+.sp b { font: 700 1rem var(--display); } .sp small { color: #8a6a1f; } .sp span { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.sp-studio summary { cursor: pointer; list-style: none; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; } .sp-studio summary h2 { margin: 0; } .sp-studio .sp-host { margin-top: 10px; }
