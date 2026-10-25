@@ -133,7 +133,9 @@ export default {
             <div class="mots">${MOTS.map(([k, l]) => `<div><h4>${l}</h4>${mem.map((m, i) => ([a, b][i][k] ? `<p style="--c:${memberColor(m)}"><b>${esc(m)}</b> ${esc([a, b][i][k])}</p>` : '')).join('')}</div>`).join('')}</div>
           </article>
         </div>
-        <div class="row"><button class="btn primary big" data-a="vision">Construire notre vision à partir de ça</button></div>`;
+        ${mem.every((m) => profileOf(m)?.doneAt)
+    ? '<div class="row"><button class="btn primary big" data-a="vision">Construire notre vision à partir de ça</button></div>'
+    : `<p class="muted portrait-wait">Notre vision et notre plan se construiront quand ${esc(mem.find((m) => !profileOf(m)?.doneAt))} aura fait son point de départ : rien de commun n’est fixé avant, et rien ne change dans sa visite.</p>`}`;
     }
 
     el.addEventListener('click', async (e) => {

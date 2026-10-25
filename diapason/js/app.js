@@ -45,6 +45,16 @@ const APPUIS = {
 };
 
 const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles };
+// Onglet en arrière-plan : le titre compte ce que l'autre vient d'ajouter, « (2) FLIP ». Revenir remet à zéro.
+{
+  const base = document.title; let n = 0;
+  onEspace((w, extra) => {
+    if (w !== 'entries' || !document.hidden) return;
+    n += (extra?.fresh || []).filter((e) => e.author && e.author !== espace.me).length;
+    if (n) document.title = `(${n}) ${base}`;
+  });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { n = 0; document.title = base; } });
+}
 initEtincelle();
 const VOIX = ['accord', 'miroir', 'tessiture', 'gym'];
 const view = $('#view');

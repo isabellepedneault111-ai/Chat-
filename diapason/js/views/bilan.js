@@ -283,6 +283,7 @@ export default {
               <p class="b-why">${esc(x.why || '')}</p>
               <ol>${(x.comment || []).map((c) => `<li>${esc(c)}</li>`).join('')}</ol>
               <p class="b-foot"><span>${x.duree} min</span><cite>${esc(x.src || '')}</cite></p>
+              ${EXERCICES[x.id] ? `<button class="btn small primary" data-exo="${esc(x.id)}">▶ Faire l’exercice</button>` : ''}
               ${EXERCICES[x.id] ? exempleHTML(x.id, x.nom) : ''}
               ${x.href ? `<a class="btn small" href="${x.href}">Ouvrir →</a>` : '<a class="btn small" href="#/session">Dans une session →</a>'}
             </article>`).join('')}</div>
@@ -309,6 +310,7 @@ export default {
       if (b === 'print') window.print();
     });
     bindExemples(el);
+    el.addEventListener('click', (e) => { const b = e.target.closest('[data-exo]'); if (b) import('../exercice.js').then((m) => m.faireExercice(b.dataset.exo)); });
     const off = onEspace((w) => { if (w === 'entries' || w === 'meta') render(); });
     const onHash = () => { if (location.hash.startsWith('#/bilan')) render(); };
     window.addEventListener('hashchange', onHash);

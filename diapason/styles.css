@@ -2015,3 +2015,43 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
   .t-caps li:not(.on) { display: none; }
   .t-caps li { color: #fff; background: rgba(243, 199, 122, .1); }
 }
+.nouveau { margin: 14px 0; padding: 14px 18px; border-left: 3px solid var(--accent); background: var(--card); border-radius: 0 8px 8px 0; }
+.nouveau-k { margin: 0 0 6px; font-size: .75rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.nouveau ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.nouveau a { color: var(--text); text-decoration: none; }
+.nouveau a:hover { text-decoration: underline; }
+.nouveau-attente { margin: 8px 0 0; font-size: .9rem; color: var(--muted); }
+/* Faire l'exercice */
+.exo { position: fixed; inset: 0; z-index: 95; background: radial-gradient(120% 90% at 50% 100%, #1b1410 0%, #0e0c0b 55%, #090808 100%); color: #efe9dc; display: grid; place-items: center; padding: 20px; overflow-y: auto; animation: tourin .4s ease; }
+.exo.out { opacity: 0; transition: opacity .3s; }
+.exo-in { width: min(760px, 100%); display: grid; gap: 18px; justify-items: center; text-align: center; }
+.exo-k { margin: 0; font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: #c9a45c; }
+.exo h2 { margin: 6px 0 4px; font-family: var(--display); font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1; }
+.exo-aide { margin: 0; color: #cfc6b4; }
+.exo-main { position: relative; width: 190px; height: 190px; display: grid; place-items: center; }
+.exo-ring { position: absolute; inset: 0; transform: rotate(-90deg); }
+.exo-ring-bg { fill: none; stroke: rgba(241, 233, 216, .12); stroke-width: 4; }
+.exo-ring-fg { fill: none; stroke: #f3c77a; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+.exo-time { margin: 0; font: 800 2.6rem var(--display); font-variant-numeric: tabular-nums; }
+.exo-beats { position: absolute; bottom: 38px; display: flex; gap: 8px; }
+.exo-beats i { width: 8px; height: 8px; border-radius: 50%; background: rgba(241, 233, 216, .2); transition: background .06s; }
+.exo-beats i.on { background: #f3c77a; }
+.exo-beats i:first-child.on { background: #ff8a5c; }
+.exo-tours { display: flex; gap: 14px; }
+.exo-tours b { padding: 10px 22px; border-radius: 999px; border: 1.5px solid rgba(241, 233, 216, .25); font: 700 1.3rem var(--display); color: rgba(241, 233, 216, .45); transition: all .15s; }
+.exo-tours b.on { color: #1b1915; background: #f3c77a; border-color: #f3c77a; transform: scale(1.06); }
+.exo-tours b.z.on { background: #ec86ad; border-color: #ec86ad; } .exo-tours b.f.on { background: #7fb1f0; border-color: #7fb1f0; }
+.exo-notes { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.exo-notes b { min-width: 54px; padding: 8px 10px; border: 1.5px solid rgba(243, 199, 122, .5); border-radius: 8px; font: 700 1.2rem var(--display); }
+.exo-notes small { display: block; font: 700 .7rem var(--body); color: #c9a45c; }
+.exo-souffle { position: relative; width: 150px; height: 150px; display: grid; place-items: center; }
+.exo-souffle i { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, rgba(243, 199, 122, .55), rgba(243, 199, 122, .08)); transform: scale(.35); transition: transform .2s linear; }
+.exo-souffle span { position: relative; font: italic 600 1.1rem var(--display); }
+.exo-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; width: 100%; }
+.exo-steps li { padding: 10px 14px; border-radius: 8px; color: rgba(241, 233, 216, .35); font-size: 1.05rem; transition: all .4s; }
+.exo-steps li.vu { color: rgba(241, 233, 216, .6); }
+.exo-steps li.on { color: #fff; background: rgba(243, 199, 122, .12); font-size: clamp(1.15rem, 2.2vw, 1.4rem); }
+.exo-ctrl { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; align-items: center; }
+.exo-ctrl .btn:not(.primary) { background: transparent; color: #efe9dc; border-color: rgba(241, 233, 216, .5); box-shadow: none; }
+.exo-bpm { display: inline-flex; align-items: center; gap: 6px; }
+.exo-bpm .icon-btn { color: #efe9dc; border-color: rgba(241, 233, 216, .4); }

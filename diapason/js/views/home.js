@@ -10,6 +10,7 @@ import { relaisPending, asksOf } from './relais.js';
 import { pendantHTML } from '../traces.js';
 import { enAttenteDeMoi } from '../corbeille.js';
 import { lune, luneSVG, TEMPS } from '../lune.js';
+import { nouveautesHTML } from '../nouveautes.js';
 
 // Où aller : chaque outil rangé par ce qu'on veut faire, pas par son nom.
 const OU_ALLER = [
@@ -54,7 +55,7 @@ export default {
         secretTry = true;
         updateEspace({ secret: 'bell' }).catch((err) => { secretErr = err.message; render(); });
       }
-      const msg = `${o}, notre espace t’attend. Va sur ${location.origin}/ , choisis « ${o} », puis tape le mot secret : bell. La suite démarre toute seule. Prends 3 minutes, avec le son.`;
+      const msg = `${o}, notre espace t’attend. Va sur ${location.origin}/ , choisis « ${o} », puis tape le mot secret : bell. La suite démarre toute seule. Prends 3 minutes.`;
       return `<section class="invite">
         <p class="invite-k">${esc(o)} n’est pas encore entré</p>
         ${secretErr ? `<p class="invite-err">Le mot secret « bell » n’a pas pu s’activer : ${esc(secretErr)}</p>`
@@ -100,7 +101,9 @@ export default {
     }
 
     function render() {
-      if (espace.connected && espace.me && !espace.meta.seen?.[espace.me]) updateEspace({ seen: { ...(espace.meta.seen || {}), [espace.me]: Date.now() } }).catch(() => {});
+      // La dernière visite de chacun, partagée : elle dit à l'autre ce qu'il n'a pas encore vu.
+      const vu = espace.meta?.seen?.[espace.me];
+      if (espace.connected && espace.me && (!vu || Date.now() - vu > 10 * 60e3)) { nouveautesHTML(); updateEspace({ seen: { ...(espace.meta.seen || {}), [espace.me]: Date.now() } }).catch(() => {}); }
       if (!espace.connected || !espace.me) {
         el.innerHTML = '<header class="masthead"><h1 class="display"><img class="mast-logo" src="img/flip.svg" alt="FLIP"></h1><p class="lead">Six mois. Deux musiciens. Des morceaux originaux.</p></header><div class="gate-host"></div>';
         espaceGate(el.querySelector('.gate-host'), { onReady: render });
@@ -123,7 +126,7 @@ export default {
           <p>Objectifs, voix, styles, besoins : chacun le sien, puis notre portrait commun. C’est lui qui nourrit le plan.</p>
           <span class="e1-who">${portraits.map((x) => `<span style="--c:${memberColor(x.m)}" class="${x.ok ? 'ok' : ''}">${esc(x.m)} ${x.ok ? '✓' : '· à faire'}</span>`).join('')}</span>
         </a>` : '';
-      if (!start && !editingVision) { el.innerHTML = head + luneHTML() + todayHTML() + filHTML() + pendantHTML() + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
+      if (!start && !editingVision) { el.innerHTML = head + luneHTML() + todayHTML() + nouveautesHTML() + filHTML() + pendantHTML() + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
       if (editingVision) { el.innerHTML = head + setupHTML(!!start); return; }
 
       const m = currentMonth();
@@ -143,6 +146,7 @@ export default {
         ${head}
         ${luneHTML()}
         ${todayHTML()}
+        ${nouveautesHTML()}
         ${filHTML()}
         ${pendantHTML()}
         <section class="plan-hero">

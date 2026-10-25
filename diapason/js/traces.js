@@ -5,7 +5,7 @@ import { MEMBERS } from './duo.js';
 import { nameFR } from './music.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const OUTILS = { accord: 'Voix + piano', ambiance: 'Ambiances', grimoire: 'Le grimoire', gym: 'Gym vocal', atelier: 'Séance d’atelier' };
+const OUTILS = { exercice: 'Exercice', accord: 'Voix + piano', ambiance: 'Ambiances', grimoire: 'Le grimoire', gym: 'Gym vocal', atelier: 'Séance d’atelier' };
 
 // Une pratique d'au moins une minute devient une trace.
 export function logPractice(outil, minutes, data = {}) {
