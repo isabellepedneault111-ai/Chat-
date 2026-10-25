@@ -5,6 +5,7 @@ import { store } from '../ui.js';
 import { embers } from '../rituel.js';
 import { VISITE } from '../visite-data.js';
 import { jouer, sonActif, basculerSon, prechargerVisite, bandeStart, bandeSection, bandeStop } from '../visite-sons.js';
+import { laboVivant } from '../labo-vivant.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
@@ -51,7 +52,7 @@ export function startTour(preview) {
   const MONTAGE = [
     ['m-voix.jpg', 'Placer ma voix dans le groove', 'FLIP joue un rythme (bossa, pop…) et les cases roses montrent où poser mes mots. La syncope devient un jeu.', 'Je chante avec plus de groove, pas seulement plus juste.', 'beat'],
     ['m-flux.jpg', 'Écrire sur le beat', 'Je chante des sons sans mots sur le beat (le mumble), et l’enregistrement part avec mon texte.', 'Tu entends la mélodie que j’avais en tête.', 'riff'],
-    ['m-labo.jpg', 'Un rythme devient une note', 'Accélère un rythme : à un moment, il devient une note. On l’entend pour vrai.', 'Des beats qu’on n’aurait jamais trouvés.', 'labo'],
+    ['m-labo.jpg', 'Un rythme devient une note', 'Trois rythmes calés sur ta musique accélèrent… jusqu’à devenir un accord de Fa majeur, dans la tonalité de Projet 1.', 'Tes beats et tes accords viennent de la même source : des idées qu’on n’aurait jamais trouvées.', 'labo'],
     ['m-trois.jpg', 'Un troisième musicien', 'Il écoute votre phrase, la transforme et vous la renvoie.', 'Un partenaire d’impro, même quand on est juste deux.', 'trois'],
     ['m-grimoire.jpg', 'Le grimoire', 'Des cartes à tirer pour lancer une chanson : un thème, une peur, une contrainte.', 'Fini la page blanche.', 'grimoire'],
     ['m-pochette.jpg', 'Notre art en pochette', 'Un dessin et un vrai son de nous deviennent la pochette de l’album.', 'Notre image, notre son, notre album.', 'pochette'],
@@ -107,7 +108,7 @@ export function startTour(preview) {
     // Une idée à la fois, le temps de lire ; la flèche passe à la suivante, rien ne file tout seul hors de l'écran.
     `<div class="t-montage">
        <header><p class="t-kicker">Et ce n’est pas tout</p><h2>Six idées <i>originales</i></h2><p class="mt-intro">Aucune autre app au monde ne les fait. Je les ai inventées pour nous.</p></header>
-       <div class="mt-stage">${MONTAGE.map(([img, t, ail, nous], i) => `<figure class="mt-tile" data-n="${i}"><div class="mt-img"><img src="img/visite/${img}" alt=""></div><figcaption><span class="mt-num">${i + 1} / ${MONTAGE.length} · idée originale</span><b>${t}</b><span class="mt-ail">${ail}</span><span class="mt-nous"><i>Pour nous :</i> ${nous}</span></figcaption></figure>`).join('')}</div>
+       <div class="mt-stage">${MONTAGE.map(([img, t, ail, nous], i) => `<figure class="mt-tile" data-n="${i}"><div class="mt-img">${img === 'm-labo.jpg' ? '<canvas class="mt-live" aria-label="Trois disques qui accélèrent jusqu’à chanter Fa majeur"></canvas>' : `<img src="img/visite/${img}" alt="">`}</div><figcaption><span class="mt-num">${i + 1} / ${MONTAGE.length} · idée originale</span><b>${t}</b><span class="mt-ail">${ail}</span><span class="mt-nous"><i>Pour nous :</i> ${nous}</span></figcaption></figure>`).join('')}</div>
        <div class="mt-dots">${MONTAGE.map((_, i) => `<button type="button" data-n="${i}" aria-label="Idée ${i + 1}"></button>`).join('')}</div>
      </div>`,
     `<div class="t-title">
@@ -191,11 +192,13 @@ export function startTour(preview) {
     const mt = box.querySelector('.t-montage');
     if (mt) {
       let k = -1;
+      let stopLive = null;
       const montre = (n) => {
-        clearTimeout(stepT); k = n;
+        clearTimeout(stepT); k = n; stopLive?.(); stopLive = null;
         mt.querySelectorAll('[data-n]').forEach((x) => { x.classList.toggle('on', +x.dataset.n === k); x.classList.toggle('vu', +x.dataset.n < k); });
-        jouer(MONTAGE[k][4]);
-        if (k < MONTAGE.length - 1) stepT = setTimeout(() => mt.isConnected && montre(k + 1), 9000);
+        const live = mt.querySelector(`.mt-tile[data-n="${k}"] .mt-live`);
+        if (live) stopLive = laboVivant(live); else jouer(MONTAGE[k][4]);
+        if (k < MONTAGE.length - 1) stepT = setTimeout(() => mt.isConnected && montre(k + 1), live ? 11500 : 9000);
       };
       mt.montageSuivant = () => { if (k < MONTAGE.length - 1) { montre(k + 1); return true; } return false; };
       mt.querySelector('.mt-dots').addEventListener('click', (e) => { const b = e.target.closest('[data-n]'); if (b) montre(+b.dataset.n); });

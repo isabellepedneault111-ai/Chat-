@@ -2313,3 +2313,4 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .cq-mots input { flex: 1; min-width: 0; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(241, 233, 216, .25); background: rgba(255, 255, 255, .06); color: #fff; font: inherit; }
 .cq-ok { margin: 0; font: italic 500 1.2rem var(--display); color: #f3c77a; }
 @keyframes cqin { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.mt-live { display: block; width: 100%; height: 100%; }

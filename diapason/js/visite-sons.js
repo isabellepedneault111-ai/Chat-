@@ -223,3 +223,33 @@ export async function voixDeZaza() {
     src.buffer = voixBuf; src.connect(g).connect(out()); src.start(t);
   } catch (e) { console.debug('voix', e); }
 }
+
+// « Un rythme devient une note », sur la pièce de Frog : trois disques à 4, 5 et 6 frappes par mesure,
+// calés sur son temps, accélèrent ensemble jusqu'à devenir Fa, La, Do (4:5:6, l'accord majeur), en ré mineur comme Projet 1.
+export const LABO = { n: [4, 5, 6], monte: 3.6, tient: 2.2, fin: 174.61 / 4 }; // fin : tours par seconde où le disque à 4 bosses chante Fa3
+export function laboAccord() {
+  const c = audio();
+  let t = c.currentTime + 0.15; let mesure = 2;
+  const son = sonActif() && c.state === 'running';
+  if (son && lecture) { t = prochainTemps(t); mesure = (4 * 60) / PISTES[lecture.id].bpm; }
+  const info = { t0: t, mesure, son, w0: 1 / mesure };
+  if (!son) return info;
+  try {
+    if (lecture) laissePasser(mesure + LABO.monte + LABO.tient, 0.3);
+    const kit = ['kick', 'hat', 'clap'];
+    LABO.n.forEach((n, i) => {
+      for (let k = 0; k < n; k++) drums[kit[i]](t + (k * mesure) / n, [0.55, 0.3, 0.22][i]);
+      const o = impulseOsc(n / mesure); const lp = c.createBiquadFilter(); const g = c.createGain();
+      lp.type = 'lowpass'; lp.frequency.value = 2600;
+      const f1 = n * LABO.fin; const fin = t + mesure + LABO.monte + LABO.tient;
+      o.frequency.setValueAtTime(n / mesure, t); o.frequency.setValueAtTime(n / mesure, t + mesure);
+      o.frequency.exponentialRampToValueAtTime(f1, t + mesure + LABO.monte);
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.025, t + mesure);
+      g.gain.linearRampToValueAtTime(0.07, t + mesure + LABO.monte); g.gain.setValueAtTime(0.07, fin - 0.6); g.gain.linearRampToValueAtTime(0.0001, fin);
+      o.connect(lp).connect(g).connect(out()); o.start(t); o.stop(fin + 0.05);
+    });
+    accord('piano', [65, 69, 72], { when: t + mesure + LABO.monte + 0.05, dur: LABO.tient - 0.3, vel: 0.35 }); // le vrai Fa majeur répond
+  } catch (e) { console.debug('labo', e); }
+  return info;
+}
+export const horloge = () => audio().currentTime;
