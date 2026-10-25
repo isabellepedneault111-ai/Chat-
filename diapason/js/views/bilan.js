@@ -104,6 +104,62 @@ function semaineHTML(mem) {
     </section>`;
 }
 
+// ---------- Notre route : chaque action laisse sa marque sur le chemin vers l'album ----------
+const KINDS = [
+  ['session', 'Séance', (e) => e.type === 'session' && e.data?.done],
+  ['relais', 'Son ou mots au relais', (e) => e.data?.relais],
+  ['idee', 'Idée au mur', (e) => ['note', 'texte', 'audio', 'essai', 'lien'].includes(e.type) && !e.data?.relais],
+  ['paroles', 'Chanson à l’atelier', (e) => e.type === 'paroles'],
+  ['bravo', 'Bravo', (e) => e.type === 'bravo'],
+  ['jeu', 'Jeu d’écriture', (e) => e.type === 'jeu'],
+];
+function routeHTML(start, mem) {
+  const end = start + 6 * 30.44 * DAY;
+  const now = Date.now();
+  const W = 1000; const H = 250; const X0 = 50; const X1 = 950;
+  const pt = (f) => { const x = X0 + f * (X1 - X0); return [x, 125 + 52 * Math.sin(f * Math.PI * 3)]; };
+  const path = (a, b) => Array.from({ length: 121 }, (_, i) => pt(a + ((b - a) * i) / 120)).map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`).join('');
+  const fNow = Math.max(0, Math.min(1, (now - start) / (end - start)));
+  const marks = [];
+  espace.entries.forEach((e) => {
+    const k = KINDS.find(([, , f]) => f(e));
+    if (!k) return;
+    const t = k[0] === 'session' ? e.data.doneAt : e.createdAt;
+    if (t < start || t > end) return;
+    const [x, y] = pt((t - start) / (end - start));
+    const side = e.author === mem[1] ? 1 : -1; // Zaza au-dessus de la route, Frog en dessous
+    const c = memberColor(e.author);
+    if (k[0] === 'session') {
+      const feux = Object.values(e.data.traces || {}).map((tr) => tr.feu).filter(Boolean);
+      const sz = 20 + (feux.length ? feux.reduce((a, b) => a + b, 0) / feux.length : 2) * 4;
+      marks.push(`<g transform="translate(${x - sz / 2},${y - sz * 0.86})" class="rt-flame"><svg width="${sz}" height="${sz}" viewBox="0 0 100 100">${FLAME().replace(/^<svg[^>]*>|<\/svg>$/g, '')}</svg><title>Séance · ${fmt(t)}</title></g>`);
+    } else {
+      const off = side * (k[0] === 'relais' ? 20 : k[0] === 'idee' ? 34 : 46);
+      const shape = k[0] === 'relais' ? `<circle cx="${x}" cy="${y + off}" r="5" fill="${c}"/>`
+        : k[0] === 'idee' ? `<rect x="${x - 4}" y="${y + off - 4}" width="8" height="8" fill="none" stroke="${c}" stroke-width="2"/>`
+          : k[0] === 'paroles' ? `<path d="M${x},${y + off - 6}l6,6l-6,6l-6,-6z" fill="${c}"/>`
+            : k[0] === 'bravo' ? `<path d="M${x},${y + off - 7}l2,5h5l-4,3l2,5l-5,-3l-5,3l2,-5l-4,-3h5z" fill="#e3a21f"/>`
+              : `<path d="M${x},${y + off - 6}l6,10h-12z" fill="none" stroke="${c}" stroke-width="2"/>`;
+      marks.push(`<g>${shape}<title>${k[1]} · ${esc(e.author)} · ${fmt(t)}</title></g>`);
+    }
+  });
+  const months = Array.from({ length: 7 }, (_, i) => { const [x, y] = pt(i / 6); return `<line x1="${x}" x2="${x}" y1="${y - 8}" y2="${y + 8}" class="rt-tick"/><text x="${x}" y="${H - 6}" class="rt-m" text-anchor="middle">${i === 0 ? 'Départ' : i === 6 ? 'Album' : `M${i}`}</text>`; }).join('');
+  const [nx, ny] = pt(fNow);
+  return `<svg viewBox="0 0 ${W} ${H}" class="route" role="img" aria-label="Notre route : chaque action placée dans le temps">
+      <path d="${path(0, 1)}" class="rt-future"/><path d="${path(0, fNow)}" class="rt-done"/>${months}${marks.join('')}
+      <g transform="translate(${nx},${ny})"><circle r="11" class="rt-now"/><text y="${ny > 125 ? 34 : -22}" text-anchor="middle" class="rt-today">Aujourd’hui</text></g>
+    </svg>
+    <div class="rt-legend"><span><i class="lg-flame">${FLAME()}</i>Séance (plus grosse si le feu était fort)</span><span><i class="lg-dot"></i>Son au relais</span><span><i class="lg-sq"></i>Idée au mur</span><span><i class="lg-dia"></i>Chanson</span><span><i class="lg-star">★</i>Bravo</span><span><i class="lg-tri"></i>Jeu d’écriture</span><span class="muted">${esc(mem[0])} au-dessus de la route, ${esc(mem[1])} en dessous</span></div>`;
+}
+const DONNEES = [
+  ['Séances', 'durée, format, cible, flammes et mot de chacun, debrief, repères du matériel', 'le rythme de la semaine, le feu, la route'],
+  ['Prises et sons du relais', 'les fichiers audio, qui les a lancés, sur quoi ils sont posés', 'ce qui circule entre les séances'],
+  ['Le mur', 'idées, liens, étape de chaque idée (brute → dans le set)', 'les cibles du mois, ce qui coince'],
+  ['Paroles et jeux', 'chansons, champ lexical, cadavres exquis, vos ateliers', 'la matière des textes'],
+  ['Voix', 'empreintes vocales datées, carte des accords (temps chanté et juste)', 'ce qui progresse'],
+  ['Bravos et autoévaluations', 'qui, quoi, quand', 'les courbes d’évolution'],
+];
+
 export default {
   id: 'bilan',
   mount(el) {
@@ -194,6 +250,8 @@ export default {
           }).join('')}
         </section>
 
+        ${start ? `<section class="panel"><div class="panel-head"><h2>Notre route</h2><span class="muted small">Chaque action y laisse sa marque</span></div>${routeHTML(start, mem)}</section>` : ''}
+
         <section class="panel">
           <div class="panel-head"><h2>Les 30 derniers jours</h2><span class="muted small">comparés aux 30 d’avant</span></div>
           <div class="b-stats">${stats.map((x) => `<div><b>${x.v}</b><span>${x.label}</span>${x.d ? `<small class="${x.d > 0 ? 'up' : 'down'}">${x.d > 0 ? '▲' : '▼'} ${Math.abs(Math.round(x.d * 10) / 10)}</small>` : '<small>=</small>'}</div>`).join('')}</div>
@@ -218,7 +276,11 @@ export default {
             </article>`).join('')}</div>
         </section>
 
-        <section class="panel"><h2>La carte de nos accords</h2>${carteHTML(map)}</section>`;
+        <section class="panel"><h2>La carte de nos accords</h2>${carteHTML(map)}</section>
+        <details class="panel donnees"><summary><h2>Ce que l’app garde, et à quoi ça sert</h2></summary>
+          <table><thead><tr><th>Quoi</th><th>Ce qui est gardé</th><th>Ce que ça nourrit</th></tr></thead><tbody>${DONNEES.map(([a, b, c]) => `<tr><th>${a}</th><td>${b}</td><td>${c}</td></tr>`).join('')}</tbody></table>
+          <p class="muted small">Tout vit dans votre espace (Netlify), accessible avec votre lien ou votre mot secret. Rien n’est revendu ni analysé ailleurs. Effacer l’espace efface tout.</p>
+        </details>`;
 
       el.dataset.text = [
         'FLIP · notre bilan',

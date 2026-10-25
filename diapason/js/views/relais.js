@@ -8,14 +8,40 @@ import { esc, ago, espaceGate } from './carnet.js';
 import { memberColor, MEMBERS } from '../duo.js';
 import { ecrire } from '../ecrire.js';
 
-export const ASKS = [
-  ['chante', 'Chante dessus', 'chante dessus'],
-  ['ecris', 'Écris dessus', 'écris des mots dessus'],
-  ['accords', 'Trouve les accords', 'trouve les accords en dessous'],
-  ['continue', 'Continue-le', 'continue-le, emmène-le ailleurs'],
-  ['ecoute', 'Juste écoute', 'écoute, c’est un cadeau'],
+// Les intentions : ce qu'on aimerait que l'autre en fasse. On peut en choisir plusieurs, et l'écrire.
+export const GROUPES = [
+  ['La voix', [['chante', 'Chante dessus', 'chante dessus'], ['harmonise', 'Harmonise-moi', 'pose une 2e voix'], ['melodie', 'Trouve la mélodie', 'trouve une mélodie là-dessus']]],
+  ['Les mots', [['ecris', 'Écris dessus', 'écris des mots dessus'], ['titre', 'Trouve-lui un titre', 'donne-lui un nom'], ['evoque', 'Dis-moi ce que ça t’évoque', 'dis-moi ce que ça t’évoque']]],
+  ['La musique', [['accords', 'Trouve les accords', 'trouve les accords en dessous'], ['rythme', 'Donne-lui un rythme', 'donne-lui un rythme'], ['habille', 'Habille-le de sons', 'habille-le de textures et d’effets'], ['continue', 'Continue-le', 'continue-le, emmène-le ailleurs']]],
+  ['La forme', [['refrain', 'Fais-en un refrain', 'vois si c’est un refrain'], ['coupe', 'Garde l’essentiel', 'coupe ce qui est de trop'], ['plus-tard', 'Pour plus tard', 'garde-le pour un autre morceau']]],
+  ['Le cœur', [['ecoute', 'Juste écoute', 'écoute, c’est un cadeau'], ['bien', 'Pour te faire du bien', 'c’est pour te faire du bien']]],
 ];
+export const ASKS = GROUPES.flatMap(([, l]) => l);
 const askOf = (id) => ASKS.find((a) => a[0] === id);
+export const asksOf = (e) => (e.data?.asks?.length ? e.data.asks : e.data?.ask ? [e.data.ask] : []).map(askOf).filter(Boolean);
+
+// Le sélecteur d'intentions, réutilisé partout (relais, ambiances, grimoire).
+export function intentions(host, { to = 'l’autre', dark = false } = {}) {
+  const chosen = new Set();
+  host.innerHTML = `<div class="intents ${dark ? 'dark' : ''}">
+      <p class="intents-q">Ton intention pour ${esc(to)} <small>(une ou plusieurs)</small></p>
+      ${GROUPES.map(([g, l]) => `<div class="intents-g"><span>${esc(g)}</span><div class="chips small">${l.map(([id, lab]) => `<button type="button" class="chip" data-int="${id}" aria-pressed="false">${esc(lab)}</button>`).join('')}</div></div>`).join('')}
+      <label class="field col intents-free"><span>Ou dis-le avec tes mots</span><input class="input" data-int-free maxlength="160" placeholder="Ex. : imagine-le joué très lentement, au petit matin"></label>
+    </div>`;
+  host.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-int]');
+    if (!b) return;
+    const id = b.dataset.int;
+    if (chosen.has(id)) chosen.delete(id); else chosen.add(id);
+    b.classList.toggle('active', chosen.has(id));
+    b.setAttribute('aria-pressed', chosen.has(id));
+  });
+  return { value: () => ({ asks: [...chosen], intent: host.querySelector('[data-int-free]').value.trim() }) };
+}
+export function intentsHTML(e) {
+  const a = asksOf(e);
+  return `${a.map((x) => `<span class="rl-ask">${esc(x[1])}</span>`).join('')}${e.data?.intent ? `<span class="rl-intent">« ${esc(e.data.intent)} »</span>` : ''}`;
+}
 const other = () => (espace.meta?.members || MEMBERS).find((m) => m !== espace.me) || 'Frog';
 const items = () => espace.entries.filter((e) => e.data?.relais);
 const threadOf = (e) => e.data?.thread || e.id;
@@ -29,9 +55,9 @@ export function relaisPending() {
 }
 
 // Envoie un son dans le relais (utilisé aussi par les Ambiances).
-export async function sendSound(blob, { title, ask = '', thread, over, align = 0, mood, onProgress } = {}) {
+export async function sendSound(blob, { title, asks = [], intent = '', thread, over, align = 0, mood, onProgress } = {}) {
   const meta = await uploadAudio(blob, onProgress);
-  const data = { relais: true, ask, stage: 0, song: '' };
+  const data = { relais: true, ask: asks[0] || '', asks, intent, stage: 0, song: '' };
   if (thread) data.thread = thread;
   if (over) { data.over = over; data.align = Math.round(align * 1000) / 1000; }
   if (mood) data.mood = mood;
@@ -92,7 +118,7 @@ export default {
     let writer = null;
     let loopTimer = 0;
     let sig = '';
-    let ask = '';
+    let picker = null;
 
     function shell() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: shell }); return; }
@@ -162,13 +188,12 @@ export default {
       if (focus) host.querySelector('.rl-item.focus')?.scrollIntoView({ block: 'center' });
     }
     function itemHTML(e, focus) {
-      const a = askOf(e.data?.ask);
       const base = e.data?.over && espace.entries.find((x) => x.id === e.data.over);
       const layers = e.audio ? chainOf(e).length : 0;
       const isPlaying = playing?.id === e.id;
       return `
         <article class="rl-item ${focus ? 'focus' : ''} ${e.author === espace.me ? 'mine' : ''}" style="--c:${memberColor(e.author)}" data-id="${esc(e.id)}">
-          <header><b>${esc(e.author)}</b><span class="mono muted">${ago(e.createdAt)}</span>${a ? `<span class="rl-ask">${esc(a[1])}</span>` : ''}${e.data?.mood ? `<span class="rl-mood">${esc(e.data.mood)}</span>` : ''}</header>
+          <header><b>${esc(e.author)}</b><span class="mono muted">${ago(e.createdAt)}</span>${intentsHTML(e)}${e.data?.mood ? `<span class="rl-mood">${esc(e.data.mood)}</span>` : ''}</header>
           <h3>${esc(e.title)}</h3>
           ${base ? `<p class="muted small">${e.audio ? 'Posé sur' : 'Écrit sur'} « ${esc(base.title)} » de ${esc(base.author)}</p>` : ''}
           ${e.type === 'note' && e.body ? `<blockquote class="rl-words">${esc(e.body).replace(/\n/g, '<br>')}</blockquote>` : ''}
@@ -208,12 +233,14 @@ export default {
       const e = work.entry;
       const head = `<div class="rl-work-head"><p><small class="mono">${work.kind === 'write' ? 'Écrire sur' : work.kind === 'over' ? 'Par-dessus' : 'Répondre à'}</small><b>« ${esc(e.title)} »</b> de ${esc(e.author)}</p><button class="icon-btn tiny" data-r="close" aria-label="Fermer">×</button></div>`;
       if (work.kind === 'write') {
-        box.innerHTML = `${head}<p class="rl-sub">Le son tourne en boucle pendant que tu écris.</p><div class="rl-writer"></div>`;
+        box.innerHTML = `${head}<p class="rl-sub">Le son tourne en boucle pendant que tu écris.</p><div class="rl-writer"></div><div class="rl-intents"></div>`;
+        const wp = intentions(box.querySelector('.rl-intents'), { to: e.author === espace.me ? other() : e.author, dark: true });
         writer = ecrire(box.querySelector('.rl-writer'), {
           saveLabel: `Envoyer à ${e.author === espace.me ? other() : e.author}`,
           title: e.title,
           onSave: async (text) => {
-            await saveEntry({ type: 'note', title: text.split('\n')[0].slice(0, 80), body: text, data: { relais: true, thread: threadOf(e), over: e.id, stage: 0, song: '' } });
+            const v = wp.value();
+            await saveEntry({ type: 'note', title: text.split('\n')[0].slice(0, 80), body: text, data: { relais: true, thread: threadOf(e), over: e.id, ask: v.asks[0] || '', ...v, stage: 0, song: '' } });
             toast('Envoyé. Tes mots sont dans le relais.');
             close();
           },
@@ -282,13 +309,13 @@ export default {
         <audio controls src="${pending.url}"></audio>
         ${pending.base ? '<button class="btn small" data-r="try">▶ Écouter avec sa couche</button>' : ''}
         <label class="field"><span>Un titre (facultatif)</span><input class="input" data-r="title" placeholder="${esc(defTitle)}" maxlength="80"></label>
-        <p class="rl-sub">Ce que tu aimerais que ${esc(to)} en fasse :</p>
-        <div class="chips small rl-asks">${ASKS.map(([id, l]) => `<button class="chip ${ask === id ? 'active' : ''}" data-ask="${id}">${esc(l)}</button>`).join('')}</div>
+        <div class="rl-intents"></div>
         <div class="rl-send">
           <button class="btn primary big" data-r="send">Envoyer à ${esc(to)} →</button>
           <button class="btn ghost" data-r="redo">Recommencer</button>
         </div>`;
       box.dataset.def = defTitle;
+      picker = intentions(box.querySelector('.rl-intents'), { to, dark: true });
     }
 
     async function send() {
@@ -298,19 +325,17 @@ export default {
       try {
         await sendSound(pending.blob, {
           title: box.querySelector('[data-r=title]').value.trim() || box.dataset.def,
-          ask, thread: pending.thread, over: pending.base?.id, align: pending.align,
+          ...picker.value(), thread: pending.thread, over: pending.base?.id, align: pending.align,
           onProgress: (p) => { btn.textContent = `Envoi ${Math.round(p * 100)} %`; },
         });
         toast(`Lancé! ${other()} le verra en ouvrant l’app.`);
         URL.revokeObjectURL(pending.url);
-        pending = null; ask = ''; work = null;
+        pending = null; work = null;
         renderReview(); renderWork(); renderThreads(true);
       } catch (err) { toast(err.message); btn.disabled = false; btn.textContent = 'Réessayer'; }
     }
 
     el.addEventListener('click', async (e) => {
-      const askB = e.target.closest('[data-ask]');
-      if (askB) { ask = ask === askB.dataset.ask ? '' : askB.dataset.ask; el.querySelectorAll('[data-ask]').forEach((b) => b.classList.toggle('active', b.dataset.ask === ask)); return; }
       const r = e.target.closest('[data-r]')?.dataset.r;
       if (!r) return;
       const item = e.target.closest('.rl-item');

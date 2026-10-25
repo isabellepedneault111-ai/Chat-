@@ -9,7 +9,7 @@ import { matchChord, chordLabel } from '../instrument.js';
 import { espace, saveEntry } from '../espace.js';
 import { esc } from './carnet.js';
 import { ecrire } from '../ecrire.js';
-import { sendSound, ASKS } from './relais.js';
+import { sendSound, intentions } from './relais.js';
 
 const AMB = [
   { id: 'fleuve', name: 'Fleuve gelé', bpm: 56, wave: 'triangle', texture: 'vent', part: 'neige', col: ['#a9d3ea', '#0f1d2a'],
@@ -194,7 +194,7 @@ export default {
     let cur = AMB[0];
     let pts = [];
     let writer = null;
-    let rec = null; let take = null; let ask = '';
+    let rec = null; let take = null; let picker = null;
 
     el.innerHTML = `
       <div class="mod-head">
@@ -221,7 +221,7 @@ export default {
         </div>
       </section>
       <div class="amb-grid">
-        <section class="panel"><h2>Écrire dans l’ambiance</h2><div class="amb-write"></div></section>
+        <section class="panel"><div class="panel-head"><h2>Écrire dans l’ambiance</h2><a class="btn small ghost" href="#/jeux">Le grimoire →</a></div><div class="amb-write"></div></section>
         <section class="panel amb-rec">
           <h2>Chanter, jouer dedans</h2>
           <p class="muted small">L’ambiance et ton micro (ou ta guitare) sont enregistrés ensemble. Tu peux aussi l’envoyer seule, comme un lit où l’autre viendra se poser.</p>
@@ -322,16 +322,15 @@ export default {
       if (!take) { box.innerHTML = ''; return; }
       box.innerHTML = `
         <audio controls src="${URL.createObjectURL(take)}"></audio>
-        ${espace.connected ? `<div class="chips small">${ASKS.map(([id, l]) => `<button class="chip ${ask === id ? 'active' : ''}" data-ask="${id}">${esc(l)}</button>`).join('')}</div>
+        ${espace.connected ? `<div class="amb-intents"></div>
         <button class="btn primary" data-x="send">Lancer dans le relais →</button>` : '<p class="muted small">Crée votre espace pour l’envoyer à l’autre.</p>'}
         <button class="btn ghost" data-x="drop">Effacer</button>`;
+      if (espace.connected) picker = intentions(box.querySelector('.amb-intents'));
     }
 
     el.addEventListener('click', async (e) => {
       const card = e.target.closest('[data-amb]');
       if (card) { choose(AMB.find((a) => a.id === card.dataset.amb)); return; }
-      const askB = e.target.closest('[data-ask]');
-      if (askB) { ask = ask === askB.dataset.ask ? '' : askB.dataset.ask; el.querySelectorAll('[data-ask]').forEach((b) => b.classList.toggle('active', b.dataset.ask === ask)); return; }
       const x = e.target.closest('[data-x]')?.dataset.x;
       if (x === 'play') { if (eng.on) { eng.stop(); e.target.textContent = '▶ Entrer'; } else { eng.start(cur); e.target.textContent = '■ Sortir'; } }
       if (x === 'midi') {
@@ -342,7 +341,7 @@ export default {
       if (x === 'send' && take) {
         const b = e.target; b.disabled = true;
         try {
-          await sendSound(take, { title: `Dans « ${cur.name} »`, ask, mood: cur.name, onProgress: (p) => { b.textContent = `Envoi ${Math.round(p * 100)} %`; } });
+          await sendSound(take, { title: `Dans « ${cur.name} »`, ...(picker?.value() || {}), mood: cur.name, onProgress: (p) => { b.textContent = `Envoi ${Math.round(p * 100)} %`; } });
           toast('Lancé dans le relais!'); take = null; showTake();
         } catch (err) { toast(err.message); b.disabled = false; }
       }

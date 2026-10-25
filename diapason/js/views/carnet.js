@@ -67,6 +67,8 @@ export function espaceGate(host, { onReady } = {}) {
     if (!me) { toast('Choisis d’abord : Zaza ou Frog?'); return; }
     espace.me = me;
     e.target.disabled = true;
+    const label = e.target.textContent;
+    if (a === 'find') e.target.textContent = 'Un instant…';
     try {
       if (a === 'create') {
         if (!confirm('Créer un NOUVEL espace? Si l’autre en a déjà créé un, entre plutôt son mot secret (sinon vous serez chacun dans le vôtre).')) { e.target.disabled = false; return; }
@@ -82,6 +84,7 @@ export function espaceGate(host, { onReady } = {}) {
       onReady?.();
       import('./tour.js').then((t) => t.maybeTour());
     } catch (err) {
+      e.target.textContent = label;
       toast(a === 'find' ? err.message : err.status === 404 ? 'Espace introuvable : vérifie le lien.' : err.message || 'Connexion impossible pour l’instant.');
       e.target.disabled = false;
     }

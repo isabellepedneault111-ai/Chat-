@@ -19,7 +19,7 @@ const SENS = [
 
 const MOTS = ['fleuve', 'cuisine à 2 h', 'autoroute', 'fenêtre', 'premier hiver', 'quai de gare', 'chalet', 'néon', 'grand-mère', 'feu de camp', 'patinoire', 'dernière cigarette', 'parking vide', 'lac gelé', 'radio', 'tempête', 'ruelle', 'lit défait', 'aurore', 'manteau'];
 
-export function ecrire(host, { mots = MOTS, minutes = 10, initial = '', title = '', onSave, saveLabel = 'Garder', song = '' } = {}) {
+export function ecrire(host, { mots = MOTS, minutes = 10, initial = '', title = '', onSave, saveLabel = 'Garder', song = '', how = null, senses = true, check = null } = {}) {
   let word = mots[Math.floor(Math.random() * mots.length)];
   let left = minutes * 60;
   let timer = 0;
@@ -29,7 +29,7 @@ export function ecrire(host, { mots = MOTS, minutes = 10, initial = '', title = 
         <p class="ecr-prompt"><small class="mono">Mot de départ</small><b></b><button class="icon-btn tiny" data-e="reroll" aria-label="Autre mot" title="Autre mot">↻</button></p>
         <div class="ecr-clock"><button class="btn small" data-e="timer">▶ ${minutes} min sans t’arrêter</button><span class="mono"></span></div>
       </div>
-      <p class="muted small ecr-how">Écris ce que tu <b>vois, entends, touches, sens, goûtes, ce que ton corps ressent et ce qui bouge</b> autour du mot. Pas de rimes, pas de relecture : juste la matière. Le tri vient après.</p>
+      <p class="muted small ecr-how">${how ?? 'Écris ce que tu <b>vois, entends, touches, sens, goûtes, ce que ton corps ressent et ce qui bouge</b> autour du mot. Pas de rimes, pas de relecture : juste la matière. Le tri vient après.'}</p>
       <textarea class="ecr-text" rows="9" placeholder="Commence par une image, pas par une idée…">${esc(initial)}</textarea>
       <div class="ecr-sens" aria-label="Sens touchés"></div>
       <div class="ecr-lines"></div>
@@ -47,12 +47,16 @@ export function ecrire(host, { mots = MOTS, minutes = 10, initial = '', title = 
 
   function analyse() {
     const text = ta.value;
+    q('.ecr-sens').hidden = !senses;
     q('.ecr-sens').innerHTML = `${SENS.map((s) => `<span class="sens ${s.re.test(text) ? 'on' : ''}">${s.label}</span>`).join('')}<span class="mono small">${SENS.filter((s) => s.re.test(text)).length} / 7 sens</span>`;
     const lines = text.split('\n').filter((l) => l.trim());
     if (!lines.length) { q('.ecr-lines').innerHTML = ''; q('.ecr-rimes').innerHTML = ''; return; }
     const counts = lines.map((l) => lineSyll(l).count);
     const ref = counts[0];
-    q('.ecr-lines').innerHTML = `<small class="mono">Syllabes chantées par ligne</small><div>${counts.map((c, i) => `<span class="${Math.abs(c - ref) > 1 ? 'off' : ''}" title="${esc(lines[i])}">${c}</span>`).join('')}</div>`;
+    // check : un patron de syllabes attendu (haïku 5-7-5, refrain 8-8-8-8…)
+    const want = (i) => (check ? check[i % check.length] : ref);
+    const ok = check && counts.length >= check.length && check.every((n, i) => counts[i] === n);
+    q('.ecr-lines').innerHTML = `<small class="mono">Syllabes chantées par ligne${check ? ` · visé : ${check.join('-')}${ok ? ' · <b class="ok-mark">réussi ✓</b>' : ''}` : ''}</small><div>${counts.map((c, i) => `<span class="${(check ? c !== want(i) : Math.abs(c - ref) > 1) ? 'off' : ''}" title="${esc(lines[i])}">${c}</span>`).join('')}</div>`;
     // Rimes du dernier mot de la ligne où est le curseur.
     const upto = text.slice(0, ta.selectionStart).split('\n');
     const cur = upto[upto.length - 1] || lines[lines.length - 1];

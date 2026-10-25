@@ -13,6 +13,7 @@ export const MODULES = [
   { id: 'carnet', num: '', name: 'Le mur', color: 'var(--c-carnet)', tagline: 'Toutes nos idées, et où elles s’en vont.' },
   { id: 'relais', num: '', name: 'Relais', color: 'var(--rec)', tagline: 'Se lancer des sons entre deux sessions, et répondre par-dessus.' },
   { id: 'ambiances', num: '', name: 'Ambiances', color: 'var(--rec)', tagline: 'Partir ailleurs avant d’écrire ou de chanter.' },
+  { id: 'jeux', num: '', name: 'Le grimoire', color: 'var(--c-paroles)', tagline: 'Rituels d’écriture : nos mots, une carte tirée dans les braises, le cadavre exquis.' },
   { id: 'bilan', num: '', name: 'Notre bilan', color: 'var(--rec)', tagline: 'Où on est rendus, et ce que la recherche dit de faire ensuite.' },
   { id: 'session', num: '', name: 'Session', color: 'var(--rec)', tagline: 'La séance guidée, du check-in à la prise.' },
 ];

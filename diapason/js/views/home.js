@@ -6,7 +6,7 @@ import { PLAN, RYTHME, VISION_FIELDS, STAGES, MEMBERS, memberColor, ROLES } from
 import { currentMonth, planContext, planStart, weekRhythm } from '../plan.js';
 import { esc, espaceGate, ago, embedHTML } from './carnet.js';
 import { activeSession } from './session.js';
-import { relaisPending, ASKS } from './relais.js';
+import { relaisPending, asksOf } from './relais.js';
 
 export default {
   id: 'home',
@@ -18,7 +18,8 @@ export default {
       const live = activeSession();
       const r = weekRhythm();
       const rp = relaisPending();
-      const ask = rp && ASKS.find((x) => x[0] === rp.data?.ask);
+      const asks = rp ? asksOf(rp) : [];
+      const ask = asks.length ? [null, asks.map((x) => x[1]).join(' · '), [asks.map((x) => x[2]).join(', '), rp.data?.intent].filter(Boolean).join(' · ')] : rp?.data?.intent ? [null, 'Son intention', rp.data.intent] : null;
       const t = live ? { t: 'Rejoindre la session', d: 'en cours', why: `${live.author} a lancé « ${live.data.cible} ».`, href: '#/session' }
         : rp ? { t: `${rp.author} t’a lancé ${rp.audio ? 'un son' : 'des mots'}`, d: ask ? ask[1] : 'à écouter', why: `« ${rp.title} » : ${ask ? ask[2] : 'écoute, puis réponds par-dessus'}.`, href: `#/relais/${rp.id}` }
         : !profileOf(espace.me)?.doneAt ? { t: 'Ton point de départ', d: '5 min', why: 'Ce que tu veux, ta voix, tes styles : c’est ce qui nourrit notre plan.', href: '#/depart' }

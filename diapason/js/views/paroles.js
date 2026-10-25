@@ -73,7 +73,7 @@ export default {
             <h1>Écrire pour être chanté</h1>
             <p class="muted">${espace.connected ? `Partagé avec votre duo dans <b>${esc(espace.meta.name)}</b>.` : 'Sur cet appareil seulement. <a href="#/carnet">Créez votre espace</a> pour écrire à deux.'}</p>
           </div>
-          <div class="actions"><button class="btn primary" data-p="new">Nouvelle chanson</button></div>
+          <div class="actions"><a class="btn" href="#/jeux">Le grimoire : un rituel avant d’écrire</a><button class="btn primary" data-p="new">Nouvelle chanson</button></div>
         </div>
         <div class="paroles-grid">
           <aside class="song-list panel">
