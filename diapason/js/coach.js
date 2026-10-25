@@ -9,7 +9,7 @@ const STEPS = [
   { route: '#/session', sel: '#nav [data-id=session]', t: 'La séance', d: 'Une séance guidée, étape par étape. Elle finit toujours par un enregistrement.' },
   { route: '#/carnet', sel: '.sky-map, #nav [data-id=carnet]', t: 'Le mur', d: 'Toutes nos idées. Au centre, l’album. Plus une idée avance, plus elle s’en approche.' },
   { route: '#/relais', sel: '#nav [data-id=relais]', t: 'Le relais', d: 'Tu m’envoies un son. Je chante par-dessus. Tu ajoutes une couche.' },
-  { route: '#/ecrire', sel: '#nav [data-id=ecrire]', t: 'Écrire', d: 'Notre journal, nos paroles, et écrire sur un beat.' },
+  { route: '#/ecrire', sel: '.ec-entry[data-id="demo-j0"], #nav [data-id=ecrire]', t: 'Écrire', d: 'Ta musique joue, je chante sans mots (le mumble), et les paroles viennent après. Ici, sur Projet 1.' },
   { route: '#/accord', sel: '#nav [data-id=voix], .tool-voix', t: 'Ton clavier, ma voix', d: 'Tu joues un accord. Je chante. L’écran montre si ma voix est juste.' },
   { route: '#/studio', sel: '#nav [data-id=studio]', t: 'Le studio', d: 'Des beats, des accords, et ton coin piano.' },
   { route: '#/', sel: '.tool-coffre, .fil-coffre', t: 'Le coffre', d: 'Nos meilleurs moments, gardés à part.' },
@@ -22,7 +22,7 @@ const visible = (sel) => sel.split(',').map((x) => x.trim()).flatMap((x) => [...
 
 import { montrerExemples, retirerExemples } from './demo.js';
 import { espace, saveEntry } from './espace.js';
-import { bandeStart, bandeSection, bandeStop, jouer, voixDeZaza } from './visite-sons.js';
+import { bandeStart, bandeSection, bandeStop, jouer } from './visite-sons.js';
 
 // apercu : Zaza voit exactement le tour de Frog, avec seulement une sortie discrète.
 export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
@@ -78,11 +78,10 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
     setTimeout(place, 380);
     setTimeout(place, 900);
   }
-  // Le mot de la fin : Projet 1 revient, la vraie voix de Zaza passe, puis sa question. La réponse de Frog lui arrive.
+  // Le mot de la fin : Projet 1 revient, puis la question de Zaza. La réponse de Frog lui arrive.
   function question() {
     removeEventListener('keydown', key);
     bandeSection('accueil');
-    setTimeout(voixDeZaza, 1500);
     const de = espace.meta?.welcome?.by || espace.meta?.createdBy || 'Zaza';
     box.classList.add('coach-fin');
     box.innerHTML = `<div class="cq" role="dialog" aria-live="polite">

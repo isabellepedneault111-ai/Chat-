@@ -198,6 +198,7 @@ export async function uploadImage(file, onProgress) {
 }
 
 export async function audioURL(audio) {
+  if (audio.src) return audio.src; // exemples du tour : un fichier du site
   if (audioCache.has(audio.id)) return audioCache.get(audio.id);
   const p = (async () => {
     const bufs = [];

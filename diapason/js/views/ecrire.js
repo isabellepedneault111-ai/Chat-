@@ -176,7 +176,7 @@ export default {
           const surQuoi = piecesAvecOreille().find(([id]) => id === sur())[1];
           await saveEntry({ type: 'texte', title: (text.split('\n')[0] || `Mumble sur ${surQuoi}`).slice(0, 80), body: text, audio, data: { journal: true, date: today(), invite: `Écrit sur ${surQuoi}`, flux: true, sur: sur(), stage: 0 } });
           ta.value = ''; yaourtBlob = null; el.querySelector('.flux-yaourt').innerHTML = '';
-          toast('Dans le journal, avec le yaourt.');
+          toast('Dans le journal, avec le mumble.');
         } catch (err) { toast(err.message); }
         b.disabled = false;
         return;

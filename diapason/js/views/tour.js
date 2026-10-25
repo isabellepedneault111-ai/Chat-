@@ -80,7 +80,7 @@ export function startTour(preview) {
         'Ma voix, en direct. Jaune : c’est juste.',
         'Combien de temps je chante juste.',
         'FLIP retient où ma voix brille.',
-      ], ['piece-0', 'piece-1', 'zaza', '', 'piece-4'], V.voix.w / V.voix.h, 'Ton clavier devient le coach de ma voix, dans ma tessiture à moi.'),
+      ], ['piece-0', 'piece-1', 'piece-2', 'piece-3', 'piece-4'], V.voix.w / V.voix.h, 'Ton clavier devient le coach de ma voix, dans ma tessiture à moi.'),
     shot(2, 'À distance, <i>en même temps</i>', 'Chacun chez soi, à la même heure, en appel.',
       frame('z', 'distance-z.jpg', V.distance.pts, [[0, 0], [1, 1], [2, 3]], r(V.distance), 'Chez moi')
       + frame('f', 'distance-f.jpg', V.distance.fpts, [[0, 2]], `${Math.round(V.distance.fw)} / ${Math.round(V.distance.fh)}`, 'Chez toi'), [
