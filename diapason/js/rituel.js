@@ -80,10 +80,92 @@ export function embers(cv, { soft = false } = {}) {
   return { burst() { burst = 10; }, stop() { cancelAnimationFrame(raf); removeEventListener('resize', size); } };
 }
 
+// ---------- Les autres univers : gravure (arcanes), encre (ce qui touche), ombre (peurs), mots flottants ----------
+function loop(cv, draw) {
+  const ctx = cv.getContext('2d');
+  let w = 0; let h = 0; let raf = 0;
+  const dpr = Math.min(2, devicePixelRatio || 1);
+  const size = () => { w = cv.clientWidth; h = cv.clientHeight; cv.width = w * dpr; cv.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+  size();
+  let burst = 0;
+  const tick = (now) => { raf = requestAnimationFrame(tick); draw(ctx, w, h, now / 1000, burst); if (burst > 0) burst -= 0.02; };
+  raf = requestAnimationFrame(tick);
+  addEventListener('resize', size);
+  return { burst() { burst = 1; }, stop() { cancelAnimationFrame(raf); removeEventListener('resize', size); } };
+}
+// Gravure : cercles et rayons dorés, très fins, qui tournent lentement, comme un dos de carte gravé.
+function gravure(cv) {
+  const dust = Array.from({ length: 70 }, () => ({ x: Math.random(), y: Math.random(), s: Math.random() * 6.3 }));
+  return loop(cv, (c, w, h, t, b) => {
+    c.clearRect(0, 0, w, h);
+    const cx = w / 2; const cy = h * 0.52; const R = Math.min(w, h) * 0.46;
+    c.save(); c.translate(cx, cy);
+    for (let k = 0; k < 4; k++) {
+      c.rotate(t * 0.02 * (k % 2 ? -1 : 1));
+      c.strokeStyle = `rgba(214,176,92,${0.10 + b * 0.25})`; c.lineWidth = 1;
+      c.beginPath(); c.arc(0, 0, R * (0.35 + k * 0.2), 0, 6.29); c.stroke();
+      const n = 12 + k * 6;
+      for (let i = 0; i < n; i++) { const a = (i / n) * 6.29; c.beginPath(); c.moveTo(Math.cos(a) * R * (0.33 + k * 0.2), Math.sin(a) * R * (0.33 + k * 0.2)); c.lineTo(Math.cos(a) * R * (0.4 + k * 0.2), Math.sin(a) * R * (0.4 + k * 0.2)); c.stroke(); }
+    }
+    c.restore();
+    for (const d of dust) { c.globalAlpha = 0.2 + 0.5 * Math.abs(Math.sin(t * 0.6 + d.s)); c.fillStyle = '#e8c77a'; c.fillRect(d.x * w, d.y * h, 1.4, 1.4); }
+    c.globalAlpha = 1;
+  });
+}
+// Encre : des nappes d'encre qui se diffusent dans l'eau, puis s'effacent.
+function encre(cv) {
+  const blots = [];
+  return loop(cv, (c, w, h, t, b) => {
+    c.clearRect(0, 0, w, h);
+    if (blots.length < 7 && Math.random() < 0.02 + b * 0.2) blots.push({ x: 0.15 + Math.random() * 0.7, y: 0.2 + Math.random() * 0.7, r: 0, max: 0.18 + Math.random() * 0.25, hue: Math.random() < 0.7 ? '70,100,190' : '150,90,170', life: 1 });
+    for (let i = blots.length - 1; i >= 0; i--) {
+      const o = blots[i]; o.r += (o.max - o.r) * 0.006; o.life -= 0.0016; if (o.life <= 0) { blots.splice(i, 1); continue; }
+      const R = o.r * Math.max(w, h);
+      for (let k = 0; k < 3; k++) {
+        const ox = Math.sin(t * 0.3 + k + i) * R * 0.15; const oy = Math.cos(t * 0.25 + k * 2 + i) * R * 0.15;
+        const g = c.createRadialGradient(o.x * w + ox, o.y * h + oy, 0, o.x * w + ox, o.y * h + oy, R * (0.7 + k * 0.2));
+        g.addColorStop(0, `rgba(${o.hue},${0.16 * o.life})`); g.addColorStop(1, `rgba(${o.hue},0)`);
+        c.fillStyle = g; c.fillRect(0, 0, w, h);
+      }
+    }
+  });
+}
+// Ombre : presque noir, un faisceau de lumière lent qui balaie, de la poussière dans la lumière.
+function ombre(cv) {
+  const dust = Array.from({ length: 120 }, () => ({ x: Math.random(), y: Math.random(), v: 0.0002 + Math.random() * 0.0005, s: Math.random() * 6.3 }));
+  return loop(cv, (c, w, h, t, b) => {
+    c.clearRect(0, 0, w, h);
+    const a = -0.5 + Math.sin(t * 0.12) * 0.35; const x0 = w * 0.5; const y0 = -h * 0.1;
+    c.save(); c.translate(x0, y0); c.rotate(a);
+    const g = c.createLinearGradient(-w * 0.18, 0, w * 0.18, 0);
+    g.addColorStop(0, 'rgba(220,225,235,0)'); g.addColorStop(0.5, `rgba(220,225,235,${0.10 + b * 0.15})`); g.addColorStop(1, 'rgba(220,225,235,0)');
+    c.fillStyle = g; c.beginPath(); c.moveTo(-w * 0.04, 0); c.lineTo(w * 0.04, 0); c.lineTo(w * 0.3, h * 1.5); c.lineTo(-w * 0.3, h * 1.5); c.closePath(); c.fill();
+    c.restore();
+    for (const d of dust) { d.y -= d.v; if (d.y < 0) d.y = 1; c.globalAlpha = 0.15 + 0.35 * Math.abs(Math.sin(t + d.s)); c.fillStyle = '#dfe3ea'; c.fillRect(d.x * w + Math.sin(t * 0.4 + d.s) * 6, d.y * h, 1.2, 1.2); }
+    c.globalAlpha = 1;
+  });
+}
+// Nos mots : les mots du champ qui flottent, très doucement.
+function flottants(cv, words) {
+  const W = (words.length ? words : ['lune', 'marée', 'braise', 'souffle']).slice(0, 24).map((w) => ({ w, x: Math.random(), y: Math.random(), v: 0.0003 + Math.random() * 0.0006, s: 14 + Math.random() * 26, p: Math.random() * 6.3 }));
+  return loop(cv, (c, w, h, t) => {
+    c.clearRect(0, 0, w, h);
+    for (const o of W) {
+      o.y -= o.v; if (o.y < -0.05) { o.y = 1.05; o.x = Math.random(); }
+      c.globalAlpha = 0.08 + 0.12 * Math.abs(Math.sin(t * 0.3 + o.p));
+      c.fillStyle = '#f3ead6'; c.font = `600 ${o.s}px Literata, Georgia, serif`;
+      c.fillText(o.w, o.x * w, o.y * h);
+    }
+    c.globalAlpha = 1;
+  });
+}
+const FONDS = { arcanes: gravure, touche: encre, peurs: ombre };
+
 const BACK = `<div class="rc-back"><div class="rc-frame"></div><div class="rc-emblem">${FLAME('rc-flame')}</div><p class="rc-mark">FLIP</p></div>`;
 function faceHTML(t) {
   return `<div class="rc-face"><div class="rc-frame"></div>
-    <p class="rc-num">${ROMAN[t.num % ROMAN.length]}</p>
+    ${t.num != null ? `<p class="rc-num">${typeof t.num === 'string' ? t.num : ROMAN[t.num % ROMAN.length]}</p>` : ''}
+    ${t.emblem ? `<div class="rc-emb">${t.emblem}</div>` : ''}
     <p class="rc-name">${esc(t.card.nom)}</p>
     <p class="rc-word">${t.mots.map(esc).join('<br>')}</p>
     <p class="rc-rule">${esc(t.card.consigne)}</p>
@@ -92,9 +174,9 @@ function faceHTML(t) {
 }
 
 // tirages : trois { card, mots, num } ; onAccept(tirage) ; resolve à la fermeture.
-export function rituel(tirages, { onAccept, theme = '' } = {}) {
+export function rituel(tirages, { onAccept, theme = '', kind = 'mots', words = [], note = '' } = {}) {
   const box = document.createElement('div');
-  box.className = 'rituel';
+  box.className = `rituel k-${kind}`;
   box.setAttribute('role', 'dialog');
   box.setAttribute('aria-modal', 'true');
   box.setAttribute('aria-label', 'Tirer une carte du grimoire');
@@ -103,13 +185,14 @@ export function rituel(tirages, { onAccept, theme = '' } = {}) {
     <button class="rt-close" data-r="close" aria-label="Fermer">×</button>
     <div class="rt-breath"><div class="rt-flame">${FLAME('rt-flame-svg')}</div><p class="rt-say">Inspire…</p></div>
     <div class="rt-stage" hidden>
-      <p class="rt-ask">${theme ? `<span>${esc(theme)}</span>` : ''}Choisis une carte.</p>
+      <p class="rt-ask">${theme ? `<span>${esc(theme)}</span>` : ''}Choisis une carte.${note ? `<small>${esc(note)}</small>` : ''}</p>
       <div class="rt-fan">${tirages.map((t, i) => `<button class="rcard" data-i="${i}" style="--i:${i - 1};--a:${Math.abs(i - 1)}" aria-label="Carte ${i + 1}"><div class="rc-inner">${BACK}${faceHTML(t)}</div></button>`).join('')}</div>
-      <div class="rt-choice" hidden><button class="btn big rt-accept" data-r="accept">Accepter la carte</button><button class="btn ghost rt-again" data-r="again">La rendre au feu</button></div>
+      <div class="rt-choice" hidden><button class="btn big rt-accept" data-r="accept">Accepter la carte</button><button class="btn ghost rt-again" data-r="again">En choisir une autre</button></div>
     </div>`;
   document.body.appendChild(box);
   requestAnimationFrame(() => box.classList.add('in'));
-  const fx = embers(box.querySelector('.rt-embers'));
+  const cvs = box.querySelector('.rt-embers');
+  const fx = kind === 'contrainte' ? embers(cvs) : kind === 'mots' ? flottants(cvs, words) : FONDS[kind](cvs);
   const stopDrone = drone();
   let chosen = null;
   const timers = [];

@@ -9,6 +9,7 @@ import { ecrire } from '../ecrire.js';
 import { rituel } from '../rituel.js';
 import { FLAME } from '../marque.js';
 import { intentions } from './relais.js';
+import { SOURCES, tirer } from '../sources.js';
 import { logPractice } from '../traces.js';
 
 // Le paquet : consignes classiques d'ateliers d'écriture. brise = 1 à 3 minutes pour se délier.
@@ -42,7 +43,7 @@ const ATELIERS = 'jeu-ateliers';
 export default {
   id: 'jeux',
   mount(el) {
-    let filtre = 'brise';
+    let source = 'arcanes';
     let writer = null;
     let tirage = null;
     let picker = null;
@@ -66,7 +67,8 @@ export default {
         </section>
         <section class="jx-draw screen panel">
           <div class="jx-draw-head">
-            <div class="seg-tabs" role="tablist">${[['brise', 'Rituel court · 3 min'], ['atelier', 'Rituel long'], ['tout', 'Tout le grimoire']].map(([id, l]) => `<button role="tab" data-filtre="${id}" aria-selected="${id === filtre}">${l}</button>`).join('')}</div>
+            <p class="jx-q">D’où vient l’inspiration aujourd’hui?</p>
+            <div class="jx-sources" role="radiogroup">${SOURCES.map((x) => `<button class="jx-src s-${x.id}" role="radio" data-src="${x.id}" aria-checked="${x.id === source}"><b>${x.nom}</b><small>${x.sous}</small></button>`).join('')}</div>
             <button class="btn big jx-open" data-j="draw">${FLAME('jx-flame')} Ouvrir le grimoire</button>
           </div>
           <div class="jx-card"></div>
@@ -102,17 +104,14 @@ export default {
     // ---------- Tirage ----------
     function draw() {
       const ws = words().map((w) => w.w);
-      if (!ws.length) { toast('Le grimoire puise dans vos mots : déposez-en quelques-uns d’abord.'); el.querySelector('[data-j=word]').focus(); return; }
-      const deck = [...CARTES, ...perso()].filter((c) => filtre === 'tout' || (filtre === 'brise' ? c.brise : !c.brise));
-      // Trois cartes face cachée, chacune avec son mot : on en choisit une.
-      const cards = [...deck].sort(() => Math.random() - 0.5).slice(0, 3);
-      const all = [...CARTES, ...perso()];
-      const tirages = cards.map((card) => {
-        const sh = [...ws].sort(() => Math.random() - 0.5);
-        return { card, mots: card.trois ? sh.slice(0, 3) : [sh[0]], num: all.indexOf(card) };
-      });
+      if (source === 'mots' && !ws.length) { toast('Cette source puise dans vos mots : déposez-en quelques-uns d’abord.'); el.querySelector('[data-j=word]').focus(); return; }
+      const deck = [...CARTES, ...perso()];
+      // Trois cartes face cachée, chacune avec son univers selon la source : on en choisit une.
+      const tirages = tirer(source, ws, deck);
+      const src = SOURCES.find((x) => x.id === source);
       rituel(tirages, {
-        theme: find(CHAMP)?.data?.theme || '',
+        kind: source, words: ws, note: src.note,
+        theme: source === 'mots' ? (find(CHAMP)?.data?.theme || 'Nos mots') : src.nom,
         onAccept: (t) => { tirage = t; logPractice('grimoire', 1, { carte: t.card.nom, mot: t.mots.join(', ') }); renderCard(); el.querySelector('.jx-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); },
       });
     }
@@ -202,8 +201,8 @@ export default {
       } catch (err) { toast(err.message); }
     });
     el.addEventListener('click', async (e) => {
-      const fb = e.target.closest('[data-filtre]');
-      if (fb) { filtre = fb.dataset.filtre; el.querySelectorAll('[data-filtre]').forEach((b) => b.setAttribute('aria-selected', b === fb)); return; }
+      const sb = e.target.closest('[data-src]');
+      if (sb) { source = sb.dataset.src; el.querySelectorAll('[data-src]').forEach((b) => b.setAttribute('aria-checked', b === sb)); return; }
       const del = e.target.closest('[data-del]');
       if (del) { const i = +del.dataset.del; await merge(CHAMP, 'Notre champ lexical', (d) => ({ ...d, words: (d.words || []).filter((w, k) => !(k === i && w.by === espace.me)) })); return; }
       const dc = e.target.closest('[data-delcard]');

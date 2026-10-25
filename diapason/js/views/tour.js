@@ -11,6 +11,7 @@ const seenInSpace = () => !!espace.meta?.tour?.[espace.me];
 
 export function maybeTour() {
   if (!espace.connected || !espace.me) return;
+  if (store.get('apercuApres', false)) { store.set('apercuApres', false); startTour(true); return; }
   if (espace.meta.createdBy && espace.me === espace.meta.createdBy) return; // celle qui a créé l'espace n'a pas besoin de la visite
   if (store.get(seenKey(), false) || seenInSpace()) return;
   startTour(false);
@@ -83,6 +84,7 @@ export function startTour(preview) {
   box.setAttribute('aria-label', 'Visite guidée');
   box.innerHTML = `
     <canvas class="t-embers" aria-hidden="true"></canvas>
+    ${preview ? `<p class="t-apercu">Aperçu : tu vois ce que ${esc(me)} verra. Rien n’est marqué pour ${esc(me)}. <button data-t="end">Fermer l’aperçu</button></p>` : ''}
     <div class="t-progress">${slides.map(() => '<i></i>').join('')}</div>
     <button class="t-skip" data-t="end">Passer</button>
     <div class="t-slide"></div>

@@ -9,6 +9,7 @@ import { activeSession } from './session.js';
 import { relaisPending, asksOf } from './relais.js';
 import { pendantHTML } from '../traces.js';
 import { enAttenteDeMoi } from '../corbeille.js';
+import { lune, luneSVG, TEMPS } from '../lune.js';
 
 // Où aller : chaque outil rangé par ce qu'on veut faire, pas par son nom.
 const OU_ALLER = [
@@ -55,6 +56,20 @@ export default {
       </section>`;
     }
 
+    // La lune : une ligne, un temps de création, et les intentions du cycle.
+    function luneHTML() {
+      const l = lune();
+      const [t, geste, href] = TEMPS[l.temps];
+      const lm = espace.meta.lune?.cycle === l.cycle ? espace.meta.lune : { cycle: l.cycle, intentions: {} };
+      const mine = lm.intentions?.[espace.me];
+      const autres = Object.entries(lm.intentions || {});
+      return `<div class="lune-line">
+        ${luneSVG(l)}<span><b>${l.nom}</b> · ${t}. ${href ? `<a href="${href}">${geste}</a>` : geste}</span>
+        ${autres.length ? `<span class="lune-int">${autres.map(([w, x]) => `<i style="color:${memberColor(w)}">${esc(w)}</i> « ${esc(x)} »`).join(' · ')}</span>` : ''}
+        ${!mine ? `<form class="lune-form"><input class="input" data-lune maxlength="140" placeholder="Ton intention pour ce cycle (jusqu’à la prochaine nouvelle lune)"><button class="btn small">Poser</button></form>` : ''}
+      </div>`;
+    }
+
     // Notre fil : de la même pièce à chacun de son côté, le mouvement ne s'arrête jamais.
     function filHTML() {
       const last = (f) => Math.max(0, ...espace.entries.filter(f).map((e) => e.data?.doneAt || e.createdAt));
@@ -99,7 +114,7 @@ export default {
           <p>Objectifs, voix, styles, besoins : chacun le sien, puis notre portrait commun. C’est lui qui nourrit le plan.</p>
           <span class="e1-who">${portraits.map((x) => `<span style="--c:${memberColor(x.m)}" class="${x.ok ? 'ok' : ''}">${esc(x.m)} ${x.ok ? '✓' : '· à faire'}</span>`).join('')}</span>
         </a>` : '';
-      if (!start && !editingVision) { el.innerHTML = head + todayHTML() + filHTML() + pendantHTML() + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
+      if (!start && !editingVision) { el.innerHTML = head + luneHTML() + todayHTML() + filHTML() + pendantHTML() + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
       if (editingVision) { el.innerHTML = head + setupHTML(!!start); return; }
 
       const m = currentMonth();
@@ -117,6 +132,7 @@ export default {
       const v = espace.meta.vision || {};
       el.innerHTML = `
         ${head}
+        ${luneHTML()}
         ${todayHTML()}
         ${filHTML()}
         ${pendantHTML()}
@@ -194,6 +210,15 @@ export default {
         </section>`;
     }
 
+    el.addEventListener('submit', async (e) => {
+      if (!e.target.classList.contains('lune-form')) return;
+      e.preventDefault();
+      const v = e.target.querySelector('[data-lune]').value.trim();
+      if (!v) return;
+      const l = lune();
+      const cur = espace.meta.lune?.cycle === l.cycle ? espace.meta.lune : { cycle: l.cycle, intentions: {} };
+      try { await updateEspace({ lune: { cycle: l.cycle, intentions: { ...cur.intentions, [espace.me]: v } } }); toast('Intention posée pour ce cycle.'); } catch (err) { toast(err.message); }
+    });
     el.addEventListener('click', async (e) => {
       const a = e.target.closest('[data-h]')?.dataset.h;
       if (a === 'edit') { editingVision = true; render(); }

@@ -62,7 +62,7 @@ export function espaceGate(host, { onReady } = {}) {
       me = w.dataset.who;
       host.querySelectorAll('[data-who]').forEach((b) => b.classList.toggle('on', b === w));
       const hint = host.querySelector('[data-g=hint]');
-      if (hint) { const o = names.find((n) => n !== me) || 'Zaza'; hint.textContent = `${me}, ${o} a sans doute déjà créé votre espace : entre le mot secret qu’${o === 'Zaza' ? 'elle' : 'il'} t’a donné.`; host.querySelector('[data-g=secret]').focus(); }
+      if (hint) { hint.textContent = `${me}, entre le mot secret de votre duo : cet appareil rejoindra votre espace.`; host.querySelector('[data-g=secret]').focus(); }
       if (espace.connected) { espace.me = me; onReady?.(); import('./tour.js').then((t) => t.maybeTour()); }
       return;
     }

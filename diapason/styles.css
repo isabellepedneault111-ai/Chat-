@@ -1752,3 +1752,53 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 /* Studio la nuit : anthracite, brume, grain (remplace étoiles et lune) */
 .rituel, .tour { background: radial-gradient(120% 90% at 50% 100%, #1b1410 0%, #0e0c0b 55%, #090808 100%); }
 .rituel::after, .tour::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .06; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); z-index: 0; }
+.t-apercu { position: absolute; top: 26px; left: 50%; transform: translateX(-50%); z-index: 3; margin: 0; padding: 6px 12px; border-radius: 999px; background: rgba(201, 164, 92, .18); border: 1px solid rgba(201, 164, 92, .5); color: #f3ead6; font-size: .82rem; white-space: nowrap; }
+.t-apercu button { margin-left: 8px; border: 0; background: none; color: #ffd36b; font-weight: 700; cursor: pointer; text-decoration: underline; }
+@media (max-width: 560px) { .t-apercu { white-space: normal; width: calc(100% - 32px); text-align: center; top: 30px; } }
+/* Grimoire : les sources */
+.jx-q { flex-basis: 100%; margin: 0 0 8px; color: #e6dfd0; font-family: var(--display); font-size: 1.2rem; }
+.jx-sources { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; flex: 1 1 100%; margin-bottom: 12px; }
+.jx-src { text-align: left; cursor: pointer; padding: 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .14); color: #f3ead6; display: grid; gap: 4px; min-height: 92px; transition: transform .15s, border-color .15s; }
+.jx-src b { font-family: var(--display); font-weight: 700; font-size: 1.05rem; }
+.jx-src small { font-size: .78rem; opacity: .8; line-height: 1.35; }
+.jx-src:hover { transform: translateY(-2px); }
+.jx-src[aria-checked="true"] { border-color: #d9b56a; box-shadow: 0 0 0 2px #d9b56a; }
+.s-arcanes { background: linear-gradient(160deg, #6e1c16 0%, #1d2a5a 100%); }
+.s-touche { background: radial-gradient(120% 120% at 30% 20%, #33437e 0%, #141a33 70%); }
+.s-peurs { background: linear-gradient(180deg, #2a2d33 0%, #0b0b0c 100%); }
+.s-contrainte { background: radial-gradient(120% 120% at 50% 110%, #5a2a10 0%, #16100c 70%); }
+.s-mots { background: linear-gradient(160deg, #3b352c 0%, #181512 100%); }
+.jx-draw-head { flex-wrap: wrap; }
+/* Rituel : un univers par source */
+.rituel.k-arcanes { background: radial-gradient(110% 90% at 50% 50%, #3a1210 0%, #170a0a 50%, #0b0d1c 100%); }
+.rituel.k-touche { background: radial-gradient(120% 100% at 50% 40%, #121a36 0%, #080b17 70%); }
+.rituel.k-peurs { background: #060607; }
+.rituel.k-mots { background: radial-gradient(120% 100% at 50% 60%, #221d17 0%, #0b0a09 70%); }
+.rituel.k-arcanes .rc-back { background: repeating-linear-gradient(45deg, #7a1e17 0 6px, #6b1913 6px 12px), #7a1e17; box-shadow: inset 0 0 0 1px #d6b05c, 0 10px 40px rgba(0, 0, 0, .55); }
+.rituel.k-arcanes .rc-back::before { content: ''; position: absolute; inset: 18%; border: 1px solid #d6b05c; transform: rotate(45deg); background: #1d2a5a; }
+.rituel.k-arcanes .rc-emblem { position: relative; z-index: 1; }
+.rituel.k-touche .rc-back { background: radial-gradient(90% 60% at 50% 45%, #2e3d78 0%, #10152b 75%); box-shadow: inset 0 0 0 1px #8ea2e8, 0 10px 40px rgba(0, 0, 0, .55); }
+.rituel.k-touche .rc-frame, .rituel.k-touche .rc-mark, .rituel.k-touche .rc-emblem { border-color: #8ea2e8; color: #b9c6f2; }
+.rituel.k-peurs .rc-back { background: linear-gradient(180deg, #24262b, #0d0d0f); box-shadow: inset 0 0 0 1px #9aa0aa, 0 10px 40px rgba(0, 0, 0, .7); }
+.rituel.k-peurs .rc-frame, .rituel.k-peurs .rc-mark, .rituel.k-peurs .rc-emblem { border-color: #9aa0aa; color: #c9ced6; }
+.rituel.k-mots .rc-back { background: radial-gradient(90% 60% at 50% 45%, #3b342a 0%, #15120f 75%); }
+.rc-emb { width: 34%; aspect-ratio: 1; margin: 6px auto 0; color: #9a7633; }
+.rc-emb .emb { width: 100%; height: 100%; }
+.rituel.k-arcanes .rc-face { background: radial-gradient(120% 80% at 30% 10%, #fbf1dc 0%, #f0dfbd 70%, #e3cc9e 100%); }
+.rituel.k-arcanes .rc-word { font-size: calc(var(--w) * .12); }
+.rt-ask small { display: block; margin-top: 8px; font-family: var(--body); font-style: normal; font-size: .82rem; color: #bfb6a4; }
+.rituel.k-touche .rc-face { background: radial-gradient(120% 80% at 30% 10%, #f4f6fd 0%, #dfe5f6 70%, #c9d2ee 100%); box-shadow: inset 0 0 0 1px #6f86c9, 0 10px 40px rgba(0, 0, 0, .55); }
+.rituel.k-touche .rc-face .rc-frame { border-color: #6f86c9; }
+.rituel.k-touche .rc-name { color: #3e4f8c; }
+.rituel.k-peurs .rc-face { background: radial-gradient(120% 80% at 30% 10%, #f3f3f1 0%, #dcdcd8 70%, #c6c6c1 100%); box-shadow: inset 0 0 0 1px #8a8d93, 0 10px 40px rgba(0, 0, 0, .7); }
+.rituel.k-peurs .rc-face .rc-frame { border-color: #8a8d93; }
+.rituel.k-peurs .rc-name { color: #4b4e55; }
+/* La lune, discrète */
+.lune-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: -6px 0 14px; font-size: .9rem; color: var(--ink-2); }
+.lune-ico { flex: none; color: var(--ink); }
+.lune-line a { color: inherit; text-decoration-color: var(--tape); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.lune-int { flex-basis: 100%; padding-left: 28px; font-family: var(--display); font-size: .92rem; }
+.lune-int i { font-style: normal; font-family: var(--body); font-weight: 700; }
+.lune-form { flex-basis: 100%; display: flex; gap: 6px; padding-left: 28px; }
+.lune-form .input { flex: 1 1 auto; max-width: 480px; padding: 6px 10px; font-size: .9rem; }
+.lune-bilan h2 { display: flex; align-items: center; gap: 8px; }

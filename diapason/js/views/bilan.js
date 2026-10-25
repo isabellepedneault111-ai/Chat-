@@ -3,6 +3,7 @@
 import { espace, onEspace, profileOf } from '../espace.js';
 import { PLAN, EXERCICES, MEMBERS, memberColor, FORMATS, RYTHME } from '../duo.js';
 import { FLAME } from '../marque.js';
+import { lune, luneSVG } from '../lune.js';
 import { exempleHTML, bindExemples } from '../exemples.js';
 import { currentMonth, planContext, planStart, weekRhythm } from '../plan.js';
 import { esc, espaceGate } from './carnet.js';
@@ -259,6 +260,7 @@ export default {
           }).join('')}
         </section>
 
+        ${(() => { const l = lune(); const lm = espace.meta.lune; return lm?.cycle === l.cycle && Object.keys(lm.intentions || {}).length ? `<section class="panel lune-bilan"><h2>${luneSVG(l, 22)} Les intentions du cycle</h2>${Object.entries(lm.intentions).map(([w, x]) => `<p><b style="color:${memberColor(w)}">${esc(w)}</b> « ${esc(x)} »</p>`).join('')}<p class="muted small">Depuis la nouvelle lune du ${fmt(new Date(lm.cycle + 'T12:00'))}. ${esc(l.nom)} aujourd’hui.</p></section>` : ''; })()}
         ${start ? `<section class="panel"><div class="panel-head"><h2>Notre route</h2><span class="muted small">Chaque action y laisse sa marque</span></div>${routeHTML(start, mem)}</section>` : ''}
 
         <section class="panel">

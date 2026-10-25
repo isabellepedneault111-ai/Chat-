@@ -54,6 +54,8 @@ async function route() {
   // Aperçu de la visite de Frog : elle se joue sans être marquée comme vue pour lui.
   if (id === 'apercu-visite') {
     location.replace('#/');
+    // Appareil pas encore connecté : on le dit, et l'aperçu démarrera dès la connexion.
+    if (!espace.id) { store.set('apercuApres', true); toast('Pour voir la visite de Frog : choisis ton nom et entre votre mot secret. Elle démarrera toute seule.'); return; }
     import('./views/tour.js').then((t) => { const go = (n = 0) => (espace.meta ? t.startTour(true) : n < 40 && setTimeout(() => go(n + 1), 250)); go(); });
     return;
   }
