@@ -76,6 +76,7 @@ const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet
 }
 initEtincelle();
 const VOIX = ['accord', 'miroir', 'tessiture', 'gym'];
+const LABO = ['labo', 'cathedrale'];
 const view = $('#view');
 installerGlossaire(view); // les mots de musique s'expliquent au survol
 installerSommaire(view); // en haut de chaque page : tout ce qu'on peut y faire
@@ -118,11 +119,12 @@ async function route() {
   host.className = `view-${v.id}`;
   view.replaceChildren(host);
   // Voix regroupe les 3 outils vocaux : petite barre d'onglets en haut.
-  if (VOIX.includes(v.id)) {
+  const fratrie = VOIX.includes(v.id) ? VOIX : LABO.includes(v.id) ? LABO : null;
+  if (fratrie) {
     const sub = document.createElement('nav');
     sub.className = 'subnav';
-    sub.setAttribute('aria-label', 'Voix');
-    sub.innerHTML = VOIX.map((m) => { const mm = MODULES.find((x) => x.id === m); return `<a href="#/${m}" class="${m === v.id ? 'active' : ''}" style="--c:${mm.color}"><span class="mono">${mm.num}</span>${mm.name}</a>`; }).join('');
+    sub.setAttribute('aria-label', fratrie === VOIX ? 'Voix' : 'Labo');
+    sub.innerHTML = fratrie.map((m) => { const mm = MODULES.find((x) => x.id === m); return `<a href="#/${m}" class="${m === v.id ? 'active' : ''}" style="--c:${mm.color}"><span class="mono">${mm.num}</span>${mm.name}</a>`; }).join('');
     view.prepend(sub);
   }
   // Un fil pour ne jamais se perdre : partout, un retour au plan de match, avec le cap du mois.
@@ -143,7 +145,7 @@ async function route() {
   cleanup = v.mount(host) || null;
   const ap = APPUIS[v.id];
   if (ap) { const f = document.createElement('p'); f.className = 'appui'; f.innerHTML = `<span>Pourquoi :</span> ${ap[0]} <cite>${ap[1]}</cite>`; view.appendChild(f); }
-  const group = VOIX.includes(v.id) ? 'voix' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' || v.id === 'ames' || v.id === 'arbre' ? 'home' : ['jeux', 'paroles', 'atelier', 'ecrire', 'placer'].includes(v.id) ? 'ecrire' : v.id;
+  const group = VOIX.includes(v.id) ? 'voix' : LABO.includes(v.id) ? 'labo' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' || v.id === 'ames' || v.id === 'arbre' ? 'home' : ['jeux', 'paroles', 'atelier', 'ecrire', 'placer'].includes(v.id) ? 'ecrire' : v.id;
   $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.id === group));
   if (v.id === 'carnet') { unseen = 0; showBadge(); }
   document.title = mod ? `${mod.name} · Diapason Labo` : 'Diapason Labo · FLIP';
@@ -168,7 +170,7 @@ micBtn.addEventListener('click', async () => {
 onMicStatus((on, err) => {
   micBtn.classList.toggle('on', on);
   micBtn.setAttribute('aria-pressed', on);
-  micBtn.querySelector('.mic-label').textContent = on ? 'Micro ouvert' : 'Micro';
+  micBtn.querySelector('.mic-label').textContent = on ? 'Micro ouvert' : 'Micro fermé';
   micBtn.title = on ? 'Le micro est ouvert : Voix, Miroir et Empreinte t’entendent. Touche pour le fermer.' : 'Ouvrir le micro (pour chanter dans Voix, Miroir, Empreinte)';
   if (err) toast('Micro refusé. Autorise-le dans la barre d’adresse du navigateur.');
 });
@@ -195,6 +197,13 @@ function openDrawer(open) {
   if (open) $('#drawerClose').focus();
 }
 $('#pistesBtn').addEventListener('click', () => openDrawer(!drawer.classList.contains('open')));
+// « ⋯ Plus » : les outils occasionnels (le coffre, pourquoi ça marche, la contrainte surprise, le grand texte).
+const plusBtn = $('#plusBtn'); const plusPop = $('.plus-pop');
+const plusOuvert = (on) => { plusPop.hidden = !on; plusBtn.setAttribute('aria-expanded', on); };
+plusBtn.addEventListener('click', (e) => { e.stopPropagation(); plusOuvert(plusPop.hidden); });
+plusPop.addEventListener('click', () => setTimeout(() => plusOuvert(false), 0));
+document.addEventListener('click', (e) => { if (!plusPop.hidden && !e.target.closest('.plus-menu')) plusOuvert(false); });
+addEventListener('hashchange', () => plusOuvert(false));
 $('#drawerClose').addEventListener('click', () => openDrawer(false));
 scrim.addEventListener('click', () => openDrawer(false));
 

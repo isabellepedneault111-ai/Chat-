@@ -3253,3 +3253,24 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 a.md-lien { color: inherit; }
 .md-lien:hover { color: #b53c0a; text-decoration-color: #b53c0a; }
 .vise { outline: 3px solid #e8c27a; outline-offset: 4px; border-radius: 8px; transition: outline-color .4s; }
+/* La barre, repensée : Labo devient un onglet ; ses outils occasionnels passent dans « ⋯ Plus » */
+.tool-labo { display: none !important; }
+@media (max-width: 760px) { .nav .nav-labo { display: none !important; } .tool-labo { display: grid !important; } }
+.plus-menu { position: relative; }
+.plus-pop { position: absolute; right: 0; top: calc(100% + 8px); z-index: 70; display: grid; gap: 2px; min-width: 250px; padding: 6px; border-radius: 12px; background: var(--paper, #fbf6ea); border: 1.5px solid var(--rule); box-shadow: 0 16px 36px -16px rgba(0,0,0,.45); }
+.plus-pop[hidden] { display: none; }
+.plus-pop > * { display: flex !important; align-items: center; gap: 10px; width: 100% !important; height: 40px; padding: 0 10px !important; border: 0 !important; background: none !important; border-radius: 8px !important; text-decoration: none; color: inherit; cursor: pointer; font: 600 .9rem var(--body, inherit); text-align: left; }
+.plus-pop > *:hover { background: rgba(127,127,127,.12) !important; }
+.plus-pop > * svg { flex: none; }
+.tools .plus-pop [data-tip]::after, .tools .plus-pop [data-tip]:hover::after { content: attr(aria-label); position: static; display: inline; background: none; color: inherit; box-shadow: none; padding: 0; width: auto; max-width: none; font: 600 .9rem var(--body, inherit); }
+.mic-pill.on .mic-label { color: inherit; }
+.tools .plus-btn[aria-expanded="true"]::after { display: none !important; }
+.icon-btn.tool-labo { border: 1.5px solid var(--rule) !important; color: inherit !important; height: 36px; width: 36px; padding: 0 !important; }
+/* La rosace de la cathédrale */
+.ca-rosace { display: grid; grid-template-columns: minmax(0, 520px) minmax(0, 1fr); gap: 28px; align-items: center; margin: 6px 0 18px; padding: 22px; border-radius: 18px; background: radial-gradient(ellipse at 30% 40%, #2a2420, #100e0b 70%); color: #efe6d2; }
+.ca-ros { width: 100%; height: auto; aspect-ratio: 1; display: block; filter: drop-shadow(0 0 30px rgba(232,194,122,.18)); }
+.ca-ros-txt h2 { margin: 2px 0 10px; font: 800 clamp(1.5rem, 3vw, 2.2rem) var(--display); color: #fff; }
+.ca-ros-txt p { color: #cfc6b4; line-height: 1.55; } .ca-ros-txt .eyebrow { color: #e8c27a; }
+.ca-ros-txt .btn { background: #e8c27a; color: #141210; border-color: #e8c27a; }
+@media (max-width: 760px) { .ca-rosace { grid-template-columns: 1fr; padding: 14px; gap: 12px; } }
+.ca-ros-txt .eyebrow { background: none !important; color: #e8c27a !important; padding: 0 !important; }

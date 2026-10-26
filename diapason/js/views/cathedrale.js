@@ -3,6 +3,7 @@
 // et si l'ensemble penche vers le rythme ou vers l'harmonie. Puis on écoute, on garde, on exporte.
 import { toast, store, autoCanvas, animate } from '../ui.js';
 import { lampeHTML, brancherLampe } from '../lampe.js';
+import { dessinerRosace } from '../rosace.js';
 import { FR } from '../music.js';
 import { espace, saveEntry, uploadAudio } from '../espace.js';
 import { composer, jouer, rendre, charger, evenementsMidi, FAMILLES, RYTHME_DEFAUT, cleDepuisNotes, segmentsMidi, accordsDesSegments, cathedraleDuJeu } from '../cathedrale.js';
@@ -40,6 +41,9 @@ export default {
         <h1>Quelques nombres, tout un orchestre.</h1>
         <p class="muted">Une clé de voûte, jouée à trois vitesses en même temps. Très lente, elle donne <b>la forme</b> (les parties durent 4, 5, 6, 7) ; moyenne, <b>le rythme</b> (4 contre 5 contre 6 contre 7) ; rapide, <b>l’harmonie</b> (les mêmes rapports entre les fréquences : un accord en intonation juste). Le labo bâtit la cathédrale ; vous décidez où mettre la lumière.</p>
       </div></div>
+      <section class="ca-rosace"><canvas class="ca-ros" width="900" height="900" role="img" aria-label="La rosace de cette cathédrale : un anneau de vitraux par nombre de la clé de voûte"></canvas>
+        <div class="ca-ros-txt"><p class="eyebrow">La rosace</p><h2>Le vitrail de votre clé</h2><p>Chaque anneau de vitraux, du centre vers le bord, est un nombre de la clé de voûte ; il compte autant de vitraux que son nombre en demande, aux couleurs de la lumière choisie pour sa partie. Changez la clé ou la lumière : le vitrail change. Pendant l’écoute, la lumière tourne et l’anneau de la partie qui joue s’embrase.</p>
+          <button class="btn" data-ca="png">⬇ La rosace (image)</button></div></section>
       <section class="ca-scene"><canvas class="ca-cv" aria-label="La cathédrale : une arche par partie, la rosace de la clé de voûte, et la lumière qui avance"></canvas>
         <div class="ca-lecture"><button class="btn primary big" data-ca="jouer">▶ Bâtir et écouter</button><span class="ca-temps mono"></span>${lampeHTML()}</div></section>
       <section class="panel ca-disques-p"><div class="panel-head"><h2>Les disques</h2><span class="muted small">un disque par nombre de la clé : il frappe autant de fois par tour, et sonne dans l’accord</span></div>
@@ -120,7 +124,17 @@ export default {
       dessiner(lecteur ? lecteur.position() : -1);
     }
 
+    const ros = q('.ca-ros'); const rctx = ros.getContext('2d');
+    let rosaceT = 0;
+    function rosace(pos = -1) {
+      if (!oeuvre?.sections?.length) return;
+      // Pendant l'écoute, huit images par seconde suffisent à une lumière qui tourne lentement (et l'ordi respire).
+      if (pos >= 0) { const t = performance.now(); if (t - rosaceT < 120) return; rosaceT = t; }
+      const couleurs = oeuvre.sections.map((s) => COUL[s.lumiere] || '#e8c27a'); const actif = pos < 0 ? -1 : oeuvre.sections.findIndex((s) => pos >= s.a && pos < s.b);
+      dessinerRosace(rctx, ros.width, { cle: oeuvre.r, couleurs, lumiere: pos < 0 ? -1 : (pos / oeuvre.duree) % 1, actif });
+    }
     function dessiner(pos) {
+      rosace(pos);
       const { ctx, w, h } = cv; if (!w || !oeuvre) return;
       ctx.clearRect(0, 0, w, h); const g = ctx.createRadialGradient(w / 2, h * 0.3, 10, w / 2, h * 0.5, w * 0.7); g.addColorStop(0, '#2a2520'); g.addColorStop(1, '#100e0b'); ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
       const M = 24; const base = h - 28; const haut = h * 0.34; const L = w - 2 * M; const X = (t) => M + (t / oeuvre.duree) * L;
@@ -195,6 +209,7 @@ export default {
         b.disabled = false; b.textContent = avant;
       }
       if (a === 'mid') telecharger(fichierMidi(evenementsMidi(oeuvre)), 'mid');
+      if (a === 'png') { rosace(-1); ros.toBlob((b) => telecharger(b, 'png'), 'image/png'); }
     });
     el.addEventListener('change', (e) => {
       const dm = e.target.dataset.dm; const dj = e.target.closest('[data-d]');

@@ -59,6 +59,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.31', quand: '2026-10-26', titre: 'La rosace, et une barre plus claire', items: [
+    ['La rosace de votre cathédrale', ['En haut de la cathédrale, un grand vitrail gothique calculé à partir de votre clé de voûte : un anneau de vitraux par nombre (du centre vers le bord), autant de vitraux que le nombre en demande, aux couleurs de la lumière choisie pour chaque partie ; des ogives au bord, du verre soufflé serti de plomb, des meneaux de pierre. Chaque clé donne une rosace unique.', 'Pendant l’écoute, la lumière tourne et l’anneau de la partie qui joue s’embrase. « ⬇ La rosace » l’enregistre en image (pour une pochette, par exemple).']],
+    ['Labo devient un onglet', ['Le labo a sa place dans la barre, comme Jouer et Voix. Dedans, deux sous-onglets : <b>Le labo</b> (les disques) et <b>La cathédrale</b>.']],
+    ['Micro et Voix ne se confondent plus', ['<b>Voix</b> (l’onglet, une note de musique) regroupe les outils pour chanter. Le bouton <b>Micro</b> dit maintenant son état : « Micro fermé » ou « Micro ouvert ». Ouvert, l’app entend ta voix ; rien n’est enregistré.']],
+    ['« ⋯ Plus »', ['Les outils occasionnels (le coffre, pourquoi ça marche, la contrainte surprise, le grand texte) sont rangés dans un menu « ⋯ ». La barre ne garde à la vue que ce qui sert tout le temps : le micro, Mon studio, le filet, le plein écran.']],
+  ] },
   { v: '0.30', quand: '2026-10-26', titre: 'Plus de coches', items: [
     ['Les notes tenues ne cochent plus', ['Pour durer, une note tenue (cordes, chœur, cors, cuivres, bois) fait tourner le milieu de son échantillon en boucle. La jointure tombait mal : un petit « coche » à chaque tour, environ toutes les deux secondes. Elle est maintenant fondue, comme dans un vrai échantillonneur. Mesuré : la flûte passe d’un saut 24 fois plus fort que la normale à 4,5 ; les cuivres de 19 à 8 ; le chœur de 16 à 6.', 'La cathédrale entre aussi moins fort dans la sortie de l’app : à plein orchestre, le limiteur ne craque plus. Partout où l’orchestre joue (la cathédrale, son WAV, Jouer), c’est corrigé.']],
   ] },
