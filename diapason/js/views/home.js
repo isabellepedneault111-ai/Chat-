@@ -9,7 +9,7 @@ import { activeSession } from './session.js';
 import { relaisPending, asksOf } from './relais.js';
 import { pendantHTML } from '../traces.js';
 import { enAttenteDeMoi } from '../corbeille.js';
-import { lune, luneSVG, TEMPS } from '../lune.js';
+import { lune, luneSVG, TEMPS, CYCLE, prochainTemps, numeroLune } from '../lune.js';
 import { nouveautesHTML } from '../nouveautes.js';
 import { aVoir } from '../suivi.js';
 import { attendMoi } from '../elan.js';
@@ -56,19 +56,6 @@ function commencerHTML() {
   if (pas.every((x) => x[3])) return '';
   const prochain = pas.findIndex((x) => !x[3]);
   return `<section class="commencer" aria-label="Par où commencer"><h2>Par où commencer</h2><ol>${pas.map(([t, d, h, ok], i) => `<li class="${ok ? 'fait' : i === prochain ? 'prochain' : ''}"><a href="${h}"><span class="cm-n">${ok ? '✓' : i + 1}</span><b>${t}</b><small>${d}</small>${i === prochain ? '<em>Maintenant →</em>' : ''}</a></li>`).join('')}</ol></section>`;
-}
-// Créer, façonner, produire : où en est notre musique, d'après les étapes du mur, et les outils de chaque moment.
-const PHASES_M = [
-  ['Créer', [0, 1], 'On génère sans juger : impro, mumble, idées brutes.', [['relais', 'Le relais'], ['ecrire', 'Le mumble'], ['labo', 'Le labo'], ['jeux', 'Le grimoire']]],
-  ['Façonner', [2], 'On développe : accords, structure, paroles posées sur la musique.', [['studio?tab=chanson', 'Nos chansons'], ['placer', 'Placer mes paroles'], ['oreille', 'L’oreille'], ['session', 'Une séance']]],
-  ['Produire', [3, 4], 'On fixe et on enregistre : prises propres, passage « spectacle ».', [['studio?tab=voix', 'Prises du studio'], ['session?cible=La%20fin%20d%E2%80%99un%20morceau', 'Séance de prise'], ['coffre', 'Le coffre']]],
-];
-function phasesHTML() {
-  const ents = espace.entries.filter((e) => !e.demo && !e.data?.demo && ['note', 'texte', 'audio', 'essai', 'paroles'].includes(e.type) && !e.data?.journal);
-  const n = PHASES_M.map(([, st]) => ents.filter((e) => st.includes(e.data?.stage || 0)).length);
-  const ici = n.every((x) => !x) ? 0 : n.indexOf(Math.max(...n));
-  return `<section class="phases-m" aria-label="Créer, façonner, produire"><div class="pm-head"><h2>Créer → Façonner → Produire</h2><p class="muted small">D’après notre mur, on est surtout en mode <b>${PHASES_M[ici][0]}</b>. Chaque idée avance à son rythme : glisse-la d’étape au mur.</p></div>
-    <div class="pm-grid">${PHASES_M.map(([t, st, d, l], i) => `<article class="pm ${i === ici ? 'ici' : ''}"><h3><span>${i + 1}</span> ${t} <small>${n[i]} idée${n[i] > 1 ? 's' : ''}</small></h3><p>${d}</p><p class="pm-etapes muted small">Au mur : ${st.map((x) => STAGES[x].label).join(', ')}</p><div>${l.map(([h, x]) => `<a href="#/${h}">${x}</a>`).join('')}</div></article>`).join('')}</div></section>`;
 }
 const OU_ALLER = [
   ['Jouer ensemble', 'Dans la même pièce ou à distance, une séance guidée qui finit par une prise.', [['session', 'Lancer une séance'], ['accord', 'Voix + piano']]],
@@ -124,17 +111,41 @@ export default {
     }
 
     // La lune : une ligne, un temps de création, et les intentions du cycle.
-    function luneHTML() {
-      const l = lune();
-      const [t, geste, href] = TEMPS[l.temps];
-      const lm = espace.meta.lune?.cycle === l.cycle ? espace.meta.lune : { cycle: l.cycle, intentions: {} };
-      const mine = lm.intentions?.[espace.me];
-      const autres = Object.entries(lm.intentions || {});
-      return `<div class="lune-line">
-        ${luneSVG(l)}<span><b>${l.nom}</b> · ${t}. ${href ? `<a href="${href}">${geste}</a>` : geste}</span>
-        ${autres.length ? `<span class="lune-int">${autres.map(([w, x]) => `<i style="color:${memberColor(w)}">${esc(w)}</i> « ${esc(x)} »`).join(' · ')}</span>` : ''}
-        ${!mine ? `<form class="lune-form"><input class="input" data-lune maxlength="140" placeholder="Ton intention pour ce cycle (jusqu’à la prochaine nouvelle lune)"><button class="btn small">Poser</button></form>` : ''}
-      </div>`;
+    // Notre cycle : la lune comme horloge du processus. Ses quatre temps = nos quatre gestes (créer, façonner,
+    // produire, trier et relire). L'intention se sème à la nouvelle lune et se relit au dernier quartier.
+    function cycleHTML() {
+      const l = lune(); const ici = CYCLE.findIndex((c) => c.temps === l.temps); const c = CYCLE[ici];
+      const lm = espace.meta.lune?.cycle === l.cycle ? espace.meta.lune : { cycle: l.cycle, intentions: {}, relue: {} };
+      const mem = espace.meta.members || MEMBERS; const mine = lm.intentions?.[espace.me];
+      const pt = prochainTemps(); const n = numeroLune(planStart());
+      const debut = new Date(`${l.cycle}T00:00`).getTime(); const ents = espace.entries.filter((e) => !e.demo && !e.data?.demo);
+      const semees = ents.filter((e) => e.createdAt >= debut && ['note', 'texte', 'audio', 'image', 'lien', 'paroles'].includes(e.type) && !e.data?.journal).length;
+      const grandi = ents.reduce((a, e) => a + (e.data?.moves || []).filter((m) => m.at >= debut && m.to > m.from).length, 0);
+      const entendu = ents.filter((e) => e.createdAt >= debut && (e.data?.prise || e.data?.filet || e.data?.cathedrale || (e.type === 'session' && e.data?.done))).length;
+      const relues = Object.keys(lm.relue || {}).length;
+      const comptes = [`${semees} semée${semees > 1 ? 's' : ''}`, `${grandi} ${grandi > 1 ? 'ont' : 'a'} grandi`, `${entendu} entendue${entendu > 1 ? 's' : ''}`, `${relues} intention${relues > 1 ? 's' : ''} relue${relues > 1 ? 's' : ''}`];
+      const R = 62; const C = 80; const pos = (deg, r = R) => [C + r * Math.cos((deg * Math.PI) / 180), C + r * Math.sin((deg * Math.PI) / 180)];
+      const arc = (i) => { const a0 = -135 + i * 90 + 4; const a1 = a0 + 82; const [x0, y0] = pos(a0); const [x1, y1] = pos(a1); return `M${x0.toFixed(1)} ${y0.toFixed(1)} A${R} ${R} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`; };
+      const [px, py] = pos(l.frac * 360 - 90);
+      const roue = `<svg class="cy-roue" viewBox="-24 -6 208 172" aria-hidden="true">${CYCLE.map((x, i) => `<path d="${arc(i)}" class="${i === ici ? 'on' : ''}"/>`).join('')}
+        ${CYCLE.map((x, i) => { const [tx, ty] = pos(-90 + i * 90, R + 13); return `<text x="${tx.toFixed(1)}" y="${(ty + 3).toFixed(1)}" text-anchor="${i === 1 ? 'start' : i === 3 ? 'end' : 'middle'}" dx="${i === 1 ? -6 : i === 3 ? 6 : 0}" class="${i === ici ? 'on' : ''}">${x.phase.split(' ')[0]}</text>`; }).join('')}
+        <circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="5" class="cy-ici"/></svg>`;
+      const relire = l.temps === 'laisser' && mine && !lm.relue?.[espace.me];
+      return `<section class="cycle" aria-label="Notre cycle">
+        <div class="cy-gauche">${roue}<div class="cy-lune">${luneSVG(l, 46)}</div></div>
+        <div class="cy-droite">
+          <p class="cy-k">Notre cycle${n ? ` · lune ${n} de nos six mois` : ''} · ${esc(l.nom.toLowerCase())}</p>
+          <h2>Le temps ${c.temps === 'laisser' ? 'de laisser aller' : c.temps === 'semer' ? 'de semer' : c.temps === 'grandir' ? 'de faire grandir' : 'de faire entendre'} <small>${esc(c.phase)}</small></h2>
+          <p>${esc(c.geste)}${pt ? ` <span class="muted">Jusqu’au ${pt.date.toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' })}, puis le temps ${pt.temps === 'laisser' ? 'de laisser aller' : pt.temps === 'semer' ? 'de semer' : pt.temps === 'grandir' ? 'de faire grandir' : 'de faire entendre'}.</span>` : ''}</p>
+          <p class="cy-outils">${c.outils.map(([h, t]) => `<a href="#/${h}">${t}</a>`).join('')}</p>
+          <div class="cy-int"><b>Nos intentions de ce cycle</b>
+            ${mem.map((m) => { const x = lm.intentions?.[m]; const r = lm.relue?.[m]; return `<p style="--c:${memberColor(m)}"><i>${esc(m)}</i> ${x ? `« ${esc(x)} »${r ? ` <em class="cy-relue">${{ tenue: 'tenue ✓', transformee: 'transformée ↻', lachee: 'lâchée, sans regret' }[r] || ''}</em>` : ''}` : '<span class="muted">pas encore posée</span>'}</p>`; }).join('')}
+            ${!mine ? `<form class="lune-form"><input class="input" data-lune maxlength="140" placeholder="${l.temps === 'semer' ? 'Ton intention pour ce cycle' : 'Ton intention, même en cours de route'} (jusqu’à la prochaine nouvelle lune)"><button class="btn small">Semer</button></form>` : ''}
+            ${relire ? `<p class="cy-relire">Le temps de relire ton intention. Elle a été… <button class="btn small" data-relue="tenue">tenue</button><button class="btn small" data-relue="transformee">transformée</button><button class="btn small" data-relue="lachee">lâchée</button></p>` : ''}
+          </div>
+          <p class="cy-comptes muted small">Ce cycle, jusqu’ici : ${comptes.join(' · ')}.</p>
+        </div>
+      </section>`;
     }
 
     // Notre fil : de la même pièce à chacun de son côté, le mouvement ne s'arrête jamais.
@@ -184,7 +195,7 @@ export default {
           <p>Objectifs, voix, styles, besoins : chacun le sien, puis notre portrait commun. C’est lui qui nourrit le plan.</p>
           <span class="e1-who">${portraits.map((x) => `<span style="--c:${memberColor(x.m)}" class="${x.ok ? 'ok' : ''}">${esc(x.m)} ${x.ok ? '✓' : '· à faire'}</span>`).join('')}</span>
         </a>` : '';
-      if (!start && !editingVision) { el.innerHTML = head + luneHTML() + todayHTML() + nouveautesHTML() + filHTML() + pendantHTML() + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
+      if (!start && !editingVision) { el.innerHTML = head + cycleHTML() + todayHTML() + nouveautesHTML() + filHTML() + pendantHTML() + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
       if (editingVision) { el.innerHTML = head + setupHTML(!!start); return; }
 
       const m = currentMonth();
@@ -205,7 +216,6 @@ export default {
         ${nouvellesBandeau()}
         ${commencerHTML()}
         <a class="arbre-teaser" href="#/arbre">${espace.me === (espace.meta.members || MEMBERS)[1] ? `Tu as demandé à ${esc((espace.meta.members || MEMBERS)[0])} d’où venaient certains sons et éléments de l’app. <b>Clique ici pour voir son arbre d’architecte d’environnement hybride à l’œuvre →</b>` : '<b>L’arbre de l’architecte</b> : toute l’architecture de Diapason Labo, à admirer →'}</a>
-        ${luneHTML()}
         ${todayHTML()}
         ${nouveautesHTML()}
         ${filHTML()}
@@ -278,7 +288,7 @@ export default {
           <cite>Une vision partagée avant de composer · Merchán-Sánchez-Jara 2023</cite>
         </details>
 
-        ${phasesHTML()}
+        ${cycleHTML()}
         <section class="ou-aller" aria-label="Où aller">
           <h2>Où aller</h2>
           <div class="oa-grid">${OU_ALLER.map(([t, why, links]) => `<div class="oa-g"><h3>${t}</h3><p>${why}</p><div>${links.map(([h, l]) => `<a href="#/${h}">${l}</a>`).join('')}</div></div>`).join('')}</div>
@@ -307,10 +317,12 @@ export default {
       const v = e.target.querySelector('[data-lune]').value.trim();
       if (!v) return;
       const l = lune();
-      const cur = espace.meta.lune?.cycle === l.cycle ? espace.meta.lune : { cycle: l.cycle, intentions: {} };
-      try { await updateEspace({ lune: { cycle: l.cycle, intentions: { ...cur.intentions, [espace.me]: v } } }); toast('Intention posée pour ce cycle.'); } catch (err) { toast(err.message); }
+      const cur = espace.meta.lune?.cycle === l.cycle ? espace.meta.lune : { cycle: l.cycle, intentions: {}, relue: {} };
+      try { await updateEspace({ lune: { ...cur, cycle: l.cycle, intentions: { ...cur.intentions, [espace.me]: v } } }); toast('Intention semée. On la relira au dernier quartier.'); } catch (err) { toast(err.message); }
     });
     el.addEventListener('click', async (e) => {
+      const rl = e.target.closest('[data-relue]');
+      if (rl) { const l = lune(); const cur = espace.meta.lune?.cycle === l.cycle ? espace.meta.lune : { cycle: l.cycle, intentions: {}, relue: {} }; try { await updateEspace({ lune: { ...cur, relue: { ...(cur.relue || {}), [espace.me]: rl.dataset.relue } } }); toast('Relue. Le prochain cycle commence à la nouvelle lune.'); } catch (err) { toast(err.message); } return; }
       // Le plan bouge avec vous : avancer d'un mois, ou prendre deux semaines de plus.
       const pl = e.target.closest('[data-plan]');
       if (pl) {

@@ -2875,3 +2875,24 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 @media (max-width: 560px) { .vi-grille { grid-template-columns: 1fr; grid-template-areas: "ton" "genre" "inst" "refs"; } }
 .vise { outline: 3px solid #e8c27a; outline-offset: 3px; border-radius: 8px; animation: vise 2.4s ease-out; }
 @keyframes vise { 0%, 60% { box-shadow: 0 0 0 8px rgba(232, 194, 122, .35); } 100% { box-shadow: 0 0 0 0 rgba(232, 194, 122, 0); } }
+/* Notre cycle : la lune comme horloge du processus. */
+.cycle { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: center; margin: 18px 0; padding: 18px 20px; border-radius: 16px; background: radial-gradient(120% 140% at 0% 50%, #24201a, #141210 70%); color: #efe6d2; }
+.cy-gauche { position: relative; width: 210px; height: 210px; }
+.cy-roue { width: 100%; height: 100%; } .cy-roue path { fill: none; stroke: #4a4338; stroke-width: 6; stroke-linecap: round; } .cy-roue path.on { stroke: #e8c27a; }
+.cy-roue text { fill: #8a7f6c; font: 600 8px "Atkinson Hyperlegible", sans-serif; } .cy-roue text.on { fill: #ffe3a3; font-weight: 800; }
+.cy-ici { fill: #fff; stroke: #e8c27a; stroke-width: 2; }
+.cy-lune { position: absolute; inset: 0; display: grid; place-items: center; color: #f3e7c9; pointer-events: none; }
+.cy-k { margin: 0; font: 700 .72rem "Atkinson Hyperlegible", sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #e8c27a; }
+.cycle h2 { margin: 4px 0 6px; font: 800 1.7rem/1.1 "Literata", serif; color: #fff; } .cycle h2 small { font: italic 500 1rem "Literata", serif; color: #b8ad98; margin-left: 6px; }
+.cycle p { margin: 4px 0; } .cycle .muted { color: #b8ad98; }
+.cy-outils { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 !important; } .cy-outils a { padding: 4px 10px; border-radius: 999px; background: #2a2620; color: #f3e7c9; font-size: .86rem; text-decoration: none; border: 1px solid #4a4338; } .cy-outils a:hover { border-color: #e8c27a; }
+.cy-int { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: rgba(239, 230, 210, .05); border: 1px solid #3a352d; }
+.cy-int > b { font: italic 700 .95rem "Literata", serif; color: #e8c27a; } .cy-int p { padding-left: 8px; border-left: 3px solid var(--c); } .cy-int i { font-style: normal; font-weight: 700; color: var(--c); filter: brightness(1.6); margin-right: 4px; }
+.cy-relue { font-style: normal; font-size: .82rem; color: #9fe0a8; margin-left: 6px; }
+.cycle .lune-form { display: flex; gap: 6px; margin-top: 6px; } .cycle .lune-form .input { flex: 1; background: #141210; color: #efe6d2; border-color: #4a4338; }
+.cy-relire .btn, .cycle .lune-form .btn { background: #2a2620; color: #efe6d2; border-color: #4a4338; }
+.cy-comptes { margin-top: 8px !important; }
+.chip.lune-sugg { border-style: dashed; }
+@media (max-width: 720px) { .cycle { grid-template-columns: 1fr; justify-items: center; } .cy-droite { justify-self: stretch; } }
+.cy-lune .lune-ico { color: #f3e7c9; filter: drop-shadow(0 0 10px rgba(243, 231, 201, .45)); }
+.cy-lune .lune-ico circle { stroke: #f3e7c9; }

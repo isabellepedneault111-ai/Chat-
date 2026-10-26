@@ -9,6 +9,7 @@ import { memberColor, MEMBERS } from '../duo.js';
 import { ecrire } from '../ecrire.js';
 import { togglePerle } from './coffre.js';
 import { vu, fait, marquer } from '../suivi.js';
+import { lune } from '../lune.js';
 
 // Les intentions : ce qu'on aimerait que l'autre en fasse. On peut en choisir plusieurs, et l'écrire.
 export const GROUPES = [
@@ -22,12 +23,15 @@ export const ASKS = GROUPES.flatMap(([, l]) => l);
 const askOf = (id) => ASKS.find((a) => a[0] === id);
 export const asksOf = (e) => (e.data?.asks?.length ? e.data.asks : e.data?.ask ? [e.data.ask] : []).map(askOf).filter(Boolean);
 
-// Le sélecteur d'intentions, réutilisé partout (relais, ambiances, grimoire).
+// Ce qu'on demande à l'autre, réutilisé partout (relais, ambiances, grimoire). La lune en suggère quelques-unes :
+// au temps de semer, on demande de créer ; de faire grandir, de développer ; de faire entendre, d'écouter ; de laisser aller, de trier.
+const PAR_TEMPS = { semer: ['chante', 'melodie', 'ecris', 'evoque'], grandir: ['harmonise', 'accords', 'rythme', 'continue', 'habille'], entendre: ['ecoute', 'bien', 'refrain'], laisser: ['coupe', 'plus-tard', 'titre'] };
+const NOM_TEMPS = { semer: 'le temps de semer', grandir: 'le temps de faire grandir', entendre: 'le temps de faire entendre', laisser: 'le temps de laisser aller' };
 export function intentions(host, { to = 'l’autre', dark = false } = {}) {
-  const chosen = new Set();
+  const chosen = new Set(); const l = lune(); const sugg = new Set(PAR_TEMPS[l.temps] || []);
   host.innerHTML = `<div class="intents ${dark ? 'dark' : ''}">
-      <p class="intents-q">Ton intention pour ${esc(to)} <small>(une ou plusieurs)</small></p>
-      ${GROUPES.map(([g, l]) => `<div class="intents-g"><span>${esc(g)}</span><div class="chips small">${l.map(([id, lab]) => `<button type="button" class="chip" data-int="${id}" aria-pressed="false">${esc(lab)}</button>`).join('')}</div></div>`).join('')}
+      <p class="intents-q">Ce que tu demandes à ${esc(to)} <small>(une ou plusieurs ; ☾ = ce que la lune suggère : ${NOM_TEMPS[l.temps]})</small></p>
+      ${GROUPES.map(([g, l2]) => `<div class="intents-g"><span>${esc(g)}</span><div class="chips small">${l2.map(([id, lab]) => `<button type="button" class="chip ${sugg.has(id) ? 'lune-sugg' : ''}" data-int="${id}" aria-pressed="false">${sugg.has(id) ? '☾ ' : ''}${esc(lab)}</button>`).join('')}</div></div>`).join('')}
       <label class="field col intents-free"><span>Ou dis-le avec tes mots</span><input class="input" data-int-free maxlength="160" placeholder="Ex. : imagine-le joué très lentement, au petit matin"></label>
     </div>`;
   host.addEventListener('click', (e) => {

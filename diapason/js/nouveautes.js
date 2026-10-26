@@ -59,6 +59,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.13', quand: '2026-10-26', titre: 'Notre cycle', items: [
+    ['La lune devient notre horloge', ['Sur l’accueil, <b>Notre cycle</b> : la lune dans sa vraie phase, entourée de ses quatre temps, qui sont nos quatre gestes. <b>Semer</b> = créer, <b>faire grandir</b> = façonner, <b>faire entendre</b> = produire, <b>laisser aller</b> = trier et relire. Six lunes ≈ nos six mois : chaque cycle est un tour complet du processus.', 'Pour chaque temps : ce qu’il appelle, jusqu’à quand, et ses outils (le relais, nos chansons, les prises, le mur…). Et ce que le cycle a déjà donné : idées semées, idées qui ont grandi, prises entendues.']],
+    ['Nos intentions, semées puis relues', ['Chacun <b>sème</b> son intention du cycle (à la nouvelle lune, ou en cours de route). Au temps de laisser aller, on la <b>relit</b> : tenue, transformée ou lâchée, sans regret.']],
+    ['Ce qu’on se demande, au rythme de la lune', ['Dans le relais, « Ton intention » devient <b>« Ce que tu demandes à… »</b> (ce n’est pas la même chose que l’intention du cycle). La lune suggère quelques demandes (☾) : créer au temps de semer, développer au temps de faire grandir, écouter à la pleine lune, trier quand elle décroît.']],
+  ] },
   { v: '0.12', quand: '2026-10-26', titre: 'La grille, et le plein écran', items: [
     ['L’oreille écrit la grille', ['Après l’écoute, <b>la grille par mesures</b>, comme une feuille d’accords de musicien : 4 temps par mesure, « % » quand une mesure se répète, et la boucle repérée (‖: Rém | Sol7 | Do | % :‖ ×3). Le tempo de la grille se recale tout seul sur les changements d’accords.', 'Touche une mesure pour l’entendre. <b>Copier la grille</b> ou <b>⬇ la grille en texte</b>. Marche aussi sur un bout pris dans le filet.']],
     ['Nos chansons s’exportent', ['Studio → Nos chansons : <b>⬇ La partition (MIDI)</b>, accords au piano et basse, au tempo du studio (les mesures tombent juste dans ton logiciel), et <b>⬇ La grille (texte)</b>, partie par partie.']],

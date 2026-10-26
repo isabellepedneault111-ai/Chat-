@@ -2,7 +2,7 @@
 // des titres présents. On voit d'un coup d'œil tout ce qu'on peut faire, sans devoir descendre pour le découvrir.
 // Le mandat de chaque page, en trois lignes : à quoi elle sert, ce qu'on peut y faire, ce qu'elle nourrit.
 const MANDATS = {
-  '': ['Savoir où on en est et quoi faire maintenant.', 'Suivre « Par où commencer », lancer une séance, voir ce que l’autre a fait.', 'Tout le reste : c’est d’ici que part chaque séance, et ici que le plan s’ajuste à ce que vous faites.'],
+  '': ['Savoir où on en est et quoi faire maintenant.', 'Suivre « Par où commencer », lancer une séance, voir ce que l’autre a fait, semer et relire nos intentions du cycle.', 'Tout le reste : c’est d’ici que part chaque séance, et ici que le plan s’ajuste à ce que vous faites.'],
   carnet: ['Garder toutes nos idées au même endroit, et les faire avancer.', 'Ajouter une idée, un son, un lien ; la faire monter d’étape (idée brute → dans le set) ; faire se rencontrer deux idées.', 'Le plan (il compte les idées et leur étape), « Créer → Façonner → Produire », nos chansons.'],
   session: ['Jouer ensemble, guidés, sans se demander quoi faire.', 'Choisir où, combien de temps, sur quoi et sur quels accords ; suivre les étapes ; finir par une prise et un debrief.', 'Le plan (séances par semaine), la prochaine cible (votre debrief devient la séance suivante), le mur (les prises).'],
   relais: ['Créer chacun son tour, à distance.', 'Envoyer un son avec une consigne (« chante dessus »), répondre par-dessus, couche après couche.', 'Le mur (chaque envoi est une idée), l’accueil de l’autre (« nouveau pour toi »).'],
