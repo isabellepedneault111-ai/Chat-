@@ -46,6 +46,8 @@ const S = {
 };
 // Ce qu'on choisit de voir sur le clavier : l'accord qui joue d'emblée ; le reste se coche au besoin.
 const voir = () => new Set(store.get('kbVoir2', ['safe']));
+// Une couleur franche par demande (palette Okabe-Ito, distincte aussi pour les daltoniens).
+const KCOUL = { safe: '#d55e00', scale: '#009e73', gamme: '#9a9a9a', jazz: '#0072b2', blue: '#a347c9' };
 const save = () => { store.set('grid', S.grid); store.set('bpm', S.bpm); store.set('key', S.key); store.set('prog', S.prog); };
 const saveMelody = () => store.set('melody', S.melody.map(({ slot, deg, who }) => ({ slot, deg, who })));
 // 8 pastilles : la pentatonique de la tonalité, dans un registre confortable pour la voix.
@@ -390,8 +392,12 @@ export default {
       const blues = new Set([3, 6, 10].map((x) => mod12(S.key + x)));
       kb.keys.forEach((k, m) => {
         const n = mod12(m); const vu = voir();
-        const classe = tones.has(n) && vu.has('safe') ? 'k-safe' : pent.has(n) && vu.has('scale') ? 'k-scale' : jazz.has(n) && vu.has('jazz') ? 'k-jazz' : gamme.has(n) && vu.has('gamme') ? 'k-gamme' : blues.has(n) && vu.has('blue') ? 'k-blue' : '';
-        ['k-safe', 'k-scale', 'k-jazz', 'k-gamme', 'k-blue'].forEach((x) => k.classList.toggle(x, x === classe));
+        // Une touche peut répondre à plusieurs demandes : elle porte alors toutes leurs couleurs, en bandes côte à côte.
+        const coul = [[tones, 'safe'], [pent, 'scale'], [gamme, 'gamme'], [jazz, 'jazz'], [blues, 'blue']].filter(([e, v]) => e.has(n) && vu.has(v)).map(([, v]) => KCOUL[v]);
+        const bandes = coul.length ? `linear-gradient(90deg, ${coul.map((c, j) => `${c} ${(j * 100) / coul.length}% ${((j + 1) * 100) / coul.length}%`).join(', ')})` : '';
+        const noire = k.classList.contains('black');
+        k.style.background = bandes ? `linear-gradient(${noire ? '#1b1915 0 22%' : '#fff 0 30%'}, transparent ${noire ? 22 : 30}%), ${bandes}` : '';
+        k.classList.toggle('k-teinte', !!bandes);
         k.classList.toggle('k-maison', n === mod12(S.key) && vu.has('maison'));
       });
     }
