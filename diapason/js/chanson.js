@@ -2,6 +2,7 @@
 // sa suite d'accords, et un ordre (Couplet 1, Refrain, Couplet 2 = le même couplet…). On joue une partie ou
 // toute la chanson d'un bout à l'autre, avec le beat. Les chansons sont partagées dans l'espace : l'autre les voit.
 import { espace, saveEntry, uid } from './espace.js';
+import { clavierDe } from './doigte.js';
 import { store, toast } from './ui.js';
 import { FR, chordName, chordIntervals } from './music.js';
 import { accord, prechargerSons } from './sampler.js';
@@ -58,7 +59,7 @@ export function chansonTab(body, ctx) {
           <select data-ch="r">${FR.map((n, k) => `<option value="${k}" ${k === c[0] ? 'selected' : ''}>${n}</option>`).join('')}</select>
           <select data-ch="q">${TYPES.map(([v, l]) => `<option value="${v}" ${v === c[1] ? 'selected' : ''}>${l}</option>`).join('')}</select>
           <select data-ch="b">${DUREES.map(([v, l]) => `<option value="${v}" ${v === c[2] ? 'selected' : ''}>${l}</option>`).join('')}</select>
-          <button class="icon-btn tiny" data-ch="ecoute" aria-label="Écouter">♪</button>${s.chords.length > 1 ? '<button class="icon-btn tiny" data-ch="moins" aria-label="Retirer">✕</button>' : ''}</li>`).join('')}</ol>
+          <span class="ge-ka">${clavierDe(c[0], c[1], { titre: chordName(c[0], c[1]) })}</span><button class="icon-btn tiny" data-ch="ecoute" aria-label="Écouter">♪</button>${s.chords.length > 1 ? '<button class="icon-btn tiny" data-ch="moins" aria-label="Retirer">✕</button>' : ''}</li>`).join('')}</ol>
         <button class="btn small" data-ch="plus">+ Accord</button>
       </article>`).join('')}</div>
       <div class="ec-row ch-exports"><span class="muted small">Exporter :</span><button class="btn small" data-ch="mid">⬇ La partition (MIDI)</button><button class="btn small" data-ch="txt">⬇ La grille (texte)</button><button class="btn small" data-ch="copier">Copier la grille</button></div>

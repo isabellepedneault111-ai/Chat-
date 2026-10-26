@@ -3043,3 +3043,33 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 @media (max-width: 760px) { .m-chez { grid-template-columns: 1fr; } }
 .m-scene.sol-vin { background: radial-gradient(rgba(255,255,255,.045) 1px, transparent 1.6px) 0 0 / 5px 5px, radial-gradient(ellipse at 40% 30%, #6e1f2a, #521520 75%); }
 .piece-svg.sol-vin .ps-sol { fill: #5e1a25; }
+/* Le doigté : chaque accord dessiné sur un clavier, la fondamentale en braise */
+.ka { display: block; width: 100%; max-width: 230px; height: auto; }
+.ka .ka-b { fill: #fbf6ea; stroke: #3a352d; stroke-width: .6; } .ka .ka-k { fill: #1b1915; }
+.ka .ka-on { fill: #e8a24a; } .ka .ka-k.ka-on { fill: #c9862e; }
+.ka .ka-r, .ka .ka-k.ka-r { fill: #b53c0a; }
+.ka .ka-n { font: 700 5.6px "Atkinson Hyperlegible", sans-serif; text-anchor: middle; fill: #6d655a; } .ka .ka-n.r { fill: #b53c0a; }
+.ka-c { max-width: 84px; margin-top: 6px; }
+.chord .ka-c { opacity: .92; } .chord.now .ka .ka-b:not(.ka-on):not(.ka-r) { fill: #efe6d2; }
+.ch-pop-ka { margin: 4px 0 8px; } .ch-pop-ka .ka { max-width: 260px; }
+.ge-ka { display: inline-block; width: 120px; vertical-align: middle; margin: 0 6px; } .ge-ka .ka { max-width: 120px; }
+.inst-ka { display: block; width: min(260px, 70%); margin: 8px auto 0; }
+.inst-choix:not(:empty) { display: flex; gap: 14px; align-items: center; margin: 8px 0 4px; padding: 8px 12px; border-radius: 10px; background: rgba(127,127,127,.08); }
+.inst-choix b { font: 800 1.6rem var(--display); } .inst-choix .ka { max-width: 220px; }
+.word-chip.on { outline: 2px solid #b53c0a; }
+.or-acc .ka-c { max-width: 64px; margin: 3px auto; }
+/* La barre d'outils, en trois familles : capter (micro, mon studio, filet) · les lieux à part (labo, coffre) · les coups de pouce (pourquoi, défi) · l'affichage */
+.tools .tsep { width: 1px; height: 26px; background: var(--rule); opacity: .35; margin: 0 4px; flex: none; }
+.tools [data-tip] { position: relative; }
+.tools [data-tip]:hover::after, .tools [data-tip]:focus-visible::after { content: attr(data-tip); position: absolute; top: calc(100% + 8px); right: 0; z-index: 60; width: max-content; max-width: 260px; padding: 6px 10px; border-radius: 8px; background: #1b1915; color: #fbf6ea; font: 600 12px/1.35 "Atkinson Hyperlegible", sans-serif; letter-spacing: 0; text-transform: none; white-space: normal; text-align: left; box-shadow: 0 8px 20px -10px #000; pointer-events: none; }
+@media (hover: none) { .tools [data-tip]:hover::after { display: none; } }
+@media (max-width: 760px) { .tools .tsep { display: none; } }
+@media (min-width: 761px) and (max-width: 1500px) { .nav a { padding: 7px 9px; } .tools { gap: 4px; } .tools .tsep { margin: 0 2px; } }
+@media (min-width: 761px) and (max-width: 1340px) {
+  .nav a { padding: 7px 7px; font-size: 1rem; gap: 5px; } .nav a svg { width: 18px; height: 18px; }
+  .tool-labo { padding: 0 9px; font-size: 0; gap: 0; } .tool-labo span { font-size: 1.3rem; }
+  .mic-pill .mic-label { display: none; } .tools .tsep { margin: 0; opacity: .25; }
+  .brand small { display: none; }
+}
+@media (min-width: 761px) and (max-width: 1180px) { .nav a svg { display: none; } .tools .tsep { display: none; } }
+@media (min-width: 761px) and (max-width: 1040px) { .topbar { flex-wrap: wrap; row-gap: 6px; } .tools { width: 100%; justify-content: flex-end; } .nav { margin: 0 0 0 auto; } }

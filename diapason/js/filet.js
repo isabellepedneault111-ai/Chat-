@@ -18,7 +18,8 @@ function etat() {
   bouton.classList.toggle('on', filet.arme);
   bouton.setAttribute('aria-pressed', filet.arme ? 'true' : 'false');
   const n = filet.pistes.size;
-  bouton.title = filet.arme ? `Le filet est tendu (${n} source${n > 1 ? 's' : ''}) : gardé depuis ${sec(garde())} sur ${sec(duree())}. Touche pour prendre ${dureeTexte()}.` : `Tendre le filet : ${dureeTexte()} jouée${duree() > 60 ? 's' : ''}, toujours gardée${duree() > 60 ? 's' : ''}`;
+  const tip = filet.arme ? `Le filet est tendu (${n} source${n > 1 ? 's' : ''}) : gardé depuis ${sec(garde())} sur ${sec(duree())}. Touche pour prendre ${dureeTexte()}.` : `Tendre le filet : ${dureeTexte()} jouée${duree() > 60 ? 's' : ''}, toujours gardée${duree() > 60 ? 's' : ''}`;
+  bouton.dataset.tip = tip; bouton.setAttribute('aria-label', tip);
 }
 // L'anneau d'or se remplit pendant que le filet se remplit : plein, il a toute sa durée.
 let anneau = 0;
@@ -34,16 +35,16 @@ function remplir() {
 }
 
 export function installerFilet() {
-  const ref = document.getElementById('pistesBtn'); if (!ref || bouton) return;
+  const ref = document.getElementById('micBtn'); if (!ref || bouton) return;
   bouton = document.createElement('button'); bouton.type = 'button'; bouton.className = 'icon-btn filet-btn'; bouton.id = 'filetBtn';
   bouton.setAttribute('aria-label', 'Le filet : la dernière minute'); bouton.innerHTML = `${ICONE}<i class="filet-pt"></i><small class="filet-t"></small>`;
-  ref.before(bouton);
+  ref.after(bouton);
   // Juste avant le filet : la prise, la porte de Mon matériel. Tout ce que Frog branche s'y trouve, en un geste.
   const prise = document.createElement('a'); prise.className = 'icon-btn prise-btn'; prise.id = 'priseBtn'; prise.href = '#/materiel';
   prise.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 0 1-12 0zM12 17v4"/></svg><small class="prise-n"></small>';
   bouton.before(prise);
   const majPrise = () => { const n = appareils().filter((x) => x.k !== 'app' && x.branche && x.actif).length; prise.querySelector('.prise-n').textContent = n || ''; prise.classList.toggle('on', n > 0);
-    const t = n ? `Mon matériel : ${n} appareil${n > 1 ? 's' : ''} branché${n > 1 ? 's' : ''} et actif${n > 1 ? 's' : ''}` : 'Mon matériel : brancher un clavier MIDI, une carte son, un micro…'; prise.title = t; prise.setAttribute('aria-label', t); };
+    const t = n ? `Mon studio : ${n} appareil${n > 1 ? 's' : ''} branché${n > 1 ? 's' : ''} et actif${n > 1 ? 's' : ''}` : 'Mon studio : brancher et placer ton matériel'; prise.dataset.tip = t; prise.setAttribute('aria-label', t); };
   majPrise(); etat(); remplir(); onMateriel(() => { etat(); remplir(); majPrise(); });
   bouton.addEventListener('click', async () => {
     if (!filet.arme) {

@@ -7,6 +7,7 @@ import { DRUM_PRESETS, PROGRESSIONS, DEFIS_IMPRO } from '../data.js';
 import { clockStart, clockStep, clockStop } from '../console.js';
 import { espace, audioURL, saveEntry, uploadImage, uploadAudio } from '../espace.js';
 import { accord as accordPiano, prechargerSons } from '../sampler.js';
+import { clavierDe } from '../doigte.js';
 import { chansonTab } from '../chanson.js';
 import { sonsPersoHTML, brancherSonsPerso } from '../sonsperso.js';
 import { EXERCICES } from '../duo.js';
@@ -176,7 +177,7 @@ export default {
       q('[data-act=play]').classList.toggle('on', S.playing);
       q('[data-act=rec]').classList.toggle('on', !!S.recorder);
       const marques = progression().marques || []; const popOuvert = q('.ch-pop');
-      q('.chord-row').innerHTML = accords().map((c, i) => `<div class="chord ${marques[i] ? 'ch-debut' : ''}" data-i="${i}" style="flex-grow:${tempsDe(c)}"><small>${marques[i] ? `<b class="ch-marque">${esc(marques[i])}</b> · ` : ''}${tempsDe(c) === 4 ? '1 mesure' : tempsDe(c) === 8 ? '2 mesures' : `${tempsDe(c)} temps`}</small><b>${chordName(mod12(S.key + c[0]), c[1])}</b></div>`).join('')
+      q('.chord-row').innerHTML = accords().map((c, i) => `<div class="chord ${marques[i] ? 'ch-debut' : ''}" data-i="${i}" style="flex-grow:${tempsDe(c)}"><small>${marques[i] ? `<b class="ch-marque">${esc(marques[i])}</b> · ` : ''}${tempsDe(c) === 4 ? '1 mesure' : tempsDe(c) === 8 ? '2 mesures' : `${tempsDe(c)} temps`}</small><b>${chordName(mod12(S.key + c[0]), c[1])}</b>${clavierDe(mod12(S.key + c[0]), c[1], { compact: true })}</div>`).join('')
         + `<button class="btn small chord-edit" data-act="editer">✎ Mes propres accords</button><p class="chord-note muted">Touche un accord pour le changer. ${progression().note || ''}</p>
         <div class="defi-row"><button class="chip ${S.defis ? 'active' : ''}" data-act="defis">${S.defis ? 'Défis d’impro ✓' : 'Défis d’impro'}</button>${S.defis ? `<p class="defi">${DEFIS_IMPRO[Math.floor(S.loop / 2) % DEFIS_IMPRO.length]}<small>un nouveau défi tous les deux tours</small></p>` : ''}</div>`;
       if (popOuvert) q('.chord-row').appendChild(popOuvert);
@@ -260,7 +261,7 @@ export default {
           <select data-ge="r" aria-label="Note de l’accord ${i + 1}">${FR.map((n, k) => `<option value="${k}" ${k === c.r ? 'selected' : ''}>${n}</option>`).join('')}</select>
           <select data-ge="q" aria-label="Couleur de l’accord ${i + 1}">${TYPES.map(([v, l]) => `<option value="${v}" ${v === c.q ? 'selected' : ''}>${l}</option>`).join('')}</select>
           <select data-ge="b" aria-label="Durée de l’accord ${i + 1}">${DUREES.map(([v, l]) => `<option value="${v}" ${v === c.b ? 'selected' : ''}>${l}</option>`).join('')}</select>
-          <b class="ge-nom">${chordName(c.r, c.q)}</b>
+          <b class="ge-nom">${chordName(c.r, c.q)}</b><span class="ge-ka">${clavierDe(c.r, c.q, { titre: chordName(c.r, c.q) })}</span>
           <button class="icon-btn tiny" data-ge="ecoute" aria-label="Écouter">▶</button>
           ${ed.length > 1 ? '<button class="icon-btn tiny" data-ge="moins" aria-label="Retirer">✕</button>' : ''}
         </li>`).join('')}</ol>
@@ -286,6 +287,7 @@ export default {
       ed = depuisGrille(); const c = ed[i]; if (!c) return;
       const pop = document.createElement('div'); pop.className = 'ch-pop panel';
       const rendre = () => { const x = ed[i]; pop.innerHTML = `<p class="ch-pop-t">Accord ${i + 1} : <b>${chordName(x.r, x.q)}</b></p>
+        <div class="ch-pop-ka">${clavierDe(x.r, x.q, { titre: chordName(x.r, x.q) })}</div>
         <div class="ch-pop-row"><select data-cp="r" aria-label="Note">${FR.map((n, k) => `<option value="${k}" ${k === x.r ? 'selected' : ''}>${n}</option>`).join('')}</select>
         <select data-cp="q" aria-label="Couleur">${TYPES.map(([v, l]) => `<option value="${v}" ${v === x.q ? 'selected' : ''}>${l}</option>`).join('')}</select>
         <select data-cp="b" aria-label="Durée">${DUREES.map(([v, l]) => `<option value="${v}" ${v === x.b ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
@@ -538,7 +540,7 @@ export default {
       body.innerHTML = `
         <div class="inst-grid">
           <div class="panel inst-screen screen">
-            <div class="inst-now"><small class="mono">accord entendu</small><b class="inst-chord">—</b><span class="inst-key mono">tonalité : à l’écoute…</span></div>
+            <div class="inst-now"><small class="mono">accord entendu</small><b class="inst-chord">—</b><span class="inst-ka"></span><span class="inst-key mono">tonalité : à l’écoute…</span></div>
             <div class="chroma" aria-hidden="true">${FR.map((n) => `<div><i></i><span>${n}</span></div>`).join('')}</div>
             <ol class="inst-timeline" aria-label="Accords joués"></ol>
           </div>
@@ -576,7 +578,7 @@ export default {
       const showChroma = (c) => { const mx = Math.max(...c) || 1; bars.forEach((b, i) => { b.style.transform = `scaleY(${(c[i] / mx).toFixed(3)})`; }); };
 
       function onChord(ch) {
-        body.querySelector('.inst-chord').textContent = chordLabel(ch);
+        body.querySelector('.inst-chord').textContent = chordLabel(ch); body.querySelector('.inst-ka').innerHTML = clavierDe(ch.root, ch.qual, { titre: chordLabel(ch) });
         if (!timeline.length || chordLabel(timeline.at(-1)) !== chordLabel(ch)) timeline.push(ch);
         if (timeline.length > 16) timeline.shift();
         body.querySelector('.inst-timeline').innerHTML = timeline.map((c, i) => `<li class="${i === timeline.length - 1 ? 'now' : ''}">${chordLabel(c)}</li>`).join('');
@@ -600,6 +602,7 @@ export default {
         body.querySelector('.ideas-body').innerHTML = `
           <h4>Après ${chordLabel(last)}, essaie…</h4>
           <div class="chips-w">${next.map((c) => `<button class="word-chip" data-chord="${c.root}:${c.qual}">${chordLabel(c)} <small>${c.roman}</small></button>`).join('')}</div>
+          <div class="inst-choix" aria-live="polite"></div>
           <h4>Les accords de ta tonalité</h4>
           <div class="chips-w">${dia.map((c) => `<button class="word-chip" data-chord="${c.root}:${c.qual}">${chordLabel(c)} <small>${c.roman}</small></button>`).join('')}</div>
           <h4>Pour chanter dessus</h4>
@@ -614,6 +617,8 @@ export default {
         const ch = e.target.closest('[data-chord]');
         if (ch) {
           const [root, qual] = ch.dataset.chord.split(':');
+          const box = body.querySelector('.inst-choix'); if (box) box.innerHTML = `<b>${esc(ch.firstChild.textContent.trim())}</b>${clavierDe(+root, qual, { titre: ch.firstChild.textContent.trim() })}`;
+          body.querySelectorAll('[data-chord]').forEach((b) => b.classList.toggle('on', b === ch));
           pad(chordIntervals(qual).map((iv) => mtof(48 + +root + iv)), audio().currentTime, 1.2, 0.06);
           return;
         }
