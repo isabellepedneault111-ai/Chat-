@@ -1,8 +1,11 @@
 // Le labo rythme ↔ note : on accélère un rythme jusqu’à ce que l’oreille l’entende comme une note (au-delà d’environ 20 battements par seconde).
-import { audio, out, impulseOsc, drums } from '../audio.js';
+import { audio, out, impulseOsc, drums, finalOut } from '../audio.js';
+import { wav } from '../oreille.js';
 import { autoCanvas, animate, css, keyboard, store } from '../ui.js';
 import { nameFR, ftom, mtof, clamp } from '../music.js';
 import { RATIO_PRESETS } from '../data.js';
+import { espace, profileOf, saveProfile } from '../espace.js';
+import { MEMBERS, memberColor } from '../duo.js';
 import { lampeHTML, brancherLampe } from '../lampe.js';
 import { onNotes, onCC, detecter } from '../materiel.js';
 import { mic } from '../audio.js';
@@ -94,6 +97,7 @@ export default {
             <button class="btn primary" data-act="play2">▶ Démarrer</button>
             <button class="btn" data-act="sweep">Glissade ↗</button>
             <button class="btn" data-act="tap">Tape le tempo</button>
+            <button class="btn" data-act="enreg" title="Enregistre ce que tu entends (groupes, liens, lampe compris), puis le télécharge en WAV">● Enregistrer</button>
           </div>
           ${lampeHTML()}
         </div>
@@ -112,6 +116,7 @@ export default {
           <ul class="tracks"></ul>
           <div class="groupes" aria-live="polite"></div>
           <div class="liens"></div>
+          <div class="reglages"></div>
           <button class="btn add-track" data-act="add">＋ Ajouter un disque</button>
           <button class="btn primary labo-beat" data-act="beat">Faire un beat de ces disques → Jouer</button>
           <a class="btn labo-cathedrale" href="#/cathedrale?du-labo">Bâtir La cathédrale de ces disques →</a>
@@ -183,6 +188,25 @@ export default {
       tracksChanged();
     }
 
+    // Mes réglages : un instantané nommé du labo (disques, groupes, liens, vitesse), gardé dans l'espace du duo.
+    // Il suit d'un appareil à l'autre, et l'autre le voit (et peut le charger) chez lui.
+    const instantane = () => ({ tracks: tracks.map(({ n, muted, inst, vol, g, respire, cache }) => ({ n, muted, inst, vol, g, respire, cache })), liens: liens.map((l) => ({ ...l })), focus, presetId, f });
+    function tousReglages() {
+      if (!espace.connected) return (store.get('laboReglages', [])).map((r) => ({ ...r, de: '' }));
+      return (espace.meta?.members || MEMBERS).flatMap((m) => (profileOf(m)?.laboReglages || []).map((r) => ({ ...r, de: m })));
+    }
+    function renderReglages() {
+      const l = tousReglages();
+      q('.reglages').innerHTML = `<h3>Mes réglages</h3>
+        <div class="rg-faire"><input class="input" data-rg="nom" maxlength="40" placeholder="Nom du réglage (ex. : la pompe du chaos)"><button class="btn small primary" data-rg="garder">Garder ce réglage</button></div>
+        ${l.length ? `<div class="rg-liste">${l.map((r) => `<span class="rg" style="--c:${r.de ? memberColor(r.de) : '#8a7f6c'}"><button class="rg-charger" data-rg="charger" data-id="${r.id}" data-de="${r.de}" title="Charger : ${r.tracks.map((t) => t.n).join(':')}${r.liens?.length ? `, ${r.liens.length} lien${r.liens.length > 1 ? 's' : ''}` : ''}">${r.nom.replace(/[<>&"]/g, '')}${r.de && r.de !== espace.me ? ` <small>· ${r.de}</small>` : ''}</button>${!r.de || r.de === espace.me ? `<button class="rg-x" data-rg="retirer" data-id="${r.id}" aria-label="Retirer ce réglage">×</button>` : ''}</span>`).join('')}</div>` : '<p class="muted small">Rien de gardé encore. Ce que tu fais ici reste aussi tout seul, même si tu actualises : ce bouton sert à garder plusieurs versions, avec un nom.</p>'}`;
+    }
+    async function majReglages(fn) {
+      if (espace.connected) { await saveProfile((d) => ({ laboReglages: fn(d.laboReglages || []) })); }
+      else store.set('laboReglages', fn(store.get('laboReglages', [])));
+      renderReglages();
+    }
+    const garder = () => store.set('laboEtat', { tracks: tracks.map(({ n, muted, inst, vol, g, respire, cache }) => ({ n, muted, inst, vol, g, respire, cache })), liens, focus, presetId, f });
     function tracksChanged() {
       liens = liens.filter((l) => (SOURCES[l.src] || +l.src < tracks.length) && (l.cible.startsWith('g') ? tracks.some((t) => t.g === l.cible.slice(1)) : +l.cible < tracks.length));
       store.set('laboCle', tracks.map((t) => t.n)); // la clé de voûte de La cathédrale
@@ -221,7 +245,7 @@ export default {
         </li>`).join('');
       q('.add-track').disabled = tracks.length >= MAX_TRACKS;
       el.querySelectorAll('[data-preset]').forEach((b) => b.classList.toggle('active', b.dataset.preset === presetId));
-      renderGroupes(); renderLiens(); renderFocus();
+      renderGroupes(); renderLiens(); renderFocus(); garder();
     }
     // Les liens : qui influence qui. Une source (un disque, à chacune de ses frappes ; ou la respiration lente) fait
     // monter ou baisser le volume d'une cible (un disque ou un groupe). « Baisser à chaque frappe », c'est la pompe
@@ -252,8 +276,8 @@ export default {
     function noeuds() {
       const lettres = [...new Set(tracks.map((t) => t.g).filter(Boolean))].sort();
       const haut = [...tracks.map((t, i) => [t, i]).filter(([t]) => !t.g).map(([t, i]) => ({ id: String(i), type: 'd', r: 22 })), ...lettres.map((g) => ({ id: `g${g}`, type: 'g', g }))];
-      const utilises = Object.keys(SOURCES).filter((k) => liens.some((l) => l.src === k));
-      const W = 640; const H = 300; const gauche = utilises.length ? 150 : 0; const cx = gauche + (W - gauche) / 2; const cy = H / 2; const n = haut.length;
+      const utilises = Object.keys(SOURCES);
+      const H = 300; const larg = q('.liens')?.clientWidth || 640; const W = Math.max(560, Math.min(1100, Math.round((larg * H) / 330))); const gauche = 150; /* la largeur suit l'écran : pas de marges vides */ const cx = gauche + (W - gauche) / 2; const cy = H / 2; const n = haut.length;
       const rx = (W - gauche) / 2 - 70; const ry = H / 2 - 62;
       const l = [];
       haut.forEach((x, k) => {
@@ -263,7 +287,7 @@ export default {
         l.push({ id: x.id, type: 'g', x: X, y: Y, r: R, label: x.g, titre: `Groupe ${x.g} : tout le groupe`, c: GROUPES[x.g] });
         m.forEach(([t, i], j) => { const b = (j / m.length) * Math.PI * 2 - Math.PI / 2; l.push({ id: String(i), type: 'm', r: 14, x: X + Math.cos(b) * rm, y: Y + Math.sin(b) * rm, label: `D${i + 1}`, titre: `Disque ${i + 1}, dans le groupe ${x.g}`, c: colors[i] }); });
       });
-      utilises.forEach((k, j) => { const [titre, label] = SOURCES[k]; l.push({ id: k, type: 's', r: 18, x: 26, y: utilises.length === 1 ? cy : 30 + j * ((H - 60) / (utilises.length - 1)), label, nom: titre, titre: SOURCES[k].join(' : '), c: '#b8ad98' }); });
+      utilises.forEach((k, j) => { const [titre, label] = SOURCES[k]; l.push({ id: k, type: 's', r: 15, x: 20, y: 24 + j * ((H - 48) / (utilises.length - 1)), label, nom: titre.replace(/^(La |Le |Une |Ta |L’)/, ''), titre: SOURCES[k].join(' : '), c: liens.some((x) => x.src === k) ? '#efe6d2' : '#8a7f6c' }); });
       return { l, W, H };
     }
     // Le nœud sous un point : le plus petit qui le contient (un disque dans un anneau gagne sur l'anneau).
@@ -281,7 +305,7 @@ export default {
       const forme = (x) => {
         if (x.type === 'g') return `<circle r="${x.r}" fill="rgba(255,255,255,.03)" stroke="${x.c}" stroke-width="4"/><text y="${-x.r - 7}" text-anchor="middle" fill="${x.c}" class="ls-glettre">Groupe ${x.label}</text>`;
         if (x.type === 'm') return `<circle r="${x.r}" fill="#1b1915" stroke="${x.c}" stroke-width="2.5"/><text y="4" text-anchor="middle" fill="${x.c}" class="ls-petit">${x.label}</text>`;
-        if (x.type === 's') return `<circle r="${x.r}" fill="#1b1915" stroke="${x.c}" stroke-width="2"/><text y="5" text-anchor="middle" fill="#efe6d2">${x.label}</text><text x="${x.r + 6}" y="4" class="ls-nom">${x.nom}</text>`;
+        if (x.type === 's') return `<circle r="${x.r}" fill="#1b1915" stroke="${x.c}" stroke-width="2"/><text y="5" text-anchor="middle" fill="#efe6d2">${x.label}</text><text x="${x.r + 6}" y="4" class="ls-nom">${x.nom}</text><rect x="${-x.r - 4}" y="${-x.r - 3}" width="${x.r * 2 + 14 + x.nom.length * 6.6}" height="${x.r * 2 + 6}" rx="10" fill="transparent"/>`;
         return `<circle r="${x.r}" fill="#1b1915" stroke="${x.c}" stroke-width="3"/><text y="3" text-anchor="middle" fill="${x.c}">${x.label}</text><text y="15" text-anchor="middle" class="ls-sous">${x.sous}</text>`;
       };
       // Les anneaux d'abord, puis les flèches, puis les disques et les déclencheurs par-dessus (on les attrape toujours).
@@ -295,17 +319,16 @@ export default {
       const lettres = [...new Set(tracks.map((t) => t.g).filter(Boolean))].sort();
       const cibles = [...tracks.map((_, i) => [String(i), `du disque ${i + 1}`]), ...lettres.map((l) => [`g${l}`, `du groupe ${l}`])];
       q('.liens').innerHTML = `<h3>Les liens : qui influence qui</h3>
-        <div class="ls-palette" role="group" aria-label="Les déclencheurs : tire-en un vers un disque ou un groupe">${Object.entries(SOURCES).map(([k, [titre, label, aide]]) => `<button type="button" class="ls-src" data-src-chip="${k}" title="${titre} : ${aide}"><b>${label}</b>${titre.replace(/^(La |Le |Une |Ta |L’)/, '')}</button>`).join('')}</div>
-        <p class="muted small">Tire un <b>déclencheur</b> ou un disque vers sa cible : un disque, ou l’anneau d’un groupe pour tout le groupe. Touche un disque sans tirer : il passe en avant, en haut. <span class="ls-leg"><i style="background:${SENS.baisse}"></i>vers le bas <i style="background:${SENS.monte}"></i>vers le haut · épaisse = forte</span></p>
+        <p class="muted small">Tire un <b>déclencheur</b> (à gauche) ou un disque vers sa cible : un disque, ou l’anneau d’un groupe pour tout le groupe. Touche un disque sans tirer : il passe en avant, en haut. <span class="ls-leg"><i style="background:${SENS.baisse}"></i>plus doux, grave, sourd, à gauche <i style="background:${SENS.monte}"></i>plus fort, aigu, brillant, à droite · épaisse = forte</span></p>
         ${schemaSVG()}
-        ${liens.length ? `<ul class="li-liste">${liens.map((l, k) => `<li class="${k === lienChoisi ? 'sel' : ''}" data-lien-li="${k}"><span><b>${nomSource(l.src)}</b>${SOURCES[l.src] ? '' : ', à chacune de ses frappes,'} pousse <select class="li-param" data-lien-param="${k}" aria-label="Ce que le lien fait bouger">${Object.entries(PARAMS).map(([v, [lb]]) => `<option value="${v}" ${(l.param || 'volume') === v ? 'selected' : ''}>${lb}</option>`).join('')}</select> <b>${nomCible(l.cible)}</b> <button class="li-sens" data-lien-sens="${k}" style="--c:${SENS[l.sens]}" title="Inverser le sens">${verbe(l)}</button></span><input type="range" min="10" max="100" value="${Math.round(l.force * 100)}" data-lien-force="${k}" aria-label="Force du lien"><button class="icon-btn tiny" data-lien-x="${k}" aria-label="Retirer ce lien">×</button></li>`).join('')}</ul>` : ''}
+        ${liens.length ? `<ul class="li-liste">${liens.map((l, k) => `<li class="${k === lienChoisi ? 'sel' : ''}" data-lien-li="${k}"><span><b>${nomSource(l.src)}</b>${SOURCES[l.src] ? '' : ', à chacune de ses frappes,'} agit sur <select class="li-param" data-lien-param="${k}" aria-label="Ce que le lien fait bouger">${Object.entries(PARAMS).map(([v, [lb]]) => `<option value="${v}" ${(l.param || 'volume') === v ? 'selected' : ''}>${lb}</option>`).join('')}</select> <b>${nomCible(l.cible)}</b> : <button class="li-sens" data-lien-sens="${k}" style="--c:${SENS[l.sens]}" title="Inverser le sens">${verbe(l)}</button></span><input type="range" min="10" max="100" value="${Math.round(l.force * 100)}" data-lien-force="${k}" aria-label="Force du lien"><button class="icon-btn tiny" data-lien-x="${k}" aria-label="Retirer ce lien">×</button></li>`).join('')}</ul>` : ''}
         <details class="li-faire-d"><summary>Ou l’écrire en phrase</summary><div class="li-faire"><select data-li="src">${tracks.map((_, i) => `<option value="${i}">Le disque ${i + 1}, à chaque frappe,</option>`).join('')}${Object.entries(SOURCES).map(([k, [lb]]) => `<option value="${k}">${lb}</option>`).join('')}</select>
-          <span>pousse</span>
+          <span>agit sur</span>
           <select data-li="param">${Object.entries(PARAMS).map(([v, [lb]]) => `<option value="${v}">${lb}</option>`).join('')}</select>
           <select data-li="cible">${cibles.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select>
-          <select data-li="sens"><option value="baisse">vers le bas (grave, sourd, gauche)</option><option value="monte">vers le haut (aigu, clair, droite)</option></select>
+          <select data-li="sens"><option value="baisse">: moins (plus doux, plus grave, plus sourd, à gauche)</option><option value="monte">: plus (plus fort, plus aigu, plus brillant, à droite)</option></select>
           <button class="btn small primary" data-li="lier">Lier</button></div></details>`;
-      brancherSchema();
+      brancherSchema(); garder();
     }
     // Un déclencheur qui a besoin du matériel : on le branche, ou on dit quoi faire.
     function prevenir(src) {
@@ -323,15 +346,6 @@ export default {
         if (a.type === 'g') { import('../ui.js').then((u) => u.toast('Un groupe reçoit des liens ; tire depuis un déclencheur ou un disque.')); return; }
         trace = { src: a.id, x: a.x, y: a.y, x0: e.clientX, y0: e.clientY, noeud: true }; svg.setPointerCapture(e.pointerId); e.preventDefault();
       });
-      // Depuis la barre des déclencheurs : la ligne part du bouton, même s'il est hors du schéma.
-      q('.ls-palette').addEventListener('pointerdown', (e) => {
-        const b = e.target.closest('[data-src-chip]'); if (!b) return;
-        const r = b.getBoundingClientRect(); const [x, y] = pt({ clientX: r.left + r.width / 2, clientY: r.bottom });
-        trace = { src: b.dataset.srcChip, x, y }; b.setPointerCapture(e.pointerId); e.preventDefault();
-        const bouge = (ev) => { const [px, py] = pt(ev); svg.querySelector('.ls-trace').setAttribute('d', `M${trace.x} ${trace.y} L${px} ${py}`); };
-        const lache = (ev) => { b.removeEventListener('pointermove', bouge); b.removeEventListener('pointerup', lache); finir(ev); };
-        b.addEventListener('pointermove', bouge); b.addEventListener('pointerup', lache);
-      });
       svg.addEventListener('pointermove', (e) => { if (!trace) return; const [x, y] = pt(e); svg.querySelector('.ls-trace').setAttribute('d', `M${trace.x} ${trace.y} L${x} ${y}`); });
       svg.addEventListener('pointerup', (e) => finir(e));
       function finir(e) {
@@ -348,7 +362,8 @@ export default {
     }
     // L'effet des liens sur un disque, maintenant : de 0 (éteint) à 1 (inchangé) ou plus.
     // Ce qu'un lien peut faire bouger chez sa cible.
-    const PARAMS = { volume: ['le volume', 'vers le bas', 'vers le haut'], hauteur: ['la hauteur', 'vers le grave', 'vers l’aigu'], brillance: ['le timbre', 'vers le sourd', 'vers le clair'], pan: ['la place', 'vers la gauche', 'vers la droite'] };
+    // Ce qu'on entend, en mots simples : chaque frappe (ou chaque mouvement du déclencheur) rend la cible un instant…
+    const PARAMS = { volume: ['le volume', 'plus doux', 'plus fort'], hauteur: ['la hauteur', 'plus grave', 'plus aigu'], brillance: ['le timbre', 'plus sourd', 'plus brillant'], pan: ['l’espace gauche-droite', 'vers la gauche', 'vers la droite'] };
     const verbe = (l) => PARAMS[l.param || 'volume'][l.sens === 'baisse' ? 1 : 2];
     // L'enveloppe d'une source : 1 au moment d'une frappe, qui retombe vite ; ou la respiration lente.
     function enveloppe(src, now) {
@@ -395,6 +410,27 @@ export default {
           </div></section>`; }).join('');
     }
 
+    // Enregistrer le labo : ce qui sort vraiment des haut-parleurs (après la lampe et les compresseurs), en WAV stéréo.
+    let prise = null;
+    function enregistrer(b) {
+      const c = audio();
+      if (prise) {
+        const { proc, morceaux } = prise; prise = null; proc.disconnect(); finalOut().disconnect(proc);
+        const n = morceaux.reduce((a, m) => a + m[0].length, 0); if (!n) return;
+        const buf = c.createBuffer(2, n, c.sampleRate); let o = 0;
+        morceaux.forEach(([l, r]) => { buf.getChannelData(0).set(l, o); buf.getChannelData(1).set(r, o); o += l.length; });
+        const nom = `Labo ${tracks.map((t) => t.n).join('-')} · ${new Date().toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h')}`;
+        const a = document.createElement('a'); a.href = URL.createObjectURL(wav(buf)); a.download = `${nom}.wav`; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+        b.textContent = '● Enregistrer'; b.classList.remove('rec-on');
+        import('../ui.js').then((u) => u.toast(`${(n / c.sampleRate).toFixed(1).replace('.', ',')} s enregistrées : le WAV est téléchargé.`));
+        return;
+      }
+      if (!playing) setPlaying(true);
+      const proc = c.createScriptProcessor(4096, 2, 2); const morceaux = [];
+      proc.onaudioprocess = (ev) => { morceaux.push([new Float32Array(ev.inputBuffer.getChannelData(0)), new Float32Array(ev.inputBuffer.getChannelData(1))]); };
+      finalOut().connect(proc); const muet = c.createGain(); muet.gain.value = 0; proc.connect(muet).connect(c.destination);
+      prise = { proc, morceaux }; b.textContent = '■ Arrêter et télécharger'; b.classList.add('rec-on');
+    }
     function setF(nf, fromInput) {
       f = clamp(nf, FMIN, FMAX);
       if (fromInput !== 'range') range.value = toV(f);
@@ -614,6 +650,11 @@ export default {
         return;
       }
       if (act === 'play' || act === 'play2') setPlaying(!playing);
+      if (act === 'enreg') enregistrer(e.target.closest('[data-act]'));
+      const rg = e.target.closest('[data-rg]')?.dataset.rg;
+      if (rg === 'garder') { const nom = q('[data-rg=nom]').value.trim() || `Réglage ${tracks.map((t) => t.n).join(':')}`; majReglages((l) => [...l, { id: Date.now().toString(36), nom, at: Date.now(), ...instantane() }].slice(-30)).then(() => import('../ui.js').then((u) => u.toast(`« ${nom} » est gardé${espace.connected ? ' : il te suit sur tes appareils, et l’autre le voit.' : '.'}`))).catch((err) => import('../ui.js').then((u) => u.toast(err.message))); }
+      if (rg === 'charger') { const b = e.target.closest('[data-rg]'); const r = tousReglages().find((x) => x.id === b.dataset.id && x.de === b.dataset.de); if (r) { const enJeu = playing; if (enJeu) setPlaying(false); tracks = r.tracks.map((t) => ({ ...t })); liens = (r.liens || []).map((l) => ({ ...l })); focus = r.focus || 0; presetId = r.presetId || 'custom'; choisis.clear(); tracksChanged(); setF(r.f || f); if (enJeu) setPlaying(true); import('../ui.js').then((u) => u.toast(`« ${r.nom} » est chargé.`)); } }
+      if (rg === 'retirer') { const id = e.target.closest('[data-rg]').dataset.id; majReglages((l) => l.filter((x) => x.id !== id)); }
       if (act === 'add' && tracks.length < MAX_TRACKS) {
         tracks.push({ n: Math.min(MAX_N, Math.max(...tracks.map((t) => t.n)) + 1), muted: false, inst: KIT[tracks.length] || 'clic' });
         presetId = 'custom';
@@ -849,9 +890,12 @@ export default {
     }
 
     syncWaveButtons();
-    loadPreset(presetId);
+    renderReglages();
+    // On retrouve le labo tel qu'on l'a laissé : disques, groupes, liens, disque en avant, vitesse.
+    const garde = store.get('laboEtat', null);
+    if (garde?.tracks?.length) { tracks = garde.tracks; liens = garde.liens || []; focus = garde.focus || 0; presetId = garde.presetId || 'custom'; f = garde.f || f; tracksChanged(); } else loadPreset(presetId);
     setF(f);
     const offLampe = brancherLampe(el);
-    return () => { offMidi.forEach((o) => o()); offLampe(); io.disconnect(); stop(); stopAudio(); radar.dispose(); strip.dispose(); air.dispose(); wave.dispose(); kb.dispose(); };
+    return () => { if (prise) { prise.proc.disconnect(); try { finalOut().disconnect(prise.proc); } catch { /* déjà débranché */ } } offMidi.forEach((o) => o()); offLampe(); io.disconnect(); stop(); stopAudio(); radar.dispose(); strip.dispose(); air.dispose(); wave.dispose(); kb.dispose(); };
   },
 };

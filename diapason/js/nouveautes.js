@@ -59,6 +59,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.25', quand: '2026-10-26', titre: 'Le labo se souvient', items: [
+    ['Rien ne se perd', ['Le labo se souvient tout seul de ce que tu as fait (disques, groupes, liens, disque en avant, vitesse), même si tu actualises la page.', '<b>Mes réglages</b> : donne un nom, « Garder ce réglage », et il te suit sur tes appareils ; l’autre le voit aussi chez lui et peut le charger. Un toucher pour le recharger.']],
+    ['● Enregistrer', ['À côté de Démarrer : enregistre exactement ce que tu entends (groupes, liens, lampe compris), puis le télécharge en WAV stéréo.']],
+    ['Des mots qui s’entendent', ['Les liens disent ce qu’on entend : « le chaos agit sur le timbre du groupe A : <b>plus sourd</b> ». Plus doux ou plus fort, plus grave ou plus aigu, plus sourd ou plus brillant, vers la gauche ou vers la droite (l’<b>espace gauche-droite</b>, entre tes deux haut-parleurs).', 'Les déclencheurs sont revenus à gauche du schéma, collés au bord ; le schéma prend toute la largeur.']],
+  ] },
   { v: '0.24', quand: '2026-10-26', titre: 'Le schéma, en plus clair', items: [
     ['Les groupes se blottissent', ['Dans le schéma des liens, les disques d’un groupe sont <b>dans son anneau</b>. On vise l’anneau pour toucher tout le groupe, ou un disque à l’intérieur pour lui seul.']],
     ['Toucher pour mettre en avant', ['Dans le schéma, touche un disque sans tirer, même dans un anneau : il passe <b>en avant</b> dans la grande fenêtre du haut, où sa fréquence se règle. Un halo le marque dans le schéma.']],

@@ -3200,3 +3200,12 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .ls-petit { font: 800 10px "Atkinson Hyperlegible", sans-serif !important; }
 .ls-g { cursor: default; }
 .ls-focus circle:first-child { filter: drop-shadow(0 0 6px #ffe3a3); stroke-width: 4; }
+.rec-on { background: #d93a24 !important; color: #fff !important; border-color: #d93a24 !important; }
+/* Mes réglages du labo */
+.reglages { margin: 12px 0; padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--rule); }
+.reglages h3 { margin: 0 0 8px; font-size: 1.02rem; }
+.rg-faire { display: flex; flex-wrap: wrap; gap: 8px; } .rg-faire .input { flex: 1; min-width: 200px; }
+.rg-liste { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.rg { display: inline-flex; align-items: center; border-radius: 16px; border: 2px solid var(--c); overflow: hidden; }
+.rg-charger { border: 0; background: none; padding: 4px 10px; cursor: pointer; font: inherit; font-weight: 700; font-size: .86rem; color: inherit; } .rg-charger small { font-weight: 400; color: var(--muted); }
+.rg-x { border: 0; border-left: 1px solid var(--c); background: none; padding: 4px 8px; cursor: pointer; color: var(--muted); }
