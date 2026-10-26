@@ -167,6 +167,18 @@ export const POURQUOI = {
 
 // ---------- Étape 1 : notre point de départ ----------
 export const OBJECTIFS = ['Finir 3 à 5 originaux', 'Jouer devant du monde', 'Une démo dont on est fiers', 'Composer vraiment à deux', 'Développer ma voix', 'Sculpter notre son', 'Écrire de meilleurs textes', 'Du plaisir, sans pression', 'Trouver notre son à nous', 'Apprendre de l’autre'];
+// Ce qu'on aime dans une chanson qui nous inspire : la précision qui rend le portrait utile (on ne copie pas un artiste,
+// on cherche sa rythmique, sa voix, sa façon de construire).
+export const ASPECTS = [['rythme', 'la rythmique, le groove'], ['voix', 'la voix'], ['texte', 'le texte'], ['melodie', 'la mélodie'], ['accords', 'les accords'], ['son', 'le son, la production'], ['ambiance', 'l’ambiance'], ['energie', 'l’énergie'], ['instrument', 'un instrument, l’arrangement'], ['structure', 'la structure, les surprises'], ['emotion', 'l’émotion']];
+export const aspect = (k) => ASPECTS.find(([x]) => x === k)?.[1] || k;
+// Un lien YouTube ou Spotify peut s'ouvrir au bon moment (« à 2:14 »).
+export function lienAuMoment(lien, moment) {
+  const m = String(moment || '').match(/(\d+)\s*[:h]\s*(\d{1,2})/); if (!lien || !m) return lien;
+  const s = +m[1] * 60 + +m[2];
+  if (/youtu\.?be/.test(lien)) return `${lien}${lien.includes('?') ? '&' : '?'}t=${s}`;
+  if (/spotify\.com\/track/.test(lien)) return `${lien.split('#')[0]}#${m[1]}:${m[2].padStart(2, '0')}`;
+  return lien;
+}
 export const STYLES = ['Folk', 'Pop', 'Électro', 'Ambient', 'Rock', 'Indie', 'Soul / R&B', 'Jazz', 'Trip-hop', 'Chanson française', 'Trad québécois', 'Hip-hop', 'Musique de film', 'Expérimental'];
 export const BESOINS = [
   ['cadre', 'Un cadre clair', 'De la liberté'],

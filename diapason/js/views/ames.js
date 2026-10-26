@@ -3,14 +3,14 @@
 // féconds, des pistes hors sentier tirées de nos propres mots, et ce que nos traces disent déjà. La page se recalcule
 // à chaque visite : plus on crée, plus elle change.
 import { espace, profileOf, onEspace } from '../espace.js';
-import { MEMBERS, BESOINS, STAGES, memberColor } from '../duo.js';
+import { MEMBERS, BESOINS, STAGES, memberColor, aspect, lienAuMoment } from '../duo.js';
 import { esc, espaceGate } from './carnet.js';
 import { arcSVG, triskelSVG } from '../talismans.js';
 import { nomNote } from '../oreille.js';
 import { store } from '../ui.js';
 
 const bas = (s) => String(s || '').toLowerCase();
-const tout = (p) => bas([p.force, p.apprendre, p.instruments, p.apporte, p.bloque, p.besoin, p.fierte, p.objectifLibre, ...(p.objectifs || []), ...(p.styles || []), ...(p.artistes || []).map((a) => a?.nom)].join(' · '));
+const tout = (p) => bas([p.force, p.apprendre, p.instruments, p.apporte, p.bloque, p.besoin, p.fierte, p.objectifLibre, ...(p.objectifs || []), ...(p.styles || []), ...(p.artistes || []).flatMap((a) => [a?.nom, a?.pourquoi, ...(a?.aime || []).map(aspect)])].join(' · '));
 
 // Des pistes hors sentier, chacune née de ce que vous avez écrit (on dit pourquoi).
 function pistes(z, f, nz, nf) {
@@ -25,6 +25,21 @@ function pistes(z, f, nz, nf) {
   if (/improvis/.test(bas(z.bloque)) || /improvis/.test(tf)) out.push(['L’impro à boussole', `Avant chaque impro, ${nf} donne UNE boussole en trois mots (« sombre, lent, trois notes »). ${nz} sait où aller ; ${nf} garde toute sa liberté.`, `Parce que ${nf} brille en impro et que ${nz} redoute de se perdre quand on improvise sans savoir ce qui est cherché.`]);
   if (z.voix && z.voix.high - z.voix.low >= 28) out.push(['Trois octaves en une chanson', `Une chanson qui commence murmurée tout en bas (${nomNote(z.voix.low + 2)}) et finit en cri tout en haut (${nomNote(z.voix.high - 2)}). Toute la voix de ${nz}, d’un bout à l’autre.`, `Parce que la tessiture mesurée de ${nz} couvre ${Math.round((z.voix.high - z.voix.low) / 12 * 10) / 10} octaves.`]);
   if (!out.length) out.push(['Une contrainte par séance', 'Tirez une contrainte au dé avant chaque séance et gardez-la jusqu’au bout.', 'Parce que la contrainte libère.']);
+  // Ce que vous cherchez tous les deux dans vos inspirations devient une façon de commencer.
+  const aime = (p) => new Set((p.artistes || []).flatMap((a) => a?.aime || []));
+  const az = aime(z); const af = aime(f);
+  const DEPART = {
+    rythme: ['Le groove d’abord', `Partez d’une rythmique que vous aimez tous les deux. ${nf} la refait au beat, ${nz} la mumble avant le moindre accord. Les accords viendront se poser sur le corps de la chanson.`],
+    voix: ['La voix devant', `Une chanson où la voix porte tout : ${nf} ne joue que ce qui la met en valeur (une pédale, deux accords). Enregistrez la voix d’abord, l’arrangement après.`],
+    texte: ['Une ligne qui tient seule', `Écrivez une seule phrase qui vous touche tous les deux, lue à voix haute sans musique. Si elle tient nue, construisez la chanson autour.`],
+    son: ['Le grain avant la note', `Choisissez un son (un piano abîmé, un souffle, un bruit de la pièce) et faites-en le personnage principal. La chanson naît de sa couleur.`],
+    ambiance: ['Le lieu avant la note', `Décrivez ensemble un lieu précis (une heure, une lumière, une température). Ambiances → écrire dedans, puis jouez ce lieu.`],
+    melodie: ['La mélodie qui reste', `Une mélodie fredonnable en 4 mesures, chantée par ${nz}, harmonisée ensuite par ${nf} de trois façons différentes. Gardez celle qui surprend.`],
+    accords: ['Les accords qui racontent', `Une suite de quatre accords qui raconte déjà quelque chose sans voix. Studio → Mes propres accords, puis la voix cherche sa place.`],
+    emotion: ['Une seule émotion, sans détour', `Nommez une émotion précise (pas « triste » : « soulagé mais honteux ») et refusez tout ce qui ne la sert pas.`],
+    energie: ['La montée', `Une chanson qui ne fait que monter : chaque section ajoute une couche, rien ne redescend avant la fin.`],
+  };
+  [...az].filter((k) => af.has(k) && DEPART[k]).slice(0, 2).forEach((k) => out.push([...DEPART[k], `Parce que vous aimez tous les deux ${aspect(k)} dans vos inspirations.`]));
   return out;
 }
 
@@ -78,7 +93,7 @@ export default {
           <div class="ap-grid">${P.map(([t, q, pq]) => `<article class="ap"><h3>${esc(t)}</h3><p>${esc(q)}</p><small>${esc(pq)}</small></article>`).join('')}</div>
         </section>
         <section class="ames-grid">
-          <article class="panel"><h2>Nos inspirations</h2><ul class="ames-insp">${insp.map((a) => `<li style="--c:${memberColor(a.de)}">${a.lien ? `<a href="${esc(a.lien)}" target="_blank" rel="noopener">${esc(a.nom)} ↗</a>` : esc(a.nom)} <small>${esc(a.de)}</small></li>`).join('') || '<li class="muted">Aucune encore.</li>'}</ul></article>
+          <article class="panel"><h2>Nos inspirations</h2><ul class="ames-insp">${insp.map((a) => `<li style="--c:${memberColor(a.de)}">${a.lien ? `<a href="${esc(lienAuMoment(a.lien, a.moment))}" target="_blank" rel="noopener">${esc(a.nom)}${a.moment ? ` à ${esc(a.moment)}` : ''} ↗</a>` : esc(a.nom)} <small>${esc(a.de)}</small>${a.aime?.length ? `<span class="art-aime">${a.aime.map(aspect).map(esc).join(' · ')}</span>` : ''}${a.pourquoi ? `<em class="art-pq">« ${esc(a.pourquoi)} »</em>` : ''}</li>`).join('') || '<li class="muted">Aucune encore.</li>'}</ul></article>
           <article class="panel"><h2>Ce que nos traces disent déjà</h2>
             <ul class="ames-traces"><li><b>${traces.seances}</b> séance${traces.seances > 1 ? 's' : ''} terminée${traces.seances > 1 ? 's' : ''}</li><li><b>${traces.prises}</b> prise${traces.prises > 1 ? 's' : ''} enregistrée${traces.prises > 1 ? 's' : ''}</li><li><b>${traces.chansons}</b> chanson${traces.chansons > 1 ? 's' : ''} montée${traces.chansons > 1 ? 's' : ''} au studio</li><li><b>${traces.pages}</b> page${traces.pages > 1 ? 's' : ''} au journal</li></ul>
             <p class="small">Nos idées au mur : ${STAGES.map((s, i) => `${esc(s.label)} <b>${traces.idees[i]}</b>`).join(' · ')}</p>

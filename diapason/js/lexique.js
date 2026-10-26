@@ -1,6 +1,7 @@
 // Outils de langue pour l'écriture de chansons : syllabes chantées, rimes, synonymes.
 // Rimes et syllabes : Lexique 3.83 (New & Pallier, lexique.org, CC BY-SA 4.0), chargé à la demande.
-// Synonymes : Wiktionnaire (CC BY-SA), interrogé en direct depuis le navigateur.
+// Synonymes : myThes 2.3 (Frédéric Labbé, Dicollecte, LGPL), le dictionnaire de LibreOffice, dans l'app et hors ligne ;
+// le Wiktionnaire (CC BY-SA) en renfort pour les mots qu'il ne connaît pas.
 
 const VOWELS = 'aeiouyEO29@§51°';
 let words = null; // mot → { phon, nb, parts, freq }
@@ -119,6 +120,36 @@ export function rimeOf(line) {
   const last = lineSyll(line).last;
   const i = last && info(last);
   return i ? rimeKey(i.phon) : (last ? last.slice(-3).toLowerCase() : '');
+}
+
+// Rimes classées pour la chanson : combien de sons on partage avec le mot (plus il y en a, plus la rime sonne),
+// et combien de syllabes a chaque rime (pour garder la même longueur de vers).
+export function rimesClassees(w, limit = 60) {
+  const i = info(w); if (!i) return null;
+  const a = i.phon.replace(/°+$/, ''); const self = norm(w);
+  const commun = (b) => { let n = 0; while (n < a.length && n < b.length && a[a.length - 1 - n] === b[b.length - 1 - n]) n++; return n; };
+  const liste = (byRime.get(rimeKey(i.phon)) || [])
+    .filter((x) => x !== self && words.get(x).phon.replace(/°+$/, '') !== a) // pas les homophones (ver, vert, verre)
+    .map((x) => ({ w: x, sons: commun(words.get(x).phon.replace(/°+$/, '')), nb: words.get(x).nb, rank: words.get(x).rank }));
+  liste.sort((x, y) => y.sons - x.sons || x.rank - y.rank);
+  // Une seule forme par son : « balance » suffit, pas aussi « balances » et « balancent ».
+  const vus = new Set(); const uniques = liste.filter((x) => { const ph = words.get(x.w).phon.replace(/°+$/, ''); if (vus.has(ph)) return false; vus.add(ph); return true; });
+  const homophones = (byRime.get(rimeKey(i.phon)) || []).filter((x) => x !== self && words.get(x).phon.replace(/°+$/, '') === a);
+  return { phon: i.phon, nb: i.nb, rimes: uniques.slice(0, limit), homophones: homophones.slice(0, 8) };
+}
+
+// Synonymes, par sens : d'abord le dictionnaire de l'app (hors ligne), sinon le Wiktionnaire.
+const NATURE = { n: 'nom', v: 'verbe', a: 'adjectif', adv: 'adverbe', '': '' };
+let thes = null;
+const chargerThes = () => (thes ||= fetch('data/synonymes-fr.tsv').then((r) => r.text()).then((t) => {
+  const m = new Map(); for (const l of t.split('\n')) { if (!l || l[0] === '#') continue; const [w, s] = l.split('\t'); m.set(w, s); } return m;
+}).catch(() => new Map()));
+export async function synonymesParSens(w) {
+  const m = await chargerThes(); const k = norm(w);
+  let brut = m.get(k) || m.get(k.replace(/s$/, '')) || m.get(k.replace(/es$/, 'e')) || m.get(k.replace(/x$/, ''));
+  if (brut) return { source: 'dico', sens: brut.split(';').map((x) => { const [n, l] = x.split(':'); const rang = (m) => words?.get(norm(m))?.rank ?? 1e6; return { nature: NATURE[n] ?? '', mots: l.split('|').sort((x, y) => rang(x) - rang(y)) }; }) };
+  const wik = await synonyms(w);
+  return wik == null ? null : { source: 'wiktionnaire', sens: wik.length ? [{ nature: '', mots: wik }] : [] };
 }
 
 // Synonymes : section « Synonymes » du Wiktionnaire (et quasi-synonymes).

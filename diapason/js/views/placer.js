@@ -120,6 +120,7 @@ export default {
           <h2>Mes lignes</h2>
           <p class="muted small">Une ligne de chanson par ligne. Chaque ligne dure deux mesures. Touche une ligne pour voir ses placements.</p>
           <textarea class="pl-texte" rows="8" placeholder="Vingt secondes de silence&#10;et ton piano revient me chercher">${esc(store.get('placerTexte', ''))}</textarea>
+          <p class="mo-astuce">Double-clique un mot : ses rimes (de la plus riche à la plus simple) et ses synonymes.</p>
           <ol class="pl-lignes"></ol>
           <div class="ec-row"><button class="btn" data-p="tout">▶ Toutes mes lignes, avec le meilleur placement</button>${espace.connected ? '<button class="btn" data-p="garder">Dans le journal</button>' : ''}</div>
         </section>

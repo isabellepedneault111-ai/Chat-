@@ -98,6 +98,7 @@ export default {
         <section class="ec-new">
           <p class="ec-invite"><small>L’invitation du jour</small>${esc(inviteDu())}</p>
           <textarea class="input ec-text" rows="5" placeholder="Écris ce qui vient. Rien ne sera jugé."></textarea>
+          <p class="mo-astuce">Double-clique un mot : ses rimes (de la plus riche à la plus simple) et ses synonymes.</p>
           <div class="ec-row"><button class="btn primary" data-e="save">Dans le journal</button><span class="muted small">${esc((espace.meta.members || MEMBERS).find((m) => m !== espace.me) || '')} le verra en ouvrant l’app.</span></div>
         </section>
         <section class="ec-flux">

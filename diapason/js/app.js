@@ -24,6 +24,7 @@ import ames from './views/ames.js';
 import arbre from './views/arbre.js';
 import materiel from './views/materiel.js';
 import { installerFilet } from './filet.js';
+import { installerMotOuvert } from './motoutil.js';
 import { installerGlossaire } from './glossaire.js';
 import { installerSommaire } from './sommaire.js';
 import { initEtincelle } from './etincelle.js';
@@ -73,6 +74,7 @@ const view = $('#view');
 installerGlossaire(view); // les mots de musique s'expliquent au survol
 installerSommaire(view); // en haut de chaque page : tout ce qu'on peut y faire
 installerFilet(); // le filet : la dernière minute, toujours gardée
+installerMotOuvert(); // double-clic sur un mot : ses rimes et ses synonymes
 let cleanup = null;
 let currentId = 'home';
 

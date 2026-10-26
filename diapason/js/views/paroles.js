@@ -85,7 +85,7 @@ export default {
           <aside class="wordbox panel">
             <p class="tape">Boîte à mots</p>
             <input class="input" data-w="q" placeholder="Un mot à faire rimer" aria-label="Mot à chercher" value="${esc(word)}">
-            <div class="wb-out"><p class="muted small">Tape un mot, ou touche un mot de ton texte : rimes, synonymes et syllabes apparaissent ici. Touche un résultat pour l’insérer.</p></div>
+            <div class="wb-out"><p class="muted small">Tape un mot, ou touche un mot de ton texte : rimes, synonymes et syllabes apparaissent ici. Touche un résultat pour l’insérer. Dans le texte, un double-clic sur un mot ouvre aussi ses rimes classées et ses synonymes.</p></div>
           </aside>
         </div>`;
       renderEditor();

@@ -2696,3 +2696,26 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .filet-btn.on.plein { box-shadow: 0 0 10px rgba(232, 194, 122, .45); }
 .filet-btn .filet-t { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); font: 700 10px "Atkinson Hyperlegible", sans-serif; color: #a5741c; white-space: nowrap; }
 .m-duree { font-size: .88rem; } .m-duree select { padding: 3px 6px; border-radius: 6px; }
+/* Le mot ouvert : rimes et synonymes au double-clic. */
+.mo-boite { position: fixed; z-index: 190; max-height: min(70vh, 560px); overflow: auto; background: #fffaf0; color: #1b1915; border: 1.5px solid #1b1915; border-radius: 12px; box-shadow: 0 18px 40px -18px rgba(0, 0, 0, .55); padding: 12px 14px; display: grid; gap: 8px; font-size: .92rem; }
+.mo-tete { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; } .mo-tete b { font: 800 1.3rem "Literata", serif; }
+.mo-syl { font-size: .84rem; } .mo-muet { opacity: .45; }
+.mo-x { margin-left: auto; border: 0; background: none; font-size: 1rem; cursor: pointer; }
+.mo-titre { margin: 2px 0 0; font: 700 .78rem "Atkinson Hyperlegible", sans-serif; text-transform: uppercase; letter-spacing: .06em; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
+.mo-meme { text-transform: none; letter-spacing: 0; font-weight: 500; display: inline-flex; gap: 4px; align-items: center; }
+.mo-k { margin: 6px 0 2px; font-weight: 700; font-size: .84rem; } .mo-k .muted { font-weight: 400; }
+.mo-puces { display: flex; flex-wrap: wrap; gap: 4px; }
+.mo-puce { border: 1px solid #d9cfbc; background: #fff; border-radius: 999px; padding: 3px 9px; cursor: pointer; font: inherit; font-size: .88rem; display: inline-flex; gap: 4px; align-items: baseline; }
+.mo-puce small { font-size: .66rem; color: #8a7f6c; } .mo-puce:hover, .mo-puce:focus { background: #f3e7c9; border-color: #c9a45c; outline: none; }
+.mo-onglet + .mo-onglet { border-top: 1px dashed #d9cfbc; padding-top: 6px; }
+.mo-src { font-size: .72rem; margin: 0; }
+.mo-astuce { font-size: .82rem; color: #6d655a; }
+.mo-plus { background: #f3e7c9; font-weight: 700; }
+/* Étape 1 : chaque inspiration dit ce qu'on aime dedans. */
+.art-blocs { display: grid; gap: 12px; margin-bottom: 10px; }
+.art-bloc { padding: 10px 12px; border: 1px solid var(--rule); border-radius: 10px; background: var(--card); }
+.art-bloc .art-row { margin-bottom: 6px; } .art-prec { grid-template-columns: 1fr 140px; margin: 6px 0 0 !important; }
+.art-q { margin: 2px 0 4px; font-weight: 700; font-size: .86rem; }
+.art-bloc .pick-chip { font-size: .82rem; padding: 4px 10px; }
+.art-aime { display: block; font-size: .82rem; color: #6d655a; } .art-pq { display: block; font-size: .88rem; }
+@media (max-width: 700px) { .art-prec { grid-template-columns: 1fr; } }

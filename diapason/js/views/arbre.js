@@ -44,7 +44,7 @@ const ARBRE = ['Diapason Labo', 'Un environnement hybride : des sons fabriqués 
   ]],
   ['Les mots', 'Pour écrire des paroles qui se chantent.', D, null, [
     ['Syllabes et rimes', 'Lexique 3.83, par Boris New et Christophe Pallier (licence CC BY-SA 4.0) : 140 000 mots, avec leur prononciation et leurs syllabes.', D],
-    ['Synonymes', 'Le Wiktionnaire (CC BY-SA), interrogé en direct.', D],
+    ['Synonymes', 'myThes 2.3 de Frédéric Labbé (Dicollecte, LGPL), le dictionnaire de LibreOffice, gardé dans l’app ; le Wiktionnaire (CC BY-SA) en renfort.', D],
     ['L’accent tonique', 'La règle du français : la dernière syllabe prononcée du groupe, jamais un e muet.', C],
   ]],
   ['Les pièces de l’app', 'Ce qu’on trouve dans chaque onglet.', null, null, [
@@ -99,6 +99,7 @@ const ORIGINE = (nom) => (/^piano-/.test(nom) ? 'Piano à queue Salamander, enre
         : nom === 'audio.js' ? 'Ici naissent la batterie, la basse et les nappes, fabriquées en direct'
           : nom === 'sampler.js' ? 'Ici jouent les vrais instruments enregistrés (piano, Rhodes, voix)'
             : nom === 'lexique-fr.tsv' ? 'Lexique 3.83 (New et Pallier, CC BY-SA 4.0) : les syllabes et les rimes'
+              : nom === 'synonymes-fr.tsv' ? 'myThes 2.3 (Frédéric Labbé, Dicollecte, LGPL) : 36 000 mots et leurs synonymes, par sens'
               : nom === 'oreille.js' ? 'Ici, l’app écoute : tempo, tonalité, accords, justesse' : '');
 const couleur = (n) => (n.c ? COUL.dossier : COUL[(n.n.split('.').pop() || '').toLowerCase()] || '#cfc6b4');
 // Les fiches : chaque point cliquable garde ici ce qu'on sait de lui.

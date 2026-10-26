@@ -2,7 +2,7 @@
 import { espace, onEspace, profileOf, saveProfile, updateEspace } from '../espace.js';
 import { toast } from '../ui.js';
 import { nameFR, FR, mod12, spanText } from '../music.js';
-import { MEMBERS, ROLES, memberColor, OBJECTIFS, STYLES, BESOINS, MOTS } from '../duo.js';
+import { MEMBERS, ROLES, memberColor, OBJECTIFS, STYLES, BESOINS, MOTS, ASPECTS, aspect, lienAuMoment } from '../duo.js';
 import { esc, espaceGate } from './carnet.js';
 
 const STEPS = ['Ce que je veux', 'Ma voix, mon jeu', 'Mes styles', 'Mes besoins', 'Mes mots'];
@@ -80,9 +80,12 @@ export default {
       }
       if (step === 2) {
         const arts = p.artistes || [];
+        const n = Math.min(6, Math.max(3, arts.filter((x) => x?.nom).length + 1));
         b.innerHTML = `<h2>Ce qui t’allume</h2>${chips(STYLES, p.styles, 'styles')}
-          <h4>3 artistes ou morceaux qui t’inspirent</h4>
-          ${[0, 1, 2].map((i) => `<div class="art-row"><input class="input" data-art="${i}" data-k="nom" placeholder="Artiste ou morceau" value="${esc(arts[i]?.nom || '')}"><input class="input" data-art="${i}" data-k="lien" placeholder="Lien Spotify, YouTube…" value="${esc(arts[i]?.lien || '')}"></div>`).join('')}`;
+          <h4>Les artistes ou morceaux qui t’inspirent, et pourquoi</h4>
+          <p class="muted small">Ce qu’on aime d’une chanson, c’est parfois juste sa rythmique, une voix, une ligne de texte, un son. Le dire précisément rend notre portrait utile : on saura quoi aller chercher, pas qui copier.</p>
+          <div class="art-blocs">${[...Array(n)].map((_, i) => artBloc(arts[i] || {}, i)).join('')}</div>
+          ${n < 6 ? '<button class="btn small" data-a="art-plus">+ Une autre inspiration</button>' : ''}`;
       }
       if (step === 3) {
         const bs = p.besoins || {};
@@ -93,6 +96,21 @@ export default {
         b.innerHTML = `<h2>Quelques mots pour ${esc(otherName())}</h2>${MOTS.map(([k, l]) => `<label class="field col"><span>${l}</span><textarea class="input" rows="2" data-f="${k}" maxlength="500">${esc(p[k] || '')}</textarea></label>`).join('')}`;
       }
     }
+
+    function artBloc(a, i) {
+      const aime = a.aime || [];
+      return `<div class="art-bloc" data-bloc="${i}">
+        <div class="art-row"><input class="input" data-art="${i}" data-k="nom" placeholder="Artiste ou morceau" value="${esc(a.nom || '')}"><input class="input" data-art="${i}" data-k="lien" placeholder="Lien Spotify, YouTube…" value="${esc(a.lien || '')}"></div>
+        <p class="art-q">Ce que j’aime dedans</p>
+        <div class="pick">${ASPECTS.map(([k, l]) => `<button type="button" class="pick-chip ${aime.includes(k) ? 'on' : ''}" data-asp="${k}" data-art-i="${i}" aria-pressed="${aime.includes(k)}">${l}</button>`).join('')}</div>
+        <div class="art-row art-prec"><input class="input" data-art="${i}" data-k="pourquoi" maxlength="240" placeholder="Précise : la caisse claire un peu en retard, la voix cassée au refrain…" value="${esc(a.pourquoi || '')}"><input class="input" data-art="${i}" data-k="moment" maxlength="12" placeholder="moment : 2:14" value="${esc(a.moment || '')}" aria-label="Le moment précis"></div>
+      </div>`;
+    }
+    const lireArts = () => [...el.querySelectorAll('.art-bloc')].map((b) => {
+      const i = b.dataset.bloc; const v = (k) => b.querySelector(`[data-art="${i}"][data-k=${k}]`)?.value.trim() || '';
+      return { nom: v('nom'), lien: v('lien'), pourquoi: v('pourquoi'), moment: v('moment'), aime: [...b.querySelectorAll('[data-asp].on')].map((x) => x.dataset.asp) };
+    });
+    const inspiLi = (x, m) => `<li style="--c:${memberColor(m)}">${x.lien ? `<a href="${esc(lienAuMoment(x.lien, x.moment))}" target="_blank" rel="noopener">${esc(x.nom)}${x.moment ? ` à ${esc(x.moment)}` : ''} ↗</a>` : `${esc(x.nom)}${x.moment ? ` <small>à ${esc(x.moment)}</small>` : ''}`}${x.aime?.length ? `<span class="art-aime">${x.aime.map(aspect).map(esc).join(' · ')}</span>` : ''}${x.pourquoi ? `<em class="art-pq">« ${esc(x.pourquoi)} »</em>` : ''}</li>`;
 
     // Le portrait commun : ce qu'on partage, ce qui diffère, ce qu'il faut se dire.
     function renderPortrait() {
@@ -119,7 +137,17 @@ export default {
           <article class="panel"><h3>Nos couleurs</h3>
             <div class="pick">${inter(a.styles, b.styles).map((x) => `<span class="pick-chip on">${esc(x)}</span>`).join('') || '<span class="muted small">Pas encore de style commun.</span>'}</div>
             ${mem.map((m, i) => { const o = only([a, b][i].styles, [b, a][i].styles); return o.length ? `<p class="small"><b style="color:${memberColor(m)}">${esc(m)}</b> apporte : ${o.map(esc).join(', ')}</p>` : ''; }).join('')}
-            <ul class="art-list">${mem.flatMap((m, i) => ([a, b][i].artistes || []).filter((x) => x?.nom).map((x) => `<li style="--c:${memberColor(m)}">${x.lien ? `<a href="${esc(x.lien)}" target="_blank" rel="noopener">${esc(x.nom)} ↗</a>` : esc(x.nom)}</li>`)).join('')}</ul>
+          </article>
+          <article class="panel wide"><h3>Ce qui nous inspire, précisément</h3>
+            ${(() => {
+              const asp = (p) => new Set((p.artistes || []).flatMap((x) => x?.aime || []));
+              const az = asp(a); const ab = asp(b); const deux = [...az].filter((k) => ab.has(k));
+              const seul = (s1, s2) => [...s1].filter((k) => !s2.has(k));
+              return `${deux.length ? `<p><b>Ce qu’on cherche tous les deux dans une chanson :</b> ${deux.map(aspect).map(esc).join(', ')}.</p>` : ''}
+                ${mem.map((m, i) => { const o = seul([az, ab][i], [ab, az][i]); return o.length ? `<p class="small"><b style="color:${memberColor(m)}">${esc(m)}</b> écoute aussi : ${o.map(aspect).map(esc).join(', ')}.</p>` : ''; }).join('')}
+                ${!az.size && !ab.size ? '<p class="muted small">Dites ce que vous aimez dans chaque inspiration (étape « Mes styles ») : le portrait saura quoi chercher.</p>' : ''}`;
+            })()}
+            <ul class="art-list">${mem.flatMap((m, i) => ([a, b][i].artistes || []).filter((x) => x?.nom).map((x) => inspiLi(x, m))).join('')}</ul>
           </article>
           <article class="panel"><h3>Nos voix</h3>
             ${singer ? `<p>Tonalités confortables pour la voix de <b>${esc(zaza ? mem[0] : mem[1])}</b> : <b>${keys.map((k) => FR[k]).join(', ') || '—'}</b>.</p>` : '<p class="muted small">Faites le test de tessiture : on en tire vos tonalités.</p>'}
@@ -149,7 +177,10 @@ export default {
         save(() => ({ [key]: vals }));
         return;
       }
+      const asp = e.target.closest('[data-asp]');
+      if (asp) { asp.classList.toggle('on'); asp.setAttribute('aria-pressed', asp.classList.contains('on')); const arts = lireArts(); save(() => ({ artistes: arts })); return; }
       const a = e.target.closest('[data-a]')?.dataset.a;
+      if (a === 'art-plus') { const box = el.querySelector('.art-blocs'); const i = box.children.length; box.insertAdjacentHTML('beforeend', artBloc({}, i)); box.lastElementChild.querySelector('input').focus(); if (i >= 5) e.target.remove(); return; }
       if (a === 'next') { step = Math.min(STEPS.length - 1, step + 1); render(); }
       if (a === 'prev') { step = Math.max(0, step - 1); render(); }
       if (a === 'finish') {
@@ -187,10 +218,7 @@ export default {
         const vals = Object.fromEntries([...el.querySelectorAll('[data-need]')].map((x) => [x.dataset.need, +x.value]));
         save(() => ({ besoins: vals }));
       }
-      if (t.dataset.art != null) {
-        const arts = [0, 1, 2].map((i) => ({ nom: el.querySelector(`[data-art="${i}"][data-k=nom]`).value.trim(), lien: el.querySelector(`[data-art="${i}"][data-k=lien]`).value.trim() }));
-        save(() => ({ artistes: arts }));
-      }
+      if (t.dataset.art != null) { const arts = lireArts(); save(() => ({ artistes: arts })); }
     });
     // Quand l'autre remplit le sien, notre portrait commun se met à jour (sans toucher au formulaire).
     const off = onEspace((what) => {
