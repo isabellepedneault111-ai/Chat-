@@ -2,6 +2,7 @@
 // Pas de notification qui sonne : une liste calme, en haut de l'accueil, qui se vide quand on a regardé.
 import { espace, profileOf } from './espace.js';
 import { MEMBERS, STAGES } from './duo.js';
+import { deLautre, vu } from './suivi.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const MUR = new Set(['note', 'texte', 'audio', 'lien', 'image', 'essai', 'paroles']);
@@ -44,8 +45,10 @@ export function nouveautesHTML() {
   const sa = espace.meta.seen?.[o];
   const pasVu = sa ? espace.entries.filter((e) => e.author === espace.me && !e.demo && !e.data?.demo && e.createdAt > sa && (MUR.has(e.type) || e.data?.relais)) : [];
   const rappel = sa && !profileOf(o)?.doneAt ? `${esc(o)} n’a pas encore fait son point de départ.` : '';
-  if (!items.length && !pasVu.length && !rappel) return '';
-  return `<section class="nouveau">
+  const nv = deLautre(); const nvAVoir = nv.filter((e) => !vu(espace.me, e.id)).length;
+  const lienNv = nv.length ? `<a class="nouveau-tout" href="#/nouvelles">Nos nouvelles${nvAVoir ? ` : <b>${nvAVoir} à voir</b>` : ''}, avec les cases « vu » et « j’ai fait ça » →</a>` : '';
+  if (!items.length && !pasVu.length && !rappel) return lienNv ? `<section class="nouveau">${lienNv}</section>` : '';
+  return `<section class="nouveau">${lienNv}
     ${items.length ? `<p class="nouveau-k">Nouveau pour toi, depuis ${quand(depuis)}</p>
     <ul>${items.slice(0, 7).map(([t, h]) => `<li><a href="${h}"><b>${esc(o)}</b> ${t} →</a></li>`).join('')}</ul>` : ''}
     ${pasVu.length || rappel ? `<p class="nouveau-attente">${pasVu.length ? `${esc(o)} n’a pas encore vu ${pasVu.length > 1 ? `tes ${pasVu.length} derniers ajouts` : `ton ${titre(pasVu[0])}`} (sa dernière visite : ${quand(sa)}).` : ''} ${rappel}</p>` : ''}
@@ -56,6 +59,13 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.9', quand: '2026-10-26', titre: 'Tout ce que je t’envoie, au même endroit', items: [
+    ['Nos nouvelles', ['Une pastille sur <b>Plan</b> compte ce que l’autre a ajouté et que tu n’as pas encore vu. L’accueil mène à <b>Nos nouvelles</b> : tout, jour par jour, avec deux cases. <b>Vu</b>, et <b>J’ai fait ça</b> quand on demandait quelque chose.', 'De l’autre côté, on voit ce que l’autre a vu et fait de nos envois. Même chose dans le relais, sous chaque envoi.']],
+    ['Le relais en mots', ['Une carte de mots (une arcane, des paroles) se répond enfin : <b>● De la musique sur ces mots</b> (les mots restent sous tes yeux pendant que tu joues), <b>✎ Répondre en mots</b>, ou <b>Placer ces mots sur une pièce</b>.']],
+    ['Le mur, épuré', ['Un champ, et cinq gestes en icônes : mémo vocal, fichier audio, image, bravo, bilan. Les filtres et le projet se cachent sous <b>Filtrer</b> ; les réglages, l’invitation et le lexique sous ⚙.', '<b>Créer un morceau</b>, même quand il n’y en a aucun : vue Morceaux → « Un nouveau morceau ». Il naît avec un couplet et un refrain au studio, et chaque idée du mur peut le rejoindre. Un morceau du mur et une chanson du studio, c’est maintenant la même chose.']],
+    ['Nos couleurs', ['<b>Braise</b> pour Zaza (le feu de FLIP, la pointe de la flèche), <b>mûre</b> pour Frog (la nuit du studio). Lisibles, et distinctes même pour un daltonien.']],
+    ['Plus stable', ['Séance, étape 4 : la page ne saute plus à chaque choix de grille, et les cartes ne débordent plus au téléphone.', 'Le filet a un vrai bouton <b>⏻ Arrêter le filet</b>.']],
+  ] },
   { v: '0.8', quand: '2026-10-26', titre: 'Les mots justes', items: [
     ['Le mot ouvert', ['Partout où l’on écrit (journal, paroles, Placer, relais…), <b>double-clique un mot</b> : ses syllabes, ses <b>rimes classées</b> de la plus riche à la plus simple (avec le nombre de syllabes de chacune, et un filtre « même nombre de syllabes »), et ses <b>synonymes par sens</b>, des plus courants aux plus rares.', 'Touche un synonyme : il remplace le mot (Ctrl+Z pour revenir). Touche une rime : elle est copiée, prête à finir une ligne.', 'Les synonymes viennent maintenant du dictionnaire libre de LibreOffice (myThes, 36 000 mots), <b>gardé dans l’app</b> : ils marchent même sans Internet.']],
     ['Nos inspirations, précisément', ['Étape 1 → Mes styles : pour chaque artiste ou morceau, <b>ce que tu aimes dedans</b> (la rythmique, la voix, le texte, le son, l’ambiance…), une précision en mots, et <b>le moment exact</b> (« à 2:14 ») : le lien YouTube s’ouvre pile là. Jusqu’à six inspirations.', 'Le portrait dit <b>ce qu’on cherche tous les deux</b> dans une chanson, et Nos deux âmes en tire des pistes pour commencer (« Le groove d’abord », « La voix devant »…).']],

@@ -8,6 +8,7 @@ import { esc, ago, espaceGate } from './carnet.js';
 import { memberColor, MEMBERS } from '../duo.js';
 import { ecrire } from '../ecrire.js';
 import { togglePerle } from './coffre.js';
+import { vu, fait, marquer } from '../suivi.js';
 
 // Les intentions : ce qu'on aimerait que l'autre en fasse. On peut en choisir plusieurs, et l'écrire.
 export const GROUPES = [
@@ -56,12 +57,13 @@ export function relaisPending() {
 }
 
 // Envoie un son dans le relais (utilisé aussi par les Ambiances).
-export async function sendSound(blob, { title, asks = [], intent = '', thread, over, align = 0, mood, onProgress } = {}) {
+export async function sendSound(blob, { title, asks = [], intent = '', thread, over, pour, align = 0, mood, onProgress } = {}) {
   const meta = await uploadAudio(blob, onProgress);
   const data = { relais: true, ask: asks[0] || '', asks, intent, stage: 0, song: '' };
   if (thread) data.thread = thread;
   if (over) { data.over = over; data.align = Math.round(align * 1000) / 1000; }
   if (mood) data.mood = mood;
+  if (pour) data.pour = pour; // de la musique pour des mots
   return saveEntry({ type: 'audio', title: title || `Son de ${espace.me}`, audio: meta, data });
 }
 
@@ -170,7 +172,7 @@ export default {
       const host = el.querySelector('.rl-threads');
       if (!host) return;
       const all = items();
-      const s = JSON.stringify(all.map((e) => [e.id, e.updatedAt])) + (playing?.id || '');
+      const s = JSON.stringify(all.map((e) => [e.id, e.updatedAt])) + (playing?.id || '') + espace.entries.filter((e) => e.type === 'profil').map((e) => e.updatedAt).join(); // les cases « vu » de l'autre comptent aussi
       if (!force && s === sig) return;
       sig = s;
       const threads = new Map();
@@ -192,13 +194,25 @@ export default {
       const base = e.data?.over && espace.entries.find((x) => x.id === e.data.over);
       const layers = e.audio ? chainOf(e).length : 0;
       const isPlaying = playing?.id === e.id;
+      const pourMots = e.data?.pour && espace.entries.find((x) => x.id === e.data.pour);
+      // « Vu » et « J'ai fait ça » : coché par celui qui reçoit, lu par celui qui a envoyé.
+      const o = other(); const asks = asksOf(e).length > 0;
+      const suivi = e.author === espace.me
+        ? `<p class="rl-suivi">${vu(o, e.id) ? `${esc(o)} l’a vu ✓` : `${esc(o)} ne l’a pas encore vu`}${asks ? (fait(o, e.id) ? ' · <b>l’a fait ✓</b>' : '') : ''}</p>`
+        : `<p class="rl-suivi"><label><input type="checkbox" data-suivi="vus" ${vu(espace.me, e.id) ? 'checked' : ''}> Vu</label>${asks ? `<label><input type="checkbox" data-suivi="faits" ${fait(espace.me, e.id) ? 'checked' : ''}> J’ai fait ça</label>` : ''}</p>`;
       return `
         <article class="rl-item ${focus ? 'focus' : ''} ${e.author === espace.me ? 'mine' : ''}" style="--c:${memberColor(e.author)}" data-id="${esc(e.id)}">
           <header><b>${esc(e.author)}</b><span class="mono muted">${ago(e.createdAt)}</span>${intentsHTML(e)}${e.data?.mood ? `<span class="rl-mood">${esc(e.data.mood)}</span>` : ''}</header>
           <h3>${esc(e.title)}</h3>
           ${base ? `<p class="muted small">${e.audio ? 'Posé sur' : 'Écrit sur'} « ${esc(base.title)} » de ${esc(base.author)}</p>` : ''}
+          ${pourMots ? `<p class="muted small">En musique, pour les mots « ${esc(pourMots.title)} » de ${esc(pourMots.author)}</p>` : ''}
           ${e.type === 'note' && e.body ? `<blockquote class="rl-words">${esc(e.body).replace(/\n/g, '<br>')}</blockquote>` : ''}
-          ${e.audio ? '' : `<div class="rl-acts"><button class="btn small ghost ${e.data?.perle ? 'on' : ''}" data-r="perle">${e.data?.perle ? '✦ Dans le coffre' : '✦ Au coffre'}</button></div>`}
+          ${e.audio ? '' : `<div class="rl-acts">
+            <button class="btn small" data-r="habille">● De la musique sur ces mots</button>
+            <button class="btn small" data-r="write">✎ Répondre en mots</button>
+            <button class="btn small ghost" data-r="placer">Placer ces mots sur une pièce</button>
+            <button class="btn small ghost ${e.data?.perle ? 'on' : ''}" data-r="perle">${e.data?.perle ? '✦ Dans le coffre' : '✦ Au coffre'}</button></div>`}
+          ${suivi}
           ${e.audio ? `<div class="rl-acts">
             <button class="btn small ${isPlaying ? 'on' : ''}" data-r="play">${isPlaying ? '■ Arrêter' : layers > 1 ? `▶ Les ${layers} couches ensemble` : '▶ Écouter'}</button>
             <button class="btn small" data-r="over">● Par-dessus</button>
@@ -231,12 +245,12 @@ export default {
       if (!box) return;
       writer?.dispose(); writer = null;
       box.hidden = !work;
-      el.querySelector('.rl-main').hidden = !!work && work.kind !== 'reply';
-      if (!work) { box.innerHTML = ''; return; }
+      el.querySelector('.rl-main').hidden = !!work && work.kind !== 'reply' && work.kind !== 'habille';
+      if (!work) { box.innerHTML = ''; const lb = el.querySelector('.rl-label b'); if (lb) lb.textContent = `Lancer un son à ${other()}`; return; }
       const e = work.entry;
-      const head = `<div class="rl-work-head"><p><small class="mono">${work.kind === 'write' ? 'Écrire sur' : work.kind === 'over' ? 'Par-dessus' : 'Répondre à'}</small><b>« ${esc(e.title)} »</b> de ${esc(e.author)}</p><button class="icon-btn tiny" data-r="close" aria-label="Fermer">×</button></div>`;
+      const head = `<div class="rl-work-head"><p><small class="mono">${work.kind === 'write' ? (e.audio ? 'Écrire sur' : 'Répondre aux mots') : work.kind === 'over' ? 'Par-dessus' : work.kind === 'habille' ? 'De la musique pour' : 'Répondre à'}</small><b>« ${esc(e.title)} »</b> de ${esc(e.author)}</p><button class="icon-btn tiny" data-r="close" aria-label="Fermer">×</button></div>`;
       if (work.kind === 'write') {
-        box.innerHTML = `${head}<p class="rl-sub">Le son tourne en boucle pendant que tu écris.</p><div class="rl-writer"></div><div class="rl-intents"></div>`;
+        box.innerHTML = `${head}${e.audio ? '<p class="rl-sub">Le son tourne en boucle pendant que tu écris.</p>' : e.body ? `<blockquote class="rl-words">${esc(e.body).replace(/\n/g, '<br>')}</blockquote>` : ''}<div class="rl-writer"></div><div class="rl-intents"></div>`;
         const wp = intentions(box.querySelector('.rl-intents'), { to: e.author === espace.me ? other() : e.author, dark: true });
         writer = ecrire(box.querySelector('.rl-writer'), {
           saveLabel: `Envoyer à ${e.author === espace.me ? other() : e.author}`,
@@ -248,7 +262,9 @@ export default {
             close();
           },
         });
-        play(e, { loop: true });
+        if (e.audio) play(e, { loop: true });
+      } else if (work.kind === 'habille') {
+        box.innerHTML = `${head}<p class="rl-sub">Les mots restent sous tes yeux. Joue ce qu’ils t’inspirent (une nappe, des accords, un rythme), puis envoie : ${esc(e.author === espace.me ? other() : e.author)} chantera dessus.</p><blockquote class="rl-words rl-prompteur">${esc(e.body || e.title).replace(/\n/g, '<br>')}</blockquote>`;
       } else if (work.kind === 'over') {
         box.innerHTML = `${head}<p class="rl-sub">Mets des écouteurs. Le son de ${esc(e.author)} part, et tu enregistres par-dessus : ta couche sera calée sur la sienne.</p><button class="btn primary big" data-r="rec">● Enregistrer par-dessus</button>`;
       } else {
@@ -280,7 +296,7 @@ export default {
         rec = null;
         clearInterval(r.timer);
         if (base) stopPlay();
-        pending = { blob, url: URL.createObjectURL(blob), base, align, thread: work ? threadOf(work.entry) : undefined };
+        pending = { blob, url: URL.createObjectURL(blob), base, align, thread: work ? threadOf(work.entry) : undefined, pour: work?.kind === 'habille' ? work.entry : undefined };
         el.querySelectorAll('[data-r=rec]').forEach((b) => b.classList.remove('on'));
         renderReview();
       };
@@ -301,12 +317,12 @@ export default {
     function renderReview() {
       const box = el.querySelector('.rl-review');
       box.hidden = !pending;
-      el.querySelector('.rl-main').hidden = !!pending || (!!work && work.kind !== 'reply');
+      el.querySelector('.rl-main').hidden = !!pending || (!!work && work.kind !== 'reply' && work.kind !== 'habille');
       el.querySelector('.rl-work').hidden = !!pending || !work;
       if (!pending) { box.innerHTML = ''; return; }
-      const to = pending.base ? (pending.base.author === espace.me ? other() : pending.base.author) : other();
+      const ref = pending.base || pending.pour; const to = ref ? (ref.author === espace.me ? other() : ref.author) : other();
       const now = new Date();
-      const defTitle = pending.base ? `Ma couche sur « ${pending.base.title} »` : pending.file ? pending.file.replace(/\.[^.]+$/, '') : `${espace.me} · ${now.getHours()} h ${String(now.getMinutes()).padStart(2, '0')}`;
+      const defTitle = pending.base ? `Ma couche sur « ${pending.base.title} »` : pending.pour ? `Musique pour « ${pending.pour.title} »` : pending.file ? pending.file.replace(/\.[^.]+$/, '') : `${espace.me} · ${now.getHours()} h ${String(now.getMinutes()).padStart(2, '0')}`;
       box.innerHTML = `
         <p class="rl-label"><b>Prêt à partir</b></p>
         <audio controls src="${pending.url}"></audio>
@@ -330,7 +346,7 @@ export default {
       try {
         await sendSound(pending.blob, {
           title: box.querySelector('[data-r=title]').value.trim() || box.dataset.def,
-          ...picker.value(), thread: pending.thread, over: pending.base?.id, align: (pending.align || 0) - (pending.nudge || 0),
+          ...picker.value(), thread: pending.thread, over: pending.base?.id, pour: pending.pour?.id, align: (pending.align || 0) - (pending.nudge || 0),
           onProgress: (p) => { btn.textContent = `Envoi ${Math.round(p * 100)} %`; },
         });
         toast(`Lancé! ${other()} le verra en ouvrant l’app.`);
@@ -361,22 +377,30 @@ export default {
         e.target.textContent = 'Chargement…';
         try { await play(entry); } catch { toast('Ce son ne se charge pas.'); renderThreads(true); }
       }
-      if ((r === 'over' || r === 'write' || r === 'reply') && entry) {
+      if (r === 'placer' && entry) { store.set('placerTexte', entry.body || entry.title); location.hash = '#/placer'; return; }
+      if ((r === 'over' || r === 'write' || r === 'reply' || r === 'habille') && entry) {
         stopPlay();
         work = { kind: r, entry };
         renderWork();
         el.querySelector('.rl-launch').scrollIntoView({ behavior: 'smooth', block: 'start' });
         if (r === 'reply') el.querySelector('.rl-label b').textContent = `Renvoyer un son à ${entry.author === espace.me ? other() : entry.author}`;
+        if (r === 'habille') el.querySelector('.rl-label b').textContent = `Enregistrer ta musique pour ces mots`;
       }
     });
-    el.addEventListener('change', (e) => {
+    el.addEventListener('change', async (e) => {
+      const sv = e.target.dataset.suivi;
+      if (sv) {
+        const id = e.target.closest('.rl-item').dataset.id;
+        try { await marquer([id], sv, e.target.checked); if (sv === 'faits' && e.target.checked && !vu(espace.me, id)) await marquer([id], 'vus'); toast(sv === 'faits' && e.target.checked ? `${other()} verra que c’est fait.` : 'Noté.'); } catch (err) { toast(err.message); }
+        renderThreads(true); return;
+      }
       const r = e.target.dataset.r;
       if (r === 'dev') store.set('relaisDev', e.target.value);
       if (r === 'raw') { store.set('relaisRaw', e.target.checked); e.target.closest('details').querySelector('summary').textContent = `Entrée : ${e.target.checked ? 'instrument (son brut)' : 'micro'}`; }
       if (r === 'nudge' && pending) { pending.nudge = +e.target.value / 1000; el.querySelector('[data-nudge-v]').textContent = `${e.target.value} ms`; }
       if (r === 'file' && e.target.files[0]) {
         const f = e.target.files[0];
-        pending = { blob: f, url: URL.createObjectURL(f), file: f.name, thread: work?.kind === 'reply' ? threadOf(work.entry) : undefined };
+        pending = { blob: f, url: URL.createObjectURL(f), file: f.name, thread: work?.kind === 'reply' || work?.kind === 'habille' ? threadOf(work.entry) : undefined, pour: work?.kind === 'habille' ? work.entry : undefined };
         renderReview();
       }
     });

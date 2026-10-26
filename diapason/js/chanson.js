@@ -19,9 +19,15 @@ async function garder(ch) {
 }
 const neuve = (nom) => { const c = { id: uid(), nom: 'Couplet', chords: [[0, 'M', 4], [9, 'm', 4], [5, 'M', 4], [7, 'M', 4]] }; const r = { id: uid(), nom: 'Refrain', chords: [[5, 'M', 4], [7, 'M', 4], [0, 'M', 4], [0, 'M', 4]] }; return { id: uid(), nom, sections: [c, r], ordre: [c.id, r.id, c.id, r.id] }; };
 
+// Créer un morceau de n'importe où (le mur, l'accueil) : il naît avec un couplet et un refrain à changer.
+export async function creerChanson(nom) { const ch = neuve(nom); await garder(ch); return ch; }
+export const nomsDeChansons = () => lesChansons().map((c) => c.nom).filter(Boolean);
+export const chansonNommee = (nom) => lesChansons().find((c) => c.nom === nom) || null;
+
 // ctx : { jouer(accords absolus [[note, qualité, temps]], nom, étiquettes par accord), actuels() → la grille du studio }
 export function chansonTab(body, ctx) {
-  let ch = lesChansons()[0] || null; let t = 0;
+  const voulue = (location.hash.match(/[?&]ch=([\w-]+)/) || [])[1];
+  let ch = lesChansons().find((c) => c.id === voulue) || lesChansons()[0] || null; let t = 0;
   const sauver = () => { clearTimeout(t); t = setTimeout(() => garder(ch).catch((e) => toast(e.message)), 600); };
   const sec = (id) => ch.sections.find((s) => s.id === id);
   // Le numéro de passage : « Couplet 1 », « Couplet 2 »…

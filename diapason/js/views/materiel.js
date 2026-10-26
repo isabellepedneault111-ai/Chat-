@@ -70,7 +70,7 @@ export default {
         </article>`;
       }).join('');
       q('.m-ajout [name=lie]').innerHTML = `<option value="">branché à l’ordinateur</option>${liste.map((b) => `<option value="${esc(b.k)}">branché à : ${esc(b.nom)}</option>`).join('')}`;
-      q('.m-filet').innerHTML = filet.arme ? `<b class="m-tendu">● Le filet est tendu</b> : ${filet.pistes.size} source${filet.pistes.size > 1 ? 's' : ''} audio + MIDI. <button class="btn small" data-m="relacher">Relâcher</button>` : '<button class="btn small" data-m="tendre">Tendre le filet</button>';
+      q('.m-filet').innerHTML = filet.arme ? `<b class="m-tendu">● Le filet est tendu</b> : ${filet.pistes.size} source${filet.pistes.size > 1 ? 's' : ''} audio + MIDI. <button class="btn small" data-m="relacher">⏻ Arrêter le filet</button>` : '<button class="btn small" data-m="tendre">Tendre le filet</button>';
       q('.m-filet').insertAdjacentHTML('beforeend', ` <label class="m-duree">garder <select data-m="duree" aria-label="Durée gardée par le filet">${DUREES.map((d) => `<option value="${d}" ${d === duree() ? 'selected' : ''}>${d / 60} min</option>`).join('')}</select></label> <span class="muted small">${duree() > 60 ? `≈ ${Math.round(duree() / 60 * 11)} Mo de mémoire par source` : ''}</span>`);
       requestAnimationFrame(cabler);
     }

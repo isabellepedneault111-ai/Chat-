@@ -19,8 +19,8 @@
   --c-paroles: #5a3fc0;
   --c-carnet: #1b1915;
   /* Paire validée pour le daltonisme (ΔE protan 15,3) */
-  --zaza: #b8336a;
-  --frog: #2a6fc4;
+  --zaza: #b53c0a; /* braise : le feu de FLIP, la pointe de la flèche */
+  --frog: #5b3a8c; /* mûre : la nuit du studio */
   /* Jetons d'interface */
   --bg: var(--paper);
   --surface: var(--card);
@@ -1887,7 +1887,7 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 
 /* Le ciel du mur : une carte gravée, encre de nuit et traits ivoire. Le centre, c'est le set. */
 .sky { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 14px; align-items: start; }
-.sky-map { --sky-z: #ec86ad; --sky-f: #7fb1f0; --sky-core: #f3c77a; --sky-ink: #f1e9d8; position: relative; background: radial-gradient(120% 90% at 50% 52%, #24201a 0%, #161410 62%, #100e0b 100%); border-radius: 10px; padding: 10px 10px 8px; color: var(--sky-ink); box-shadow: inset 0 0 0 1px rgba(241, 233, 216, .08), 0 18px 40px -24px rgba(16, 14, 11, .7); overflow: hidden; }
+.sky-map { --sky-z: #f0875a; --sky-f: #b89be6; --sky-core: #f3c77a; --sky-ink: #f1e9d8; position: relative; background: radial-gradient(120% 90% at 50% 52%, #24201a 0%, #161410 62%, #100e0b 100%); border-radius: 10px; padding: 10px 10px 8px; color: var(--sky-ink); box-shadow: inset 0 0 0 1px rgba(241, 233, 216, .08), 0 18px 40px -24px rgba(16, 14, 11, .7); overflow: hidden; }
 .sky-svg { display: block; width: 100%; height: auto; }
 .sky-ring { fill: none; stroke: var(--sky-ink); stroke-opacity: .13; stroke-width: 1; }
 .sky-ring.s0 { stroke-dasharray: 2 5; }
@@ -2453,7 +2453,7 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .kb-legende li { display: flex; gap: 8px; align-items: baseline; } .kb-legende i { flex: 0 0 18px; height: 12px; border-radius: 3px; border: 1px solid rgba(0, 0, 0, .2); }
 .lg-safe { background: var(--pink); } .lg-scale { background: #ffd2ec; } .lg-gamme { background: #e9e4d8; } .lg-jazz { background: #9fc3f0; } .lg-blue { background: #c9a7f0; }
 /* Le glossaire au survol */
-.mot-aide { text-decoration: underline dotted rgba(184, 51, 106, .7); text-underline-offset: 3px; text-decoration-thickness: 1.5px; cursor: help; }
+.mot-aide { text-decoration: underline dotted rgba(194, 65, 12, .65); text-underline-offset: 3px; text-decoration-thickness: 1.5px; cursor: help; }
 .mot-aide:focus-visible { outline: 2px solid #c9a45c; border-radius: 3px; }
 .bulle-aide { position: fixed; z-index: 120; display: grid; gap: 4px; padding: 10px 12px; border-radius: 10px; background: #1b1915; color: #efe9dc; font-size: .9rem; line-height: 1.4; box-shadow: 0 12px 30px -12px rgba(0, 0, 0, .6); pointer-events: none; }
 .bulle-aide b { font: italic 700 1rem var(--display); color: #f3c77a; }
@@ -2733,3 +2733,35 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 }
 .pas .grille-top { flex-wrap: wrap; } .pas .grille-top b { flex: 1 1 60%; }
 .pas .grille-top em { order: 3; flex-basis: 100%; }
+.filet-tete-b { display: flex; gap: 8px; align-items: center; } .filet-tete-b .btn { background: #2a2620; color: #efe6d2; border-color: #4a4338; }
+/* Le mur, épuré : un champ, cinq gestes en icônes, des filtres repliés. */
+.capture { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.capture .capture-in { flex: 1 1 260px; min-width: 0; }
+.cap-vite { display: flex; gap: 6px; } .cap-vite .icon-btn { cursor: pointer; }
+.mur-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.mur-tools .search { flex: 1 1 200px; min-width: 0; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+.filters[hidden] { display: none; }
+.filters .projet-sel { display: inline-flex; gap: 6px; align-items: center; font-size: .86rem; }
+.ch-lien { display: block; margin: 4px 0 8px; font-size: .86rem; font-weight: 700; color: var(--ink); }
+.ch-new { border-style: dashed; } .ch-new-f { display: flex; gap: 6px; margin: 8px 0; } .ch-new-f .input { flex: 1; min-width: 0; }
+/* Nos nouvelles. */
+.nv-barre { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin: 6px 0 14px; }
+.nv-n { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: var(--rec); color: #fff; font-size: .74rem; margin-left: 4px; }
+.nv-tout { font-size: .9rem; display: inline-flex; gap: 6px; align-items: center; }
+.nv-jour h2 { font: 700 .82rem "Atkinson Hyperlegible", sans-serif; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 18px 0 6px; }
+.nv-liste { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.nv-item { display: flex; gap: 12px; align-items: flex-start; justify-content: space-between; padding: 10px 14px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--c); }
+.nv-item.vu { opacity: .62; }
+.nv-txt { display: grid; gap: 3px; min-width: 0; } .nv-txt small { color: var(--muted); } .nv-txt a { font-weight: 700; font-size: 1.02rem; color: var(--ink); overflow-wrap: anywhere; }
+.nv-asks { margin: 2px 0 0; display: flex; flex-wrap: wrap; gap: 4px 8px; font-size: .84rem; } .nv-asks span { padding: 1px 8px; border-radius: 9px; background: var(--tape); } .nv-asks em { color: var(--muted); }
+.nv-etat { font-size: .84rem; color: var(--muted); } .nv-etat b { color: var(--sage); }
+.nv-cases { display: grid; gap: 6px; flex: none; font-size: .9rem; } .nv-cases label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; white-space: nowrap; } .nv-cases input { width: 18px; height: 18px; accent-color: var(--sage); }
+.nv-vide { padding: 30px 0; color: var(--muted); font-size: 1.05rem; }
+.nouveau-tout { display: block; margin-bottom: 8px; font-weight: 700; color: var(--ink); }
+.nv-badge { background: var(--rec) !important; }
+/* Relais : le suivi, et les mots sous les yeux. */
+.rl-suivi { margin: 6px 0 0; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .86rem; opacity: .9; } .rl-suivi label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; } .rl-suivi b { color: #9fe0a8; }
+.rl-prompteur { font: 500 1.35rem/1.5 "Literata", serif; padding: 14px 18px; }
+@media (max-width: 600px) { .nv-item { flex-direction: column; } .nv-cases { display: flex; gap: 14px; } }
+.nav [data-id=home] .nv-badge { top: 0; right: -10px; }

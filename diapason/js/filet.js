@@ -70,7 +70,7 @@ function ouvrir() {
 
   const v = document.createElement('div'); v.className = 'filet-voile'; v.setAttribute('role', 'dialog'); v.setAttribute('aria-modal', 'true'); v.setAttribute('aria-label', 'Le filet : la dernière minute');
   v.innerHTML = `<div class="filet-carte">
-    <div class="filet-tete"><div><p class="eyebrow">Le filet</p><h2>${dureeTexte()[0].toUpperCase() + dureeTexte().slice(1)}, figée${duree() > 60 ? 's' : ''}.</h2></div><button class="icon-btn" data-fl="fermer" aria-label="Fermer">✕</button></div>
+    <div class="filet-tete"><div><p class="eyebrow">Le filet</p><h2>${dureeTexte()[0].toUpperCase() + dureeTexte().slice(1)}, figée${duree() > 60 ? 's' : ''}.</h2></div><div class="filet-tete-b"><button class="btn small" data-fl="relacher" title="Le filet arrête d’écouter et oublie la minute gardée">⏻ Arrêter le filet</button><button class="icon-btn" data-fl="fermer" aria-label="Fermer">✕</button></div></div>
     <p class="muted small">Glisse sur la minute pour choisir le bout à garder (le silence avant et après est déjà coupé). Coche les sources à mélanger.</p>
     <canvas class="filet-cv" aria-label="Les sources de la dernière minute, et le bout choisi"></canvas>
     <div class="filet-src">${s.pistes.map((p) => `<label><input type="checkbox" data-src="${esc(p.k)}" checked> ${esc(p.nom)}</label>`).join('')}${s.midi.length ? `<label><input type="checkbox" data-src="midi" checked> Notes MIDI (${s.midi.filter((m) => (m.d[0] & 0xf0) === 0x90 && m.d[2]).length}), jouées au piano à l’écoute</label>` : ''}${!s.pistes.length && !s.midi.length ? '<span class="muted">Aucune source active : coche-en dans Mon matériel.</span>' : ''}</div>
@@ -83,7 +83,7 @@ function ouvrir() {
       <button class="btn" data-fl="wav">⬇ Son (WAV)</button>
       ${s.midi.length ? '<button class="btn" data-fl="mid">⬇ Notes (MIDI)</button>' : ''}
     </div>
-    <p class="muted small">Le filet continue d’écouter pendant que tu choisis. Rien ne quitte ton appareil tant que tu ne gardes pas le bout. <a href="#/materiel" data-fl="materiel">Mon matériel</a> · <button class="lien" data-fl="relacher">Relâcher le filet</button></p>
+    <p class="muted small">Le filet continue d’écouter pendant que tu choisis. Rien ne quitte ton appareil tant que tu ne gardes pas le bout. <a href="#/materiel" data-fl="materiel">Mon matériel</a></p>
   </div>`;
   document.body.appendChild(v);
   const q = (x) => v.querySelector(x); const cv = q('.filet-cv'); const g = cv.getContext('2d');
@@ -153,7 +153,7 @@ function ouvrir() {
     const a = e.target.closest('[data-fl]')?.dataset.fl; if (!a) return;
     if (a === 'fermer') fermerTout();
     if (a === 'materiel') fermerTout();
-    if (a === 'relacher') { relacher(); fermerTout(); toast('Filet relâché : plus rien n’est écouté.'); }
+    if (a === 'relacher') { relacher(); fermerTout(); toast('Filet arrêté : plus rien n’est écouté, la minute gardée est oubliée. Touche-le pour le retendre.'); }
     if (a === 'ecoute') {
       if (lecture) { arreter(); return; }
       const c = audio(); const src = c.createBufferSource(); src.buffer = melange(); src.connect(c.destination); // direct : le filet ne se capture pas lui-même

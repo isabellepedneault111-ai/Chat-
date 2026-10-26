@@ -23,6 +23,8 @@ import placer from './views/placer.js';
 import ames from './views/ames.js';
 import arbre from './views/arbre.js';
 import materiel from './views/materiel.js';
+import nouvelles from './views/nouvelles.js';
+import { aVoir } from './suivi.js';
 import { installerFilet } from './filet.js';
 import { installerMotOuvert } from './motoutil.js';
 import { installerGlossaire } from './glossaire.js';
@@ -57,7 +59,7 @@ const APPUIS = {
   placer: ['La prosodie : quand les syllabes accentuées tombent sur les temps forts, le texte se chante tout seul ; à côté, il boite.', 'Pattison 2009'],
 };
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel };
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles };
 // Onglet en arrière-plan : le titre compte ce que l'autre vient d'ajouter, « (2) FLIP ». Revenir remet à zéro.
 {
   const base = document.title; let n = 0;
@@ -228,6 +230,12 @@ function showBadge() {
   b.hidden = !unseen;
   b.textContent = unseen > 9 ? '9+' : unseen;
 }
+// Pastille sur Plan : ce que l'autre a ajouté et que je n'ai pas encore vu (Nos nouvelles).
+function majNouvelles() {
+  const b = $('#nav [data-id=home] .nv-badge'); if (!b) return; const n = aVoir().length;
+  b.hidden = !n; b.textContent = n > 9 ? '9+' : n; b.title = n ? `${n} nouvelle${n > 1 ? 's' : ''} à voir` : '';
+}
+onEspace((what) => { if (what === 'entries' || what === 'meta') majNouvelles(); });
 onEspace((what, extra) => {
   if (what === 'entries') $('#nav .nav-session').classList.toggle('live', !!activeSession());
   if (what === 'entries' && extra?.fresh?.length && currentId !== 'carnet') {

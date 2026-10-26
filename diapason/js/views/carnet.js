@@ -10,6 +10,7 @@ import { jeter } from '../corbeille.js';
 import { togglePerle } from './coffre.js';
 import { projets, projetCourant, setProjet, projetNom, creerProjet } from '../projets.js';
 import { skyHTML, rencontres, matches, kindOf, sleepingDays } from '../constellation.js';
+import { creerChanson, nomsDeChansons, chansonNommee } from '../chanson.js';
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export function ago(t) {
@@ -143,7 +144,8 @@ function nextStep(board) {
 }
 const stageOf = (e) => (e.data && Number.isInteger(e.data.stage) ? e.data.stage : e.type === 'paroles' ? 2 : 0);
 const songOf = (e) => (e.type === 'paroles' ? (e.title || 'Sans titre') : e.data?.song || '');
-export const allSongs = () => [...new Set(espace.entries.filter(onBoard).map(songOf).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
+// Un morceau, c'est un nom partagé par des idées du mur… ou une chanson montée au studio, même encore vide.
+export const allSongs = () => [...new Set([...espace.entries.filter(onBoard).map(songOf), ...nomsDeChansons()].filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
 
 export default {
   id: 'carnet',
@@ -189,11 +191,10 @@ export default {
           <div>
             <p class="eyebrow">Le mur${projetCourant() ? ` · ${esc(projetNom(projetCourant()))}` : ''}</p>
             <h1>${projetCourant() ? esc(projetNom(projetCourant())) : 'Nos idées, et où elles s’en vont'}</h1>
-            <label class="projet-sel"><span>Projet</span><select data-projet><option value="">Tous nos projets</option>${projets().map((p) => `<option value="${esc(p.id)}" ${p.id === projetCourant() ? 'selected' : ''}>${esc(p.nom)}</option>`).join('')}<option value="+">+ Nouveau projet…</option></select></label>
-            <p class="muted">Tu es <b style="color:${memberColor(espace.me)}">${esc(espace.me)}</b> · <span class="sync-state">synchronisé</span> · <a href="#/lexique">lexique</a> · <button class="linklike" data-c="share">inviter ${esc(other())}</button></p>
+            <p class="muted">Tu es <b style="color:${memberColor(espace.me)}">${esc(espace.me)}</b> · <span class="sync-state">synchronisé</span></p>
           </div>
           <div class="actions">
-            <button class="btn ghost" data-c="settings" aria-expanded="false">Réglages</button>
+            <button class="icon-btn" data-c="settings" aria-expanded="false" aria-label="Réglages, inviter, lexique" title="Réglages, inviter, lexique"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></button>
           </div>
         </div>
         <div class="panel settings" hidden></div>
@@ -201,17 +202,13 @@ export default {
         <form class="capture panel" autocomplete="off">
           <input class="input capture-in" data-c="quick" placeholder="Une idée, un accord, un lien Spotify ou YouTube…" aria-label="Idée ou lien">
           <button class="btn primary" type="submit">Ajouter</button>
-          <details class="cap-more"><summary class="btn ghost">Plus</summary>
-            <div class="cap-menu">
-              <button class="btn ghost" type="button" data-c="rec">● Mémo vocal</button>
-              <label class="btn ghost">Un fichier audio<input type="file" accept="audio/*,video/*" data-c="file" hidden></label>
-              <label class="btn ghost">Une image : photo, dessin, toile<input type="file" accept="image/*" data-c="image" multiple hidden></label>
-              <button class="btn ghost" type="button" data-type="bravo">Un bravo à ${esc(other())}</button>
-              <a class="btn ghost" href="#/studio?tab=cover">Faire une pochette</a>
-              <a class="btn ghost" href="#/oreille">Analyser une pièce (L’oreille)</a>
-              <button class="btn ghost" type="button" data-c="more">Bilan, évaluation…</button>
-            </div>
-          </details>
+          <div class="cap-vite" role="group" aria-label="Ajouter autre chose">
+            <button class="icon-btn" type="button" data-c="rec" title="Un mémo vocal" aria-label="Un mémo vocal"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+            <label class="icon-btn" title="Un fichier audio" aria-label="Un fichier audio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><input type="file" accept="audio/*,video/*" data-c="file" hidden></label>
+            <label class="icon-btn" title="Une image : photo, dessin, toile" aria-label="Une image"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-6-6-9 9"/></svg><input type="file" accept="image/*" data-c="image" multiple hidden></label>
+            <button class="icon-btn" type="button" data-type="bravo" title="Un bravo à ${esc(other())}" aria-label="Un bravo à ${esc(other())}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg></button>
+            <button class="icon-btn" type="button" data-c="more" title="Un bilan, une évaluation…" aria-label="Un bilan, une évaluation"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6" class="fill"/><circle cx="12" cy="12" r="1.6" class="fill"/><circle cx="19" cy="12" r="1.6" class="fill"/></svg></button>
+          </div>
         </form>
         <div class="composer panel" hidden></div>
 
@@ -224,9 +221,10 @@ export default {
             <button role="tab" data-v="morceaux">Morceaux</button>
             <button role="tab" data-v="fil">Fil</button>
           </div>
-          <div class="filters"></div>
           <input class="input search" type="search" placeholder="Retrouver : un mot, un accord, un nom…" aria-label="Retrouver une idée">
+          <button class="btn small" type="button" data-c="filtrer" aria-expanded="false">Filtrer<span class="f-n"></span></button>
         </div>
+        <div class="filters" hidden></div>
         <div class="mur"></div>
         <div class="detail-scrim" hidden></div>
         <aside class="detail panel" hidden></aside>`;
@@ -240,6 +238,7 @@ export default {
       const w = espace.meta.welcome || {};
       el.querySelector('.settings').innerHTML = `
         <h2>Réglages</h2>
+        <p class="row"><button class="btn small" data-c="share">Inviter ${esc(other())}</button><a class="btn small ghost" href="#/lexique">Notre lexique</a></p>
         <div class="settings-grid">
           <div>
             <label class="field col"><span>Mot d’accueil pour ${esc(other())} (sa première visite)</span><textarea class="input" data-s="welcome" rows="3" placeholder="Forever more…">${esc(w.text || '')}</textarea></label>
@@ -291,7 +290,10 @@ export default {
       el.querySelectorAll('[data-v]').forEach((b) => b.setAttribute('aria-selected', b.dataset.v === view));
       const songs = allSongs();
       const mem = espace.meta.members || MEMBERS;
+      const nf = [fWho, fSong, fKind, fWhen, projetCourant()].filter(Boolean).length;
+      const fn = el.querySelector('.f-n'); if (fn) fn.textContent = nf ? ` · ${nf}` : '';
       el.querySelector('.filters').innerHTML = `
+        <label class="projet-sel"><span>Projet</span><select data-projet><option value="">Tous nos projets</option>${projets().map((p) => `<option value="${esc(p.id)}" ${p.id === projetCourant() ? 'selected' : ''}>${esc(p.nom)}</option>`).join('')}<option value="+">+ Nouveau projet…</option></select></label>
         <select class="input f-sel" data-fsel="who" aria-label="De qui"><option value="">Nous deux</option>${mem.map((m) => `<option ${fWho === m ? 'selected' : ''}>${esc(m)}</option>`).join('')}</select>
         <select class="input f-sel" data-fsel="song" aria-label="Morceau"><option value="">Tous les morceaux</option>${songs.map((x) => `<option ${fSong === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}<option value="—" ${fSong === '—' ? 'selected' : ''}>Sans morceau</option></select>
         <select class="input f-sel" data-fsel="kind" aria-label="Quoi"><option value="">Sons, mots, images</option>${[['son', 'Des sons'], ['mots', 'Des mots'], ['image', 'Des images'], ['lien', 'Des écoutes']].map(([v, l]) => `<option value="${v}" ${fKind === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
@@ -317,10 +319,15 @@ export default {
         mur.innerHTML = `<div class="board songs">${groups.map((g) => {
           const cards = board.filter((e) => (g === '—' ? !songOf(e) : songOf(e) === g)).sort((a, b) => stageOf(b) - stageOf(a));
           const top = cards.length ? Math.max(...cards.map(stageOf)) : 0;
+          const ch = g !== '—' && chansonNommee(g);
           return `<section class="board-col" data-song="${esc(g)}"><header><b>${g === '—' ? 'Sans morceau' : esc(g)}</b><span class="mono">${cards.length}</span></header>
             <div class="song-meter" title="Étape la plus avancée">${STAGES.map((st) => `<i class="${st.id <= top && cards.length ? 'on' : ''}"></i>`).join('')}</div>
-            <div class="cards">${cards.map(cardHTML).join('')}</div></section>`;
-        }).join('') || emptyHTML()}</div>`;
+            ${ch ? `<a class="ch-lien" href="#/studio?tab=chanson&ch=${esc(ch.id)}">♫ Ses parties et ses accords →</a>` : g !== '—' ? `<button class="linklike ch-lien" data-c="song-accords" data-nom="${esc(g)}">♫ Lui donner des parties et des accords</button>` : ''}
+            <div class="cards">${cards.map(cardHTML).join('') || (g !== '—' ? '<p class="col-hint">Encore aucune idée. Ouvre une idée du mur et choisis ce morceau.</p>' : '')}</div></section>`;
+        }).join('')}
+          <section class="board-col ch-new"><header><b>Un nouveau morceau</b></header>
+            <div class="ch-new-f"><input class="input" data-c-nom placeholder="Son nom (ex. : Fleuve gelé)" maxlength="60" aria-label="Nom du nouveau morceau"><button type="button" class="btn small primary" data-c="song-creer">Créer</button></div>
+            <p class="col-hint">Il naît avec un couplet et un refrain dans le studio. Ensuite, chaque idée du mur peut le rejoindre (ouvre-la : « Morceau »).</p></section></div>`;
       }
       hydrateImages(mur);
     }
@@ -685,6 +692,13 @@ export default {
       const a = e.target.closest('[data-c]')?.dataset.c;
       if (a === 'close') closeDetail();
       if (a === 'more') openComposer(composing ? null : 'bilan');
+      if (a === 'song-creer' || a === 'song-accords') {
+        const nom = a === 'song-accords' ? e.target.closest('[data-nom]').dataset.nom : (el.querySelector('[data-c-nom]')?.value || '').trim().slice(0, 60);
+        if (!nom) { el.querySelector('[data-c-nom]')?.focus(); toast('Donne-lui un nom.'); return; }
+        try { const ch = await creerChanson(nom); toast(`« ${nom} » est né. Ses parties t’attendent au studio.`); if (a === 'song-accords') location.hash = `#/studio?tab=chanson&ch=${ch.id}`; else renderAll(true); } catch (err) { toast(err.message); }
+        return;
+      }
+      if (a === 'filtrer') { const f = el.querySelector('.filters'); f.hidden = !f.hidden; e.target.closest('[data-c]').setAttribute('aria-expanded', !f.hidden); return; }
       if (a === 'close-composer') openComposer(null);
       if (a === 'post') postFull();
       if (a === 'rec') toggleRec(e.target.closest('[data-c]'), (blob) => postAudio(blob));
