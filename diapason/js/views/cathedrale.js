@@ -2,6 +2,7 @@
 // (forme, rythme, harmonie), et on décide où mettre la lumière : quelle famille de l'orchestre chante chaque partie,
 // et si l'ensemble penche vers le rythme ou vers l'harmonie. Puis on écoute, on garde, on exporte.
 import { toast, store, autoCanvas, animate } from '../ui.js';
+import { lampeHTML, brancherLampe } from '../lampe.js';
 import { FR } from '../music.js';
 import { espace, saveEntry, uploadAudio } from '../espace.js';
 import { composer, jouer, rendre, charger, evenementsMidi, FAMILLES, RYTHME_DEFAUT, cleDepuisNotes, segmentsMidi, accordsDesSegments, cathedraleDuJeu } from '../cathedrale.js';
@@ -40,7 +41,7 @@ export default {
         <p class="muted">Une clé de voûte, jouée à trois vitesses en même temps. Très lente, elle donne <b>la forme</b> (les parties durent 4, 5, 6, 7) ; moyenne, <b>le rythme</b> (4 contre 5 contre 6 contre 7) ; rapide, <b>l’harmonie</b> (les mêmes rapports entre les fréquences : un accord en intonation juste). Le labo bâtit la cathédrale ; vous décidez où mettre la lumière.</p>
       </div></div>
       <section class="ca-scene"><canvas class="ca-cv" aria-label="La cathédrale : une arche par partie, la rosace de la clé de voûte, et la lumière qui avance"></canvas>
-        <div class="ca-lecture"><button class="btn primary big" data-ca="jouer">▶ Bâtir et écouter</button><span class="ca-temps mono"></span></div></section>
+        <div class="ca-lecture"><button class="btn primary big" data-ca="jouer">▶ Bâtir et écouter</button><span class="ca-temps mono"></span>${lampeHTML()}</div></section>
       <section class="panel ca-disques-p"><div class="panel-head"><h2>Les disques</h2><span class="muted small">un disque par nombre de la clé : il frappe autant de fois par tour, et sonne dans l’accord</span></div>
         <div class="ca-disques"></div></section>
       <section class="panel ca-branche"><div class="panel-head"><h2>Ce que Frog branche</h2><span class="muted small">un accord tenu, ou toute une minute de jeu prise dans le filet, devient la cathédrale ; elle peut aussi jouer sur ses appareils</span></div>
@@ -283,6 +284,7 @@ export default {
 
     new ResizeObserver(() => dessiner(lecteur ? lecteur.position() : -1)).observe(q('.ca-cv'));
     majTout();
-    return () => { lecteur?.arreter(); anim?.(); offNotes?.(); ecouteAudio?.stop(); clearTimeout(attente); };
+    const offLampe = brancherLampe(el);
+    return () => { lecteur?.arreter(); anim?.(); offNotes?.(); ecouteAudio?.stop(); clearTimeout(attente); offLampe(); };
   },
 };

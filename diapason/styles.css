@@ -3140,3 +3140,21 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .li-liste li::before { content: none !important; }
 .li-faire { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; } .li-faire select { padding: 5px 6px; border-radius: 6px; max-width: 100%; }
 @media (max-width: 560px) { .li-liste li { grid-template-columns: 1fr auto; } .li-liste input { grid-column: 1; } }
+/* La lampe : un tube dessiné, son filament rougeoit en chauffant */
+.lampe-ctl { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 6px 10px; border-radius: 12px; border: 1.5px solid var(--rule); background: rgba(127,127,127,.06); --tiede: 0; }
+.lp-bouton { display: inline-flex; align-items: center; gap: 8px; border: 0; background: none; cursor: pointer; padding: 0; color: inherit; text-align: left; }
+.lp-bouton span { display: grid; line-height: 1.1; } .lp-bouton small { font-size: .72rem; color: var(--muted); }
+.lp-tube { width: 26px; height: 33px; overflow: visible; }
+.lp-verre { fill: rgba(200,220,230,.18); stroke: currentColor; stroke-width: 1.4; }
+.lp-fil { fill: none; stroke: #6d655a; stroke-width: 1.6; stroke-linejoin: round; transition: stroke .4s; }
+.lp-culot { fill: #3a352d; } .lp-broche { stroke: #8a7f6c; stroke-width: 1.4; }
+.lampe-ctl.on .lp-fil { stroke: #ff8a3d; filter: drop-shadow(0 0 calc(2px + 6px * var(--tiede)) rgba(255, 120, 40, calc(.3 + .6 * var(--tiede)))); }
+.lampe-ctl.on .lp-verre { fill: rgba(255, 150, 60, calc(.08 + .25 * var(--tiede))); }
+.lampe-ctl.on { border-color: #ff8a3d; }
+.lp-chauffe { display: inline-flex; align-items: center; gap: 6px; font-size: .76rem; color: var(--muted); } .lp-chauffe input { width: 90px; }
+.lampe-ctl:not(.on) .lp-chauffe { opacity: .5; }
+.lp-quoi summary { list-style: none; cursor: pointer; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid var(--rule); font-weight: 800; font-size: .8rem; }
+.lp-quoi summary::-webkit-details-marker { display: none; }
+.lp-quoi[open] { flex-basis: 100%; } .lp-quoi p { margin: 6px 0 0; font-size: .82rem; max-width: 60ch; }
+.screen .lampe-ctl, .ca-lecture .lampe-ctl { color: #efe6d2; border-color: #4a4338; background: rgba(0,0,0,.25); }
+.ca-lecture { flex-wrap: wrap; }

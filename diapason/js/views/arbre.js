@@ -253,7 +253,7 @@ export default {
         <ul class="arbre no-aide">${noeud(ARBRE, 0)}</ul>
         <p class="ec-row"><button class="btn small" data-ar="ouvrir">Tout déplier</button><button class="btn small" data-ar="fermer">Tout replier</button></p>
       </details>`;
-    fetch('data/arbre.json').then((r) => r.json()).then((data) => {
+    fetch('data/arbre.json', { cache: 'no-cache' }).then((r) => r.json()).then((data) => {
       const compte = (n) => (n.c ? 1 + n.c.reduce((a, x) => a + compte(x), 0) : 0); const dossiers = compte(data);
       const { svg } = dessinArbre(data);
       el.querySelector('.ar-mot-lignes').textContent = data.lignes.toLocaleString('fr-CA'); cadence();
@@ -261,7 +261,7 @@ export default {
       el.querySelector('.ar-stats').innerHTML = `<b>${data.fichiers}</b> fichiers · <b>${dossiers - 1}</b> dossiers · <b>${data.lignes.toLocaleString('fr-CA')}</b> lignes écrites`;
     }).catch(() => { el.querySelector('.ar-dessin').innerHTML = '<p class="muted">L’arbre n’a pas pu se charger.</p>'; });
     let gData = null;
-    fetch('data/genealogie.json').then((r) => r.json()).then((g) => {
+    fetch('data/genealogie.json', { cache: 'no-cache' }).then((r) => r.json()).then((g) => {
       const host = el.querySelector('.gn-host'); host.innerHTML = dessinGenealogie(g);
       host.scrollLeft = host.scrollWidth; // on arrive sur aujourd'hui ; on remonte le temps en glissant
       const et = el.querySelector('.ar-mot-etapes'); if (et) et.textContent = g.lanes[0].c.length.toLocaleString('fr-CA');

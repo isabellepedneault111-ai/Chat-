@@ -3,7 +3,7 @@
 // rapide, l'harmonie (les mêmes rapports entre les fréquences : un accord en intonation juste, sans arrondi au piano).
 // Cowell, New Musical Resources (1930) ; Stockhausen, « …wie die Zeit vergeht… » (1957).
 // Le labo propose la cathédrale ; Frog et Zaza décident où mettre la lumière.
-import { audio } from './audio.js';
+import { audio, out, lampeHorsLigne } from './audio.js';
 import { joue, prechargerSons, echantillons, reglage, boucler } from './sampler.js';
 
 export const FAMILLES = [
@@ -156,7 +156,7 @@ export function cathedraleDuJeu({ accords }) {
 
 // Jouer en direct : on programme les notes un peu à l'avance, au fil de la lecture.
 export function jouer(oeuvre, { depuis = 0, onFin, sortie = null } = {}) {
-  const c = audio(); const maitre = c.createGain(); maitre.gain.value = 0.9; maitre.connect(c.destination);
+  const c = audio(); const maitre = c.createGain(); maitre.gain.value = 0.9; maitre.connect(out()); // par la lampe, si elle est allumée
   const pans = new Map(); const panDe = (p) => { const k = Math.round(p * 10) / 10; if (!pans.has(k)) { const sp = c.createStereoPanner(); sp.pan.value = k; sp.connect(maitre); pans.set(k, sp); } return pans.get(k); };
   const t0 = c.currentTime + 0.15 - depuis; let i = oeuvre.notes.findIndex((n) => n.t >= depuis); if (i < 0) i = oeuvre.notes.length;
   const tic = () => {
@@ -178,7 +178,7 @@ export function jouer(oeuvre, { depuis = 0, onFin, sortie = null } = {}) {
 export async function rendre(oeuvre, onProgres) {
   await charger();
   const sr = 44100; const ctx = new OfflineAudioContext(2, Math.ceil((oeuvre.duree + 1.5) * sr), sr);
-  const maitre = ctx.createDynamicsCompressor(); maitre.threshold.value = -14; maitre.ratio.value = 3; maitre.connect(ctx.destination);
+  const maitre = ctx.createDynamicsCompressor(); maitre.threshold.value = -14; maitre.ratio.value = 3; maitre.connect(lampeHorsLigne(ctx, ctx.destination));
   oeuvre.notes.forEach((n) => {
     const l = echantillons(n.banque); if (!l) return; const B = reglage(n.banque);
     const s = l.reduce((a, b) => (Math.abs(b.midi - n.midi) < Math.abs(a.midi - n.midi) ? b : a));

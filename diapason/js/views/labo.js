@@ -3,6 +3,7 @@ import { audio, out, impulseOsc, drums } from '../audio.js';
 import { autoCanvas, animate, css, keyboard, store } from '../ui.js';
 import { nameFR, ftom, mtof, clamp } from '../music.js';
 import { RATIO_PRESETS } from '../data.js';
+import { lampeHTML, brancherLampe } from '../lampe.js';
 
 const FMIN = 0.5;
 const FMAX = 880;
@@ -90,6 +91,7 @@ export default {
             <button class="btn" data-act="sweep">Glissade ↗</button>
             <button class="btn" data-act="tap">Tape le tempo</button>
           </div>
+          ${lampeHTML()}
         </div>
 
         <div class="panel kb-panel">
@@ -109,7 +111,7 @@ export default {
           <button class="btn add-track" data-act="add">＋ Ajouter un disque</button>
           <button class="btn primary labo-beat" data-act="beat">Faire un beat de ces disques → Jouer</button>
           <a class="btn labo-cathedrale" href="#/cathedrale?du-labo">Bâtir La cathédrale de ces disques →</a>
-          <p class="muted small">Touche le cercle d’un disque pour le choisir ; choisis-en plusieurs pour en faire un <b>groupe</b> qui bouge ensemble. Chaque disque devient une ligne de batterie, ses frappes réparties au mieux sur la mesure (rythme euclidien, Toussaint 2005).</p>
+          <p class="muted small">Touche le cercle d’un disque pour le choisir ; choisis-en plusieurs pour en faire un <b>groupe</b> qui bouge ensemble. <b>Pour l’instant : jusqu’à 6 disques et 3 groupes.</b> Il y en aura plus quand nous aurons bien testé. Chaque disque devient une ligne de batterie, ses frappes réparties au mieux sur la mesure (rythme euclidien, Toussaint 2005).</p>
         </div>
 
         <div class="panel wave-panel">
@@ -692,6 +694,7 @@ export default {
     syncWaveButtons();
     loadPreset(presetId);
     setF(f);
-    return () => { io.disconnect(); stop(); stopAudio(); radar.dispose(); strip.dispose(); air.dispose(); wave.dispose(); kb.dispose(); };
+    const offLampe = brancherLampe(el);
+    return () => { offLampe(); io.disconnect(); stop(); stopAudio(); radar.dispose(); strip.dispose(); air.dispose(); wave.dispose(); kb.dispose(); };
   },
 };

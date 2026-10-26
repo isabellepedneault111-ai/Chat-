@@ -18,6 +18,17 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
+# L'arbre et la généalogie changent à chaque mise en ligne : toujours relus frais (le reste des données reste en mémoire une semaine).
+[[headers]]
+  for = "/data/arbre.json"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/data/genealogie.json"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
 [[headers]]
   for = "/data/*"
   [headers.values]

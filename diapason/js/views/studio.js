@@ -8,6 +8,7 @@ import { clockStart, clockStep, clockStop } from '../console.js';
 import { espace, audioURL, saveEntry, uploadImage, uploadAudio } from '../espace.js';
 import { accord as accordPiano, prechargerSons } from '../sampler.js';
 import { clavierDe } from '../doigte.js';
+import { lampeHTML, brancherLampe } from '../lampe.js';
 import { chansonTab } from '../chanson.js';
 import { sonsPersoHTML, brancherSonsPerso } from '../sonsperso.js';
 import { EXERCICES } from '../duo.js';
@@ -146,6 +147,7 @@ export default {
         <button class="btn small tap" data-act="tap" title="Tape ce bouton au rythme de ta musique : le labo en déduit le tempo">Taper le tempo</button>
         <label class="field"><span>Tonalité</span><select data-in="key" aria-label="Tonalité">${FR.map((n, i) => `<option value="${i}">${n} majeur / ${FR[(i + 9) % 12]} mineur</option>`).join('')}</select></label>
         <label class="field"><span>Accords</span><select data-in="prog" aria-label="Progression d’accords"></select></label>
+        ${lampeHTML()}
         <button class="rec-btn" data-act="rec" aria-label="Enregistrer une prise">● REC</button>
       </div>
       <div class="chord-row"></div>
@@ -985,7 +987,8 @@ export default {
 
     syncTop();
     renderTab();
-    return () => { stop(); disposeTab(); kb?.dispose(); S.onLoop = null; };
+    const offLampe = brancherLampe(el);
+    return () => { offLampe(); stop(); disposeTab(); kb?.dispose(); S.onLoop = null; };
   },
 };
 

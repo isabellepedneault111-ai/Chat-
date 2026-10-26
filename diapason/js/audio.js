@@ -28,13 +28,74 @@ export function audio() {
     bus.release.value = 0.12;
     master = ctx.createGain();
     master.gain.value = 1;
-    master.connect(comp).connect(makeup).connect(bus);
+    // Entre l'app et les compresseurs : la lampe (éteinte, elle laisse tout passer tel quel).
+    const apresLampe = ctx.createGain();
+    construireLampe(master, apresLampe);
+    apresLampe.connect(comp).connect(makeup).connect(bus);
     bus.connect(ctx.destination);
   }
   if (ctx.state === 'suspended') ctx.resume();
   return ctx;
 }
 export const out = () => (audio(), master);
+
+// ---------- La lampe ----------
+// Ce qu'une vraie lampe (un tube à vide) ajoute au son, imité honnêtement, en trois gestes :
+// 1. la saturation douce et ASYMÉTRIQUE : la lampe déforme un peu plus un côté de l'onde que l'autre, ce qui ajoute
+//    surtout des harmoniques paires (l'octave) : la « chaleur » ;
+// 2. la compression naturelle : l'alimentation fléchit quand on joue fort (le « sag ») ;
+// 3. le bruit de grenaille : le courant est fait d'électrons qui arrivent un par un, au hasard (Schottky, 1918).
+//    On l'entend comme un souffle très léger, plus présent quand le signal est fort (il suit le courant).
+// Et comme une vraie, elle chauffe : allumée, elle met une dizaine de secondes à trouver son son.
+const lampe = { on: false, chauffe: 0.5, noeuds: null };
+const courbeLampe = (ch) => {
+  const n = 4096; const k = 0.8 + 2 * ch; const b = 0.25 + 0.35 * ch; /* mesuré : l'harmonique 2 domine la 3, profil d'une triode */ const c = new Float32Array(n);
+  const ref = Math.tanh(k * (1 + b)) - Math.tanh(k * b);
+  for (let i = 0; i < n; i++) { const x = (i / (n - 1)) * 2 - 1; c[i] = (Math.tanh(k * (x + b)) - Math.tanh(k * b)) / ref; }
+  return c;
+};
+function construireLampe(entree, sortie) {
+  const sec = ctx.createGain(); sec.gain.value = 1; entree.connect(sec).connect(sortie);
+  const chaud = ctx.createGain(); chaud.gain.value = 0;
+  const sag = ctx.createDynamicsCompressor(); sag.threshold.value = -26; sag.knee.value = 30; sag.ratio.value = 2.5; sag.attack.value = 0.012; sag.release.value = 0.3;
+  const drive = ctx.createGain(); drive.gain.value = 1.4;
+  const forme = ctx.createWaveShaper(); forme.curve = courbeLampe(0); forme.oversample = '4x';
+  const dc = ctx.createBiquadFilter(); dc.type = 'highpass'; dc.frequency.value = 18; // l'asymétrie crée un décalage continu : on le retire
+  const ton = ctx.createBiquadFilter(); ton.type = 'lowpass'; ton.frequency.value = 15000; ton.Q.value = 0.5;
+  entree.connect(sag).connect(drive).connect(forme).connect(dc).connect(ton).connect(chaud).connect(sortie);
+  // La grenaille : un bruit blanc dont le volume suit l'enveloppe du signal (redressé, lissé).
+  const len = ctx.sampleRate * 2; const nb = ctx.createBuffer(1, len, ctx.sampleRate); const d = nb.getChannelData(0); for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  const bruit = ctx.createBufferSource(); bruit.buffer = nb; bruit.loop = true;
+  const aigu = ctx.createBiquadFilter(); aigu.type = 'highpass'; aigu.frequency.value = 1800;
+  const grenaille = ctx.createGain(); grenaille.gain.value = 0;
+  const redresse = ctx.createWaveShaper(); const abs = new Float32Array(1025); for (let i = 0; i < 1025; i++) abs[i] = Math.abs((i / 1024) * 2 - 1); redresse.curve = abs;
+  const lisse = ctx.createBiquadFilter(); lisse.type = 'lowpass'; lisse.frequency.value = 25;
+  const dose = ctx.createGain(); dose.gain.value = 0;
+  entree.connect(redresse).connect(lisse).connect(dose).connect(grenaille.gain);
+  bruit.connect(aigu).connect(grenaille).connect(chaud);
+  bruit.start();
+  lampe.noeuds = { sec, chaud, forme, ton, dose, drive };
+}
+let chauffage = 0;
+function appliquerLampe() {
+  const n = lampe.noeuds; if (!n) return; const t = ctx.currentTime; const ch = lampe.on ? lampe.chauffe : 0;
+  n.sec.gain.setTargetAtTime(lampe.on ? 0 : 1, t, 0.08);
+  n.chaud.gain.setTargetAtTime(lampe.on ? 0.92 : 0, t, 0.08);
+  n.ton.frequency.setTargetAtTime(16000 - 9000 * ch, t, 0.2);
+  n.dose.gain.setTargetAtTime(0.004 + 0.02 * ch, t, 0.2);
+  n.drive.gain.setTargetAtTime(1 + 0.6 * ch, t, 0.2);
+}
+export function regler_lampe({ on = lampe.on, chauffe = lampe.chauffe } = {}) {
+  const allume = on && !lampe.on; lampe.on = on; lampe.chauffe = chauffe; audio();
+  clearInterval(chauffage);
+  if (allume) {
+    // Elle chauffe : la courbe passe de presque droite à sa forme pleine, en une dizaine de secondes.
+    const t0 = performance.now();
+    chauffage = setInterval(() => { const u = Math.min(1, (performance.now() - t0) / 10000); lampe.noeuds.forme.curve = courbeLampe(lampe.chauffe * (1 - (1 - u) ** 2)); lampe.tiede = u; if (u >= 1) clearInterval(chauffage); }, 250);
+  } else if (on) lampe.noeuds.forme.curve = courbeLampe(chauffe);
+  appliquerLampe();
+}
+export const etatLampe = () => ({ on: lampe.on, chauffe: lampe.chauffe, tiede: lampe.tiede ?? 1 });
 // Sortie finale (après compresseur), pour l'enregistrement.
 export const finalOut = () => (audio(), bus);
 
@@ -359,4 +420,15 @@ function yin(data, sr, threshold = 0.15) {
   const denom = x0 + x2 - 2 * x1;
   const better = denom ? tau + (x0 - x2) / (2 * denom) : tau;
   return { freq: sr / better, clarity: 1 - x1 };
+}
+
+// La même lampe pour un rendu hors ligne (le WAV de la cathédrale) : la saturation et la couleur, sans la chauffe.
+export function lampeHorsLigne(c, dest) {
+  if (!lampe.on) return dest;
+  const forme = c.createWaveShaper(); forme.curve = courbeLampe(lampe.chauffe); forme.oversample = '4x';
+  const drive = c.createGain(); drive.gain.value = 1 + 0.6 * lampe.chauffe;
+  const dc = c.createBiquadFilter(); dc.type = 'highpass'; dc.frequency.value = 18;
+  const ton = c.createBiquadFilter(); ton.type = 'lowpass'; ton.frequency.value = 16000 - 9000 * lampe.chauffe; ton.Q.value = 0.5;
+  drive.connect(forme).connect(dc).connect(ton).connect(dest);
+  return drive;
 }
