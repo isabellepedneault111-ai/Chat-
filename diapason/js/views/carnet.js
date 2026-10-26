@@ -231,6 +231,9 @@ export default {
       renderSettings();
       lastSig = '';
       renderAll(true);
+      // Arrivé depuis Nos nouvelles (« ?voir=… ») : la fiche de l'idée s'ouvre tout de suite.
+      const voir = (location.hash.match(/[?&]voir=([\w-]+)/) || [])[1];
+      if (voir && espace.entries.some((x) => x.id === voir)) setTimeout(() => openDetail(voir), 50);
     }
     const other = () => (espace.meta.members || MEMBERS).find((m) => m !== espace.me) || 'l’autre';
 

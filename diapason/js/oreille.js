@@ -252,11 +252,12 @@ export async function trouverAccords(buf, bpm, onStep = () => {}) {
   onStep('Je cherche les accords…'); await pause();
   const { x, sr } = mono(buf);
   const tempo = bpm < 80 ? bpm * 2 : bpm; const temps = 60 / tempo;
-  const N = 4096; const pasT = Math.max(N, Math.floor(temps * sr));
+  // Une mesure tous les quarts de temps : les changements d'accords sont datés finement, quel que soit le tempo estimé.
+  const N = 4096; const pasT = Math.max(N / 2, Math.floor((temps / 4) * sr));
   const brut = [];
   for (let p = 0; p + N < x.length; p += pasT) {
     const ch = new Float64Array(12); let e = 0;
-    for (let o = 0; o + N <= pasT && p + o + N < x.length; o += N / 2) {
+    for (let o = 0; (o === 0 || o + N <= pasT) && p + o + N < x.length; o += N / 2) {
       const w = new Float32Array(N); for (let i = 0; i < N; i++) { const v = x[p + o + i]; w[i] = v * (0.5 - 0.5 * Math.cos((2 * Math.PI * i) / N)); e += v * v; }
       const m = fftMag(w);
       for (let k = 6; k < N / 2; k++) { const f = (k * sr) / N; if (f < 60 || f > 1800) continue; const pc = ((Math.round(12 * Math.log2(f / 261.63)) % 12) + 12) % 12; ch[pc] += m[k] * (f < 300 ? 1.4 : 1); }
@@ -273,7 +274,8 @@ export async function trouverAccords(buf, bpm, onStep = () => {}) {
     if (brut.length % 40 === 0) await pause();
   }
   // Lisser : un accord isolé d'un seul temps entre deux identiques est sans doute une note de passage.
-  for (let i = 1; i < brut.length - 1; i++) { const a = brut[i - 1]; const c = brut[i + 1]; if (a && c && a.r === c.r && a.q === c.q && (!brut[i] || brut[i].r !== a.r || brut[i].q !== a.q)) brut[i] = a; }
+  // (Les mesures sont des quarts de temps : on lisse les îlots de moins d'un temps, en deux passes.)
+  for (let passe = 0; passe < 2; passe++) for (let w = 1; w <= 3; w++) for (let i = 1; i + w < brut.length; i++) { const a = brut[i - 1]; const c = brut[i + w]; if (a && c && a.r === c.r && a.q === c.q) for (let k = i; k < i + w; k++) if (!brut[k] || brut[k].r !== a.r || brut[k].q !== a.q) brut[k] = a; }
   const segs = [];
   brut.forEach((b, i) => {
     const t = (i * pasT) / sr; const last = segs[segs.length - 1];
@@ -281,4 +283,45 @@ export async function trouverAccords(buf, bpm, onStep = () => {}) {
     else if (b) segs.push({ r: b.r, q: b.q, a: t, b: t + pasT / sr });
   });
   return segs.filter((s) => s.b - s.a >= temps * 0.9).map((s) => ({ ...s, nom: NOTES[s.r] + SUF[s.q], temps: Math.round((s.b - s.a) / temps) }));
+}
+
+// ---------- La grille par mesures ----------
+// Comme une feuille d'accords de musicien : 4 temps par mesure, 4 mesures par ligne. Une mesure identique à la précédente
+// devient « % » ; si toute la suite tourne en boucle, on l'écrit une fois, avec ses reprises (‖: … :‖ × n).
+export function grilleMesures(accs, bpm, parMesure = 4) {
+  if (!accs?.length) return null;
+  const t0 = bpm < 80 ? bpm * 2 : bpm; const debut = accs[0].a;
+  // Recaler le tempo : les changements d'accords tombent sur des temps. On cherche, à ±6 % du tempo entendu,
+  // la durée de temps qui les aligne le mieux (sinon, une petite erreur s'accumule et tout glisse en fin de grille).
+  const changes = accs.slice(1).map((x) => x.a - debut); let temps = 60 / t0; let mieux = -Infinity;
+  for (let k = -120; k <= 120; k++) { const L = (60 / t0) * (1 + k * 0.0005); const sc = changes.reduce((s2, c) => s2 + Math.cos((2 * Math.PI * c) / L), 0) - Math.abs(k) * 0.002; if (sc > mieux) { mieux = sc; temps = L; } }
+  const tempo = Math.round(60 / temps);
+  // Et la phase : on décale le départ pour que les changements tombent pile sur les temps, en moyenne.
+  const ph = Math.atan2(changes.reduce((s2, c) => s2 + Math.sin((2 * Math.PI * c) / temps), 0), changes.reduce((s2, c) => s2 + Math.cos((2 * Math.PI * c) / temps), 0));
+  const debutCale = debut + (ph / (2 * Math.PI)) * temps;
+  const fin = accs[accs.length - 1].b; const nb = Math.max(1, Math.ceil((fin - debut) / (temps * parMesure) - 0.25));
+  // Un petit trou (moins d'un temps) entre deux accords : l'accord continue, le son s'est juste éteint un instant.
+  const a = (t) => (accs.find((x) => t >= x.a - temps * 0.25 && t < x.b - temps * 0.25) || accs.find((x) => t >= x.b - temps * 0.25 && t < x.b + temps))?.nom || '';
+  const mesures = [];
+  for (let m = 0; m < nb; m++) {
+    const tps = [...Array(parMesure)].map((_, k) => a(debutCale + (m * parMesure + k + 0.5) * temps));
+    // Les temps qui répètent l'accord d'avant s'effacent : « Rém · · · », « Do · Sol · ».
+    const cases = tps.map((x, k) => (k && x === tps[k - 1] ? '' : x || '—'));
+    mesures.push({ m: m + 1, t: debutCale + m * parMesure * temps, cases, cle: tps.join('|') });
+  }
+  // La boucle : la plus petite période (en mesures) qui se répète sur toute la suite, au moins deux fois.
+  // (Tolérante : 80 % des mesures doivent revenir, car l'oreille peut se tromper sur un temps au début ou à la fin.)
+  let periode = 0;
+  for (let p = 1; p <= Math.floor(mesures.length / 2); p++) {
+    const ok = mesures.filter((x, i) => i >= p && x.cle === mesures[i - p].cle).length;
+    if (ok >= 0.8 * (mesures.length - p) && !(p > 1 && mesures.slice(0, p).every((x) => x.cle === mesures[0].cle))) { periode = p; break; }
+  }
+  // La boucle écrite une fois : pour chaque mesure de la boucle, la version la plus fréquente.
+  const boucle = periode ? [...Array(periode)].map((_, j) => { const v = mesures.filter((_, i) => i % periode === j); const n = {}; v.forEach((x) => { n[x.cle] = (n[x.cle] || 0) + 1; }); const top = Object.entries(n).sort((a2, b2) => b2[1] - a2[1])[0][0]; return v.find((x) => x.cle === top); }) : null;
+  return { mesures, periode, boucle, tours: periode ? Math.round(mesures.length / periode) : 0, tempo };
+}
+export function grilleTexte(g, titre = '') {
+  const l = g.boucle || g.mesures; const lignes = [];
+  for (let i = 0; i < l.length; i += 4) lignes.push(`| ${l.slice(i, i + 4).map((x, k) => (i + k && x.cle === l[i + k - 1].cle ? '%' : x.cases.map((c) => c || '·').join(' '))).join(' | ')} |`);
+  return `${titre ? `${titre}\n` : ''}${g.tempo} BPM · 4 temps par mesure\n${g.periode ? `‖: répété ${g.tours} fois :‖\n` : ''}${lignes.join('\n')}\n`;
 }

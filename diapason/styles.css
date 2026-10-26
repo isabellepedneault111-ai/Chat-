@@ -2844,3 +2844,34 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .mandat.avec-som:has(.som-2col) { grid-template-columns: .8fr 1.25fr .95fr minmax(300px, 1.45fr); }
 @media (max-width: 1100px) { .mandat, .mandat.avec-som, .mandat.avec-som:has(.som-2col) { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 760px) { .mandat, .mandat.avec-som, .mandat.avec-som:has(.som-2col) { grid-template-columns: 1fr; } }
+/* L'oreille : la grille par mesures. */
+.or-grille { margin: 12px 0; padding: 12px 14px; border-radius: 12px; background: #fffaf0; border: 1px solid var(--line); }
+.or-grille-t { margin: 0 0 8px; } .or-rep { color: #8a5a12; font-weight: 700; }
+.or-mesures { display: grid; grid-template-columns: repeat(4, 1fr); border-left: 2px solid var(--ink); margin-bottom: 8px; }
+.or-mes { position: relative; display: flex; align-items: center; justify-content: space-around; gap: 4px; min-height: 52px; padding: 14px 8px 6px; border: 0; border-right: 2px solid var(--ink); border-bottom: 1px solid var(--line); background: none; cursor: pointer; font: 700 1.05rem var(--display); color: var(--ink); }
+.or-mes:hover { background: #f3e7c9; } .or-mes small { position: absolute; top: 3px; left: 6px; font: 500 .66rem var(--mono); color: var(--muted); }
+.or-mes span { min-width: 0; overflow-wrap: anywhere; } .or-pct { font-size: 1.3rem; color: var(--muted); }
+.or-mes.rep-a { border-left: 5px double var(--ink); } .or-mes.rep-b { border-right: 5px double var(--ink); }
+@media (max-width: 600px) { .or-mesures { grid-template-columns: repeat(2, 1fr); } .or-mes { font-size: .92rem; } }
+/* Notre vision, en manifeste. */
+.vi { display: grid; gap: 12px; margin: 10px 0 12px; }
+.vi-intention { margin: 0; padding: 18px 22px; border-radius: 14px; background: #1b1916; color: #f3e7c9; font: italic 500 clamp(1.15rem, 2.2vw, 1.6rem)/1.4 "Literata", serif; border-left: 6px solid #e8c27a; }
+.vi-intention small, .vi-case small { display: block; font: 700 .7rem "Atkinson Hyperlegible", sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #a5741c; margin-bottom: 6px; font-style: normal; }
+.vi-grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.vi-case { padding: 12px 14px; border-radius: 12px; background: #fffaf0; border: 1px solid var(--line); display: grid; align-content: start; gap: 6px; }
+.vi-kb { width: 100%; max-width: 160px; height: auto; } .vi-kb rect { fill: #fff; stroke: #8a7f6c; stroke-width: .8; } .vi-kb rect.noire { fill: #1b1916; } .vi-kb rect.on { fill: #e8c27a; } .vi-kb rect.noire.on { fill: #a5741c; }
+.vi-genre b { font: 900 1.5rem/1.15 "Literata", serif; } .vi-genre i { color: #e8c27a; font-style: normal; margin: 0 6px; }
+.vi-inst div { display: flex; flex-wrap: wrap; gap: 4px; align-items: baseline; padding-left: 8px; border-left: 4px solid var(--c); margin-bottom: 4px; } .vi-inst div b { width: 100%; color: var(--c); }
+.vi-inst span { font-size: .8rem; padding: 1px 8px; border-radius: 9px; background: #f3e7c9; }
+.vi-refs p { margin: 0 0 6px; padding-left: 8px; border-left: 4px solid var(--c); } .vi-refs b { display: block; } .vi-refs span { font-size: .8rem; color: var(--muted); }
+.vi-vide { color: var(--muted); font-style: italic; font-weight: 400; }
+.art-dire { display: block; font-size: .82rem; font-weight: 700; }
+@media (max-width: 900px) { .vi-grille { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .vi-grille { grid-template-columns: 1fr; } }
+.vi-grille { grid-template-columns: 1fr 1.2fr 1.2fr; grid-template-areas: "ton inst refs" "genre inst refs"; }
+.vi-ton { grid-area: ton; } .vi-genre { grid-area: genre; } .vi-inst { grid-area: inst; } .vi-refs { grid-area: refs; }
+.vi-ton { grid-template-columns: auto 1fr; align-items: center; } .vi-ton small { grid-column: 1 / -1; } .vi-kb { width: 120px; }
+@media (max-width: 900px) { .vi-grille { grid-template-columns: 1fr 1fr; grid-template-areas: "ton genre" "inst refs"; } }
+@media (max-width: 560px) { .vi-grille { grid-template-columns: 1fr; grid-template-areas: "ton" "genre" "inst" "refs"; } }
+.vise { outline: 3px solid #e8c27a; outline-offset: 3px; border-radius: 8px; animation: vise 2.4s ease-out; }
+@keyframes vise { 0%, 60% { box-shadow: 0 0 0 8px rgba(232, 194, 122, .35); } 100% { box-shadow: 0 0 0 0 rgba(232, 194, 122, 0); } }

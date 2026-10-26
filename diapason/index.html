@@ -9,6 +9,13 @@
   <meta property="og:title" content="FLIP · Zaza & Frog">
   <meta property="og:description" content="Six mois, deux musiciens, des morceaux originaux.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <!-- Ajoutée à l'écran d'accueil, l'app s'ouvre en plein écran, sans barre de navigateur (Android, iPhone, iPad). -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="img/icone-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FLIP">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400..900;1,7..72,400..700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -38,7 +45,8 @@
       <a class="icon-btn tool-coffre" href="#/coffre" title="Le coffre : nos petites perles" aria-label="Le coffre"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10a8 5 0 0 1 16 0v9H4z"/><path d="M4 12h16M11 11h2v3h-2z"/></svg></a>
       <button class="icon-btn" id="pistesBtn" type="button" title="Pourquoi ça marche (la recherche)" aria-label="Pourquoi ça marche"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg></button>
       <button class="icon-btn" id="defiBtn" type="button" title="Contrainte surprise" aria-label="Contrainte surprise"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="9" r="1.2" class="fill"/><circle cx="15" cy="15" r="1.2" class="fill"/><circle cx="15" cy="9" r="1.2" class="fill"/><circle cx="9" cy="15" r="1.2" class="fill"/></svg></button>
-      <button class="icon-btn tool-proj" id="projBtn" type="button" title="Grand texte (jouer à distance de l’écran)" aria-label="Grand texte" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button class="icon-btn tool-proj" id="projBtn" type="button" title="Grand texte (jouer à distance de l’écran)" aria-label="Grand texte" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19 8.5 5h1L15 19M5.2 14h7.6"/><path d="M15.5 12.5a3 3 0 1 1 0 4.8M21 10v9"/></svg></button>
+      <button class="icon-btn tool-fs" id="fsBtn" type="button" title="Plein écran (cache la barre du navigateur)" aria-label="Plein écran" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
     </div>
   </header>
 

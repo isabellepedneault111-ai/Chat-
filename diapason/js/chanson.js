@@ -5,6 +5,7 @@ import { espace, saveEntry, uid } from './espace.js';
 import { store, toast } from './ui.js';
 import { FR, chordName, chordIntervals } from './music.js';
 import { accord, prechargerSons } from './sampler.js';
+import { fichierMidi } from './materiel.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const PARTIES = ['Intro', 'Couplet', 'Pré-refrain', 'Refrain', 'Pont', 'Solo', 'Outro'];
@@ -60,6 +61,7 @@ export function chansonTab(body, ctx) {
           <button class="icon-btn tiny" data-ch="ecoute" aria-label="Écouter">♪</button>${s.chords.length > 1 ? '<button class="icon-btn tiny" data-ch="moins" aria-label="Retirer">✕</button>' : ''}</li>`).join('')}</ol>
         <button class="btn small" data-ch="plus">+ Accord</button>
       </article>`).join('')}</div>
+      <div class="ec-row ch-exports"><span class="muted small">Exporter :</span><button class="btn small" data-ch="mid">⬇ La partition (MIDI)</button><button class="btn small" data-ch="txt">⬇ La grille (texte)</button><button class="btn small" data-ch="copier">Copier la grille</button></div>
       <div class="ec-row"><button class="btn" data-ch="nouvelle-partie">+ Nouvelle partie</button><button class="btn" data-ch="depuis-studio">+ Partie avec les accords du studio</button></div>
       <datalist id="ch-noms">${PARTIES.map((p) => `<option value="${p}">`).join('')}</datalist>
       <p class="muted small">${espace.connected ? 'Chaque changement est gardé et partagé : l’autre voit la chanson dans son studio.' : 'Gardé sur cet appareil.'}</p>
@@ -82,6 +84,7 @@ export function chansonTab(body, ctx) {
     if (k === 'retirer' && oi) ch.ordre.splice(+oi.dataset.o, 1);
     if ((k === 'gauche' || k === 'droite') && oi) { const i = +oi.dataset.o; const j = i + (k === 'gauche' ? -1 : 1); if (j >= 0 && j < ch.ordre.length) [ch.ordre[i], ch.ordre[j]] = [ch.ordre[j], ch.ordre[i]]; }
     if (k === 'tout') { const et = etiquettes(); const acc = []; const marques = []; ch.ordre.forEach((id, i) => { (sec(id)?.chords || []).forEach((c, j) => { acc.push(c); marques.push(j === 0 ? et[i] : ''); }); }); if (acc.length) ctx.jouer(acc, ch.nom, marques); return; }
+    if (k === 'mid' || k === 'txt' || k === 'copier') { exporter(k); return; }
     if (k === 'jouer' && s) { ctx.jouer(s.chords, `${ch.nom} · ${s.nom}`, s.chords.map((_, j) => (j === 0 ? s.nom : ''))); return; }
     if (k === 'ecoute' && s && li) { const [r, q] = s.chords[+li.dataset.i]; prechargerSons(['piano']); accord('piano', chordIntervals(q).map((iv) => 52 + ((r + 8) % 12) + iv), { dur: 1.3, vel: 0.6 }); return; }
     if (k === 'plus' && s) { const d = s.chords[s.chords.length - 1]; s.chords.push([(d[0] + 5) % 12, 'M', 4]); }
@@ -92,5 +95,32 @@ export function chansonTab(body, ctx) {
     if (k === 'depuis-studio') ch.sections.push({ id: uid(), nom: 'Partie du studio', chords: ctx.actuels() });
     sauver(); rendre();
   });
+  // Les exports : la partition MIDI (deux pistes en une : les accords au piano, la basse), au tempo du studio,
+  // et la grille en texte, partie par partie, comme une feuille d'accords de musicien.
+  function exporter(k) {
+    const et = etiquettes(); const bpm = ctx.tempo?.() || 92; const temps = 60 / bpm;
+    if (k === 'mid') {
+      const ev = [{ t: 0, d: [0xc0, 0] }, { t: 0, d: [0xc1, 32] }]; let t = 0; // canal 1 : piano ; canal 2 : basse
+      ch.ordre.forEach((id) => (sec(id)?.chords || []).forEach(([r, q, b]) => {
+        const dur = b * temps; chordIntervals(q).forEach((iv) => { const m = 60 + r + iv - (r >= 7 ? 12 : 0); ev.push({ t, d: [0x90, m, 76] }, { t: t + dur * 0.98, d: [0x80, m, 0] }); });
+        ev.push({ t, d: [0x91, 36 + r, 90] }, { t: t + dur * 0.95, d: [0x81, 36 + r, 0] }); t += dur;
+      }));
+      telecharger(fichierMidi(ev.sort((a, b2) => a.t - b2.t), bpm), 'mid'); return;
+    }
+    const lignes = [`${ch.nom}`, `${bpm} BPM · 4 temps par mesure`, ''];
+    const vus = new Set();
+    ch.ordre.forEach((id, i) => {
+      const s2 = sec(id); if (!s2) return;
+      if (vus.has(id)) { lignes.push(`${et[i]} : comme avant`); return; } vus.add(id);
+      const mes = []; let cur = []; let n = 0;
+      s2.chords.forEach(([r, q, b]) => { let reste = b; const nom = chordName(r, q); let premier = true; while (reste > 0) { const place = Math.min(reste, 4 - n); cur.push(premier ? nom : '·'); for (let j = 1; j < place; j++) cur.push('·'); premier = false; n += place; reste -= place; if (n === 4) { mes.push(cur.join(' ')); cur = []; n = 0; } } });
+      if (cur.length) mes.push(cur.join(' '));
+      lignes.push(`${et[i]}`); for (let j = 0; j < mes.length; j += 4) lignes.push(`| ${mes.slice(j, j + 4).join(' | ')} |`); lignes.push('');
+    });
+    const txt = `${lignes.join('\n')}\n`;
+    if (k === 'copier') { navigator.clipboard?.writeText(txt).then(() => toast('Grille copiée.')).catch(() => toast('Copie refusée par le navigateur.')); return; }
+    telecharger(new Blob([txt], { type: 'text/plain;charset=utf-8' }), 'txt');
+  }
+  const telecharger = (blob, ext) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${ch.nom.replace(/[\\/:*?"<>|]+/g, ' ').trim() || 'chanson'}.${ext}`; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); };
   rendre();
 }

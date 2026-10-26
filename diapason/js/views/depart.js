@@ -19,7 +19,7 @@ export function keysFor(low, high) {
 export default {
   id: 'depart',
   mount(el) {
-    let step = 0;
+    let step = Math.min(4, Math.max(0, (+(location.hash.match(/etape=(\d)/) || [])[1] || 1) - 1));
     let saveT = 0;
 
     function render() {

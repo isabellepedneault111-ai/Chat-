@@ -4,7 +4,7 @@ import { audio, out } from '../audio.js';
 import { espace, audioURL, saveEntry, uploadAudio, saveProfile, members } from '../espace.js';
 import { toast, autoCanvas } from '../ui.js';
 import { esc } from './carnet.js';
-import { ecouter, boucler, rendreBoucle, diagnostic, notesVoix, nomNote, trouverAccords } from '../oreille.js';
+import { ecouter, boucler, rendreBoucle, diagnostic, notesVoix, nomNote, trouverAccords, grilleMesures, grilleTexte } from '../oreille.js';
 import { chargerGrille } from './studio.js';
 
 const PIECES = [['data/sons/frog-joywalk-complet.mp3', 'Joy Walk (Frog)'], ['data/sons/frog-visite.mp3', 'Projet 1, après la pause (Frog)']];
@@ -114,6 +114,10 @@ export default {
       const ton = res.ton.split(' ou ')[0]; const NOMS = ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
       box.innerHTML = `<h3>Les accords <small class="muted">${accs.length} changements trouvés · touche un accord pour l’écouter</small></h3>
         <div class="or-acc-liste">${accs.slice(0, 48).map((a, i) => `<button class="or-acc" data-acc="${i}" title="${mmss(a.a)} · ${a.temps} temps"><b>${esc(a.nom)}</b><small>${mmss(a.a)}</small></button>`).join('')}</div>
+        ${(() => { const g = grilleMesures(accs, res.bpm); if (!g) return ''; box._grille = g; const l = g.boucle || g.mesures.slice(0, 32);
+          return `<div class="or-grille"><p class="or-grille-t"><b>La grille</b> · ${g.tempo} BPM · 4 temps par mesure${g.periode ? ` · <span class="or-rep">‖: une boucle de ${g.periode} mesure${g.periode > 1 ? 's' : ''}, jouée ${g.tours} fois :‖</span>` : ''}</p>
+            <div class="or-mesures">${l.map((x, i) => `<button class="or-mes ${g.periode && i === 0 ? 'rep-a' : ''} ${g.periode && i === l.length - 1 ? 'rep-b' : ''}" data-mes="${i}" title="Mesure ${g.boucle ? i + 1 : x.m} · ${mmss(x.t)}"><small>${g.boucle ? i + 1 : x.m}</small>${i && x.cle === l[i - 1].cle ? '<b class="or-pct">%</b>' : x.cases.map((c) => `<span>${c ? esc(c) : '·'}</span>`).join('')}</button>`).join('')}</div>
+            <div class="ec-row"><button class="btn small" data-o="grille-copier">Copier la grille</button><button class="btn small" data-o="grille-txt">⬇ La grille (texte)</button></div></div>`; })()}
         <div class="ec-row"><button class="btn primary" data-o="studio">Jouer avec ces accords dans le studio →</button><span class="muted small">Les 8 premiers changements, avec leur durée, deviennent « Mes accords ». La tonalité estimée (${esc(ton)}) colore le clavier.</span></div>`;
       box._noms = NOMS;
     }
@@ -182,6 +186,13 @@ export default {
       if (!o || !res) return;
       const ac = e.target.closest('[data-acc]');
       if (ac && accs) { const a = accs[+ac.dataset.acc]; joueDe(a.a, a.b); return; }
+      const ms = e.target.closest('[data-mes]'); const g = q('.or-accords')._grille;
+      if (ms && g) { const x = (g.boucle || g.mesures)[+ms.dataset.mes]; joueDe(x.t, x.t + (240 / g.tempo)); return; }
+      if ((o === 'grille-copier' || o === 'grille-txt') && g) {
+        const txt = grilleTexte(g, `${nom} · ${res.ton.split(' ou ')[0]}`);
+        if (o === 'grille-copier') { navigator.clipboard?.writeText(txt).then(() => toast('Grille copiée : colle-la dans un message, un document, ton logiciel.')).catch(() => toast('Copie refusée par le navigateur.')); return; }
+        const a2 = document.createElement('a'); a2.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain;charset=utf-8' })); a2.download = `Grille · ${nom.replace(/[\\/:*?"<>|]+/g, ' ')}.txt`; document.body.append(a2); a2.click(); a2.remove(); return;
+      }
       if (o === 'studio' && accs?.length) {
         const [n, mode] = res.ton.split(' ou ')[0].split(' '); const NOMS = q('.or-accords')._noms; let tonique = NOMS.indexOf(n); if (mode === 'mineur') tonique = (tonique + 3) % 12;
         const DUR = [1, 2, 3, 4, 6, 8]; const proche = (t) => DUR.reduce((x, y) => (Math.abs(y - t) < Math.abs(x - t) ? y : x));

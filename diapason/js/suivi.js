@@ -24,15 +24,17 @@ export function decrire(e) {
   if (d.relais) return [e.audio ? 'Un son au relais' : 'Des mots au relais', `#/relais/${e.id}`];
   if (e.type === 'chanson') return ['Une chanson au studio', `#/studio?tab=chanson&ch=${e.id}`];
   if (e.type === 'son') return ['Un son de batterie remplacé', '#/studio?tab=beat'];
-  if (e.type === 'bravo') return ['Un bravo', '#/'];
+  if (e.type === 'bravo') return ['Un bravo', `#/?voir=${e.id}`];
   if (e.type === 'session') return ['Une séance terminée', '#/bilan'];
-  if (d.etincelle && d.pour === 'app') return ['Une idée pour le labo', '#/ecrire'];
-  if (d.journal || d.atelier) return ['Une page du journal', '#/ecrire'];
+  if (d.etincelle && d.pour === 'app') return ['Une idée pour le labo', `#/ecrire?voir=${e.id}`];
+  if (d.journal || d.atelier) return ['Une page du journal', `#/ecrire?voir=${e.id}`];
   if (e.type === 'paroles') return ['Des paroles', '#/paroles'];
-  if (d.filet) return ['Un bout pris dans le filet', '#/carnet'];
-  if (d.prise) return ['Une prise du studio', '#/carnet'];
-  if (e.type === 'audio') return ['Un son au mur', '#/carnet'];
-  if (e.type === 'image') return ['Une image au mur', '#/carnet'];
-  if (e.type === 'lien') return ['Une écoute partagée', '#/carnet'];
-  return ['Une idée au mur', '#/carnet'];
+  const mur = `#/carnet?voir=${e.id}`; // le mur ouvre directement la fiche de l'idée
+  if (d.filet) return ['Un bout pris dans le filet', mur];
+  if (d.prise) return ['Une prise du studio', mur];
+  if (d.cathedrale) return ['Une cathédrale', mur];
+  if (e.type === 'audio') return ['Un son au mur', mur];
+  if (e.type === 'image') return ['Une image au mur', mur];
+  if (e.type === 'lien') return ['Une écoute partagée', mur];
+  return ['Une idée au mur', mur];
 }

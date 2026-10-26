@@ -157,11 +157,12 @@ export function instantane() {
   return { sr, duree: n / sr, pistes, midi, noms };
 }
 
-// Le fichier MIDI standard (format 0, 960 tics par seconde à 60 BPM), pour l'ouvrir dans n'importe quel logiciel.
-export function fichierMidi(evts) {
+// Le fichier MIDI standard (format 0, 960 tics par noire, au tempo donné), pour l'ouvrir dans n'importe quel logiciel.
+export function fichierMidi(evts, bpm = 60) {
   const vlq = (v) => { const o = [v & 0x7f]; while ((v >>= 7)) o.unshift((v & 0x7f) | 0x80); return o; };
-  const piste = [0x00, 0xff, 0x51, 0x03, 0x0f, 0x42, 0x40]; let avant = 0;
-  evts.forEach((e) => { const t = Math.round(e.t * 960); piste.push(...vlq(Math.max(0, t - avant)), ...e.d.slice(0, (e.d[0] & 0xf0) === 0xc0 || (e.d[0] & 0xf0) === 0xd0 ? 2 : 3)); avant = t; });
+  const us = Math.round(60e6 / bpm); // le tempo écrit dans le fichier : le logiciel place les mesures au bon endroit
+  const piste = [0x00, 0xff, 0x51, 0x03, (us >> 16) & 255, (us >> 8) & 255, us & 255]; let avant = 0;
+  evts.forEach((e) => { const t = Math.round(e.t * 960 * (bpm / 60)); piste.push(...vlq(Math.max(0, t - avant)), ...e.d.slice(0, (e.d[0] & 0xf0) === 0xc0 || (e.d[0] & 0xf0) === 0xd0 ? 2 : 3)); avant = t; });
   piste.push(0x00, 0xff, 0x2f, 0x00);
   const l = piste.length;
   return new Blob([new Uint8Array([0x4d, 0x54, 0x68, 0x64, 0, 0, 0, 6, 0, 0, 0, 1, 0x03, 0xc0, 0x4d, 0x54, 0x72, 0x6b, (l >>> 24) & 255, (l >>> 16) & 255, (l >>> 8) & 255, l & 255, ...piste])], { type: 'audio/midi' });

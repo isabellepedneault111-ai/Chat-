@@ -136,7 +136,7 @@ export default {
     function idees() {
       const ul = el.querySelector('.ec-idees-l'); if (!ul) return;
       const l = espace.entries.filter((e) => e.data?.etincelle && e.data?.pour === 'app' && !e.demo && !e.data?.demo).sort((a, b) => b.createdAt - a.createdAt);
-      ul.innerHTML = l.map((e) => `<li style="--c:${memberColor(e.author)}"><p>${esc(e.body || e.title)}</p><small><b>${esc(e.author)}</b> · ${ago(e.createdAt)}${e.data?.fait ? ' · <b class="fait">fait ✓</b>' : ''}</small></li>`).join('') || '<li class="muted">Aucune idée notée pour l’instant.</li>';
+      ul.innerHTML = l.map((e) => `<li style="--c:${memberColor(e.author)}" data-id="${esc(e.id)}"><p>${esc(e.body || e.title)}</p><small><b>${esc(e.author)}</b> · ${ago(e.createdAt)}${e.data?.fait ? ' · <b class="fait">fait ✓</b>' : ''}</small></li>`).join('') || '<li class="muted">Aucune idée notée pour l’instant.</li>';
     }
     function list(force) {
       const host = el.querySelector('.ec-list');

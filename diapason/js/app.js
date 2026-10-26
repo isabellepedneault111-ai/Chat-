@@ -133,6 +133,9 @@ async function route() {
   const mod = MODULES.find((m) => m.id === v.id);
   view.style.setProperty('--accent', mod ? mod.color : 'var(--rec)');
   currentId = v.id;
+  // « ?voir=… » : on amène l'élément sous les yeux et on le fait briller un instant (Nos nouvelles, la tresse…).
+  const voir = (location.hash.match(/[?&]voir=([\w-]+)/) || [])[1];
+  if (voir && v.id !== 'carnet') { let n = 0; const cherche = () => { const t = host.querySelector(`[data-id="${CSS.escape(voir)}"]`); if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'center' }); t.classList.add('vise'); setTimeout(() => t.classList.remove('vise'), 2600); } else if (n++ < 20) setTimeout(cherche, 150); }; setTimeout(cherche, 200); }
   host.classList.add('entering');
   setTimeout(() => host.classList.remove('entering'), 900);
   cleanup = v.mount(host) || null;
@@ -223,6 +226,21 @@ function setProj(on) {
   store.set('projector', on);
 }
 projBtn.addEventListener('click', () => setProj(!document.documentElement.classList.contains('projector')));
+
+// Le vrai plein écran : la barre du navigateur disparaît. Sur iPhone, le navigateur ne le permet pas pour une page :
+// on explique comment ajouter l'app à l'écran d'accueil, d'où elle s'ouvre déjà sans barre.
+const fsBtn = $('#fsBtn');
+const enPleinEcran = () => !!(document.fullscreenElement || document.webkitFullscreenElement) || matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches;
+const majFs = () => { const on = enPleinEcran(); fsBtn.setAttribute('aria-pressed', on); fsBtn.title = on ? 'Quitter le plein écran' : 'Plein écran (cache la barre du navigateur)'; document.documentElement.classList.toggle('plein-ecran', on); };
+fsBtn.addEventListener('click', async () => {
+  const d = document.documentElement;
+  if (document.fullscreenElement || document.webkitFullscreenElement) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); return; }
+  const req = d.requestFullscreen || d.webkitRequestFullscreen;
+  if (req) { try { await req.call(d, { navigationUI: 'hide' }); return; } catch { /* refusé : on explique */ } }
+  toast(/iPhone|iPod/.test(navigator.userAgent) ? 'Sur iPhone : touche Partager, puis « Sur l’écran d’accueil ». FLIP s’ouvrira de là, sans barre.' : 'Ce navigateur refuse le plein écran. Ajoute FLIP à l’écran d’accueil : il s’ouvrira sans barre.');
+});
+['fullscreenchange', 'webkitfullscreenchange'].forEach((ev) => document.addEventListener(ev, majFs));
+majFs();
 setProj(store.get('projector', false));
 
 // Pastille « nouveau » sur Carnet quand le duo ajoute quelque chose ailleurs dans l'app.

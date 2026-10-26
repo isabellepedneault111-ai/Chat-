@@ -2,7 +2,7 @@
 import { espace, onEspace, updateEspace, profileOf } from '../espace.js';
 import { toast, store } from '../ui.js';
 import { MODULES } from '../data.js';
-import { PLAN, RYTHME, VISION_FIELDS, STAGES, MEMBERS, memberColor, ROLES } from '../duo.js';
+import { PLAN, RYTHME, VISION_FIELDS, STAGES, MEMBERS, memberColor, ROLES, aspect, lienAuMoment } from '../duo.js';
 import { currentMonth, planContext, planStart, weekRhythm, planAjuste } from '../plan.js';
 import { esc, espaceGate, ago, embedHTML } from './carnet.js';
 import { activeSession } from './session.js';
@@ -18,6 +18,28 @@ const nouvellesBandeau = () => { const n = aVoir(); if (!n.length) return ''; re
 
 // Où aller : chaque outil rangé par ce qu'on veut faire, pas par son nom.
 // Par où commencer : trois gestes, dans l'ordre, cochés quand ils sont faits. Disparaît quand tout est fait.
+// Notre vision, comme un manifeste : les tonalités allumées sur un clavier, nos instruments côte à côte,
+// le genre en grand, nos références avec leur pourquoi, et ce qu'on veut faire ressentir.
+const NOTES_V = { do: 0, 'do♯': 1, 'ré♭': 1, ré: 2, 'ré♯': 3, 'mi♭': 3, mi: 4, fa: 5, 'fa♯': 6, 'sol♭': 6, sol: 7, 'sol♯': 8, 'la♭': 8, la: 9, 'la♯': 10, 'si♭': 10, si: 11 };
+function visionHTML(v, mem) {
+  const tons = new Set((v.tonalite || '').toLowerCase().replace(/#/g, '♯').split(/[,·/]+|\s+et\s+/).map((x) => NOTES_V[x.trim().split(/\s+/)[0]]).filter((x) => x != null));
+  const blanches = [0, 2, 4, 5, 7, 9, 11]; const noires = [[1, 0], [3, 1], [6, 3], [8, 4], [10, 5]];
+  const clavier = `<svg class="vi-kb" viewBox="0 0 140 52" aria-hidden="true">${blanches.map((n, i) => `<rect x="${i * 20}" y="0" width="19" height="52" rx="2" class="${tons.has(n) ? 'on' : ''}"/>`).join('')}${noires.map(([n, i]) => `<rect x="${i * 20 + 13}" y="0" width="12" height="31" rx="2" class="noire ${tons.has(n) ? 'on' : ''}"/>`).join('')}</svg>`;
+  const parts = (v.instrumentation || '').split(/\s+·\s+(?=[A-ZÀ-Ý][\wÀ-ÿ]+\s*:)/);
+  const inst = mem.map((m) => { const p = parts.find((x) => x.trim().startsWith(m)); return [m, p ? p.replace(new RegExp(`^\\s*${m}\\s*:\\s*`), '').split(/\s*·\s*|,\s*/).filter(Boolean) : []]; });
+  const arts = mem.flatMap((m) => (profileOf(m)?.artistes || []).filter((a) => a?.nom).map((a) => ({ ...a, by: m })));
+  const refs = (v.style || '').split(/,\s*/).filter(Boolean).map((r) => ({ r, a: arts.find((a) => a.nom === r) }));
+  const vide = '<span class="vi-vide">à décider ensemble</span>';
+  return `<div class="vi">
+    ${v.intention ? `<blockquote class="vi-intention"><small>Ce qu’on veut que les gens ressentent</small>${esc(v.intention)}</blockquote>` : `<blockquote class="vi-intention"><small>Ce qu’on veut que les gens ressentent</small>${vide}</blockquote>`}
+    <div class="vi-grille">
+      <section class="vi-case vi-ton"><small>Nos tonalités</small>${clavier}<b>${v.tonalite ? esc(v.tonalite) : vide}</b></section>
+      <section class="vi-case vi-genre"><small>Notre genre</small><b>${v.genre ? esc(v.genre).replace(/ · /g, '<i>·</i>') : vide}</b></section>
+      <section class="vi-case vi-inst"><small>Nos instruments</small>${inst.map(([m, l]) => `<div style="--c:${memberColor(m)}"><b>${esc(m)}</b>${l.length ? l.map((x) => `<span>${esc(x)}</span>`).join('') : '<span class="vi-vide">—</span>'}</div>`).join('')}</section>
+      <section class="vi-case vi-refs"><small>Nos références</small>${refs.length ? refs.map(({ r, a }) => `<p style="--c:${a ? memberColor(a.by) : 'var(--ink)'}"><b>${esc(r)}</b>${a?.aime?.length ? `<span>${a.aime.map(aspect).map(esc).join(' · ')}</span>` : a ? '<span class="vi-vide">pourquoi ? à dire</span>' : ''}</p>`).join('') : vide}</section>
+    </div></div>`;
+}
+
 function commencerHTML() {
   const mem = espace.meta.members || MEMBERS; const frog = espace.me === mem[1];
   const ents = espace.entries.filter((e) => !e.demo && !e.data?.demo);
@@ -27,6 +49,10 @@ function commencerHTML() {
     frog ? ['Monter une chanson et ses accords', 'Studio → Nos chansons : couplet, refrain, pont, chacun avec ses accords. Puis on la joue.', '#/studio?tab=chanson', ents.some((e) => e.type === 'chanson')]
       : ['Placer tes paroles sur Projet 1', 'Écrire → Placer mes paroles : les syllabes, les accents, la note à chanter.', '#/placer', !!store.get('placerTexte', '')],
   ];
+  // Dire pourquoi nos inspirations nous inspirent : une tâche pour chacun (on voit où en est l'autre).
+  const dit = (m) => { const l = (profileOf(m)?.artistes || []).filter((a) => a?.nom); return l.length > 0 && l.every((a) => a.aime?.length || a.pourquoi); };
+  const autre = mem.find((m) => m !== espace.me);
+  pas.splice(1, 0, ['Dire pourquoi nos inspirations nous inspirent', `Pour chaque artiste ou morceau : sa rythmique, sa voix, son texte… et le moment précis. ${dit(autre) ? `${autre} l’a fait ✓` : `${autre} aussi a cette tâche.`}`, '#/depart?etape=3', dit(espace.me)]);
   if (pas.every((x) => x[3])) return '';
   const prochain = pas.findIndex((x) => !x[3]);
   return `<section class="commencer" aria-label="Par où commencer"><h2>Par où commencer</h2><ol>${pas.map(([t, d, h, ok], i) => `<li class="${ok ? 'fait' : i === prochain ? 'prochain' : ''}"><a href="${h}"><span class="cm-n">${ok ? '✓' : i + 1}</span><b>${t}</b><small>${d}</small>${i === prochain ? '<em>Maintenant →</em>' : ''}</a></li>`).join('')}</ol></section>`;
@@ -228,13 +254,13 @@ export default {
           <div class="home-trio">
             <section class="panel bravos">
               <div class="panel-head"><h2>Nos bravos</h2><a class="btn small" href="#/carnet">★ En envoyer un</a></div>
-              ${bravos.length ? `<ul>${bravos.map((b) => `<li style="--c:${memberColor(b.author)}"><p>${esc(b.body || b.title)}</p><small><b>${esc(b.author)}</b> → ${esc(b.data?.to || '')} · ${ago(b.createdAt)}</small></li>`).join('')}</ul>` : '<p class="muted small">Le premier bravo est le plus dur. Ce que l’autre a fait de bien, précisément.</p>'}
+              ${bravos.length ? `<ul>${bravos.map((b) => `<li style="--c:${memberColor(b.author)}" data-id="${esc(b.id)}"><p>${esc(b.body || b.title)}</p><small><b>${esc(b.author)}</b> → ${esc(b.data?.to || '')} · ${ago(b.createdAt)}</small></li>`).join('')}</ul>` : '<p class="muted small">Le premier bravo est le plus dur. Ce que l’autre a fait de bien, précisément.</p>'}
             </section>
             <section class="panel inspi">
               <div class="panel-head"><h2>Ce qui nous inspire</h2><a class="btn small" href="#/carnet">+ Un lien</a></div>
               ${links[0] ? embedHTML(links[0].data?.url || links[0].body) : ''}
               <ul class="inspi-list">${links.slice(links[0] && embedHTML(links[0].data?.url || links[0].body) ? 1 : 0).map((l) => `<li style="--c:${memberColor(l.author)}"><a href="${esc(l.data?.url || l.body)}" target="_blank" rel="noopener">${esc(l.title)} ↗</a></li>`).join('')}
-                ${arts.map((a) => `<li style="--c:${memberColor(a.by)}">${a.lien ? `<a href="${esc(a.lien)}" target="_blank" rel="noopener">${esc(a.nom)} ↗</a>` : esc(a.nom)}</li>`).join('')}</ul>
+                ${arts.map((a) => `<li style="--c:${memberColor(a.by)}">${a.lien ? `<a href="${esc(lienAuMoment(a.lien, a.moment))}" target="_blank" rel="noopener">${esc(a.nom)} ↗</a>` : esc(a.nom)}${a.aime?.length ? `<span class="art-aime">${a.aime.map(aspect).map(esc).join(' · ')}</span>` : ''}${a.pourquoi ? `<em class="art-pq">« ${esc(a.pourquoi)} »</em>` : a.by === espace.me && !a.aime?.length ? '<a class="art-dire" href="#/depart?etape=3">Dire pourquoi →</a>' : ''}</li>`).join('')}</ul>
               ${!links.length && !arts.length ? '<p class="muted small">Collez un lien Spotify ou YouTube dans la capture du mur : il apparaît ici, prêt à écouter.</p>' : ''}
             </section>
             <a class="panel evo-teaser" href="#/bilan">
@@ -247,7 +273,7 @@ export default {
 
 
         <details class="panel vision-fold"><summary><h2>Notre vision</h2><span class="muted small">tonalité, genre, intention</span></summary>
-          <dl>${VISION_FIELDS.map(([k, label]) => `<dt>${label}</dt><dd>${v[k] ? esc(v[k]) : '<span class="muted">à décider ensemble</span>'}</dd>`).join('')}</dl>
+          ${visionHTML(v, mem)}
           <button class="btn small ghost" data-h="edit">Modifier</button>
           <cite>Une vision partagée avant de composer · Merchán-Sánchez-Jara 2023</cite>
         </details>

@@ -330,6 +330,7 @@ export default {
           q('.chord-row').scrollIntoView({ behavior: 'smooth', block: 'center' });
         },
         actuels: () => accords().map((c) => [mod12(S.key + c[0]), c[1], tempsDe(c)]),
+        tempo: () => S.bpm,
       });
       if (tab === 'voix') voixTab(body);
       if (tab === 'cover') coverTab(body);
