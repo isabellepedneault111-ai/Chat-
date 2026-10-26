@@ -4,6 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 python3 tools/arbre.py
+python3 tools/orphelins.py  # aucune page ne dépend de l’accueil pour être trouvée : sinon, on ne publie pas
 tmp=$(mktemp -d)
 npx -y esbuild@0.24.2 js/app.js --bundle --format=iife --minify --target=es2020 --outfile="$tmp/app.js"
 npx -y esbuild@0.24.2 styles.css --minify --outfile="$tmp/styles.css"
