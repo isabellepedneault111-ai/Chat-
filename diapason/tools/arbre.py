@@ -21,6 +21,43 @@ def role(f):
         elif morceaux or t: break
     r = ' '.join(morceaux)
     return (r[:260].rsplit(' ', 1)[0] + '…') if len(r) > 260 else r
+import re
+SECTION = re.compile(r'^\s*(?://|/\*)\s*-{3,}\s*(.+?)\s*-{3,}')
+FONCTION = re.compile(r'^\s*(?:export\s+)?(?:async\s+)?function\s+([\wÀ-ÿœ]+)\s*\(')
+CONSTE = re.compile(r'^export\s+const\s+([\wÀ-ÿœ]+)\s*=')
+CSS = re.compile(r'^/\*\s*(.+?)\s*\*/')
+DEF = re.compile(r'^(?:def|class)\s+(\w+)')
+def elements(f, texte=None):
+    if texte is None:
+        try: texte = (racine / f).read_text(errors='ignore')
+        except OSError: return []
+    if not texte: return []
+    out = []
+    for l in texte.splitlines():
+        if f.endswith(('.js', '.mjs')):
+            m = SECTION.match(l)
+            if m: out.append('§ ' + m.group(1)); continue
+            m = FONCTION.match(l) or CONSTE.match(l)
+            if m: out.append(m.group(1))
+        elif f.endswith('.css'):
+            m = CSS.match(l)
+            if m: out.append('§ ' + m.group(1)[:70].split(' : ')[0].split('. ')[0])
+        elif f.endswith('.py'):
+            m = DEF.match(l) or SECTION.match(l.replace('#', '//', 1))
+            if m: out.append(m.group(1))
+    vus = set(); return [x for x in out if not (x in vus or vus.add(x))]
+def precedent(f):
+    # Le contenu du fichier avant sa dernière retouche (vide s'il vient de naître).
+    h = subprocess.run(['git', 'log', '-2', '--format=%h', '--', f], cwd=racine, capture_output=True, text=True).stdout.split()
+    if len(h) < 2: return ''
+    return subprocess.run(['git', 'show', f'{h[1]}:./{f}'], cwd=racine, capture_output=True, text=True).stdout
+def histoire(f):
+    # Ses dernières retouches (depuis Diapason) : la date et ce que l'étape a fait, en une phrase.
+    out = []
+    for l in subprocess.run(['git', 'log', '-6', '--format=%ad|%s', '--date=short', '--', f], cwd=racine, capture_output=True, text=True).stdout.splitlines():
+        d, sujet = l.split('|', 1)
+        if d >= '2026-10-24' and not sujet.startswith('Arbre et généalogie'): out.append([d, sujet[:140]])
+    return out[:4]
 dates = {}
 for l in subprocess.run(['git', 'log', '--format=@%ad', '--date=short', '--name-only', '--relative'], cwd=racine, capture_output=True, text=True).stdout.splitlines():
     if l.startswith('@'): d = l[1:]
@@ -38,6 +75,13 @@ for f in fichiers:
     fiche = {'n': parts[-1], 'l': lignes}
     if f.endswith(('.js', '.mjs', '.css', '.py', '.sh', '.toml')) and role(f): fiche['r'] = role(f)
     if f in dates: fiche['nee'], fiche['mod'] = dates[f]
+    # Ce qu'il contient, grosso modo : ses fonctions et ses sections (et ce qui y est nouveau depuis sa retouche d'avant).
+    el = elements(f)
+    if el:
+        avant = set(elements(f, precedent(f)))
+        fiche['el'] = [[x, 1] if avant and x not in avant else [x] for x in el][:48]
+    h = histoire(f)
+    if h: fiche['h'] = h
     noeud['c'][parts[-1]] = fiche
 def liste(n):
     if 'c' in n: return {'n': n['n'], 'c': sorted((liste(x) for x in n['c'].values()), key=lambda x: ('c' not in x, x['n']))}

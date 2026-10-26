@@ -196,6 +196,8 @@ function ficheFichier(n) {
     ${n.r ? `<p class="ar-f-role">« ${esc(n.r)} »</p><p class="muted small">La première phrase écrite en tête du fichier : ce qu’il fait, dans ses propres mots.</p>` : ''}
     ${o ? `<p><b>D’où il vient :</b> ${esc(o)}</p>` : ''}
     <p class="ar-f-meta">${n.l ? `<span><b>${n.l.toLocaleString('fr-CA')}</b> lignes</span>` : ''}${n.nee ? `<span>né le <b>${jour(n.nee)}</b></span>` : ''}${n.mod && n.mod !== n.nee ? `<span>retouché le <b>${jour(n.mod)}</b></span>` : ''}</p>
+    ${n.h?.length ? `<div class="ar-f-h"><b>Ses dernières retouches</b><ul>${n.h.map(([d, t]) => `<li><span>${jour(d).replace(/ \d{4}$/, '')}</span> ${esc(t)}</li>`).join('')}</ul></div>` : ''}
+    ${n.el?.length ? `<div class="ar-f-el"><b>Ce qu’il contient</b>${n.el.some((x) => x[1]) ? ' <span class="ar-nv">nouveau</span> = ajouté à sa dernière retouche' : ''}<p>${n.el.map(([x, nv]) => `<span class="${x.startsWith('§') ? 'ar-sec' : 'ar-fn'} ${nv ? 'nv' : ''}">${esc(x.replace(/^§ /, ''))}</span>`).join('')}</p><p class="muted small">Les sections (en gras) sont les grandes parties du fichier ; les autres noms, ses fonctions : ce qu’il sait faire.</p></div>` : ''}
     ${ext === 'mp3' && chemin.startsWith('data/sons/') ? `<button class="btn small" data-mp3="${esc(chemin)}">▶ Écouter ce son</button>` : ''}`;
 }
 function ficheEtape(c) {

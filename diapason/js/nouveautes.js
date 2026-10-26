@@ -59,6 +59,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.26', quand: '2026-10-26', titre: 'Dans chaque fichier', items: [
+    ['L’arbre ouvre les fichiers', ['Touche un fichier dans l’arbre : sa fiche montre maintenant <b>ses dernières retouches</b> (la date, et ce que chacune a fait, en une phrase) et <b>ce qu’il contient</b>, grosso modo : ses grandes sections et ses fonctions. Ce qui a été ajouté à sa dernière retouche est marqué <b>nouveau</b>, en or. On voit enfin qu’un ajout est dans tel fichier, et que c’est tel truc.']],
+    ['Le numéro de version, sous le logo', ['Sous « Diapason Labo », en haut à gauche : le numéro de la version que tu as à l’écran. Si ce n’est pas le dernier, recharge l’app.']],
+  ] },
   { v: '0.25', quand: '2026-10-26', titre: 'Le labo se souvient', items: [
     ['Rien ne se perd', ['Le labo se souvient tout seul de ce que tu as fait (disques, groupes, liens, disque en avant, vitesse), même si tu actualises la page.', '<b>Mes réglages</b> : donne un nom, « Garder ce réglage », et il te suit sur tes appareils ; l’autre le voit aussi chez lui et peut le charger. Un toucher pour le recharger.']],
     ['● Enregistrer', ['À côté de Démarrer : enregistre exactement ce que tu entends (groupes, liens, lampe compris), puis le télécharge en WAV stéréo.']],

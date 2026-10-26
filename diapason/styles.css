@@ -3214,3 +3214,11 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .tracks-panel .tr-corps { gap: 7px; }
 .tracks-panel .tr-choisir { margin-left: 8px; }
 .ar-recent { filter: drop-shadow(0 0 3px #ffe3a3); } .ar-recents { display: block; margin-top: 4px; font-size: .88rem; }
+/* La fiche d'un fichier : ses retouches et ce qu'il contient */
+.ar-f-h ul { list-style: none; margin: 4px 0 10px; padding: 0; display: grid; gap: 4px; font-size: .84rem; }
+.ar-f-h li::before { content: none !important; } .ar-f-h li span { color: #e8c27a; font-weight: 700; margin-right: 4px; }
+.ar-f-el p { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+.ar-f-el .ar-fn, .ar-f-el .ar-sec { font-size: .76rem; padding: 2px 7px; border-radius: 8px; background: #2a2620; color: #cfc6b4; }
+.ar-f-el .ar-sec { font-weight: 800; color: #efe6d2; background: #3a352d; }
+.ar-f-el .nv { background: #e8c27a; color: #1b1916; }
+.ar-nv { font-size: .72rem; padding: 1px 7px; border-radius: 8px; background: #e8c27a; color: #1b1916; font-weight: 800; }

@@ -269,5 +269,5 @@ onEspace((what, extra) => {
   }
 });
 
-boot().then(() => { maybeTour(); import('./nouveautes.js').then((n) => { n.majAvecAmour(); n.guetterVersions(); }); import('./sonsperso.js').then((m) => m.chargerSonsPerso()); });
+boot().then(() => { maybeTour(); import('./nouveautes.js').then((n) => { n.majAvecAmour(); n.guetterVersions(); const b = document.querySelector('.brand small'); if (b && !b.dataset.v) { b.dataset.v = n.VERSIONS[0].v; b.textContent += ` · ${n.VERSIONS[0].v}`; } }); import('./sonsperso.js').then((m) => m.chargerSonsPerso()); });
 route();
