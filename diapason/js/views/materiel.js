@@ -1,83 +1,159 @@
-// Mon matériel : le studio physique de Frog, redessiné. Chaque appareil (détecté ou ajouté à la main) a sa carte, son
-// câble jusqu'à l'ordinateur, et une case pour l'activer. Ce qui est actif, le filet l'écoute ; les témoins s'allument
-// quand le son ou les notes passent. On place les appareils comme dans la vraie pièce, en les glissant.
+// Mon studio : la pièce de Frog, redessinée pour lui ressembler. Le plancher, les murs, les meubles ; chaque appareil
+// (détecté ou ajouté à la main) à sa place, à sa couleur, à sa taille, avec son câble jusqu'à l'ordinateur et une case
+// pour l'activer. Ce qui est actif, le filet l'écoute ; les témoins s'allument quand le son ou les notes passent.
+// Une photo de la vraie pièce peut servir de calque. Et l'autre peut voir le studio, s'il est partagé.
 import { toast } from '../ui.js';
 import { appareils, regler, ajouter, retirer, detecter, onMateriel, onActivite, SORTES, filet, tendre, relacher, niveau, DUREES, duree, choisirDuree, dureeTexte } from '../materiel.js';
+import { pieceSVG, dessin, COULEURS, MEUBLES, SOLS, MURS, piece, reglerPiece, ajouterMeuble, reglerMeuble, retirerMeuble, studioActuel, pos, ficheDe, reglerFiche, couleurDePhoto, restaurerDepuisProfil, photosDuStudio } from '../piece.js';
+import { espace, profileOf, saveProfile, uploadImage, audioURL } from '../espace.js';
+import { MEMBERS } from '../duo.js';
 
 const esc = (x) => String(x ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-// Une silhouette par sorte d'appareil, dessinée au trait.
-const DESSIN = {
-  clavier: `<rect x="2" y="14" width="116" height="34" rx="3" class="m-corps"/><rect x="6" y="18" width="30" height="6" rx="1" class="m-ecran"/>${[...Array(14)].map((_, i) => `<rect x="${6 + i * 7.7}" y="28" width="7" height="17" class="m-blanche"/>`).join('')}${[0, 1, 3, 4, 5, 7, 8, 10, 11, 12].map((i) => `<rect x="${11 + i * 7.7}" y="28" width="4.4" height="10" class="m-noire"/>`).join('')}`,
-  table: `<rect x="14" y="4" width="92" height="52" rx="4" class="m-corps"/>${[0, 1, 2, 3].map((c) => `${[0, 1, 2].map((r) => `<circle cx="${30 + c * 20}" cy="${12 + r * 8}" r="3" class="m-bouton"/>`).join('')}<rect x="${29 + c * 20}" y="38" width="2" height="14" class="m-rail"/><rect x="${26 + c * 20}" y="${42 - c * 2}" width="8" height="4" rx="1" class="m-fader"/>`).join('')}<rect x="20" y="40" width="3" height="12" class="m-led"/>`,
-  interface: `<rect x="10" y="14" width="100" height="32" rx="5" class="m-corps"/><circle cx="30" cy="30" r="8" class="m-bouton"/><circle cx="52" cy="30" r="8" class="m-bouton"/><circle cx="76" cy="30" r="5" class="m-jack"/><circle cx="94" cy="30" r="5" class="m-jack"/><rect x="24" y="18" width="12" height="2" class="m-led"/>`,
-  synthe: `<rect x="10" y="8" width="100" height="44" rx="4" class="m-corps"/>${[...Array(8)].map((_, i) => `<rect x="${18 + (i % 4) * 14}" y="${16 + Math.floor(i / 4) * 14}" width="11" height="11" rx="2" class="m-pad"/>`).join('')}<circle cx="88" cy="22" r="6" class="m-bouton"/><circle cx="88" cy="40" r="6" class="m-bouton"/>`,
-  micro: `<rect x="50" y="4" width="20" height="30" rx="10" class="m-corps"/><path d="M54 14h12M54 20h12M54 26h12" class="m-grille"/><path d="M44 26a16 16 0 0 0 32 0M60 42v12M48 56h24" class="m-pied"/>`,
-  ordi: `<rect x="22" y="6" width="76" height="40" rx="3" class="m-corps"/><rect x="27" y="11" width="66" height="30" class="m-ecran"/><path d="M12 50h96l-6 6H18z" class="m-corps"/><text x="60" y="30" text-anchor="middle" class="m-txt">FLIP</text>`,
-  ecoute: `<path d="M30 40V30a30 30 0 0 1 60 0v10" class="m-pied"/><rect x="22" y="36" width="14" height="20" rx="5" class="m-corps"/><rect x="84" y="36" width="14" height="20" rx="5" class="m-corps"/>`,
-  autre: `<rect x="20" y="12" width="80" height="36" rx="5" class="m-corps"/><circle cx="40" cy="30" r="6" class="m-bouton"/><rect x="56" y="26" width="34" height="8" rx="2" class="m-ecran"/>`,
-};
-const dessin = (s) => `<svg viewBox="0 0 120 60" class="m-svg" aria-hidden="true">${DESSIN[s] || DESSIN.autre}</svg>`;
 
 export default {
   id: 'materiel',
   mount(el) {
+    const autre = (espace.meta?.members || MEMBERS).find((m) => m !== espace.me) || 'l’autre';
+    if (espace.connected && restaurerDepuisProfil()) setTimeout(() => toast('Ton studio est revenu tel que tu l’avais placé sur ton autre appareil.'), 400);
+    // Une photo du serveur, posée dans une balise <img> dès qu'elle arrive.
+    const poser = (root) => root.querySelectorAll('img[data-ph]').forEach(async (i) => { try { i.src = await audioURL(JSON.parse(i.dataset.ph)); } catch { i.remove(); } });
+    // Chez l'autre : son studio en grand, tel qu'il l'a placé (lecture seule).
+    const chez = decodeURIComponent((location.hash.match(/[?&]chez=([^&]+)/) || [])[1] || '');
+    const st = chez && profileOf(chez)?.studio;
+    if (st) {
+      const ap = st.appareils.filter((a) => !a.hub);
+      el.innerHTML = `<div class="mod-head"><div><p class="eyebrow">Le studio de ${esc(chez)}</p><h1>Là où naît la musique.</h1>
+        <p class="muted">Tel que ${esc(chez)} l’a placé : la pièce, les meubles, les appareils, et les câbles jusqu’à l’ordinateur. En doré, ce qui est actif.</p></div></div>
+        <section class="m-chez">${pieceSVG(st, { titre: `Le studio de ${chez}` })}${profileOf(chez)?.studioPhoto && profileOf(chez)?.studioPhotoPartagee !== false ? `<figure><img data-ph='${esc(JSON.stringify(profileOf(chez).studioPhoto))}' alt="La pièce, en photo"><figcaption>La vraie pièce, en photo</figcaption></figure>` : ''}</section>
+        <section class="panel"><h2>Ce qu’il y a dans la pièce</h2><p class="m-liste">${ap.map((a) => { const f = ficheDe(chez, a.nom); return `<span class="${a.actif ? 'on' : ''}">${f.photo ? `<img data-ph='${esc(JSON.stringify(f.photo))}' alt="${esc(a.nom)}">` : dessin(a.sorte, a.couleur)}<b>${esc(a.nom)}</b>${f.marque || f.modele ? `<small>${esc([f.marque, f.modele].filter(Boolean).join(' · '))}</small>` : ''}${a.lie ? `<small>par ${esc(a.lie)}</small>` : ''}</span>`; }).join('')}</p>
+        <a class="btn" href="#/materiel">Mon studio à moi →</a></section>`;
+      poser(el); return () => {};
+    }
     el.innerHTML = `
       <div class="mod-head"><div>
-        <p class="eyebrow">Mon matériel</p>
-        <h1>Ton studio, tel qu’il est branché.</h1>
-        <p class="muted">Tout ce que l’ordinateur voit (claviers, table de mixage, interface, micros), plus ce que tu ajoutes à la main. Coche ce qui joue aujourd’hui : le filet l’écoute et en garde la dernière minute (ou 3, ou 5). Glisse les appareils pour les placer comme dans ta pièce.</p>
+        <p class="eyebrow">Mon studio</p>
+        <h1>Ton studio, tel qu’il est vraiment.</h1>
+        <p class="muted">Ta pièce, tes meubles, tes appareils à leur place, à leur couleur, à leur taille. Ce que l’ordinateur voit (claviers, table de mixage, interface, micros) arrive tout seul ; le reste (enceintes, guitares, platines, ce qui passe par la table) s’ajoute à la main. Coche ce qui joue aujourd’hui : le filet l’écoute.</p>
       </div></div>
       <section class="panel m-barre">
         <button class="btn primary" data-m="detecter">Détecter mon matériel</button>
-        <button class="btn" data-m="ajout">+ Ajouter un appareil</button>
+        <button class="btn" data-m="ajout">+ Un appareil</button>
+        <label class="m-sel"><span>+ Un meuble</span><select data-m="meuble" aria-label="Ajouter un meuble ou un élément de décor"><option value="">choisir…</option>${Object.entries(MEUBLES).map(([k, [l]]) => `<option value="${k}">${l}</option>`).join('')}</select></label>
+        <button class="btn" data-m="piece">Ma pièce</button>
         <span class="m-filet"></span>
         <form class="m-ajout" hidden>
-          <input name="nom" placeholder="Ex. : Xone:4D, Roland SV-1, Scarlett…" required aria-label="Nom de l’appareil">
+          <input name="nom" placeholder="Ex. : Technics SL-1200, KRK Rokit 5, Fender Jazz Bass…" required aria-label="Nom de l’appareil">
           <select name="sorte" aria-label="Sorte">${Object.entries(SORTES).map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}</select>
           <select name="lie" aria-label="Branché à"><option value="">branché à l’ordinateur</option></select>
           <button class="btn primary">Ajouter</button>
         </form>
+        <div class="m-piece" hidden>
+          <label class="m-sel"><span>Le plancher</span><select data-p="sol">${Object.entries(SOLS).map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}</select></label>
+          <span class="m-sel"><span>Les murs</span><span class="m-murs">${Object.entries(MURS).map(([k, c]) => `<button type="button" class="m-mur" data-mur="${k}" style="--c:${c}" aria-label="Murs ${k}" title="${k}"></button>`).join('')}</span></span>
+          <label class="btn small m-photo-b">Une photo de ma pièce, en calque<input type="file" accept="image/*" data-p="photo" hidden></label>
+          <label class="m-sel m-opa"><span>calque</span><input type="range" min="0" max="90" data-p="opacite"></label>
+          <button class="btn small" data-p="sansphoto">Retirer la photo</button>
+          <span class="muted small">Cette photo sert de calque : glisse tes appareils et tes meubles par-dessus, à leur vraie place.</span>
+        </div>
       </section>
-      <section class="m-scene" aria-label="Le studio, vu d’en haut"><svg class="m-cables" aria-hidden="true"></svg><div class="m-cartes"></div></section>
+      <div class="m-wrap">
+        <section class="m-scene" aria-label="Le studio, vu d’en haut"><img class="m-photo" alt=""><div class="m-meubles"></div><svg class="m-cables" aria-hidden="true"></svg><div class="m-cartes"></div></section>
+        <aside class="m-fiche panel" hidden></aside>
+      </div>
+      <section class="panel m-partage"></section>
       <section class="panel m-aide">
         <h2>Comment ça marche</h2>
         <ul>
+          <li><b>Placer</b> : glisse un appareil ou un meuble. Touche-le pour sa fiche : sa couleur, sa taille, son orientation, ce à quoi il est branché.</li>
           <li><b>Détecter</b> : le navigateur demande une fois l’accès au micro (sinon il cache le nom des appareils) et au MIDI. Chrome ou Edge sur l’ordinateur lisent le MIDI.</li>
-          <li><b>Actif</b> : le filet garde la dernière minute de chaque entrée audio active, des notes MIDI des claviers actifs, et du son de l’app. Décoche ce qui ne joue pas : moins de bruit, moins de mémoire.</li>
-          <li><b>Faire sonner</b> (claviers MIDI) : l’app joue ses notes au piano, pour un clavier muet ou au casque.</li>
-          <li>Une table de mixage branchée en audio (la Xone:4D l’est par USB) apparaît comme une entrée ; un appareil qui passe par elle s’ajoute à la main, « branché à » la table.</li>
+          <li><b>Actif</b> : le filet garde la dernière minute de chaque entrée audio active, des notes MIDI des claviers actifs, et du son de l’app.</li>
+          <li>Une table de mixage branchée en audio (la Xone:4D l’est par USB) apparaît comme une entrée ; un appareil qui passe par elle s’ajoute à la main, « branché à » la table : son câble va jusqu’à elle.</li>
         </ul>
       </section>`;
     const q = (s) => el.querySelector(s);
-    const scene = q('.m-scene'); const cartes = q('.m-cartes'); const cables = q('.m-cables');
-    const pos = (a, i, n) => (a.x != null ? [a.x, a.y] : a.sorte === 'ordi' && a.k === 'app' ? [50, 50] : [50 + 36 * Math.cos((i / Math.max(1, n)) * Math.PI * 2 - Math.PI / 2 + 0.5), 50 + 31 * Math.sin((i / Math.max(1, n)) * Math.PI * 2 - Math.PI / 2 + 0.5)]);
-    let liste = [];
+    const scene = q('.m-scene'); const cartes = q('.m-cartes'); const cables = q('.m-cables'); const meublesEl = q('.m-meubles'); const fiche = q('.m-fiche');
+    let liste = []; let choix = null; // { t: 'a' | 'm', k }
+
+    // ---------- Le partage : l'autre voit le studio ----------
+    let dernier = ''; let minuterie = 0;
+    function partager() {
+      clearTimeout(minuterie);
+      minuterie = setTimeout(async () => {
+        if (!espace.connected || !espace.me || !piece().partage) return;
+        const st = studioActuel(); const sig = JSON.stringify({ ...st, at: 0 }); if (sig === dernier) return; dernier = sig;
+        try { await saveProfile(() => ({ studio: st })); } catch { /* hors ligne : ce sera pour la prochaine fois */ }
+      }, 1500);
+    }
+    function rendrePartage() {
+      const p = piece(); const chez = profileOf(autre)?.studio;
+      q('.m-partage').innerHTML = espace.connected ? `<label class="check"><input type="checkbox" data-p="partage" ${p.partage ? 'checked' : ''}> <b>${esc(autre)} voit mon studio</b> sur son accueil (la pièce, les meubles, les appareils et leurs photos).</label>${profileOf(espace.me)?.studioPhoto ? `<label class="check"><input type="checkbox" data-p="partagephoto" ${profileOf(espace.me)?.studioPhotoPartagee !== false ? 'checked' : ''}> et la photo de la pièce</label>` : ''}${chez ? ` <a class="btn small" href="#/materiel?chez=${encodeURIComponent(autre)}">Voir le studio de ${esc(autre)} →</a>` : ''}` : '<p class="muted small">Connecte-toi à votre espace pour montrer ton studio à l’autre.</p>';
+    }
+
+    // ---------- La pièce ----------
+    function rendrePiece() {
+      const p = piece();
+      scene.className = `m-scene sol-${p.sol}`; scene.style.setProperty('--mur', MURS[p.mur] || MURS.braise);
+      const ph = q('.m-photo'); const enLigne = espace.connected && profileOf(espace.me)?.studioPhoto;
+      if (p.photo) { ph.src = p.photo; ph.hidden = false; ph.style.opacity = p.photoOpacite; }
+      else if (enLigne) { ph.hidden = false; ph.style.opacity = p.photoOpacite; audioURL(enLigne).then((u) => { ph.src = u; }).catch(() => { ph.hidden = true; }); }
+      else { ph.removeAttribute('src'); ph.hidden = true; }
+      q('[data-p=sol]').value = p.sol; q('[data-p=opacite]').value = Math.round(p.photoOpacite * 100);
+      el.querySelectorAll('[data-mur]').forEach((b) => b.classList.toggle('on', b.dataset.mur === p.mur));
+      meublesEl.innerHTML = p.meubles.map((m) => `<div class="m-meuble ${choix?.t === 'm' && choix.k === m.id ? 'choisi' : ''}" data-mid="${esc(m.id)}" style="left:${m.x}%;top:${m.y}%;width:${m.w}%;height:${m.h}%;--r:${m.r || 0}deg" title="${esc(MEUBLES[m.sorte]?.[0] || '')}">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${MEUBLES[m.sorte]?.[3] || ''}</svg>${choix?.t === 'm' && choix.k === m.id ? '<i class="m-poignee-t" data-taille></i>' : ''}</div>`).join('');
+    }
+
+    // ---------- Les appareils ----------
     function rendre() {
       liste = appareils(); const autres = liste.filter((a) => a.k !== 'app');
       cartes.innerHTML = liste.map((a) => {
         const [x, y] = pos(a, autres.indexOf(a), autres.length);
-        return `<article class="m-carte ${a.actif ? 'actif' : ''} ${a.branche ? '' : 'absent'}" data-k="${esc(a.k)}" style="left:${x}%;top:${y}%">
-          <div class="m-poignee" title="Glisser pour placer">${dessin(a.sorte)}<i class="m-temoin"></i></div>
-          <label class="m-actif"><input type="checkbox" data-mk="actif" ${a.actif ? 'checked' : ''}> <b>${esc(a.nom)}</b></label>
-          <p class="m-tags">${a.k === 'app' ? '<span>ce que l’app joue</span>' : ''}${a.audio ? '<span>audio</span>' : ''}${a.midi ? '<span>MIDI</span>' : ''}${a.perso && !a.branche ? `<span>${a.lie ? 'par ' + esc(liste.find((b) => b.k === a.lie)?.nom || 'un autre') : 'ajouté à la main'}</span>` : ''}${!a.perso && !a.branche ? '<span class="m-off">pas branché</span>' : ''}</p>
-          ${a.audio || a.k === 'app' ? '<span class="m-niveau"><i></i></span>' : ''}
-          ${a.midi ? `<label class="m-petit"><input type="checkbox" data-mk="son" ${a.son ? 'checked' : ''}> faire sonner au piano</label>` : ''}
-          <details class="m-regl"><summary>Régler</summary>
-            <input data-mk="nom" value="${esc(a.nom)}" aria-label="Nom">
-            <select data-mk="sorte" aria-label="Sorte">${Object.entries(SORTES).map(([k, l]) => `<option value="${k}" ${k === a.sorte ? 'selected' : ''}>${l}</option>`).join('')}</select>
-            ${a.perso ? `<select data-mk="lie" aria-label="Branché à"><option value="">à l’ordinateur</option>${liste.filter((b) => b.k !== a.k).map((b) => `<option value="${esc(b.k)}" ${b.k === a.lie ? 'selected' : ''}>${esc(b.nom)}</option>`).join('')}</select><button class="btn small" data-mk="retirer">Retirer</button>` : ''}
-          </details>
-        </article>`;
+        return `<div class="m-app ${a.actif ? 'actif' : ''} ${a.branche ? '' : 'absent'} ${choix?.t === 'a' && choix.k === a.k ? 'choisi' : ''}" data-k="${esc(a.k)}" style="left:${x}%;top:${y}%;--t:${a.taille || 1};--r:${a.rot || 0}deg" tabindex="0" role="button" aria-label="${esc(a.nom)}${a.actif ? ', actif' : ''}">
+          <div class="m-dessin">${(() => { const f = espace.connected ? ficheDe(espace.me, a.nom) : {}; return f.photo && f.surPlan ? `<img class="m-vraie" data-ph='${esc(JSON.stringify(f.photo))}' alt="">` : dessin(a.sorte, a.couleur); })()}</div><i class="m-temoin"></i>
+          <span class="m-nom">${esc(a.nom)}</span>${a.audio || a.k === 'app' ? '<span class="m-niveau"><i></i></span>' : ''}</div>`;
       }).join('');
       q('.m-ajout [name=lie]').innerHTML = `<option value="">branché à l’ordinateur</option>${liste.map((b) => `<option value="${esc(b.k)}">branché à : ${esc(b.nom)}</option>`).join('')}`;
       q('.m-filet').innerHTML = filet.arme ? `<b class="m-tendu">● Le filet est tendu</b> : ${filet.pistes.size} source${filet.pistes.size > 1 ? 's' : ''} audio + MIDI. <button class="btn small" data-m="relacher">⏻ Arrêter le filet</button>` : '<button class="btn small" data-m="tendre">Tendre le filet</button>';
-      q('.m-filet').insertAdjacentHTML('beforeend', ` <label class="m-duree">garder <select data-m="duree" aria-label="Durée gardée par le filet">${DUREES.map((d) => `<option value="${d}" ${d === duree() ? 'selected' : ''}>${d / 60} min</option>`).join('')}</select></label> <span class="muted small">${duree() > 60 ? `≈ ${Math.round(duree() / 60 * 11)} Mo de mémoire par source` : ''}</span>`);
-      requestAnimationFrame(cabler);
+      q('.m-filet').insertAdjacentHTML('beforeend', ` <label class="m-duree">garder <select data-m="duree" aria-label="Durée gardée par le filet">${DUREES.map((d) => `<option value="${d}" ${d === duree() ? 'selected' : ''}>${d / 60} min</option>`).join('')}</select></label>`);
+      poser(cartes); rendrePiece(); rendreFiche(); rendrePartage();
+      requestAnimationFrame(cabler); partager();
     }
+
+    // La fiche : tout ce qu'on règle sur l'appareil ou le meuble touché.
+    function rendreFiche() {
+      if (!choix) { fiche.hidden = true; return; }
+      if (choix.t === 'm') {
+        const m = piece().meubles.find((x) => x.id === choix.k); if (!m) { choix = null; fiche.hidden = true; return; }
+        fiche.hidden = false;
+        fiche.innerHTML = `<div class="m-fiche-t"><b>${esc(MEUBLES[m.sorte]?.[0])}</b><button class="icon-btn tiny" data-f="fermer" aria-label="Fermer">✕</button></div>
+          <div class="m-fiche-row"><button class="btn small" data-f="tourner">↻ Tourner</button><button class="btn small" data-f="dupliquer">Doubler</button><button class="btn small" data-f="retirerm">Retirer</button></div>
+          <p class="muted small">Glisse-le pour le placer ; tire le coin pour l’agrandir.</p>`;
+        return;
+      }
+      const a = liste.find((x) => x.k === choix.k); if (!a) { choix = null; fiche.hidden = true; return; }
+      fiche.hidden = false; const fi = espace.connected ? ficheDe(espace.me, a.nom) : {};
+      fiche.innerHTML = `<div class="m-fiche-t"><b>${esc(a.nom)}</b><button class="icon-btn tiny" data-f="fermer" aria-label="Fermer">✕</button></div>
+        <p class="m-tags">${a.k === 'app' ? '<span>ce que l’app joue</span>' : ''}${a.audio ? '<span>audio</span>' : ''}${a.midi ? '<span>MIDI</span>' : ''}${a.perso && !a.branche ? `<span>${a.lie ? 'par ' + esc(liste.find((b) => b.k === a.lie)?.nom || 'un autre') : 'ajouté à la main'}</span>` : ''}${!a.perso && !a.branche ? '<span class="m-off">pas branché</span>' : ''}</p>
+        <label class="check"><input type="checkbox" data-mk="actif" ${a.actif ? 'checked' : ''}> Actif aujourd’hui (le filet l’écoute)</label>
+        ${a.midi ? `<label class="check"><input type="checkbox" data-mk="son" ${a.son ? 'checked' : ''}> Faire sonner au piano (clavier muet, casque)</label>` : ''}
+        <div class="m-fphoto">${fi.photo ? `<img data-ph='${esc(JSON.stringify(fi.photo))}' alt="${esc(a.nom)}">` : `<span class="m-fphoto-vide">${dessin(a.sorte, a.couleur)}</span>`}
+          <label class="btn small">${fi.photo ? 'Changer la photo' : '📷 Sa photo'}<input type="file" accept="image/*" capture="environment" data-fi="photo" hidden></label>
+          ${fi.photo ? `<label class="check small"><input type="checkbox" data-fi="surPlan" ${fi.surPlan ? 'checked' : ''}> sa photo sur le plan</label>` : ''}</div>
+        <div class="m-fiche-row"><label class="field"><span>Marque</span><input data-fi="marque" value="${esc(fi.marque || '')}" placeholder="Roland, Technics…"></label><label class="field"><span>Modèle</span><input data-fi="modele" value="${esc(fi.modele || '')}" placeholder="SV-1, SL-1200…"></label></div>
+        <label class="field"><span>Nom</span><input data-mk="nom" value="${esc(a.nom)}"></label>
+        <label class="field"><span>Sorte</span><select data-mk="sorte">${Object.entries(SORTES).map(([k, l]) => `<option value="${k}" ${k === a.sorte ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+        <div class="field"><span>Couleur</span><div class="m-coul">${Object.entries(COULEURS).map(([k, [l, v]]) => `<button type="button" class="m-c ${k === (a.couleur || 'noir') ? 'on' : ''}" data-coul="${k}" style="${v}" title="${l}" aria-label="${l}"></button>`).join('')}</div></div>
+        <label class="field"><span>Taille</span><input type="range" min="50" max="200" step="5" data-mk="taille" value="${Math.round((a.taille || 1) * 100)}"></label>
+        <div class="m-fiche-row"><button class="btn small" data-f="tourner">↻ Tourner</button>${a.k !== 'app' ? `<select data-mk="lie" aria-label="Branché à"><option value="">branché à l’ordinateur</option>${liste.filter((b) => b.k !== a.k && b.k !== 'app').map((b) => `<option value="${esc(b.k)}" ${b.k === a.lie ? 'selected' : ''}>branché à : ${esc(b.nom)}</option>`).join('')}</select>` : ''}</div>
+        ${a.perso ? '<button class="btn small" data-mk="retirer">Retirer l’appareil</button>' : ''}`;
+      if (!espace.connected) fiche.querySelector('.m-fphoto').innerHTML = '<p class="muted small">Connecte-toi à votre espace pour donner une photo à tes appareils.</p>';
+      poser(fiche);
+    }
+
     // Les câbles : de chaque appareil vers l'ordinateur (ou vers l'appareil où il est branché).
     function cabler() {
       const r = scene.getBoundingClientRect(); cables.setAttribute('viewBox', `0 0 ${r.width} ${r.height}`);
-      const centre = (k) => { const c = cartes.querySelector(`[data-k="${CSS.escape(k)}"] .m-poignee`); if (!c) return null; const b = c.getBoundingClientRect(); return [b.left - r.left + b.width / 2, b.top - r.top + b.height / 2]; };
+      const centre = (k) => { const c = cartes.querySelector(`[data-k="${CSS.escape(k)}"] .m-dessin`); if (!c) return null; const b = c.getBoundingClientRect(); return [b.left - r.left + b.width / 2, b.top - r.top + b.height / 2]; };
       const hub = centre('app');
       cables.innerHTML = liste.filter((a) => a.k !== 'app').map((a) => {
         const p = centre(a.k); const vers = (a.lie && centre(a.lie)) || hub; if (!p || !vers) return '';
@@ -93,36 +169,96 @@ export default {
     });
     // Les niveaux audio, en direct, quand le filet écoute.
     let raf = 0;
-    const niveaux = () => { cartes.querySelectorAll('.m-carte').forEach((c) => { const i = c.querySelector('.m-niveau i'); if (!i) return; const n = niveau(c.dataset.k); i.style.width = n <= 0 ? '0' : `${Math.max(0, Math.min(100, ((20 * Math.log10(n) + 60) / 60) * 100)).toFixed(0)}%`; }); raf = requestAnimationFrame(niveaux); };
+    const niveaux = () => { cartes.querySelectorAll('.m-app').forEach((c) => { const i = c.querySelector('.m-niveau i'); if (!i) return; const n = niveau(c.dataset.k); i.style.width = n <= 0 ? '0' : `${Math.max(0, Math.min(100, ((20 * Math.log10(n) + 60) / 60) * 100)).toFixed(0)}%`; }); raf = requestAnimationFrame(niveaux); };
     raf = requestAnimationFrame(niveaux);
     const ro = new ResizeObserver(cabler); ro.observe(scene);
     detecter();
 
-    // Glisser une carte : seulement la poignée (le dessin), pour garder les cases faciles à cocher.
+    // Glisser : un appareil ou un meuble se déplace ; le coin d'un meuble l'agrandit ; un simple toucher ouvre sa fiche.
     let tire = null;
-    cartes.addEventListener('pointerdown', (e) => { const p = e.target.closest('.m-poignee'); if (!p || matchMedia('(max-width: 640px)').matches) return; const c = p.closest('.m-carte'); tire = { c, id: e.pointerId }; p.setPointerCapture(e.pointerId); c.classList.add('tire'); e.preventDefault(); });
-    cartes.addEventListener('pointermove', (e) => {
-      if (!tire) return; const r = scene.getBoundingClientRect();
-      tire.x = Math.max(6, Math.min(94, ((e.clientX - r.left) / r.width) * 100)); tire.y = Math.max(14, Math.min(86, ((e.clientY - r.top) / r.height) * 100));
-      tire.c.style.left = `${tire.x}%`; tire.c.style.top = `${tire.y}%`; cabler();
+    scene.addEventListener('pointerdown', (e) => {
+      const app = e.target.closest('.m-app'); const mb = e.target.closest('.m-meuble'); const t = e.target.closest('[data-taille]');
+      if (!app && !mb) { if (choix) { choix = null; rendre(); } return; }
+      const n = app || mb; const r = scene.getBoundingClientRect();
+      tire = { n, t: app ? 'a' : 'm', k: app ? app.dataset.k : mb.dataset.mid, x0: e.clientX, y0: e.clientY, bouge: false, taille: !!t, l0: parseFloat(n.style.left), t0: parseFloat(n.style.top), w0: parseFloat(n.style.width), h0: parseFloat(n.style.height), r };
+      n.setPointerCapture(e.pointerId); e.preventDefault();
     });
-    cartes.addEventListener('pointerup', () => { if (!tire) return; tire.c.classList.remove('tire'); if (tire.x != null) regler(tire.c.dataset.k, { x: +tire.x.toFixed(1), y: +tire.y.toFixed(1) }); tire = null; });
+    scene.addEventListener('pointermove', (e) => {
+      if (!tire) return; const { r } = tire; const dx = ((e.clientX - tire.x0) / r.width) * 100; const dy = ((e.clientY - tire.y0) / r.height) * 100;
+      if (!tire.bouge && Math.hypot(e.clientX - tire.x0, e.clientY - tire.y0) < 5) return; tire.bouge = true; tire.n.classList.add('tire');
+      if (tire.taille) { tire.w = Math.max(3, Math.min(95, tire.w0 + dx * 2)); tire.h = Math.max(2, Math.min(95, tire.h0 + dy * 2)); tire.n.style.width = `${tire.w}%`; tire.n.style.height = `${tire.h}%`; return; }
+      tire.x = Math.max(3, Math.min(97, tire.l0 + dx)); tire.y = Math.max(4, Math.min(96, tire.t0 + dy));
+      tire.n.style.left = `${tire.x}%`; tire.n.style.top = `${tire.y}%`; if (tire.t === 'a') cabler();
+    });
+    scene.addEventListener('pointerup', () => {
+      if (!tire) return; const t = tire; tire = null; t.n.classList.remove('tire');
+      if (!t.bouge) { choix = { t: t.t, k: t.k }; rendre(); return; }
+      if (t.t === 'a' && t.x != null) regler(t.k, { x: +t.x.toFixed(1), y: +t.y.toFixed(1) });
+      if (t.t === 'm') { reglerMeuble(t.k, t.taille ? { w: +t.w.toFixed(1), h: +t.h.toFixed(1) } : { x: +t.x.toFixed(1), y: +t.y.toFixed(1) }); rendre(); }
+    });
+    cartes.addEventListener('keydown', (e) => { const a = e.target.closest('.m-app'); if (a && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); choix = { t: 'a', k: a.dataset.k }; rendre(); } });
+
+    async function ficheChange(champ, input) {
+      const a = liste.find((x) => x.k === choix.k); if (!a) return;
+      try {
+        if (champ === 'photo') {
+          const f = input.files[0]; if (!f) return; toast('J’envoie la photo…');
+          const [image, couleur] = await Promise.all([uploadImage(f), couleurDePhoto(f).catch(() => null)]);
+          await reglerFiche(a.nom, { photo: image }); if (couleur) regler(a.k, { couleur });
+          toast(couleur ? `Photo gardée. La couleur sur le plan suit la photo : ${COULEURS[couleur][0].toLowerCase()}.` : 'Photo gardée.');
+        } else await reglerFiche(a.nom, { [champ]: input.type === 'checkbox' ? input.checked : input.value.trim() });
+        rendre();
+      } catch (err) { toast(err.message || 'La photo n’a pas pu partir.'); }
+    }
+    // Une photo de la pièce, réduite (elle reste légère dans l'appareil).
+    async function photo(f) {
+      const img = await createImageBitmap(f); const k = Math.min(1, 1100 / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      try { reglerPiece({ photo: c.toDataURL('image/jpeg', 0.7) }); } catch { toast('Cette photo est trop lourde pour être gardée ici.'); return; }
+      rendrePiece(); toast('La photo est en calque : glisse tes appareils et tes meubles par-dessus.');
+      if (espace.connected) { try { const image = await uploadImage(f); await saveProfile(() => ({ studioPhoto: image })); rendrePartage(); } catch { /* elle reste en calque ici */ } }
+    }
 
     el.addEventListener('change', (e) => {
-      if (e.target.dataset.m === 'duree') { choisirDuree(e.target.value); toast(`Le filet garde maintenant ${dureeTexte()}.`); return; }
-      const k = e.target.closest('.m-carte')?.dataset.k; const m = e.target.dataset.mk; if (!k || !m) return;
-      regler(k, { [m]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
+      const d = e.target.dataset;
+      if (d.m === 'duree') { choisirDuree(e.target.value); toast(`Le filet garde maintenant ${dureeTexte()}.`); return; }
+      if (d.m === 'meuble' && e.target.value) { const m = ajouterMeuble(e.target.value); e.target.value = ''; choix = { t: 'm', k: m.id }; rendre(); return; }
+      if (d.p === 'sol') { reglerPiece({ sol: e.target.value }); rendrePiece(); partager(); return; }
+      if (d.p === 'photo' && e.target.files[0]) { photo(e.target.files[0]); e.target.value = ''; return; }
+      if (d.p === 'partage') { reglerPiece({ partage: e.target.checked }); if (e.target.checked) { dernier = ''; partager(); toast(`${autre} verra ton studio sur son accueil.`); } else saveProfile(() => ({ studio: null })).catch(() => {}); return; }
+      if (d.fi && choix?.t === 'a') { ficheChange(d.fi, e.target); return; }
+      if (d.p === 'partagephoto') { saveProfile(() => ({ studioPhotoPartagee: e.target.checked })).catch(() => {}); return; }
+      const m = d.mk; if (!choix || choix.t !== 'a' || !m) return;
+      const v = e.target.type === 'checkbox' ? e.target.checked : m === 'taille' ? +e.target.value / 100 : e.target.value;
+      regler(choix.k, { [m]: v });
+    });
+    el.addEventListener('input', (e) => {
+      if (e.target.dataset.p === 'opacite') { const o = +e.target.value / 100; q('.m-photo').style.opacity = o; clearTimeout(e.target._t); e.target._t = setTimeout(() => reglerPiece({ photoOpacite: o }), 200); }
+      if (e.target.dataset.mk === 'taille' && choix?.t === 'a') cartes.querySelector(`[data-k="${CSS.escape(choix.k)}"]`)?.style.setProperty('--t', +e.target.value / 100);
     });
     el.addEventListener('click', async (e) => {
-      const mk = e.target.closest('[data-mk=retirer]'); if (mk) { retirer(mk.closest('.m-carte').dataset.k); return; }
-      const a = e.target.closest('[data-m]')?.dataset.m; if (!a) return;
+      const mur = e.target.closest('[data-mur]'); if (mur) { reglerPiece({ mur: mur.dataset.mur }); rendrePiece(); partager(); return; }
+      const coul = e.target.closest('[data-coul]'); if (coul && choix?.t === 'a') { regler(choix.k, { couleur: coul.dataset.coul }); return; }
+      if (e.target.closest('[data-mk=retirer]') && choix) { retirer(choix.k); choix = null; return; }
+      const f = e.target.closest('[data-f]')?.dataset.f;
+      if (f === 'fermer') { choix = null; rendre(); return; }
+      if (f === 'tourner' && choix) {
+        if (choix.t === 'a') { const a = liste.find((x) => x.k === choix.k); regler(choix.k, { rot: ((a?.rot || 0) + 45) % 360 }); }
+        else { const m = piece().meubles.find((x) => x.id === choix.k); reglerMeuble(choix.k, { r: ((m?.r || 0) + 90) % 360 }); rendre(); }
+        return;
+      }
+      if (f === 'retirerm' && choix) { retirerMeuble(choix.k); choix = null; rendre(); return; }
+      if (f === 'dupliquer' && choix) { const m = piece().meubles.find((x) => x.id === choix.k); const n = ajouterMeuble(m.sorte); reglerMeuble(n.id, { w: m.w, h: m.h, r: m.r, x: Math.min(95, m.x + 4), y: Math.min(95, m.y + 4) }); choix = { t: 'm', k: n.id }; rendre(); return; }
+      if (e.target.closest('[data-p=sansphoto]')) { reglerPiece({ photo: null }); if (espace.connected) saveProfile(() => ({ studioPhoto: null })).then(rendrePiece).catch(() => {}); rendrePiece(); return; }
+      const a = e.target.closest('[data-m]')?.dataset.m; if (!a || e.target.tagName === 'SELECT') return;
       if (a === 'detecter') { const l = await detecter({ demander: true }); toast(`${l.filter((x) => x.branche && x.k !== 'app').length} appareil(s) trouvé(s).`); }
-      if (a === 'ajout') { const f = q('.m-ajout'); f.hidden = !f.hidden; if (!f.hidden) f.nom.focus(); }
+      if (a === 'ajout') { const fo = q('.m-ajout'); fo.hidden = !fo.hidden; if (!fo.hidden) fo.nom.focus(); }
+      if (a === 'piece') { const p = q('.m-piece'); p.hidden = !p.hidden; e.target.classList.toggle('on', !p.hidden); }
       if (a === 'tendre') { try { await tendre(); } catch (err) { toast(err.message); } }
       if (a === 'relacher') relacher();
     });
-    q('.m-ajout').addEventListener('submit', (e) => { e.preventDefault(); const f = e.target; ajouter(f.nom.value, f.sorte.value, f.lie.value); f.reset(); f.hidden = true; });
+    q('.m-ajout').addEventListener('submit', (e) => { e.preventDefault(); const fo = e.target; const k = ajouter(fo.nom.value, fo.sorte.value, fo.lie.value); fo.reset(); fo.hidden = true; choix = { t: 'a', k }; rendre(); });
     q('.m-ajout [name=nom]').addEventListener('input', (e) => { const s = e.target.form.sorte; import('../materiel.js').then((m) => { s.value = m.deviner(e.target.value); }); });
-    return () => { off1(); off2(); cancelAnimationFrame(raf); ro.disconnect(); };
+    return () => { off1(); off2(); cancelAnimationFrame(raf); ro.disconnect(); clearTimeout(minuterie); };
   },
 };

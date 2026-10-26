@@ -8,7 +8,7 @@ import { notePiano } from './sampler.js';
 
 export const SORTES = {
   clavier: 'Clavier', table: 'Table de mixage', interface: 'Interface audio', synthe: 'Synthé ou boîte à rythmes',
-  micro: 'Micro', ordi: 'Ordinateur', ecoute: 'Écoute (casque, moniteurs)', autre: 'Autre',
+  platine: 'Platine vinyle ou CDJ', guitare: 'Guitare ou basse', micro: 'Micro', enceinte: 'Enceinte, moniteur', ecoute: 'Casque', ordi: 'Ordinateur', autre: 'Autre',
 };
 // D'après le nom que l'appareil donne de lui-même : une bonne première idée, que Frog corrige d'un clic.
 export function deviner(nom) {
@@ -17,6 +17,10 @@ export function deviner(nom) {
   if (/scarlett|focusrite|motu|audient|umc|ssl|apollo|presonus|steinberg|interface|babyface|id14|id4/.test(n)) return 'interface';
   if (/sv-?1|piano|keys?\b|keyboard|keystation|launchkey|mpk|nord|kronos|fp-|rd-|clavier|keylab|oxygen/.test(n)) return 'clavier';
   if (/synth|minilogue|moog|op-1|tr-|td-|drum|volca|digitakt|microkorg|juno|prophet/.test(n)) return 'synthe';
+  if (/technics|sl-?1200|turntable|platine|cdj|xdj|plx|reloop/.test(n)) return 'platine';
+  if (/guitar|guitare|bass|basse|strat|tele|les paul|fender|gibson|ibanez/.test(n)) return 'guitare';
+  if (/monitor|moniteur|enceinte|krk|rokit|genelec|yamaha hs|adam|jbl|speaker/.test(n)) return 'enceinte';
+  if (/casque|headphone|dt ?770|dt ?990|ath-|hd ?\d{3}/.test(n)) return 'ecoute';
   if (/micro|mic\b|microphone|built-in|intégr|internal|webcam|airpods|headset/.test(n)) return 'micro';
   return 'autre';
 }
@@ -44,7 +48,7 @@ export function appareils() {
   const r = reg(); const cles = new Set([...Object.keys(r), ...detecte.audio.keys(), ...detecte.midi.keys()]);
   return [...cles].map((k) => {
     const x = r[k] || {}; const nom = x.nom || propre(detecte.audio.get(k)?.label || detecte.midi.get(k)?.name || k);
-    return { k, nom, sorte: x.sorte || deviner(nom), actif: x.actif ?? (k !== 'app' ? !!detecte.midi.get(k) : true), audio: detecte.audio.get(k)?.deviceId || null, midi: detecte.midi.has(k), perso: !!x.perso, son: !!x.son, lie: x.lie || '', x: x.x, y: x.y, branche: k === 'app' || detecte.audio.has(k) || detecte.midi.has(k) };
+    return { k, nom, sorte: x.sorte || deviner(nom), actif: x.actif ?? (k !== 'app' ? !!detecte.midi.get(k) : true), audio: detecte.audio.get(k)?.deviceId || null, midi: detecte.midi.has(k), perso: !!x.perso, son: !!x.son, lie: x.lie || '', x: x.x, y: x.y, couleur: x.couleur || '', taille: x.taille || 1, rot: x.rot || 0, branche: k === 'app' || detecte.audio.has(k) || detecte.midi.has(k) };
   }).sort((a, b) => (a.k === 'app' ? -1 : b.k === 'app' ? 1 : (b.branche - a.branche) || a.nom.localeCompare(b.nom)));
 }
 export function regler(k, change) {

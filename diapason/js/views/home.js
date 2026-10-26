@@ -14,6 +14,7 @@ import { nouveautesHTML } from '../nouveautes.js';
 import { aVoir } from '../suivi.js';
 import { mesTaches } from '../taches.js';
 import { attendMoi } from '../elan.js';
+import { pieceSVG, studioActuel, piece } from '../piece.js';
 // Tout en haut de l'accueil : ce que l'autre a ajouté et que je n'ai pas vu. C'est là que mène la pastille de Plan.
 const nouvellesBandeau = () => { const n = aVoir(); const t = mesTaches(); if (!n.length && !t.length) return ''; const tot = n.length + t.length;
   const quoi = [n.length ? `${n.length} ${n.length > 1 ? 'nouvelles' : 'nouvelle'} de ${esc(n[0].author)} à voir` : '', t.length ? `${t.length} chose${t.length > 1 ? 's' : ''} à faire pour toi : ${t.slice(0, 2).map((x) => esc(x.titre)).join(', ')}${t.length > 2 ? '…' : ''}` : ''].filter(Boolean).join(' · ');
@@ -242,6 +243,7 @@ export default {
           ${(() => { const at = attendMoi(); if (!at.length) return ''; const e = at[0]; const j = Math.floor((Date.now() - e.createdAt) / 864e5);
             return `<a class="next-card nc-tresse" href="#/relais/${esc(e.id)}"><p class="tape">La tresse attend ta réponse</p><h3>« ${esc(e.title || 'sans titre')} »</h3><p>${esc(e.author)} te l’a lancé ${j < 1 ? 'aujourd’hui' : j < 2 ? 'hier' : `il y a ${j} jours`}${at.length > 1 ? `, et ${at.length - 1} autre${at.length > 2 ? 's' : ''} attend${at.length > 2 ? 'ent' : ''} aussi` : ''}. Quand vous vous répondez, vos deux fils se rapprochent.</p><span class="btn">Répondre →</span></a>`; })()}
         </section>
+        ${studioHTML(mem)}
 
         ${(() => {
           const aj = planAjuste(PLAN);
@@ -297,6 +299,21 @@ export default {
           <h2>Où aller</h2>
           <div class="oa-grid">${OU_ALLER.map(([t, why, links]) => `<div class="oa-g"><h3>${t}</h3><p>${why}</p><div>${links.map(([h, l]) => `<a href="#/${h}">${l}</a>`).join('')}</div></div>`).join('')}</div>
         </section>`;
+    }
+
+    // Le studio : le mien (Frog le recrée tel qu'il est), et celui de l'autre s'il le partage.
+    function studioHTML(mem) {
+      const o = mem.find((x) => x !== espace.me); const chez = o && profileOf(o)?.studio; const moi = studioActuel();
+      const fait = moi.meubles.length || moi.appareils.some((a) => !a.hub) || piece().photo;
+      const cartes = [];
+      if (fait) {
+        const n = moi.appareils.filter((a) => !a.hub).length; const act = moi.appareils.filter((a) => !a.hub && a.actif).length;
+        cartes.push(`<a class="studio-carte" href="#/materiel">${pieceSVG(moi, { titre: 'Ton studio' })}<div><p class="tape">Ton studio</p><h3>Tel qu’il est branché</h3><p>${n} appareil${n > 1 ? 's' : ''}${act ? `, ${act} actif${act > 1 ? 's' : ''} en ce moment` : ''}${moi.meubles.length ? `, ${moi.meubles.length} meuble${moi.meubles.length > 1 ? 's' : ''}` : ''}. Ce qui est actif, le filet l’écoute.</p><span class="btn small">Entrer dans le studio →</span></div></a>`);
+      } else if (espace.me === 'Frog') {
+        cartes.push(`<a class="studio-carte invite" href="#/materiel">${pieceSVG(moi)}<div><p class="tape">Ton studio, dans l’app</p><h3>Recrée ta pièce, comme elle est</h3><p>Branche ton matériel : l’app le reconnaît. Ajoute le reste à la main, place tout comme chez toi (le plancher, les meubles, les couleurs), même par-dessus une photo de la pièce. ${o ? `${esc(o)} pourra le voir, si tu le veux.` : ''}</p><span class="btn small">Brancher et placer →</span></div></a>`);
+      }
+      if (chez) cartes.push(`<a class="studio-carte" href="#/materiel?chez=${encodeURIComponent(o)}" data-id="studio">${pieceSVG(chez, { titre: `Le studio de ${o}` })}<div><p class="tape">Le studio de ${esc(o)}</p><h3>Là où naît la musique</h3><p>${chez.appareils.filter((a) => !a.hub).map((a) => esc(a.nom)).slice(0, 5).join(', ')}${chez.appareils.length > 6 ? '…' : ''}. Placé par ${esc(o)}, ${ago(chez.at)}.</p></div></a>`);
+      return cartes.length ? `<section class="studio-band" aria-label="Le studio">${cartes.join('')}</section>` : '';
     }
 
     function setupHTML(edit) {
