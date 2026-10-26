@@ -816,7 +816,7 @@ export default {
         renderAll();
         const oe = openId && espace.entries.find((x) => x.id === openId);
         if (openId && (!oe || oe.updatedAt !== detailVersion)) openDetail(openId);
-        extra?.fresh?.forEach((x) => toast(`${x.editedBy || x.author} : ${x.title || 'nouvelle entrée'}`));
+        extra?.fresh?.forEach((x) => toast(`${x.editedBy || x.author} ${x._nouveau ? 'a ajouté' : 'a modifié'} : ${x.title || 'une idée'}`));
       }
       if (what === 'online') {
         const s = el.querySelector('.sync-state');

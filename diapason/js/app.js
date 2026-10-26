@@ -265,7 +265,7 @@ onEspace((what, extra) => {
   if (what === 'entries' && extra?.fresh?.length && currentId !== 'carnet') {
     unseen += extra.fresh.length;
     showBadge();
-    if (!['paroles', 'home', 'session'].includes(currentId) && extra.fresh[0].type !== 'session') toast(`${extra.fresh[0].editedBy || extra.fresh[0].author} a ajouté quelque chose au mur.`);
+    if (!['paroles', 'home', 'session'].includes(currentId) && extra.fresh[0].type !== 'session') { const f = extra.fresh[0]; toast(`${f.editedBy || f.author} ${f._nouveau ? 'a ajouté' : 'a modifié'} « ${(f.title || 'quelque chose').slice(0, 50)} ».`); }
   }
 });
 

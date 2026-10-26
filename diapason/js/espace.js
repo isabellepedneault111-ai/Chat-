@@ -99,7 +99,9 @@ async function refresh(force) {
   if (!espace.id) return;
   const { data } = await api(`/${espace.id}/entries`);
   const before = new Set(espace.entries.map((e) => `${e.id}:${e.updatedAt}`));
-  const fresh = data.entries.filter((e) => !before.has(`${e.id}:${e.updatedAt}`) && e.editedBy !== espace.me);
+  // Ce qui vient de l'autre et compte pour une personne : pas les profils, les traces, ni ce qui part à la corbeille.
+  const fresh = data.entries.filter((e) => !before.has(`${e.id}:${e.updatedAt}`) && e.editedBy !== espace.me && !['profil', 'trace', 'parcours'].includes(e.type) && !e.data?.corbeille)
+    .map((e) => ({ ...e, _nouveau: !espace.entries.some((x) => x.id === e.id) }));
   espace.entries = [...data.entries.filter((e) => !e.data?.corbeille), ...(espace.demoEntries || [])];
   espace.trash = data.entries.filter((e) => e.data?.corbeille);
   espace.rev = data.rev;
@@ -147,7 +149,7 @@ export async function saveEntry(entry, { baseUpdatedAt, force } = {}) {
   }
   const { status, data } = await api(`/${espace.id}/entries/${id}`, {
     method: 'PUT',
-    body: JSON.stringify({ entry: { ...entry, author: entry.author || espace.me }, baseUpdatedAt, force }),
+    body: JSON.stringify({ entry: { ...entry, author: entry.author || espace.me, editedBy: espace.me }, baseUpdatedAt, force }),
   });
   if (status === 409) return { conflict: true, current: data.current };
   espace.entries = espace.entries.filter((e) => e.id !== id);

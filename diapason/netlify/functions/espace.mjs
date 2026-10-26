@@ -153,7 +153,7 @@ export async function handle(req, store) {
         image: e.image && ID.test(e.image.id || '') && /^image\//.test(e.image.type || '') ? { id: e.image.id, type: clean(e.image.type, 60), parts: Math.min(MAX_PARTS, +e.image.parts || 1), size: +e.image.size || 0, w: +e.image.w || 0, h: +e.image.h || 0 } : null,
         createdAt: prev?.createdAt || now,
         updatedAt: now,
-        editedBy: clean(e.author, 40),
+        editedBy: clean(e.editedBy || e.author, 40), // qui a vraiment fait la modification (pas forcément l'auteur)
       };
       await store.setJSON(k, entry);
       return json({ entry, rev: await bump(store, sid) });
