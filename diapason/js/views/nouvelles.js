@@ -23,7 +23,7 @@ export default {
         <div class="mod-head"><div>
           <p class="eyebrow">Nos nouvelles</p>
           <h1>${onglet === 'pour-moi' ? `Ce que ${esc(o)} a ajouté` : 'Ce que j’ai envoyé'}</h1>
-          <p class="muted">${onglet === 'pour-moi' ? `Coche <b>Vu</b> quand tu l’as regardé, <b>J’ai fait ça</b> quand tu as répondu à ce que ${esc(o)} demandait. ${esc(o)} le verra.` : `Ce que ${esc(o)} a vu et fait de tes envois.`}</p>
+          <p class="muted"><a href="#/elan">Voir notre élan, la tresse →</a></p><p class="muted">${onglet === 'pour-moi' ? `Coche <b>Vu</b> quand tu l’as regardé, <b>J’ai fait ça</b> quand tu as répondu à ce que ${esc(o)} demandait. ${esc(o)} le verra.` : `Ce que ${esc(o)} a vu et fait de tes envois.`}</p>
         </div></div>
         <div class="nv-barre">
           <div class="seg-tabs" role="tablist"><button role="tab" data-nv="pour-moi" aria-selected="${onglet === 'pour-moi'}">Pour moi${nonVues.length ? ` <b class="nv-n">${nonVues.length}</b>` : ''}</button><button role="tab" data-nv="de-moi" aria-selected="${onglet === 'de-moi'}">Ce que j’ai envoyé</button></div>

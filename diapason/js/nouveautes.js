@@ -59,6 +59,9 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.10', quand: '2026-10-26', titre: 'Notre élan', items: [
+    ['La tresse', ['Une nouvelle page, <b>Notre élan</b> (sur l’accueil, et depuis Nos nouvelles) : nos deux fils dans le temps, braise et mûre. Chaque création est un nœud sur son fil ; chaque réponse, un lien d’or d’un fil à l’autre.', 'Plus on échange un jour, plus les fils se rapprochent ; pendant une séance à deux, ils se croisent : plus vous jouez ensemble, plus ils se tressent. Les jours calmes, ils respirent.', 'Touche un nœud ou un lien : il raconte (« Frog a mis de la musique sur « Arcane majeur » de Zaza, le lendemain »). Et la page dit en mots qui lance, qui répond, en combien de temps, ce qui circule le plus et ce qui attend, sans hâte. Pas de score.']],
+  ] },
   { v: '0.9', quand: '2026-10-26', titre: 'Tout ce que je t’envoie, au même endroit', items: [
     ['Nos nouvelles', ['Une pastille sur <b>Plan</b> compte ce que l’autre a ajouté et que tu n’as pas encore vu. L’accueil mène à <b>Nos nouvelles</b> : tout, jour par jour, avec deux cases. <b>Vu</b>, et <b>J’ai fait ça</b> quand on demandait quelque chose.', 'De l’autre côté, on voit ce que l’autre a vu et fait de nos envois. Même chose dans le relais, sous chaque envoi.']],
     ['Le relais en mots', ['Une carte de mots (une arcane, des paroles) se répond enfin : <b>● De la musique sur ces mots</b> (les mots restent sous tes yeux pendant que tu joues), <b>✎ Répondre en mots</b>, ou <b>Placer ces mots sur une pièce</b>.']],

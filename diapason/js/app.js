@@ -24,6 +24,7 @@ import ames from './views/ames.js';
 import arbre from './views/arbre.js';
 import materiel from './views/materiel.js';
 import nouvelles from './views/nouvelles.js';
+import elan from './views/elan.js';
 import { aVoir } from './suivi.js';
 import { installerFilet } from './filet.js';
 import { installerMotOuvert } from './motoutil.js';
@@ -59,7 +60,7 @@ const APPUIS = {
   placer: ['La prosodie : quand les syllabes accentuées tombent sur les temps forts, le texte se chante tout seul ; à côté, il boite.', 'Pattison 2009'],
 };
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles };
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles, elan };
 // Onglet en arrière-plan : le titre compte ce que l'autre vient d'ajouter, « (2) FLIP ». Revenir remet à zéro.
 {
   const base = document.title; let n = 0;

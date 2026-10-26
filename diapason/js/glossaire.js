@@ -53,6 +53,7 @@ const ONGLETS = {
   relais: 'Le relais : tu envoies un son, l’autre répond par-dessus quand il veut. Couche après couche.',
   ecrire: 'Écrire : notre journal, les paroles, le grimoire, placer ses mots sur une musique, nos idées pour le labo.',
   studio: 'Le studio : un beat, nos propres accords, où improviser sur le clavier, les prises et la scène.',
+  elan: 'Notre élan : la tresse de nos deux fils dans le temps.',
   voix: 'La voix : ton clavier coache ma voix, la tessiture, les exercices de justesse.',
 };
 

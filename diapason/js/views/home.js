@@ -216,6 +216,7 @@ export default {
           const sessions = espace.entries.filter((e) => e.type === 'session' && e.data?.done);
           const mins = sessions.reduce((sum, e) => sum + Math.max(0, Math.min(240, (e.data.doneAt - e.data.startedAt - (e.data.pausedTotal || 0)) / 60000)), 0);
           return `
+          <a class="ames-teaser el-teaser" href="#/elan"><b>Notre élan</b><span>La tresse : nos deux fils dans le temps, qui lance, qui répond, ce qui circule entre nous. Pas de score : un mouvement.</span><em>Voir →</em></a>
           ${mem.every((x) => profileOf(x)?.doneAt) ? `<a class="ames-teaser" href="#/ames"><b>Nos deux âmes</b><span>L’arc et le triskel : ce que nos deux étapes 1 donnent ensemble, nos pistes hors sentier, ce que nos traces disent déjà.</span><em>Voir →</em></a>` : ''}
           <div class="home-trio">
             <section class="panel bravos">

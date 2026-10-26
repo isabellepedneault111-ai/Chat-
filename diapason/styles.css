@@ -2765,3 +2765,24 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .rl-prompteur { font: 500 1.35rem/1.5 "Literata", serif; padding: 14px 18px; }
 @media (max-width: 600px) { .nv-item { flex-direction: column; } .nv-cases { display: flex; gap: 14px; } }
 .nav [data-id=home] .nv-badge { top: 0; right: -10px; }
+/* Notre élan : la tresse. */
+.el-barre { margin: 6px 0 12px; }
+.el-scene { background: radial-gradient(120% 100% at 50% 40%, #24201a, #141210 70%); border-radius: 16px; padding: 14px 14px 10px; color: #efe6d2; }
+.el-host { overflow-x: auto; padding-bottom: 4px; }
+.el-svg { display: block; }
+.el-fil { fill: none; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; opacity: .95; }
+.el-jour { stroke: rgba(239, 230, 210, .07); } .el-date { fill: #8a7f6c; font: 11px "Atkinson Hyperlegible", sans-serif; }
+.el-nom { font: 800 14px "Literata", serif; }
+.el-noeud { stroke: #141210; stroke-width: 2; cursor: pointer; } .el-noeud:hover { stroke: #fff; }
+.el-lien { fill: none; stroke: #e8c27a; stroke-width: 1.6; opacity: .7; cursor: pointer; } .el-lien:hover { opacity: 1; stroke-width: 2.6; }
+.el-monte { fill: none; stroke: #e8c27a; stroke-width: 2; cursor: pointer; }
+.el-seance { fill: rgba(232, 194, 122, .18); stroke: rgba(232, 194, 122, .55); cursor: pointer; } .el-seance.solo { fill: rgba(239, 230, 210, .06); stroke-dasharray: 3 4; }
+.el-choisi { stroke: #fff !important; opacity: 1 !important; stroke-width: 3 !important; }
+.el-fiche { min-height: 1.5em; margin: 10px 4px 4px; font: 500 1.02rem/1.45 "Literata", serif; }
+.el-cles { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 6px 4px 0; font-size: .82rem; color: #b8ad98; } .el-cles i { display: inline-block; vertical-align: middle; margin-right: 6px; }
+.el-cles .k-n { width: 10px; height: 10px; border-radius: 50%; background: #efe6d2; } .el-cles .k-l { width: 18px; height: 2px; background: #e8c27a; } .el-cles .k-m { width: 0; height: 0; border: 5px solid transparent; border-bottom: 7px solid #e8c27a; margin-top: -6px; } .el-cles .k-s { width: 18px; height: 10px; border-radius: 5px; background: rgba(232, 194, 122, .35); }
+.el-vide { padding: 40px 10px; font: italic 500 1.1rem "Literata", serif; text-align: center; }
+.el-lecture dl { display: grid; gap: 10px; margin: 8px 0; } .el-lecture dl > div { display: grid; grid-template-columns: 170px 1fr; gap: 12px; padding: 10px 14px; background: var(--card); border-radius: 10px; border: 1px solid var(--line); }
+.el-lecture dt { font-weight: 800; } .el-lecture dd { margin: 0; }
+@media (max-width: 600px) { .el-lecture dl > div { grid-template-columns: 1fr; gap: 2px; } }
+.el-zone { fill: none; stroke: transparent; stroke-width: 14; cursor: pointer; }
