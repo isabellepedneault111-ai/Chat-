@@ -106,10 +106,10 @@ export default {
             <ul class="ames-traces"><li><b>${traces.seances}</b> séance${traces.seances > 1 ? 's' : ''} terminée${traces.seances > 1 ? 's' : ''}</li><li><b>${traces.prises}</b> prise${traces.prises > 1 ? 's' : ''} enregistrée${traces.prises > 1 ? 's' : ''}</li><li><b>${traces.chansons}</b> chanson${traces.chansons > 1 ? 's' : ''} montée${traces.chansons > 1 ? 's' : ''} au studio</li><li><b>${traces.pages}</b> page${traces.pages > 1 ? 's' : ''} au journal</li></ul>
             <p class="small">Nos idées au mur : ${STAGES.map((s, i) => `${esc(s.label)} <b>${traces.idees[i]}</b>`).join(' · ')}</p>
             ${mem.map((m, i) => { const n = fortes([z, f][i]); return n.length ? `<p class="small">Les notes fortes de <b style="color:${memberColor(m)}">${esc(m)}</b>, mesurées par L’oreille : ${n.join(', ')}.</p>` : ''; }).join('') || `<p class="small muted">Quand vous gardez une prise de voix dans L’oreille, vos meilleures notes apparaissent ici.</p>`}
-            <p class="small muted">Tout se recalcule : chaque séance, chaque prise et chaque idée qui monte font bouger votre plan de match et cette page.</p>
+            <p class="small muted">Tout se recalcule : chaque séance, chaque prise et chaque idée qui monte font bouger votre accueil et cette page.</p>
           </article>
         </section>
-        <p class="ec-row"><a class="btn" href="#/depart">Revoir nos étapes 1</a><a class="btn" href="#/">Notre plan de match →</a></p>`;
+        <p class="ec-row"><a class="btn" href="#/depart">Revoir nos étapes 1</a><a class="btn" href="#/">Accueil →</a></p>`;
     };
     rendre();
     return onEspace((what) => { if (what === 'meta' || what === 'entries' || what === 'connected') rendre(); });

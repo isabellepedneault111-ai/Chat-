@@ -63,7 +63,7 @@ const APPUIS = {
   placer: ['La prosodie : quand les syllabes accentuées tombent sur les temps forts, le texte se chante tout seul ; à côté, il boite.', 'Pattison 2009'],
 };
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles, elan, cathedrale, passage };
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles, elan, cathedrale, passage, projet: home };
 // Onglet en arrière-plan : le titre compte ce que l'autre vient d'ajouter, « (2) FLIP ». Revenir remet à zéro.
 {
   const base = document.title; let n = 0;
@@ -89,7 +89,7 @@ function majRetour() {
   const back = document.querySelector('.retour-plan');
   if (!back) return;
   const m = espace.meta?.plan ? currentMonth() : 0; const goal = m ? PLAN[m - 1] : null;
-  back.innerHTML = `← Notre plan de match${goal ? ` <span>· mois ${m} : ${goal.titre}</span>` : ''}`;
+  back.innerHTML = `← Accueil${goal ? ` <span>· mois ${m} : ${goal.titre}</span>` : ''}`;
 }
 onEspace((w) => { if (w === 'meta') majRetour(); });
 

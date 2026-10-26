@@ -59,6 +59,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.32', quand: '2026-10-26', titre: 'Un accueil pour aujourd’hui, une page pour le projet', items: [
+    ['L’accueil garde le quotidien', ['Il ne montre plus que ce qui sert aujourd’hui : les nouvelles de l’autre, par où commencer, le mois en cours avec la prochaine séance, et la lune où on est rendus. L’onglet s’appelle maintenant <b>Accueil</b>, partout.']],
+    ['« Ce qu’on bâtit, à deux »', ['Une carte en bas de l’accueil ouvre <b>Notre projet</b> : le plan des six mois, nos intentions, notre vision, ce qui nous inspire, puis ce que nos traces disent de nous (l’élan, nos deux âmes, le bilan, les bravos) et nos deux studios.', 'Le studio de l’autre y a toujours sa place : tant qu’il n’est pas partagé, la case l’attend.']],
+    ['L’arbre descend', ['L’arbre de l’app (son architecture, ses versions) reste accessible par un petit lien tout en bas de l’accueil.']],
+  ] },
   { v: '0.31', quand: '2026-10-26', titre: 'La rosace, et une barre plus claire', items: [
     ['La rosace de votre cathédrale', ['En haut de la cathédrale, un grand vitrail gothique calculé à partir de votre clé de voûte : un anneau de vitraux par nombre (du centre vers le bord), autant de vitraux que le nombre en demande, aux couleurs de la lumière choisie pour chaque partie ; des ogives au bord, du verre soufflé serti de plomb, des meneaux de pierre. Chaque clé donne une rosace unique.', 'Pendant l’écoute, la lumière tourne et l’anneau de la partie qui joue s’embrase. « ⬇ La rosace » l’enregistre en image (pour une pochette, par exemple).']],
     ['Labo devient un onglet', ['Le labo a sa place dans la barre, comme Jouer et Voix. Dedans, deux sous-onglets : <b>Le labo</b> (les disques) et <b>La cathédrale</b>.']],

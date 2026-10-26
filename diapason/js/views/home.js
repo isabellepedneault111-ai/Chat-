@@ -214,15 +214,11 @@ export default {
             : { label: 'Micro-session solo', why: 'Le duo est à jour cette semaine. 20 minutes chacun de son côté.' };
       const last = espace.entries.filter((e) => e.type === 'session' && e.data?.debrief?.prochaine).sort((a, b) => b.data.doneAt - a.data.doneAt)[0];
       const v = espace.meta.vision || {};
+      if (location.hash.startsWith('#/projet')) { el.innerHTML = projetHTML(mem, v, m, goal, got); return; }
       el.innerHTML = `
         ${head}
         ${nouvellesBandeau()}
         ${commencerHTML()}
-        <a class="arbre-teaser" href="#/arbre">${espace.me === (espace.meta.members || MEMBERS)[1] ? `Tu as demandé à ${esc((espace.meta.members || MEMBERS)[0])} d’où venaient certains sons et éléments de l’app. <b>Clique ici pour voir son arbre d’architecte d’environnement hybride à l’œuvre →</b>` : '<b>L’arbre de l’architecte</b> : toute l’architecture de Diapason Labo, à admirer →'}</a>
-        ${todayHTML()}
-        ${nouveautesHTML()}
-        ${filHTML()}
-        ${pendantHTML()}
         <section class="plan-hero">
           <div class="month-now">
             <p class="tape">Mois ${m} sur 6</p>
@@ -241,8 +237,7 @@ export default {
           ${(() => { const at = attendMoi(); if (!at.length) return ''; const e = at[0]; const j = Math.floor((Date.now() - e.createdAt) / 864e5);
             return `<a class="next-card nc-tresse" href="#/relais/${esc(e.id)}"><p class="tape">La tresse attend ta réponse</p><h3>« ${esc(e.title || 'sans titre')} »</h3><p>${esc(e.author)} te l’a lancé ${j < 1 ? 'aujourd’hui' : j < 2 ? 'hier' : `il y a ${j} jours`}${at.length > 1 ? `, et ${at.length - 1} autre${at.length > 2 ? 's' : ''} attend${at.length > 2 ? 'ent' : ''} aussi` : ''}. Quand vous vous répondez, vos deux fils se rapprochent.</p><span class="btn">Répondre →</span></a>`; })()}
         </section>
-        ${studioHTML(mem)}
-
+        ${cycleHTML()}
         ${(() => {
           const aj = planAjuste(PLAN);
           return aj.length ? `<section class="ajuste">
@@ -256,49 +251,57 @@ export default {
           </section>` : '';
         })()}
         ${etape1}
-        ${(() => {
-          const bravos = espace.entries.filter((e) => e.type === 'bravo').slice(0, 3);
-          const links = espace.entries.filter((e) => e.type === 'lien').slice(0, 4);
-          const arts = mem.flatMap((x) => (profileOf(x)?.artistes || []).filter((a) => a?.nom).map((a) => ({ ...a, by: x })));
-          const sessions = espace.entries.filter((e) => e.type === 'session' && e.data?.done);
-          const mins = sessions.reduce((sum, e) => sum + Math.max(0, Math.min(240, (e.data.doneAt - e.data.startedAt - (e.data.pausedTotal || 0)) / 60000)), 0);
-          return `
-          <a class="ames-teaser el-teaser" href="#/elan"><b>Notre élan</b><span>La tresse : nos deux fils dans le temps, qui lance, qui répond, ce qui circule entre nous. Pas de score : un mouvement.</span><em>Voir →</em></a>
-          ${mem.every((x) => profileOf(x)?.doneAt) ? `<a class="ames-teaser" href="#/ames"><b>Nos deux âmes</b><span>L’arc et le triskel : ce que nos deux étapes 1 donnent ensemble, nos pistes hors sentier, ce que nos traces disent déjà.</span><em>Voir →</em></a>` : ''}
-          <div class="home-trio">
-            <section class="panel bravos">
-              <div class="panel-head"><h2>Nos bravos</h2><a class="btn small" href="#/carnet">★ En envoyer un</a></div>
-              ${bravos.length ? `<ul>${bravos.map((b) => `<li style="--c:${memberColor(b.author)}" data-id="${esc(b.id)}"><p>${esc(b.body || b.title)}</p><small><b>${esc(b.author)}</b> → ${esc(b.data?.to || '')} · ${ago(b.createdAt)}</small></li>`).join('')}</ul>` : '<p class="muted small">Le premier bravo est le plus dur. Ce que l’autre a fait de bien, précisément.</p>'}
-            </section>
-            <section class="panel inspi">
-              <div class="panel-head"><h2>Ce qui nous inspire</h2><a class="btn small" href="#/carnet">+ Un lien</a></div>
-              ${links[0] ? embedHTML(links[0].data?.url || links[0].body) : ''}
-              <ul class="inspi-list">${links.slice(links[0] && embedHTML(links[0].data?.url || links[0].body) ? 1 : 0).map((l) => `<li style="--c:${memberColor(l.author)}"><a href="${esc(l.data?.url || l.body)}" target="_blank" rel="noopener">${esc(l.title)} ↗</a></li>`).join('')}
-                ${arts.map((a) => `<li style="--c:${memberColor(a.by)}">${a.lien ? `<a href="${esc(lienAuMoment(a.lien, a.moment))}" target="_blank" rel="noopener">${esc(a.nom)} ↗</a>` : esc(a.nom)}${a.aime?.length ? `<span class="art-aime">${a.aime.map(aspect).map(esc).join(' · ')}</span>` : ''}${a.pourquoi ? `<em class="art-pq">« ${esc(a.pourquoi)} »</em>` : a.by === espace.me && !a.aime?.length ? '<a class="art-dire" href="#/depart?etape=3">Dire pourquoi →</a>' : ''}</li>`).join('')}</ul>
-              ${!links.length && !arts.length ? '<p class="muted small">Collez un lien Spotify ou YouTube dans la capture du mur : il apparaît ici, prêt à écouter.</p>' : ''}
-            </section>
-            <a class="panel evo-teaser" href="#/bilan">
-              <h2>Notre bilan</h2>
-              <div class="mini-stats"><div><b>${Math.floor(mins / 60)} h ${String(Math.round(mins % 60)).padStart(2, '0')}</b><span>jouées</span></div><div><b>${sessions.length}</b><span>sessions</span></div><div><b>${espace.entries.filter((e) => e.type === 'evaluation').length}</b><span>autoévaluations</span></div></div>
-              <span class="btn small">Où on est rendus →</span>
-            </a>
-          </div>`;
-        })()}
-
-
-        <details class="panel vision-fold"><summary><h2>Notre vision</h2><span class="muted small">tonalité, genre, intention</span></summary>
-          ${visionHTML(v, mem)}
-          <button class="btn small ghost" data-h="edit">Modifier</button>
-          <cite>Une vision partagée avant de composer · Merchán-Sánchez-Jara 2023</cite>
-        </details>
-
-        ${cycleHTML()}
-        <section class="ou-aller" aria-label="Où aller">
-          <h2>Où aller</h2>
-          <div class="oa-grid">${OU_ALLER.map(([t, why, links]) => `<div class="oa-g"><h3>${t}</h3><p>${why}</p><div>${links.map(([h, l]) => `<a href="#/${h}">${l}</a>`).join('')}</div></div>`).join('')}</div>
-        </section>`;
+        ${projetCarte(mem)}
+        <p class="arbre-pied"><a href="#/arbre">${espace.me === mem[1] ? `L’arbre de l’app : d’où viennent les sons et les éléments que tu demandais à ${esc(mem[0])} →` : 'L’arbre de l’app : son architecture, ses versions →'}</a></p>
+        `;
     }
 
+    // Notre projet, en une carte sur l'accueil : ce qui nous définit attend sur sa page.
+    function projetCarte(mem) {
+      const arts = mem.flatMap((x) => (profileOf(x)?.artistes || []).filter((a) => a?.nom)); const v = espace.meta.vision || {};
+      return `<a class="projet-carte" href="#/projet"><div><p class="tape">Notre projet</p><h2>Ce qu’on bâtit, à deux</h2>
+        <p>Le plan des six mois, nos intentions, notre vision${v.tonalite ? ` (${esc(v.tonalite)})` : ''}, ce qui nous inspire${arts.length ? ` (${arts.length})` : ''}, nos deux âmes, notre élan, notre bilan, nos studios.</p></div><span class="btn">Ouvrir →</span></a>`;
+    }
+    // La page « Notre projet » : tout ce qui dit qui on est et où on va, au même endroit.
+    function projetHTML(mem, v, m, goal, got) {
+      const links = espace.entries.filter((e) => e.type === 'lien').slice(0, 6);
+      const arts = mem.flatMap((x) => (profileOf(x)?.artistes || []).filter((a) => a?.nom).map((a) => ({ ...a, by: x })));
+      const sessions = espace.entries.filter((e) => e.type === 'session' && e.data?.done);
+      const mins = sessions.reduce((sum, e) => sum + Math.max(0, Math.min(240, (e.data.doneAt - e.data.startedAt - (e.data.pausedTotal || 0)) / 60000)), 0);
+      const bravos = espace.entries.filter((e) => e.type === 'bravo'); const dernier = bravos[0];
+      const lm = luneCourante(espace.meta);
+      return `<a class="retour-plan" href="#/">← Accueil</a><div class="mod-head"><div><p class="eyebrow">Notre projet</p><h1>Ce qu’on bâtit, à deux.</h1>
+        <p class="muted">Le cap, les intentions, la vision, les inspirations, et ce que nos traces disent de nous. L’accueil, lui, garde le quotidien.</p></div></div>
+        <section class="panel pj-plan"><h2>Le plan des six mois</h2>
+          <ol class="pj-mois">${PLAN.map((g, i) => `<li class="${i + 1 === m ? 'now' : i + 1 < m ? 'fait' : ''}"><span class="mono">Mois ${i + 1}</span><b>${esc(g.titre)}</b><small>${esc(g.sortie)}</small></li>`).join('')}</ol>
+          <p class="small">Ce mois-ci : <b>${Math.min(got, goal.cible)} / ${goal.cible}</b> · ${esc(goal.src)}</p></section>
+        <section class="panel pj-int"><div class="panel-head"><h2>Nos intentions</h2><a class="btn small" href="#/passage">Nos lunes passées →</a></div>
+          ${mem.map((x) => { const t = lm.intentions?.[x]; return `<p style="--c:${memberColor(x)}" class="pj-i"><b>${esc(x)}</b> ${t ? `« ${esc(t)} »` : '<span class="muted">pas encore semée pour cette lune</span>'}</p>`; }).join('')}
+          <p class="muted small">On les sème à la nouvelle lune, sur l’accueil ; on les relit la dernière semaine du cycle.</p></section>
+        <div class="pj-deux">
+          <section class="panel vision-in"><div class="panel-head"><h2>Notre vision</h2><button class="btn small ghost" data-h="edit">Modifier</button></div>
+            ${visionHTML(v, mem)}<cite>Une vision partagée avant de composer · Merchán-Sánchez-Jara 2023</cite></section>
+          <section class="panel inspi"><div class="panel-head"><h2>Ce qui nous inspire</h2><a class="btn small" href="#/carnet">+ Un lien</a></div>
+            ${links[0] ? embedHTML(links[0].data?.url || links[0].body) : ''}
+            <ul class="inspi-list">${links.slice(links[0] && embedHTML(links[0].data?.url || links[0].body) ? 1 : 0).map((l) => `<li style="--c:${memberColor(l.author)}"><a href="${esc(l.data?.url || l.body)}" target="_blank" rel="noopener">${esc(l.title)} ↗</a></li>`).join('')}
+              ${arts.map((a) => `<li style="--c:${memberColor(a.by)}">${a.lien ? `<a href="${esc(lienAuMoment(a.lien, a.moment))}" target="_blank" rel="noopener">${esc(a.nom)} ↗</a>` : esc(a.nom)}${a.aime?.length ? `<span class="art-aime">${a.aime.map(aspect).map(esc).join(' · ')}</span>` : ''}${a.pourquoi ? `<em class="art-pq">« ${esc(a.pourquoi)} »</em>` : a.by === espace.me && !a.aime?.length ? '<a class="art-dire" href="#/depart?etape=3">Dire pourquoi →</a>' : ''}</li>`).join('')}</ul>
+            ${!links.length && !arts.length ? '<p class="muted small">Collez un lien Spotify ou YouTube dans la capture du mur : il apparaît ici, prêt à écouter.</p>' : ''}</section>
+        </div>
+        <section class="nous-deux"><h2>Ce que nos traces disent de nous</h2><div class="nd-tuiles">
+          <a class="nd-t" href="#/elan"><b>Notre élan</b><span>qui lance, qui répond, ce qui circule</span></a>
+          ${mem.every((x) => profileOf(x)?.doneAt) ? '<a class="nd-t" href="#/ames"><b>Nos deux âmes</b><span>ce que nos étapes 1 disent ensemble</span></a>' : '<a class="nd-t" href="#/depart"><b>Nos étapes 1</b><span>d’où chacun part</span></a>'}
+          <a class="nd-t" href="#/bilan"><b>Notre bilan</b><span>${Math.floor(mins / 60)} h ${String(Math.round(mins % 60)).padStart(2, '0')} jouées · ${sessions.length} séance${sessions.length > 1 ? 's' : ''}</span></a>
+          <a class="nd-t" href="#/carnet"><b>Nos bravos</b><span>${dernier ? `« ${esc((dernier.body || dernier.title || '').slice(0, 46))}${(dernier.body || dernier.title || '').length > 46 ? '…' : ''} »` : 'le premier est le plus dur'}</span></a>
+          ${studioTuiles(mem)}
+        </div></section>`;
+    }
+    // Le studio en tuiles, pour « Nous deux » : le mien, et celui de l'autre s'il le partage.
+    function studioTuiles(mem) {
+      const o = mem.find((x) => x !== espace.me); const chez = o && profileOf(o)?.studio; const moi = studioActuel();
+      const fait = moi.meubles.length || moi.appareils.some((a) => !a.hub) || piece().photo;
+      return `<a class="nd-t nd-studio" href="#/materiel">${pieceSVG(moi)}<b>${fait ? 'Ton studio' : 'Recrée ton studio'}</b><span>${fait ? `${moi.appareils.filter((a) => !a.hub).length} appareils, tels qu’ils sont` : 'ta pièce et tes instruments'}</span></a>`
+        + (chez ? `<a class="nd-t nd-studio" href="#/materiel?chez=${encodeURIComponent(o)}" data-id="studio">${pieceSVG(chez)}<b>Le studio de ${esc(o)}</b><span>${ago(chez.at)}</span></a>` : o ? `<div class="nd-t nd-studio nd-vide"><b>Le studio de ${esc(o)}</b><span>pas encore partagé : il apparaîtra ici dès que ${esc(o)} le montre</span></div>` : '');
+    }
     // Le studio : le mien (Frog le recrée tel qu'il est), et celui de l'autre s'il le partage.
     function studioHTML(mem) {
       const o = mem.find((x) => x !== espace.me); const chez = o && profileOf(o)?.studio; const moi = studioActuel();

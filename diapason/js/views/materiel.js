@@ -86,7 +86,7 @@ export default {
     }
     function rendrePartage() {
       const p = piece(); const chez = profileOf(autre)?.studio;
-      q('.m-partage').innerHTML = espace.connected ? `<label class="check"><input type="checkbox" data-p="partage" ${p.partage ? 'checked' : ''}> <b>Montrer mon studio à ${esc(autre)}</b> : il apparaît sur son accueil, à côté du sien (la pièce, les meubles, les appareils et leurs photos). Chacun garde son propre studio.</label>${profileOf(espace.me)?.studioPhoto ? `<label class="check"><input type="checkbox" data-p="partagephoto" ${profileOf(espace.me)?.studioPhotoPartagee !== false ? 'checked' : ''}> et la photo de la pièce</label>` : ''}${chez ? ` <a class="btn small" href="#/materiel?chez=${encodeURIComponent(autre)}">Voir le studio de ${esc(autre)} →</a>` : ''}` : '<p class="muted small">Connecte-toi à votre espace pour montrer ton studio à l’autre.</p>';
+      q('.m-partage').innerHTML = espace.connected ? `<label class="check"><input type="checkbox" data-p="partage" ${p.partage ? 'checked' : ''}> <b>Montrer mon studio à ${esc(autre)}</b> : il apparaît dans « Notre projet », à côté du sien (la pièce, les meubles, les appareils et leurs photos). Chacun garde son propre studio.</label>${profileOf(espace.me)?.studioPhoto ? `<label class="check"><input type="checkbox" data-p="partagephoto" ${profileOf(espace.me)?.studioPhotoPartagee !== false ? 'checked' : ''}> et la photo de la pièce</label>` : ''}${chez ? ` <a class="btn small" href="#/materiel?chez=${encodeURIComponent(autre)}">Voir le studio de ${esc(autre)} →</a>` : ''}` : '<p class="muted small">Connecte-toi à votre espace pour montrer ton studio à l’autre.</p>';
     }
 
     // ---------- La pièce ----------

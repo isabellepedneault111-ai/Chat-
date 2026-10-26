@@ -131,7 +131,7 @@ export const VISION_FIELDS = [
 
 // « Pourquoi ça marche » : ce que dit la recherche, section par section.
 export const POURQUOI = {
-  home: { titre: 'Le plan de match', points: [
+  home: { titre: 'L’accueil', points: [
     ['Des séances courtes et régulières battent les rares longues répétitions.', 'Rohrer 2004'],
     ['Un objectif clair et partagé (tonalité, instrumentation, genre, style) est un préalable à la composition à deux.', 'Merchán-Sánchez-Jara 2023'],
     ['Six mois suffisent pour passer d’idées brutes à 3 à 5 morceaux originaux prêts à jouer.', 'Synthèse Consensus'],
