@@ -66,7 +66,7 @@ export function installerSommaire(vue) {
     const m = MANDATS[id];
     if (m && tete) {
       const box = document.createElement('div'); box.className = `mandat no-aide ${replie() ? 'replie' : ''}`;
-      box.innerHTML = ['Ça sert à', 'Tu peux', 'Ça nourrit'].map((t, i) => `<div class="md-case">${ICONES[i]}<div><b>${t}</b><ul>${POINTS(m[i]).map((x) => `<li>${x.replace(/\.$/, '')}</li>`).join('')}</ul></div></div>`).join('')
+      box.innerHTML = ['Ça sert à', 'Tu peux', 'Ça nourrit'].map((t, i) => `<div class="md-case">${ICONES[i]}<div><b>${t}</b><ul class="${POINTS(m[i]).length > 3 ? 'md-2col' : ''}">${POINTS(m[i]).map((x) => `<li>${x.replace(/\.$/, '')}</li>`).join('')}</ul></div></div>`).join('')
         + `<button type="button" class="md-plier" data-md="plier" aria-label="${replie() ? 'Déplier' : 'Replier'} le mandat de la page">${replie() ? 'À quoi sert cette page ▾' : '▴'}</button>`;
       tete.after(box);
     }

@@ -2833,3 +2833,14 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 @media (max-width: 1100px) { .mandat.avec-som:has(.som-2col) { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 760px) { .mandat.avec-som:has(.som-2col) { grid-template-columns: 1fr; } }
 .ca-scene { display: grid; } .ca-lecture { position: static; padding: 10px 16px 14px; background: #100e0b; }
+/* Le mandat : des cases de même hauteur (harmonie), sans vide (les longues listes passent sur deux colonnes). */
+.mandat { align-items: stretch; }
+.md-case > div { min-width: 0; }
+.md-case ul.md-2col { columns: 2; column-gap: 16px; } .md-case ul.md-2col li { break-inside: avoid; }
+@media (max-width: 1100px) { .md-case ul.md-2col { columns: 1; } }
+.md-case ul.md-2col { columns: 1; }
+.mandat { grid-template-columns: .9fr 1.5fr 1fr; }
+.mandat.avec-som { grid-template-columns: .85fr 1.45fr 1fr minmax(190px, .95fr); }
+.mandat.avec-som:has(.som-2col) { grid-template-columns: .8fr 1.25fr .95fr minmax(300px, 1.45fr); }
+@media (max-width: 1100px) { .mandat, .mandat.avec-som, .mandat.avec-som:has(.som-2col) { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 760px) { .mandat, .mandat.avec-som, .mandat.avec-som:has(.som-2col) { grid-template-columns: 1fr; } }
