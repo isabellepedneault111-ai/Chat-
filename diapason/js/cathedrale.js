@@ -21,7 +21,7 @@ const plier = (x) => ((x % 12) + 12) % 12;
 // La note la plus proche de « vise » qui garde la même classe de hauteur.
 const pres = (classe, vise) => { let m = vise - plier(vise) + classe; if (m - vise > 6) m -= 12; if (vise - m > 6) m += 12; return m; };
 
-export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 0.5 }) {
+export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 0.5, voix = [] }) {
   const r = [...new Set(cle.map((x) => Math.round(x)).filter((x) => x > 0 && x <= 32))].sort((a, b) => a - b);
   if (!r.length) return { sections: [], notes: [], duree: 0, r };
   const somme = r.reduce((a, b) => a + b, 0); const ecart = (x) => 12 * Math.log2(x / r[0]);
@@ -35,14 +35,15 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
     // L'harmonie : l'accord tenu, réarticulé tous les deux tours. Plus l'axe va vers « harmonie », plus il est présent.
     if (axe > 0.12) for (let u = s.a; u < s.b - 0.3; u += CYCLE * 2) {
       const v = (0.12 + 0.3 * axe) * enveloppe(u);
-      accord.forEach((m, k) => pousse({ t: u + k * 0.02, dur: Math.min(CYCLE * 2.1, s.b - u), banque: 'cordes', midi: pres(plier(m), 55 + k * 4), vel: v }));
+      accord.forEach((m, k) => !voix[k]?.muet && pousse({ t: u + k * 0.02, dur: Math.min(CYCLE * 2.1, s.b - u), banque: 'cordes', midi: pres(plier(m), 55 + k * 4), vel: v }));
       pousse({ t: u, dur: Math.min(CYCLE * 2.1, s.b - u), banque: 'cordes', midi: pres(plier(s.racine), 40), vel: v * 0.9 });
       if (s.lumiere === 'cuivres' || axe > 0.75) pousse({ t: u + 0.05, dur: CYCLE * 1.6, banque: 'cor', midi: pres(plier(accord[1] ?? accord[0]), 57), vel: v * 0.8 });
     }
     // Le rythme : chaque nombre de la clé de voûte frappe autant de fois par tour (4 contre 5 contre 6…).
     if (axe < 0.88) r.forEach((x, j) => {
-      const banque = RYTHME[j % RYTHME.length]; const v0 = (0.75 - 0.6 * axe) * (j === 0 ? 0.9 : 0.6);
-      const haut = banque === 'timbales' ? 41 : banque === 'celesta' ? 79 : banque === 'harpe' ? 64 : 60;
+      if (voix[j]?.muet) return;
+      const banque = voix[j]?.banque || RYTHME[j % RYTHME.length]; const v0 = (0.75 - 0.6 * axe) * (j === 0 ? 0.9 : 0.6) * (voix[j]?.vol ?? 1);
+      const haut = { timbales: 41, celesta: 79, harpe: 64, flute: 76, choeur: 64, cor: 57, cuivres: 57, clarinette: 62, hautbois: 69 }[banque] || 60;
       for (let u = s.a; u < s.b - 0.05; u += CYCLE / x) pousse({ t: u, dur: 0.3, banque, midi: pres(plier(accord[j] ?? s.racine), haut), vel: v0 * enveloppe(u) * (Math.abs(((u - s.a) % CYCLE)) < 0.01 ? 1.15 : 1) });
     });
     // La lumière : une mélodie dans la famille choisie, faite des notes de l'accord, au rythme du nombre de la partie.
@@ -73,18 +74,38 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
 }
 
 export const charger = () => prechargerSons(BANQUES_UTILES);
+export const RYTHME_DEFAUT = RYTHME;
+
+// Un accord joué (sur un clavier MIDI, ou entendu par une entrée audio) devient une clé de voûte : chaque intervalle
+// au-dessus de la note la plus grave est lu comme le rapport simple le plus proche (tierce majeure = 5/4, quinte = 3/2,
+// septième « naturelle » = 7/4…), puis on ramène le tout à des entiers. Do Mi Sol → 4:5:6 ; Ré Fa La → 10:12:15.
+const JUSTE = [[1, 1], [16, 15], [9, 8], [6, 5], [5, 4], [4, 3], [7, 5], [3, 2], [8, 5], [5, 3], [7, 4], [15, 8]];
+const pgcd = (a, b) => (b ? pgcd(b, a % b) : a);
+export function cleDepuisNotes(midis) {
+  const l = [...new Set(midis)].sort((a, b) => a - b); if (l.length < 2) return null;
+  const bas = l[0]; const fr = l.map((m) => { const d = m - bas; const [n, q] = JUSTE[d % 12]; return [n * 2 ** Math.floor(d / 12), q]; });
+  const den = fr.reduce((a, [, q]) => (a * q) / pgcd(a, q), 1); let cle = fr.map(([n, q]) => (n * den) / q);
+  const g = cle.reduce((a, b) => pgcd(a, b)); cle = [...new Set(cle.map((x) => x / g))].sort((a, b) => a - b);
+  if (cle.some((x) => x > 32)) return null;
+  return { cle, tonique: 45 + ((((bas - 45) % 12) + 12) % 12) };
+}
 
 // Jouer en direct : on programme les notes un peu à l'avance, au fil de la lecture.
-export function jouer(oeuvre, { depuis = 0, onFin } = {}) {
+export function jouer(oeuvre, { depuis = 0, onFin, sortie = null } = {}) {
   const c = audio(); const maitre = c.createGain(); maitre.gain.value = 0.9; maitre.connect(c.destination);
   const t0 = c.currentTime + 0.15 - depuis; let i = oeuvre.notes.findIndex((n) => n.t >= depuis); if (i < 0) i = oeuvre.notes.length;
   const tic = () => {
     const horizon = c.currentTime + 0.8;
-    while (i < oeuvre.notes.length && t0 + oeuvre.notes[i].t < horizon) { const n = oeuvre.notes[i++]; joue(n.banque, n.midi, { when: t0 + n.t, dur: n.dur, vel: n.vel, dest: maitre }); }
+    while (i < oeuvre.notes.length && t0 + oeuvre.notes[i].t < horizon) {
+      const n = oeuvre.notes[i++]; joue(n.banque, n.midi, { when: t0 + n.t, dur: n.dur, vel: n.vel, dest: maitre });
+      // Et sur le matériel de Frog : la même note, arrondie au demi-ton (le MIDI ne connaît pas l'intonation juste).
+      if (sortie) { const ch = canal(n.banque); const m = Math.max(0, Math.min(127, Math.round(n.midi))); const ts = performance.now() + (t0 + n.t - c.currentTime) * 1000; try { sortie.send([0x90 | ch, m, Math.max(1, Math.min(127, Math.round(n.vel * 140)))], ts); sortie.send([0x80 | ch, m, 0], ts + n.dur * 1000); } catch { /* appareil débranché */ } }
+    }
     if (c.currentTime - t0 > oeuvre.duree + 1.5) { arreter(); onFin?.(); }
   };
+  if (sortie) Object.entries(PROGRAMMES).forEach(([b, p]) => { try { sortie.send([0xc0 | canal(b), p]); } catch { /* */ } });
   const id = setInterval(tic, 120); tic();
-  const arreter = () => { clearInterval(id); maitre.gain.setTargetAtTime(0, c.currentTime, 0.15); setTimeout(() => maitre.disconnect(), 900); };
+  const arreter = () => { if (sortie) for (let ch = 0; ch < 16; ch++) { try { sortie.send([0xb0 | ch, 123, 0]); } catch { /* */ } } clearInterval(id); maitre.gain.setTargetAtTime(0, c.currentTime, 0.15); setTimeout(() => maitre.disconnect(), 900); };
   return { arreter, position: () => c.currentTime - t0 };
 }
 
@@ -111,8 +132,9 @@ export async function rendre(oeuvre, onProgres) {
 
 // Le fichier MIDI : une piste par famille (programmes General MIDI), les hauteurs arrondies au demi-ton.
 const PROGRAMMES = { cordes: 48, pizz: 45, harpe: 46, cor: 60, cuivres: 61, flute: 73, clarinette: 71, hautbois: 68, choeur: 52, timbales: 47, celesta: 8 };
+const canal = (b) => { const k = Object.keys(PROGRAMMES).indexOf(b); return k >= 9 ? k + 1 : Math.max(0, k); }; // le canal 10 est réservé aux batteries
 export function evenementsMidi(oeuvre) {
-  const canaux = Object.keys(PROGRAMMES); const can = (b) => { const k = canaux.indexOf(b); return k >= 9 ? k + 1 : k; }; // le canal 10 est réservé aux batteries
+  const canaux = Object.keys(PROGRAMMES); const can = canal;
   const ev = canaux.map((b) => ({ t: 0, d: [0xc0 | can(b), PROGRAMMES[b]] }));
   oeuvre.notes.forEach((n) => { const ch = can(n.banque); const m = Math.max(0, Math.min(127, Math.round(n.midi))); const v = Math.max(1, Math.min(127, Math.round(n.vel * 140)));
     ev.push({ t: n.t, d: [0x90 | ch, m, v] }, { t: n.t + n.dur, d: [0x80 | ch, m, 0] }); });

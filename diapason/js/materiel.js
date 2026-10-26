@@ -27,7 +27,14 @@ const cle = (nom) => propre(nom).toLowerCase();
 const reg = () => store.get('materiel', { app: { nom: 'Le son de l’app', sorte: 'ordi', actif: true } });
 const ecrire = (r) => store.set('materiel', r);
 const detecte = { audio: new Map(), midi: new Map() }; // clé → deviceId / MIDIInput
-const ecoutes = new Set(); const activite = new Set();
+const ecoutes = new Set(); const activite = new Set(); const notesEcoute = new Set();
+// Les notes jouées sur tous les claviers actifs (pour La cathédrale, et tout ce qui veut écouter le jeu de Frog).
+export const onNotes = (fn) => { notesEcoute.add(fn); return () => notesEcoute.delete(fn); };
+// Les sorties MIDI branchées (synthés, claviers, logiciels) : on peut y renvoyer des notes.
+export async function sortiesMidi() {
+  if (!navigator.requestMIDIAccess) return [];
+  try { midiAcces ||= await navigator.requestMIDIAccess(); return [...midiAcces.outputs.values()]; } catch { return []; }
+}
 export const onMateriel = (fn) => { ecoutes.add(fn); return () => ecoutes.delete(fn); };
 export const onActivite = (fn) => { activite.add(fn); return () => activite.delete(fn); };
 const signaler = () => ecoutes.forEach((f) => { try { f(); } catch { /* une vue fermée */ } });
@@ -79,6 +86,7 @@ function surMidi(e) {
   const k = cle(e.target.name); const a = appareils().find((x) => x.k === k); if (!a?.actif) return;
   const [st, note, vel] = e.data; const cmd = st & 0xf0;
   activite.forEach((f) => f(k, cmd === 0x90 && vel > 0 ? vel / 127 : 0));
+  if (cmd === 0x90 || cmd === 0x80) notesEcoute.forEach((f) => f(k, note, vel, cmd === 0x90 && vel > 0));
   if (a.son && cmd === 0x90 && vel > 0) notePiano(note, { vel: 0.3 + vel / 200 });
   if (filet.arme && cmd >= 0x80 && cmd <= 0xe0) {
     const c = audio(); filet.midi.push({ t: c.currentTime - Math.max(0, (performance.now() - e.timeStamp) / 1000), d: [...e.data], k });

@@ -2916,3 +2916,26 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .nv-taches ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .nv-taches a { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center; padding: 10px 14px; border-radius: 10px; background: #1b1916; color: #efe6d2; text-decoration: none; border-left: 5px solid #e8c27a; }
 .nv-taches b { font-size: 1rem; } .nv-taches small { grid-column: 1; color: #b8ad98; } .nv-taches span { grid-row: 1 / 3; grid-column: 2; color: #e8c27a; font-weight: 800; }
+/* Le labo, rééquilibré : des disques de taille raisonnable, une colonne de réglages large et rangée. */
+@media (min-width: 1000px) {
+  .labo-layout { grid-template-columns: minmax(0, 540px) minmax(0, 1fr); gap: 0 20px; }
+  .radar-panel { max-height: 540px; }
+  .tracks-panel .tracks { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+  .tracks-panel > .chips, .ctrl-panel > .chips { flex-wrap: wrap; overflow: visible; }
+  .tracks-panel .add-track, .tracks-panel .labo-beat, .tracks-panel .labo-cathedrale { display: inline-flex; width: auto; margin-right: 6px; }
+  .ctrl-panel .row { flex-wrap: wrap; }
+}
+@media (min-width: 1000px) { .tracks-panel .tracks { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); } }
+/* La cathédrale : les disques, et ce que Frog branche. */
+.ca-disques { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; align-items: stretch; }
+.ca-disque { display: grid; grid-template-columns: 76px 1fr; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: #1b1916; color: #efe6d2; }
+.ca-disque.muet { opacity: .45; }
+.ca-dsvg { width: 76px; height: 76px; } .ca-dsvg .anneau { fill: none; stroke: var(--c); stroke-width: 2; opacity: .5; } .ca-dsvg circle:not(.anneau) { fill: var(--c); }
+.ca-dsvg line { stroke: #fff; stroke-width: 1.2; opacity: .6; } .ca-dsvg text { fill: #fff; font: 800 15px "Literata", serif; } .ca-dsvg .tourne { transform-origin: 30px 30px; }
+.ca-dreg { display: grid; gap: 6px; min-width: 0; } .ca-dnb { display: flex; align-items: center; gap: 4px; } .ca-dnb b { min-width: 24px; text-align: center; font: 800 1.1rem "Literata", serif; }
+.ca-dnb .icon-btn { background: #2a2620; color: #efe6d2; border-color: #4a4338; } .ca-dnb .icon-btn.on { background: #e8c27a; color: #1b1916; }
+.ca-dreg select { width: 100%; padding: 4px; border-radius: 6px; background: #141210; color: #efe6d2; border: 1px solid #4a4338; font-size: .84rem; }
+.ca-dvol { display: flex; align-items: center; gap: 6px; font-size: .74rem; color: #b8ad98; } .ca-dvol input { flex: 1; min-width: 0; }
+.ca-dplus { align-self: center; justify-self: start; }
+.ca-branche .ca-row { align-items: center; gap: 12px; } .ca-entendu { margin: 8px 0 0; } .ca-entendu b.mono { font-size: 1rem; }
+.ca-disques-p, .ca-branche { margin-bottom: 14px; }

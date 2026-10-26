@@ -4,7 +4,10 @@
 import { toast, store, autoCanvas, animate } from '../ui.js';
 import { FR } from '../music.js';
 import { espace, saveEntry, uploadAudio } from '../espace.js';
-import { composer, jouer, rendre, charger, evenementsMidi, FAMILLES } from '../cathedrale.js';
+import { composer, jouer, rendre, charger, evenementsMidi, FAMILLES, RYTHME_DEFAUT, cleDepuisNotes } from '../cathedrale.js';
+import { onNotes, detecter, appareils, sortiesMidi } from '../materiel.js';
+import { createListener } from '../instrument.js';
+import { chordIntervals } from '../music.js';
 import { wav } from '../oreille.js';
 import { fichierMidi } from '../materiel.js';
 
@@ -38,6 +41,12 @@ export default {
       </div></div>
       <section class="ca-scene"><canvas class="ca-cv" aria-label="La cathédrale : une arche par partie, la rosace de la clé de voûte, et la lumière qui avance"></canvas>
         <div class="ca-lecture"><button class="btn primary big" data-ca="jouer">▶ Bâtir et écouter</button><span class="ca-temps mono"></span></div></section>
+      <section class="panel ca-disques-p"><div class="panel-head"><h2>Les disques</h2><span class="muted small">un disque par nombre de la clé : il frappe autant de fois par tour, et sonne dans l’accord</span></div>
+        <div class="ca-disques"></div></section>
+      <section class="panel ca-branche"><div class="panel-head"><h2>Ce que Frog branche</h2><span class="muted small">un accord joué devient la clé de voûte ; la cathédrale peut jouer sur ses appareils</span></div>
+        <div class="ca-row"><button class="btn" data-ca="ecouter">● Écouter mon matériel</button><label class="check"><input type="checkbox" data-ca="suivre"> Suivre mon jeu (chaque accord tenu devient la clé)</label>
+          <label class="field"><span>Jouer aussi sur</span><select data-ca="sortie"><option value="">Aucun appareil MIDI</option></select></label></div>
+        <p class="ca-entendu muted small">Branche un clavier MIDI ou une entrée audio (Mon matériel), puis joue un accord et tiens-le.</p></section>
       <div class="ca-grille">
         <section class="panel"><h2>La clé de voûte</h2>
           <div class="ca-cles">${CLES.map(([k, l, n, d]) => `<button class="ca-cle" data-cle="${k}"><b>${l}</b><span>${n}</span><small>${d}</small></button>`).join('')}${du ? `<button class="ca-cle" data-cle="labo"><b>${du.join(' : ')}</b><span>Tes disques du labo</span><small>La clé que tu as faite tourner.</small></button>` : ''}</div>
@@ -67,8 +76,24 @@ export default {
     const q = (s) => el.querySelector(s);
     const cv = autoCanvas(q('.ca-cv'));
 
+    // Les disques : un par nombre de la clé de voûte, réglable (nombre, instrument, volume, sourdine), qui tournent à l'écoute.
+    const INSTR = [['timbales', 'Timbales'], ['pizz', 'Pizzicati'], ['harpe', 'Harpe'], ['celesta', 'Célesta'], ['cor', 'Cor'], ['cuivres', 'Cuivres'], ['flute', 'Flûte'], ['clarinette', 'Clarinette'], ['choeur', 'Chœur']];
+    const DCOUL = ['#e8c27a', '#93b08e', '#f0875a', '#b89be6', '#7fb1f0', '#9fe0c3'];
+    function disqueSVG(n, c) { const pts = [...Array(n)].map((_, i) => { const a = (i / n) * Math.PI * 2 - Math.PI / 2; return `<circle cx="${(30 + 22 * Math.cos(a)).toFixed(1)}" cy="${(30 + 22 * Math.sin(a)).toFixed(1)}" r="3.2"/>`; }).join(''); return `<svg viewBox="0 0 60 60" class="ca-dsvg" style="--c:${c}"><circle cx="30" cy="30" r="22" class="anneau"/><g class="tourne">${pts}<line x1="30" y1="30" x2="30" y2="8"/></g><text x="30" y="35" text-anchor="middle">${n}</text></svg>`; }
+    function rendreDisques() {
+      const voix = etat.voix || [];
+      q('.ca-disques').innerHTML = etat.cle.map((n, j) => { const v = voix[j] || {}; const b = v.banque || RYTHME_DEFAUT[j % RYTHME_DEFAUT.length];
+        return `<div class="ca-disque ${v.muet ? 'muet' : ''}" data-d="${j}">${disqueSVG(n, DCOUL[j % 6])}
+          <div class="ca-dreg"><div class="ca-dnb"><button class="icon-btn tiny" data-dm="moins" aria-label="Moins">−</button><b>${n}</b><button class="icon-btn tiny" data-dm="plus" aria-label="Plus">+</button><button class="icon-btn tiny ${v.muet ? 'on' : ''}" data-dm="muet" aria-label="Sourdine" title="Sourdine">M</button>${etat.cle.length > 2 ? '<button class="icon-btn tiny" data-dm="retirer" aria-label="Retirer">×</button>' : ''}</div>
+            <select data-dm="banque" aria-label="Instrument du disque">${INSTR.map(([k, l]) => `<option value="${k}" ${k === b ? 'selected' : ''}>${l}</option>`).join('')}</select>
+            <label class="ca-dvol"><span>volume</span><input type="range" min="0" max="150" value="${Math.round((v.vol ?? 1) * 100)}" data-dm="vol"></label></div></div>`; }).join('')
+        + (etat.cle.length < 6 ? '<button class="btn small ca-dplus" data-dm="ajouter">+ Un disque</button>' : '');
+    }
+    const majDisque = (j, change) => { const voix = [...(etat.voix || [])]; voix[j] = { ...(voix[j] || {}), ...change }; return voix; };
+
     function majTout() {
-      oeuvre = composer({ cle: etat.cle, tonique: etat.tonique, duree: etat.duree, lumieres: etat.lumieres, axe: etat.axe });
+      oeuvre = composer({ cle: etat.cle, tonique: etat.tonique, duree: etat.duree, lumieres: etat.lumieres, axe: etat.axe, voix: etat.voix || [] });
+      rendreDisques();
       const r = oeuvre.r;
       q('.ca-parties').innerHTML = oeuvre.sections.map((s) => `<div class="ca-partie" style="flex:${s.ratio};--c:${COUL[s.lumiere]}"><b>${ROMAINS[s.i] || s.i + 1} · ${s.ratio}</b><small>${mmss(s.b - s.a)}</small>
         <select data-lum="${s.i}" aria-label="La lumière sur la partie ${s.i + 1}">${FAMILLES.map(([k, l]) => `<option value="${k}" ${k === s.lumiere ? 'selected' : ''}>${l}</option>`).join('')}</select></div>`).join('');
@@ -119,14 +144,26 @@ export default {
     async function lancer() {
       if (lecteur) { arreter(); return; }
       const b = q('[data-ca=jouer]'); b.textContent = 'L’orchestre s’installe…'; await charger();
-      lecteur = jouer(oeuvre, { onFin: arreter }); b.textContent = '■ Arrêter';
-      anim = animate(() => { if (!lecteur) return; const p = lecteur.position(); dessiner(p); q('.ca-temps').textContent = `${mmss(Math.max(0, p))} / ${mmss(oeuvre.duree)}`; });
+      lecteur = jouer(oeuvre, { onFin: arreter, sortie: sorties.find((o) => o.id === store.get('caSortie', '')) || null }); b.textContent = '■ Arrêter';
+      anim = animate(() => { if (!lecteur) return; const p = lecteur.position(); dessiner(p); q('.ca-temps').textContent = `${mmss(Math.max(0, p))} / ${mmss(oeuvre.duree)}`;
+        el.querySelectorAll('.ca-dsvg .tourne').forEach((g) => { g.style.transform = `rotate(${((Math.max(0, p) / 2.4) % 1) * 360}deg)`; }); });
     }
     const titre = () => q('[data-ca=titre]').value.trim() || `Cathédrale ${etat.cle.join(':')}`;
     const telecharger = (blob, ext) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${titre().replace(/[^\p{L}\p{N} _:-]+/gu, ' ').replace(/[:\s]+/g, ' ').trim()}.${ext}`; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); };
     const changer = (patch) => { const avant = lecteur; if (avant) arreter(); etat = { ...etat, ...patch }; garder(); majTout(); if (q('[data-ca=titre]') && /^Cathédrale [\d:]+$/.test(q('[data-ca=titre]').value)) q('[data-ca=titre]').value = `Cathédrale ${etat.cle.join(':')}`; };
 
     el.addEventListener('click', async (e) => {
+      const dm = e.target.closest('[data-dm]')?.dataset.dm; const dj = e.target.closest('[data-d]');
+      if (dm === 'ajouter') { const cle = [...etat.cle, Math.min(32, Math.max(...etat.cle) + 1)]; q('[data-ca=nombres]').value = cle.join(' '); changer({ cle, lumieres: [] }); return; }
+      if (dj && ['moins', 'plus', 'muet', 'retirer'].includes(dm)) {
+        const j = +dj.dataset.d; const cle = [...etat.cle];
+        if (dm === 'moins') cle[j] = Math.max(1, cle[j] - 1); if (dm === 'plus') cle[j] = Math.min(32, cle[j] + 1);
+        if (dm === 'muet') { changer({ voix: majDisque(j, { muet: !(etat.voix?.[j]?.muet) }) }); return; }
+        if (dm === 'retirer') { cle.splice(j, 1); const voix = [...(etat.voix || [])]; voix.splice(j, 1); q('[data-ca=nombres]').value = cle.join(' '); changer({ cle, voix, lumieres: [] }); return; }
+        if (new Set(cle).size !== cle.length) { toast('Deux disques ne peuvent pas avoir le même nombre.'); return; }
+        q('[data-ca=nombres]').value = cle.join(' '); changer({ cle, lumieres: [] }); return;
+      }
+      if (e.target.closest('[data-ca=ecouter]')) { ecouterMateriel(); return; }
       const c = e.target.closest('[data-cle]');
       if (c) { const v = c.dataset.cle === 'labo' ? du : CLES.find((x) => x[0] === c.dataset.cle)[4]; q('[data-ca=nombres]').value = v.join(' '); changer({ cle: v, lumieres: [] }); return; }
       const a = e.target.closest('[data-ca]')?.dataset.ca;
@@ -143,6 +180,11 @@ export default {
       if (a === 'mid') telecharger(fichierMidi(evenementsMidi(oeuvre)), 'mid');
     });
     el.addEventListener('change', (e) => {
+      const dm = e.target.dataset.dm; const dj = e.target.closest('[data-d]');
+      if (dm === 'banque' && dj) { changer({ voix: majDisque(+dj.dataset.d, { banque: e.target.value }) }); return; }
+      if (dm === 'vol' && dj) { changer({ voix: majDisque(+dj.dataset.d, { vol: +e.target.value / 100 }) }); return; }
+      if (e.target.dataset.ca === 'sortie') { store.set('caSortie', e.target.value); toast(e.target.value ? 'La cathédrale jouera aussi sur cet appareil (hauteurs arrondies au demi-ton).' : 'Plus d’appareil MIDI en sortie.'); return; }
+      if (e.target.dataset.ca === 'suivre') { suivre = e.target.checked; return; }
       const l = e.target.dataset.lum; if (l != null) { const lum = oeuvre.sections.map((s) => s.lumiere); lum[+l] = e.target.value; changer({ lumieres: lum }); return; }
       const a = e.target.dataset.ca;
       if (a === 'nombres') { const v = e.target.value.split(/[^\d]+/).map(Number).filter((x) => x > 0 && x <= 32).slice(0, 6); if (v.length) changer({ cle: v, lumieres: [] }); else toast('Des nombres entiers, de 1 à 32 (ex. : 4 5 6 7).'); }
@@ -150,8 +192,43 @@ export default {
       if (a === 'duree') changer({ duree: +e.target.value });
     });
     el.addEventListener('input', (e) => { if (e.target.dataset.ca === 'axe') { etat.axe = +e.target.value / 100; garder(); clearTimeout(e.target._t); e.target._t = setTimeout(() => changer({}), 250); } });
+    // ---------- Ce que Frog branche ----------
+    let sorties = []; let suivre = false; let offNotes = null; let ecouteAudio = null; const tenues = new Set(); let attente = 0; let propose = null;
+    const NOMS = ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
+    async function remplirSorties() {
+      sorties = await sortiesMidi(); const sel = q('[data-ca=sortie]'); const cur = store.get('caSortie', '');
+      sel.innerHTML = `<option value="">Aucun appareil MIDI</option>${sorties.map((o) => `<option value="${esc(o.id)}" ${o.id === cur ? 'selected' : ''}>${esc(o.name)}</option>`).join('')}`;
+    }
+    function proposer(notes, source) {
+      const r = cleDepuisNotes(notes); const box = q('.ca-entendu'); if (!r) { box.textContent = 'Accord trop complexe pour une clé de voûte (des nombres au-delà de 32) : essaie trois ou quatre notes.'; return; }
+      propose = r; const noms = [...new Set(notes.map((m) => NOMS[((m % 12) + 12) % 12]))].join(' ');
+      box.innerHTML = `${esc(source)} : <b>${noms}</b> → la clé <b class="mono">${r.cle.join(' : ')}</b>, depuis ${NOMS[r.tonique % 12]}. ${suivre ? '<i>Appliquée.</i>' : '<button class="btn small" data-ca="appliquer">En faire la clé de voûte</button>'}`;
+      if (suivre) appliquer();
+    }
+    function appliquer() { if (!propose) return; q('[data-ca=nombres]').value = propose.cle.join(' '); q('[data-ca=tonique]').value = String(propose.tonique); changer({ cle: propose.cle, tonique: propose.tonique, lumieres: [], voix: [] }); }
+    el.addEventListener('click', (e) => { if (e.target.closest('[data-ca=appliquer]')) appliquer(); });
+    async function ecouterMateriel() {
+      const b = q('[data-ca=ecouter]');
+      if (offNotes || ecouteAudio) { offNotes?.(); offNotes = null; ecouteAudio?.stop(); ecouteAudio = null; b.textContent = '● Écouter mon matériel'; return; }
+      await detecter({ demander: true }); await remplirSorties();
+      const actifs = appareils().filter((a) => a.actif && a.branche && a.k !== 'app');
+      offNotes = onNotes((k, note, vel, on) => {
+        if (on) tenues.add(note); else tenues.delete(note);
+        clearTimeout(attente); if (tenues.size >= 2) { const l = [...tenues]; const nom = appareils().find((a) => a.k === k)?.nom || 'Ton clavier'; attente = setTimeout(() => proposer(l, nom), 450); }
+      });
+      const audioIn = actifs.find((a) => a.audio);
+      if (audioIn) {
+        ecouteAudio = createListener({ deviceId: audioIn.audio, onChord: (m) => proposer(chordIntervals(m.qual).map((iv) => 48 + m.root + iv), audioIn.nom) });
+        try { await ecouteAudio.start(); } catch { ecouteAudio = null; }
+      }
+      b.textContent = '■ Arrêter l’écoute';
+      q('.ca-entendu').innerHTML = `À l’écoute : ${actifs.length ? actifs.map((a) => `<b>${esc(a.nom)}</b>`).join(', ') : 'aucun appareil actif (coche-les dans <a href="#/materiel">Mon matériel</a>)'}. Joue un accord et tiens-le.`;
+    }
+    // Sans demander la permission au chargement : on remplit les sorties seulement si le MIDI est déjà autorisé.
+    navigator.permissions?.query({ name: 'midi' }).then((st) => { if (st.state === 'granted') remplirSorties(); }).catch(() => {});
+
     new ResizeObserver(() => dessiner(lecteur ? lecteur.position() : -1)).observe(q('.ca-cv'));
     majTout();
-    return () => { lecteur?.arreter(); anim?.(); };
+    return () => { lecteur?.arreter(); anim?.(); offNotes?.(); ecouteAudio?.stop(); clearTimeout(attente); };
   },
 };
