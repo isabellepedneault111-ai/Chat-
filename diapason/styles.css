@@ -3199,3 +3199,4 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .ls-glettre { font: 800 12px "Atkinson Hyperlegible", sans-serif; }
 .ls-petit { font: 800 10px "Atkinson Hyperlegible", sans-serif !important; }
 .ls-g { cursor: default; }
+.ls-focus circle:first-child { filter: drop-shadow(0 0 6px #ffe3a3); stroke-width: 4; }

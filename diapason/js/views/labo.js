@@ -285,7 +285,7 @@ export default {
         return `<circle r="${x.r}" fill="#1b1915" stroke="${x.c}" stroke-width="3"/><text y="3" text-anchor="middle" fill="${x.c}">${x.label}</text><text y="15" text-anchor="middle" class="ls-sous">${x.sous}</text>`;
       };
       // Les anneaux d'abord, puis les flèches, puis les disques et les déclencheurs par-dessus (on les attrape toujours).
-      const g = (x) => `<g class="ls-noeud ls-${x.type}" data-noeud="${x.id}" transform="translate(${x.x} ${x.y})"><title>${x.titre}</title>${forme(x)}</g>`;
+      const g = (x) => `<g class="ls-noeud ls-${x.type} ${(x.type === 'd' || x.type === 'm') && +x.id === focus ? 'ls-focus' : ''}" data-noeud="${x.id}" transform="translate(${x.x} ${x.y})"><title>${x.titre}</title>${forme(x)}</g>`;
       const anneaux = l.filter((x) => x.type === 'g').map(g).join(''); const nd = l.filter((x) => x.type !== 'g').map(g).join('');
       return `<svg class="li-schema" viewBox="0 0 ${W} ${H}" role="img" aria-label="Le schéma des liens : qui influence qui">
         <defs>${Object.entries(SENS).map(([k, c]) => `<marker id="ls-fl-${k}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker>`).join('')}</defs>
@@ -296,7 +296,7 @@ export default {
       const cibles = [...tracks.map((_, i) => [String(i), `du disque ${i + 1}`]), ...lettres.map((l) => [`g${l}`, `du groupe ${l}`])];
       q('.liens').innerHTML = `<h3>Les liens : qui influence qui</h3>
         <div class="ls-palette" role="group" aria-label="Les déclencheurs : tire-en un vers un disque ou un groupe">${Object.entries(SOURCES).map(([k, [titre, label, aide]]) => `<button type="button" class="ls-src" data-src-chip="${k}" title="${titre} : ${aide}"><b>${label}</b>${titre.replace(/^(La |Le |Une |Ta |L’)/, '')}</button>`).join('')}</div>
-        <p class="muted small">Tire un <b>déclencheur</b> ou un disque vers sa cible : un disque, ou l’anneau d’un groupe pour tout le groupe. <span class="ls-leg"><i style="background:${SENS.baisse}"></i>vers le bas <i style="background:${SENS.monte}"></i>vers le haut · épaisse = forte</span></p>
+        <p class="muted small">Tire un <b>déclencheur</b> ou un disque vers sa cible : un disque, ou l’anneau d’un groupe pour tout le groupe. Touche un disque sans tirer : il passe en avant, en haut. <span class="ls-leg"><i style="background:${SENS.baisse}"></i>vers le bas <i style="background:${SENS.monte}"></i>vers le haut · épaisse = forte</span></p>
         ${schemaSVG()}
         ${liens.length ? `<ul class="li-liste">${liens.map((l, k) => `<li class="${k === lienChoisi ? 'sel' : ''}" data-lien-li="${k}"><span><b>${nomSource(l.src)}</b>${SOURCES[l.src] ? '' : ', à chacune de ses frappes,'} pousse <select class="li-param" data-lien-param="${k}" aria-label="Ce que le lien fait bouger">${Object.entries(PARAMS).map(([v, [lb]]) => `<option value="${v}" ${(l.param || 'volume') === v ? 'selected' : ''}>${lb}</option>`).join('')}</select> <b>${nomCible(l.cible)}</b> <button class="li-sens" data-lien-sens="${k}" style="--c:${SENS[l.sens]}" title="Inverser le sens">${verbe(l)}</button></span><input type="range" min="10" max="100" value="${Math.round(l.force * 100)}" data-lien-force="${k}" aria-label="Force du lien"><button class="icon-btn tiny" data-lien-x="${k}" aria-label="Retirer ce lien">×</button></li>`).join('')}</ul>` : ''}
         <details class="li-faire-d"><summary>Ou l’écrire en phrase</summary><div class="li-faire"><select data-li="src">${tracks.map((_, i) => `<option value="${i}">Le disque ${i + 1}, à chaque frappe,</option>`).join('')}${Object.entries(SOURCES).map(([k, [lb]]) => `<option value="${k}">${lb}</option>`).join('')}</select>
@@ -321,7 +321,7 @@ export default {
         if (!n) { const li = e.target.closest('[data-lien]'); lienChoisi = li ? +li.dataset.lien : -1; renderLiens(); return; }
         const { l } = noeuds(); const a = l.find((x) => x.id === n.dataset.noeud);
         if (a.type === 'g') { import('../ui.js').then((u) => u.toast('Un groupe reçoit des liens ; tire depuis un déclencheur ou un disque.')); return; }
-        trace = { src: a.id, x: a.x, y: a.y }; svg.setPointerCapture(e.pointerId); e.preventDefault();
+        trace = { src: a.id, x: a.x, y: a.y, x0: e.clientX, y0: e.clientY, noeud: true }; svg.setPointerCapture(e.pointerId); e.preventDefault();
       });
       // Depuis la barre des déclencheurs : la ligne part du bouton, même s'il est hors du schéma.
       q('.ls-palette').addEventListener('pointerdown', (e) => {
@@ -336,6 +336,8 @@ export default {
       svg.addEventListener('pointerup', (e) => finir(e));
       function finir(e) {
         if (!trace) return; const t = trace; trace = null; svg.querySelector('.ls-trace').setAttribute('d', '');
+        // Un simple toucher sur un disque (sans tirer) : il passe en avant, dans la grande fenêtre du haut.
+        if (t.noeud && Math.hypot(e.clientX - t.x0, e.clientY - t.y0) < 6 && /^\d+$/.test(t.src)) { focus = +t.src; renderTracks(); import('../ui.js').then((u) => u.toast(`Disque ${focus + 1} en avant, en haut : sa fréquence se règle à côté du cercle.`)); return; }
         const [x, y] = pt(e); const { l } = noeuds(); const b = nœudA(l, x, y);
         if (!b || b.id === t.src) return;
         if (SOURCES[b.id]) { import('../ui.js').then((u) => u.toast('Les déclencheurs influencent les autres ; rien ne les influence. Tire vers un disque ou un groupe.')); return; }

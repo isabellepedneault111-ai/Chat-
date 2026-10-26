@@ -61,6 +61,7 @@ export function nouveautesHTML() {
 export const VERSIONS = [
   { v: '0.24', quand: '2026-10-26', titre: 'Le schéma, en plus clair', items: [
     ['Les groupes se blottissent', ['Dans le schéma des liens, les disques d’un groupe sont <b>dans son anneau</b>. On vise l’anneau pour toucher tout le groupe, ou un disque à l’intérieur pour lui seul.']],
+    ['Toucher pour mettre en avant', ['Dans le schéma, touche un disque sans tirer, même dans un anneau : il passe <b>en avant</b> dans la grande fenêtre du haut, où sa fréquence se règle. Un halo le marque dans le schéma.']],
     ['Les déclencheurs dans une barre', ['Les déclencheurs (respiration, oscillation, hasard, chaos, voix, clavier, molette) attendent dans une barre compacte, au-dessus du schéma. On en tire un vers sa cible ; seuls ceux qu’on utilise apparaissent dans le schéma. Toute la place va aux disques et aux groupes.']],
   ] },
   { v: '0.23', quand: '2026-10-26', titre: 'Déclencheurs et paramètres', items: [
