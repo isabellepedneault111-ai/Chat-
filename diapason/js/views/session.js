@@ -10,6 +10,7 @@ import { audio, click } from '../audio.js';
 import { FR, mod12, chordName } from '../music.js';
 import { FORMATS, PHASES, EXERCICES, GRILLES, CIBLES, PLAN, memberColor } from '../duo.js';
 import { currentMonth, weekRhythm } from '../plan.js';
+import { VERDICTS, objectifSemaine } from '../objectifs.js';
 import { setLoop, toggleLoop, loopPlaying, setTempo } from './studio.js';
 import { startConsole, consoleState, onConsole, listOutputs, setClockOutput, clockState, setClockOffset } from '../console.js';
 import { esc, espaceGate, allSongs } from './carnet.js';
@@ -163,7 +164,7 @@ export default {
           <div>
             <p class="eyebrow">Session n° ${r.total + 1}${m ? ` · mois ${m}` : ''}</p>
             <h1>On joue.</h1>
-            <p class="muted">${m ? `Ce mois-ci : <b>${esc(PLAN[m - 1].titre)}</b>. ` : ''}Cette semaine : ${r.duo} / 2 sessions duo.</p>
+            <p class="muted">${m ? `Ce mois-ci : <b>${esc(PLAN[m - 1].titre)}</b>. ` : ''}Cette semaine : ${r.duo} / 2 sessions duo${objectifSemaine() ? `, et vous visez « ${esc(objectifSemaine())} »` : ''}.</p>
           </div>
         </div>
         ${depuisHTML()}
@@ -187,7 +188,7 @@ export default {
             <div class="chips">${CIBLES.map((c) => `<button class="chip ${setup.cible === c ? 'active' : ''}" data-cible="${esc(c)}">${esc(c)}</button>`).join('')}</div>
             ${CIBLE_INFO[setup.cible] ? `<p class="cible-info"><b>${esc(setup.cible)} :</b> ${CIBLE_INFO[setup.cible][0]}</p>` : ''}
             <div class="pas-row">
-              <label class="field col"><span>Ou à vos mots</span><input class="input" data-s="cible" maxlength="80" placeholder="Ex. : trouver l’intro de Fleuve gelé"></label>
+              <label class="field col"><span>Ou à vos mots</span><input class="input" data-s="cible" maxlength="80" value="${CIBLES.includes(setup.cible) ? '' : esc(setup.cible)}" placeholder="Ex. : trouver l’intro de Fleuve gelé"></label>
               <label class="field col"><span>Pour quel morceau? (facultatif)</span><select data-s="song"><option value="">Idées libres</option>${songs.map((x) => `<option ${x === setup.song ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></label>
             </div>
           </li>
@@ -316,8 +317,10 @@ export default {
           <div class="trace-form">
             <p class="trace-q">${esc(espace.me)}, le feu de cette séance?</p>
             <div class="feu" role="radiogroup" aria-label="Le feu de la séance">${[1, 2, 3, 4, 5].map((n) => `<button role="radio" aria-checked="${mine.feu === n}" data-feu="${n}" class="${mine.feu >= n ? 'on' : ''}" aria-label="${n} sur 5">${FLAME()}</button>`).join('')}</div>
+            ${d.cible ? `<p class="trace-q">La cible « ${esc(d.cible)} », pour toi?</p>
+            <div class="ob-v" role="radiogroup" aria-label="La cible de la séance">${VERDICTS.map(([k, t]) => `<button role="radio" aria-checked="${mine.cible === k}" class="${mine.cible === k ? 'on' : ''} v-${k}" data-cible-v="${k}">${t}</button>`).join('')}</div>` : ''}
             <label class="field col"><span>Un mot pour la séance</span><input class="input" data-a-trace="mot" maxlength="40" value="${esc(mine.mot || '')}" placeholder="frissons, laborieux, enfin…"></label>
-            ${Object.entries(d.traces || {}).filter(([w]) => w !== espace.me).map(([w, t]) => `<p class="trace-other" style="--c:${memberColor(w)}"><b>${esc(w)}</b> ${'●'.repeat(t.feu || 0)} ${t.mot ? `« ${esc(t.mot)} »` : ''}</p>`).join('')}
+            ${Object.entries(d.traces || {}).filter(([w]) => w !== espace.me).map(([w, t]) => `<p class="trace-other" style="--c:${memberColor(w)}"><b>${esc(w)}</b> ${'●'.repeat(t.feu || 0)} ${t.cible ? `cible : ${(VERDICTS.find((v) => v[0] === t.cible) || [, ''])[1].toLowerCase()} ` : ''}${t.mot ? `« ${esc(t.mot)} »` : ''}</p>`).join('')}
           </div>
           <p class="muted small">Tout est gardé : le résumé, vos flammes, vos mots, le debrief et les prises. Vous les retrouvez dans « Notre bilan ».</p>
           <button class="btn primary big" data-a="end">Ranger la séance</button></section>`;
@@ -453,6 +456,12 @@ export default {
       if (a === 'rec') recordTake(e.target.closest('[data-a]'));
       const xo = e.target.closest('[data-exo]');
       if (xo) import('../exercice.js').then((m) => m.faireExercice(xo.dataset.exo, { garderBoucle: true }));
+      const cv = e.target.closest('[data-cible-v]');
+      if (cv) {
+        cv.parentElement.querySelectorAll('button').forEach((b) => { b.classList.toggle('on', b === cv); b.setAttribute('aria-checked', b === cv); });
+        await patch((d) => ({ traces: { ...(d.traces || {}), [espace.me]: { ...(d.traces?.[espace.me] || {}), cible: cv.dataset.cibleV } } })).catch(() => {});
+        return;
+      }
       const feu = e.target.closest('[data-feu]');
       if (feu) {
         const n = +feu.dataset.feu;

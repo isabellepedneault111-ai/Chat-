@@ -6,7 +6,7 @@ import { getStore } from '@netlify/blobs';
 export const config = { path: ['/api/espace', '/api/espace/*'] };
 
 const ID = /^[A-Za-z0-9_-]{8,40}$/;
-const TYPES = new Set(['carte', 'jeu', 'trace', 'note', 'texte', 'paroles', 'audio', 'bilan', 'evaluation', 'essai', 'parcours', 'lien', 'session', 'profil', 'bravo', 'image', 'chanson', 'son']);
+const TYPES = new Set(['carte', 'jeu', 'trace', 'note', 'texte', 'paroles', 'audio', 'bilan', 'evaluation', 'essai', 'parcours', 'lien', 'session', 'profil', 'bravo', 'image', 'chanson', 'son', 'semaine']);
 const MAX_ENTRY = 300 * 1024; // 300 Ko de JSON par entrée
 const MAX_PART = 4 * 1024 * 1024; // morceaux audio de 4 Mo (limite des fonctions : 6 Mo)
 const MAX_PARTS = 25; // ~100 Mo par audio

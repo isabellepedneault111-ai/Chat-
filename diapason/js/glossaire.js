@@ -49,7 +49,7 @@ const T = [
   [/\bdebrief\b/i, 'Debrief', 'Le petit retour à la fin : ce qu’on visait, ce qu’on a entendu, ce qu’on garde pour la prochaine fois.'],
 ];
 const ONGLETS = {
-  home: 'Le plan : où on en est, la prochaine chose à faire, et ce que l’autre a fait depuis ta dernière visite.',
+  home: 'L’accueil : ce qu’on fait aujourd’hui (le mois, l’objectif de la semaine, la prochaine séance) et ce que l’autre a fait depuis ta dernière visite. La pastille compte ce qui t’attend.',
   carnet: 'Le mur : toutes nos idées. Plus une idée avance (brute → en chantier → presque prête → prête), plus elle s’approche du centre.',
   session: 'Une séance guidée, à deux ou seul : étape par étape, avec la musique, et toujours une prise à la fin.',
   relais: 'Le relais : tu envoies un son, l’autre répond par-dessus quand il veut. Couche après couche.',
@@ -57,6 +57,7 @@ const ONGLETS = {
   studio: 'Jouer : un beat, nos propres accords, où improviser sur le clavier, les prises et la scène.',
   elan: 'Notre élan : la tresse de nos deux fils dans le temps.',
   voix: 'La voix : ton clavier coache ma voix, la tessiture, les exercices de justesse.',
+  labo: 'Le labo : des disques qui tournent selon des nombres, qu’on regroupe et qu’on relie ; et La cathédrale, qui en fait une pièce entière.',
 };
 
 const SAUTER = new Set(['H1', 'A', 'BUTTON', 'SELECT', 'OPTION', 'TEXTAREA', 'INPUT', 'SCRIPT', 'STYLE', 'CANVAS', 'SVG', 'CODE', 'LABEL']);
@@ -108,7 +109,7 @@ export function installerGlossaire(vue) {
   passe();
   const sur = (e) => {
     const m = e.target.closest?.('.mot-aide'); if (m) { montrer(m, m.dataset.t, m.dataset.d); return; }
-    const o = e.target.closest?.('#nav a[data-id]'); if (o && ONGLETS[o.dataset.id]) { montrer(o, o.textContent.trim(), ONGLETS[o.dataset.id]); return; }
+    const o = e.target.closest?.('#nav a[data-id]'); if (o && ONGLETS[o.dataset.id]) { montrer(o, (o.querySelector('b')?.textContent || o.textContent).trim(), ONGLETS[o.dataset.id]); return; }
     const ic = e.target.closest?.('[data-aide]'); if (ic) montrer(ic, ic.getAttribute('aria-label') || '', ic.dataset.aide);
   };
   const hors = (e) => { if (e.target.closest?.('.mot-aide, #nav a[data-id], [data-aide]')) cacher(); };

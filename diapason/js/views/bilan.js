@@ -10,6 +10,7 @@ import { esc, espaceGate } from './carnet.js';
 import { carte, carteHTML, notesMagiques } from './accord.js';
 import { nameFR } from '../music.js';
 import { toast } from '../ui.js';
+import { historiqueHTML, VERDICTS } from '../objectifs.js';
 
 const DAY = 864e5;
 const fmt = (t) => new Date(t).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' });
@@ -52,7 +53,7 @@ function traceHTML(e) {
   return `<article class="trace">
     <header><b>${new Date(d.doneAt).toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long' })}</b><span>${esc((f?.label || d.format).split(' · ')[0])} · ${sessMin(e)} min jouées${takes ? ` · ${takes} prise${takes > 1 ? 's' : ''}` : ''}</span></header>
     ${d.cible ? `<p class="trace-cible">Cible : <b>${esc(d.cible)}</b>${d.song ? ` · ${esc(d.song)}` : ''}</p>` : ''}
-    <div class="trace-who">${Object.entries(d.traces || {}).map(([w, t]) => `<p style="--c:${memberColor(w)}"><b>${esc(w)}</b>${flames(t.feu || 0)}${t.mot ? `<em>« ${esc(t.mot)} »</em>` : ''}</p>`).join('') || '<p class="muted small">Pas de flammes notées pour cette séance.</p>'}</div>
+    <div class="trace-who">${Object.entries(d.traces || {}).map(([w, t]) => `<p style="--c:${memberColor(w)}"><b>${esc(w)}</b>${flames(t.feu || 0)}${t.cible ? `<span class="ob-pastille v-${t.cible}">cible ${(VERDICTS.find((v) => v[0] === t.cible) || [, ''])[1].toLowerCase()}</span>` : ''}${t.mot ? `<em>« ${esc(t.mot)} »</em>` : ''}</p>`).join('') || '<p class="muted small">Pas de flammes notées pour cette séance.</p>'}</div>
     ${db.intention || db.entendu || db.ecart || db.prochaine ? `<dl class="trace-db">${[['intention', 'On voulait'], ['entendu', 'On a entendu'], ['ecart', 'L’écart'], ['prochaine', 'Prochaine cible']].filter(([k]) => db[k]).map(([k, l]) => `<dt>${l}</dt><dd>${esc(db[k])}</dd>`).join('')}</dl>` : ''}
     ${takes ? '<a class="btn small" href="#/carnet">Réécouter les prises →</a>' : ''}
   </article>`;
@@ -176,7 +177,7 @@ export default {
       const tab = TABS.find((t) => t[0] === location.hash.split('/')[2])?.[0] || 'semaine';
       const tabs = `<div class="seg-tabs b-tabs" role="tablist">${TABS.map(([id, l]) => `<a role="tab" href="#/bilan/${id}" aria-selected="${id === tab}">${l}</a>`).join('')}</div>`;
       if (tab !== 'mois') {
-        el.innerHTML = `<div class="mod-head"><div><p class="eyebrow">Notre bilan</p><h1>${tab === 'seance' ? 'Les traces de nos séances' : 'Notre semaine'}</h1><p class="muted">${tab === 'seance' ? 'Chaque séance laisse sa trace : le feu, un mot, ce qu’on voulait, ce qu’on a entendu, la prochaine cible.' : 'Le rythme, le feu et ce qui s’est passé entre les séances. Une seule chose à viser ensuite.'}</p></div></div>${tabs}${tab === 'seance' ? seanceHTML() : semaineHTML(espace.meta.members || MEMBERS)}`;
+        el.innerHTML = `<div class="mod-head"><div><p class="eyebrow">Notre bilan</p><h1>${tab === 'seance' ? 'Les traces de nos séances' : 'Notre semaine'}</h1><p class="muted">${tab === 'seance' ? 'Chaque séance laisse sa trace : le feu, un mot, ce qu’on voulait, ce qu’on a entendu, la prochaine cible.' : 'Le rythme, le feu et ce qui s’est passé entre les séances. Une seule chose à viser ensuite.'}</p></div></div>${tabs}${tab === 'seance' ? seanceHTML() : `${semaineHTML(espace.meta.members || MEMBERS)}${historiqueHTML()}`}`;
         return;
       }
       const mem = espace.meta.members || MEMBERS;

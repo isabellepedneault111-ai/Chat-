@@ -204,7 +204,7 @@ export default {
           <p class="eyebrow">Ambiances</p>
           <h1>Partir ailleurs</h1>
           <p class="muted">Choisis un lieu : l’app le fait sonner. Frog peut en prendre les commandes avec n’importe quel clavier MIDI. Écris dedans, chante dedans, puis lance-le à l’autre.</p>
-          ${espace.meta?.vision?.intention ? `<p class="small amb-int">Notre intention d’album : <b>« ${esc(espace.meta.vision.intention)} »</b></p>` : ''}
+          ${espace.meta?.vision?.intention ? `<p class="small amb-int">Notre cap : <b>« ${esc(espace.meta.vision.intention)} »</b></p>` : ''}
         </div>
       </div>
       <div class="amb-pick" role="list">${AMB.map((a) => `<button class="amb-card" data-amb="${a.id}" style="--a:${a.col[0]};--b:${a.col[1]}" aria-pressed="${a === cur}"><b>${esc(a.name)}</b><small>${a.mots.slice(0, 3).map(esc).join(' · ')}</small></button>`).join('')}</div>

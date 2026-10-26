@@ -228,7 +228,7 @@ export default {
       for (let i = 1; i < trail.length; i++) {
         const a = trail[i - 1]; const b = trail[i];
         if (b.t - a.t > 0.2) continue;
-        ctx.strokeStyle = b.hit ? '#f1cf4e' : css('--zaza') || '#b53c0a';
+        ctx.strokeStyle = b.hit ? '#f1cf4e' : css('--zaza') || '#b04e00';
         ctx.beginPath();
         ctx.moveTo(w - ((t - a.t) / WINDOW) * w, y(a.m));
         ctx.lineTo(w - ((t - b.t) / WINDOW) * w, y(b.m));

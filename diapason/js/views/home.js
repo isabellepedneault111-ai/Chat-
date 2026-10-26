@@ -15,6 +15,7 @@ import { aVoir } from '../suivi.js';
 import { mesTaches } from '../taches.js';
 import { attendMoi } from '../elan.js';
 import { pieceSVG, studioActuel, piece } from '../piece.js';
+import { semaineHTML, echelleHTML, brancherObjectifs } from '../objectifs.js';
 // Tout en haut de l'accueil : ce que l'autre a ajouté et que je n'ai pas vu. C'est là que mène la pastille de Plan.
 const nouvellesBandeau = () => { const n = aVoir(); const t = mesTaches(); if (!n.length && !t.length) return ''; const tot = n.length + t.length;
   const quoi = [n.length ? `${n.length} ${n.length > 1 ? 'nouvelles' : 'nouvelle'} de ${esc(n[0].author)} à voir` : '', t.length ? `${t.length} chose${t.length > 1 ? 's' : ''} à faire pour toi : ${t.slice(0, 2).map((x) => esc(x.titre)).join(', ')}${t.length > 2 ? '…' : ''}` : ''].filter(Boolean).join(' · ');
@@ -35,7 +36,7 @@ function visionHTML(v, mem) {
   const refs = (v.style || '').split(/,\s*/).filter(Boolean).map((r) => ({ r, a: arts.find((a) => a.nom === r) }));
   const vide = '<span class="vi-vide">à décider ensemble</span>';
   return `<div class="vi">
-    ${v.intention ? `<blockquote class="vi-intention"><small>Ce qu’on veut que les gens ressentent</small>${esc(v.intention)}</blockquote>` : `<blockquote class="vi-intention"><small>Ce qu’on veut que les gens ressentent</small>${vide}</blockquote>`}
+    ${v.ressenti ? `<blockquote class="vi-intention"><small>Ce qu’on veut que les gens ressentent</small>${esc(v.ressenti)}</blockquote>` : `<p class="vi-ressenti"><small>Ce qu’on veut que les gens ressentent</small>${vide} <span class="muted small">(notre cap des six mois, lui, est en haut de la page)</span></p>`}
     <div class="vi-grille">
       <section class="vi-case vi-ton"><small>Nos tonalités</small>${clavier}<b>${v.tonalite ? esc(v.tonalite) : vide}</b></section>
       <section class="vi-case vi-genre"><small>Notre genre</small><b>${v.genre ? esc(v.genre).replace(/ · /g, '<i>·</i>') : vide}</b></section>
@@ -185,9 +186,8 @@ export default {
       const start = planStart();
       const head = `
         <header class="masthead">
-          <h1 class="display"><img class="mast-logo" src="img/flip.svg" alt="FLIP"></h1>
+          <h1 class="mast-app"><b>Diapason Labo</b> <span>le laboratoire de FLIP</span></h1>
           <canvas class="mast-wave" aria-hidden="true"></canvas>
-          <p class="mast-app"><b>Diapason Labo</b> <span>le laboratoire de FLIP</span></p>
         </header>`;
       const mem0 = espace.meta.members || MEMBERS;
       const portraits = mem0.map((m) => ({ m, ok: !!profileOf(m)?.doneAt }));
@@ -226,6 +226,7 @@ export default {
             <p class="sortie">Sortie visée : <b>${esc(goal.sortie)}</b></p>
             <div class="meter-big" style="--p:${Math.min(100, Math.round((got / goal.cible) * 100))}"><i></i><span class="mono">${Math.min(got, goal.cible)} / ${goal.cible}</span></div>
             <cite>${goal.src}</cite>
+            ${semaineHTML()}
           </div>
           <a class="next-card" href="#/session">
             <p class="tape red">${live ? 'En direct' : 'Prochaine séance'}</p>
@@ -272,6 +273,7 @@ export default {
       const lm = luneCourante(espace.meta);
       return `<a class="retour-plan" href="#/">← Accueil</a><div class="mod-head"><div><p class="eyebrow">Notre projet</p><h1>Ce qu’on bâtit, à deux.</h1>
         <p class="muted">Le cap, les intentions, la vision, les inspirations, et ce que nos traces disent de nous. L’accueil, lui, garde le quotidien.</p></div></div>
+        <section class="panel pj-obj"><h2>Nos objectifs, du plus loin au plus près</h2>${echelleHTML(v, m, goal)}</section>
         <section class="panel pj-plan"><h2>Le plan des six mois</h2>
           <ol class="pj-mois">${PLAN.map((g, i) => `<li class="${i + 1 === m ? 'now' : i + 1 < m ? 'fait' : ''}"><span class="mono">Mois ${i + 1}</span><b>${esc(g.titre)}</b><small>${esc(g.sortie)}</small></li>`).join('')}</ol>
           <p class="small">Ce mois-ci : <b>${Math.min(got, goal.cible)} / ${goal.cible}</b> · ${esc(goal.src)}</p></section>
@@ -333,6 +335,7 @@ export default {
         </section>`;
     }
 
+    brancherObjectifs(el, () => render());
     el.addEventListener('submit', async (e) => {
       if (!e.target.classList.contains('lune-form')) return;
       e.preventDefault();

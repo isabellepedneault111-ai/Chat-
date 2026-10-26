@@ -21,7 +21,7 @@ export function lune(date = new Date()) {
 export const CYCLE = [
   { temps: 'semer', phase: 'Créer', quand: 'nouvelle lune', periode: 'les jours de la nouvelle lune', geste: 'Générer sans juger : impro, mumble, idées brutes. Et poser chacun son intention du cycle.', outils: [['relais', 'Le relais'], ['ecrire', 'Le mumble'], ['labo', 'Le labo'], ['jeux', 'Le grimoire']] },
   { temps: 'grandir', phase: 'Façonner', quand: 'lune croissante', periode: 'les deux semaines où la lune grossit', geste: 'Développer : accords, structure, paroles posées sur la musique.', outils: [['studio?tab=chanson', 'Nos chansons'], ['placer', 'Placer mes paroles'], ['oreille', 'L’oreille'], ['session', 'Une séance']] },
-  { temps: 'entendre', phase: 'Produire', quand: 'pleine lune', periode: 'les jours de la pleine lune', geste: 'Fixer et faire entendre : une prise complète, d’un bout à l’autre, à faire écouter à quelqu’un.', outils: [['studio?tab=voix', 'Les prises'], ['session?cible=La%20fin%20d%E2%80%99un%20morceau', 'Séance de prise'], ['cathedrale', 'La cathédrale']] },
+  { temps: 'entendre', phase: 'Produire', quand: 'pleine lune', periode: 'les jours de la pleine lune', geste: 'Fixer et faire entendre : une prise courte, d’un bout à l’autre. Soixante secondes suffisent, un original ou un cover à notre sauce, qu’on fait écouter à une personne. Pas prêts? La pleine lune revient dans un mois.', outils: [['session?cible=60%20secondes%20d%E2%80%99un%20cover%20%C3%A0%20notre%20sauce', '60 s d’un cover à notre sauce'], ['studio?tab=voix', 'Les prises'], ['session?cible=La%20fin%20d%E2%80%99un%20morceau', 'Séance de prise'], ['cathedrale', 'La cathédrale']] },
   { temps: 'laisser', phase: 'Trier et relire', quand: 'lune décroissante', periode: 'la dernière semaine, quand la lune décroît', geste: 'Trier le mur, garder les perles, et relire son intention du cycle : tenue, transformée ou lâchée.', outils: [['carnet', 'Le mur'], ['coffre', 'Le coffre'], ['elan', 'Notre élan'], ['bilan', 'Le bilan']] },
 ];
 // Quand change le prochain temps (pour dire « jusqu'au 5 novembre »).
@@ -36,7 +36,7 @@ export const numeroLune = (debutPlan, date = new Date()) => (debutPlan ? Math.ma
 export const TEMPS = {
   semer: ['le temps de semer', 'Posez chacun une intention pour ce cycle de 29 jours.', ''],
   grandir: ['le temps de faire grandir', 'Prenez une idée du mur et donnez-lui trois variations.', '#/carnet'],
-  entendre: ['le temps de faire entendre', 'Une prise complète, d’un bout à l’autre, à faire écouter à quelqu’un.', '#/session'],
+  entendre: ['le temps de faire entendre', 'Une prise courte, d’un bout à l’autre (60 secondes, un original ou un cover à notre sauce), à faire écouter à une personne.', '#/session'],
   laisser: ['le temps de laisser aller', 'Triez le mur : ce qui ne sert plus va à la corbeille, le reste monte d’une étape.', '#/carnet'],
 };
 

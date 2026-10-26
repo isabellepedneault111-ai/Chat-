@@ -126,7 +126,8 @@ export const VISION_FIELDS = [
   ['instrumentation', 'Instrumentation', 'Ex. : voix, guitare acoustique, piano, nappes et délais'],
   ['genre', 'Genre', 'Ex. : folk électro'],
   ['style', 'Style, références', 'Ex. : intime, cinématographique'],
-  ['intention', 'Ce qu’on veut que les gens ressentent', 'Ex. : l’hiver, mais avec de la lumière dedans'],
+  ['intention', 'Notre cap, dans six mois', 'Ex. : deux chansons originales qu’on maîtrise, enregistrées'],
+  ['ressenti', 'Ce qu’on veut que les gens ressentent', 'Ex. : l’hiver, mais avec de la lumière dedans'],
 ];
 
 // « Pourquoi ça marche » : ce que dit la recherche, section par section.
