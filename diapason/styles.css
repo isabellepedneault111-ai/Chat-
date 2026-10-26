@@ -3234,3 +3234,15 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .gc-zone { margin-left: 0 !important; }
 @media (max-width: 760px) { .gc-zone { --gc-lab: 70px; } }
 .brand small { white-space: nowrap; }
+/* Le mandat en mots-clés : l'icône et le titre sur une ligne, les mots-clés dessous, alignés à gauche,
+   la petite marque braise dans le texte (pas dans la marge), sans aucun retrait. */
+.md-case:has(> ul.md-mots) { display: grid; grid-template-columns: 30px minmax(0, 1fr); grid-template-areas: "ic ti" "mo mo"; gap: 4px 8px; align-items: center; align-content: start; }
+.md-case:has(> ul.md-mots) svg { grid-area: ic; width: 30px; height: 30px; flex: none; }
+.md-case:has(> ul.md-mots) > b { grid-area: ti; }
+.md-case ul.md-mots { grid-area: mo; margin: 2px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: .84rem; line-height: 1.35; }
+.md-case ul.md-mots > li { position: static; }
+.md-case ul.md-mots > li::before { position: static; display: inline-block; vertical-align: middle; margin: 0 5px 2px 0; width: 7px; height: 2px; }
+/* L'accueil : « Diapason Labo » en grand, le logo FLIP plus discret */
+.view-home .mast-logo { height: clamp(46px, 7vw, 76px); }
+.view-home .mast-app { font-size: clamp(2.2rem, 5.4vw, 4.2rem); line-height: 1.02; margin-top: 6px; letter-spacing: -.02em; }
+.view-home .mast-app span { display: block; font-size: .36em; margin: 4px 0 0 2px; letter-spacing: 0; }

@@ -32,6 +32,38 @@ const MANDATS = {
   bilan: ['Voir où on est rendus.', 'Les heures jouées, les séances, les progrès, la prochaine cible.', 'La motivation, et le plan.'],
   evolution: ['Voir nos courbes dans le temps.', 'Suivre la régularité, la justesse, les idées qui avancent.', 'Le bilan et le plan.'],
 };
+// Les mêmes trois cases, en mots-clés : ce qu'on lit d'un coup d'œil (la phrase complète reste au survol).
+const MOTS = {
+  '': [['où on en est', 'quoi faire maintenant'], ['par où commencer', 'lancer une séance', 'ce que l’autre a fait', 'nos intentions du cycle'], ['chaque séance', 'le plan qui s’ajuste']],
+  carnet: [['toutes nos idées', 'les faire avancer'], ['ajouter une idée, un son, un lien', 'monter d’étape', 'faire se rencontrer deux idées'], ['le plan', 'nos chansons']],
+  session: [['jouer ensemble, guidés'], ['où, combien de temps', 'sur quels accords', 'suivre les étapes', 'une prise, un debrief'], ['le plan', 'la prochaine cible']],
+  relais: [['créer chacun son tour', 'à distance'], ['envoyer un son', 'une consigne', 'répondre par-dessus'], ['le mur', 'nos nouvelles']],
+  ecrire: [['écrire, seul ou à deux', 'des paroles qui se chantent'], ['le journal', 'le mumble', 'l’atelier', 'Placer mes paroles', 'rimes et synonymes'], ['le plan', 'nos chansons']],
+  studio: [['construire la musique'], ['le beat', 'tes propres accords', 'une chanson entière', 'une prise', 'improviser au clavier'], ['les séances', 'le mur', 'la pochette']],
+  oreille: [['comprendre une pièce', 'en quelques secondes'], ['tempo, tonalité', 'les parties', 'la boucle', 'les accords', 'ce qui brille'], ['Jouer', 'le profil de la voix']],
+  placer: [['des paroles sur une musique'], ['syllabes et accents', '7 placements', 'le guide vocal'], ['le journal', 'nos chansons']],
+  ames: [['qui on est, ensemble'], ['ce qui nous unit', 'nos frottements féconds', 'nos pistes hors sentier'], ['rien à remplir']],
+  passage: [['fermer un cycle à deux'], ['relire', 'ce que le cycle a donné', 'l’idée qu’on emporte', 'semer la suivante'], ['notre cycle', 'nos lunes passées']],
+  cathedrale: [['une œuvre d’orchestre', 'avec quelques nombres'], ['la clé de voûte', 'les disques', 'la lumière', 'ce que Frog branche'], ['le mur', 'le WAV, le MIDI']],
+  elan: [['le mouvement du duo'], ['la tresse', 'qui lance, qui répond', 'ce qui circule'], ['le plan', 'nos nouvelles']],
+  nouvelles: [['ce que l’autre a ajouté'], ['cocher vu', 'j’ai fait ça', 'ouvrir chaque nouvelle'], ['ce que l’autre voit de toi']],
+  materiel: [['ton studio, tel qu’il est'], ['détecter tes appareils', 'placer comme chez toi', 'photographier', 'tendre le filet'], ['le filet', 'la cathédrale', 'l’accueil']],
+  arbre: [['l’architecture de l’app'], ['les fichiers', 'la généalogie', 'le journal des versions', 'les sons'], ['rien : on admire']],
+  depart: [['d’où on part'], ['ton étape 1', 'notre portrait', 'notre vision'], ['le plan', 'Nos deux âmes', 'les tonalités']],
+  accord: [['chanter juste'], ['un accord au clavier', 'la voix en direct'], ['la carte de nos accords', 'le profil de la voix']],
+  tessiture: [['l’étendue de ta voix'], ['du grave à l’aigu', 'ton type de voix'], ['les tonalités conseillées', 'le guide vocal']],
+  gym: [['échauffer la voix'], ['exercices courts', 'selon ta tessiture'], ['ta voix, séance après séance']],
+  miroir: [['voir sa voix'], ['chanter', 'la hauteur dessinée'], ['la justesse']],
+  labo: [['un rythme devient une note'], ['les disques', 'les groupes', 'les liens', 'la lampe'], ['Jouer', 'la cathédrale']],
+  paroles: [['un texte qui se chante'], ['les syllabes', 'rimes et synonymes', 'les passages incertains'], ['nos chansons', 'le relais']],
+  atelier: [['écrire, guidé, 25 minutes'], ['délier la main', 'les sens', 'une contrainte'], ['le journal', 'nos paroles']],
+  jeux: [['lancer l’écriture'], ['tirer une carte', 'cadavre exquis', 'notre champ de mots'], ['le journal', 'nos paroles']],
+  ambiances: [['partir ailleurs'], ['une ambiance sonore', 'écrire dedans'], ['le journal', 'une séance']],
+  coffre: [['nos meilleurs moments'], ['relire', 'réécouter'], ['la mémoire du duo', 'le bilan']],
+  etincelles: [['aucune idée perdue'], ['noter de n’importe où'], ['le mur', 'nos idées pour le labo']],
+  bilan: [['où on est rendus'], ['heures, séances', 'progrès', 'la prochaine cible'], ['la motivation', 'le plan']],
+  evolution: [['nos courbes'], ['régularité', 'justesse', 'idées qui avancent'], ['le bilan', 'le plan']],
+};
 // Trois petites images, une par case : la cible (ça sert à), la main (tu peux), les racines (ça nourrit).
 const ICONES = [
   '<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="16"/><circle cx="20" cy="20" r="10"/><circle cx="20" cy="20" r="3.5" class="pl"/><path d="M33 7 21 19M33 7v6M33 7h-6"/></svg>',
@@ -67,7 +99,7 @@ export function installerSommaire(vue) {
     const m = MANDATS[id];
     if (m && tete) {
       const box = document.createElement('div'); box.className = `mandat no-aide ${replie() ? 'replie' : ''}`;
-      box.innerHTML = ['Ça sert à', 'Tu peux', 'Ça nourrit'].map((t, i) => `<div class="md-case">${ICONES[i]}<div><b>${t}</b><ul class="${POINTS(m[i]).length > 3 ? 'md-2col' : ''}">${POINTS(m[i]).map((x) => `<li>${x.replace(/\.$/, '')}</li>`).join('')}</ul></div></div>`).join('')
+      box.innerHTML = ['Ça sert à', 'Tu peux', 'Ça nourrit'].map((t, i) => { const mc = MOTS[id]?.[i] || POINTS(m[i]).map((x) => x.replace(/\.$/, '')); return `<div class="md-case" title="${m[i].replace(/"/g, '&quot;')}">${ICONES[i]}<b>${t}</b><ul class="md-mots">${mc.map((x) => `<li>${x}</li>`).join('')}</ul></div>`; }).join('')
         + `<button type="button" class="md-plier" data-md="plier" aria-label="${replie() ? 'Déplier' : 'Replier'} le mandat de la page">${replie() ? 'À quoi sert cette page ▾' : '▴'}</button>`;
       tete.after(box);
     }

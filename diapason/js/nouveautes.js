@@ -59,6 +59,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.28', quand: '2026-10-26', titre: 'En mots-clés', items: [
+    ['Ça sert à, Tu peux, Ça nourrit', ['Sur chaque page, les trois cases du haut sont en <b>mots-clés</b>, alignés à gauche, sans retrait. La phrase complète reste au survol de chaque case.']],
+    ['Diapason Labo, en grand', ['Sur l’accueil, <b>Diapason Labo</b> est maintenant le grand titre ; le logo FLIP, au-dessus, est plus discret.']],
+  ] },
   { v: '0.27', quand: '2026-10-26', titre: 'Le grand ménage des bords', items: [
     ['Rien ne colle plus au bord', ['Les cartes des disques du labo : la rangée − 2 + M × débordait dans la marge ; « choisir » passe sous le cercle du disque, et chaque carte garde de l’air à droite, à toutes les largeurs d’écran.', 'L’Empreinte : la « zone commune » dépassait de l’écran (on pouvait glisser la page de côté). Corrigé.', 'Une vérification automatique passe maintenant sur toutes les pages, sur téléphone, tablette et ordinateur, à la recherche de ce qui déborde ou colle au bord.']],
     ['Un accueil plus direct', ['La phrase « Six mois. Deux musiciens… » et la ligne des rôles sont parties : l’accueil commence par le labo.']],
