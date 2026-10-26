@@ -4,6 +4,8 @@ import { autoCanvas, animate, css, keyboard, store } from '../ui.js';
 import { nameFR, ftom, mtof, clamp } from '../music.js';
 import { RATIO_PRESETS } from '../data.js';
 import { lampeHTML, brancherLampe } from '../lampe.js';
+import { onNotes, onCC, detecter } from '../materiel.js';
+import { mic } from '../audio.js';
 
 const FMIN = 0.5;
 const FMAX = 880;
@@ -182,7 +184,7 @@ export default {
     }
 
     function tracksChanged() {
-      liens = liens.filter((l) => (l.src === 'souffle' || +l.src < tracks.length) && (l.cible.startsWith('g') ? tracks.some((t) => t.g === l.cible.slice(1)) : +l.cible < tracks.length));
+      liens = liens.filter((l) => (SOURCES[l.src] || +l.src < tracks.length) && (l.cible.startsWith('g') ? tracks.some((t) => t.g === l.cible.slice(1)) : +l.cible < tracks.length));
       store.set('laboCle', tracks.map((t) => t.n)); // la clé de voûte de La cathédrale
       realPhase = tracks.map(() => 0);
       hits = tracks.map(() => []);
@@ -203,7 +205,7 @@ export default {
         <li class="track ${t.muted ? 'muted' : ''} ${choisis.has(i) ? 'choisi' : ''} ${t.g ? 'en-groupe' : ''}" style="--c:${colors[i]};--g:${GROUPES[t.g] || 'transparent'}">
           <button class="tr-pick" data-tr="pick" data-i="${i}" aria-pressed="${choisis.has(i)}" aria-label="Choisir le disque ${i + 1}">${disqueMini(t.n, colors[i])}</button>
           <div class="tr-corps">
-            <div class="tr-tete"><button class="track-name tr-haut ${i === focus ? 'on' : ''}" data-focus="${i}" title="Mettre ce disque en avant, en haut">Disque ${i + 1}${i === focus ? ' ▲' : ''}</button>${t.g ? `<span class="tr-g" style="--g:${GROUPES[t.g]}">groupe ${t.g}</span>` : ''}</div>
+            <div class="tr-tete"><button class="track-name tr-haut ${i === focus ? 'on' : ''}" data-focus="${i}" title="Mettre ce disque en avant, en haut">Disque ${i + 1}${i === focus ? ' ▲' : ''}</button>${t.g ? `<span class="tr-g" style="--g:${GROUPES[t.g]}">groupe ${t.g}</span>` : `<label class="tr-choisir"><input type="checkbox" data-tr="pick" data-i="${i}" ${choisis.has(i) ? 'checked' : ''}> choisir</label>`}</div>
             <div class="tr-regl">
               <span class="stepper">
                 <button class="icon-btn tiny" data-tr="minus" data-i="${i}" aria-label="Moins de bosses">−</button>
@@ -226,7 +228,20 @@ export default {
     // (sidechain) de la musique électronique : la grosse caisse fait de la place aux autres.
     let liens = [];
     const nomCible = (c) => (c.startsWith('g') ? `du groupe ${c.slice(1)}` : `du disque ${+c + 1}`);
-    const nomSource = (src) => (src === 'souffle' ? 'la respiration lente' : `le disque ${+src + 1}`);
+    // Les déclencheurs qui ne sont pas des disques : ceux qu'on retrouve sur tous les synthés modulaires (oscillations
+    // lentes ou rapides, hasard, enveloppe d'une voix, clavier, molette) et un vraiment déjanté : le chaos.
+    const SOURCES = {
+      souffle: ['La respiration lente', '∿', 'monte et descend sur quatre tours'],
+      vibrato: ['Une oscillation rapide', '≈', 'six fois par seconde : vibrato, trémolo'],
+      hasard: ['Le hasard', '?', 'une nouvelle valeur à chaque battement du disque 1'],
+      chaos: ['Le chaos', '✶', 'jamais deux fois pareil, pourtant pas du hasard (suite logistique)'],
+      voix: ['Ta voix au micro', '◉', 'plus tu chantes fort, plus ça bouge (allume MICRO en haut)'],
+      clavier: ['Le clavier MIDI', '♪', 'chaque note jouée, plus fort si tu frappes fort'],
+      molette: ['La molette du clavier', '◐', 'la molette de modulation (CC 1)'],
+    };
+    const etatSrc = { hb: -1, hv: 0, cb: -1, cv: 0.37, midiT: -9, midiV: 0, cc: 0 };
+    const nomSource = (src) => (SOURCES[src] ? SOURCES[src][0].replace(/^./, (c) => c.toLowerCase()) : `le disque ${+src + 1}`);
+    const offMidi = [onNotes((k, n, v, on) => { if (on) { etatSrc.midiT = audio().currentTime; etatSrc.midiV = v / 127; } }), onCC((k, num, val) => { if (num === 1) etatSrc.cc = val / 127; })];
     // Le schéma : chaque disque, chaque groupe et la respiration sont des nœuds ; chaque lien, une flèche (orange :
     // fait baisser ; vert : fait monter ; plus épaisse = plus forte). On tire d'un nœud à un autre pour créer un lien ;
     // on touche une flèche pour la choisir (changer son sens, sa force, la retirer).
@@ -234,10 +249,12 @@ export default {
     const SENS = { baisse: '#d55e00', monte: '#009e73' };
     function noeuds() {
       const lettres = [...new Set(tracks.map((t) => t.g).filter(Boolean))].sort();
-      const l = [...tracks.map((t, i) => ({ id: String(i), type: 'd', label: String(t.n), titre: `Disque ${i + 1}`, c: colors[i] })), ...lettres.map((g) => ({ id: `g${g}`, type: 'g', label: g, titre: `Groupe ${g}`, c: GROUPES[g] })), { id: 'souffle', type: 's', label: '∿', titre: 'La respiration lente', c: '#b8ad98' }];
-      const W = 640; const H = 250; const n = l.length;
-      l.forEach((x, k) => { const a = (k / n) * Math.PI * 2 - Math.PI / 2; x.x = W / 2 + Math.cos(a) * (W / 2 - 60); x.y = H / 2 + Math.sin(a) * (H / 2 - 36); });
-      return { l, W, H };
+      const cercle = [...tracks.map((t, i) => ({ id: String(i), type: 'd', label: `D${i + 1}`, sous: t.n, titre: `Disque ${i + 1} (${t.n} par tour)`, c: colors[i] })), ...lettres.map((g) => ({ id: `g${g}`, type: 'g', label: g, titre: `Groupe ${g}`, c: GROUPES[g] }))];
+      const srcs = Object.entries(SOURCES).map(([k, [titre, label, aide]]) => ({ id: k, type: 's', label, titre: `${titre} : ${aide}`, nom: titre, c: '#b8ad98' }));
+      const W = 720; const H = 330; const n = cercle.length; const cx = 470; const cy = H / 2;
+      cercle.forEach((x, k) => { const a = (k / n) * Math.PI * 2 - Math.PI / 2; x.x = cx + Math.cos(a) * 190; x.y = cy + Math.sin(a) * 125; });
+      srcs.forEach((x, k) => { x.x = 40; x.y = 28 + k * ((H - 56) / (srcs.length - 1)); });
+      return { l: [...cercle, ...srcs], W, H };
     }
     function schemaSVG() {
       const { l, W, H } = noeuds(); const at = (id) => l.find((x) => x.id === id);
@@ -247,10 +264,10 @@ export default {
         const dx = b.x - a.x; const dy = b.y - a.y; const d = Math.hypot(dx, dy) || 1; const ux = dx / d; const uy = dy / d;
         const x1 = a.x + ux * 26; const y1 = a.y + uy * 26; const x2 = b.x - ux * 30; const y2 = b.y - uy * 30;
         const mx = (x1 + x2) / 2 - uy * 28; const my = (y1 + y2) / 2 + ux * 28; // une courbe : deux liens opposés ne se cachent pas
-        const fr = x.src === 'souffle' ? 0 : freqOf(+x.src); const bat = playing && fr > 0 && fr < 9 ? `style="animation-duration:${(1 / fr).toFixed(3)}s"` : '';
-        return `<g class="ls-lien ${k === lienChoisi ? 'sel' : ''} ${bat ? 'bat' : ''}" data-lien="${k}" ${bat}><path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" class="ls-zone"/><path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" stroke="${SENS[x.sens]}" stroke-width="${(1.5 + 5 * x.force).toFixed(1)}" marker-end="url(#ls-fl-${x.sens})" class="ls-trait"/></g>`;
+        const fr = SOURCES[x.src] ? 0 : freqOf(+x.src); const bat = playing && fr > 0 && fr < 9 ? `style="animation-duration:${(1 / fr).toFixed(3)}s"` : '';
+        return `<g class="ls-lien ${k === lienChoisi ? 'sel' : ''} ${bat ? 'bat' : ''}" data-lien="${k}" ${bat}><path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" class="ls-zone"/><path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" stroke="${SENS[x.sens]}" stroke-width="${(1.5 + 5 * x.force).toFixed(1)}" marker-end="url(#ls-fl-${x.sens})" class="ls-trait"/><text x="${mx}" y="${my}" class="ls-param" text-anchor="middle">${{ volume: 'vol.', hauteur: 'haut.', brillance: 'timbre', pan: 'G↔D' }[x.param || 'volume']}</text></g>`;
       }).join('');
-      const nd = l.map((x) => `<g class="ls-noeud ls-${x.type}" data-noeud="${x.id}" transform="translate(${x.x} ${x.y})"><title>${x.titre}</title>${x.type === 'g' ? `<circle r="24" fill="none" stroke="${x.c}" stroke-width="4"/><circle r="17" fill="#1b1915"/>` : `<circle r="22" fill="#1b1915" stroke="${x.c}" stroke-width="3"/>`}<text y="6" text-anchor="middle" fill="${x.type === 's' ? '#efe6d2' : x.c}">${x.label}</text></g>`).join('');
+      const nd = l.map((x) => `<g class="ls-noeud ls-${x.type}" data-noeud="${x.id}" transform="translate(${x.x} ${x.y})"><title>${x.titre}</title>${x.type === 'g' ? `<circle r="24" fill="none" stroke="${x.c}" stroke-width="4"/><circle r="17" fill="#1b1915"/>` : `<circle r="22" fill="#1b1915" stroke="${x.c}" stroke-width="3"/>`}<text y="${x.sous ? 3 : 6}" text-anchor="middle" fill="${x.type === 's' ? '#efe6d2' : x.c}">${x.label}</text>${x.sous ? `<text y="15" text-anchor="middle" class="ls-sous">${x.sous}</text>` : ''}${x.type === 's' ? `<text x="30" y="5" class="ls-nom">${x.nom}</text><rect x="-24" y="-23" width="${40 + x.nom.length * 7}" height="46" rx="12" fill="transparent" class="ls-prise"/>` : ''}</g>`).join('');
       return `<svg class="li-schema" viewBox="0 0 ${W} ${H}" role="img" aria-label="Le schéma des liens : qui influence qui">
         <defs>${Object.entries(SENS).map(([k, c]) => `<marker id="ls-fl-${k}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker>`).join('')}</defs>
         ${appart}${fl}<path class="ls-trace" d="" />${nd}</svg>`;
@@ -259,15 +276,21 @@ export default {
       const lettres = [...new Set(tracks.map((t) => t.g).filter(Boolean))].sort();
       const cibles = [...tracks.map((_, i) => [String(i), `du disque ${i + 1}`]), ...lettres.map((l) => [`g${l}`, `du groupe ${l}`])];
       q('.liens').innerHTML = `<h3>Les liens : qui influence qui</h3>
-        <p class="muted small">Tire d’un cercle vers un autre pour créer un lien. Touche une flèche pour la choisir. <span class="ls-leg"><i style="background:${SENS.baisse}"></i>fait baisser <i style="background:${SENS.monte}"></i>fait monter · plus épaisse = plus forte</span></p>
+        <p class="muted small">Tire d’un cercle vers un autre pour créer un lien. Touche une flèche pour la choisir. <span class="ls-leg"><i style="background:${SENS.baisse}"></i>vers le bas, le grave, le sourd, la gauche <i style="background:${SENS.monte}"></i>vers le haut, l’aigu, le clair, la droite · plus épaisse = plus forte · sur la flèche : ce qu’elle pousse</span></p>
         ${schemaSVG()}
-        ${liens.length ? `<ul class="li-liste">${liens.map((l, k) => `<li class="${k === lienChoisi ? 'sel' : ''}" data-lien-li="${k}"><span><b>${nomSource(l.src)}</b>${l.src === 'souffle' ? '' : ', à chacune de ses frappes,'} fait <button class="li-sens" data-lien-sens="${k}" style="--c:${SENS[l.sens]}" title="Inverser">${l.sens === 'baisse' ? 'baisser' : 'monter'}</button> le volume <b>${nomCible(l.cible)}</b></span><input type="range" min="10" max="100" value="${Math.round(l.force * 100)}" data-lien-force="${k}" aria-label="Force du lien"><button class="icon-btn tiny" data-lien-x="${k}" aria-label="Retirer ce lien">×</button></li>`).join('')}</ul>` : ''}
-        <details class="li-faire-d"><summary>Ou l’écrire en phrase</summary><div class="li-faire"><select data-li="src">${tracks.map((_, i) => `<option value="${i}">Le disque ${i + 1}, à chaque frappe,</option>`).join('')}<option value="souffle">La respiration lente</option></select>
-          <select data-li="sens"><option value="baisse">fait baisser</option><option value="monte">fait monter</option></select>
-          <span>le volume</span>
+        ${liens.length ? `<ul class="li-liste">${liens.map((l, k) => `<li class="${k === lienChoisi ? 'sel' : ''}" data-lien-li="${k}"><span><b>${nomSource(l.src)}</b>${SOURCES[l.src] ? '' : ', à chacune de ses frappes,'} pousse <select class="li-param" data-lien-param="${k}" aria-label="Ce que le lien fait bouger">${Object.entries(PARAMS).map(([v, [lb]]) => `<option value="${v}" ${(l.param || 'volume') === v ? 'selected' : ''}>${lb}</option>`).join('')}</select> <b>${nomCible(l.cible)}</b> <button class="li-sens" data-lien-sens="${k}" style="--c:${SENS[l.sens]}" title="Inverser le sens">${verbe(l)}</button></span><input type="range" min="10" max="100" value="${Math.round(l.force * 100)}" data-lien-force="${k}" aria-label="Force du lien"><button class="icon-btn tiny" data-lien-x="${k}" aria-label="Retirer ce lien">×</button></li>`).join('')}</ul>` : ''}
+        <details class="li-faire-d"><summary>Ou l’écrire en phrase</summary><div class="li-faire"><select data-li="src">${tracks.map((_, i) => `<option value="${i}">Le disque ${i + 1}, à chaque frappe,</option>`).join('')}${Object.entries(SOURCES).map(([k, [lb]]) => `<option value="${k}">${lb}</option>`).join('')}</select>
+          <span>pousse</span>
+          <select data-li="param">${Object.entries(PARAMS).map(([v, [lb]]) => `<option value="${v}">${lb}</option>`).join('')}</select>
           <select data-li="cible">${cibles.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select>
+          <select data-li="sens"><option value="baisse">vers le bas (grave, sourd, gauche)</option><option value="monte">vers le haut (aigu, clair, droite)</option></select>
           <button class="btn small primary" data-li="lier">Lier</button></div></details>`;
       brancherSchema();
+    }
+    // Un déclencheur qui a besoin du matériel : on le branche, ou on dit quoi faire.
+    function prevenir(src) {
+      if (src === 'clavier' || src === 'molette') detecter({ demander: true });
+      if (src === 'voix' && !mic.level) import('../ui.js').then((u) => u.toast('Allume le MICRO en haut : ta voix fera bouger la cible.'));
     }
     // Tirer un lien à la main (souris ou doigt) : du nœud de départ au nœud d'arrivée.
     function brancherSchema() {
@@ -284,31 +307,51 @@ export default {
         if (!trace) return; const t = trace; trace = null; svg.querySelector('.ls-trace').setAttribute('d', '');
         const [x, y] = pt(e); const { l } = noeuds(); const b = l.find((n) => Math.hypot(n.x - x, n.y - y) < 28);
         if (!b || b.id === t.src) return;
-        if (b.id === 'souffle') { import('../ui.js').then((u) => u.toast('La respiration influence les autres, mais rien ne l’influence.')); return; }
+        if (SOURCES[b.id]) { import('../ui.js').then((u) => u.toast('Les déclencheurs à gauche influencent les autres ; rien ne les influence. Tire vers un disque ou un groupe.')); return; }
         if (t.src.startsWith('g')) { import('../ui.js').then((u) => u.toast('Un lien part d’un disque ou de la respiration (un groupe peut en recevoir).')); return; }
         if (!b.id.startsWith('g') && tracks[+b.id] && t.src === b.id) return;
-        liens.push({ src: t.src, sens: 'baisse', cible: b.id, force: 0.7 }); lienChoisi = liens.length - 1; renderLiens();
+        liens.push({ src: t.src, sens: 'baisse', cible: b.id, param: 'volume', force: 0.7 }); lienChoisi = liens.length - 1; renderLiens(); prevenir(t.src);
       });
     }
     // L'effet des liens sur un disque, maintenant : de 0 (éteint) à 1 (inchangé) ou plus.
-    function effetLiens(i, now) {
-      let x = 1;
+    // Ce qu'un lien peut faire bouger chez sa cible.
+    const PARAMS = { volume: ['le volume', 'vers le bas', 'vers le haut'], hauteur: ['la hauteur', 'vers le grave', 'vers l’aigu'], brillance: ['le timbre', 'vers le sourd', 'vers le clair'], pan: ['la place', 'vers la gauche', 'vers la droite'] };
+    const verbe = (l) => PARAMS[l.param || 'volume'][l.sens === 'baisse' ? 1 : 2];
+    // L'enveloppe d'une source : 1 au moment d'une frappe, qui retombe vite ; ou la respiration lente.
+    function enveloppe(src, now) {
+      if (src === 'souffle') return 0.5 - 0.5 * Math.cos((now * Math.min(f, 4) * Math.PI * 2) / 4);
+      if (src === 'vibrato') return 0.5 - 0.5 * Math.cos(now * 6 * Math.PI * 2);
+      if (src === 'hasard' || src === 'chaos') {
+        const b = Math.floor(now * Math.min(f, 8));
+        if (src === 'hasard' && b !== etatSrc.hb) { etatSrc.hb = b; etatSrc.hv = Math.random(); }
+        if (src === 'chaos' && b !== etatSrc.cb) { etatSrc.cb = b; etatSrc.cv = 3.93 * etatSrc.cv * (1 - etatSrc.cv); }
+        return src === 'hasard' ? etatSrc.hv : etatSrc.cv;
+      }
+      if (src === 'voix') return Math.min(1, (mic.level || 0) * 6);
+      if (src === 'clavier') return etatSrc.midiV * Math.exp(-(now - etatSrc.midiT) * 4);
+      if (src === 'molette') return etatSrc.cc;
+      const s = tracks[+src]; if (!s || s.muted) return null; const fr = freqOf(+src); const depuis = ((now * fr) % 1) / fr; return Math.exp(-depuis * 9);
+    }
+    const viseLien = (l, i) => (l.cible.startsWith('g') ? tracks[i].g === l.cible.slice(1) : +l.cible === i) && String(i) !== l.src;
+    function effetLiens(i, now, param = 'volume') {
+      let x = param === 'pan' ? 0 : 1;
       liens.forEach((l) => {
-        const vise = l.cible.startsWith('g') ? tracks[i].g === l.cible.slice(1) : +l.cible === i;
-        if (!vise || String(i) === l.src) return;
-        let env;
-        if (l.src === 'souffle') env = 0.5 - 0.5 * Math.cos((now * Math.min(f, 4) * Math.PI * 2) / 4);
-        else { const s = tracks[+l.src]; if (!s || s.muted) return; const fr = freqOf(+l.src); const depuis = ((now * fr) % 1) / fr; env = Math.exp(-depuis * 9); }
-        x *= l.sens === 'baisse' ? 1 - l.force * env : 1 - l.force + l.force * env;
+        if ((l.param || 'volume') !== param || !viseLien(l, i)) return;
+        const env = enveloppe(l.src, now); if (env == null) return; const a = l.force * env; const bas = l.sens === 'baisse';
+        if (param === 'volume') x *= bas ? 1 - a : 1 - l.force + a;
+        if (param === 'hauteur') x *= 2 ** ((bas ? -1 : 1) * a * 2 / 12); // jusqu'à deux demi-tons
+        if (param === 'brillance') x *= bas ? 1 - 0.9 * a : 1 + 2.5 * a;
+        if (param === 'pan') x += (bas ? -1 : 1) * a;
       });
-      return x;
+      return param === 'pan' ? Math.max(-1, Math.min(1, x)) : x;
     }
     function renderGroupes() {
       const lettres = [...new Set(tracks.map((t) => t.g).filter(Boolean))].sort();
       const libre = Object.keys(GROUPES).find((l) => !lettres.includes(l));
       const choix = choisis.size ? `<div class="gr-choix"><span>${choisis.size} disque${choisis.size > 1 ? 's' : ''} choisi${choisis.size > 1 ? 's' : ''}</span>${choisis.size >= 2 && libre ? `<button class="btn small primary" data-gr="grouper">Les grouper (groupe ${libre})</button>` : ''}${lettres.map((l) => `<button class="btn small" data-gr="joindre" data-g="${l}">Ajouter au groupe ${l}</button>`).join('')}<button class="btn small" data-gr="vider">Ne rien choisir</button></div>` : '';
       const membres = (l) => tracks.map((t, i) => [t, i]).filter(([t]) => t.g === l);
-      q('.groupes').innerHTML = choix + lettres.map((l) => { const m = membres(l); const vol = Math.round(m.reduce((a, [t]) => a + (t.vol ?? 1), 0) / m.length * 100); const resp = m.some(([t]) => t.respire); const muet = m.every(([t]) => t.muted);
+      const aide = !choisis.size && lettres.length < 3 ? `<p class="gr-aide">◎ <b>Faire un groupe</b> : coche « choisir » sur deux disques ou plus (ou touche leur cercle), puis « Les grouper ». Le groupe bouge alors d’un seul geste.</p>` : '';
+      q('.groupes').innerHTML = aide + choix + lettres.map((l) => { const m = membres(l); const vol = Math.round(m.reduce((a, [t]) => a + (t.vol ?? 1), 0) / m.length * 100); const resp = m.some(([t]) => t.respire); const muet = m.every(([t]) => t.muted);
         return `<section class="groupe" style="--g:${GROUPES[l]}">
           <header><b>Groupe ${l}</b><span class="gr-m">${m.map(([t, i]) => `<i style="--c:${colors[i]}">${t.n}</i>`).join('')}</span><button class="icon-btn tiny" data-gr="degrouper" data-g="${l}" aria-label="Défaire le groupe ${l}" title="Défaire le groupe">×</button></header>
           <div class="gr-regl">
@@ -409,16 +452,20 @@ export default {
       gain.connect(lp).connect(out());
       const per = 1 / Math.sqrt(Math.max(1, live().length));
       const tg = [];
+      const filt = []; const pans = [];
       const oscs = tracks.map((t, i) => {
         const o = impulseOsc(freqOf(i));
         const g = c.createGain();
         g.gain.value = t.muted ? 0 : per * oscMix(i) * niveau(i);
-        o.connect(g).connect(gain);
+        // Par disque : un filtre (la brillance) et une place gauche-droite, que les liens peuvent faire bouger.
+        const fi = c.createBiquadFilter(); fi.type = 'lowpass'; fi.frequency.value = 6000; fi.Q.value = 0.7;
+        const pa = c.createStereoPanner(); pa.pan.value = 0;
+        o.connect(g).connect(fi).connect(pa).connect(gain);
         o.start();
-        tg.push(g);
+        tg.push(g); filt.push(fi); pans.push(pa);
         return o;
       });
-      nodes = { gain, oscs, lp, tg };
+      nodes = { gain, oscs, lp, tg, filt, pans };
       // Les frappes de batterie, programmées un peu à l'avance pour tomber juste.
       nextHit = tracks.map(() => c.currentTime + 0.05);
       let avant = audio().currentTime;
@@ -445,6 +492,13 @@ export default {
       const c = audio();
       const per = 1 / Math.sqrt(Math.max(1, live().length));
       tracks.forEach((t, i) => nodes.tg[i].gain.setTargetAtTime(t.muted ? 0 : per * oscMix(i) * niveau(i), c.currentTime, vite ? 0.008 : 0.02));
+      // Les autres paramètres que les liens font bouger : hauteur, brillance, place.
+      const k = vite ? 0.008 : 0.03; const now = c.currentTime;
+      tracks.forEach((t, i) => {
+        if (liens.some((l) => l.param === 'hauteur' && viseLien(l, i))) nodes.oscs[i].frequency.setTargetAtTime(freqOf(i) * effetLiens(i, now, 'hauteur'), now, k);
+        nodes.filt[i].frequency.setTargetAtTime(Math.max(150, Math.min(18000, 6000 * effetLiens(i, now, 'brillance'))), now, k);
+        nodes.pans[i].pan.setTargetAtTime(effetLiens(i, now, 'pan'), now, k);
+      });
     }
     function stopAudio() {
       clearInterval(drumT);
@@ -464,6 +518,7 @@ export default {
     }
 
     el.addEventListener('change', (e) => {
+      const lp = e.target.dataset.lienParam; if (lp != null) { liens[+lp].param = e.target.value; lienChoisi = +lp; renderLiens(); return; }
       const si = e.target.closest('[data-inst]');
       if (si) { tracks[+si.dataset.inst].inst = si.value; updateMutes(); return; }
       const gi = e.target.dataset.grInst; if (gi && e.target.value) { tracks.forEach((t) => { if (t.g === gi) t.inst = e.target.value; }); updateMutes(); renderTracks(); }
@@ -477,9 +532,9 @@ export default {
       const fo = e.target.closest('[data-focus]'); if (fo) { focus = +fo.dataset.focus; renderTracks(); return; }
       const vo = e.target.closest('[data-voir]'); if (vo) { if (vo.dataset.voir === 'tous') tracks.forEach((t) => { t.cache = false; }); else { const t = tracks[+vo.dataset.voir]; if (!t.cache && visibles().length <= 1) return; t.cache = !t.cache; } renderFocus(); return; }
       if (e.target.closest('[data-li=lier]')) {
-        const v = (k) => q(`[data-li=${k}]`).value; const l = { src: v('src'), sens: v('sens'), cible: v('cible'), force: 0.7 };
+        const v = (k) => q(`[data-li=${k}]`).value; const l = { src: v('src'), sens: v('sens'), cible: v('cible'), param: v('param'), force: 0.7 };
         if (l.src === l.cible) { import('../ui.js').then((u) => u.toast('Un disque ne peut pas s’influencer lui-même : choisis une autre cible.')); return; }
-        liens.push(l); renderLiens(); return;
+        liens.push(l); renderLiens(); prevenir(l.src); return;
       }
       const lx = e.target.closest('[data-lien-x]'); if (lx) { liens.splice(+lx.dataset.lienX, 1); lienChoisi = -1; renderLiens(); updateMutes(); return; }
       const ls = e.target.closest('[data-lien-sens]'); if (ls) { const l = liens[+ls.dataset.lienSens]; l.sens = l.sens === 'baisse' ? 'monte' : 'baisse'; lienChoisi = +ls.dataset.lienSens; renderLiens(); return; }
@@ -764,6 +819,6 @@ export default {
     loadPreset(presetId);
     setF(f);
     const offLampe = brancherLampe(el);
-    return () => { offLampe(); io.disconnect(); stop(); stopAudio(); radar.dispose(); strip.dispose(); air.dispose(); wave.dispose(); kb.dispose(); };
+    return () => { offMidi.forEach((o) => o()); offLampe(); io.disconnect(); stop(); stopAudio(); radar.dispose(); strip.dispose(); air.dispose(); wave.dispose(); kb.dispose(); };
   },
 };

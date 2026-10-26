@@ -34,6 +34,9 @@ const detecte = { audio: new Map(), midi: new Map() }; // clé → deviceId / MI
 const ecoutes = new Set(); const activite = new Set(); const notesEcoute = new Set();
 // Les notes jouées sur tous les claviers actifs (pour La cathédrale, et tout ce qui veut écouter le jeu de Frog).
 export const onNotes = (fn) => { notesEcoute.add(fn); return () => notesEcoute.delete(fn); };
+// Les contrôleurs (molette de modulation, potentiomètres, pédales) : numéro et valeur, de tous les claviers actifs.
+const ccEcoute = new Set();
+export const onCC = (fn) => { ccEcoute.add(fn); return () => ccEcoute.delete(fn); };
 // Les sorties MIDI branchées (synthés, claviers, logiciels) : on peut y renvoyer des notes.
 export async function sortiesMidi() {
   if (!navigator.requestMIDIAccess) return [];
@@ -91,6 +94,7 @@ function surMidi(e) {
   const [st, note, vel] = e.data; const cmd = st & 0xf0;
   activite.forEach((f) => f(k, cmd === 0x90 && vel > 0 ? vel / 127 : 0));
   if (cmd === 0x90 || cmd === 0x80) notesEcoute.forEach((f) => f(k, note, vel, cmd === 0x90 && vel > 0));
+  if (cmd === 0xb0) ccEcoute.forEach((f) => f(k, note, vel));
   if (a.son && cmd === 0x90 && vel > 0) notePiano(note, { vel: 0.3 + vel / 200 });
   if (filet.arme && cmd >= 0x80 && cmd <= 0xe0) {
     const c = audio(); filet.midi.push({ t: c.currentTime - Math.max(0, (performance.now() - e.timeStamp) / 1000), d: [...e.data], k });

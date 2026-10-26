@@ -59,6 +59,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.23', quand: '2026-10-26', titre: 'Déclencheurs et paramètres', items: [
+    ['Faire un groupe, sans chercher', ['Chaque disque a sa case <b>« choisir »</b>, et une ligne dit quoi faire : coche deux disques ou plus, puis « Les grouper ».']],
+    ['Les liens poussent plus que le volume', ['Un lien pousse maintenant <b>le volume</b>, <b>la hauteur</b> (jusqu’à deux demi-tons : vibrato, glissés), <b>le timbre</b> (plus sourd ou plus clair) ou <b>la place</b> (vers la gauche ou la droite). La phrase se lit d’elle-même : « le chaos pousse le timbre du groupe A vers le sourd ».']],
+    ['D’autres déclencheurs', ['À gauche du schéma, ce que les compositeurs branchent le plus sur les synthés modulaires, et quelques-uns déjantés : la <b>respiration lente</b>, une <b>oscillation rapide</b> (six fois par seconde : vibrato, trémolo), le <b>hasard</b> (une nouvelle valeur à chaque battement), le <b>chaos</b> (une suite logistique : jamais deux fois pareil, pourtant pas du hasard), <b>ta voix au micro</b> (plus tu chantes fort, plus ça bouge), <b>le clavier MIDI</b> de Frog (chaque note, plus fort s’il frappe fort) et <b>sa molette de modulation</b>.', 'Dans le schéma, les disques s’appellent D1, D2… (leur nombre de bosses en petit dessous), comme dans les cartes.']],
+  ] },
   { v: '0.22', quand: '2026-10-26', titre: 'Le schéma des liens', items: [
     ['Le disque en avant', ['En haut, à côté du cercle, la fréquence en gros n’est plus seulement celle du disque 1 : <b>En avant</b> (ou le nom d’un disque, dans sa carte) choisit celui qu’on veut voir et régler. Taper sa fréquence règle tout l’ensemble, les rapports restent.']],
     ['Ce qu’on voit dans la grande fenêtre', ['Les petits cercles numérotés en haut à droite du radar montrent ou cachent chaque disque dans la fenêtre. Caché, un disque joue toujours : on choisit seulement ce qu’on regarde.']],

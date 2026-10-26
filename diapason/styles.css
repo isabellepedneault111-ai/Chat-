@@ -3185,3 +3185,10 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .li-liste li.sel { outline: 2px solid #b53c0a; }
 .li-sens { border: 0; border-radius: 10px; padding: 1px 8px; background: var(--c); color: #fff; font-weight: 800; cursor: pointer; }
 .li-faire-d summary { cursor: pointer; font-size: .85rem; color: var(--muted); margin-bottom: 6px; }
+.tr-choisir { display: inline-flex; align-items: center; gap: 4px; font-size: .76rem; color: var(--muted); cursor: pointer; } .tr-choisir input { width: 16px; height: 16px; accent-color: #b53c0a; }
+.gr-aide { margin: 0; padding: 8px 12px; border-radius: 10px; background: rgba(127,127,127,.07); font-size: .86rem; }
+.ls-nom { font: 600 12px "Atkinson Hyperlegible", sans-serif; fill: #b8ad98; cursor: grab; }
+.li-param { padding: 2px 4px; border-radius: 6px; font: inherit; font-weight: 700; }
+.ls-param { font: 700 10px "Atkinson Hyperlegible", sans-serif; fill: #efe6d2; paint-order: stroke; stroke: #141210; stroke-width: 3px; pointer-events: none; }
+.li-schema { max-height: 380px; }
+.ls-sous { font: 700 9px 'Atkinson Hyperlegible', sans-serif !important; fill: #b8ad98; }
