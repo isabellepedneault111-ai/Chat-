@@ -269,5 +269,5 @@ onEspace((what, extra) => {
   }
 });
 
-boot().then(() => { maybeTour(); import('./nouveautes.js').then((n) => n.majAvecAmour()); import('./sonsperso.js').then((m) => m.chargerSonsPerso()); });
+boot().then(() => { maybeTour(); import('./nouveautes.js').then((n) => { n.majAvecAmour(); n.guetterVersions(); }); import('./sonsperso.js').then((m) => m.chargerSonsPerso()); });
 route();

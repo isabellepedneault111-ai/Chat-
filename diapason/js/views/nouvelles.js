@@ -27,6 +27,7 @@ export default {
           <p class="muted"><a href="#/elan">Voir notre élan, la tresse →</a></p><p class="muted">${onglet === 'pour-moi' ? `Coche <b>Vu</b> quand tu l’as regardé, <b>J’ai fait ça</b> quand tu as répondu à ce que ${esc(o)} demandait. ${esc(o)} le verra.` : `Ce que ${esc(o)} a vu et fait de tes envois.`}</p>
         </div></div>
         ${(() => { const t = mesTaches(); return t.length ? `<section class="nv-taches"><h2>À faire pour toi</h2><ul>${t.map((x) => `<li><a href="${x.lien}"><b>${esc(x.titre)}</b><small>${esc(x.pourquoi)}</small><span>→</span></a></li>`).join('')}</ul></section>` : ''; })()}
+        <p class="nv-maj"><button class="btn small" data-nv="revoir-maj" type="button">Revoir les dernières mises à jour de l’app</button></p>
         <div class="nv-barre">
           <div class="seg-tabs" role="tablist"><button role="tab" data-nv="pour-moi" aria-selected="${onglet === 'pour-moi'}">Pour moi${nonVues.length ? ` <b class="nv-n">${nonVues.length}</b>` : ''}</button><button role="tab" data-nv="de-moi" aria-selected="${onglet === 'de-moi'}">Ce que j’ai envoyé</button></div>
           ${onglet === 'pour-moi' ? `<label class="nv-tout"><input type="checkbox" data-nv="tout" ${tout ? 'checked' : ''}> voir aussi ce que j’ai déjà vu</label>${nonVues.length > 1 ? '<button class="btn small" data-nv="tout-vu">Tout marquer vu</button>' : ''}` : ''}
@@ -46,6 +47,7 @@ export default {
       </li>`;
     }
     el.addEventListener('click', async (e) => {
+      if (e.target.closest('[data-nv=revoir-maj]')) { import('../nouveautes.js').then((n) => n.majAvecAmour({ revoir: true })); return; }
       const t = e.target.closest('[data-nv]')?.dataset.nv;
       if (t === 'pour-moi' || t === 'de-moi') { onglet = t; rendre(); return; }
       if (t === 'tout-vu') { await marquer(deLautre().filter((x) => !vu(espace.me, x.id)).map((x) => x.id), 'vus').catch((err) => toast(err.message)); rendre(); return; }

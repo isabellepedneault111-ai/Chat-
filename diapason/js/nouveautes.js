@@ -59,6 +59,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.19', quand: '2026-10-26', titre: 'Les nouveautés arrivent', items: [
+    ['Même quand l’app reste ouverte', ['Diapason Labo reste souvent ouvert (en plein écran, ou sur l’écran d’accueil du cellulaire) : il ne redémarrait pas, et la fenêtre des nouveautés ne s’ouvrait jamais. Maintenant, quand une nouvelle version est en ligne, un bandeau le dit : « Charger les nouveautés », et cette fenêtre s’ouvre.']],
+    ['Revoir les mises à jour', ['Dans <b>Nos nouvelles</b>, un bouton rouvre les dernières mises à jour, quand on veut.', 'L’arbre suit aussi : sa liste de fichiers, son journal des versions et sa généalogie se mettent à jour à chaque mise en ligne.']],
+  ] },
   { v: '0.18', quand: '2026-10-26', titre: 'Voir les accords', items: [
     ['Chaque accord, dessiné sur un clavier', ['Partout où l’on choisit un accord, on voit les touches à jouer : la fondamentale en braise, les autres notes en or, leur nom dessous. Ce sont les touches exactes qu’on entend en cliquant ▶. Dans la rangée du studio, dans la fenêtre d’un accord, dans tes propres accords, dans les chansons, dans L’oreille, dans « Mon instrument ».', 'Les notes sont bien orthographiées : Sol m7, c’est Sol – Si♭ – Ré – Fa (pas La♯).']],
     ['« Studio » devient « Jouer »', ['L’onglet du beat, des accords, des chansons et des prises s’appelle maintenant <b>Jouer</b>, comme Écrire juste à côté. « Mon studio », c’est la pièce et le matériel (la prise, en haut) : les deux ne se confondent plus.']],
@@ -136,12 +140,13 @@ export const VERSIONS = [
 ] },
 ];
 const cle = (v) => `diapason:maj:version ${v}:${espace.id}`;
-export function majAvecAmour() {
+export function majAvecAmour({ revoir = false } = {}) {
   if (!espace.connected || !espace.me) return;
   const mem = espace.meta.members || MEMBERS; const frog = espace.me === mem[1];
-  if (frog && !espace.meta.tour?.[espace.me]) return; // la première fois, c'est la visite qui accueille
+  if (frog && !revoir && !espace.meta.tour?.[espace.me]) return; // la première fois, c'est la visite qui accueille
   let neuves;
-  try { neuves = VERSIONS.filter((x) => !localStorage.getItem(cle(x.v))); } catch { return; }
+  if (revoir) neuves = VERSIONS.slice(0, 4);
+  else try { neuves = VERSIONS.filter((x) => !localStorage.getItem(cle(x.v))); } catch { return; }
   if (!neuves.length) return;
   const z = mem[0]; const [une, ...avant] = neuves;
   const liste = (x) => `<div class="maj-liste">${x.items.map(([t, l]) => `<section><h3>${t}</h3><ul>${l.map((y) => `<li>${y}</li>`).join('')}</ul></section>`).join('')}</div>`;
@@ -157,4 +162,26 @@ export function majAvecAmour() {
   </div>`;
   document.body.appendChild(box);
   box.addEventListener('click', (e) => { if (e.target.closest('[data-maj]') || e.target === box) { try { neuves.forEach((x) => localStorage.setItem(cle(x.v), '1')); } catch { /* tant pis, elle reviendra */ } box.remove(); } });
+}
+
+// L'app reste souvent ouverte (plein écran, écran d'accueil du cellulaire) : elle ne redémarre pas, et ne verrait jamais
+// la nouvelle version. On regarde donc, quand on revient sur l'app et tous les quarts d'heure, si une version plus
+// récente est en ligne ; si oui, un bandeau propose de la charger (la fenêtre des nouveautés s'ouvre alors).
+let bandeau = null;
+async function verifierVersion() {
+  if (bandeau || document.visibilityState !== 'visible') return;
+  try {
+    const t = await (await fetch(`js/nouveautes.js?v=${Date.now()}`, { cache: 'no-store' })).text();
+    const v = (t.match(/v: '([\d.]+)'/) || [])[1];
+    if (!v || v === VERSIONS[0].v) return;
+    bandeau = document.createElement('div'); bandeau.className = 'maj-bandeau'; bandeau.setAttribute('role', 'status');
+    bandeau.innerHTML = `<span>La version <b>${esc(v)}</b> de Diapason Labo est prête.</span><button class="btn small primary" type="button">Charger les nouveautés</button>`;
+    bandeau.querySelector('button').addEventListener('click', () => location.reload());
+    document.body.appendChild(bandeau);
+  } catch { /* hors ligne : on regardera plus tard */ }
+}
+export function guetterVersions() {
+  document.addEventListener('visibilitychange', verifierVersion);
+  addEventListener('focus', verifierVersion);
+  setInterval(verifierVersion, 15 * 60 * 1000);
 }
