@@ -3,7 +3,7 @@
 // puis on le garde au mur, on l'envoie à L'oreille ou on le télécharge (WAV pour le son, MIDI pour les notes).
 import { audio } from './audio.js';
 import { toast, store } from './ui.js';
-import { filet, tendre, relacher, instantane, fichierMidi, onMateriel, DUREE } from './materiel.js';
+import { filet, tendre, relacher, instantane, fichierMidi, onMateriel, duree, dureeTexte, garde } from './materiel.js';
 import { wav } from './oreille.js';
 import { espace, saveEntry, uploadAudio } from './espace.js';
 import { notePiano, prechargerSons } from './sampler.js';
@@ -18,17 +18,29 @@ function etat() {
   bouton.classList.toggle('on', filet.arme);
   bouton.setAttribute('aria-pressed', filet.arme ? 'true' : 'false');
   const n = filet.pistes.size;
-  bouton.title = filet.arme ? `Le filet est tendu (${n} source${n > 1 ? 's' : ''}) : touche pour prendre la dernière minute` : 'Tendre le filet : la dernière minute jouée, toujours gardée';
+  bouton.title = filet.arme ? `Le filet est tendu (${n} source${n > 1 ? 's' : ''}) : gardé depuis ${sec(garde())} sur ${sec(duree())}. Touche pour prendre ${dureeTexte()}.` : `Tendre le filet : ${dureeTexte()} jouée${duree() > 60 ? 's' : ''}, toujours gardée${duree() > 60 ? 's' : ''}`;
+}
+// L'anneau d'or se remplit pendant que le filet se remplit : plein, il a toute sa durée.
+let anneau = 0;
+function remplir() {
+  cancelAnimationFrame(anneau);
+  const tour = () => {
+    if (!bouton) return; const f = filet.arme ? garde() / duree() : 0; etat();
+    bouton.style.setProperty('--plein', `${(f * 360).toFixed(1)}deg`); bouton.classList.toggle('plein', filet.arme && f >= 1);
+    const t = bouton.querySelector('.filet-t'); if (t) t.textContent = filet.arme && f < 1 ? sec(garde()) : '';
+    if (filet.arme) anneau = setTimeout(() => requestAnimationFrame(tour), 500);
+  };
+  tour();
 }
 
 export function installerFilet() {
   const ref = document.getElementById('pistesBtn'); if (!ref || bouton) return;
   bouton = document.createElement('button'); bouton.type = 'button'; bouton.className = 'icon-btn filet-btn'; bouton.id = 'filetBtn';
-  bouton.setAttribute('aria-label', 'Le filet : la dernière minute'); bouton.innerHTML = `${ICONE}<i class="filet-pt"></i>`;
-  ref.before(bouton); etat(); onMateriel(etat);
+  bouton.setAttribute('aria-label', 'Le filet : la dernière minute'); bouton.innerHTML = `${ICONE}<i class="filet-pt"></i><small class="filet-t"></small>`;
+  ref.before(bouton); etat(); remplir(); onMateriel(() => { etat(); remplir(); });
   bouton.addEventListener('click', async () => {
     if (!filet.arme) {
-      try { await tendre(); toast('Le filet est tendu : la dernière minute est toujours gardée. Rejoue, puis touche-le.'); } catch (e) { toast(e.message); }
+      try { await tendre(); toast(`Le filet est tendu : ${dureeTexte()}, toujours gardée${duree() > 60 ? 's' : ''}. L’anneau d’or se remplit ; joue, puis touche-le.`); } catch (e) { toast(e.message); }
       return;
     }
     ouvrir();
@@ -58,7 +70,7 @@ function ouvrir() {
 
   const v = document.createElement('div'); v.className = 'filet-voile'; v.setAttribute('role', 'dialog'); v.setAttribute('aria-modal', 'true'); v.setAttribute('aria-label', 'Le filet : la dernière minute');
   v.innerHTML = `<div class="filet-carte">
-    <div class="filet-tete"><div><p class="eyebrow">Le filet</p><h2>La dernière minute, figée.</h2></div><button class="icon-btn" data-fl="fermer" aria-label="Fermer">✕</button></div>
+    <div class="filet-tete"><div><p class="eyebrow">Le filet</p><h2>${dureeTexte()[0].toUpperCase() + dureeTexte().slice(1)}, figée${duree() > 60 ? 's' : ''}.</h2></div><button class="icon-btn" data-fl="fermer" aria-label="Fermer">✕</button></div>
     <p class="muted small">Glisse sur la minute pour choisir le bout à garder (le silence avant et après est déjà coupé). Coche les sources à mélanger.</p>
     <canvas class="filet-cv" aria-label="Les sources de la dernière minute, et le bout choisi"></canvas>
     <div class="filet-src">${s.pistes.map((p) => `<label><input type="checkbox" data-src="${esc(p.k)}" checked> ${esc(p.nom)}</label>`).join('')}${s.midi.length ? `<label><input type="checkbox" data-src="midi" checked> Notes MIDI (${s.midi.filter((m) => (m.d[0] & 0xf0) === 0x90 && m.d[2]).length}), jouées au piano à l’écoute</label>` : ''}${!s.pistes.length && !s.midi.length ? '<span class="muted">Aucune source active : coche-en dans Mon matériel.</span>' : ''}</div>
@@ -99,8 +111,8 @@ function ouvrir() {
     g.strokeStyle = '#e8c27a'; g.lineWidth = 2; [sel.a, sel.b].forEach((t) => { g.beginPath(); g.moveTo(X(t), 0); g.lineTo(X(t), H - 18); g.stroke(); });
     if (tete != null) { g.strokeStyle = '#fff'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(X(tete), 0); g.lineTo(X(tete), H - 18); g.stroke(); }
     g.fillStyle = '#b8ad98'; g.font = '11px "Atkinson Hyperlegible", sans-serif'; g.textAlign = 'center';
-    for (let t = 0; t <= s.duree; t += 10) g.fillText(`−${Math.round(s.duree - t)} s`, X(t), H - 5);
-    q('.filet-duree').textContent = `Le bout choisi : ${sec(sel.a)} → ${sec(sel.b)} (${(sel.b - sel.a).toFixed(1).replace('.', ',')} s) sur ${Math.round(s.duree)} s gardées`;
+    const pas = s.duree > 120 ? 30 : 10; for (let t = s.duree % pas; t <= s.duree; t += pas) g.fillText(s.duree - t < 0.5 ? 'maintenant' : `−${sec(s.duree - t)}`, X(t), H - 5);
+    q('.filet-duree').textContent = `Le bout choisi : ${sec(sel.a)} → ${sec(sel.b)} (${(sel.b - sel.a).toFixed(1).replace('.', ',')} s) · le filet avait ${sec(s.duree)}${s.duree < duree() - 1 ? ` sur ${sec(duree())} (il venait d’être tendu)` : ''}`;
   };
   new ResizeObserver(dessiner).observe(cv); dessiner();
   // Glisser : un nouveau bout ; près d'un bord : on déplace ce bord.
@@ -166,4 +178,3 @@ function ouvrir() {
   });
   addEventListener('keydown', function esc(e) { if (!v.isConnected) { removeEventListener('keydown', esc); return; } if (e.key === 'Escape') fermerTout(); });
 }
-export { DUREE };

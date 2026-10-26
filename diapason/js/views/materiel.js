@@ -2,7 +2,7 @@
 // câble jusqu'à l'ordinateur, et une case pour l'activer. Ce qui est actif, le filet l'écoute ; les témoins s'allument
 // quand le son ou les notes passent. On place les appareils comme dans la vraie pièce, en les glissant.
 import { toast } from '../ui.js';
-import { appareils, regler, ajouter, retirer, detecter, onMateriel, onActivite, SORTES, filet, tendre, relacher, niveau, DUREE } from '../materiel.js';
+import { appareils, regler, ajouter, retirer, detecter, onMateriel, onActivite, SORTES, filet, tendre, relacher, niveau, DUREES, duree, choisirDuree, dureeTexte } from '../materiel.js';
 
 const esc = (x) => String(x ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // Une silhouette par sorte d'appareil, dessinée au trait.
@@ -25,7 +25,7 @@ export default {
       <div class="mod-head"><div>
         <p class="eyebrow">Mon matériel</p>
         <h1>Ton studio, tel qu’il est branché.</h1>
-        <p class="muted">Tout ce que l’ordinateur voit (claviers, table de mixage, interface, micros), plus ce que tu ajoutes à la main. Coche ce qui joue aujourd’hui : le filet l’écoute. Glisse les appareils pour les placer comme dans ta pièce.</p>
+        <p class="muted">Tout ce que l’ordinateur voit (claviers, table de mixage, interface, micros), plus ce que tu ajoutes à la main. Coche ce qui joue aujourd’hui : le filet l’écoute et en garde la dernière minute (ou 3, ou 5). Glisse les appareils pour les placer comme dans ta pièce.</p>
       </div></div>
       <section class="panel m-barre">
         <button class="btn primary" data-m="detecter">Détecter mon matériel</button>
@@ -70,7 +70,8 @@ export default {
         </article>`;
       }).join('');
       q('.m-ajout [name=lie]').innerHTML = `<option value="">branché à l’ordinateur</option>${liste.map((b) => `<option value="${esc(b.k)}">branché à : ${esc(b.nom)}</option>`).join('')}`;
-      q('.m-filet').innerHTML = filet.arme ? `<b class="m-tendu">● Le filet est tendu</b> : ${filet.pistes.size} source${filet.pistes.size > 1 ? 's' : ''} audio + MIDI, la dernière minute (${DUREE} s). <button class="btn small" data-m="relacher">Relâcher</button>` : '<button class="btn small" data-m="tendre">Tendre le filet</button> <span class="muted small">pour garder en continu la dernière minute</span>';
+      q('.m-filet').innerHTML = filet.arme ? `<b class="m-tendu">● Le filet est tendu</b> : ${filet.pistes.size} source${filet.pistes.size > 1 ? 's' : ''} audio + MIDI. <button class="btn small" data-m="relacher">Relâcher</button>` : '<button class="btn small" data-m="tendre">Tendre le filet</button>';
+      q('.m-filet').insertAdjacentHTML('beforeend', ` <label class="m-duree">garder <select data-m="duree" aria-label="Durée gardée par le filet">${DUREES.map((d) => `<option value="${d}" ${d === duree() ? 'selected' : ''}>${d / 60} min</option>`).join('')}</select></label> <span class="muted small">${duree() > 60 ? `≈ ${Math.round(duree() / 60 * 11)} Mo de mémoire par source` : ''}</span>`);
       requestAnimationFrame(cabler);
     }
     // Les câbles : de chaque appareil vers l'ordinateur (ou vers l'appareil où il est branché).
@@ -108,6 +109,7 @@ export default {
     cartes.addEventListener('pointerup', () => { if (!tire) return; tire.c.classList.remove('tire'); if (tire.x != null) regler(tire.c.dataset.k, { x: +tire.x.toFixed(1), y: +tire.y.toFixed(1) }); tire = null; });
 
     el.addEventListener('change', (e) => {
+      if (e.target.dataset.m === 'duree') { choisirDuree(e.target.value); toast(`Le filet garde maintenant ${dureeTexte()}.`); return; }
       const k = e.target.closest('.m-carte')?.dataset.k; const m = e.target.dataset.mk; if (!k || !m) return;
       regler(k, { [m]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
     });

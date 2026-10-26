@@ -82,12 +82,18 @@ function surMidi(e) {
   if (a.son && cmd === 0x90 && vel > 0) notePiano(note, { vel: 0.3 + vel / 200 });
   if (filet.arme && cmd >= 0x80 && cmd <= 0xe0) {
     const c = audio(); filet.midi.push({ t: c.currentTime - Math.max(0, (performance.now() - e.timeStamp) / 1000), d: [...e.data], k });
-    const vieux = c.currentTime - DUREE - 2; while (filet.midi.length && filet.midi[0].t < vieux) filet.midi.shift();
+    const vieux = c.currentTime - duree() - 2; while (filet.midi.length && filet.midi[0].t < vieux) filet.midi.shift();
   }
 }
 
 // ---------- Le filet ----------
-export const DUREE = 60;
+// Combien le filet garde : 1, 3 ou 5 minutes, au choix. Plus long = plus de mémoire (environ 11 Mo par minute et par source).
+export const DUREES = [60, 180, 300];
+export const duree = () => store.get('filetDuree', 60);
+export function choisirDuree(s) { store.set('filetDuree', DUREES.includes(+s) ? +s : 60); signaler(); }
+export const dureeTexte = (s = duree()) => (s === 60 ? 'la dernière minute' : `les ${s / 60} dernières minutes`);
+// Depuis combien de temps le filet écoute (plafonné à sa durée) : il n'a pas encore tout tant que ce n'est pas plein.
+export const garde = () => (filet.arme ? Math.min(duree(), audio().currentTime - (filet.depuis ?? audio().currentTime)) : 0);
 const BLOC = 4096;
 const CODE = `class Filet extends AudioWorkletProcessor {
   constructor() { super(); this.b = new Float32Array(${BLOC}); this.n = 0; }
@@ -106,7 +112,7 @@ async function piste(k, nom, source, flux = null) {
   const node = new AudioWorkletNode(c, 'filet', { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [1] });
   const an = c.createAnalyser(); an.fftSize = 512;
   const p = { k, nom, morceaux: [], node, source, flux, an };
-  node.port.onmessage = (e) => { p.morceaux.push(e.data); const vieux = c.currentTime - DUREE - 1; while (p.morceaux.length && p.morceaux[0].fin < vieux) p.morceaux.shift(); };
+  node.port.onmessage = (e) => { p.morceaux.push(e.data); const vieux = c.currentTime - duree() - 1; while (p.morceaux.length && p.morceaux[0].fin < vieux) p.morceaux.shift(); };
   source.connect(node); source.connect(an); node.connect(muet);
   filet.pistes.set(k, p);
 }
@@ -139,7 +145,7 @@ export const niveau = (k) => { const p = filet.pistes.get(k); if (!p) return -1;
 
 // Une photo de la dernière minute : chaque piste alignée sur la même horloge, et les notes MIDI.
 export function instantane() {
-  const c = audio(); const sr = c.sampleRate; const fin = c.currentTime; const debut = Math.max(fin - DUREE, filet.depuis ?? fin - DUREE);
+  const c = audio(); const sr = c.sampleRate; const fin = c.currentTime; const debut = Math.max(fin - duree(), filet.depuis ?? fin - duree());
   const n = Math.max(1, Math.floor((fin - debut) * sr));
   const pistes = [...filet.pistes.values()].map((p) => {
     const d = new Float32Array(n);

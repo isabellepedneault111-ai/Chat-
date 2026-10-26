@@ -2691,3 +2691,8 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .m-regl input, .m-regl select { width: 100%; padding: 4px 6px; border-radius: 6px; border: 1px solid #4a4338; background: #141210; color: #efe6d2; font-size: .82rem; }
 .m-regl .btn { background: #2a2620; color: #efe6d2; border-color: #4a4338; }
 @media (max-width: 640px) { .m-scene { height: auto; padding: 12px; } .m-cables { display: none; } .m-cartes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .m-carte { position: relative; left: auto !important; top: auto !important; transform: none; width: auto; } .m-poignee { cursor: default; } }
+/* L'anneau du filet : il se remplit jusqu'à ce que la durée complète soit gardée. */
+.filet-btn.on { background: linear-gradient(#1b1916, #1b1916) padding-box, conic-gradient(#e8c27a var(--plein, 0deg), #4a4338 0) border-box; border: 4px solid transparent !important; }
+.filet-btn.on.plein { box-shadow: 0 0 10px rgba(232, 194, 122, .45); }
+.filet-btn .filet-t { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); font: 700 10px "Atkinson Hyperlegible", sans-serif; color: #a5741c; white-space: nowrap; }
+.m-duree { font-size: .88rem; } .m-duree select { padding: 3px 6px; border-radius: 6px; }
