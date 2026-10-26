@@ -3073,3 +3073,14 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 }
 @media (min-width: 761px) and (max-width: 1180px) { .nav a svg { display: none; } .tools .tsep { display: none; } }
 @media (min-width: 761px) and (max-width: 1040px) { .topbar { flex-wrap: wrap; row-gap: 6px; } .tools { width: 100%; justify-content: flex-end; } .nav { margin: 0 0 0 auto; } }
+/* Le clavier d'impro : une couleur franche par demande (palette Okabe-Ito, lisible aussi pour les daltoniens). */
+.key.white.k-safe { background: linear-gradient(#fff 0 30%, #d55e00 30%); } .key.black.k-safe { background: #d55e00; }
+.key.white.k-scale { background: linear-gradient(#fff 0 30%, #009e73 30%); } .key.black.k-scale { background: #009e73; }
+.key.white.k-gamme { background: linear-gradient(#fff 0 30%, #9a9a9a 30%); } .key.black.k-gamme { background: #9a9a9a; }
+.key.white.k-jazz { background: linear-gradient(#fff 0 30%, #0072b2 30%); } .key.black.k-jazz { background: #0072b2; }
+.key.white.k-blue { background: linear-gradient(#fff 0 30%, #a347c9 30%); } .key.black.k-blue { background: #a347c9; }
+.lg-safe { background: #d55e00 !important; } .lg-scale { background: #009e73 !important; } .lg-gamme { background: #9a9a9a !important; } .lg-jazz { background: #0072b2 !important; } .lg-blue { background: #a347c9 !important; }
+.lg-maison { background: #fff !important; border-radius: 50% !important; box-shadow: inset 0 0 0 3px #1b1915; }
+.key.k-maison::after { width: 12px; height: 12px; margin-left: -6px; background: #fff; box-shadow: 0 0 0 3px #1b1915; }
+.kb-legende i.lg-maison { flex: 0 0 12px; height: 12px; margin: 0 3px; }
+.key.white:is(.k-safe, .k-scale, .k-jazz, .k-blue, .k-gamme) span { color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.45); }

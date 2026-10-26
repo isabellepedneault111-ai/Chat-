@@ -44,8 +44,8 @@ const S = {
   defis: store.get('defisImpro', false),
   onLoop: null,
 };
-// Ce qu'on choisit de voir sur le clavier (toutes les couleurs par défaut).
-const voir = () => new Set(store.get('kbVoir', ['safe', 'scale', 'gamme', 'jazz', 'blue']));
+// Ce qu'on choisit de voir sur le clavier : l'accord qui joue d'emblée ; le reste se coche au besoin.
+const voir = () => new Set(store.get('kbVoir2', ['safe']));
 const save = () => { store.set('grid', S.grid); store.set('bpm', S.bpm); store.set('key', S.key); store.set('prog', S.prog); };
 const saveMelody = () => store.set('melody', S.melody.map(({ slot, deg, who }) => ({ slot, deg, who })));
 // 8 pastilles : la pentatonique de la tonalité, dans un registre confortable pour la voix.
@@ -354,12 +354,12 @@ export default {
         <div class="panel">
           <div class="panel-head"><h2>Où improviser sur le clavier</h2><span class="muted">Les couleurs suivent l’accord qui joue.</span></div>
           <div class="kb-host"></div>
-          <p class="muted small kb-aide">Coche ce que tu veux voir. Chaque couleur a sa teinte claire (touches blanches) et sa teinte foncée (touches noires). Le point doré marque la <b>tonique</b>, la note « maison » de la tonalité.</p>
-          <ul class="kb-legende">${[['safe', 'L’accord qui joue', 'ça sonne à 100 %, toujours. Idéal pour finir une phrase.'], ['scale', 'La pentatonique', 'sûr aussi, impossible de « fausser ». Parfait pour improviser.'], ['gamme', 'Le reste de la gamme', 'bien en passant, moins pour s’y arrêter.'], ['jazz', 'Couleurs jazz', 'la 9e, la 6te, la 7e de l’accord : une note rêveuse, à poser exprès.'], ['blue', 'Notes blues (hors sentier)', 'un frottement voulu, qui « pleure ». Glisse vers une note voisine juste après.']].map(([k, t, d]) => `<li><label><input type="checkbox" data-voir="${k}" ${voir().has(k) ? 'checked' : ''}><i class="lg-${k}"></i><i class="lg-${k} lg-noire"></i><b>${t}</b> : ${d}</label></li>`).join('')}</ul>
+          <p class="muted small kb-aide">D’emblée, seulement l’accord qui joue. Coche ce que tu veux ajouter : chaque demande a sa couleur, bien distincte des autres.</p>
+          <ul class="kb-legende">${[['safe', 'L’accord qui joue', 'ça sonne à 100 %, toujours. Idéal pour finir une phrase.'], ['scale', 'La pentatonique', 'sûr aussi, impossible de « fausser ». Parfait pour improviser.'], ['gamme', 'Le reste de la gamme', 'bien en passant, moins pour s’y arrêter.'], ['jazz', 'Couleurs jazz', 'la 9e, la 6te, la 7e de l’accord : une note rêveuse, à poser exprès.'], ['blue', 'Notes blues (hors sentier)', 'un frottement voulu, qui « pleure ». Glisse vers une note voisine juste après.'], ['maison', 'La tonique', 'la note « maison » de la tonalité (le point) : on y revient pour conclure.']].map(([k, t, d]) => `<li><label><input type="checkbox" data-voir="${k}" ${voir().has(k) ? 'checked' : ''}><i class="lg-${k}"></i><b>${t}</b> : ${d}</label></li>`).join('')}</ul>
         </div>`;
       kb = keyboard(body.querySelector('.kb-host'), { from: 48, to: 76 });
       paintSafe(0);
-      body.addEventListener('change', (e) => { const v = e.target.dataset.voir; if (!v) return; const set = voir(); if (e.target.checked) set.add(v); else set.delete(v); store.set('kbVoir', [...set]); safeBar = -1; paintSafe(S.cur ? chordAtStep(S.cur.step).i : 0); });
+      body.addEventListener('change', (e) => { const v = e.target.dataset.voir; if (!v) return; const set = voir(); if (e.target.checked) set.add(v); else set.delete(v); store.set('kbVoir2', [...set]); safeBar = -1; paintSafe(S.cur ? chordAtStep(S.cur.step).i : 0); });
       const hote = body.querySelector('.sp-host'); brancherSonsPerso(hote, () => { hote.innerHTML = sonsPersoHTML(); });
       body.addEventListener('click', (e) => {
         const c = e.target.closest('[data-cell]');
@@ -392,7 +392,7 @@ export default {
         const n = mod12(m); const vu = voir();
         const classe = tones.has(n) && vu.has('safe') ? 'k-safe' : pent.has(n) && vu.has('scale') ? 'k-scale' : jazz.has(n) && vu.has('jazz') ? 'k-jazz' : gamme.has(n) && vu.has('gamme') ? 'k-gamme' : blues.has(n) && vu.has('blue') ? 'k-blue' : '';
         ['k-safe', 'k-scale', 'k-jazz', 'k-gamme', 'k-blue'].forEach((x) => k.classList.toggle(x, x === classe));
-        k.classList.toggle('k-maison', n === mod12(S.key));
+        k.classList.toggle('k-maison', n === mod12(S.key) && vu.has('maison'));
       });
     }
 
