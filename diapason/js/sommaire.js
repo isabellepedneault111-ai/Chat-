@@ -65,7 +65,13 @@ export function installerSommaire(vue) {
   };
   // Au plus une fois toutes les 400 ms, même sur une page qui bouge sans arrêt (Voix + piano, le studio).
   const passe = () => { if (!t) t = setTimeout(() => { t = 0; construire(); }, 400); };
-  new MutationObserver((ms) => { if (ms.some((m) => !m.target.closest?.('.sommaire, .mandat'))) passe(); }).observe(vue, { childList: true, subtree: true });
+  // Une page qui se redessine en entier (la séance, à chaque choix) perd son mandat : on le remet tout de suite,
+  // avant que l'écran ne se peigne, sinon tout le contenu saute deux fois.
+  const perdu = () => (MANDATS[idDe()] && !vue.querySelector('.mandat')) || (sig.split('#')[1]?.includes('|') && !vue.querySelector('.sommaire'));
+  new MutationObserver((ms) => {
+    if (!ms.some((m) => !m.target.closest?.('.sommaire, .mandat'))) return;
+    if (perdu() && vue.querySelector('.mod-head, .masthead, .ames-hero')) { clearTimeout(t); t = 0; construire(); } else passe();
+  }).observe(vue, { childList: true, subtree: true });
   vue.addEventListener('click', (e) => {
     if (e.target.closest('[data-md=plier]')) {
       const box = e.target.closest('.mandat'); const r = !box.classList.contains('replie'); box.classList.toggle('replie', r);
