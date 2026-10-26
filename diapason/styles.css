@@ -3365,3 +3365,5 @@ a.md-lien { color: inherit; }
 .ca-vif { font-style: normal; font-size: .78rem; padding: 1px 8px; border-radius: 999px; background: #efe2c4; color: #6d4a00; }
 .ca-gl .li-liste { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; } .ca-gl .li-liste li { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 6px 10px; border-radius: 8px; background: var(--card); border: 1px solid var(--rule); }
 .ca-gl .li-liste li > span::first-letter { text-transform: uppercase; }
+.ar-verdict { margin: 4px 0 14px; padding: 16px 20px; border-radius: 12px; background: #1b1916; color: #efe6d2 !important; font: 500 1.12rem/1.6 var(--display); max-width: none !important; }
+.ar-verdict b { color: #f3c77a !important; }

@@ -51,12 +51,19 @@ def precedent(f):
     h = subprocess.run(['git', 'log', '-2', '--format=%h', '--', f], cwd=racine, capture_output=True, text=True).stdout.split()
     if len(h) < 2: return ''
     return subprocess.run(['git', 'show', f'{h[1]}:./{f}'], cwd=racine, capture_output=True, text=True).stdout
+import re
+# La page sur la conception reste à part : on ne la nomme pas dans l'histoire des étapes.
+DISCRET = re.compile(r'fa[cç]on de faire|direction interpr|architecte d.environnement', re.I)
+def discret(sujet):
+    if not DISCRET.search(sujet): return sujet
+    garde = [x for x in re.split(r' ; |, (?=[a-zé])', sujet) if not DISCRET.search(x)]
+    return ' ; '.join(garde) if garde else 'L’arbre : retouches de mise en page'
 def histoire(f):
     # Ses dernières retouches (depuis Diapason) : la date et ce que l'étape a fait, en une phrase.
     out = []
     for l in subprocess.run(['git', 'log', '-6', '--format=%ad|%s', '--date=short', '--', f], cwd=racine, capture_output=True, text=True).stdout.splitlines():
         d, sujet = l.split('|', 1)
-        if d >= '2026-10-24' and not sujet.startswith('Arbre et généalogie'): out.append([d, sujet[:140]])
+        if d >= '2026-10-24' and not sujet.startswith('Arbre et généalogie'): out.append([d, discret(sujet)[:140]])
     return out[:4]
 dates = {}
 for l in subprocess.run(['git', 'log', '--format=@%ad', '--date=short', '--name-only', '--relative'], cwd=racine, capture_output=True, text=True).stdout.splitlines():
@@ -99,7 +106,7 @@ def commits(spec, *opts):
     out = []
     for l in git('log', '--format=%h|%ad|%P|%s', '--date=short', *opts, spec).splitlines():
         h, d, p, s = l.split('|', 3)
-        out.append({'h': h, 'd': d, 'p': p.split(), 's': s})
+        out.append({'h': h, 'd': d, 'p': p.split(), 's': discret(s)})
     return out[::-1]
 ERES = [('Diapason :', 'Diapason'), ('Zaza × Frog', 'Zaza × Frog'), ('FLIP', 'FLIP'), ('Visite', 'La visite'), ('labo 0.5', 'Version 0.5'), ('Diapason Labo', 'Diapason Labo')]
 def ere(s):
