@@ -208,7 +208,7 @@ export default {
       for (let m = FROM; m <= TO; m += 12) ticks.push(`<span style="left:${pct(m)}%">${nameFR(m)}</span>`);
       host.innerHTML = `
         <div class="gc-area">
-          ${hasZone ? `<div class="gc-zone" style="left:${pct(cLow)}%;width:${pct(cHigh) - pct(cLow)}%"><span>Zone commune</span></div>` : ''}
+          ${hasZone ? `<div class="gc-zone" style="left:calc(var(--gc-lab, 110px) + (100% - var(--gc-lab, 110px)) * ${pct(cLow) / 100});width:calc((100% - var(--gc-lab, 110px)) * ${(pct(cHigh) - pct(cLow)) / 100})"><span>Zone commune</span></div>` : ''}
           ${group.map((g, i) => `
             <div class="gc-row" data-i="${i}">
               <span class="gc-name">${g.name.replace(/[<>&]/g, '')}</span>

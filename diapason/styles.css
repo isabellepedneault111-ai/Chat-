@@ -3222,3 +3222,15 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .ar-f-el .ar-sec { font-weight: 800; color: #efe6d2; background: #3a352d; }
 .ar-f-el .nv { background: #e8c27a; color: #1b1916; }
 .ar-nv { font-size: .72rem; padding: 1px 7px; border-radius: 8px; background: #e8c27a; color: #1b1916; font-weight: 800; }
+.tr-gauche { display: grid; justify-items: center; gap: 4px; }
+.tracks-panel .tr-choisir { margin-left: 0; }
+.tr-tete { flex-wrap: wrap; row-gap: 2px; min-width: 0; }
+.tr-corps > * { min-width: 0; }
+.tracks-panel .track .icon-btn.tiny { width: 28px; height: 28px; }
+.tracks-panel .tr-regl { gap: 4px; flex-wrap: wrap; }
+.tracks-panel .track .stepper { gap: 4px; }
+@media (min-width: 1000px) { .tracks-panel .tracks { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important; } }
+/* La zone commune de l'empreinte : décalée de la colonne des noms, et sa largeur en tient compte (plus de débordement) */
+.gc-zone { margin-left: 0 !important; }
+@media (max-width: 760px) { .gc-zone { --gc-lab: 70px; } }
+.brand small { white-space: nowrap; }

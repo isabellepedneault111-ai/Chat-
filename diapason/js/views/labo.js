@@ -227,9 +227,9 @@ export default {
     function renderTracks() {
       q('.tracks').innerHTML = tracks.map((t, i) => `
         <li class="track ${t.muted ? 'muted' : ''} ${choisis.has(i) ? 'choisi' : ''} ${t.g ? 'en-groupe' : ''}" style="--c:${colors[i]};--g:${GROUPES[t.g] || 'transparent'}">
-          <button class="tr-pick" data-tr="pick" data-i="${i}" aria-pressed="${choisis.has(i)}" aria-label="Choisir le disque ${i + 1}">${disqueMini(t.n, colors[i])}</button>
+          <div class="tr-gauche"><button class="tr-pick" data-tr="pick" data-i="${i}" aria-pressed="${choisis.has(i)}" aria-label="Choisir le disque ${i + 1}">${disqueMini(t.n, colors[i])}</button>${t.g ? '' : `<label class="tr-choisir"><input type="checkbox" data-tr="pick" data-i="${i}" ${choisis.has(i) ? 'checked' : ''}> choisir</label>`}</div>
           <div class="tr-corps">
-            <div class="tr-tete"><button class="track-name tr-haut ${i === focus ? 'on' : ''}" data-focus="${i}" title="Mettre ce disque en avant, en haut">Disque ${i + 1}${i === focus ? ' ▲' : ''}</button>${t.g ? `<span class="tr-g" style="--g:${GROUPES[t.g]}">groupe ${t.g}</span>` : `<label class="tr-choisir"><input type="checkbox" data-tr="pick" data-i="${i}" ${choisis.has(i) ? 'checked' : ''}> choisir</label>`}</div>
+            <div class="tr-tete"><button class="track-name tr-haut ${i === focus ? 'on' : ''}" data-focus="${i}" title="Mettre ce disque en avant, en haut">Disque ${i + 1}${i === focus ? ' ▲' : ''}</button>${t.g ? `<span class="tr-g" style="--g:${GROUPES[t.g]}">groupe ${t.g}</span>` : ''}</div>
             <div class="tr-regl">
               <span class="stepper">
                 <button class="icon-btn tiny" data-tr="minus" data-i="${i}" aria-label="Moins de bosses">−</button>

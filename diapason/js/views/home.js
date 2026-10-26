@@ -188,8 +188,6 @@ export default {
           <h1 class="display"><img class="mast-logo" src="img/flip.svg" alt="FLIP"></h1>
           <canvas class="mast-wave" aria-hidden="true"></canvas>
           <p class="mast-app"><b>Diapason Labo</b> <span>le laboratoire de FLIP</span></p>
-          <p class="lead">Six mois. Deux musiciens. Des morceaux originaux.</p>
-          <p class="duo-line">${(espace.meta.members || MEMBERS).map((m) => `<span style="--c:${memberColor(m)}"><b>${esc(m)}</b> ${esc(ROLES[m] || '')}</span>`).join('')}</p>
         </header>`;
       const mem0 = espace.meta.members || MEMBERS;
       const portraits = mem0.map((m) => ({ m, ok: !!profileOf(m)?.doneAt }));
