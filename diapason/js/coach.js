@@ -11,7 +11,7 @@ const STEPS = [
   { route: '#/relais', sel: '#nav [data-id=relais]', t: 'Le relais', d: 'Tu m’envoies un son. Je chante par-dessus. Tu ajoutes une couche.' },
   { route: '#/ecrire', sel: '.ec-entry[data-id="demo-j0"], #nav [data-id=ecrire]', t: 'Écrire', d: 'Ta musique joue, je chante sans mots (le mumble), et les paroles viennent après. Ici, sur Projet 1.' },
   { route: '#/accord', sel: '#nav [data-id=voix], .tool-voix', t: 'Ton clavier, ma voix', d: 'Tu joues un accord. Je chante. L’écran montre si ma voix est juste.' },
-  { route: '#/studio', sel: '#nav [data-id=studio]', t: 'Le studio', d: 'Des beats, des accords, et ton coin piano.' },
+  { route: '#/studio', sel: '#nav [data-id=studio]', t: 'Jouer', d: 'Des beats, des accords, nos chansons, et ton coin piano.' },
   { route: '#/', sel: '.tool-coffre, .fil-coffre', t: 'Le coffre', d: 'Nos meilleurs moments, gardés à part.' },
   { route: '#/', sel: '.etincelle', t: 'L’étincelle', d: 'Une idée te vient? Touche la flamme, de n’importe où.' },
   { route: '#/depart', sel: '.mod-head h1, .view h1', t: 'À toi : l’étape 1', d: 'Tes goûts, ta voix, tes envies. Cinq minutes. Notre plan part de là.', final: true },

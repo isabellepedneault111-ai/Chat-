@@ -63,9 +63,9 @@ export function chansonTab(body, ctx) {
         <button class="btn small" data-ch="plus">+ Accord</button>
       </article>`).join('')}</div>
       <div class="ec-row ch-exports"><span class="muted small">Exporter :</span><button class="btn small" data-ch="mid">⬇ La partition (MIDI)</button><button class="btn small" data-ch="txt">⬇ La grille (texte)</button><button class="btn small" data-ch="copier">Copier la grille</button></div>
-      <div class="ec-row"><button class="btn" data-ch="nouvelle-partie">+ Nouvelle partie</button><button class="btn" data-ch="depuis-studio">+ Partie avec les accords du studio</button></div>
+      <div class="ec-row"><button class="btn" data-ch="nouvelle-partie">+ Nouvelle partie</button><button class="btn" data-ch="depuis-studio">+ Partie avec les accords en cours</button></div>
       <datalist id="ch-noms">${PARTIES.map((p) => `<option value="${p}">`).join('')}</datalist>
-      <p class="muted small">${espace.connected ? 'Chaque changement est gardé et partagé : l’autre voit la chanson dans son studio.' : 'Gardé sur cet appareil.'}</p>
+      <p class="muted small">${espace.connected ? 'Chaque changement est gardé et partagé : l’autre voit la chanson de son côté.' : 'Gardé sur cet appareil.'}</p>
     </div>`;
   }
   body.addEventListener('change', (e) => {
@@ -93,7 +93,7 @@ export function chansonTab(body, ctx) {
     if (k === 'dupliquer' && s) { const n = { id: uid(), nom: `${s.nom} bis`, chords: s.chords.map((c) => [...c]) }; ch.sections.push(n); }
     if (k === 'supprimer' && s) { ch.sections = ch.sections.filter((x) => x !== s); ch.ordre = ch.ordre.filter((x) => x !== s.id); }
     if (k === 'nouvelle-partie') { const reste = PARTIES.find((p) => !ch.sections.some((x) => x.nom === p)) || 'Partie'; ch.sections.push({ id: uid(), nom: reste, chords: [[0, 'M', 4], [7, 'M', 4]] }); }
-    if (k === 'depuis-studio') ch.sections.push({ id: uid(), nom: 'Partie du studio', chords: ctx.actuels() });
+    if (k === 'depuis-studio') ch.sections.push({ id: uid(), nom: 'Partie en cours', chords: ctx.actuels() });
     sauver(); rendre();
   });
   // Les exports : la partition MIDI (deux pistes en une : les accords au piano, la basse), au tempo du studio,

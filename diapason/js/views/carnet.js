@@ -330,7 +330,7 @@ export default {
         }).join('')}
           <section class="board-col ch-new"><header><b>Un nouveau morceau</b></header>
             <div class="ch-new-f"><input class="input" data-c-nom placeholder="Son nom (ex. : Fleuve gelé)" maxlength="60" aria-label="Nom du nouveau morceau"><button type="button" class="btn small primary" data-c="song-creer">Créer</button></div>
-            <p class="col-hint">Il naît avec un couplet et un refrain dans le studio. Ensuite, chaque idée du mur peut le rejoindre (ouvre-la : « Morceau »).</p></section></div>`;
+            <p class="col-hint">Il naît avec un couplet et un refrain, dans Jouer. Ensuite, chaque idée du mur peut le rejoindre (ouvre-la : « Morceau »).</p></section></div>`;
       }
       hydrateImages(mur);
     }
@@ -698,7 +698,7 @@ export default {
       if (a === 'song-creer' || a === 'song-accords') {
         const nom = a === 'song-accords' ? e.target.closest('[data-nom]').dataset.nom : (el.querySelector('[data-c-nom]')?.value || '').trim().slice(0, 60);
         if (!nom) { el.querySelector('[data-c-nom]')?.focus(); toast('Donne-lui un nom.'); return; }
-        try { const ch = await creerChanson(nom); toast(`« ${nom} » est né. Ses parties t’attendent au studio.`); if (a === 'song-accords') location.hash = `#/studio?tab=chanson&ch=${ch.id}`; else renderAll(true); } catch (err) { toast(err.message); }
+        try { const ch = await creerChanson(nom); toast(`« ${nom} » est né. Ses parties t’attendent dans Jouer.`); if (a === 'song-accords') location.hash = `#/studio?tab=chanson&ch=${ch.id}`; else renderAll(true); } catch (err) { toast(err.message); }
         return;
       }
       if (a === 'filtrer') { const f = el.querySelector('.filters'); f.hidden = !f.hidden; e.target.closest('[data-c]').setAttribute('aria-expanded', !f.hidden); return; }

@@ -54,7 +54,7 @@ const ARBRE = ['Diapason Labo', 'Un environnement hybride : des sons fabriqués 
     ['Session', 'Une séance guidée, étape par étape, avec la musique, qui finit par une prise.'],
     ['Relais', 'Un son envoyé, une couche par-dessus, chacun son temps.'],
     ['Écrire', 'Le journal, le mumble, l’atelier, le grimoire, Placer mes paroles, Nos idées pour le labo.'],
-    ['Studio', 'Le beat, Mes propres accords, Nos chansons, les prises, la pochette, la scène, Mon instrument (MIDI).'],
+    ['Jouer', 'Le beat, Mes propres accords, Nos chansons, les prises, la pochette, la scène, Mon instrument (MIDI).'],
     ['Voix', 'Ton clavier coache ma voix, la tessiture, le gym vocal, le miroir.'],
     ['L’oreille', 'Analyser une pièce, trouver ses accords, mesurer une voix.'],
     ['Nos deux âmes', 'Ce que nos deux étapes 1 donnent ensemble, et nos pistes hors sentier.'],

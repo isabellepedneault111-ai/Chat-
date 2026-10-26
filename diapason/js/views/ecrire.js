@@ -125,7 +125,7 @@ export default {
         <section class="panel ec-idees" id="idees-flip">
           <h2>Nos idées pour le labo</h2>
           <p class="muted small">Un bouton qu’on cherche, une fonction rêvée, un mot pas clair : chaque idée est gardée ici, datée, et l’app s’améliore à partir de cette liste.</p>
-          <div class="ec-row"><input class="input" data-e="idee-txt" maxlength="300" placeholder="Ex. : pouvoir choisir mes propres accords dans le studio"><button class="btn primary" data-e="idee">Noter l’idée</button></div>
+          <div class="ec-row"><input class="input" data-e="idee-txt" maxlength="300" placeholder="Ex. : pouvoir choisir mes propres accords dans Jouer"><button class="btn primary" data-e="idee">Noter l’idée</button></div>
           <ul class="ec-idees-l"></ul>
         </section>`;
       stopGroove?.(); stopGroove = bindGroove(el);

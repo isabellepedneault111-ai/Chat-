@@ -105,7 +105,7 @@ export default {
           </div>
           <ul class="tracks"></ul>
           <button class="btn add-track" data-act="add">＋ Ajouter un disque</button>
-          <button class="btn primary labo-beat" data-act="beat">Faire un beat de ces disques → Studio</button>
+          <button class="btn primary labo-beat" data-act="beat">Faire un beat de ces disques → Jouer</button>
           <a class="btn labo-cathedrale" href="#/cathedrale?du-labo">Bâtir La cathédrale de ces disques →</a>
           <p class="muted small">Chaque disque devient une ligne de batterie, ses frappes réparties au mieux sur la mesure (rythme euclidien, Toussaint 2005).</p>
         </div>

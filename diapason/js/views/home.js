@@ -50,7 +50,7 @@ function commencerHTML() {
   const pas = [
     ['Notre première vraie séance', 'Choisir quoi travailler, la musique part, on suit les étapes, on finit par une prise.', '#/session', ents.some((e) => e.type === 'session' && e.data?.done)],
     ['Découvrir nos deux âmes', 'Ce que nos deux étapes 1 donnent ensemble, et nos pistes hors sentier.', '#/ames', store.get('amesVu', false)],
-    frog ? ['Monter une chanson et ses accords', 'Studio → Nos chansons : couplet, refrain, pont, chacun avec ses accords. Puis on la joue.', '#/studio?tab=chanson', ents.some((e) => e.type === 'chanson')]
+    frog ? ['Monter une chanson et ses accords', 'Jouer → Nos chansons : couplet, refrain, pont, chacun avec ses accords. Puis on la joue.', '#/studio?tab=chanson', ents.some((e) => e.type === 'chanson')]
       : ['Placer tes paroles sur Projet 1', 'Écrire → Placer mes paroles : les syllabes, les accents, la note à chanter.', '#/placer', !!store.get('placerTexte', '')],
   ];
   // Dire pourquoi nos inspirations nous inspirent : une tâche pour chacun (on voit où en est l'autre).
@@ -66,7 +66,7 @@ const OU_ALLER = [
   ['Entre deux séances', 'Se lancer des sons, répondre par-dessus, garder les perles et les étincelles.', [['relais', 'Le relais'], ['etincelles', 'Nos étincelles'], ['coffre', 'Le coffre']]],
   ['Écrire', 'Notre journal, une séance d’atelier, le grimoire, puis sculpter les textes pour qu’ils se chantent.', [['ecrire', 'Notre journal'], ['atelier', 'Séance d’atelier'], ['jeux', 'Le grimoire'], ['paroles', 'Paroles']]],
   ['Voir le chemin', 'Où on est rendus, ce qui progresse, et ce que la recherche conseille ensuite.', [['bilan', 'Notre bilan'], ['carnet', 'Le mur'], ['evolution', 'Nos courbes'], ['lexique', 'Notre lexique'], ['ames', 'Nos deux âmes'], ['arbre', 'L’arbre de l’architecte']]],
-  ['Travailler sa voix, son son', 'Les outils de fond, quand on veut creuser.', [['tessiture', 'Empreinte'], ['gym', 'Gym vocal'], ['miroir', 'Miroir'], ['studio', 'Studio'], ['labo', 'Le labo']]],
+  ['Travailler sa voix, son son', 'Les outils de fond, quand on veut creuser.', [['tessiture', 'Empreinte'], ['gym', 'Gym vocal'], ['miroir', 'Miroir'], ['studio', 'Jouer'], ['labo', 'Le labo']]],
 ];
 
 export default {

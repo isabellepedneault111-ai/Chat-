@@ -37,7 +37,7 @@ const CIBLE_INFO = {
   'La fin d’un morceau': ['comment on termine : ralenti, coupure nette, dernier accord tenu.', 'cadence'],
 };
 // La grille faite à la main dans le studio (« Mes propres accords ») passe en tête, à côté des modèles.
-const grilles = () => { const c = store.get('customProg', null); return c ? [{ id: 'perso', nom: 'Nos accords (studio)', roman: c.roman, chords: c.chords, usage: 'La grille que vous avez faite dans le studio.', perso: true }, ...GRILLES] : GRILLES; };
+const grilles = () => { const c = store.get('customProg', null); return c ? [{ id: 'perso', nom: 'Nos accords (Jouer)', roman: c.roman, chords: c.chords, usage: 'La grille que vous avez faite dans Jouer.', perso: true }, ...GRILLES] : GRILLES; };
 const otherOf = () => (espace.meta?.members || ['Zaza', 'Frog']).find((m) => m !== espace.me) || 'l’autre';
 const pick = (arr, not) => { const pool = arr.filter((x) => x !== not); return pool.length ? pool[Math.floor(Math.random() * pool.length)] : arr[0]; };
 

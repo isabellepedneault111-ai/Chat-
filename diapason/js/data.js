@@ -8,7 +8,7 @@ export const MODULES = [
   { id: 'tessiture', num: '02', name: 'Empreinte', color: 'var(--c-empreinte)', tagline: 'L’étendue de chaque voix, et la zone du duo.' },
   { id: 'gym', num: '03', name: 'Gym vocal', color: 'var(--c-gym)', tagline: 'Échauffements transposés, notés en direct.' },
   { id: 'labo', num: '∿', name: 'Le labo', color: 'var(--c-labo)', tagline: 'Rythme ↔ note : quand un polyrythme devient un accord.' },
-  { id: 'studio', num: '', name: 'Studio', color: 'var(--c-studio)', tagline: 'Beat, accords, instrument, scène, clip.' },
+  { id: 'studio', num: '', name: 'Jouer', color: 'var(--c-studio)', tagline: 'Beat, accords, instrument, scène, clip.' },
   { id: 'paroles', num: '', name: 'Paroles', color: 'var(--c-paroles)', tagline: 'Syllabes, rimes, synonymes : écrire pour être chanté.' },
   { id: 'carnet', num: '', name: 'Le mur', color: 'var(--c-carnet)', tagline: 'Toutes nos idées, et où elles s’en vont.' },
   { id: 'relais', num: '', name: 'Relais', color: 'var(--rec)', tagline: 'Se lancer des sons entre deux sessions, et répondre par-dessus.' },

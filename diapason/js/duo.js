@@ -151,7 +151,7 @@ export const POURQUOI = {
     ['Les paroles, les hooks et les transitions arrivent au 4e mois, une fois les morceaux fixés.', 'Merchán-Sánchez-Jara 2023'],
     ['Des contraintes claires réduisent la peur de la page blanche.', 'Merchán-Sánchez-Jara 2023'],
   ] },
-  studio: { titre: 'Le studio', points: [
+  studio: { titre: 'Jouer', points: [
     ['La complémentarité des instruments : le clavier en syncope contre la guitare crée des couches.', 'Merchán-Sánchez-Jara 2023'],
     ['Le design sonore numérique fait le pont entre l’acoustique et l’électronique.', 'Bremmer 2024'],
   ] },

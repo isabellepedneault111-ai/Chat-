@@ -22,7 +22,7 @@ export const aVoir = () => (espace.connected && espace.me ? deLautre().filter((e
 export function decrire(e) {
   const d = e.data || {};
   if (d.relais) return [e.audio ? 'Un son au relais' : 'Des mots au relais', `#/relais/${e.id}`];
-  if (e.type === 'chanson') return ['Une chanson au studio', `#/studio?tab=chanson&ch=${e.id}`];
+  if (e.type === 'chanson') return ['Une chanson (Jouer)', `#/studio?tab=chanson&ch=${e.id}`];
   if (e.type === 'son') return ['Un son de batterie remplacé', '#/studio?tab=beat'];
   if (e.type === 'bravo') return ['Un bravo', `#/?voir=${e.id}`];
   if (e.type === 'session') return ['Une séance terminée', '#/bilan'];
@@ -31,7 +31,7 @@ export function decrire(e) {
   if (e.type === 'paroles') return ['Des paroles', '#/paroles'];
   const mur = `#/carnet?voir=${e.id}`; // le mur ouvre directement la fiche de l'idée
   if (d.filet) return ['Un bout pris dans le filet', mur];
-  if (d.prise) return ['Une prise du studio', mur];
+  if (d.prise) return ['Une prise enregistrée', mur];
   if (d.cathedrale) return ['Une cathédrale', mur];
   if (e.type === 'audio') return ['Un son au mur', mur];
   if (e.type === 'image') return ['Une image au mur', mur];

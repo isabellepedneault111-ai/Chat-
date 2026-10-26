@@ -134,7 +134,7 @@ export default {
     el.innerHTML = `
       <div class="mod-head">
         <div>
-          <p class="eyebrow">Studio</p>
+          <p class="eyebrow">Jouer</p>
           <h1>Construire, jouer, improviser</h1>
           <p class="muted">Un beat, des accords qui changent sans couper, des défis d’impro, et une pochette faite de notre art.</p>
           <p class="ec-row"><a class="btn small" href="#/oreille">L’oreille : analyser une pièce →</a> <a class="btn small" href="#/materiel">Mon matériel et le filet →</a></p>
@@ -425,7 +425,7 @@ export default {
       b.disabled = true; b.textContent = 'J’envoie…';
       try {
         const a = await uploadAudio(t.blob);
-        await saveEntry({ type: 'audio', title: `Prise du studio · ${t.chords}`, audio: a, data: { stage: 0, prise: true, bpm: t.bpm, accords: t.chords } });
+        await saveEntry({ type: 'audio', title: `Prise · ${t.chords}`, audio: a, data: { stage: 0, prise: true, bpm: t.bpm, accords: t.chords } });
         t.gardee = true; toast('La prise est au mur, comme idée brute.'); if (tab === 'voix') renderTab();
       } catch (err) { b.disabled = false; b.textContent = 'Garder au mur'; toast(err.message); }
     });

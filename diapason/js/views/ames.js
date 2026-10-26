@@ -36,7 +36,7 @@ function pistes(z, f, nz, nf) {
     son: ['Le grain avant la note', `Choisissez un son (un piano abîmé, un souffle, un bruit de la pièce) et faites-en le personnage principal. La chanson naît de sa couleur.`],
     ambiance: ['Le lieu avant la note', `Décrivez ensemble un lieu précis (une heure, une lumière, une température). Ambiances → écrire dedans, puis jouez ce lieu.`],
     melodie: ['La mélodie qui reste', `Une mélodie fredonnable en 4 mesures, chantée par ${nz}, harmonisée ensuite par ${nf} de trois façons différentes. Gardez celle qui surprend.`],
-    accords: ['Les accords qui racontent', `Une suite de quatre accords qui raconte déjà quelque chose sans voix. Studio → Mes propres accords, puis la voix cherche sa place.`],
+    accords: ['Les accords qui racontent', `Une suite de quatre accords qui raconte déjà quelque chose sans voix. Jouer → Mes propres accords, puis la voix cherche sa place.`],
     emotion: ['Une seule émotion, sans détour', `Nommez une émotion précise (pas « triste » : « soulagé mais honteux ») et refusez tout ce qui ne la sert pas.`],
     energie: ['La montée', `Une chanson qui ne fait que monter : chaque section ajoute une couche, rien ne redescend avant la fin.`],
   };

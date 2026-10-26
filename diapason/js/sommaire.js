@@ -22,7 +22,7 @@ const MANDATS = {
   tessiture: ['Connaître l’étendue de ta voix.', 'Chanter du plus grave au plus aigu confortable : le labo mesure et nomme ton type de voix.', 'Les tonalités conseillées, le guide vocal de Placer mes paroles, Nos deux âmes.'],
   gym: ['Échauffer et entraîner la voix.', 'Des exercices courts, adaptés à ta tessiture.', 'Ta voix, séance après séance.'],
   miroir: ['Voir sa voix pendant qu’on chante.', 'Chanter et regarder la hauteur se dessiner.', 'La justesse, par le retour visuel.'],
-  labo: ['Entendre comment un rythme devient une note, puis un accord.', 'Faire tourner des disques, accélérer, trouver des accords impossibles au piano.', 'Le studio (un rythme du labo peut devenir la grille de batterie).'],
+  labo: ['Entendre comment un rythme devient une note, puis un accord.', 'Faire tourner des disques, accélérer, trouver des accords impossibles au piano.', 'Jouer (un rythme du labo peut devenir la grille de batterie).'],
   paroles: ['Sculpter un texte pour qu’il se chante.', 'Compter les syllabes, trouver des rimes et des synonymes, marquer les passages incertains.', 'Nos chansons, le relais (paroles à chanter).'],
   atelier: ['Une séance d’écriture guidée de 25 minutes.', 'Délier la main, écrire par les sens, une contrainte, garder ce qui brille.', 'Le journal, puis nos paroles.'],
   jeux: ['Lancer l’écriture quand la page est blanche.', 'Tirer une carte, jouer au cadavre exquis, explorer notre champ de mots.', 'Le journal et nos paroles.'],
