@@ -26,7 +26,7 @@ export const asksOf = (e) => (e.data?.asks?.length ? e.data.asks : e.data?.ask ?
 // Ce qu'on demande à l'autre, réutilisé partout (relais, ambiances, grimoire). La lune en suggère quelques-unes :
 // au temps de semer, on demande de créer ; de faire grandir, de développer ; de faire entendre, d'écouter ; de laisser aller, de trier.
 const PAR_TEMPS = { semer: ['chante', 'melodie', 'ecris', 'evoque'], grandir: ['harmonise', 'accords', 'rythme', 'continue', 'habille'], entendre: ['ecoute', 'bien', 'refrain'], laisser: ['coupe', 'plus-tard', 'titre'] };
-const NOM_TEMPS = { semer: 'le temps de semer', grandir: 'le temps de faire grandir', entendre: 'le temps de faire entendre', laisser: 'le temps de laisser aller' };
+const NOM_TEMPS = { semer: 'nouvelle lune, le temps de créer', grandir: 'lune qui grossit, le temps de façonner', entendre: 'pleine lune, le temps de faire entendre', laisser: 'lune qui décroît, le temps de trier' };
 export function intentions(host, { to = 'l’autre', dark = false } = {}) {
   const chosen = new Set(); const l = lune(); const sugg = new Set(PAR_TEMPS[l.temps] || []);
   host.innerHTML = `<div class="intents ${dark ? 'dark' : ''}">
@@ -146,7 +146,7 @@ export default {
               <p class="rl-label"><b>Lancer un son à ${esc(other())}</b><span class="mono rl-time"></span></p>
               <p class="rl-sub">Une touche pour enregistrer, une pour arrêter.</p>
               <div class="rl-more">
-                <label class="btn small">Un mémo du téléphone<input type="file" accept="audio/*,video/*" data-r="file" hidden></label>
+                <label class="btn small">Un fichier audio (mémo, son de l’ordi…)<input type="file" accept="audio/*,video/*" data-r="file" hidden></label>
                 <details class="rl-input"><summary>Entrée : ${store.get('relaisRaw', false) ? 'instrument (son brut)' : 'micro'}</summary>
                   <label class="field"><span>Appareil</span><select data-r="dev"><option value="">Par défaut</option></select></label>
                   <label class="check"><input type="checkbox" data-r="raw" ${store.get('relaisRaw', false) ? 'checked' : ''}> Son d’instrument, brut : pour un clavier ou une guitare branchés dans une carte son (sans réduction de bruit ni égaliseur automatique)</label>

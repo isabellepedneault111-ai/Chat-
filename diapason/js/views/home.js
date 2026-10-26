@@ -9,12 +9,15 @@ import { activeSession } from './session.js';
 import { relaisPending, asksOf } from './relais.js';
 import { pendantHTML } from '../traces.js';
 import { enAttenteDeMoi } from '../corbeille.js';
-import { lune, luneSVG, TEMPS, CYCLE, prochainTemps, numeroLune } from '../lune.js';
+import { lune, luneSVG, TEMPS, CYCLE, prochainTemps, numeroLune, luneCourante, patchLune } from '../lune.js';
 import { nouveautesHTML } from '../nouveautes.js';
 import { aVoir } from '../suivi.js';
+import { mesTaches } from '../taches.js';
 import { attendMoi } from '../elan.js';
 // Tout en haut de l'accueil : ce que l'autre a ajouté et que je n'ai pas vu. C'est là que mène la pastille de Plan.
-const nouvellesBandeau = () => { const n = aVoir(); if (!n.length) return ''; return `<a class="nv-bandeau" href="#/nouvelles"><b>${n.length}</b><span>${n.length > 1 ? 'nouvelles' : 'nouvelle'} de ${esc(n[0].author)} à voir : ${n.slice(0, 2).map((e) => `« ${esc((e.title || 'sans titre').slice(0, 40))} »`).join(', ')}${n.length > 2 ? '…' : ''}</span><em>Ouvrir Nos nouvelles →</em></a>`; };
+const nouvellesBandeau = () => { const n = aVoir(); const t = mesTaches(); if (!n.length && !t.length) return ''; const tot = n.length + t.length;
+  const quoi = [n.length ? `${n.length} ${n.length > 1 ? 'nouvelles' : 'nouvelle'} de ${esc(n[0].author)} à voir` : '', t.length ? `${t.length} chose${t.length > 1 ? 's' : ''} à faire pour toi : ${t.slice(0, 2).map((x) => esc(x.titre)).join(', ')}${t.length > 2 ? '…' : ''}` : ''].filter(Boolean).join(' · ');
+  return `<a class="nv-bandeau" href="#/nouvelles"><b>${tot}</b><span>${quoi}</span><em>Ouvrir →</em></a>`; };
 
 // Où aller : chaque outil rangé par ce qu'on veut faire, pas par son nom.
 // Par où commencer : trois gestes, dans l'ordre, cochés quand ils sont faits. Disparaît quand tout est fait.
@@ -112,10 +115,10 @@ export default {
 
     // La lune : une ligne, un temps de création, et les intentions du cycle.
     // Notre cycle : la lune comme horloge du processus. Ses quatre temps = nos quatre gestes (créer, façonner,
-    // produire, trier et relire). L'intention se sème à la nouvelle lune et se relit au dernier quartier.
+    // produire, trier et relire). L'intention se sème à la nouvelle lune et se relit la dernière semaine du cycle.
     function cycleHTML() {
       const l = lune(); const ici = CYCLE.findIndex((c) => c.temps === l.temps); const c = CYCLE[ici];
-      const lm = espace.meta.lune?.cycle === l.cycle ? espace.meta.lune : { cycle: l.cycle, intentions: {}, relue: {} };
+      const lm = luneCourante(espace.meta);
       const mem = espace.meta.members || MEMBERS; const mine = lm.intentions?.[espace.me];
       const pt = prochainTemps(); const n = numeroLune(planStart());
       const debut = new Date(`${l.cycle}T00:00`).getTime(); const ents = espace.entries.filter((e) => !e.demo && !e.data?.demo);
@@ -135,15 +138,16 @@ export default {
         <div class="cy-gauche">${roue}<div class="cy-lune">${luneSVG(l, 46)}</div></div>
         <div class="cy-droite">
           <p class="cy-k">Notre cycle${n ? ` · lune ${n} de nos six mois` : ''} · ${esc(l.nom.toLowerCase())}</p>
-          <h2>Le temps ${c.temps === 'laisser' ? 'de laisser aller' : c.temps === 'semer' ? 'de semer' : c.temps === 'grandir' ? 'de faire grandir' : 'de faire entendre'} <small>${esc(c.phase)}</small></h2>
+          <h2>Le temps ${c.temps === 'laisser' ? 'de laisser aller' : c.temps === 'semer' ? 'de semer' : c.temps === 'grandir' ? 'de faire grandir' : 'de faire entendre'} <small>${esc(c.phase)} · ${esc(c.periode)}</small></h2>
           <p>${esc(c.geste)}${pt ? ` <span class="muted">Jusqu’au ${pt.date.toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' })}, puis le temps ${pt.temps === 'laisser' ? 'de laisser aller' : pt.temps === 'semer' ? 'de semer' : pt.temps === 'grandir' ? 'de faire grandir' : 'de faire entendre'}.</span>` : ''}</p>
           <p class="cy-outils">${c.outils.map(([h, t]) => `<a href="#/${h}">${t}</a>`).join('')}</p>
           <div class="cy-int"><b>Nos intentions de ce cycle</b>
             ${mem.map((m) => { const x = lm.intentions?.[m]; const r = lm.relue?.[m]; return `<p style="--c:${memberColor(m)}"><i>${esc(m)}</i> ${x ? `« ${esc(x)} »${r ? ` <em class="cy-relue">${{ tenue: 'tenue ✓', transformee: 'transformée ↻', lachee: 'lâchée, sans regret' }[r] || ''}</em>` : ''}` : '<span class="muted">pas encore posée</span>'}</p>`; }).join('')}
             ${!mine ? `<form class="lune-form"><input class="input" data-lune maxlength="140" placeholder="${l.temps === 'semer' ? 'Ton intention pour ce cycle' : 'Ton intention, même en cours de route'} (jusqu’à la prochaine nouvelle lune)"><button class="btn small">Semer</button></form>` : ''}
-            ${relire ? `<p class="cy-relire">Le temps de relire ton intention. Elle a été… <button class="btn small" data-relue="tenue">tenue</button><button class="btn small" data-relue="transformee">transformée</button><button class="btn small" data-relue="lachee">lâchée</button></p>` : ''}
+            ${relire ? `<p class="cy-relire">La dernière semaine du cycle : relis ton intention. Elle a été… <button class="btn small" data-relue="tenue">tenue</button><button class="btn small" data-relue="transformee">transformée</button><button class="btn small" data-relue="lachee">lâchée</button></p>` : ''}
           </div>
           <p class="cy-comptes muted small">Ce cycle, jusqu’ici : ${comptes.join(' · ')}.</p>
+          ${l.age > 18 || l.age < 4 ? `<a class="cy-passage" href="#/passage">☾ Le passage de la nouvelle lune : fermer ce cycle à deux, semer le suivant →</a>` : `<a class="cy-passage discret" href="#/passage">Nos passages</a>`}
         </div>
       </section>`;
     }
@@ -316,13 +320,11 @@ export default {
       e.preventDefault();
       const v = e.target.querySelector('[data-lune]').value.trim();
       if (!v) return;
-      const l = lune();
-      const cur = espace.meta.lune?.cycle === l.cycle ? espace.meta.lune : { cycle: l.cycle, intentions: {}, relue: {} };
-      try { await updateEspace({ lune: { ...cur, cycle: l.cycle, intentions: { ...cur.intentions, [espace.me]: v } } }); toast('Intention semée. On la relira au dernier quartier.'); } catch (err) { toast(err.message); }
+      try { await updateEspace(patchLune(espace.meta, (b) => ({ intentions: { ...b.intentions, [espace.me]: v } }))); toast('Intention semée. On la relira la dernière semaine du cycle.'); } catch (err) { toast(err.message); }
     });
     el.addEventListener('click', async (e) => {
       const rl = e.target.closest('[data-relue]');
-      if (rl) { const l = lune(); const cur = espace.meta.lune?.cycle === l.cycle ? espace.meta.lune : { cycle: l.cycle, intentions: {}, relue: {} }; try { await updateEspace({ lune: { ...cur, relue: { ...(cur.relue || {}), [espace.me]: rl.dataset.relue } } }); toast('Relue. Le prochain cycle commence à la nouvelle lune.'); } catch (err) { toast(err.message); } return; }
+      if (rl) { try { await updateEspace(patchLune(espace.meta, (b) => ({ relue: { ...(b.relue || {}), [espace.me]: rl.dataset.relue } }))); toast('Relue. Le prochain cycle commence à la nouvelle lune.'); } catch (err) { toast(err.message); } return; }
       // Le plan bouge avec vous : avancer d'un mois, ou prendre deux semaines de plus.
       const pl = e.target.closest('[data-plan]');
       if (pl) {

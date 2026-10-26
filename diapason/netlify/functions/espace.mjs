@@ -88,7 +88,7 @@ export async function handle(req, store) {
         if (k) { await store.set(k, sid); await store.set(`${sid}/secretkey`, k); } else await store.delete(`${sid}/secretkey`);
         meta.hasSecret = !!k;
       }
-      for (const k of ['goal', 'vision', 'plan', 'welcome', 'tour', 'seen', 'projets', 'lune']) {
+      for (const k of ['goal', 'vision', 'plan', 'welcome', 'tour', 'seen', 'projets', 'lune', 'lunes', 'luneProchaine']) {
         if (body[k] != null) {
           const txt = JSON.stringify(body[k]);
           if (txt.length > 20000) return fail(413, 'Réglage trop volumineux');

@@ -6,6 +6,7 @@ import { memberColor } from '../duo.js';
 import { esc, ago, espaceGate } from './carnet.js';
 import { asksOf } from './relais.js';
 import { autre, vu, fait, marquer, deLautre, deMoi, decrire } from '../suivi.js';
+import { mesTaches } from '../taches.js';
 
 const jour = (t) => new Date(t).toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long' });
 
@@ -25,12 +26,14 @@ export default {
           <h1>${onglet === 'pour-moi' ? `Ce que ${esc(o)} a ajouté` : 'Ce que j’ai envoyé'}</h1>
           <p class="muted"><a href="#/elan">Voir notre élan, la tresse →</a></p><p class="muted">${onglet === 'pour-moi' ? `Coche <b>Vu</b> quand tu l’as regardé, <b>J’ai fait ça</b> quand tu as répondu à ce que ${esc(o)} demandait. ${esc(o)} le verra.` : `Ce que ${esc(o)} a vu et fait de tes envois.`}</p>
         </div></div>
+        ${(() => { const t = mesTaches(); return t.length ? `<section class="nv-taches"><h2>À faire pour toi</h2><ul>${t.map((x) => `<li><a href="${x.lien}"><b>${esc(x.titre)}</b><small>${esc(x.pourquoi)}</small><span>→</span></a></li>`).join('')}</ul></section>` : ''; })()}
         <div class="nv-barre">
           <div class="seg-tabs" role="tablist"><button role="tab" data-nv="pour-moi" aria-selected="${onglet === 'pour-moi'}">Pour moi${nonVues.length ? ` <b class="nv-n">${nonVues.length}</b>` : ''}</button><button role="tab" data-nv="de-moi" aria-selected="${onglet === 'de-moi'}">Ce que j’ai envoyé</button></div>
           ${onglet === 'pour-moi' ? `<label class="nv-tout"><input type="checkbox" data-nv="tout" ${tout ? 'checked' : ''}> voir aussi ce que j’ai déjà vu</label>${nonVues.length > 1 ? '<button class="btn small" data-nv="tout-vu">Tout marquer vu</button>' : ''}` : ''}
         </div>
         ${parJour.length ? parJour.map(([j, l]) => `<section class="nv-jour"><h2>${j}</h2><ul class="nv-liste">${l.map((e) => item(e, o)).join('')}</ul></section>`).join('')
           : `<p class="nv-vide">${onglet === 'pour-moi' ? (recues.length ? `Tout est vu. ${esc(o)} sera content·e.` : `${esc(o)} n’a encore rien ajouté.`) : 'Tu n’as encore rien envoyé.'}</p>`}`;
+      // (Les tâches se recalculent avec les nouvelles : elles s'effacent d'elles-mêmes quand c'est fait.)
     }
     function item(e, o) {
       const [quoi, lien] = decrire(e); const asks = asksOf(e); const me = espace.me;

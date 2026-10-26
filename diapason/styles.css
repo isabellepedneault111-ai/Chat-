@@ -2896,3 +2896,23 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 @media (max-width: 720px) { .cycle { grid-template-columns: 1fr; justify-items: center; } .cy-droite { justify-self: stretch; } }
 .cy-lune .lune-ico { color: #f3e7c9; filter: drop-shadow(0 0 10px rgba(243, 231, 201, .45)); }
 .cy-lune .lune-ico circle { stroke: #f3e7c9; }
+/* Le passage de la nouvelle lune. */
+.pa-tete { align-items: center; } .pa-lunes { display: flex; align-items: center; gap: 10px; color: var(--ink); font-size: 1.4rem; }
+.pa-fini { padding: 14px 18px; border-radius: 12px; background: #1b1916; color: #f3e7c9; font: italic 600 1.1rem "Literata", serif; text-align: center; }
+.pa-etapes { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pa-etapes h2 { display: flex; align-items: center; gap: 10px; } .pa-etapes h2 span { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #1b1916; color: #e8c27a; font: 800 1rem "Literata", serif; }
+.pa-int, .pa-garde { padding: 6px 0 6px 10px; border-left: 4px solid var(--c); margin-bottom: 8px; display: grid; gap: 4px; }
+.pa-int b, .pa-garde b { color: var(--c); } .pa-int q { font: italic 500 1.05rem "Literata", serif; } .pa-int em { font-style: normal; font-size: .86rem; color: var(--sage); }
+.pa-relire { margin: 2px 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: .9rem; }
+.pa-mot { width: 100%; } .pa-m { margin: 0; font-size: .92rem; color: var(--muted); }
+.pa-chiffres { display: flex; flex-wrap: wrap; gap: 8px 18px; } .pa-chiffres b { font: 800 1.4rem "Literata", serif; margin-right: 4px; }
+.pa-idees { display: flex; flex-wrap: wrap; gap: 6px; } .pa-idees a { display: grid; padding: 4px 10px; border-radius: 8px; background: var(--card); border-left: 4px solid var(--c); text-decoration: none; color: var(--ink); font-size: .88rem; } .pa-idees small { color: var(--muted); font-size: .72rem; }
+.pa-lec { display: grid; gap: 6px; margin: 8px 0; } .pa-lec div { display: grid; grid-template-columns: 150px 1fr; gap: 8px; font-size: .9rem; } .pa-lec dt { font-weight: 700; } .pa-lec dd { margin: 0; }
+.pa-semer { display: flex; gap: 6px; } .pa-semer .input { flex: 1; }
+.pa-memoire article { padding: 8px 0; border-bottom: 1px dashed var(--line); } .pa-memoire p { margin: 3px 0; } .pa-memoire p[style] b { color: var(--c); } .pa-date { display: flex; gap: 6px; align-items: center; font-weight: 700; }
+.cy-passage { display: inline-block; margin-top: 8px; padding: 8px 14px; border-radius: 999px; background: #e8c27a; color: #1b1916; font-weight: 800; text-decoration: none; } .cy-passage.discret { background: none; color: #b8ad98; padding: 0; font-weight: 600; text-decoration: underline; }
+@media (max-width: 860px) { .pa-etapes { grid-template-columns: 1fr; } .pa-lec div { grid-template-columns: 1fr; } }
+.nv-taches { margin: 6px 0 14px; } .nv-taches h2 { font: 700 .82rem "Atkinson Hyperlegible", sans-serif; text-transform: uppercase; letter-spacing: .06em; color: #a5741c; margin: 0 0 6px; }
+.nv-taches ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.nv-taches a { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; align-items: center; padding: 10px 14px; border-radius: 10px; background: #1b1916; color: #efe6d2; text-decoration: none; border-left: 5px solid #e8c27a; }
+.nv-taches b { font-size: 1rem; } .nv-taches small { grid-column: 1; color: #b8ad98; } .nv-taches span { grid-row: 1 / 3; grid-column: 2; color: #e8c27a; font-weight: 800; }

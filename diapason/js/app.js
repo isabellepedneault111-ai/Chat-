@@ -26,7 +26,9 @@ import materiel from './views/materiel.js';
 import nouvelles from './views/nouvelles.js';
 import elan from './views/elan.js';
 import cathedrale from './views/cathedrale.js';
+import passage from './views/passage.js';
 import { aVoir } from './suivi.js';
+import { mesTaches } from './taches.js';
 import { installerFilet } from './filet.js';
 import { installerMotOuvert } from './motoutil.js';
 import { installerGlossaire } from './glossaire.js';
@@ -61,7 +63,7 @@ const APPUIS = {
   placer: ['La prosodie : quand les syllabes accentuées tombent sur les temps forts, le texte se chante tout seul ; à côté, il boite.', 'Pattison 2009'],
 };
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles, elan, cathedrale };
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles, elan, cathedrale, passage };
 // Onglet en arrière-plan : le titre compte ce que l'autre vient d'ajouter, « (2) FLIP ». Revenir remet à zéro.
 {
   const base = document.title; let n = 0;
@@ -252,8 +254,8 @@ function showBadge() {
 }
 // Pastille sur Plan : ce que l'autre a ajouté et que je n'ai pas encore vu (Nos nouvelles).
 function majNouvelles() {
-  const b = $('#nav [data-id=home] .nv-badge'); if (!b) return; const n = aVoir().length;
-  b.hidden = !n; b.textContent = n > 9 ? '9+' : n; b.title = n ? `${n} nouvelle${n > 1 ? 's' : ''} à voir` : '';
+  const b = $('#nav [data-id=home] .nv-badge'); if (!b) return; const v = aVoir().length; const t = mesTaches().length; const n = v + t;
+  b.hidden = !n; b.textContent = n > 9 ? '9+' : n; b.title = [v ? `${v} nouvelle${v > 1 ? 's' : ''} à voir` : '', t ? `${t} chose${t > 1 ? 's' : ''} à faire pour toi` : ''].filter(Boolean).join(' · ');
 }
 onEspace((what) => { if (what === 'entries' || what === 'meta') majNouvelles(); });
 // Toucher la pastille mène droit à Nos nouvelles (toucher « Plan » mène à l'accueil, où elles sont tout en haut).
