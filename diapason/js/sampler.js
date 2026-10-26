@@ -42,9 +42,25 @@ export function prechargerSons(liste = Object.keys(BANQUES)) {
 export const pret = (b) => !!tampons[b];
 // Les instruments tenus (cordes, chœur, cuivres, bois) : un échantillon dure ~3 s ; pour une note plus longue,
 // on fait tourner le milieu du son en boucle, là où il ne bouge plus.
-export function boucler(src, B, dur) {
-  if (!B.boucle || dur * src.playbackRate.value < src.buffer.duration - 0.4) return;
-  src.loop = true; src.loopStart = B.boucle[0]; src.loopEnd = Math.min(B.boucle[1], src.buffer.duration - 0.1);
+// La jointure de la boucle est fondue : les 120 dernières millisecondes avant la fin de la boucle glissent vers
+// ce qui précède son début. Au saut, l'onde continue sans rupture (sinon : un petit « coche » à chaque tour).
+const fondus = new WeakMap();
+function tamponBoucle(buf, a, b, ctx) {
+  const deja = fondus.get(buf); if (deja && deja.sampleRate === ctx.sampleRate) return deja;
+  const sr = buf.sampleRate; const ia = Math.round(a * sr); const ib = Math.round(b * sr); const xf = Math.min(Math.round(0.12 * sr), ia, ib - ia - 1);
+  const out = ctx.createBuffer(buf.numberOfChannels, ib, sr);
+  for (let c = 0; c < buf.numberOfChannels; c++) {
+    const d = buf.getChannelData(c); const o = out.getChannelData(c); o.set(d.subarray(0, ib));
+    for (let i = 0; i < xf; i++) { const w = i / xf; const k = ib - xf + i; o[k] = d[k] * Math.cos(w * Math.PI / 2) + d[ia - xf + i] * Math.sin(w * Math.PI / 2); }
+  }
+  fondus.set(buf, out); return out;
+}
+// Donne son échantillon à la note (le playbackRate doit déjà être réglé) : tel quel, ou fondu en boucle si la note dure.
+export function boucler(src, B, dur, buf) {
+  if (!B.boucle || dur * src.playbackRate.value < buf.duration - 0.4) { src.buffer = buf; return; }
+  const a = B.boucle[0]; const b = Math.min(B.boucle[1], buf.duration - 0.1);
+  src.buffer = tamponBoucle(buf, a, b, src.context);
+  src.loop = true; src.loopStart = a; src.loopEnd = b;
 }
 // Pour rendre hors ligne (un fichier WAV) : les échantillons d'une banque, et ses réglages.
 export const echantillons = (b) => tampons[b] || null;
@@ -58,11 +74,10 @@ export function joue(banque, midi, { when = 0, dur = 1, vel = 0.8, dest } = {}) 
   const t = Math.max(when, c.currentTime);
   const s = l.reduce((a, b) => (Math.abs(b.midi - midi) < Math.abs(a.midi - midi) ? b : a));
   const src = c.createBufferSource();
-  src.buffer = s.buf;
   src.playbackRate.value = 2 ** ((midi - s.midi) / 12);
   const g = c.createGain();
   const B = BANQUES[banque];
-  boucler(src, B, dur);
+  boucler(src, B, dur, s.buf);
   const v = B.gain * vel;
   if (banque === 'voix') { g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t + 0.12); } else g.gain.setValueAtTime(v, t);
   g.gain.setValueAtTime(v, t + dur);

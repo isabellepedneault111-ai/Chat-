@@ -59,6 +59,9 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.30', quand: '2026-10-26', titre: 'Plus de coches', items: [
+    ['Les notes tenues ne cochent plus', ['Pour durer, une note tenue (cordes, chœur, cors, cuivres, bois) fait tourner le milieu de son échantillon en boucle. La jointure tombait mal : un petit « coche » à chaque tour, environ toutes les deux secondes. Elle est maintenant fondue, comme dans un vrai échantillonneur. Mesuré : la flûte passe d’un saut 24 fois plus fort que la normale à 4,5 ; les cuivres de 19 à 8 ; le chœur de 16 à 6.', 'La cathédrale entre aussi moins fort dans la sortie de l’app : à plein orchestre, le limiteur ne craque plus. Partout où l’orchestre joue (la cathédrale, son WAV, Jouer), c’est corrigé.']],
+  ] },
   { v: '0.29', quand: '2026-10-26', titre: 'Des mots-clés qui mènent quelque part', items: [
     ['Cliquer pour y aller', ['Dans Ça sert à, Tu peux et Ça nourrit, un mot-clé souligné mène quelque part : à la partie de la page qu’il nomme (« les liens », « la lampe », « le beat »… elle s’illumine un instant), ou à la page qu’il nomme (« Jouer ↗ », « le mur ↗ »).', 'Les mots-clés sont en colonne, avec un petit rond, au lieu des petits traits.']],
   ] },

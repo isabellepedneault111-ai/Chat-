@@ -156,7 +156,7 @@ export function cathedraleDuJeu({ accords }) {
 
 // Jouer en direct : on programme les notes un peu à l'avance, au fil de la lecture.
 export function jouer(oeuvre, { depuis = 0, onFin, sortie = null } = {}) {
-  const c = audio(); const maitre = c.createGain(); maitre.gain.value = 0.9; maitre.connect(out()); // par la lampe, si elle est allumée
+  const c = audio(); const maitre = c.createGain(); maitre.gain.value = 0.42; maitre.connect(out()); /* la sortie de l'app double le volume : on entre plus bas, pour ne pas faire craquer le limiteur */ // par la lampe, si elle est allumée
   const pans = new Map(); const panDe = (p) => { const k = Math.round(p * 10) / 10; if (!pans.has(k)) { const sp = c.createStereoPanner(); sp.pan.value = k; sp.connect(maitre); pans.set(k, sp); } return pans.get(k); };
   const t0 = c.currentTime + 0.15 - depuis; let i = oeuvre.notes.findIndex((n) => n.t >= depuis); if (i < 0) i = oeuvre.notes.length;
   const tic = () => {
@@ -182,7 +182,7 @@ export async function rendre(oeuvre, onProgres) {
   oeuvre.notes.forEach((n) => {
     const l = echantillons(n.banque); if (!l) return; const B = reglage(n.banque);
     const s = l.reduce((a, b) => (Math.abs(b.midi - n.midi) < Math.abs(a.midi - n.midi) ? b : a));
-    const src = ctx.createBufferSource(); src.buffer = s.buf; src.playbackRate.value = 2 ** ((n.midi - s.midi) / 12); boucler(src, B, n.dur);
+    const src = ctx.createBufferSource(); src.playbackRate.value = 2 ** ((n.midi - s.midi) / 12); boucler(src, B, n.dur, s.buf);
     const g = ctx.createGain(); const v = B.gain * n.vel;
     g.gain.setValueAtTime(v, n.t); g.gain.setValueAtTime(v, n.t + n.dur); g.gain.exponentialRampToValueAtTime(0.0001, n.t + n.dur + B.release);
     if (n.pan) { const sp = ctx.createStereoPanner(); sp.pan.value = n.pan; src.connect(g).connect(sp).connect(maitre); } else src.connect(g).connect(maitre);
