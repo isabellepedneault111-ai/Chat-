@@ -59,6 +59,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.24', quand: '2026-10-26', titre: 'Le schéma, en plus clair', items: [
+    ['Les groupes se blottissent', ['Dans le schéma des liens, les disques d’un groupe sont <b>dans son anneau</b>. On vise l’anneau pour toucher tout le groupe, ou un disque à l’intérieur pour lui seul.']],
+    ['Les déclencheurs dans une barre', ['Les déclencheurs (respiration, oscillation, hasard, chaos, voix, clavier, molette) attendent dans une barre compacte, au-dessus du schéma. On en tire un vers sa cible ; seuls ceux qu’on utilise apparaissent dans le schéma. Toute la place va aux disques et aux groupes.']],
+  ] },
   { v: '0.23', quand: '2026-10-26', titre: 'Déclencheurs et paramètres', items: [
     ['Faire un groupe, sans chercher', ['Chaque disque a sa case <b>« choisir »</b>, et une ligne dit quoi faire : coche deux disques ou plus, puis « Les grouper ».']],
     ['Les liens poussent plus que le volume', ['Un lien pousse maintenant <b>le volume</b>, <b>la hauteur</b> (jusqu’à deux demi-tons : vibrato, glissés), <b>le timbre</b> (plus sourd ou plus clair) ou <b>la place</b> (vers la gauche ou la droite). La phrase se lit d’elle-même : « le chaos pousse le timbre du groupe A vers le sourd ».']],

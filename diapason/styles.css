@@ -3192,3 +3192,10 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .ls-param { font: 700 10px "Atkinson Hyperlegible", sans-serif; fill: #efe6d2; paint-order: stroke; stroke: #141210; stroke-width: 3px; pointer-events: none; }
 .li-schema { max-height: 380px; }
 .ls-sous { font: 700 9px 'Atkinson Hyperlegible', sans-serif !important; fill: #b8ad98; }
+.ls-palette { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 6px; }
+.ls-src { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 4px; border-radius: 16px; border: 1.5px solid var(--rule); background: #1b1915; color: #efe6d2; font-size: .8rem; cursor: grab; touch-action: none; }
+.ls-src b { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; border: 1.5px solid #b8ad98; font-size: .8rem; }
+.ls-src:active { cursor: grabbing; }
+.ls-glettre { font: 800 12px "Atkinson Hyperlegible", sans-serif; }
+.ls-petit { font: 800 10px "Atkinson Hyperlegible", sans-serif !important; }
+.ls-g { cursor: default; }

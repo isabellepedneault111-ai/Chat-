@@ -247,36 +247,56 @@ export default {
     // on touche une flèche pour la choisir (changer son sens, sa force, la retirer).
     let lienChoisi = -1; let trace = null;
     const SENS = { baisse: '#d55e00', monte: '#009e73' };
+    // La disposition : en cercle, les disques seuls et les groupes ; les disques d'un groupe se blottissent dans son
+    // anneau. À gauche, seulement les déclencheurs qu'on utilise (les autres attendent dans la barre, au-dessus).
     function noeuds() {
       const lettres = [...new Set(tracks.map((t) => t.g).filter(Boolean))].sort();
-      const cercle = [...tracks.map((t, i) => ({ id: String(i), type: 'd', label: `D${i + 1}`, sous: t.n, titre: `Disque ${i + 1} (${t.n} par tour)`, c: colors[i] })), ...lettres.map((g) => ({ id: `g${g}`, type: 'g', label: g, titre: `Groupe ${g}`, c: GROUPES[g] }))];
-      const srcs = Object.entries(SOURCES).map(([k, [titre, label, aide]]) => ({ id: k, type: 's', label, titre: `${titre} : ${aide}`, nom: titre, c: '#b8ad98' }));
-      const W = 720; const H = 330; const n = cercle.length; const cx = 470; const cy = H / 2;
-      cercle.forEach((x, k) => { const a = (k / n) * Math.PI * 2 - Math.PI / 2; x.x = cx + Math.cos(a) * 190; x.y = cy + Math.sin(a) * 125; });
-      srcs.forEach((x, k) => { x.x = 40; x.y = 28 + k * ((H - 56) / (srcs.length - 1)); });
-      return { l: [...cercle, ...srcs], W, H };
+      const haut = [...tracks.map((t, i) => [t, i]).filter(([t]) => !t.g).map(([t, i]) => ({ id: String(i), type: 'd', r: 22 })), ...lettres.map((g) => ({ id: `g${g}`, type: 'g', g }))];
+      const utilises = Object.keys(SOURCES).filter((k) => liens.some((l) => l.src === k));
+      const W = 640; const H = 300; const gauche = utilises.length ? 150 : 0; const cx = gauche + (W - gauche) / 2; const cy = H / 2; const n = haut.length;
+      const rx = (W - gauche) / 2 - 70; const ry = H / 2 - 62;
+      const l = [];
+      haut.forEach((x, k) => {
+        const a = n === 1 ? 0 : (k / n) * Math.PI * 2 - Math.PI / 2; const X = n === 1 ? cx : cx + Math.cos(a) * rx; const Y = n === 1 ? cy : cy + Math.sin(a) * ry;
+        if (x.type === 'd') { const i = +x.id; l.push({ ...x, x: X, y: Y, label: `D${i + 1}`, sous: tracks[i].n, titre: `Disque ${i + 1} (${tracks[i].n} par tour)`, c: colors[i] }); return; }
+        const m = tracks.map((t, i) => [t, i]).filter(([t]) => t.g === x.g); const rm = m.length <= 2 ? 15 : 20; const R = rm + 26;
+        l.push({ id: x.id, type: 'g', x: X, y: Y, r: R, label: x.g, titre: `Groupe ${x.g} : tout le groupe`, c: GROUPES[x.g] });
+        m.forEach(([t, i], j) => { const b = (j / m.length) * Math.PI * 2 - Math.PI / 2; l.push({ id: String(i), type: 'm', r: 14, x: X + Math.cos(b) * rm, y: Y + Math.sin(b) * rm, label: `D${i + 1}`, titre: `Disque ${i + 1}, dans le groupe ${x.g}`, c: colors[i] }); });
+      });
+      utilises.forEach((k, j) => { const [titre, label] = SOURCES[k]; l.push({ id: k, type: 's', r: 18, x: 26, y: utilises.length === 1 ? cy : 30 + j * ((H - 60) / (utilises.length - 1)), label, nom: titre, titre: SOURCES[k].join(' : '), c: '#b8ad98' }); });
+      return { l, W, H };
     }
+    // Le nœud sous un point : le plus petit qui le contient (un disque dans un anneau gagne sur l'anneau).
+    const nœudA = (l, x, y) => l.filter((n) => Math.hypot(n.x - x, n.y - y) <= n.r + 6).sort((a, b) => a.r - b.r)[0];
     function schemaSVG() {
       const { l, W, H } = noeuds(); const at = (id) => l.find((x) => x.id === id);
-      const appart = tracks.map((t, i) => (t.g ? `<line x1="${at(String(i)).x}" y1="${at(String(i)).y}" x2="${at(`g${t.g}`).x}" y2="${at(`g${t.g}`).y}" class="ls-membre" style="stroke:${GROUPES[t.g]}"/>` : '')).join('');
       const fl = liens.map((x, k) => {
         const a = at(x.src); const b = at(x.cible); if (!a || !b) return '';
         const dx = b.x - a.x; const dy = b.y - a.y; const d = Math.hypot(dx, dy) || 1; const ux = dx / d; const uy = dy / d;
-        const x1 = a.x + ux * 26; const y1 = a.y + uy * 26; const x2 = b.x - ux * 30; const y2 = b.y - uy * 30;
-        const mx = (x1 + x2) / 2 - uy * 28; const my = (y1 + y2) / 2 + ux * 28; // une courbe : deux liens opposés ne se cachent pas
+        const x1 = a.x + ux * (a.r + 3); const y1 = a.y + uy * (a.r + 3); const x2 = b.x - ux * (b.r + 7); const y2 = b.y - uy * (b.r + 7);
+        const mx = (x1 + x2) / 2 - uy * 24; const my = (y1 + y2) / 2 + ux * 24; // une courbe : deux liens opposés ne se cachent pas
         const fr = SOURCES[x.src] ? 0 : freqOf(+x.src); const bat = playing && fr > 0 && fr < 9 ? `style="animation-duration:${(1 / fr).toFixed(3)}s"` : '';
         return `<g class="ls-lien ${k === lienChoisi ? 'sel' : ''} ${bat ? 'bat' : ''}" data-lien="${k}" ${bat}><path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" class="ls-zone"/><path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" stroke="${SENS[x.sens]}" stroke-width="${(1.5 + 5 * x.force).toFixed(1)}" marker-end="url(#ls-fl-${x.sens})" class="ls-trait"/><text x="${mx}" y="${my}" class="ls-param" text-anchor="middle">${{ volume: 'vol.', hauteur: 'haut.', brillance: 'timbre', pan: 'G↔D' }[x.param || 'volume']}</text></g>`;
       }).join('');
-      const nd = l.map((x) => `<g class="ls-noeud ls-${x.type}" data-noeud="${x.id}" transform="translate(${x.x} ${x.y})"><title>${x.titre}</title>${x.type === 'g' ? `<circle r="24" fill="none" stroke="${x.c}" stroke-width="4"/><circle r="17" fill="#1b1915"/>` : `<circle r="22" fill="#1b1915" stroke="${x.c}" stroke-width="3"/>`}<text y="${x.sous ? 3 : 6}" text-anchor="middle" fill="${x.type === 's' ? '#efe6d2' : x.c}">${x.label}</text>${x.sous ? `<text y="15" text-anchor="middle" class="ls-sous">${x.sous}</text>` : ''}${x.type === 's' ? `<text x="30" y="5" class="ls-nom">${x.nom}</text><rect x="-24" y="-23" width="${40 + x.nom.length * 7}" height="46" rx="12" fill="transparent" class="ls-prise"/>` : ''}</g>`).join('');
+      const forme = (x) => {
+        if (x.type === 'g') return `<circle r="${x.r}" fill="rgba(255,255,255,.03)" stroke="${x.c}" stroke-width="4"/><text y="${-x.r - 7}" text-anchor="middle" fill="${x.c}" class="ls-glettre">Groupe ${x.label}</text>`;
+        if (x.type === 'm') return `<circle r="${x.r}" fill="#1b1915" stroke="${x.c}" stroke-width="2.5"/><text y="4" text-anchor="middle" fill="${x.c}" class="ls-petit">${x.label}</text>`;
+        if (x.type === 's') return `<circle r="${x.r}" fill="#1b1915" stroke="${x.c}" stroke-width="2"/><text y="5" text-anchor="middle" fill="#efe6d2">${x.label}</text><text x="${x.r + 6}" y="4" class="ls-nom">${x.nom}</text>`;
+        return `<circle r="${x.r}" fill="#1b1915" stroke="${x.c}" stroke-width="3"/><text y="3" text-anchor="middle" fill="${x.c}">${x.label}</text><text y="15" text-anchor="middle" class="ls-sous">${x.sous}</text>`;
+      };
+      // Les anneaux d'abord, puis les flèches, puis les disques et les déclencheurs par-dessus (on les attrape toujours).
+      const g = (x) => `<g class="ls-noeud ls-${x.type}" data-noeud="${x.id}" transform="translate(${x.x} ${x.y})"><title>${x.titre}</title>${forme(x)}</g>`;
+      const anneaux = l.filter((x) => x.type === 'g').map(g).join(''); const nd = l.filter((x) => x.type !== 'g').map(g).join('');
       return `<svg class="li-schema" viewBox="0 0 ${W} ${H}" role="img" aria-label="Le schéma des liens : qui influence qui">
         <defs>${Object.entries(SENS).map(([k, c]) => `<marker id="ls-fl-${k}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker>`).join('')}</defs>
-        ${appart}${fl}<path class="ls-trace" d="" />${nd}</svg>`;
+        ${anneaux}${fl}${nd}<path class="ls-trace" d="" /></svg>`;
     }
     function renderLiens() {
       const lettres = [...new Set(tracks.map((t) => t.g).filter(Boolean))].sort();
       const cibles = [...tracks.map((_, i) => [String(i), `du disque ${i + 1}`]), ...lettres.map((l) => [`g${l}`, `du groupe ${l}`])];
       q('.liens').innerHTML = `<h3>Les liens : qui influence qui</h3>
-        <p class="muted small">Tire d’un cercle vers un autre pour créer un lien. Touche une flèche pour la choisir. <span class="ls-leg"><i style="background:${SENS.baisse}"></i>vers le bas, le grave, le sourd, la gauche <i style="background:${SENS.monte}"></i>vers le haut, l’aigu, le clair, la droite · plus épaisse = plus forte · sur la flèche : ce qu’elle pousse</span></p>
+        <div class="ls-palette" role="group" aria-label="Les déclencheurs : tire-en un vers un disque ou un groupe">${Object.entries(SOURCES).map(([k, [titre, label, aide]]) => `<button type="button" class="ls-src" data-src-chip="${k}" title="${titre} : ${aide}"><b>${label}</b>${titre.replace(/^(La |Le |Une |Ta |L’)/, '')}</button>`).join('')}</div>
+        <p class="muted small">Tire un <b>déclencheur</b> ou un disque vers sa cible : un disque, ou l’anneau d’un groupe pour tout le groupe. <span class="ls-leg"><i style="background:${SENS.baisse}"></i>vers le bas <i style="background:${SENS.monte}"></i>vers le haut · épaisse = forte</span></p>
         ${schemaSVG()}
         ${liens.length ? `<ul class="li-liste">${liens.map((l, k) => `<li class="${k === lienChoisi ? 'sel' : ''}" data-lien-li="${k}"><span><b>${nomSource(l.src)}</b>${SOURCES[l.src] ? '' : ', à chacune de ses frappes,'} pousse <select class="li-param" data-lien-param="${k}" aria-label="Ce que le lien fait bouger">${Object.entries(PARAMS).map(([v, [lb]]) => `<option value="${v}" ${(l.param || 'volume') === v ? 'selected' : ''}>${lb}</option>`).join('')}</select> <b>${nomCible(l.cible)}</b> <button class="li-sens" data-lien-sens="${k}" style="--c:${SENS[l.sens]}" title="Inverser le sens">${verbe(l)}</button></span><input type="range" min="10" max="100" value="${Math.round(l.force * 100)}" data-lien-force="${k}" aria-label="Force du lien"><button class="icon-btn tiny" data-lien-x="${k}" aria-label="Retirer ce lien">×</button></li>`).join('')}</ul>` : ''}
         <details class="li-faire-d"><summary>Ou l’écrire en phrase</summary><div class="li-faire"><select data-li="src">${tracks.map((_, i) => `<option value="${i}">Le disque ${i + 1}, à chaque frappe,</option>`).join('')}${Object.entries(SOURCES).map(([k, [lb]]) => `<option value="${k}">${lb}</option>`).join('')}</select>
@@ -300,18 +320,29 @@ export default {
         const n = e.target.closest('[data-noeud]');
         if (!n) { const li = e.target.closest('[data-lien]'); lienChoisi = li ? +li.dataset.lien : -1; renderLiens(); return; }
         const { l } = noeuds(); const a = l.find((x) => x.id === n.dataset.noeud);
+        if (a.type === 'g') { import('../ui.js').then((u) => u.toast('Un groupe reçoit des liens ; tire depuis un déclencheur ou un disque.')); return; }
         trace = { src: a.id, x: a.x, y: a.y }; svg.setPointerCapture(e.pointerId); e.preventDefault();
       });
+      // Depuis la barre des déclencheurs : la ligne part du bouton, même s'il est hors du schéma.
+      q('.ls-palette').addEventListener('pointerdown', (e) => {
+        const b = e.target.closest('[data-src-chip]'); if (!b) return;
+        const r = b.getBoundingClientRect(); const [x, y] = pt({ clientX: r.left + r.width / 2, clientY: r.bottom });
+        trace = { src: b.dataset.srcChip, x, y }; b.setPointerCapture(e.pointerId); e.preventDefault();
+        const bouge = (ev) => { const [px, py] = pt(ev); svg.querySelector('.ls-trace').setAttribute('d', `M${trace.x} ${trace.y} L${px} ${py}`); };
+        const lache = (ev) => { b.removeEventListener('pointermove', bouge); b.removeEventListener('pointerup', lache); finir(ev); };
+        b.addEventListener('pointermove', bouge); b.addEventListener('pointerup', lache);
+      });
       svg.addEventListener('pointermove', (e) => { if (!trace) return; const [x, y] = pt(e); svg.querySelector('.ls-trace').setAttribute('d', `M${trace.x} ${trace.y} L${x} ${y}`); });
-      svg.addEventListener('pointerup', (e) => {
+      svg.addEventListener('pointerup', (e) => finir(e));
+      function finir(e) {
         if (!trace) return; const t = trace; trace = null; svg.querySelector('.ls-trace').setAttribute('d', '');
-        const [x, y] = pt(e); const { l } = noeuds(); const b = l.find((n) => Math.hypot(n.x - x, n.y - y) < 28);
+        const [x, y] = pt(e); const { l } = noeuds(); const b = nœudA(l, x, y);
         if (!b || b.id === t.src) return;
-        if (SOURCES[b.id]) { import('../ui.js').then((u) => u.toast('Les déclencheurs à gauche influencent les autres ; rien ne les influence. Tire vers un disque ou un groupe.')); return; }
+        if (SOURCES[b.id]) { import('../ui.js').then((u) => u.toast('Les déclencheurs influencent les autres ; rien ne les influence. Tire vers un disque ou un groupe.')); return; }
         if (t.src.startsWith('g')) { import('../ui.js').then((u) => u.toast('Un lien part d’un disque ou de la respiration (un groupe peut en recevoir).')); return; }
         if (!b.id.startsWith('g') && tracks[+b.id] && t.src === b.id) return;
         liens.push({ src: t.src, sens: 'baisse', cible: b.id, param: 'volume', force: 0.7 }); lienChoisi = liens.length - 1; renderLiens(); prevenir(t.src);
-      });
+      }
     }
     // L'effet des liens sur un disque, maintenant : de 0 (éteint) à 1 (inchangé) ou plus.
     // Ce qu'un lien peut faire bouger chez sa cible.
