@@ -64,6 +64,10 @@ const MOTS = {
   bilan: [['où on est rendus'], ['heures, séances', 'progrès', 'la prochaine cible'], ['la motivation', 'le plan']],
   evolution: [['nos courbes'], ['régularité', 'justesse', 'idées qui avancent'], ['le bilan', 'le plan']],
 };
+// Un mot-clé qui nomme une autre page y mène ; un mot-clé qui nomme une partie de la page y amène.
+const PAGES = { 'le mur': '#/carnet', jouer: '#/studio', 'la cathédrale': '#/cathedrale', 'le plan': '#/', 'le plan qui s’ajuste': '#/', 'le journal': '#/ecrire', 'nos chansons': '#/studio?tab=chanson', 'une chanson entière': '#/studio?tab=chanson', 'le relais': '#/relais', 'nos nouvelles': '#/nouvelles', 'ce que l’autre a fait': '#/nouvelles', 'le bilan': '#/bilan', 'nos deux âmes': '#/ames', 'l’accueil': '#/', 'notre cycle': '#/', 'chaque séance': '#/session', 'les séances': '#/session', 'lancer une séance': '#/session', 'une séance': '#/session', 'nos paroles': '#/paroles', 'nos idées pour le labo': '#/ecrire', 'placer mes paroles': '#/placer', 'le guide vocal': '#/placer', 'le profil de la voix': '#/tessiture', 'ton type de voix': '#/tessiture', 'ton étape 1': '#/depart', 'notre portrait': '#/depart', 'la pochette': '#/studio?tab=cover', 'le filet': '#/materiel', 'tendre le filet': '#/materiel', 'la carte de nos accords': '#/accord', 'la prochaine cible': '#/bilan', 'les tonalités': '#/depart', 'les tonalités conseillées': '#/depart', 'nos lunes passées': '#/passage', 'l’atelier': '#/atelier', 'le mumble': '#/ecrire', 'rimes et synonymes': '#/lexique' };
+const CIBLES = { 'les groupes': '.groupes', 'les liens': '.liens', 'la lampe': '.lampe-ctl', 'les disques': '.tracks-panel', 'la clé de voûte': '.ca-cles', 'ce que frog branche': '.ca-branche', 'la lumière': '.ca-parties', 'la tresse': '.el-scene, .tresse, canvas', 'par où commencer': '.etape1, .commencer, [class*=commencer]', 'nos intentions du cycle': '.cycle, [class*=cycle]', 'le beat': '[data-tab=beat]', 'improviser au clavier': '.kb-legende', 'une chanson entière': '[data-tab=chanson]', 'la pochette': '[data-tab=cover]', 'une prise': '[data-tab=voix]', 'tes propres accords': '[data-act=editer]', 'le plan qui s’ajuste': '.ajuste', 'où on en est': '.plan-hero', 'quoi faire maintenant': '.next-card', 'ajouter une idée, un son, un lien': '.capture, .cap, [class*=capture]', 'nos lunes passées': '.ps-lunes, [class*=lunes]' };
+const norme = (x) => x.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[’']/g, ' ').replace(/\b(le|la|les|l|un|une|des|du|de|nos|notre|ton|ta|tes|vos|votre|ses|son|sa|d|a|au|aux)\b/g, ' ').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
 // Trois petites images, une par case : la cible (ça sert à), la main (tu peux), les racines (ça nourrit).
 const ICONES = [
   '<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="16"/><circle cx="20" cy="20" r="10"/><circle cx="20" cy="20" r="3.5" class="pl"/><path d="M33 7 21 19M33 7v6M33 7h-6"/></svg>',
@@ -102,6 +106,15 @@ export function installerSommaire(vue) {
       box.innerHTML = ['Ça sert à', 'Tu peux', 'Ça nourrit'].map((t, i) => { const mc = MOTS[id]?.[i] || POINTS(m[i]).map((x) => x.replace(/\.$/, '')); return `<div class="md-case" title="${m[i].replace(/"/g, '&quot;')}">${ICONES[i]}<b>${t}</b><ul class="md-mots">${mc.map((x) => `<li>${x}</li>`).join('')}</ul></div>`; }).join('')
         + `<button type="button" class="md-plier" data-md="plier" aria-label="${replie() ? 'Déplier' : 'Replier'} le mandat de la page">${replie() ? 'À quoi sert cette page ▾' : '▴'}</button>`;
       tete.after(box);
+      // Les mots-clés deviennent des liens : vers une partie de cette page si elle existe, sinon vers la page nommée.
+      const parties = [...vue.querySelectorAll('h2, h3, summary h2')].filter((h) => h.offsetParent && !h.closest('.mandat, .sommaire, .tour, .coach, .maj'));
+      box.querySelectorAll('.md-mots li').forEach((li) => {
+        const t = li.textContent.trim(); const n = norme(t); const cle = t.toLowerCase();
+        let cible = CIBLES[cle] && vue.querySelector(CIBLES[cle]);
+        if (!cible && n.length >= 4) cible = parties.find((h) => { const hn = norme(h.textContent); return hn && (hn.includes(n) || (n.includes(hn) && hn.length >= 5)); });
+        if (cible) { li.innerHTML = `<button type="button" class="md-lien" title="Aller à cette partie de la page">${esc(t)}</button>`; li.firstChild._cible = cible; return; }
+        const page = PAGES[cle]; if (page && page.split('?')[0] !== `#/${id}`) li.innerHTML = `<a class="md-lien" href="${page}" title="Ouvrir cette page">${esc(t)} ↗</a>`;
+      });
     }
     vue._somTitres = titres;
     majFlottant(titres);
@@ -124,6 +137,8 @@ export function installerSommaire(vue) {
     if (perdu() && vue.querySelector('.mod-head, .masthead, .ames-hero')) { clearTimeout(t); t = 0; construire(); } else passe();
   }).observe(vue, { childList: true, subtree: true });
   vue.addEventListener('click', (e) => {
+    const ml = e.target.closest('button.md-lien');
+    if (ml?._cible) { const c = ml._cible; const d = c.closest('details'); if (d && !d.open) d.open = true; if (c.matches('[data-tab], button')) c.click(); c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('vise'); setTimeout(() => c.classList.remove('vise'), 2400); return; }
     if (e.target.closest('[data-md=plier]')) {
       const box = e.target.closest('.mandat'); const r = !box.classList.contains('replie'); box.classList.toggle('replie', r);
       try { localStorage.setItem('diapason:mandatReplie', r ? '1' : '0'); } catch { /* tant pis */ }

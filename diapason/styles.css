@@ -3246,3 +3246,10 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .view-home .mast-logo { height: clamp(46px, 7vw, 76px); }
 .view-home .mast-app { font-size: clamp(2.2rem, 5.4vw, 4.2rem); line-height: 1.02; margin-top: 6px; letter-spacing: -.02em; }
 .view-home .mast-app span { display: block; font-size: .36em; margin: 4px 0 0 2px; letter-spacing: 0; }
+/* Les mots-clés : en colonne, un petit rond braise (pas de trait), alignés à gauche ; cliquables quand ils mènent quelque part */
+.md-case ul.md-mots { display: grid !important; gap: 3px; }
+.md-case ul.md-mots > li::before { width: 5px !important; height: 5px !important; border-radius: 50% !important; margin: 0 7px 2px 1px !important; }
+.md-lien { border: 0; background: none; padding: 0; font: inherit; color: inherit; cursor: pointer; text-align: left; text-decoration: underline; text-decoration-color: rgba(181,60,10,.45); text-underline-offset: 3px; }
+a.md-lien { color: inherit; }
+.md-lien:hover { color: #b53c0a; text-decoration-color: #b53c0a; }
+.vise { outline: 3px solid #e8c27a; outline-offset: 4px; border-radius: 8px; transition: outline-color .4s; }

@@ -59,6 +59,9 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.29', quand: '2026-10-26', titre: 'Des mots-clés qui mènent quelque part', items: [
+    ['Cliquer pour y aller', ['Dans Ça sert à, Tu peux et Ça nourrit, un mot-clé souligné mène quelque part : à la partie de la page qu’il nomme (« les liens », « la lampe », « le beat »… elle s’illumine un instant), ou à la page qu’il nomme (« Jouer ↗ », « le mur ↗ »).', 'Les mots-clés sont en colonne, avec un petit rond, au lieu des petits traits.']],
+  ] },
   { v: '0.28', quand: '2026-10-26', titre: 'En mots-clés', items: [
     ['Ça sert à, Tu peux, Ça nourrit', ['Sur chaque page, les trois cases du haut sont en <b>mots-clés</b>, alignés à gauche, sans retrait. La phrase complète reste au survol de chaque case.']],
     ['Diapason Labo, en grand', ['Sur l’accueil, <b>Diapason Labo</b> est maintenant le grand titre ; le logo FLIP, au-dessus, est plus discret.']],
