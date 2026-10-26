@@ -62,6 +62,8 @@ export const VERSIONS = [
   { v: '0.25', quand: '2026-10-26', titre: 'Le labo se souvient', items: [
     ['Rien ne se perd', ['Le labo se souvient tout seul de ce que tu as fait (disques, groupes, liens, disque en avant, vitesse), même si tu actualises la page.', '<b>Mes réglages</b> : donne un nom, « Garder ce réglage », et il te suit sur tes appareils ; l’autre le voit aussi chez lui et peut le charger. Un toucher pour le recharger.']],
     ['● Enregistrer', ['À côté de Démarrer : enregistre exactement ce que tu entends (groupes, liens, lampe compris), puis le télécharge en WAV stéréo.']],
+    ['L’arbre montre ce qui bouge', ['Le nombre de fichiers ne change que quand on en crée un. L’arbre dit maintenant aussi ce qui a bougé à la dernière mise à jour : combien de fichiers ont été retouchés (et lesquels), combien sont nés ce jour-là ; ils brillent dans le dessin.']],
+    ['De l’air dans les cartes', ['Dans « Tes disques », le texte ne colle plus au bord droit des cartes.']],
     ['Des mots qui s’entendent', ['Les liens disent ce qu’on entend : « le chaos agit sur le timbre du groupe A : <b>plus sourd</b> ». Plus doux ou plus fort, plus grave ou plus aigu, plus sourd ou plus brillant, vers la gauche ou vers la droite (l’<b>espace gauche-droite</b>, entre tes deux haut-parleurs).', 'Les déclencheurs sont revenus à gauche du schéma, collés au bord ; le schéma prend toute la largeur.']],
   ] },
   { v: '0.24', quand: '2026-10-26', titre: 'Le schéma, en plus clair', items: [

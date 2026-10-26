@@ -107,6 +107,7 @@ const ORIGINE = (nom) => (/^piano-/.test(nom) ? 'Piano à queue Salamander, enre
 const couleur = (n) => (n.c ? COUL.dossier : COUL[(n.n.split('.').pop() || '').toLowerCase()] || '#cfc6b4');
 // Les fiches : chaque point cliquable garde ici ce qu'on sait de lui.
 let FICHES = []; let ETAPES = [];
+let RECENT = ''; // la date de la dernière retouche : ces fichiers brillent
 function dessinArbre(data) {
   FICHES = [];
   const R = 330; let feuilles = 0; let prof = 0; let dossiers = 0;
@@ -136,7 +137,7 @@ function dessinArbre(data) {
       if (n.d > 0) { points += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${Math.max(3, 7 - n.d)}" fill="${COUL.dossier}" class="ar-pt" data-f="${FICHES.push(n) - 1}" tabindex="0"><title>${n.chemin} · ${n.c.length} éléments</title></circle>`; const [lx, ly] = xy(a, r + 16); mots += `<text class="ar-dos" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" dominant-baseline="middle">${n.n}</text>`; }
     } else {
       const deg = (a * 180) / Math.PI; const gauche = deg > 90 && deg < 270;
-      points += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.2" fill="${couleur(n)}" class="ar-pt" data-f="${FICHES.push(n) - 1}" stroke="transparent" stroke-width="6"><title>${n.chemin}${n.l ? ` · ${n.l} lignes` : ''}${ORIGINE(n.n) ? `\n${ORIGINE(n.n)}` : ''}</title></circle>`;
+      points += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${n.mod && n.mod === RECENT ? 3.4 : 2.2}" fill="${couleur(n)}" class="ar-pt ${n.mod && n.mod === RECENT ? 'ar-recent' : ''}" data-f="${FICHES.push(n) - 1}" stroke="transparent" stroke-width="6"><title>${n.chemin}${n.l ? ` · ${n.l} lignes` : ''}${ORIGINE(n.n) ? `\n${ORIGINE(n.n)}` : ''}</title></circle>`;
       const [tx, ty] = xy(a, R + 6);
       mots += `<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" transform="rotate(${gauche ? deg - 180 : deg} ${tx.toFixed(1)} ${ty.toFixed(1)})" text-anchor="${gauche ? 'end' : 'start'}" dominant-baseline="middle" fill="${couleur(n)}">${n.n}</text>`;
     }
@@ -255,10 +256,16 @@ export default {
       </details>`;
     fetch('data/arbre.json', { cache: 'no-cache' }).then((r) => r.json()).then((data) => {
       const compte = (n) => (n.c ? 1 + n.c.reduce((a, x) => a + compte(x), 0) : 0); const dossiers = compte(data);
+      // Le nombre de fichiers ne bouge que quand on en crée un ; ce qui bouge à chaque mise à jour, ce sont les fichiers
+      // retouchés : on les montre (ils brillent aussi dans le dessin).
+      const feuilles = []; (function t(x, ch) { if (x.c) x.c.forEach((y) => t(y, ch ? `${ch}/${y.n}` : y.n)); else feuilles.push({ ...x, chemin: ch }); })(data, '');
+      RECENT = feuilles.reduce((m, x) => (x.mod && x.mod > m ? x.mod : m), '');
+      const retouches = feuilles.filter((x) => x.mod === RECENT); const nes = feuilles.filter((x) => x.nee === RECENT);
       const { svg } = dessinArbre(data);
       el.querySelector('.ar-mot-lignes').textContent = data.lignes.toLocaleString('fr-CA'); cadence();
       el.querySelector('.ar-dessin').innerHTML = svg;
-      el.querySelector('.ar-stats').innerHTML = `<b>${data.fichiers}</b> fichiers · <b>${dossiers - 1}</b> dossiers · <b>${data.lignes.toLocaleString('fr-CA')}</b> lignes écrites`;
+      el.querySelector('.ar-stats').innerHTML = `<b>${data.fichiers}</b> fichiers · <b>${dossiers - 1}</b> dossiers · <b>${data.lignes.toLocaleString('fr-CA')}</b> lignes écrites
+        ${RECENT ? `<span class="ar-recents">Le ${jour(RECENT)} : <b>${retouches.length}</b> fichier${retouches.length > 1 ? 's' : ''} retouché${retouches.length > 1 ? 's' : ''}${nes.length ? `, dont <b>${nes.length}</b> né${nes.length > 1 ? 's' : ''} ce jour-là` : ''} (ils brillent dans le dessin) : ${retouches.sort((a, b) => b.l - a.l).slice(0, 6).map((x) => x.n).join(', ')}${retouches.length > 6 ? '…' : ''}</span>` : ''}`;
     }).catch(() => { el.querySelector('.ar-dessin').innerHTML = '<p class="muted">L’arbre n’a pas pu se charger.</p>'; });
     let gData = null;
     fetch('data/genealogie.json', { cache: 'no-cache' }).then((r) => r.json()).then((g) => {
