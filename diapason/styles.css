@@ -3367,3 +3367,5 @@ a.md-lien { color: inherit; }
 .ca-gl .li-liste li > span::first-letter { text-transform: uppercase; }
 .ar-verdict { margin: 4px 0 14px; padding: 16px 20px; border-radius: 12px; background: #1b1916; color: #efe6d2 !important; font: 500 1.12rem/1.6 var(--display); max-width: none !important; }
 .ar-verdict b { color: #f3c77a !important; }
+.b-tabs .b-courbes { margin-left: auto; align-self: center; font-weight: 700; text-decoration: none; padding: 0 6px; }
+.view-home + .subnav, .subnav[aria-label="Accueil"] { margin-top: -4px; }

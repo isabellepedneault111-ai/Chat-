@@ -59,6 +59,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.35', quand: '2026-10-26', titre: 'Rien ne se cache derrière l’accueil', items: [
+    ['L’accueil a ses sous-onglets', ['Comme Jouer, Voix et Labo : <b>Aujourd’hui · Notre projet · Notre bilan · Nos lunes</b>. Ce qu’on ouvrait seulement depuis l’accueil (le projet, le passage de lune) a maintenant une place fixe, toujours au même endroit.']],
+    ['L’arbre dans « ⋯ »', ['L’arbre de l’app (son architecture, ses versions) est aussi dans le menu ⋯, en haut à droite.']],
+    ['Nos courbes', ['Dans Notre bilan, à côté de Séance, Semaine et Mois : « Nos courbes → ».']],
+  ] },
   { v: '0.34', quand: '2026-10-26', titre: 'Le labo entier dans la cathédrale', items: [
     ['« Bâtir La cathédrale de ces disques » emporte tout', ['Plus seulement les nombres : les <b>groupes</b> du labo deviennent des <b>pupitres</b> de l’orchestre, chaque son trouve son équivalent (grosse caisse → timbales, caisse claire → pizzicati, charley → célesta, claps → harpe), avec les volumes, les sourdines, la respiration et <b>les liens</b>.']],
     ['Les pupitres', ['Sous chaque disque, « pupitre A, B ou C ». Un pupitre se règle d’un geste : son instrument, son volume, sourdine, solo, respirer.']],

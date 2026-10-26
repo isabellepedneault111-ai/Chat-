@@ -175,7 +175,7 @@ export default {
     function render() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: render }); return; }
       const tab = TABS.find((t) => t[0] === location.hash.split('/')[2])?.[0] || 'semaine';
-      const tabs = `<div class="seg-tabs b-tabs" role="tablist">${TABS.map(([id, l]) => `<a role="tab" href="#/bilan/${id}" aria-selected="${id === tab}">${l}</a>`).join('')}</div>`;
+      const tabs = `<div class="seg-tabs b-tabs" role="tablist">${TABS.map(([id, l]) => `<a role="tab" href="#/bilan/${id}" aria-selected="${id === tab}">${l}</a>`).join('')}<a href="#/evolution" class="b-courbes">Nos courbes →</a></div>`;
       if (tab !== 'mois') {
         el.innerHTML = `<div class="mod-head"><div><p class="eyebrow">Notre bilan</p><h1>${tab === 'seance' ? 'Les traces de nos séances' : 'Notre semaine'}</h1><p class="muted">${tab === 'seance' ? 'Chaque séance laisse sa trace : le feu, un mot, ce qu’on voulait, ce qu’on a entendu, la prochaine cible.' : 'Le rythme, le feu et ce qui s’est passé entre les séances. Une seule chose à viser ensuite.'}</p></div></div>${tabs}${tab === 'seance' ? seanceHTML() : `${semaineHTML(espace.meta.members || MEMBERS)}${historiqueHTML()}`}`;
         return;

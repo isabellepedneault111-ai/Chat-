@@ -271,7 +271,7 @@ export default {
       const mins = sessions.reduce((sum, e) => sum + Math.max(0, Math.min(240, (e.data.doneAt - e.data.startedAt - (e.data.pausedTotal || 0)) / 60000)), 0);
       const bravos = espace.entries.filter((e) => e.type === 'bravo'); const dernier = bravos[0];
       const lm = luneCourante(espace.meta);
-      return `<a class="retour-plan" href="#/">← Accueil</a><div class="mod-head"><div><p class="eyebrow">Notre projet</p><h1>Ce qu’on bâtit, à deux.</h1>
+      return `<div class="mod-head"><div><p class="eyebrow">Notre projet</p><h1>Ce qu’on bâtit, à deux.</h1>
         <p class="muted">Le cap, les intentions, la vision, les inspirations, et ce que nos traces disent de nous. L’accueil, lui, garde le quotidien.</p></div></div>
         <section class="panel pj-obj"><h2>Nos objectifs, du plus loin au plus près</h2>${echelleHTML(v, m, goal)}</section>
         <section class="panel pj-plan"><h2>Le plan des six mois</h2>

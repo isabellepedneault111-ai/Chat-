@@ -79,7 +79,9 @@ const VOIX = ['accord', 'miroir', 'tessiture', 'gym'];
 const LABO = ['labo', 'cathedrale'];
 // Jouer : jouer, mon studio (le matériel, tel qu'il est), l'oreille (trouver les accords d'un enregistrement).
 const JOUER = ['studio', 'materiel', 'oreille'];
-const NOMS_FRATRIE = { studio: ['♪', 'Jouer'], materiel: ['⌂', 'Mon studio'], oreille: ['◎', 'L’oreille'] };
+// L'accueil : aujourd'hui, et ce qui se relit (le projet, le bilan, les lunes passées). Chaque page a sa place fixe.
+const ACCUEIL = ['', 'projet', 'bilan', 'passage'];
+const NOMS_FRATRIE = { '': ['☼', 'Aujourd’hui'], projet: ['✦', 'Notre projet'], bilan: ['↗', 'Notre bilan'], passage: ['☾', 'Nos lunes'], studio: ['♪', 'Jouer'], materiel: ['⌂', 'Mon studio'], oreille: ['◎', 'L’oreille'] };
 const view = $('#view');
 installerGlossaire(view); // les mots de musique s'expliquent au survol
 installerSommaire(view); // en haut de chaque page : tout ce qu'on peut y faire
@@ -122,16 +124,19 @@ async function route() {
   host.className = `view-${v.id}`;
   view.replaceChildren(host);
   // Voix regroupe les 3 outils vocaux : petite barre d'onglets en haut.
-  const fratrie = VOIX.includes(v.id) ? VOIX : LABO.includes(v.id) ? LABO : JOUER.includes(v.id) ? JOUER : null;
+  const ici = routes[id] ? id : ''; // la route elle-même : l'accueil et Notre projet partagent une vue
+  const fratrie = ACCUEIL.includes(ici) ? ACCUEIL : VOIX.includes(v.id) ? VOIX : LABO.includes(v.id) ? LABO : JOUER.includes(v.id) ? JOUER : null;
   if (fratrie) {
     const sub = document.createElement('nav');
     sub.className = 'subnav';
-    sub.setAttribute('aria-label', fratrie === VOIX ? 'Voix' : fratrie === JOUER ? 'Jouer' : 'Labo');
-    sub.innerHTML = fratrie.map((m) => { const mm = MODULES.find((x) => x.id === m); const [num, nom] = NOMS_FRATRIE[m] || [mm.num, mm.name]; return `<a href="#/${m}" class="${m === v.id ? 'active' : ''}" style="--c:${mm?.color || 'var(--c-studio)'}"><span class="mono">${num}</span>${nom}</a>`; }).join('');
+    sub.setAttribute('aria-label', fratrie === VOIX ? 'Voix' : fratrie === JOUER ? 'Jouer' : fratrie === ACCUEIL ? 'Accueil' : 'Labo');
+    sub.innerHTML = fratrie.map((m) => { const mm = MODULES.find((x) => x.id === m); const [num, nom] = NOMS_FRATRIE[m] || [mm.num, mm.name]; return `<a href="#/${m}" class="${m === ici || (m && m === v.id) ? 'active' : ''}" style="--c:${mm?.color || (fratrie === ACCUEIL ? 'var(--zaza)' : 'var(--c-studio)')}"><span class="mono">${num}</span>${nom}</a>`; }).join('');
     view.prepend(sub);
+    // Sur téléphone, le sous-onglet actif reste visible même s'il est le dernier.
+    requestAnimationFrame(() => { const act = sub.querySelector('.active'); if (act && sub.scrollWidth > sub.clientWidth) sub.scrollLeft = act.offsetLeft - 16; });
   }
   // Un fil pour ne jamais se perdre : partout, un retour au plan de match, avec le cap du mois.
-  if (v.id !== 'home') {
+  if (v.id !== 'home' && fratrie !== ACCUEIL) {
     const back = document.createElement('a');
     back.className = 'retour-plan'; back.href = '#/';
     view.prepend(back);
@@ -148,7 +153,7 @@ async function route() {
   cleanup = v.mount(host) || null;
   const ap = APPUIS[v.id];
   if (ap) { const f = document.createElement('p'); f.className = 'appui'; f.innerHTML = `<span>Pourquoi :</span> ${ap[0]} <cite>${ap[1]}</cite>`; view.appendChild(f); }
-  const group = VOIX.includes(v.id) ? 'voix' : LABO.includes(v.id) ? 'labo' : JOUER.includes(v.id) ? 'studio' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' || v.id === 'ames' || v.id === 'arbre' ? 'home' : ['jeux', 'paroles', 'atelier', 'ecrire', 'placer'].includes(v.id) ? 'ecrire' : v.id;
+  const group = VOIX.includes(v.id) ? 'voix' : LABO.includes(v.id) ? 'labo' : JOUER.includes(v.id) ? 'studio' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' || v.id === 'passage' || v.id === 'ames' || v.id === 'arbre' ? 'home' : ['jeux', 'paroles', 'atelier', 'ecrire', 'placer'].includes(v.id) ? 'ecrire' : v.id;
   $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.id === group));
   if (v.id === 'carnet') { unseen = 0; showBadge(); }
   document.title = mod ? `${mod.name} · Diapason Labo` : 'Diapason Labo · FLIP';
