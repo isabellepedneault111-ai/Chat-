@@ -7,6 +7,24 @@ fichiers = subprocess.run(['git', 'ls-files'], cwd=racine, capture_output=True, 
 fichiers = [f for f in fichiers if not f.startswith(('dist/', 'package-lock')) and not f.endswith('.png')]
 arbre = {'n': 'Diapason Labo', 'c': {}}
 lignes_total = 0
+# Pour la fiche de chaque point : le rôle du fichier (sa première phrase de commentaire), sa naissance et sa dernière retouche.
+def role(f):
+    try: tete = (racine / f).read_text(errors='ignore').splitlines()[:6]
+    except OSError: return ''
+    morceaux = []
+    for l in tete:
+        t = l.strip()
+        if t.startswith(('#!', '<!doctype', '<!DOCTYPE')): continue
+        if t.startswith(('//', '#', '/*', '*', '<!--')):
+            t = t.lstrip('/#*!<- ').rstrip('*/->').strip()
+            if t: morceaux.append(t)
+        elif morceaux or t: break
+    r = ' '.join(morceaux)
+    return (r[:260].rsplit(' ', 1)[0] + '…') if len(r) > 260 else r
+dates = {}
+for l in subprocess.run(['git', 'log', '--format=@%ad', '--date=short', '--name-only', '--relative'], cwd=racine, capture_output=True, text=True).stdout.splitlines():
+    if l.startswith('@'): d = l[1:]
+    elif l: dates.setdefault(l, [d, d])[0] = d  # le log va du plus récent au plus ancien : [naissance, retouche]
 for f in fichiers:
     noeud = arbre
     parts = f.split('/')
@@ -17,7 +35,10 @@ for f in fichiers:
         try: lignes = (racine / f).read_text(errors='ignore').count('\n')
         except OSError: pass
     lignes_total += lignes
-    noeud['c'][parts[-1]] = {'n': parts[-1], 'l': lignes}
+    fiche = {'n': parts[-1], 'l': lignes}
+    if f.endswith(('.js', '.mjs', '.css', '.py', '.sh', '.toml')) and role(f): fiche['r'] = role(f)
+    if f in dates: fiche['nee'], fiche['mod'] = dates[f]
+    noeud['c'][parts[-1]] = fiche
 def liste(n):
     if 'c' in n: return {'n': n['n'], 'c': sorted((liste(x) for x in n['c'].values()), key=lambda x: ('c' not in x, x['n']))}
     return n
@@ -42,6 +63,13 @@ def ere(s):
         if s.startswith(k): return v
     return None
 principale = commits('HEAD', '--first-parent')
+# Ce que chaque étape a touché : fichiers, lignes ajoutées, lignes retirées.
+stats = {}; h = None
+for l in git('log', '--first-parent', '--format=@%h', '--shortstat', 'HEAD').splitlines():
+    if l.startswith('@'): h = l[1:]
+    elif 'changed' in l:
+        nb = lambda mot: int(next((x.split()[0] for x in l.split(',') if mot in x), 0))
+        stats[h] = [nb('changed'), nb('insertion'), nb('deletion')]
 fusionnes = []
 for c in principale:
     if len(c['p']) > 1:
@@ -53,7 +81,7 @@ for c in principale:
     e = ere(c['s']) or (derniere if c['d'] >= '2026-10-24' else None)
     if c['d'] >= '2026-10-24' and not e: e = 'Diapason'
     derniere = e or derniere
-    lanes[0]['c'].append({'d': c['d'], 'h': c['h'], 's': c['s'] if c['d'] >= '2026-10-24' or c['s'].startswith('Create Flip') else ('Fusion d’un autre chantier' if len(c['p']) > 1 else 'Le tout premier dépôt'), 'e': e, 'f': len(c['p']) > 1})
+    lanes[0]['c'].append({'d': c['d'], 'h': c['h'], 's': c['s'] if c['d'] >= '2026-10-24' or c['s'].startswith('Create Flip') else ('Fusion d’un autre chantier' if len(c['p']) > 1 else 'Le tout premier dépôt'), 'e': e, 'f': len(c['p']) > 1, 't': stats.get(c['h'])})
 if fusionnes:
     lanes.append({'id': 'fusion', 'nom': 'Un chantier fusionné', 'musique': False, 'c': [{'d': x['d'], 'h': x['h'], 'vers': x['vers']} for x in fusionnes]})
 dans = set(git('rev-list', 'HEAD').split())

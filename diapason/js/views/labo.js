@@ -1,3 +1,4 @@
+// Le labo rythme ↔ note : on accélère un rythme jusqu’à ce que l’oreille l’entende comme une note (au-delà d’environ 20 battements par seconde).
 import { audio, out, impulseOsc, drums } from '../audio.js';
 import { autoCanvas, animate, css, keyboard } from '../ui.js';
 import { nameFR, ftom, mtof, clamp } from '../music.js';

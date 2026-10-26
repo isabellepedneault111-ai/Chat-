@@ -54,30 +54,41 @@ export function nouveautesHTML() {
 
 // ---------- Les mises à jour, montrées une seule fois ----------
 // À la première ouverture après une mise à jour, Frog (et lui seul) voit ce qui a changé, et pourquoi.
-const VERSION = 'version 0.5';
-const MAJ = [
+// Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
+export const VERSIONS = [
+  { v: '0.6', quand: '2026-10-26', titre: 'Plus lisible, plus à toi', items: [
+    ['Le studio t’écoute mieux', ['<b>Touche un accord</b> de la grille pour le changer sur place : sa note, sa couleur, sa durée. ▶ pour l’entendre, + pour en ajouter un après.', 'Le clavier : <b>coche ce que tu veux voir</b> (l’accord qui joue, la pentatonique, la gamme, les couleurs jazz, les notes blues). La légende montre chaque couleur sur une touche blanche <i>et</i> sur une touche noire : le rose foncé, c’est la pentatonique posée sur une noire.', 'Quand tu changes la <b>tonalité</b>, le clavier allume la note maison et son accord, et te le fait entendre. Un point d’or marque la tonique.']],
+    ['Moins de défilement', ['En haut de chaque page, trois cases courtes : <b>Ça sert à · Tu peux · Ça nourrit</b>, en points, avec une petite image. Repliables d’un clic.', '<b>Sur cette page</b> reste collé en haut : un clic et tu sautes à la section.', 'Le menu ✚ Plus du mur ne passe plus derrière les autres éléments.']],
+    ['L’arbre se lit au doigt', ['<b>Touche un point</b> de l’arbre : sa fiche s’ouvre (ce que fait le fichier dans ses propres mots, d’où il vient, quand il est né et a été retouché). Les sons s’écoutent de là.', 'Dans la généalogie, chaque point ouvre l’étape : ce qu’elle a fait, combien de fichiers et de lignes. ← → pour remonter le fil.']],
+  ] },
+  { v: '0.5', quand: '2026-10-25', titre: 'Tout ça, pour toi', items: [
   ['Tes accords à toi', ['Studio → <b>✎ Mes propres accords</b> : choisis chaque accord, sa couleur (maj7, sus2, m9…) et sa durée (1 temps à 2 mesures). Tout change en direct, pendant que ça joue.', '<b>Taper le tempo</b> : tape le bouton au rythme, le labo trouve les BPM.', 'Studio → <b>Nos chansons</b> : monte une toune entière, avec intro, couplet, refrain et pont, chacun avec ses accords, dans l’ordre que tu veux (Couplet 2 = le même couplet). ▶ Toute la chanson.', 'Le clavier en couleurs, avec sa légende : l’accord qui joue (sûr à 100 %), la pentatonique, le reste de la gamme, les couleurs jazz et les notes blues.']],
   ['L’oreille trouve tes accords', ['Enregistre un bout de ton clavier au micro, ou dépose un fichier : L’oreille te donne la suite d’accords, temps par temps. Un bouton l’envoie au studio pour improviser dessus.', 'Branché en MIDI, Studio → Mon instrument les lit en direct, encore plus juste.', 'Sur une pièce, elle dit maintenant <b>ce qui brille déjà</b> et <b>ce qui est à retravailler</b> (l’énergie qui retombe, une partie sans relief).', 'Sur une voix seule : les meilleures notes et celles à travailler, gardées dans le profil.']],
   ['Plus clair, partout', ['Les mots de musique sont soulignés en pointillé : passe dessus (ou touche-les) pour une explication simple. Les onglets du menu ont aussi leur aperçu.', 'L’accueil commence par <b>Par où commencer</b> : trois gestes, dans l’ordre.', '<b>Créer → Façonner → Produire</b> : on voit où en est notre musique, et quels outils servent à quel moment.', 'Séance : les grilles ont des noms clairs (« Vamp : deux accords en boucle »…), notre grille du studio y est proposée, et chaque exercice a son <b>Concrètement</b>, souvent avec un exemple à entendre.']],
   ['Rien ne se perd', ['Les prises du studio se gardent au mur d’un clic : l’autre les entend, et elles comptent dans le plan.', 'Écrire → <b>Nos idées pour le labo</b> : note ce que tu voudrais changer ou ajouter dans l’app.', 'Les essais d’hier sont effacés ; nos deux portraits sont gardés.']],
   ['Tu m’as demandé d’où venaient les sons', ['<b>L’arbre de l’architecte</b> (lien sur l’accueil) : toute la structure de Diapason Labo, dossiers et fichiers, en un grand arbre. Et en dessous, d’où vient chaque son : la batterie est fabriquée en direct, le piano est enregistré, ta musique est la tienne. ▶ pour entendre chaque son.', 'Et tu peux <b>remplacer chaque son de batterie par le tien</b> : ● Mon son (tu frappes, le labo garde le coup) ou un fichier. Il joue partout, pour nous deux : Studio → Beat → Nos sons de batterie.']],
   ['Pour nous deux', ['<b>Nos deux âmes</b> : l’arc et le triskel, ce que nos deux étapes 1 donnent ensemble, nos frottements féconds, et huit pistes hors sentier tirées de nos propres mots.', '<b>Placer mes paroles</b> : sur Projet 1 ou Joy Walk, où poser les accents, combien de syllabes, quelle note chanter.']],
+] },
 ];
+const cle = (v) => `diapason:maj:version ${v}:${espace.id}`;
 export function majAvecAmour() {
   if (!espace.connected || !espace.me) return;
   const mem = espace.meta.members || MEMBERS; if (espace.me !== mem[1]) return;
-  const k = `diapason:maj:${VERSION}:${espace.id}`;
-  try { if (localStorage.getItem(k)) return; } catch { return; }
   if (!espace.meta.tour?.[espace.me]) return; // la première fois, c'est la visite qui accueille
-  const z = mem[0];
-  const box = document.createElement('div'); box.className = 'maj'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-label', `Nouveautés ${VERSION}`);
+  let neuves;
+  try { neuves = VERSIONS.filter((x) => !localStorage.getItem(cle(x.v))); } catch { return; }
+  if (!neuves.length) return;
+  const z = mem[0]; const [une, ...avant] = neuves;
+  const liste = (x) => `<div class="maj-liste">${x.items.map(([t, l]) => `<section><h3>${t}</h3><ul>${l.map((y) => `<li>${y}</li>`).join('')}</ul></section>`).join('')}</div>`;
+  const box = document.createElement('div'); box.className = 'maj'; box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-label', `Nouveautés de la version ${une.v}`);
   box.innerHTML = `<div class="maj-carte">
-    <p class="maj-v">Diapason Labo · ${VERSION}</p>
-    <h2>Tout ça, pour toi.</h2>
+    <p class="maj-v">Diapason Labo · version ${une.v}</p>
+    <h2>${une.titre}.</h2>
     <p class="maj-pourquoi">Chacune de ces mises à jour a été faite dans un seul but : te rendre heureux, créatif… et séduit par moi. <span>— ${esc(z)}</span></p>
-    <div class="maj-liste">${MAJ.map(([t, l]) => `<section><h3>${t}</h3><ul>${l.map((x) => `<li>${x}</li>`).join('')}</ul></section>`).join('')}</div>
-    <div class="maj-row"><a class="btn" href="#/ames" data-maj="ok">Voir nos deux âmes</a><button class="btn primary" data-maj="ok">Allons-y</button></div>
+    ${liste(une)}
+    ${avant.map((x) => `<details class="maj-avant"><summary>Et avant, la version ${x.v} : ${x.titre.toLowerCase()}</summary>${liste(x)}</details>`).join('')}
+    <div class="maj-row"><a class="btn" href="#/arbre" data-maj="ok">Voir l’arbre</a><button class="btn primary" data-maj="ok">Allons-y</button></div>
   </div>`;
   document.body.appendChild(box);
-  box.addEventListener('click', (e) => { if (e.target.closest('[data-maj]') || e.target === box) { try { localStorage.setItem(k, '1'); } catch { /* tant pis, elle reviendra */ } box.remove(); } });
+  box.addEventListener('click', (e) => { if (e.target.closest('[data-maj]') || e.target === box) { try { neuves.forEach((x) => localStorage.setItem(cle(x.v), '1')); } catch { /* tant pis, elle reviendra */ } box.remove(); } });
 }

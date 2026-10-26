@@ -1,3 +1,4 @@
+// Le studio : un beat, nos propres accords (durées libres, accord cliquable), le clavier en couleurs pour improviser, nos chansons, les prises et la scène.
 import { audio, drums, pad, bass, mic, startMic, finalOut, pluck } from '../audio.js';
 import { store, keyboard, toast, animate, autoCanvas, getProfile } from '../ui.js';
 import { FR, mtof, chordIntervals, chordName, hash, rng, mod12, clamp, nameFR } from '../music.js';
@@ -42,6 +43,8 @@ const S = {
   defis: store.get('defisImpro', false),
   onLoop: null,
 };
+// Ce qu'on choisit de voir sur le clavier (toutes les couleurs par défaut).
+const voir = () => new Set(store.get('kbVoir', ['safe', 'scale', 'gamme', 'jazz', 'blue']));
 const save = () => { store.set('grid', S.grid); store.set('bpm', S.bpm); store.set('key', S.key); store.set('prog', S.prog); };
 const saveMelody = () => store.set('melody', S.melody.map(({ slot, deg, who }) => ({ slot, deg, who })));
 // 8 pastilles : la pentatonique de la tonalité, dans un registre confortable pour la voix.
@@ -172,10 +175,11 @@ export default {
       q('[data-act=play]').textContent = S.playing ? '■' : '▶';
       q('[data-act=play]').classList.toggle('on', S.playing);
       q('[data-act=rec]').classList.toggle('on', !!S.recorder);
-      const marques = progression().marques || [];
+      const marques = progression().marques || []; const popOuvert = q('.ch-pop');
       q('.chord-row').innerHTML = accords().map((c, i) => `<div class="chord ${marques[i] ? 'ch-debut' : ''}" data-i="${i}" style="flex-grow:${tempsDe(c)}"><small>${marques[i] ? `<b class="ch-marque">${esc(marques[i])}</b> · ` : ''}${tempsDe(c) === 4 ? '1 mesure' : tempsDe(c) === 8 ? '2 mesures' : `${tempsDe(c)} temps`}</small><b>${chordName(mod12(S.key + c[0]), c[1])}</b></div>`).join('')
-        + `<button class="btn small chord-edit" data-act="editer">✎ Mes propres accords</button><p class="chord-note muted">${progression().note || ''}</p>
+        + `<button class="btn small chord-edit" data-act="editer">✎ Mes propres accords</button><p class="chord-note muted">Touche un accord pour le changer. ${progression().note || ''}</p>
         <div class="defi-row"><button class="chip ${S.defis ? 'active' : ''}" data-act="defis">${S.defis ? 'Défis d’impro ✓' : 'Défis d’impro'}</button>${S.defis ? `<p class="defi">${DEFIS_IMPRO[Math.floor(S.loop / 2) % DEFIS_IMPRO.length]}<small>un nouveau défi tous les deux tours</small></p>` : ''}</div>`;
+      if (popOuvert) q('.chord-row').appendChild(popOuvert);
     };
 
     el.addEventListener('input', (e) => {
@@ -184,7 +188,11 @@ export default {
     });
     el.addEventListener('change', (e) => {
       const k = e.target.dataset.in;
-      if (k === 'key') { S.key = +e.target.value; save(); relay(); syncTop(); renderTab(); }
+      if (k === 'key') {
+        S.key = +e.target.value; save(); relay(); syncTop(); renderTab();
+        // La maison s'allume : la tonique et son accord, deux secondes, et on les entend.
+        requestAnimationFrame(() => { if (!kb) return; const tri = [0, 4, 7].map((x) => mod12(S.key + x)); kb.keys.forEach((kk, m) => { kk.classList.toggle('k-flash', tri.includes(mod12(m))); kk.classList.toggle('k-flash-t', mod12(m) === mod12(S.key)); }); setTimeout(() => kb?.keys.forEach((kk) => kk.classList.remove('k-flash', 'k-flash-t')), 2200); prechargerSons(['piano']); accordPiano('piano', [0, 4, 7].map((x) => 60 + ((S.key + x) % 12) - (S.key > 6 ? 12 : 0)), { dur: 1.2, vel: 0.5 }); toast(`${FR[S.key]} majeur : la maison est ${FR[S.key]}, l’accord maison ${[0, 4, 7].map((x) => FR[mod12(S.key + x)]).join('-')}.`); });
+      }
       if (k === 'prog') { S.prog = e.target.value; save(); relay(); syncTop(); renderTab(); }
     });
 
@@ -226,6 +234,8 @@ export default {
       if (act === 'rec') toggleRec();
       if (act === 'defis') { S.defis = !S.defis; store.set('defisImpro', S.defis); syncTop(); }
       if (act === 'tap') taper();
+      const cb = e.target.closest('.chord-row .chord[data-i]'); if (cb) { ouvrirAccord(+cb.dataset.i, cb); return; }
+      if (!e.target.closest('.ch-pop')) q('.ch-pop')?.remove();
       if (act === 'editer') { const box = q('.grille-editeur'); if (!box.hidden) { box.hidden = true; return; } ed = depuisGrille(); rendreEditeur(); box.hidden = false; box.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
     });
     // Changer de style pendant que ça joue : pas de silence, pas de superposition. Le nouveau prend le relais sur le temps.
@@ -270,6 +280,29 @@ export default {
       if (k === 'plus') { const d = ed[ed.length - 1]; ed.push({ r: mod12(d.r + 5), q: 'M', b: 4 }); appliquer(); rendreEditeur(); }
       if (k === 'fermer') q('.grille-editeur').hidden = true;
     });
+    // Cliquer sur un accord de la rangée : on le change sur place (note, couleur, durée), sans ouvrir l'éditeur complet.
+    function ouvrirAccord(i, ancre) {
+      q('.ch-pop')?.remove();
+      ed = depuisGrille(); const c = ed[i]; if (!c) return;
+      const pop = document.createElement('div'); pop.className = 'ch-pop panel';
+      const rendre = () => { const x = ed[i]; pop.innerHTML = `<p class="ch-pop-t">Accord ${i + 1} : <b>${chordName(x.r, x.q)}</b></p>
+        <div class="ch-pop-row"><select data-cp="r" aria-label="Note">${FR.map((n, k) => `<option value="${k}" ${k === x.r ? 'selected' : ''}>${n}</option>`).join('')}</select>
+        <select data-cp="q" aria-label="Couleur">${TYPES.map(([v, l]) => `<option value="${v}" ${v === x.q ? 'selected' : ''}>${l}</option>`).join('')}</select>
+        <select data-cp="b" aria-label="Durée">${DUREES.map(([v, l]) => `<option value="${v}" ${v === x.b ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+        <div class="ch-pop-row"><button class="btn small" data-cp="ecoute">▶ Écouter</button><button class="btn small" data-cp="apres">+ Un accord après</button>${ed.length > 1 ? '<button class="btn small" data-cp="retirer">Retirer</button>' : ''}<button class="btn small primary" data-cp="ok">OK</button></div>`; };
+      rendre();
+      const r = ancre.getBoundingClientRect(); const rr = q('.chord-row').getBoundingClientRect();
+      pop.style.left = `${Math.max(0, Math.min(r.left - rr.left, rr.width - 300))}px`; pop.style.top = `${r.bottom - rr.top + 6}px`;
+      q('.chord-row').appendChild(pop); pop.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      pop.addEventListener('change', (e) => { const k = e.target.dataset.cp; ed[i][k] = k === 'q' ? e.target.value : +e.target.value; appliquer(); rendre(); q('.chord-row').appendChild(pop); });
+      pop.addEventListener('click', (e) => {
+        e.stopPropagation(); const k = e.target.closest('[data-cp]')?.dataset.cp; if (!k || e.target.tagName === 'SELECT') return;
+        if (k === 'ecoute') { const x = ed[i]; prechargerSons(['piano']); accordPiano('piano', chordIntervals(x.q).map((iv) => 52 + ((x.r + 8) % 12) + iv), { dur: 1.3, vel: 0.6 }); return; }
+        if (k === 'apres') { ed.splice(i + 1, 0, { r: mod12(ed[i].r + 5), q: 'M', b: 4 }); appliquer(); }
+        if (k === 'retirer') { ed.splice(i, 1); appliquer(); }
+        pop.remove();
+      });
+    }
     // Taper le tempo : la moyenne des derniers intervalles entre les touches.
     const taps = [];
     function taper() {
@@ -318,16 +351,12 @@ export default {
         <div class="panel">
           <div class="panel-head"><h2>Où improviser sur le clavier</h2><span class="muted">Les couleurs suivent l’accord qui joue.</span></div>
           <div class="kb-host"></div>
-          <ul class="kb-legende">
-            <li><i class="lg-safe"></i><b>L’accord qui joue</b> : ça sonne à 100 %, toujours. Idéal pour finir une phrase.</li>
-            <li><i class="lg-scale"></i><b>La pentatonique</b> : sûr aussi, impossible de « fausser ». Parfait pour improviser.</li>
-            <li><i class="lg-gamme"></i><b>Le reste de la gamme</b> : bien en passant, moins pour s’y arrêter.</li>
-            <li><i class="lg-jazz"></i><b>Couleurs jazz</b> : la 9e, la 6te, la 7e de l’accord. Une note un peu rêveuse, à poser exprès.</li>
-            <li><i class="lg-blue"></i><b>Notes blues</b> : un frottement voulu, qui « pleure ». Glisse vers une note voisine juste après.</li>
-          </ul>
+          <p class="muted small kb-aide">Coche ce que tu veux voir. Chaque couleur a sa teinte claire (touches blanches) et sa teinte foncée (touches noires). Le point doré marque la <b>tonique</b>, la note « maison » de la tonalité.</p>
+          <ul class="kb-legende">${[['safe', 'L’accord qui joue', 'ça sonne à 100 %, toujours. Idéal pour finir une phrase.'], ['scale', 'La pentatonique', 'sûr aussi, impossible de « fausser ». Parfait pour improviser.'], ['gamme', 'Le reste de la gamme', 'bien en passant, moins pour s’y arrêter.'], ['jazz', 'Couleurs jazz', 'la 9e, la 6te, la 7e de l’accord : une note rêveuse, à poser exprès.'], ['blue', 'Notes blues (hors sentier)', 'un frottement voulu, qui « pleure ». Glisse vers une note voisine juste après.']].map(([k, t, d]) => `<li><label><input type="checkbox" data-voir="${k}" ${voir().has(k) ? 'checked' : ''}><i class="lg-${k}"></i><i class="lg-${k} lg-noire"></i><b>${t}</b> : ${d}</label></li>`).join('')}</ul>
         </div>`;
       kb = keyboard(body.querySelector('.kb-host'), { from: 48, to: 76 });
       paintSafe(0);
+      body.addEventListener('change', (e) => { const v = e.target.dataset.voir; if (!v) return; const set = voir(); if (e.target.checked) set.add(v); else set.delete(v); store.set('kbVoir', [...set]); safeBar = -1; paintSafe(S.cur ? chordAtStep(S.cur.step).i : 0); });
       const hote = body.querySelector('.sp-host'); brancherSonsPerso(hote, () => { hote.innerHTML = sonsPersoHTML(); });
       body.addEventListener('click', (e) => {
         const c = e.target.closest('[data-cell]');
@@ -357,8 +386,10 @@ export default {
       const jazz = new Set([2, 9, ch.qual.startsWith('m') ? 10 : 11].map((x) => mod12(ch.root + x)));
       const blues = new Set([3, 6, 10].map((x) => mod12(S.key + x)));
       kb.keys.forEach((k, m) => {
-        const n = mod12(m); const classe = tones.has(n) ? 'k-safe' : pent.has(n) ? 'k-scale' : jazz.has(n) ? 'k-jazz' : gamme.has(n) ? 'k-gamme' : blues.has(n) ? 'k-blue' : '';
+        const n = mod12(m); const vu = voir();
+        const classe = tones.has(n) && vu.has('safe') ? 'k-safe' : pent.has(n) && vu.has('scale') ? 'k-scale' : jazz.has(n) && vu.has('jazz') ? 'k-jazz' : gamme.has(n) && vu.has('gamme') ? 'k-gamme' : blues.has(n) && vu.has('blue') ? 'k-blue' : '';
         ['k-safe', 'k-scale', 'k-jazz', 'k-gamme', 'k-blue'].forEach((x) => k.classList.toggle(x, x === classe));
+        k.classList.toggle('k-maison', n === mod12(S.key));
       });
     }
 

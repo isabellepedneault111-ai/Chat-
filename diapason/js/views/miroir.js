@@ -1,3 +1,4 @@
+// Miroir : la voix dessinée en direct, sa hauteur et sa justesse, pour se voir chanter.
 import { mic, onPitch, startMic, tone } from '../audio.js';
 import { autoCanvas, animate, getProfile, toast, css } from '../ui.js';
 import { nameFR, nameEN, isBlack, mtof, clamp, lerp, spanText } from '../music.js';

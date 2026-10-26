@@ -1,3 +1,4 @@
+// Gym vocal : des échauffements taillés sur la tessiture mesurée, guidés note par note.
 import { audio, mic, onPitch, startMic, tone, click } from '../audio.js';
 import { autoCanvas, animate, getProfile, store, css, toast } from '../ui.js';
 import { nameFR, mtof, pitchClassDiff, lerp } from '../music.js';

@@ -27,6 +27,15 @@ const MANDATS = {
   bilan: ['Voir où on est rendus.', 'Les heures jouées, les séances, les progrès, la prochaine cible.', 'La motivation, et le plan.'],
   evolution: ['Voir nos courbes dans le temps.', 'Suivre la régularité, la justesse, les idées qui avancent.', 'Le bilan et le plan.'],
 };
+// Trois petites images, une par case : la cible (ça sert à), la main (tu peux), les racines (ça nourrit).
+const ICONES = [
+  '<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="16"/><circle cx="20" cy="20" r="10"/><circle cx="20" cy="20" r="3.5" class="pl"/><path d="M33 7 21 19M33 7v6M33 7h-6"/></svg>',
+  '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M13 34V17a2.5 2.5 0 0 1 5 0v9M18 24V9a2.5 2.5 0 0 1 5 0v15M23 24V11a2.5 2.5 0 0 1 5 0v14M28 25v-8a2.5 2.5 0 0 1 5 0v9c0 6-4 9-9 9h-3c-4 0-6-2-8-5l-4-6a2.4 2.4 0 0 1 4-3l2 2"/></svg>',
+  '<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="11" r="7" class="pl"/><path d="M20 18v8M20 26c-4 0-6 3-9 7M20 26c4 0 6 3 9 7M20 26v8M15 30l-5 1M25 30l5 1"/></svg>',
+];
+// Une liste qui suit un deux-points reste dans sa puce (« Construire la musique : beat, accords ») ; sinon, une virgule = une puce.
+const POINTS = (t) => t.split(/\s*;\s*/).flatMap((x) => (/\s:\s/.test(x) ? [x] : x.split(/\s*,\s+(?![^()]*\))/))).filter(Boolean);
+const replie = () => { try { return localStorage.getItem('diapason:mandatReplie') === '1'; } catch { return false; } };
 const idDe = () => (location.hash.replace(/^#\/?/, '').split(/[?#]/)[0]) || '';
 export function installerSommaire(vue) {
   let t = 0; let sig = '';
@@ -41,8 +50,9 @@ export function installerSommaire(vue) {
     const tete = vue.querySelector('.mod-head, .masthead, .ames-hero');
     const m = MANDATS[id];
     if (m && tete) {
-      const box = document.createElement('div'); box.className = 'mandat no-aide';
-      box.innerHTML = `<p><b>Ça sert à</b> ${m[0]}</p><p><b>Tu peux</b> ${m[1]}</p><p><b>Ça nourrit</b> ${m[2]}</p>`;
+      const box = document.createElement('div'); box.className = `mandat no-aide ${replie() ? 'replie' : ''}`;
+      box.innerHTML = ['Ça sert à', 'Tu peux', 'Ça nourrit'].map((t, i) => `<div class="md-case">${ICONES[i]}<div><b>${t}</b><ul>${POINTS(m[i]).map((x) => `<li>${x.replace(/\.$/, '')}</li>`).join('')}</ul></div></div>`).join('')
+        + `<button type="button" class="md-plier" data-md="plier" aria-label="${replie() ? 'Déplier' : 'Replier'} le mandat de la page">${replie() ? 'À quoi sert cette page ▾' : '▴'}</button>`;
       tete.after(box);
     }
     if (titres.length < 2) return;
@@ -56,6 +66,11 @@ export function installerSommaire(vue) {
   const passe = () => { if (!t) t = setTimeout(() => { t = 0; construire(); }, 400); };
   new MutationObserver((ms) => { if (ms.some((m) => !m.target.closest?.('.sommaire, .mandat'))) passe(); }).observe(vue, { childList: true, subtree: true });
   vue.addEventListener('click', (e) => {
+    if (e.target.closest('[data-md=plier]')) {
+      const box = e.target.closest('.mandat'); const r = !box.classList.contains('replie'); box.classList.toggle('replie', r);
+      try { localStorage.setItem('diapason:mandatReplie', r ? '1' : '0'); } catch { /* tant pis */ }
+      const b2 = box.querySelector('[data-md=plier]'); b2.textContent = r ? 'À quoi sert cette page ▾' : '▴'; return;
+    }
     const b = e.target.closest('.sommaire [data-som]'); if (!b) return;
     const h = b.closest('.sommaire')._titres[+b.dataset.som];
     const d = h.closest('details'); if (d && !d.open) d.open = true;

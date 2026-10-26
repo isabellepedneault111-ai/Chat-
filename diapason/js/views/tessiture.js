@@ -1,3 +1,4 @@
+// Empreinte : mesurer l’étendue de la voix, de la note la plus grave à la plus aiguë, sans forcer.
 import { mic, onPitch, startMic, stopMic } from '../audio.js';
 import { keyboard, store, getProfile, toast, ring } from '../ui.js';
 import { nameFR, nameEN, spanText, pcFR } from '../music.js';

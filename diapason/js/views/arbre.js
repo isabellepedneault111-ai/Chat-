@@ -100,7 +100,10 @@ const ORIGINE = (nom) => (/^piano-/.test(nom) ? 'Piano à queue Salamander, enre
             : nom === 'lexique-fr.tsv' ? 'Lexique 3.83 (New et Pallier, CC BY-SA 4.0) : les syllabes et les rimes'
               : nom === 'oreille.js' ? 'Ici, l’app écoute : tempo, tonalité, accords, justesse' : '');
 const couleur = (n) => (n.c ? COUL.dossier : COUL[(n.n.split('.').pop() || '').toLowerCase()] || '#cfc6b4');
+// Les fiches : chaque point cliquable garde ici ce qu'on sait de lui.
+let FICHES = []; let ETAPES = [];
 function dessinArbre(data) {
+  FICHES = [];
   const R = 330; let feuilles = 0; let prof = 0; let dossiers = 0;
   // Démêler : les fichiers de base vont dans leur propre branche, et un dossier qui ne contient qu'un dossier
   // se lit d'un trait (« netlify/functions ») au lieu de faire un nœud serré près du centre.
@@ -125,10 +128,10 @@ function dessinArbre(data) {
         liens += `<path d="M${x.toFixed(1)} ${y.toFixed(1)}C${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="${couleur(ch)}" style="--d:${(n.d * 0.35 + k * 0.01).toFixed(2)}s"/>`;
         dessine(ch);
       });
-      if (n.d > 0) { points += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${Math.max(3, 7 - n.d)}" fill="${COUL.dossier}"><title>${n.chemin} · ${n.c.length} éléments</title></circle>`; const [lx, ly] = xy(a, r + 16); mots += `<text class="ar-dos" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" dominant-baseline="middle">${n.n}</text>`; }
+      if (n.d > 0) { points += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${Math.max(3, 7 - n.d)}" fill="${COUL.dossier}" class="ar-pt" data-f="${FICHES.push(n) - 1}" tabindex="0"><title>${n.chemin} · ${n.c.length} éléments</title></circle>`; const [lx, ly] = xy(a, r + 16); mots += `<text class="ar-dos" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" dominant-baseline="middle">${n.n}</text>`; }
     } else {
       const deg = (a * 180) / Math.PI; const gauche = deg > 90 && deg < 270;
-      points += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.2" fill="${couleur(n)}"><title>${n.chemin}${n.l ? ` · ${n.l} lignes` : ''}${ORIGINE(n.n) ? `\n${ORIGINE(n.n)}` : ''}</title></circle>`;
+      points += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.2" fill="${couleur(n)}" class="ar-pt" data-f="${FICHES.push(n) - 1}" stroke="transparent" stroke-width="6"><title>${n.chemin}${n.l ? ` · ${n.l} lignes` : ''}${ORIGINE(n.n) ? `\n${ORIGINE(n.n)}` : ''}</title></circle>`;
       const [tx, ty] = xy(a, R + 6);
       mots += `<text x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" transform="rotate(${gauche ? deg - 180 : deg} ${tx.toFixed(1)} ${ty.toFixed(1)})" text-anchor="${gauche ? 'end' : 'start'}" dominant-baseline="middle" fill="${couleur(n)}">${n.n}</text>`;
     }
@@ -140,6 +143,7 @@ function dessinArbre(data) {
 // La généalogie : chaque étape du projet (un point), chaque branche de travail (une ligne), les fusions.
 const ERE_COUL = { Diapason: '#6f9fe0', 'Zaza × Frog': '#93b08e', FLIP: '#e8c27a', 'La visite': '#ff6fae', 'Version 0.5': '#b58cf0', 'Diapason Labo': '#f3c77a' };
 function dessinGenealogie(g) {
+  ETAPES = [];
   const tous = g.lanes.flatMap((l, li) => l.c.map((c, k) => ({ ...c, li, k })));
   tous.sort((a, b) => (a.d < b.d ? -1 : a.d > b.d ? 1 : a.li - b.li || a.k - b.k));
   let x = 40; let jour = ''; const pos = {}; const jours = [];
@@ -160,14 +164,45 @@ function dessinGenealogie(g) {
     svg += `<path d="M${depart} ${Y(0)} C${depart} ${y}, ${premier - 20} ${y}, ${premier} ${y}" class="gn-br"/><path d="M${premier} ${y} H${dernier}" class="gn-br"/>`;
     // Chaque groupe d'étapes revient dans la lignée au moment de sa fusion.
     if (l.c[0].vers) { const fins = {}; l.c.forEach((c) => { fins[c.vers] = Math.max(fins[c.vers] || 0, pos[c.h]); }); Object.entries(fins).forEach(([vh, xf]) => { const v = pos[vh]; svg += `<path d="M${xf} ${y} C${xf + 12} ${y}, ${v} ${y + 4}, ${v} ${Y(0)}" class="gn-br gn-fusion"/>`; }); }
-    l.c.forEach((c) => { svg += `<circle cx="${pos[c.h]}" cy="${y}" r="2.6" class="gn-pt-autre"><title>${c.d} · ${l.nom}</title></circle>`; });
+    l.c.forEach((c) => { svg += `<circle cx="${pos[c.h]}" cy="${y}" r="2.6" class="gn-pt-autre ar-pt" data-g="${ETAPES.push({ ...c, lane: l }) - 1}" stroke="transparent" stroke-width="6"><title>${c.d} · ${l.nom}</title></circle>`; });
     svg += `<text x="${premier}" y="${y - 7}" class="gn-lane">${l.nom} · ${l.c.length} étapes</text>`;
   });
   svg += `<path d="M${pos[lignee.c[0].h]} ${Y(0)} H${pos[lignee.c[lignee.c.length - 1].h]}" class="gn-tronc"/>`;
-  lignee.c.forEach((c) => { svg += `<circle cx="${pos[c.h]}" cy="${Y(0)}" r="${c.f ? 4.5 : 3.4}" fill="${ERE_COUL[c.e] || '#cfc6b4'}" class="${c.f ? 'gn-fus' : ''}"><title>${c.d} · ${c.s.replace(/[<&]/g, '')}</title></circle>`; });
+  lignee.c.forEach((c, k) => { svg += `<circle cx="${pos[c.h]}" cy="${Y(0)}" r="${c.f ? 4.5 : 3.4}" fill="${ERE_COUL[c.e] || '#cfc6b4'}" class="ar-pt ${c.f ? 'gn-fus' : ''}" data-g="${ETAPES.push({ ...c, lane: lignee, rang: k + 1, sur: lignee.c.length }) - 1}" stroke="transparent" stroke-width="6"><title>${c.d} · ${c.s.replace(/[<&]/g, '')}</title></circle>`; });
   jours.forEach(([d, xx], i) => { if (i % 1 === 0) svg += `<text x="${xx}" y="${H - 14}" class="gn-jour" transform="rotate(-35 ${xx} ${H - 14})">${new Date(`${d}T12:00`).toLocaleDateString('fr-CA', { day: 'numeric', month: 'short', year: d < '2026' ? 'numeric' : undefined })}</text>`; });
   svg += `<text x="${pos[lignee.c[0].h]}" y="${Y(0) + 22}" class="gn-note">« Create Flip » : le premier geste</text>`;
   return `<svg class="gn-svg" viewBox="0 0 ${W} ${H + 20}" width="${W}" height="${H + 20}" role="img" aria-label="La généalogie du projet, branche par branche">${svg}</svg>`;
+}
+
+const SORTE = { js: 'Code (JavaScript) : ce que l’app fait', mjs: 'Code du serveur : là où nos données sont gardées', css: 'Styles : l’allure de l’app', html: 'La page d’entrée', mp3: 'Un son', json: 'Des données', tsv: 'Des données de langue', jpg: 'Une image', mp4: 'Une vidéo', svg: 'Une image dessinée', py: 'Un outil de construction', sh: 'Un outil de construction', toml: 'Les réglages de mise en ligne', md: 'Une note', txt: 'Une note' };
+const jour = (d) => (d ? new Date(`${d}T12:00`).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric' }) : '');
+const compteFeuilles = (n) => (n.c ? n.c.reduce((a, x) => a + compteFeuilles(x), 0) : 1);
+function ficheFichier(n) {
+  const chemin = n.chemin.replace(/^Diapason Labo\//, '').replace(/^la base\//, '');
+  if (n.c) {
+    const lignes = (function t(x) { return x.c ? x.c.reduce((a, y) => a + t(y), 0) : x.l || 0; })(n);
+    return `<p class="ar-f-sorte" style="--c:${COUL.dossier}">Dossier</p><h3>${esc(n.n)}</h3><p class="ar-f-ch">${esc(chemin)}</p>
+      <p>${n.c.length} éléments directs, ${compteFeuilles(n)} fichiers en tout${lignes ? `, ${lignes.toLocaleString('fr-CA')} lignes écrites` : ''}.</p>
+      <p class="ar-f-liste">${n.c.slice(0, 18).map((x) => `<span>${esc(x.n)}${x.c ? '/' : ''}</span>`).join('')}${n.c.length > 18 ? `<span>… et ${n.c.length - 18} autres</span>` : ''}</p>`;
+  }
+  const ext = (n.n.split('.').pop() || '').toLowerCase(); const o = ORIGINE(n.n);
+  return `<p class="ar-f-sorte" style="--c:${couleur(n)}">${SORTE[ext] || 'Fichier'}</p><h3>${esc(n.n)}</h3><p class="ar-f-ch">${esc(chemin)}</p>
+    ${n.r ? `<p class="ar-f-role">« ${esc(n.r)} »</p><p class="muted small">La première phrase écrite en tête du fichier : ce qu’il fait, dans ses propres mots.</p>` : ''}
+    ${o ? `<p><b>D’où il vient :</b> ${esc(o)}</p>` : ''}
+    <p class="ar-f-meta">${n.l ? `<span><b>${n.l.toLocaleString('fr-CA')}</b> lignes</span>` : ''}${n.nee ? `<span>né le <b>${jour(n.nee)}</b></span>` : ''}${n.mod && n.mod !== n.nee ? `<span>retouché le <b>${jour(n.mod)}</b></span>` : ''}</p>
+    ${ext === 'mp3' && chemin.startsWith('data/sons/') ? `<button class="btn small" data-mp3="${esc(chemin)}">▶ Écouter ce son</button>` : ''}`;
+}
+function ficheEtape(c) {
+  if (!c.lane.musique) {
+    return `<p class="ar-f-sorte" style="--c:#6d655a">${esc(c.lane.nom)}</p><h3>Une étape le ${jour(c.d)}</h3>
+      <p>Un autre chantier, mené avec Claude dans le même dépôt. On montre sa forme (quand, combien d’étapes), pas son contenu : ce n’est pas de la musique.</p><p class="ar-f-meta"><span>${c.lane.c.length} étapes sur cette branche</span></p>`;
+  }
+  const [fic, plus, moins] = c.t || [];
+  return `<p class="ar-f-sorte" style="--c:${ERE_COUL[c.e] || '#cfc6b4'}">${esc(c.e || 'Avant Diapason')}${c.rang ? ` · étape ${c.rang} sur ${c.sur}` : ''}</p>
+    <h3>${esc(c.s)}</h3><p class="ar-f-ch">${jour(c.d)} · empreinte ${esc(c.h)}</p>
+    ${c.f ? '<p>Ici, une branche de travail est revenue dans la lignée : son contenu a été fusionné.</p>' : ''}
+    ${fic != null ? `<p class="ar-f-meta"><span><b>${fic}</b> fichier${fic > 1 ? 's' : ''} touché${fic > 1 ? 's' : ''}</span><span class="ar-plus">+${plus.toLocaleString('fr-CA')} lignes</span><span class="ar-moins">−${moins.toLocaleString('fr-CA')}</span></p>` : ''}
+    <p class="ar-f-nav"><button class="btn small" data-gpas="-1" ${c.rang > 1 ? '' : 'disabled'}>← Étape d’avant</button><button class="btn small" data-gpas="1" ${c.rang < c.sur ? '' : 'disabled'}>Étape d’après →</button></p>`;
 }
 
 export default {
@@ -177,14 +212,15 @@ export default {
       <div class="mod-head"><div>
         <p class="eyebrow">L’arbre de l’architecte</p>
         <h1>Un environnement hybride, à l’œuvre.</h1>
-        <p class="muted">Tout Diapason Labo, dossier par dossier, fichier par fichier : la vraie structure de l’app, telle qu’elle tourne en ce moment. Ici, on ne touche à rien : on admire. Passe sur un point pour voir son nom complet.</p>
+        <p class="muted">Tout Diapason Labo, dossier par dossier, fichier par fichier : la vraie structure de l’app, telle qu’elle tourne en ce moment. Ici, on ne touche à rien : on admire. Touche un point : sa fiche s’ouvre à côté (ce qu’il fait, d’où il vient, quand il est né).</p>
       </div></div>
-      <section class="ar-scene no-aide"><div class="ar-stats"></div><div class="ar-dessin"><p class="muted">L’arbre pousse…</p></div>
+      <section class="ar-scene no-aide"><div class="ar-stats"></div><div class="ar-cadre"><div class="ar-dessin"><p class="muted">L’arbre pousse…</p></div><aside class="ar-fiche" aria-live="polite"><p class="muted">Touche un point de l’arbre : un dossier (or) ou un fichier.</p></aside></div>
         <p class="ar-cles"><i style="--c:#e8c27a"></i>dossiers <i style="--c:#ff6fae"></i>code (JavaScript) <i style="--c:#6f9fe0"></i>styles <i style="--c:#b58cf0"></i>sons <i style="--c:#93b08e"></i>données <i style="--c:#f0a36f"></i>images</p></section>
       <section class="ar-genea no-aide">
         <h2>La généalogie</h2>
-        <p class="muted small">Chaque point est une étape du projet, chaque ligne une branche de travail avec Claude. Tout commence le 13 août 2025 par « Create Flip ». Les branches qui reviennent dans la lignée ont été fusionnées ; les autres sont d’autres chantiers, dessinés sans leur contenu. Passe sur un point pour lire l’étape.</p>
+        <p class="muted small">Chaque point est une étape du projet, chaque ligne une branche de travail avec Claude. Tout commence le 13 août 2025 par « Create Flip ». Les branches qui reviennent dans la lignée ont été fusionnées ; les autres sont d’autres chantiers, dessinés sans leur contenu. Touche un point pour ouvrir l’étape : ce qu’elle a fait, quand, combien de lignes.</p>
         <div class="gn-host"><p class="muted">La généalogie se dessine…</p></div>
+        <aside class="ar-fiche gn-fiche" aria-live="polite"><p class="muted">Touche un point de la lignée pour lire l’étape.</p></aside>
         <p class="ar-cles gn-cles">${Object.entries(ERE_COUL).map(([k, c]) => `<i style="--c:${c}"></i>${k}`).join(' ')} <i style="--c:#6d655a"></i>autres chantiers</p>
       </section>
       <section class="ar-mot">
@@ -231,7 +267,23 @@ export default {
       }
     }
 
+    let gIci = -1;
+    const choisir = (pt) => { pt.closest('svg').querySelectorAll('.ar-choisi').forEach((x) => x.classList.remove('ar-choisi')); pt.classList.add('ar-choisi'); };
+    const montrerEtape = (i) => {
+      const c = ETAPES[i]; if (!c) return; gIci = i; el.querySelector('.gn-fiche').innerHTML = ficheEtape(c);
+      const pt = el.querySelector(`.gn-svg [data-g="${i}"]`); if (pt) { choisir(pt); const host = el.querySelector('.gn-host'); const x = +pt.getAttribute('cx'); if (x < host.scrollLeft + 40 || x > host.scrollLeft + host.clientWidth - 40) host.scrollTo({ left: x - host.clientWidth / 2, behavior: 'smooth' }); }
+    };
+    const lePoint = (e) => {
+      const f = e.target.closest('[data-f]'); if (f) { choisir(f); el.querySelector('.ar-dessin + .ar-fiche').innerHTML = ficheFichier(FICHES[+f.dataset.f]); return true; }
+      const g = e.target.closest('[data-g]'); if (g) { montrerEtape(+g.dataset.g); return true; }
+      return false;
+    };
+    el.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && lePoint(e)) e.preventDefault(); });
+    let mp3 = null;
     el.addEventListener('click', (e) => {
+      if (lePoint(e)) return;
+      const m = e.target.closest('[data-mp3]'); if (m) { mp3?.pause(); mp3 = new Audio(m.dataset.mp3); mp3.play().catch(() => {}); return; }
+      const gp = e.target.closest('[data-gpas]'); if (gp) { const c = ETAPES[gIci]; const k = ETAPES.findIndex((x) => x.lane === c.lane && x.rang === c.rang + +gp.dataset.gpas); if (k >= 0) montrerEtape(k); return; }
       const s = e.target.closest('[data-son]'); if (s) { e.preventDefault(); ecouter(s.dataset.son); return; }
       const a = e.target.closest('[data-ar]')?.dataset.ar;
       if (a) el.querySelectorAll('.arbre details').forEach((d, i) => { d.open = a === 'ouvrir' || i === 0; });
