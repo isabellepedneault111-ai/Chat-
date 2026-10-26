@@ -87,9 +87,20 @@ export default {
         return `<div class="ca-disque ${v.muet ? 'muet' : ''}" data-d="${j}">${disqueSVG(n, DCOUL[j % 6])}
           <div class="ca-dreg"><div class="ca-dnb"><button class="icon-btn tiny" data-dm="moins" aria-label="Moins">−</button><b>${n}</b><button class="icon-btn tiny" data-dm="plus" aria-label="Plus">+</button><button class="icon-btn tiny ${v.muet ? 'on' : ''}" data-dm="muet" aria-label="Sourdine" title="Sourdine">M</button>${etat.cle.length > 2 ? '<button class="icon-btn tiny" data-dm="retirer" aria-label="Retirer">×</button>' : ''}</div>
             <select data-dm="banque" aria-label="Instrument du disque">${INSTR.map(([k, l]) => `<option value="${k}" ${k === b ? 'selected' : ''}>${l}</option>`).join('')}</select>
-            <label class="ca-dvol"><span>volume</span><input type="range" min="0" max="150" value="${Math.round((v.vol ?? 1) * 100)}" data-dm="vol"></label></div></div>`; }).join('')
+            <label class="ca-dvol"><span>volume</span><input type="range" min="0" max="150" value="${Math.round((v.vol ?? 1) * 100)}" data-dm="vol"></label>
+            ${Object.entries(REGLAGES).filter(([k]) => v[k] != null).map(([k, [l, mn, mx, pas, fmt]]) => `<label class="ca-dvol"><span>${l}</span><input type="range" min="${mn}" max="${mx}" step="${pas}" value="${v[k]}" data-dr="${k}" aria-label="${l}"><output>${fmt(v[k])}</output><button type="button" class="ca-dx" data-dm="sansreglage" data-k="${k}" aria-label="Retirer ${l}">×</button></label>`).join('')}
+            ${Object.keys(REGLAGES).some((k) => v[k] == null) ? `<select class="ca-dplus-r" data-dm="reglage" aria-label="Ajouter un réglage au disque"><option value="">＋ un réglage…</option>${Object.entries(REGLAGES).filter(([k]) => v[k] == null).map(([k, [l, , , , , d, aide]]) => `<option value="${k}" title="${aide}">${l}</option>`).join('')}</select>` : ''}</div></div>`; }).join('')
         + (etat.cle.length < 6 ? '<button class="btn small ca-dplus" data-dm="ajouter">+ Un disque</button>' : '');
     }
+    // Les réglages qu'on ajoute à un disque, au choix : [nom, min, max, pas, affichage, valeur de départ, à quoi ça sert].
+    const REGLAGES = {
+      oct: ['hauteur', -2, 2, 1, (x) => (x > 0 ? `+${x} oct.` : x < 0 ? `${x} oct.` : 'telle quelle'), 0, 'Monter ou descendre le disque d’une ou deux octaves.'],
+      pan: ['gauche ↔ droite', -1, 1, 0.1, (x) => (Math.abs(x) < 0.05 ? 'au centre' : x < 0 ? `gauche ${Math.round(-x * 100)} %` : `droite ${Math.round(x * 100)} %`), 0, 'Placer le disque dans l’espace stéréo.'],
+      dec: ['décalage', 0, 0.95, 0.05, (x) => `${Math.round(x * 100)} % du pas`, 0.5, 'Frapper en retard, entre les coups : un contretemps.'],
+      aer: ['aération', 0, 0.8, 0.05, (x) => `${Math.round(x * 100)} % de silences`, 0.3, 'Retirer des frappes, toujours les mêmes : le rythme respire.'],
+      dur: ['durée des notes', 0.1, 2.5, 0.1, (x) => `${x.toFixed(1).replace('.', ',')} s`, 0.3, 'Des frappes sèches ou des notes tenues.'],
+      acc: ['accent', 0, 1, 0.05, (x) => `${Math.round(x * 100)} %`, 0.5, 'Appuyer le premier coup de chaque tour.'],
+    };
     const majDisque = (j, change) => { const voix = [...(etat.voix || [])]; voix[j] = { ...(voix[j] || {}), ...change }; return voix; };
 
     function majTout() {
@@ -156,12 +167,14 @@ export default {
     el.addEventListener('click', async (e) => {
       const dm = e.target.closest('[data-dm]')?.dataset.dm; const dj = e.target.closest('[data-d]');
       if (dm === 'ajouter') { const cle = [...etat.cle, Math.min(32, Math.max(...etat.cle) + 1)]; q('[data-ca=nombres]').value = cle.join(' '); changer({ cle, lumieres: [] }); return; }
+      if (dm === 'sansreglage' && dj) { const voix = majDisque(+dj.dataset.d, {}); delete voix[+dj.dataset.d][e.target.closest('[data-k]').dataset.k]; changer({ voix }); return; }
       if (dj && ['moins', 'plus', 'muet', 'retirer'].includes(dm)) {
         const j = +dj.dataset.d; const cle = [...etat.cle];
-        if (dm === 'moins') cle[j] = Math.max(1, cle[j] - 1); if (dm === 'plus') cle[j] = Math.min(32, cle[j] + 1);
+        // On saute par-dessus les nombres déjà pris : de 2, « + » passe à 4 si un autre disque a déjà 3.
+        const pris = new Set(cle.filter((_, k) => k !== j)); const pas = dm === 'plus' ? 1 : dm === 'moins' ? -1 : 0;
+        if (pas) { let x = cle[j] + pas; while (pris.has(x) && x >= 1 && x <= 32) x += pas; if (x < 1 || x > 32) { toast(pas > 0 ? 'Les nombres vont jusqu’à 32.' : 'Le plus petit nombre libre est déjà pris.'); return; } cle[j] = x; }
         if (dm === 'muet') { changer({ voix: majDisque(j, { muet: !(etat.voix?.[j]?.muet) }) }); return; }
         if (dm === 'retirer') { cle.splice(j, 1); const voix = [...(etat.voix || [])]; voix.splice(j, 1); q('[data-ca=nombres]').value = cle.join(' '); changer({ cle, voix, lumieres: [] }); return; }
-        if (new Set(cle).size !== cle.length) { toast('Deux disques ne peuvent pas avoir le même nombre.'); return; }
         q('[data-ca=nombres]').value = cle.join(' '); changer({ cle, lumieres: [] }); return;
       }
       if (e.target.closest('[data-ca=ecouter]')) { ecouterMateriel(); return; }
@@ -186,6 +199,8 @@ export default {
       const dm = e.target.dataset.dm; const dj = e.target.closest('[data-d]');
       if (dm === 'banque' && dj) { changer({ voix: majDisque(+dj.dataset.d, { banque: e.target.value }) }); return; }
       if (dm === 'vol' && dj) { changer({ voix: majDisque(+dj.dataset.d, { vol: +e.target.value / 100 }) }); return; }
+      if (dm === 'reglage' && dj && e.target.value) { const k = e.target.value; changer({ voix: majDisque(+dj.dataset.d, { [k]: REGLAGES[k][5] }) }); return; }
+      if (e.target.dataset.dr && dj) { changer({ voix: majDisque(+dj.dataset.d, { [e.target.dataset.dr]: +e.target.value }) }); return; }
       if (e.target.dataset.ca === 'sortie') { store.set('caSortie', e.target.value); toast(e.target.value ? 'La cathédrale jouera aussi sur cet appareil (hauteurs arrondies au demi-ton).' : 'Plus d’appareil MIDI en sortie.'); return; }
       if (e.target.dataset.ca === 'suivre') { suivre = e.target.checked; return; }
       const l = e.target.dataset.lum; if (l != null) { const lum = oeuvre.sections.map((s) => s.lumiere); lum[+l] = e.target.value; changer({ lumieres: lum }); return; }
@@ -194,7 +209,8 @@ export default {
       if (a === 'tonique') changer({ tonique: +e.target.value });
       if (a === 'duree') changer({ duree: +e.target.value });
     });
-    el.addEventListener('input', (e) => { if (e.target.dataset.ca === 'axe') { etat.axe = +e.target.value / 100; garder(); clearTimeout(e.target._t); e.target._t = setTimeout(() => changer({}), 250); } });
+    el.addEventListener('input', (e) => {
+      if (e.target.dataset.dr) { const o = e.target.nextElementSibling; const k = e.target.dataset.dr; if (o) o.textContent = REGLAGES[k][4](+e.target.value); } if (e.target.dataset.ca === 'axe') { etat.axe = +e.target.value / 100; garder(); clearTimeout(e.target._t); e.target._t = setTimeout(() => changer({}), 250); } });
     // ---------- Ce que Frog branche ----------
     let sorties = []; let suivre = false; let offNotes = null; let ecouteAudio = null; const tenues = new Set(); let attente = 0; let propose = null;
     const NOMS = ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];

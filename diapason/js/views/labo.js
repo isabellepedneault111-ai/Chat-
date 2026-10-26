@@ -104,10 +104,12 @@ export default {
             <button class="chip" data-preset="random">Surprise</button>
           </div>
           <ul class="tracks"></ul>
+          <div class="groupes" aria-live="polite"></div>
+          <div class="liens"></div>
           <button class="btn add-track" data-act="add">＋ Ajouter un disque</button>
           <button class="btn primary labo-beat" data-act="beat">Faire un beat de ces disques → Jouer</button>
           <a class="btn labo-cathedrale" href="#/cathedrale?du-labo">Bâtir La cathédrale de ces disques →</a>
-          <p class="muted small">Chaque disque devient une ligne de batterie, ses frappes réparties au mieux sur la mesure (rythme euclidien, Toussaint 2005).</p>
+          <p class="muted small">Touche le cercle d’un disque pour le choisir ; choisis-en plusieurs pour en faire un <b>groupe</b> qui bouge ensemble. Chaque disque devient une ligne de batterie, ses frappes réparties au mieux sur la mesure (rythme euclidien, Toussaint 2005).</p>
         </div>
 
         <div class="panel wave-panel">
@@ -152,7 +154,7 @@ export default {
     const live = () => tracks.map((t, i) => i).filter((i) => !tracks[i].muted);
 
     function loadPreset(id) {
-      presetId = id;
+      presetId = id; choisis.clear();
       if (id === 'random') {
         const k = 2 + Math.floor(Math.random() * 3);
         const set = new Set();
@@ -165,6 +167,7 @@ export default {
     }
 
     function tracksChanged() {
+      liens = liens.filter((l) => (l.src === 'souffle' || +l.src < tracks.length) && (l.cible.startsWith('g') ? tracks.some((t) => t.g === l.cible.slice(1)) : +l.cible < tracks.length));
       store.set('laboCle', tracks.map((t) => t.n)); // la clé de voûte de La cathédrale
       realPhase = tracks.map(() => 0);
       hits = tracks.map(() => []);
@@ -174,22 +177,80 @@ export default {
       updateText(true);
     }
 
+    // Les groupes : quelques disques choisis ensemble, qu'on fait varier d'un seul geste (nombre, son, volume, sourdine,
+    // solo, respiration). Chaque groupe a sa lettre et sa couleur d'anneau.
+    const GROUPES = { A: '#e8c27a', B: '#9fe0c3', C: '#f0875a' };
+    let choisis = new Set();
+    let souffle = 0; // la respiration des groupes qui « respirent » (volume qui monte et descend sur 4 tours)
+    const disqueMini = (n, c) => `<svg viewBox="0 0 60 60" class="tr-svg" aria-hidden="true"><circle cx="30" cy="30" r="22" fill="none" stroke="${c}" stroke-width="2.5"/>${[...Array(Math.min(n, 16))].map((_, k) => { const a = (k / n) * Math.PI * 2 - Math.PI / 2; return `<circle cx="${(30 + 22 * Math.cos(a)).toFixed(1)}" cy="${(30 + 22 * Math.sin(a)).toFixed(1)}" r="3.4" fill="${c}"/>`; }).join('')}<text x="30" y="36" text-anchor="middle">${n}</text></svg>`;
     function renderTracks() {
       q('.tracks').innerHTML = tracks.map((t, i) => `
-        <li class="track ${t.muted ? 'muted' : ''}" style="--c:${colors[i]}">
-          <span class="track-dot"></span>
-          <span class="track-name">Disque ${i + 1}</span>
-          <select class="track-inst" data-inst="${i}" aria-label="Son du disque ${i + 1}">${INSTS.map(([v, l]) => `<option value="${v}" ${(t.inst || 'clic') === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
-          <span class="stepper">
-            <button class="icon-btn tiny" data-tr="minus" data-i="${i}" aria-label="Moins de bosses">−</button>
-            <b class="mono" aria-label="${t.n} bosses par tour">${t.n}</b>
-            <button class="icon-btn tiny" data-tr="plus" data-i="${i}" aria-label="Plus de bosses">+</button>
-          </span>
-          <button class="icon-btn tiny" data-tr="mute" data-i="${i}" aria-pressed="${t.muted}" aria-label="${t.muted ? 'Réactiver' : 'Couper'} le disque ${i + 1}">M</button>
-          <button class="icon-btn tiny" data-tr="del" data-i="${i}" aria-label="Retirer le disque ${i + 1}" ${tracks.length < 2 ? 'disabled' : ''}>×</button>
+        <li class="track ${t.muted ? 'muted' : ''} ${choisis.has(i) ? 'choisi' : ''} ${t.g ? 'en-groupe' : ''}" style="--c:${colors[i]};--g:${GROUPES[t.g] || 'transparent'}">
+          <button class="tr-pick" data-tr="pick" data-i="${i}" aria-pressed="${choisis.has(i)}" aria-label="Choisir le disque ${i + 1}">${disqueMini(t.n, colors[i])}</button>
+          <div class="tr-corps">
+            <div class="tr-tete"><span class="track-name">Disque ${i + 1}</span>${t.g ? `<span class="tr-g" style="--g:${GROUPES[t.g]}">groupe ${t.g}</span>` : ''}</div>
+            <div class="tr-regl">
+              <span class="stepper">
+                <button class="icon-btn tiny" data-tr="minus" data-i="${i}" aria-label="Moins de bosses">−</button>
+                <b class="mono" aria-label="${t.n} bosses par tour">${t.n}</b>
+                <button class="icon-btn tiny" data-tr="plus" data-i="${i}" aria-label="Plus de bosses">+</button>
+              </span>
+              <button class="icon-btn tiny" data-tr="mute" data-i="${i}" aria-pressed="${t.muted}" aria-label="${t.muted ? 'Réactiver' : 'Couper'} le disque ${i + 1}">M</button>
+              <button class="icon-btn tiny" data-tr="del" data-i="${i}" aria-label="Retirer le disque ${i + 1}" ${tracks.length < 2 ? 'disabled' : ''}>×</button>
+            </div>
+            <select class="track-inst" data-inst="${i}" aria-label="Son du disque ${i + 1}">${INSTS.map(([v, l]) => `<option value="${v}" ${(t.inst || 'clic') === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
+            <label class="tr-vol"><span>volume</span><input type="range" min="0" max="150" value="${Math.round((t.vol ?? 1) * 100)}" data-vol="${i}" aria-label="Volume du disque ${i + 1}"></label>
+          </div>
         </li>`).join('');
       q('.add-track').disabled = tracks.length >= MAX_TRACKS;
       el.querySelectorAll('[data-preset]').forEach((b) => b.classList.toggle('active', b.dataset.preset === presetId));
+      renderGroupes(); renderLiens();
+    }
+    // Les liens : qui influence qui. Une source (un disque, à chacune de ses frappes ; ou la respiration lente) fait
+    // monter ou baisser le volume d'une cible (un disque ou un groupe). « Baisser à chaque frappe », c'est la pompe
+    // (sidechain) de la musique électronique : la grosse caisse fait de la place aux autres.
+    let liens = [];
+    const nomCible = (c) => (c.startsWith('g') ? `du groupe ${c.slice(1)}` : `du disque ${+c + 1}`);
+    const nomSource = (src) => (src === 'souffle' ? 'la respiration lente' : `le disque ${+src + 1}`);
+    function renderLiens() {
+      const lettres = [...new Set(tracks.map((t) => t.g).filter(Boolean))].sort();
+      const cibles = [...tracks.map((_, i) => [String(i), `du disque ${i + 1}`]), ...lettres.map((l) => [`g${l}`, `du groupe ${l}`])];
+      q('.liens').innerHTML = `<h3>Les liens : qui influence qui</h3>
+        ${liens.length ? `<ul class="li-liste">${liens.map((l, k) => `<li><span><b>${nomSource(l.src)}</b>${l.src === 'souffle' ? '' : ', à chacune de ses frappes,'} fait <b>${l.sens === 'baisse' ? 'baisser' : 'monter'}</b> le volume <b>${nomCible(l.cible)}</b></span><input type="range" min="10" max="100" value="${Math.round(l.force * 100)}" data-lien-force="${k}" aria-label="Force du lien"><button class="icon-btn tiny" data-lien-x="${k}" aria-label="Retirer ce lien">×</button></li>`).join('')}</ul>` : ''}
+        <div class="li-faire"><select data-li="src">${tracks.map((_, i) => `<option value="${i}">Le disque ${i + 1}, à chaque frappe,</option>`).join('')}<option value="souffle">La respiration lente</option></select>
+          <select data-li="sens"><option value="baisse">fait baisser</option><option value="monte">fait monter</option></select>
+          <span>le volume</span>
+          <select data-li="cible">${cibles.map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select>
+          <button class="btn small primary" data-li="lier">Lier</button></div>
+        <p class="muted small">Essaie : la grosse caisse (disque 1) fait baisser le volume des autres. On entend la pompe dès qu’on ralentit sous 8 Hz.</p>`;
+    }
+    // L'effet des liens sur un disque, maintenant : de 0 (éteint) à 1 (inchangé) ou plus.
+    function effetLiens(i, now) {
+      let x = 1;
+      liens.forEach((l) => {
+        const vise = l.cible.startsWith('g') ? tracks[i].g === l.cible.slice(1) : +l.cible === i;
+        if (!vise || String(i) === l.src) return;
+        let env;
+        if (l.src === 'souffle') env = 0.5 - 0.5 * Math.cos((now * Math.min(f, 4) * Math.PI * 2) / 4);
+        else { const s = tracks[+l.src]; if (!s || s.muted) return; const fr = freqOf(+l.src); const depuis = ((now * fr) % 1) / fr; env = Math.exp(-depuis * 9); }
+        x *= l.sens === 'baisse' ? 1 - l.force * env : 1 - l.force + l.force * env;
+      });
+      return x;
+    }
+    function renderGroupes() {
+      const lettres = [...new Set(tracks.map((t) => t.g).filter(Boolean))].sort();
+      const libre = Object.keys(GROUPES).find((l) => !lettres.includes(l));
+      const choix = choisis.size ? `<div class="gr-choix"><span>${choisis.size} disque${choisis.size > 1 ? 's' : ''} choisi${choisis.size > 1 ? 's' : ''}</span>${choisis.size >= 2 && libre ? `<button class="btn small primary" data-gr="grouper">Les grouper (groupe ${libre})</button>` : ''}${lettres.map((l) => `<button class="btn small" data-gr="joindre" data-g="${l}">Ajouter au groupe ${l}</button>`).join('')}<button class="btn small" data-gr="vider">Ne rien choisir</button></div>` : '';
+      const membres = (l) => tracks.map((t, i) => [t, i]).filter(([t]) => t.g === l);
+      q('.groupes').innerHTML = choix + lettres.map((l) => { const m = membres(l); const vol = Math.round(m.reduce((a, [t]) => a + (t.vol ?? 1), 0) / m.length * 100); const resp = m.some(([t]) => t.respire); const muet = m.every(([t]) => t.muted);
+        return `<section class="groupe" style="--g:${GROUPES[l]}">
+          <header><b>Groupe ${l}</b><span class="gr-m">${m.map(([t, i]) => `<i style="--c:${colors[i]}">${t.n}</i>`).join('')}</span><button class="icon-btn tiny" data-gr="degrouper" data-g="${l}" aria-label="Défaire le groupe ${l}" title="Défaire le groupe">×</button></header>
+          <div class="gr-regl">
+            <span class="gr-bloc"><small>nombre</small><button class="btn small" data-gr="moins" data-g="${l}">−1</button><button class="btn small" data-gr="plus" data-g="${l}">+1</button><button class="btn small" data-gr="d2" data-g="${l}">÷2</button><button class="btn small" data-gr="x2" data-g="${l}">×2</button></span>
+            <label class="gr-bloc"><small>son</small><select data-gr-inst="${l}"><option value="">…</option>${INSTS.map(([v, lb]) => `<option value="${v}">${lb}</option>`).join('')}</select></label>
+            <label class="gr-bloc gr-vol"><small>volume</small><input type="range" min="0" max="150" value="${vol}" data-gr-vol="${l}"></label>
+            <span class="gr-bloc"><button class="btn small ${muet ? 'on' : ''}" data-gr="muet" data-g="${l}">${muet ? 'Réactiver' : 'Sourdine'}</button><button class="btn small" data-gr="solo" data-g="${l}">Solo</button><button class="btn small ${resp ? 'on' : ''}" data-gr="respire" data-g="${l}" title="Le volume du groupe monte et descend, sur quatre tours">${resp ? '◉ Respire' : '○ Respirer'}</button></span>
+          </div></section>`; }).join('');
     }
 
     function setF(nf, fromInput) {
@@ -285,7 +346,7 @@ export default {
       const oscs = tracks.map((t, i) => {
         const o = impulseOsc(freqOf(i));
         const g = c.createGain();
-        g.gain.value = t.muted ? 0 : per * oscMix(i);
+        g.gain.value = t.muted ? 0 : per * oscMix(i) * niveau(i);
         o.connect(g).connect(gain);
         o.start();
         tg.push(g);
@@ -294,24 +355,30 @@ export default {
       nodes = { gain, oscs, lp, tg };
       // Les frappes de batterie, programmées un peu à l'avance pour tomber juste.
       nextHit = tracks.map(() => c.currentTime + 0.05);
+      let avant = audio().currentTime;
       drumT = setInterval(() => {
         const now = audio().currentTime;
+        if (tracks.some((t) => t.respire)) souffle += ((now - avant) * Math.min(f, 4) * Math.PI * 2) / 4;
+        if (liens.length || tracks.some((t) => t.respire)) updateMutes(true);
+        avant = now;
         tracks.forEach((t, i) => {
           const fr = freqOf(i);
           if (t.muted || (t.inst || 'clic') === 'clic' || fr >= 20) { nextHit[i] = now + 0.02; return; }
           const vel = 1 - smooth(fr);
-          while (nextHit[i] < now + 0.08) { if (vel > 0.02) drums[t.inst](nextHit[i], vel * (i ? 0.8 : 1)); nextHit[i] += 1 / fr; }
+          while (nextHit[i] < now + 0.08) { const v = vel * (i ? 0.8 : 1) * niveau(i); if (v > 0.02) drums[t.inst](nextHit[i], Math.min(1.2, v)); nextHit[i] += 1 / fr; }
         });
       }, 20);
     }
     // 0 sous 8 Hz (on entend la batterie), 1 au-delà de 20 Hz (on entend la note).
     function smooth(fr) { const x = clamp((fr - 8) / 12, 0, 1); return x * x * (3 - 2 * x); }
     function oscMix(i) { return (tracks[i].inst || 'clic') === 'clic' ? 1 : smooth(freqOf(i)); }
-    function updateMutes() {
+    // Le volume d'un disque : son réglage, et la respiration de son groupe (de 15 % à 100 %, sur quatre tours du disque 1).
+    function niveau(i) { const t = tracks[i]; const b = t.respire ? 0.15 + 0.85 * (0.5 - 0.5 * Math.cos(souffle)) : 1; return (t.vol ?? 1) * b * (liens.length ? effetLiens(i, audio().currentTime) : 1); }
+    function updateMutes(vite) {
       if (!nodes) return;
       const c = audio();
       const per = 1 / Math.sqrt(Math.max(1, live().length));
-      tracks.forEach((t, i) => nodes.tg[i].gain.setTargetAtTime(t.muted ? 0 : per * oscMix(i), c.currentTime, 0.02));
+      tracks.forEach((t, i) => nodes.tg[i].gain.setTargetAtTime(t.muted ? 0 : per * oscMix(i) * niveau(i), c.currentTime, vite ? 0.008 : 0.02));
     }
     function stopAudio() {
       clearInterval(drumT);
@@ -331,9 +398,38 @@ export default {
 
     el.addEventListener('change', (e) => {
       const si = e.target.closest('[data-inst]');
-      if (si) { tracks[+si.dataset.inst].inst = si.value; updateMutes(); }
+      if (si) { tracks[+si.dataset.inst].inst = si.value; updateMutes(); return; }
+      const gi = e.target.dataset.grInst; if (gi && e.target.value) { tracks.forEach((t) => { if (t.g === gi) t.inst = e.target.value; }); updateMutes(); renderTracks(); }
+    });
+    el.addEventListener('input', (e) => {
+      const lf = e.target.dataset.lienForce; if (lf != null) { liens[+lf].force = +e.target.value / 100; return; }
+      const v = e.target.dataset.vol; if (v != null) { tracks[+v].vol = +e.target.value / 100; updateMutes(); return; }
+      const gv = e.target.dataset.grVol; if (gv) { tracks.forEach((t) => { if (t.g === gv) t.vol = +e.target.value / 100; }); updateMutes(); el.querySelectorAll('[data-vol]').forEach((r) => { const t = tracks[+r.dataset.vol]; if (t.g === gv) r.value = e.target.value; }); }
     });
     el.addEventListener('click', (e) => {
+      if (e.target.closest('[data-li=lier]')) {
+        const v = (k) => q(`[data-li=${k}]`).value; const l = { src: v('src'), sens: v('sens'), cible: v('cible'), force: 0.7 };
+        if (l.src === l.cible) { import('../ui.js').then((u) => u.toast('Un disque ne peut pas s’influencer lui-même : choisis une autre cible.')); return; }
+        liens.push(l); renderLiens(); return;
+      }
+      const lx = e.target.closest('[data-lien-x]'); if (lx) { liens.splice(+lx.dataset.lienX, 1); renderLiens(); updateMutes(); return; }
+      const gb = e.target.closest('[data-gr]');
+      if (gb) {
+        const a = gb.dataset.gr; const l = gb.dataset.g; const membres = tracks.filter((t) => t.g === l);
+        if (a === 'vider') choisis.clear();
+        if (a === 'grouper') { const libre = Object.keys(GROUPES).find((x) => !tracks.some((t) => t.g === x)); choisis.forEach((i) => { tracks[i].g = libre; }); choisis.clear(); }
+        if (a === 'joindre') { choisis.forEach((i) => { tracks[i].g = l; }); choisis.clear(); }
+        if (a === 'degrouper') { tracks.forEach((t) => { if (t.g === l) { t.g = ''; t.respire = false; } }); liens = liens.filter((x) => x.cible !== `g${l}`); }
+        if (['plus', 'moins', 'x2', 'd2'].includes(a)) {
+          const nv = (n) => (a === 'plus' ? n + 1 : a === 'moins' ? n - 1 : a === 'x2' ? n * 2 : n / 2);
+          if (membres.some((t) => { const x = nv(t.n); return x < 1 || x > MAX_N || !Number.isInteger(x); })) { import('../ui.js').then((u) => u.toast(a === 'd2' ? 'Tous les nombres du groupe doivent être pairs pour se diviser par 2.' : `Les nombres restent entre 1 et ${MAX_N}.`)); return; }
+          membres.forEach((t) => { t.n = nv(t.n); }); presetId = 'custom'; tracksChanged(); return;
+        }
+        if (a === 'muet') { const tous = membres.every((t) => t.muted); membres.forEach((t) => { t.muted = !tous; }); updateMutes(); updateText(true); }
+        if (a === 'solo') { tracks.forEach((t) => { t.muted = t.g !== l; }); updateMutes(); updateText(true); }
+        if (a === 'respire') { const on = !membres.some((t) => t.respire); membres.forEach((t) => { t.respire = on; }); if (!on) updateMutes(); }
+        renderTracks(); return;
+      }
       const wb = e.target.closest('[data-wave]');
       if (wb) { waveMode = wb.dataset.wave; syncWaveButtons(); return; }
       const pb = e.target.closest('[data-preset]');
@@ -343,10 +439,11 @@ export default {
         const i = +tb.dataset.i;
         const t = tracks[i];
         const a = tb.dataset.tr;
+        if (a === 'pick') { if (choisis.has(i)) choisis.delete(i); else choisis.add(i); renderTracks(); return; }
         if (a === 'mute') { t.muted = !t.muted; renderTracks(); updateMutes(); updateText(true); return; }
         if (a === 'plus') t.n = Math.min(MAX_N, t.n + 1);
         if (a === 'minus') t.n = Math.max(1, t.n - 1);
-        if (a === 'del' && tracks.length > 1) tracks.splice(i, 1);
+        if (a === 'del' && tracks.length > 1) { tracks.splice(i, 1); choisis.clear(); }
         presetId = 'custom';
         tracksChanged();
         return;

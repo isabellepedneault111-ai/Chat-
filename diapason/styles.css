@@ -2926,7 +2926,7 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 }
 @media (min-width: 1000px) { .tracks-panel .tracks { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); } }
 /* La cathédrale : les disques, et ce que Frog branche. */
-.ca-disques { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; align-items: stretch; }
+.ca-disques { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 10px; align-items: stretch; }
 .ca-disque { display: grid; grid-template-columns: 76px 1fr; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: #1b1916; color: #efe6d2; }
 .ca-disque.muet { opacity: .45; }
 .ca-dsvg { width: 76px; height: 76px; } .ca-dsvg .anneau { fill: none; stroke: var(--c); stroke-width: 2; opacity: .5; } .ca-dsvg circle:not(.anneau) { fill: var(--c); }
@@ -3091,3 +3091,52 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .maj-bandeau { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 220; display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; justify-content: center; max-width: calc(100vw - 32px); padding: 10px 14px; border-radius: 12px; background: #1b1915; color: #fbf6ea; box-shadow: 0 14px 34px -14px #000; font-size: .95rem; }
 @media (max-width: 760px) { .maj-bandeau { bottom: calc(86px + env(safe-area-inset-bottom)); } }
 .nv-maj { margin: 0 0 10px; }
+/* Le labo, recomposé : le radar et les réglages côte à côte, à la même hauteur ; tes disques en cartes, sur toute la largeur. */
+@media (min-width: 1000px) {
+  .labo-layout { grid-template-columns: minmax(0, 460px) minmax(0, 1fr); grid-template-areas: "radar ctrl" "tracks tracks" "kb kb" "wave wave" "explain explain"; gap: 0 20px; align-items: stretch; }
+  .radar-panel { max-height: 460px; align-self: start; }
+  .ctrl-panel { display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
+  .ctrl-panel .mobile-presets { display: flex; flex-wrap: wrap; overflow: visible; margin: 0; }
+  .tracks-panel > .chips { display: none; }
+  .tracks-panel .tracks { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)) !important; }
+}
+.track { display: grid; grid-template-columns: 64px 1fr; gap: 10px; align-items: center; border-left-width: 1.5px; box-shadow: inset 0 0 0 0 var(--g); }
+.track.en-groupe { box-shadow: inset 0 0 0 3px var(--g); }
+.track.choisi { outline: 3px dashed #b53c0a; outline-offset: 2px; }
+.tr-pick { padding: 0; border: 0; background: #1b1915; border-radius: 50%; width: 64px; height: 64px; cursor: pointer; display: grid; place-items: center; }
+.tr-pick[aria-pressed="true"] { box-shadow: 0 0 0 3px #b53c0a; }
+.tr-svg { width: 58px; height: 58px; } .tr-svg text { fill: #efe6d2; font: 800 15px "Atkinson Hyperlegible", sans-serif; }
+.tr-corps { display: grid; gap: 5px; min-width: 0; }
+.tr-tete { display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+.tr-g { font-size: .72rem; font-weight: 800; padding: 1px 8px; border-radius: 9px; background: var(--g); color: #1b1915; }
+.tr-regl { display: flex; align-items: center; gap: 6px; }
+.track .track-inst { width: 100%; min-width: 0; }
+.tr-vol { display: flex; align-items: center; gap: 6px; font-size: .74rem; color: var(--muted); } .tr-vol input { flex: 1; min-width: 0; }
+.groupes { display: grid; gap: 10px; margin: 10px 0; }
+.gr-choix { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 12px; border-radius: 10px; background: rgba(181,60,10,.08); border: 1.5px dashed #b53c0a; }
+.groupe { padding: 10px 12px; border-radius: 12px; background: #1b1915; color: #efe6d2; box-shadow: inset 0 0 0 3px var(--g); }
+.groupe header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; } .groupe header b { color: var(--g); font-size: 1.02rem; }
+.gr-m { display: flex; gap: 4px; flex: 1; } .gr-m i { font-style: normal; font: 800 .8rem "Atkinson Hyperlegible", sans-serif; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--c); }
+.gr-regl { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.gr-bloc { display: inline-flex; align-items: center; gap: 5px; } .gr-bloc small { color: #b8ad98; font-size: .74rem; margin-right: 2px; }
+.groupe .btn { background: #2a2620; color: #efe6d2; border-color: #4a4338; } .groupe .btn.on { background: var(--g); color: #1b1915; }
+.groupe select { padding: 4px 6px; border-radius: 6px; } .gr-vol input { width: 110px; }
+.groupe .icon-btn { background: #2a2620; color: #efe6d2; border-color: #4a4338; }
+.ca-disque { padding: 10px 14px 10px 10px; grid-template-columns: 70px minmax(0, 1fr); }
+.ca-dreg input[type=range] { width: 100%; min-width: 0; margin: 0; }
+.ca-dvol { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 6px; align-items: center; }
+.ca-dvol:first-of-type { grid-template-columns: auto minmax(0, 1fr); }
+.ca-dvol output { font-size: .72rem; color: #e8c27a; white-space: nowrap; }
+.ca-dx { width: 20px; height: 20px; border-radius: 50%; border: 1px solid #4a4338; background: #2a2620; color: #efe6d2; font-size: .75rem; line-height: 1; padding: 0; cursor: pointer; }
+.ca-dplus-r { font-size: .78rem !important; color: #e8c27a !important; border-style: dashed !important; }
+.ca-dvol:has(output) { grid-template-columns: minmax(0, 1fr) auto auto; row-gap: 2px; }
+.ca-dvol:has(output) span { grid-column: 1; grid-row: 1; } .ca-dvol:has(output) output { grid-column: 2; grid-row: 1; } .ca-dvol:has(output) .ca-dx { grid-column: 3; grid-row: 1; }
+.ca-dvol:has(output) input { grid-column: 1 / -1; grid-row: 2; }
+/* Les liens : qui influence qui */
+.liens { margin: 12px 0; padding: 12px 14px; border-radius: 12px; border: 1.5px dashed var(--rule); }
+.liens h3 { margin: 0 0 8px; font-size: 1.02rem; }
+.li-liste { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 6px; }
+.li-liste li { display: grid; grid-template-columns: minmax(0, 1fr) 120px auto; gap: 10px; align-items: center; padding: 6px 10px; border-radius: 8px; background: rgba(127,127,127,.08); }
+.li-liste li::before { content: none !important; }
+.li-faire { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; } .li-faire select { padding: 5px 6px; border-radius: 6px; max-width: 100%; }
+@media (max-width: 560px) { .li-liste li { grid-template-columns: 1fr auto; } .li-liste input { grid-column: 1; } }

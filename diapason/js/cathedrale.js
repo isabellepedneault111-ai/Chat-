@@ -45,8 +45,15 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
     if (axe < 0.88) r.forEach((x, j) => {
       if (voix[j]?.muet) return;
       const banque = voix[j]?.banque || RYTHME[j % RYTHME.length]; const v0 = (0.75 - 0.6 * axe) * (j === 0 ? 0.9 : 0.6) * (voix[j]?.vol ?? 1);
-      const haut = { timbales: 41, celesta: 79, harpe: 64, flute: 76, choeur: 64, cor: 57, cuivres: 57, clarinette: 62, hautbois: 69 }[banque] || 60;
-      for (let u = s.a; u < s.b - 0.05; u += CYCLE / x) pousse({ t: u, dur: 0.3, banque, midi: pres(plier(accord[j % accord.length] ?? s.racine), haut), vel: v0 * enveloppe(u) * (Math.abs(((u - s.a) % CYCLE)) < 0.01 ? 1.15 : 1) });
+      const haut = ({ timbales: 41, celesta: 79, harpe: 64, flute: 76, choeur: 64, cor: 57, cuivres: 57, clarinette: 62, hautbois: 69 }[banque] || 60) + 12 * (voix[j]?.oct || 0);
+      // Les réglages ajoutés au disque : décalage (contretemps), aération (des frappes retirées, toujours les mêmes),
+      // durée des notes, accent du premier coup, place gauche-droite.
+      const V = voix[j] || {}; const pasR = CYCLE / x; const aer = V.aer || 0; let k = 0;
+      for (let u = s.a + (V.dec || 0) * pasR; u < s.b - 0.05; u += pasR, k++) {
+        if (aer && ((k * 9301 + j * 49297 + 233) % 233280) / 233280 < aer) continue;
+        const premier = k % x === 0;
+        pousse({ t: u, dur: V.dur ?? 0.3, banque, midi: pres(plier(accord[j % accord.length] ?? s.racine), haut), pan: V.pan || 0, vel: v0 * enveloppe(u) * (premier ? 1 + (V.acc ?? 0.15) : 1) });
+      }
     });
     // La lumière : une mélodie dans la famille choisie, faite des notes de l'accord, au rythme du nombre de la partie.
     const fam = FAMILLES.find((f) => f[0] === s.lumiere);
@@ -150,11 +157,12 @@ export function cathedraleDuJeu({ accords }) {
 // Jouer en direct : on programme les notes un peu à l'avance, au fil de la lecture.
 export function jouer(oeuvre, { depuis = 0, onFin, sortie = null } = {}) {
   const c = audio(); const maitre = c.createGain(); maitre.gain.value = 0.9; maitre.connect(c.destination);
+  const pans = new Map(); const panDe = (p) => { const k = Math.round(p * 10) / 10; if (!pans.has(k)) { const sp = c.createStereoPanner(); sp.pan.value = k; sp.connect(maitre); pans.set(k, sp); } return pans.get(k); };
   const t0 = c.currentTime + 0.15 - depuis; let i = oeuvre.notes.findIndex((n) => n.t >= depuis); if (i < 0) i = oeuvre.notes.length;
   const tic = () => {
     const horizon = c.currentTime + 0.8;
     while (i < oeuvre.notes.length && t0 + oeuvre.notes[i].t < horizon) {
-      const n = oeuvre.notes[i++]; joue(n.banque, n.midi, { when: t0 + n.t, dur: n.dur, vel: n.vel, dest: maitre });
+      const n = oeuvre.notes[i++]; joue(n.banque, n.midi, { when: t0 + n.t, dur: n.dur, vel: n.vel, dest: n.pan ? panDe(n.pan) : maitre });
       // Et sur le matériel de Frog : la même note, arrondie au demi-ton (le MIDI ne connaît pas l'intonation juste).
       if (sortie) { const ch = canal(n.banque); const m = Math.max(0, Math.min(127, Math.round(n.midi))); const ts = performance.now() + (t0 + n.t - c.currentTime) * 1000; try { sortie.send([0x90 | ch, m, Math.max(1, Math.min(127, Math.round(n.vel * 140)))], ts); sortie.send([0x80 | ch, m, 0], ts + n.dur * 1000); } catch { /* appareil débranché */ } }
     }
@@ -177,7 +185,8 @@ export async function rendre(oeuvre, onProgres) {
     const src = ctx.createBufferSource(); src.buffer = s.buf; src.playbackRate.value = 2 ** ((n.midi - s.midi) / 12); boucler(src, B, n.dur);
     const g = ctx.createGain(); const v = B.gain * n.vel;
     g.gain.setValueAtTime(v, n.t); g.gain.setValueAtTime(v, n.t + n.dur); g.gain.exponentialRampToValueAtTime(0.0001, n.t + n.dur + B.release);
-    src.connect(g).connect(maitre); src.start(n.t); src.stop(n.t + n.dur + B.release + 0.05);
+    if (n.pan) { const sp = ctx.createStereoPanner(); sp.pan.value = n.pan; src.connect(g).connect(sp).connect(maitre); } else src.connect(g).connect(maitre);
+    src.start(n.t); src.stop(n.t + n.dur + B.release + 0.05);
   });
   onProgres?.(0.5);
   const buf = await ctx.startRendering();
