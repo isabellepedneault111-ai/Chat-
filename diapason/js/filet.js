@@ -143,7 +143,7 @@ function ouvrir() {
   };
   const notesDuBout = () => s.midi.filter((m) => m.t >= sel.a && m.t <= sel.b).map((m) => ({ ...m, t: m.t - sel.a }));
   const nom = () => q('.filet-nom').value.trim() || 'Un bout de jam';
-  const telecharger = (blob, ext) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${nom().replace(/[^\p{L}\p{N} _-]+/gu, ' ').replace(/\s+/g, ' ').trim() || 'filet'}.${ext}`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); };
+  const telecharger = (blob, ext) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${nom().replace(/[^\p{L}\p{N} _-]+/gu, ' ').replace(/\s+/g, ' ').trim() || 'filet'}.${ext}`; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); };
   const arreter = () => { lecture?.stop(); lecture = null; tete = null; q('[data-fl=ecoute]').textContent = '▶ Écouter le bout'; dessiner(); };
   const fermerTout = () => { arreter(); v.remove(); };
 

@@ -12,6 +12,7 @@ import { enAttenteDeMoi } from '../corbeille.js';
 import { lune, luneSVG, TEMPS } from '../lune.js';
 import { nouveautesHTML } from '../nouveautes.js';
 import { aVoir } from '../suivi.js';
+import { attendMoi } from '../elan.js';
 // Tout en haut de l'accueil : ce que l'autre a ajouté et que je n'ai pas vu. C'est là que mène la pastille de Plan.
 const nouvellesBandeau = () => { const n = aVoir(); if (!n.length) return ''; return `<a class="nv-bandeau" href="#/nouvelles"><b>${n.length}</b><span>${n.length > 1 ? 'nouvelles' : 'nouvelle'} de ${esc(n[0].author)} à voir : ${n.slice(0, 2).map((e) => `« ${esc((e.title || 'sans titre').slice(0, 40))} »`).join(', ')}${n.length > 2 ? '…' : ''}</span><em>Ouvrir Nos nouvelles →</em></a>`; };
 
@@ -198,6 +199,8 @@ export default {
             ${last ? `<p class="last-target"><span class="mono">La dernière fois, vous vous êtes dit :</span> « ${esc(last.data.debrief.prochaine)} »</p>` : ''}
             <span class="btn primary">● ${live ? 'Rejoindre' : 'Lancer la session'}</span>
           </a>
+          ${(() => { const at = attendMoi(); if (!at.length) return ''; const e = at[0]; const j = Math.floor((Date.now() - e.createdAt) / 864e5);
+            return `<a class="next-card nc-tresse" href="#/relais/${esc(e.id)}"><p class="tape">La tresse attend ta réponse</p><h3>« ${esc(e.title || 'sans titre')} »</h3><p>${esc(e.author)} te l’a lancé ${j < 1 ? 'aujourd’hui' : j < 2 ? 'hier' : `il y a ${j} jours`}${at.length > 1 ? `, et ${at.length - 1} autre${at.length > 2 ? 's' : ''} attend${at.length > 2 ? 'ent' : ''} aussi` : ''}. Quand vous vous répondez, vos deux fils se rapprochent.</p><span class="btn">Répondre →</span></a>`; })()}
         </section>
 
         ${(() => {

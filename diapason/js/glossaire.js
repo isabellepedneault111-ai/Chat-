@@ -43,6 +43,8 @@ const T = [
   [/improvis(er|ation|e|ons|ez)/i, 'Improviser', 'Inventer en jouant, sur le moment, sans partition. Il n’y a pas de faute, seulement des essais.'],
   [/\bponts?\b(?! de)/i, 'Pont', 'Une partie différente qui casse la routine, souvent avant le dernier refrain.'],
   [/\bbreaks?\b/i, 'Break', 'Une coupure où presque tout s’arrête, pour relancer avec plus de force.'],
+  [/intonation juste/i, 'Intonation juste', 'Des notes accordées selon de vrais rapports de fréquences (4:5:6), et non arrondies aux touches du piano. Plus pur, parfois étrange : la septième « naturelle » est plus basse que celle du piano.'],
+  [/clé de voûte/i, 'Clé de voûte', 'La pierre au sommet d’une arche, qui tient tout. Dans La cathédrale : les quelques nombres d’où viennent la forme, le rythme et l’harmonie.'],
   [/\bfilet\b/i, 'Le filet', 'Il écoute en continu ce qui est actif (le son de l’app, tes entrées audio, tes notes MIDI) et garde toujours la dernière minute. Un beau moment de jam n’est jamais perdu : touche le filet, choisis le bout, garde-le.'],
   [/\bdebrief\b/i, 'Debrief', 'Le petit retour à la fin : ce qu’on visait, ce qu’on a entendu, ce qu’on garde pour la prochaine fois.'],
 ];

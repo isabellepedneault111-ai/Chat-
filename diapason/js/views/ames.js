@@ -8,6 +8,7 @@ import { esc, espaceGate } from './carnet.js';
 import { arcSVG, triskelSVG } from '../talismans.js';
 import { nomNote } from '../oreille.js';
 import { store } from '../ui.js';
+import { circulation } from '../elan.js';
 
 const bas = (s) => String(s || '').toLowerCase();
 const tout = (p) => bas([p.force, p.apprendre, p.instruments, p.apporte, p.bloque, p.besoin, p.fierte, p.objectifLibre, ...(p.objectifs || []), ...(p.styles || []), ...(p.artistes || []).flatMap((a) => [a?.nom, a?.pourquoi, ...(a?.aime || []).map(aspect)])].join(' · '));
@@ -39,6 +40,13 @@ function pistes(z, f, nz, nf) {
     emotion: ['Une seule émotion, sans détour', `Nommez une émotion précise (pas « triste » : « soulagé mais honteux ») et refusez tout ce qui ne la sert pas.`],
     energie: ['La montée', `Une chanson qui ne fait que monter : chaque section ajoute une couche, rien ne redescend avant la fin.`],
   };
+  // Ce qui circule déjà entre vous (la tresse) devient une piste : prolonger ce qui marche, ou tenter l'inverse.
+  const flux = circulation()[0];
+  if (flux) {
+    const INVERSE = { 'de la musique sur des mots': ['L’échange inversé', `Jusqu’ici, la musique vient souvent se poser sur des mots. Cette semaine, l’inverse : ${nf} lance un son sans consigne, ${nz} écrit dessus sans le réécouter plus de deux fois.`], 'des mots sur un son': ['L’échange inversé', `Jusqu’ici, les mots viennent souvent se poser sur des sons. Cette semaine, l’inverse : ${nz} lance quatre lignes, ${nf} les habille sans les chanter.`], 'une couche par-dessus': ['La couche qui retire', `Vous empilez volontiers des couches. Essayez une réponse qui enlève : reprendre le son de l’autre et n’en garder que dix secondes.`] };
+    const p = INVERSE[flux[0]] || ['Ce qui circule entre vous', `Ce qui passe le plus d’un fil à l’autre : ${flux[0]}. Faites-en le cœur de la prochaine séance.`];
+    out.push([...p, 'Parce que c’est ce que la tresse montre : ce qui circule le plus entre vous.']);
+  }
   [...az].filter((k) => af.has(k) && DEPART[k]).slice(0, 2).forEach((k) => out.push([...DEPART[k], `Parce que vous aimez tous les deux ${aspect(k)} dans vos inspirations.`]));
   return out;
 }

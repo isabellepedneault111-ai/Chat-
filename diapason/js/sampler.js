@@ -9,15 +9,15 @@ const BANQUES = {
   rhodes: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.8, release: 0.9 },
   voix: { notes: ['C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5'], gain: 0.55, release: 0.5 },
   // L'orchestre (FluidR3 GM, MIT) : de quoi bâtir une cathédrale, à la Wendy Carlos.
-  cordes: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.6, release: 0.9, nom: 'Cordes', famille: 'cordes' },
+  cordes: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.6, release: 0.9, boucle: [1.1, 2.9], nom: 'Cordes', famille: 'cordes' },
   pizz: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.8, release: 0.25, nom: 'Pizzicati', famille: 'cordes' },
   harpe: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.75, release: 1.6, nom: 'Harpe', famille: 'cordes' },
-  cor: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5'], gain: 0.6, release: 0.5, nom: 'Cor', famille: 'cuivres' },
-  cuivres: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5'], gain: 0.5, release: 0.4, nom: 'Cuivres', famille: 'cuivres' },
-  flute: { notes: ['C4', 'Gb4', 'C5', 'Gb5', 'C6', 'Gb6', 'C7'], gain: 0.6, release: 0.3, nom: 'Flûte', famille: 'bois' },
-  clarinette: { notes: ['C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.6, release: 0.3, nom: 'Clarinette', famille: 'bois' },
-  hautbois: { notes: ['Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.55, release: 0.3, nom: 'Hautbois', famille: 'bois' },
-  choeur: { notes: ['C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.55, release: 0.8, nom: 'Chœur', famille: 'voix' },
+  cor: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5'], gain: 0.6, release: 0.5, boucle: [1.1, 2.9], nom: 'Cor', famille: 'cuivres' },
+  cuivres: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5'], gain: 0.5, release: 0.4, boucle: [1.1, 2.9], nom: 'Cuivres', famille: 'cuivres' },
+  flute: { notes: ['C4', 'Gb4', 'C5', 'Gb5', 'C6', 'Gb6', 'C7'], gain: 0.6, release: 0.3, boucle: [1.1, 2.9], nom: 'Flûte', famille: 'bois' },
+  clarinette: { notes: ['C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.6, release: 0.3, boucle: [1.1, 2.9], nom: 'Clarinette', famille: 'bois' },
+  hautbois: { notes: ['Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.55, release: 0.3, boucle: [1.1, 2.9], nom: 'Hautbois', famille: 'bois' },
+  choeur: { notes: ['C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.55, release: 0.8, boucle: [1.1, 2.9], nom: 'Chœur', famille: 'voix' },
   timbales: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4'], gain: 0.9, release: 1.4, nom: 'Timbales', famille: 'percussions' },
   celesta: { notes: ['C4', 'Gb4', 'C5', 'Gb5', 'C6', 'Gb6', 'C7'], gain: 0.6, release: 1.2, nom: 'Célesta', famille: 'percussions' },
 };
@@ -40,6 +40,15 @@ export function prechargerSons(liste = Object.keys(BANQUES)) {
   }));
 }
 export const pret = (b) => !!tampons[b];
+// Les instruments tenus (cordes, chœur, cuivres, bois) : un échantillon dure ~3 s ; pour une note plus longue,
+// on fait tourner le milieu du son en boucle, là où il ne bouge plus.
+export function boucler(src, B, dur) {
+  if (!B.boucle || dur * src.playbackRate.value < src.buffer.duration - 0.4) return;
+  src.loop = true; src.loopStart = B.boucle[0]; src.loopEnd = Math.min(B.boucle[1], src.buffer.duration - 0.1);
+}
+// Pour rendre hors ligne (un fichier WAV) : les échantillons d'une banque, et ses réglages.
+export const echantillons = (b) => tampons[b] || null;
+export const reglage = (b) => BANQUES[b];
 
 // Joue une note. vel : 0..1 ; dur : durée tenue avant le relâchement (en secondes).
 export function joue(banque, midi, { when = 0, dur = 1, vel = 0.8, dest } = {}) {
@@ -53,6 +62,7 @@ export function joue(banque, midi, { when = 0, dur = 1, vel = 0.8, dest } = {}) 
   src.playbackRate.value = 2 ** ((midi - s.midi) / 12);
   const g = c.createGain();
   const B = BANQUES[banque];
+  boucler(src, B, dur);
   const v = B.gain * vel;
   if (banque === 'voix') { g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t + 0.12); } else g.gain.setValueAtTime(v, t);
   g.gain.setValueAtTime(v, t + dur);

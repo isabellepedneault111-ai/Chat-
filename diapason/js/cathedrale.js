@@ -1,0 +1,120 @@
+// La cathédrale : une clé de voûte (quelques nombres entiers, comme 4:5:6:7) jouée à trois vitesses en même temps.
+// Très lente, elle donne la forme (les parties durent 4, 5, 6, 7) ; moyenne, le rythme (4 contre 5 contre 6 contre 7) ;
+// rapide, l'harmonie (les mêmes rapports entre les fréquences : un accord en intonation juste, sans arrondi au piano).
+// Cowell, New Musical Resources (1930) ; Stockhausen, « …wie die Zeit vergeht… » (1957).
+// Le labo propose la cathédrale ; Frog et Zaza décident où mettre la lumière.
+import { audio } from './audio.js';
+import { joue, prechargerSons, echantillons, reglage, boucler } from './sampler.js';
+
+export const FAMILLES = [
+  ['cordes', 'Les cordes', 'cordes'], ['bois', 'Les bois', 'flute'], ['cuivres', 'Les cuivres', 'cor'],
+  ['choeur', 'Le chœur', 'choeur'], ['harpe', 'La harpe', 'harpe'], ['celesta', 'Le célesta', 'celesta'], ['silence', 'Presque rien', null],
+];
+const RYTHME = ['timbales', 'pizz', 'harpe', 'celesta', 'pizz', 'harpe'];
+const BOIS = ['flute', 'hautbois', 'clarinette'];
+export const BANQUES_UTILES = ['cordes', 'pizz', 'harpe', 'cor', 'cuivres', 'flute', 'clarinette', 'hautbois', 'choeur', 'timbales', 'celesta'];
+const CYCLE = 2.4; // un tour de rythme, en secondes
+// n frappes réparties au mieux sur len pas (rythme euclidien, Toussaint 2005).
+const euclide = (n, len) => Array.from({ length: len }, (_, i) => Math.floor((i * n) / len) !== Math.floor(((i - 1) * n) / len) || i === 0);
+// Ramène un intervalle (en demi-tons, fractionnaire) dans l'octave.
+const plier = (x) => ((x % 12) + 12) % 12;
+// La note la plus proche de « vise » qui garde la même classe de hauteur.
+const pres = (classe, vise) => { let m = vise - plier(vise) + classe; if (m - vise > 6) m -= 12; if (vise - m > 6) m += 12; return m; };
+
+export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 0.5 }) {
+  const r = [...new Set(cle.map((x) => Math.round(x)).filter((x) => x > 0 && x <= 32))].sort((a, b) => a - b);
+  if (!r.length) return { sections: [], notes: [], duree: 0, r };
+  const somme = r.reduce((a, b) => a + b, 0); const ecart = (x) => 12 * Math.log2(x / r[0]);
+  const sections = []; let t = 0;
+  r.forEach((x, i) => { const d = (duree * x) / somme; sections.push({ i, a: t, b: t + d, ratio: x, racine: tonique + plier(ecart(x)), lumiere: lumieres[i] || FAMILLES[i % 6][0] }); t += d; });
+  const coda = 7; const total = t + coda; const notes = [];
+  const enveloppe = (u) => 0.55 + 0.45 * Math.sin(Math.PI * Math.min(1, u / t)) ** 0.8;
+  const pousse = (n) => { if (n.vel > 0.02) notes.push(n); };
+  sections.forEach((s) => {
+    const accord = r.map((x) => s.racine + plier(ecart(x)));
+    // L'harmonie : l'accord tenu, réarticulé tous les deux tours. Plus l'axe va vers « harmonie », plus il est présent.
+    if (axe > 0.12) for (let u = s.a; u < s.b - 0.3; u += CYCLE * 2) {
+      const v = (0.12 + 0.3 * axe) * enveloppe(u);
+      accord.forEach((m, k) => pousse({ t: u + k * 0.02, dur: Math.min(CYCLE * 2.1, s.b - u), banque: 'cordes', midi: pres(plier(m), 55 + k * 4), vel: v }));
+      pousse({ t: u, dur: Math.min(CYCLE * 2.1, s.b - u), banque: 'cordes', midi: pres(plier(s.racine), 40), vel: v * 0.9 });
+      if (s.lumiere === 'cuivres' || axe > 0.75) pousse({ t: u + 0.05, dur: CYCLE * 1.6, banque: 'cor', midi: pres(plier(accord[1] ?? accord[0]), 57), vel: v * 0.8 });
+    }
+    // Le rythme : chaque nombre de la clé de voûte frappe autant de fois par tour (4 contre 5 contre 6…).
+    if (axe < 0.88) r.forEach((x, j) => {
+      const banque = RYTHME[j % RYTHME.length]; const v0 = (0.75 - 0.6 * axe) * (j === 0 ? 0.9 : 0.6);
+      const haut = banque === 'timbales' ? 41 : banque === 'celesta' ? 79 : banque === 'harpe' ? 64 : 60;
+      for (let u = s.a; u < s.b - 0.05; u += CYCLE / x) pousse({ t: u, dur: 0.3, banque, midi: pres(plier(accord[j] ?? s.racine), haut), vel: v0 * enveloppe(u) * (Math.abs(((u - s.a) % CYCLE)) < 0.01 ? 1.15 : 1) });
+    });
+    // La lumière : une mélodie dans la famille choisie, faite des notes de l'accord, au rythme du nombre de la partie.
+    const fam = FAMILLES.find((f) => f[0] === s.lumiere);
+    if (fam?.[2]) {
+      const banque = fam[0] === 'bois' ? BOIS[s.i % 3] : fam[2]; const pas = (CYCLE * 2) / 16; const motif = euclide(Math.min(16, Math.max(3, s.ratio)), 16);
+      const centre = { cordes: 72, flute: 79, hautbois: 74, clarinette: 67, cor: 62, choeur: 69, harpe: 72, celesta: 84 }[banque] || 72;
+      let k = 0; let phrase = 0;
+      for (let u = s.a + CYCLE; u < s.b - CYCLE * 0.5; u += CYCLE * 2, phrase++) {
+        motif.forEach((on, p) => {
+          if (!on || u + p * pas > s.b - 0.4) return;
+          // Une phrase monte dans l'accord, la suivante redescend.
+          const monte = phrase % 2 === 0; const L = accord.length; const m = accord[monte ? k % L : L - 1 - (k % L)];
+          const vise = centre + (monte ? 1 : -1) * ((k % 5) - 2) * 2;
+          pousse({ t: u + p * pas, dur: pas * (motif.slice(p + 1).indexOf(true) + 1 || 2) * 0.95, banque, midi: pres(plier(m), vise), vel: (0.45 + 0.15 * Math.sin((p / 16) * Math.PI)) * enveloppe(u) });
+          k++;
+        });
+      }
+    }
+  });
+  // La coda : tout l'orchestre se pose sur l'accord de départ, et s'éteint.
+  const fin = r.map((x) => tonique + plier(ecart(x)));
+  [['cordes', 52], ['choeur', 64], ['cor', 57], ['harpe', 67]].forEach(([b, vise], n) => fin.forEach((m, k) => pousse({ t: t + n * 0.04 + (b === 'harpe' ? k * 0.12 : 0), dur: coda - 1, banque: b, midi: pres(plier(m), vise + k * 3), vel: 0.42 })));
+  pousse({ t, dur: 2, banque: 'timbales', midi: pres(plier(tonique), 41), vel: 0.8 });
+  pousse({ t, dur: coda - 1, banque: 'cordes', midi: pres(plier(tonique), 38), vel: 0.5 });
+  notes.sort((a, b) => a.t - b.t);
+  return { sections, notes, duree: total, r, coda: [t, total] };
+}
+
+export const charger = () => prechargerSons(BANQUES_UTILES);
+
+// Jouer en direct : on programme les notes un peu à l'avance, au fil de la lecture.
+export function jouer(oeuvre, { depuis = 0, onFin } = {}) {
+  const c = audio(); const maitre = c.createGain(); maitre.gain.value = 0.9; maitre.connect(c.destination);
+  const t0 = c.currentTime + 0.15 - depuis; let i = oeuvre.notes.findIndex((n) => n.t >= depuis); if (i < 0) i = oeuvre.notes.length;
+  const tic = () => {
+    const horizon = c.currentTime + 0.8;
+    while (i < oeuvre.notes.length && t0 + oeuvre.notes[i].t < horizon) { const n = oeuvre.notes[i++]; joue(n.banque, n.midi, { when: t0 + n.t, dur: n.dur, vel: n.vel, dest: maitre }); }
+    if (c.currentTime - t0 > oeuvre.duree + 1.5) { arreter(); onFin?.(); }
+  };
+  const id = setInterval(tic, 120); tic();
+  const arreter = () => { clearInterval(id); maitre.gain.setTargetAtTime(0, c.currentTime, 0.15); setTimeout(() => maitre.disconnect(), 900); };
+  return { arreter, position: () => c.currentTime - t0 };
+}
+
+// Rendre en fichier : le même orchestre, calculé hors ligne, plus vite que le temps réel.
+export async function rendre(oeuvre, onProgres) {
+  await charger();
+  const sr = 44100; const ctx = new OfflineAudioContext(2, Math.ceil((oeuvre.duree + 1.5) * sr), sr);
+  const maitre = ctx.createDynamicsCompressor(); maitre.threshold.value = -14; maitre.ratio.value = 3; maitre.connect(ctx.destination);
+  oeuvre.notes.forEach((n) => {
+    const l = echantillons(n.banque); if (!l) return; const B = reglage(n.banque);
+    const s = l.reduce((a, b) => (Math.abs(b.midi - n.midi) < Math.abs(a.midi - n.midi) ? b : a));
+    const src = ctx.createBufferSource(); src.buffer = s.buf; src.playbackRate.value = 2 ** ((n.midi - s.midi) / 12); boucler(src, B, n.dur);
+    const g = ctx.createGain(); const v = B.gain * n.vel;
+    g.gain.setValueAtTime(v, n.t); g.gain.setValueAtTime(v, n.t + n.dur); g.gain.exponentialRampToValueAtTime(0.0001, n.t + n.dur + B.release);
+    src.connect(g).connect(maitre); src.start(n.t); src.stop(n.t + n.dur + B.release + 0.05);
+  });
+  onProgres?.(0.5);
+  const buf = await ctx.startRendering();
+  // Ramené à un niveau franc : le pic à -1 dB.
+  let pic = 0; for (let c = 0; c < buf.numberOfChannels; c++) { const d = buf.getChannelData(c); for (let i = 0; i < d.length; i++) pic = Math.max(pic, Math.abs(d[i])); }
+  const k = pic > 1e-4 ? 0.89 / pic : 1; for (let c = 0; c < buf.numberOfChannels; c++) { const d = buf.getChannelData(c); for (let i = 0; i < d.length; i++) d[i] *= k; }
+  return buf;
+}
+
+// Le fichier MIDI : une piste par famille (programmes General MIDI), les hauteurs arrondies au demi-ton.
+const PROGRAMMES = { cordes: 48, pizz: 45, harpe: 46, cor: 60, cuivres: 61, flute: 73, clarinette: 71, hautbois: 68, choeur: 52, timbales: 47, celesta: 8 };
+export function evenementsMidi(oeuvre) {
+  const canaux = Object.keys(PROGRAMMES); const can = (b) => { const k = canaux.indexOf(b); return k >= 9 ? k + 1 : k; }; // le canal 10 est réservé aux batteries
+  const ev = canaux.map((b) => ({ t: 0, d: [0xc0 | can(b), PROGRAMMES[b]] }));
+  oeuvre.notes.forEach((n) => { const ch = can(n.banque); const m = Math.max(0, Math.min(127, Math.round(n.midi))); const v = Math.max(1, Math.min(127, Math.round(n.vel * 140)));
+    ev.push({ t: n.t, d: [0x90 | ch, m, v] }, { t: n.t + n.dur, d: [0x80 | ch, m, 0] }); });
+  return ev.sort((a, b) => a.t - b.t || (a.d[0] & 0xf0) - (b.d[0] & 0xf0));
+}

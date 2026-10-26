@@ -59,3 +59,17 @@ export function lecture(depuis = 0) {
   if (attend.length) out.push(['Ce qui attend', `${attend.map((e) => `« ${e.title} » (${e.author})`).join(', ')} : une réponse viendra quand elle viendra.`]);
   return out;
 }
+
+// Ce que l'autre m'a lancé et qui attend ma réponse : la tresse nourrit le plan (« la prochaine chose à faire »).
+export function attendMoi() {
+  if (!espace.connected || !espace.me) return [];
+  const repondus = new Set(echanges().filter((x) => x.vers === espace.me).map((x) => x.a.id));
+  const faits = profileOf(espace.me)?.faits || {};
+  return espace.entries.filter((e) => e.author && e.author !== espace.me && e.data?.relais && !e.demo && !e.data?.demo && !repondus.has(e.id) && !faits[e.id] && Date.now() - e.createdAt < 21 * J)
+    .sort((a, b) => a.createdAt - b.createdAt);
+}
+// Ce qui circule le plus entre nous, pour Nos deux âmes.
+export function circulation() {
+  const k = {}; echanges().forEach((x) => { k[x.quoi] = (k[x.quoi] || 0) + 1; });
+  return Object.entries(k).sort((a, b) => b[1] - a[1]);
+}

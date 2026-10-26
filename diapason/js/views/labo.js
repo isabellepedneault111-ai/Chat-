@@ -1,6 +1,6 @@
 // Le labo rythme ↔ note : on accélère un rythme jusqu’à ce que l’oreille l’entende comme une note (au-delà d’environ 20 battements par seconde).
 import { audio, out, impulseOsc, drums } from '../audio.js';
-import { autoCanvas, animate, css, keyboard } from '../ui.js';
+import { autoCanvas, animate, css, keyboard, store } from '../ui.js';
 import { nameFR, ftom, mtof, clamp } from '../music.js';
 import { RATIO_PRESETS } from '../data.js';
 
@@ -64,6 +64,7 @@ export default {
           <p class="eyebrow">Le labo · rythme ↔ note</p>
           <h1>Accélère un rythme… jusqu’à ce qu’il chante</h1>
           <p class="muted">Chaque bosse d’un disque est un clic. Au-delà de ~20 clics par seconde, ton cerveau entend une <em>note</em>.</p>
+          <p><a class="btn small" href="#/cathedrale?du-labo">La cathédrale : tout un orchestre à partir de ces disques →</a></p>
         </div>
       </div>
       <div class="labo-layout">
@@ -105,6 +106,7 @@ export default {
           <ul class="tracks"></ul>
           <button class="btn add-track" data-act="add">＋ Ajouter un disque</button>
           <button class="btn primary labo-beat" data-act="beat">Faire un beat de ces disques → Studio</button>
+          <a class="btn labo-cathedrale" href="#/cathedrale?du-labo">Bâtir La cathédrale de ces disques →</a>
           <p class="muted small">Chaque disque devient une ligne de batterie, ses frappes réparties au mieux sur la mesure (rythme euclidien, Toussaint 2005).</p>
         </div>
 
@@ -163,6 +165,7 @@ export default {
     }
 
     function tracksChanged() {
+      store.set('laboCle', tracks.map((t) => t.n)); // la clé de voûte de La cathédrale
       realPhase = tracks.map(() => 0);
       hits = tracks.map(() => []);
       flashes = tracks.map(() => 0);
