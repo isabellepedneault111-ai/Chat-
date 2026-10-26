@@ -134,7 +134,7 @@ export default {
           <p class="eyebrow">Studio</p>
           <h1>Construire, jouer, improviser</h1>
           <p class="muted">Un beat, des accords qui changent sans couper, des défis d’impro, et une pochette faite de notre art.</p>
-          <p><a class="btn small" href="#/oreille">L’oreille : analyser une pièce →</a></p>
+          <p class="ec-row"><a class="btn small" href="#/oreille">L’oreille : analyser une pièce →</a> <a class="btn small" href="#/materiel">Mon matériel et le filet →</a></p>
         </div>
       </div>
       <div class="panel transport">

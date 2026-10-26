@@ -53,9 +53,13 @@ export function nouveautesHTML() {
 }
 
 // ---------- Les mises à jour, montrées une seule fois ----------
-// À la première ouverture après une mise à jour, Frog (et lui seul) voit ce qui a changé, et pourquoi.
-// Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
+// À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
+// Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.7', quand: '2026-10-26', titre: 'Rien de ce que tu joues ne se perd', items: [
+    ['Le filet', ['Un nouveau bouton en haut, à côté de l’ampoule : <b>le filet</b>. Tendu, il garde toujours la <b>dernière minute</b> de ce qui joue : le son de l’app, tes entrées audio, les notes de tes claviers MIDI.', 'Un beau moment vient de passer ? Touche le filet : la minute se fige. Chaque source a sa ligne, les notes MIDI aussi. <b>Glisse pour choisir le bout</b> (le silence avant et après est déjà coupé), coche les sources à mélanger, écoute.', 'Puis : <b>Garder au mur</b>, <b>L’oreille</b> (elle trouve les accords du bout), <b>⬇ WAV</b> pour le son, <b>⬇ MIDI</b> pour les notes, à ouvrir dans ton logiciel.', 'Rien ne quitte l’ordinateur tant que tu ne gardes pas le bout. Le filet se retend tout seul à ta prochaine visite.']],
+    ['Mon matériel', ['Studio → <b>Mon matériel et le filet</b> : ton studio redessiné, vu d’en haut. <b>Détecter mon matériel</b> trouve tes entrées audio et tes claviers MIDI ; la Xone:4D, le SV-1 ou ce qui n’est pas branché à l’ordi s’ajoutent à la main, « branchés à » l’appareil qui les reçoit.', 'Une <b>case par appareil</b> : actif ou pas aujourd’hui. Les câbles s’allument, les témoins clignotent quand les notes passent, les niveaux bougent quand le son entre.', 'Glisse les appareils pour les placer comme dans ta pièce : l’app s’en souvient. Un clavier MIDI muet peut <b>sonner au piano</b> d’un clic.']],
+  ] },
   { v: '0.6', quand: '2026-10-26', titre: 'Plus lisible, plus à toi', items: [
     ['Le studio t’écoute mieux', ['<b>Touche un accord</b> de la grille pour le changer sur place : sa note, sa couleur, sa durée. ▶ pour l’entendre, + pour en ajouter un après.', 'Le clavier : <b>coche ce que tu veux voir</b> (l’accord qui joue, la pentatonique, la gamme, les couleurs jazz, les notes blues). La légende montre chaque couleur sur une touche blanche <i>et</i> sur une touche noire : le rose foncé, c’est la pentatonique posée sur une noire.', 'Quand tu changes la <b>tonalité</b>, le clavier allume la note maison et son accord, et te le fait entendre. Un point d’or marque la tonique.']],
     ['Moins de défilement', ['En haut de chaque page, trois cases courtes : <b>Ça sert à · Tu peux · Ça nourrit</b>, en points, avec une petite image. Repliables d’un clic.', '<b>Sur cette page</b> reste collé en haut : un clic et tu sautes à la section.', 'Le menu ✚ Plus du mur ne passe plus derrière les autres éléments.']],
@@ -73,8 +77,8 @@ export const VERSIONS = [
 const cle = (v) => `diapason:maj:version ${v}:${espace.id}`;
 export function majAvecAmour() {
   if (!espace.connected || !espace.me) return;
-  const mem = espace.meta.members || MEMBERS; if (espace.me !== mem[1]) return;
-  if (!espace.meta.tour?.[espace.me]) return; // la première fois, c'est la visite qui accueille
+  const mem = espace.meta.members || MEMBERS; const frog = espace.me === mem[1];
+  if (frog && !espace.meta.tour?.[espace.me]) return; // la première fois, c'est la visite qui accueille
   let neuves;
   try { neuves = VERSIONS.filter((x) => !localStorage.getItem(cle(x.v))); } catch { return; }
   if (!neuves.length) return;
@@ -84,7 +88,8 @@ export function majAvecAmour() {
   box.innerHTML = `<div class="maj-carte">
     <p class="maj-v">Diapason Labo · version ${une.v}</p>
     <h2>${une.titre}.</h2>
-    <p class="maj-pourquoi">Chacune de ces mises à jour a été faite dans un seul but : te rendre heureux, créatif… et séduit par moi. <span>— ${esc(z)}</span></p>
+    ${frog ? `<p class="maj-pourquoi">Chacune de ces mises à jour a été faite dans un seul but : te rendre heureux, créatif… et séduit par moi. <span>— ${esc(z)}</span></p>`
+    : `<p class="maj-pourquoi">Le résumé de ce qui a changé. ${esc(mem[1])} verra cette même liste une fois, à sa prochaine ouverture, avec ton mot : « te rendre heureux, créatif… et séduit par moi ».</p>`}
     ${liste(une)}
     ${avant.map((x) => `<details class="maj-avant"><summary>Et avant, la version ${x.v} : ${x.titre.toLowerCase()}</summary>${liste(x)}</details>`).join('')}
     <div class="maj-row"><a class="btn" href="#/arbre" data-maj="ok">Voir l’arbre</a><button class="btn primary" data-maj="ok">Allons-y</button></div>

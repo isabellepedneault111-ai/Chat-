@@ -2642,3 +2642,52 @@ h1, h2, h3, .mod-head h1 { font-optical-sizing: auto; }
 .gn-fiche { position: static; margin-top: 10px; max-width: 640px; }
 @media (max-width: 860px) { .ar-cadre { grid-template-columns: 1fr; } .ar-fiche { position: static; } }
 .maj-avant { margin-top: 10px; } .maj-avant summary { cursor: pointer; font-weight: 700; }
+/* Le journal des versions (arbre). */
+.ar-versions summary { cursor: pointer; } .ar-versions summary h2 { display: inline; }
+.ar-versions section { margin-top: 12px; } .ar-versions h3 { font: 800 1.05rem "Literata", serif; margin: 0 0 4px; }
+/* Le filet : bouton de la barre du haut. */
+.filet-btn { position: relative; }
+.filet-btn .filet-pt { position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: #b8ad98; }
+.filet-btn.on { background: #1b1916; color: #e8c27a; border-color: #e8c27a; }
+.filet-btn.on .filet-pt { background: #e8c27a; animation: filet-pouls 2s ease-in-out infinite; }
+@keyframes filet-pouls { 50% { box-shadow: 0 0 0 4px rgba(232, 194, 122, .25); } }
+@media (prefers-reduced-motion: reduce) { .filet-btn.on .filet-pt { animation: none; } }
+.filet-voile { position: fixed; inset: 0; z-index: 200; background: rgba(13, 12, 11, .62); display: grid; place-items: center; padding: 16px; }
+.filet-carte { width: min(920px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: #1b1916; color: #efe6d2; border: 1px solid #3a352d; border-radius: 14px; padding: 18px 20px; display: grid; gap: 10px; }
+.filet-carte .muted { color: #b8ad98; } .filet-carte a { color: #e8c27a; }
+.filet-tete { display: flex; justify-content: space-between; align-items: start; gap: 10px; } .filet-tete h2 { margin: 0; color: #fff; font: 800 1.5rem "Literata", serif; }
+.filet-tete .icon-btn { background: #2a2620; color: #efe6d2; border-color: #4a4338; }
+.filet-cv { width: 100%; height: 220px; border-radius: 10px; cursor: crosshair; touch-action: none; }
+.filet-src { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .92rem; }
+.filet-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.filet-actions .btn:not(.primary) { background: #2a2620; color: #efe6d2; border-color: #4a4338; }
+.filet-nom { flex: 1 1 200px; min-width: 0; padding: 8px 10px; border-radius: 8px; border: 1px solid #4a4338; background: #141210; color: #efe6d2; }
+.filet-carte .lien { background: none; border: 0; color: #e8c27a; text-decoration: underline; cursor: pointer; padding: 0; font: inherit; }
+/* Mon matériel : le studio vu d'en haut. */
+.m-barre { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.m-filet { flex: 1 1 260px; font-size: .92rem; } .m-tendu { color: #a5741c; }
+.m-ajout { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 8px; } .m-ajout input { flex: 1 1 220px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--rule); }
+.m-scene { position: relative; height: clamp(520px, 70vh, 760px); margin: 14px 0; border-radius: 16px; overflow: hidden; background: radial-gradient(ellipse at 50% 45%, #2a2520, #141210 70%); }
+.m-cables { position: absolute; inset: 0; width: 100%; height: 100%; }
+.m-cables path { fill: none; stroke: #4a4338; stroke-width: 2.5; stroke-dasharray: 5 6; }
+.m-cables path.on { stroke: #c9a45c; stroke-dasharray: none; opacity: .75; } .m-cables path.vif { stroke: #ffe3a3; opacity: 1; stroke-width: 3.5; }
+.m-carte { position: absolute; transform: translate(-50%, -50%); width: 168px; padding: 8px 10px 10px; border-radius: 12px; background: #1b1916; color: #efe6d2; border: 1px solid #3a352d; display: grid; gap: 4px; box-shadow: 0 10px 24px -12px #000; }
+.m-carte.actif { border-color: #c9a45c; } .m-carte.absent { opacity: .62; } .m-carte.tire { z-index: 5; box-shadow: 0 18px 30px -10px #000; }
+.m-poignee { position: relative; cursor: grab; touch-action: none; } .m-carte.tire .m-poignee { cursor: grabbing; }
+.m-svg { display: block; width: 100%; height: auto; }
+.m-svg .m-corps { fill: #2a2620; stroke: #8a7f6c; stroke-width: 1.2; } .m-svg .m-ecran { fill: #0e1a14; stroke: #4a5f4a; }
+.m-svg .m-blanche { fill: #efe6d2; stroke: #8a7f6c; stroke-width: .5; } .m-svg .m-noire { fill: #141210; }
+.m-svg .m-bouton { fill: #141210; stroke: #b8ad98; stroke-width: 1; } .m-svg .m-rail { fill: #0d0c0b; } .m-svg .m-fader { fill: #efe6d2; }
+.m-svg .m-jack { fill: #0d0c0b; stroke: #b8ad98; } .m-svg .m-pad { fill: #3a352d; stroke: #8a7f6c; stroke-width: .6; } .m-svg .m-led { fill: #93b08e; }
+.m-svg .m-grille, .m-svg .m-pied { fill: none; stroke: #8a7f6c; stroke-width: 2; } .m-svg .m-txt { fill: #e8c27a; font: 800 10px "Literata", serif; }
+.m-carte.actif .m-svg .m-corps { stroke: #e8c27a; }
+.m-temoin { position: absolute; top: 2px; right: 2px; width: 9px; height: 9px; border-radius: 50%; background: #3a352d; }
+.m-carte.actif .m-temoin { background: #6d655a; } .m-temoin.vif { background: #ffe3a3 !important; box-shadow: 0 0 10px #ffe3a3; }
+.m-actif { display: flex; gap: 6px; align-items: center; cursor: pointer; font-size: .92rem; line-height: 1.2; } .m-actif input { width: 18px; height: 18px; accent-color: #c9a45c; flex: none; }
+.m-tags { margin: 0; display: flex; flex-wrap: wrap; gap: 4px; } .m-tags span { font-size: .7rem; padding: 1px 6px; border-radius: 9px; background: #2a2620; color: #b8ad98; } .m-tags .m-off { color: #f39a9a; }
+.m-niveau { height: 4px; border-radius: 2px; background: #2a2620; overflow: hidden; } .m-niveau i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #93b08e, #e8c27a 70%, #f39a9a); }
+.m-petit { font-size: .78rem; display: flex; gap: 5px; align-items: center; color: #b8ad98; }
+.m-regl summary { font-size: .76rem; color: #b8ad98; cursor: pointer; } .m-regl[open] { display: grid; gap: 5px; }
+.m-regl input, .m-regl select { width: 100%; padding: 4px 6px; border-radius: 6px; border: 1px solid #4a4338; background: #141210; color: #efe6d2; font-size: .82rem; }
+.m-regl .btn { background: #2a2620; color: #efe6d2; border-color: #4a4338; }
+@media (max-width: 640px) { .m-scene { height: auto; padding: 12px; } .m-cables { display: none; } .m-cartes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } .m-carte { position: relative; left: auto !important; top: auto !important; transform: none; width: auto; } .m-poignee { cursor: default; } }

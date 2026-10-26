@@ -5,6 +5,7 @@ import { audio, drums, pad, bass, pluck, impulseOsc, out } from '../audio.js';
 import { joue, accord, prechargerSons } from '../sampler.js';
 import { mtof } from '../music.js';
 import { espace } from '../espace.js';
+import { VERSIONS } from '../nouveautes.js';
 const esc = (x) => String(x ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 const F = 'fabriqué en direct'; const E = 'enregistré'; const C = 'calculé'; const D = 'données';
@@ -237,6 +238,9 @@ export default {
         </ul>
         <p class="ar-mot-sign">— ${esc((espace.meta?.members || ['Zaza'])[0])}, conceptrice · l’agent : Claude (Anthropic), via Claude Code</p>
       </section>
+      <details class="panel ar-versions"><summary><h2>Le journal des versions</h2></summary>
+        ${VERSIONS.map((x) => `<section><h3>Version ${x.v} · ${x.titre} <small class="muted">${new Date(`${x.quand}T12:00`).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' })}</small></h3>${x.items.map(([t, l]) => `<p><b>${t}</b></p><ul>${l.map((y) => `<li>${y}</li>`).join('')}</ul>`).join('')}</section>`).join('')}
+      </details>
       <details class="panel ar-details" open><summary><h2>D’où vient chaque son : piano, batterie, voix…</h2></summary>
         <p class="ar-legende"><em class="ar-etq ar-f">${F}</em><em class="ar-etq ar-e">${E}</em><em class="ar-etq ar-c">${C}</em><em class="ar-etq ar-d">${D}</em></p>
         <ul class="arbre no-aide">${noeud(ARBRE, 0)}</ul>

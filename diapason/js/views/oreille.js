@@ -53,6 +53,8 @@ export default {
     // Redessiner quand la carte prend sa taille (elle apparaît seulement après l'écoute).
     const roC = new ResizeObserver(() => requestAnimationFrame(dessiner)); roC.observe(q('.or-canvas'));
     const etat = (t) => { q('.or-etat').textContent = t; };
+    // Un bout pris dans le filet arrive ici tout seul.
+    if (window.__flipOreille) { const f = window.__flipOreille; window.__flipOreille = null; setTimeout(async () => analyser(await f.blob.arrayBuffer(), f.nom), 0); }
     const arrete = () => { stopBoucle?.(); stopBoucle = null; lecture?.stop?.(); lecture = null; q('[data-o=boucle]').textContent = '▶ Écouter la boucle'; };
 
     async function analyser(arrayBuffer, n) {
