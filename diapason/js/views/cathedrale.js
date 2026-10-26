@@ -6,7 +6,9 @@ import { lampeHTML, brancherLampe } from '../lampe.js';
 import { dessinerRosace } from '../rosace.js';
 import { FR } from '../music.js';
 import { espace, saveEntry, uploadAudio } from '../espace.js';
-import { composer, jouer, rendre, charger, evenementsMidi, FAMILLES, RYTHME_DEFAUT, cleDepuisNotes, segmentsMidi, accordsDesSegments, cathedraleDuJeu } from '../cathedrale.js';
+import { composer, jouer, rendre, charger, evenementsMidi, FAMILLES, RYTHME_DEFAUT, cleDepuisNotes, segmentsMidi, accordsDesSegments, cathedraleDuJeu, ranger, SOURCES_VIVES } from '../cathedrale.js';
+import { audio, mic } from '../audio.js';
+import { onCC } from '../materiel.js';
 import { onNotes, detecter, appareils, sortiesMidi, filet, instantane } from '../materiel.js';
 import { createListener } from '../instrument.js';
 import { chordIntervals } from '../music.js';
@@ -24,6 +26,17 @@ const CLES = [
 ];
 const ROMAINS = ['I', 'II', 'III', 'IV', 'V', 'VI'];
 const COUL = { cordes: '#e8c27a', bois: '#93b08e', cuivres: '#f0875a', choeur: '#b89be6', harpe: '#9fe0c3', celesta: '#7fb1f0', silence: '#6d655a' };
+// Le labo dans la cathédrale : ses groupes deviennent des pupitres de l'orchestre, ses sons trouvent leur équivalent
+// d'orchestre, ses liens s'écrivent dans la partition.
+const ORCH = { kick: 'timbales', snare: 'pizz', hat: 'celesta', clap: 'harpe', clic: 'pizz' };
+const GROUPES = { A: '#e8c27a', B: '#9fe0c3', C: '#f0875a' };
+const SOURCES = { souffle: 'la respiration lente', vibrato: 'une oscillation rapide', hasard: 'le hasard', chaos: 'le chaos', voix: 'ta voix au micro', clavier: 'le clavier MIDI', molette: 'la molette du clavier' };
+const PARAMS = { volume: ['le volume', 'plus doux', 'plus fort'], hauteur: ['la hauteur', 'plus grave', 'plus aigu'], brillance: ['le timbre', 'plus sourd', 'plus brillant'], pan: ['l’espace gauche-droite', 'vers la gauche', 'vers la droite'] };
+function depuisLabo(L) {
+  if (!L?.tracks?.length) return null;
+  const voix = L.tracks.map((t) => ({ banque: ORCH[t.inst] || undefined, vol: t.vol ?? 1, muet: t.muted || undefined, g: t.g || undefined, respire: t.respire || undefined }));
+  return ranger(L.tracks.map((t) => t.n), voix, (L.liens || []).map((l) => ({ src: String(l.src), cible: String(l.cible), param: l.param || 'volume', sens: l.sens || 'monte', force: l.force ?? 0.6 })));
+}
 const mmss = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
 const nomNote = (m) => { const r = Math.round(m); const c = Math.round((m - r) * 100); return `${FR[((r % 12) + 12) % 12]}${c ? ` <small>${c > 0 ? '+' : ''}${c}¢</small>` : ''}`; };
 
@@ -32,7 +45,9 @@ export default {
   mount(el) {
     const du = store.get('laboCle', null);
     let etat = store.get('cathedrale', { cle: du || [4, 5, 6, 7], tonique: 50, duree: 120, axe: 0.5, lumieres: [] });
-    if (du && location.hash.includes('du-labo')) etat = { ...etat, cle: du, lumieres: [] };
+    const duLabo = () => depuisLabo(store.get('laboEtat', null));
+    if (location.hash.includes('du-labo')) { const L = duLabo(); if (L) etat = { ...etat, ...L, lumieres: [], parties: [] }; else if (du) etat = { ...etat, cle: du, lumieres: [] }; }
+    { const R = ranger(etat.cle, etat.voix || [], etat.liens || []); etat = { ...etat, ...R }; }
     let oeuvre = null; let lecteur = null; let anim = null;
     const garder = () => store.set('cathedrale', etat);
     el.innerHTML = `
@@ -48,6 +63,8 @@ export default {
         <div class="ca-lecture"><button class="btn primary big" data-ca="jouer">▶ Bâtir et écouter</button><span class="ca-temps mono"></span>${lampeHTML()}</div></section>
       <section class="panel ca-disques-p"><div class="panel-head"><h2>Les disques</h2><span class="muted small">un disque par nombre de la clé : il frappe autant de fois par tour, et sonne dans l’accord</span></div>
         <div class="ca-disques"></div></section>
+      <section class="panel ca-gl"><div class="panel-head"><h2>Les pupitres et les liens</h2><span class="muted small">comme au labo : des disques regroupés, qui bougent ensemble, et des liens qui font agir l’un sur l’autre</span></div>
+        <div class="ca-groupes"></div><div class="ca-liens"></div></section>
       <section class="panel ca-branche"><div class="panel-head"><h2>Ce que Frog branche</h2><span class="muted small">un accord tenu, ou toute une minute de jeu prise dans le filet, devient la cathédrale ; elle peut aussi jouer sur ses appareils</span></div>
         <div class="ca-row"><button class="btn" data-ca="ecouter">● Écouter mon matériel</button><button class="btn" data-ca="filet">◎ La cathédrale de mon jeu</button><label class="check"><input type="checkbox" data-ca="suivre"> Suivre mon jeu (chaque accord tenu devient la clé)</label>
           <label class="field"><span>Jouer aussi sur</span><select data-ca="sortie"><option value="">Aucun appareil MIDI</option></select></label></div>
@@ -89,8 +106,9 @@ export default {
     function rendreDisques() {
       const voix = etat.voix || [];
       q('.ca-disques').innerHTML = etat.cle.map((n, j) => { const v = voix[j] || {}; const b = v.banque || RYTHME_DEFAUT[j % RYTHME_DEFAUT.length];
-        return `<div class="ca-disque ${v.muet ? 'muet' : ''}" data-d="${j}">${disqueSVG(n, DCOUL[j % 6])}
-          <div class="ca-dreg"><div class="ca-dnb"><button class="icon-btn tiny" data-dm="moins" aria-label="Moins">−</button><b>${n}</b><button class="icon-btn tiny" data-dm="plus" aria-label="Plus">+</button><button class="icon-btn tiny ${v.muet ? 'on' : ''}" data-dm="muet" aria-label="Sourdine" title="Sourdine">M</button>${etat.cle.length > 2 ? '<button class="icon-btn tiny" data-dm="retirer" aria-label="Retirer">×</button>' : ''}</div>
+        return `<div class="ca-disque ${v.muet ? 'muet' : ''} ${v.g ? 'en-g' : ''}" data-d="${j}" style="--g:${GROUPES[v.g] || 'transparent'}">${disqueSVG(n, DCOUL[j % 6])}
+          <div class="ca-dreg"><div class="ca-dnb"><button class="icon-btn tiny" data-dm="moins" aria-label="Moins">−</button><b>${n}</b><button class="icon-btn tiny" data-dm="plus" aria-label="Plus">+</button><button class="icon-btn tiny ${v.muet ? 'on' : ''}" data-dm="muet" aria-label="Sourdine" title="Sourdine">M</button><button class="icon-btn tiny ${v.respire ? 'on' : ''}" data-dm="respire" aria-label="Respirer" title="Respirer : le volume monte et descend sur quatre tours">∿</button>${etat.cle.length > 2 ? '<button class="icon-btn tiny" data-dm="retirer" aria-label="Retirer">×</button>' : ''}</div>
+            <select data-dm="groupe" aria-label="Pupitre du disque" class="ca-dg" style="--g:${GROUPES[v.g] || 'transparent'}"><option value="">sans pupitre</option>${Object.keys(GROUPES).map((g) => `<option value="${g}" ${v.g === g ? 'selected' : ''}>pupitre ${g}</option>`).join('')}</select>
             <select data-dm="banque" aria-label="Instrument du disque">${INSTR.map(([k, l]) => `<option value="${k}" ${k === b ? 'selected' : ''}>${l}</option>`).join('')}</select>
             <label class="ca-dvol"><span>volume</span><input type="range" min="0" max="150" value="${Math.round((v.vol ?? 1) * 100)}" data-dm="vol"></label>
             ${Object.entries(REGLAGES).filter(([k]) => v[k] != null).map(([k, [l, mn, mx, pas, fmt]]) => `<label class="ca-dvol"><span>${l}</span><input type="range" min="${mn}" max="${mx}" step="${pas}" value="${v[k]}" data-dr="${k}" aria-label="${l}"><output>${fmt(v[k])}</output><button type="button" class="ca-dx" data-dm="sansreglage" data-k="${k}" aria-label="Retirer ${l}">×</button></label>`).join('')}
@@ -106,11 +124,32 @@ export default {
       dur: ['durée des notes', 0.1, 2.5, 0.1, (x) => `${x.toFixed(1).replace('.', ',')} s`, 0.3, 'Des frappes sèches ou des notes tenues.'],
       acc: ['accent', 0, 1, 0.05, (x) => `${Math.round(x * 100)} %`, 0.5, 'Appuyer le premier coup de chaque tour.'],
     };
+    // Les pupitres : les disques d'un même groupe, réglés d'un seul geste (instrument, volume, sourdine, solo, respirer).
+    function rendreGL() {
+      const voix = etat.voix || []; const lettres = [...new Set(voix.map((v) => v?.g).filter(Boolean))].sort();
+      const membres = (g) => etat.cle.map((n, j) => [n, j]).filter(([, j]) => voix[j]?.g === g);
+      q('.ca-groupes').innerHTML = lettres.length ? lettres.map((g) => { const m = membres(g); const vol = Math.round((m.reduce((a, [, j]) => a + (voix[j]?.vol ?? 1), 0) / m.length) * 100);
+        const muet = m.every(([, j]) => voix[j]?.muet); const resp = m.some(([, j]) => voix[j]?.respire);
+        return `<div class="ca-pup" style="--g:${GROUPES[g]}"><b>Pupitre ${g}</b><span class="ca-pup-m">${m.map(([n]) => `<i>${n}</i>`).join('')}</span>
+          <select data-pu="banque" data-g="${g}" aria-label="Instrument du pupitre ${g}"><option value="">instrument…</option>${INSTR.map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}</select>
+          <label class="ca-dvol"><span>volume</span><input type="range" min="0" max="150" value="${vol}" data-pu="vol" data-g="${g}"></label>
+          <button class="btn small ${muet ? 'on' : ''}" data-pu="muet" data-g="${g}">${muet ? 'Réactiver' : 'Sourdine'}</button><button class="btn small" data-pu="solo" data-g="${g}">Solo</button><button class="btn small ${resp ? 'on' : ''}" data-pu="respire" data-g="${g}">Respirer</button></div>`; }).join('')
+        : '<p class="muted small">Pas encore de pupitre. Choisis « pupitre A » sous deux disques ou plus : ils bougent ensemble, et un lien peut viser tout le pupitre.</p>';
+      const nomC = (c) => (String(c).startsWith('g') ? `tout le pupitre ${c.slice(1)}` : `le disque ${etat.cle[+c] ?? '?'}`);
+      const nomS = (x) => SOURCES[x] || `le disque ${etat.cle[+x] ?? '?'}, à chacune de ses frappes,`;
+      const liens = etat.liens || [];
+      q('.ca-liens').innerHTML = `<h3>Les liens</h3>${liens.length ? `<ul class="li-liste">${liens.map((l, k) => `<li><span><b>${esc(nomS(l.src))}</b> rend <b>${esc(nomC(l.cible))}</b> ${PARAMS[l.param || 'volume'][l.sens === 'baisse' ? 1 : 2]} (${PARAMS[l.param || 'volume'][0]}, force ${Math.round((l.force ?? 0.6) * 100)} %)${SOURCES_VIVES.has(l.src) ? ' <em class="ca-vif">en direct seulement</em>' : ''}</span><button class="icon-btn tiny" data-li-x="${k}" aria-label="Retirer ce lien">×</button></li>`).join('')}</ul>` : '<p class="muted small">Aucun lien. Ceux du labo arrivent avec « Bâtir La cathédrale de ces disques ».</p>'}
+        <div class="ca-li-faire"><select data-lf="src">${etat.cle.map((n, j) => `<option value="${j}">Le disque ${n}, à chaque frappe,</option>`).join('')}${Object.entries(SOURCES).map(([k, l]) => `<option value="${k}">${l.replace(/^./, (c) => c.toUpperCase())}</option>`).join('')}</select>
+          <span>rend</span><select data-lf="cible">${etat.cle.map((n, j) => `<option value="${j}">le disque ${n}</option>`).join('')}${lettres.map((g) => `<option value="g${g}">tout le pupitre ${g}</option>`).join('')}</select>
+          <select data-lf="effet">${Object.entries(PARAMS).flatMap(([p, [, b, h]]) => [`<option value="${p}|baisse">${b}</option>`, `<option value="${p}|monte">${h}</option>`]).join('')}</select>
+          <label class="ca-dvol"><span>force</span><input type="range" min="10" max="100" value="60" data-lf="force"></label><button class="btn small" data-lf="ajouter">+ Ce lien</button></div>
+        <p class="muted small">Les liens qui se calculent (un disque, la respiration, l’oscillation, le hasard, le chaos) sont écrits dans la partition : ils restent dans le WAV et le MIDI. La voix, le clavier et la molette agissent pendant l’écoute seulement, avec un quart de seconde d’avance.</p>`;
+    }
     const majDisque = (j, change) => { const voix = [...(etat.voix || [])]; voix[j] = { ...(voix[j] || {}), ...change }; return voix; };
 
     function majTout() {
-      oeuvre = composer({ cle: etat.cle, tonique: etat.tonique, duree: etat.duree, lumieres: etat.lumieres, axe: etat.axe, voix: etat.voix || [], parties: etat.parties || [] });
-      rendreDisques();
+      oeuvre = composer({ cle: etat.cle, tonique: etat.tonique, duree: etat.duree, lumieres: etat.lumieres, axe: etat.axe, voix: etat.voix || [], parties: etat.parties || [], liens: etat.liens || [] });
+      rendreDisques(); rendreGL();
       const r = oeuvre.r;
       q('.ca-parties').innerHTML = oeuvre.sections.map((s) => `<div class="ca-partie" style="flex:${s.ratio};--c:${COUL[s.lumiere]}"><b>${ROMAINS[s.i] || s.i + 1} · ${s.ratio}</b><small>${mmss(s.b - s.a)}${s.forme ? ` · sur ${esc(s.forme.nom)}` : ''}</small>
         <select data-lum="${s.i}" aria-label="La lumière sur la partie ${s.i + 1}">${FAMILLES.map(([k, l]) => `<option value="${k}" ${k === s.lumiere ? 'selected' : ''}>${l}</option>`).join('')}</select></div>`).join('');
@@ -171,16 +210,25 @@ export default {
     async function lancer() {
       if (lecteur) { arreter(); return; }
       const b = q('[data-ca=jouer]'); b.textContent = 'L’orchestre s’installe…'; await charger();
-      lecteur = jouer(oeuvre, { onFin: arreter, sortie: sorties.find((o) => o.id === store.get('caSortie', '')) || null }); b.textContent = '■ Arrêter';
+      lecteur = jouer(oeuvre, { onFin: arreter, vivant: envVivant, sortie: sorties.find((o) => o.id === store.get('caSortie', '')) || null }); b.textContent = '■ Arrêter';
       anim = animate(() => { if (!lecteur) return; const p = lecteur.position(); dessiner(p); q('.ca-temps').textContent = `${mmss(Math.max(0, p))} / ${mmss(oeuvre.duree)}`;
         el.querySelectorAll('.ca-dsvg .tourne').forEach((g) => { g.style.transform = `rotate(${((Math.max(0, p) / 2.4) % 1) * 360}deg)`; }); });
     }
     const titre = () => q('[data-ca=titre]').value.trim() || `Cathédrale ${etat.cle.join(':')}`;
     const telecharger = (blob, ext) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${titre().replace(/[^\p{L}\p{N} _:-]+/gu, ' ').replace(/[:\s]+/g, ' ').trim()}.${ext}`; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); };
-    const changer = (patch) => { const avant = lecteur; if (avant) arreter(); if (patch.cle && patch.cle.length !== etat.cle.length && !('parties' in patch)) patch.parties = []; etat = { ...etat, ...patch }; garder(); majTout(); if (q('[data-ca=titre]') && /^Cathédrale [\d:]+$/.test(q('[data-ca=titre]').value)) q('[data-ca=titre]').value = `Cathédrale ${etat.cle.join(':')}`; };
+    const changer = (patch) => { const avant = lecteur; if (avant) arreter(); if (patch.cle && patch.cle.length !== etat.cle.length && !('parties' in patch)) patch.parties = []; etat = { ...etat, ...patch }; if (patch.cle || patch.voix) { const R = ranger(etat.cle, etat.voix || [], etat.liens || []); etat = { ...etat, ...R }; if (q('[data-ca=nombres]')) q('[data-ca=nombres]').value = etat.cle.join(' '); } garder(); majTout(); if (q('[data-ca=titre]') && /^Cathédrale [\d:]+$/.test(q('[data-ca=titre]').value)) q('[data-ca=titre]').value = `Cathédrale ${etat.cle.join(':')}`; };
 
     el.addEventListener('click', async (e) => {
       const dm = e.target.closest('[data-dm]')?.dataset.dm; const dj = e.target.closest('[data-d]');
+      const pu = e.target.closest('[data-pu]'); if (pu && e.target.tagName === 'BUTTON') { const g = pu.dataset.g; const a = pu.dataset.pu; const voix = etat.cle.map((_, j) => ({ ...(etat.voix?.[j] || {}) })); const dans = (j) => voix[j].g === g;
+        if (a === 'muet') { const tous = voix.every((v, j) => !dans(j) || v.muet); voix.forEach((v, j) => { if (dans(j)) v.muet = !tous || undefined; }); }
+        if (a === 'solo') voix.forEach((v, j) => { v.muet = dans(j) ? undefined : true; });
+        if (a === 'respire') { const on = !voix.some((v, j) => dans(j) && v.respire); voix.forEach((v, j) => { if (dans(j)) v.respire = on || undefined; }); }
+        changer({ voix }); return; }
+      const lx = e.target.closest('[data-li-x]'); if (lx) { const liens = [...(etat.liens || [])]; liens.splice(+lx.dataset.liX, 1); changer({ liens }); return; }
+      if (e.target.closest('[data-lf=ajouter]')) { const v = (k) => q(`[data-lf=${k}]`).value; const [param, sens] = v('effet').split('|'); const l = { src: v('src'), cible: v('cible'), param, sens, force: +v('force') / 100 };
+        if (l.src === l.cible) { toast('Un disque ne peut pas agir sur lui-même.'); return; } changer({ liens: [...(etat.liens || []), l] }); return; }
+      if (dm === 'respire' && dj) { changer({ voix: majDisque(+dj.dataset.d, { respire: !(etat.voix?.[+dj.dataset.d]?.respire) || undefined }) }); return; }
       if (dm === 'ajouter') { const cle = [...etat.cle, Math.min(32, Math.max(...etat.cle) + 1)]; q('[data-ca=nombres]').value = cle.join(' '); changer({ cle, lumieres: [] }); return; }
       if (dm === 'sansreglage' && dj) { const voix = majDisque(+dj.dataset.d, {}); delete voix[+dj.dataset.d][e.target.closest('[data-k]').dataset.k]; changer({ voix }); return; }
       if (dj && ['moins', 'plus', 'muet', 'retirer'].includes(dm)) {
@@ -189,14 +237,15 @@ export default {
         const pris = new Set(cle.filter((_, k) => k !== j)); const pas = dm === 'plus' ? 1 : dm === 'moins' ? -1 : 0;
         if (pas) { let x = cle[j] + pas; while (pris.has(x) && x >= 1 && x <= 32) x += pas; if (x < 1 || x > 32) { toast(pas > 0 ? 'Les nombres vont jusqu’à 32.' : 'Le plus petit nombre libre est déjà pris.'); return; } cle[j] = x; }
         if (dm === 'muet') { changer({ voix: majDisque(j, { muet: !(etat.voix?.[j]?.muet) }) }); return; }
-        if (dm === 'retirer') { cle.splice(j, 1); const voix = [...(etat.voix || [])]; voix.splice(j, 1); q('[data-ca=nombres]').value = cle.join(' '); changer({ cle, voix, lumieres: [] }); return; }
+        if (dm === 'retirer') { cle.splice(j, 1); const voix = [...(etat.voix || [])]; voix.splice(j, 1); const re = (x) => (/^\d+$/.test(String(x)) ? (+x === j ? null : String(+x > j ? +x - 1 : +x)) : x); const liens = (etat.liens || []).map((l) => ({ ...l, src: re(l.src), cible: re(l.cible) })).filter((l) => l.src != null && l.cible != null); q('[data-ca=nombres]').value = cle.join(' '); changer({ cle, voix, liens, lumieres: [] }); return; }
         q('[data-ca=nombres]').value = cle.join(' '); changer({ cle, lumieres: [] }); return;
       }
       if (e.target.closest('[data-ca=ecouter]')) { ecouterMateriel(); return; }
       if (e.target.closest('[data-ca=filet]')) { depuisFilet(); return; }
       if (e.target.closest('[data-ca=batir]')) { batirDuJeu(); return; }
       const c = e.target.closest('[data-cle]');
-      if (c) { const v = c.dataset.cle === 'labo' ? du : CLES.find((x) => x[0] === c.dataset.cle)[4]; q('[data-ca=nombres]').value = v.join(' '); changer({ cle: v, lumieres: [], parties: [] }); return; }
+      if (c) { if (c.dataset.cle === 'labo') { const L = duLabo(); if (L) { changer({ ...L, lumieres: [], parties: [] }); toast('Les disques du labo sont là : leurs pupitres, leurs sons, leurs liens.'); return; } }
+        const v = c.dataset.cle === 'labo' ? du : CLES.find((x) => x[0] === c.dataset.cle)[4]; q('[data-ca=nombres]').value = v.join(' '); changer({ cle: v, lumieres: [], parties: [], liens: [], voix: [] }); return; }
       const a = e.target.closest('[data-ca]')?.dataset.ca;
       if (a === 'jouer') lancer();
       if (a === 'wav' || a === 'mur') {
@@ -204,7 +253,7 @@ export default {
         try {
           const buf = await rendre(oeuvre); const fichier = wav(buf);
           if (a === 'wav') telecharger(fichier, 'wav');
-          else { b.textContent = 'J’envoie…'; const au = await uploadAudio(fichier); await saveEntry({ type: 'audio', title: titre(), audio: { ...au, duration: +oeuvre.duree.toFixed(1) }, data: { stage: 0, cathedrale: { cle: etat.cle, tonique: etat.tonique, axe: etat.axe, lumieres: oeuvre.sections.map((s) => s.lumiere) } } }); toast('La cathédrale est au mur.'); }
+          else { b.textContent = 'J’envoie…'; const au = await uploadAudio(fichier); await saveEntry({ type: 'audio', title: titre(), audio: { ...au, duration: +oeuvre.duree.toFixed(1) }, data: { stage: 0, cathedrale: { cle: etat.cle, tonique: etat.tonique, axe: etat.axe, lumieres: oeuvre.sections.map((s) => s.lumiere), voix: etat.voix || [], liens: etat.liens || [] } } }); toast('La cathédrale est au mur.'); }
         } catch (err) { toast(err.message || 'Le rendu n’a pas marché.'); }
         b.disabled = false; b.textContent = avant;
       }
@@ -213,6 +262,10 @@ export default {
     });
     el.addEventListener('change', (e) => {
       const dm = e.target.dataset.dm; const dj = e.target.closest('[data-d]');
+      if (dm === 'groupe' && dj) { changer({ voix: majDisque(+dj.dataset.d, { g: e.target.value || undefined }) }); return; }
+      const pu = e.target.closest('[data-pu]');
+      if (pu?.dataset.pu === 'banque' && e.target.value) { changer({ voix: etat.cle.map((_, j) => (etat.voix?.[j]?.g === pu.dataset.g ? { ...etat.voix[j], banque: e.target.value } : etat.voix?.[j] || {})) }); return; }
+      if (pu?.dataset.pu === 'vol') { changer({ voix: etat.cle.map((_, j) => (etat.voix?.[j]?.g === pu.dataset.g ? { ...etat.voix[j], vol: +e.target.value / 100 } : etat.voix?.[j] || {})) }); return; }
       if (dm === 'banque' && dj) { changer({ voix: majDisque(+dj.dataset.d, { banque: e.target.value }) }); return; }
       if (dm === 'vol' && dj) { changer({ voix: majDisque(+dj.dataset.d, { vol: +e.target.value / 100 }) }); return; }
       if (dm === 'reglage' && dj && e.target.value) { const k = e.target.value; changer({ voix: majDisque(+dj.dataset.d, { [k]: REGLAGES[k][5] }) }); return; }
@@ -228,6 +281,10 @@ export default {
     el.addEventListener('input', (e) => {
       if (e.target.dataset.dr) { const o = e.target.nextElementSibling; const k = e.target.dataset.dr; if (o) o.textContent = REGLAGES[k][4](+e.target.value); } if (e.target.dataset.ca === 'axe') { etat.axe = +e.target.value / 100; garder(); clearTimeout(e.target._t); e.target._t = setTimeout(() => changer({}), 250); } });
     // ---------- Ce que Frog branche ----------
+    // Les sources vivantes, pendant l'écoute : ta voix (le micro ouvert), le clavier MIDI, la molette.
+    const vif = { t: -9, v: 0, cc: 0 };
+    const offVif = [onNotes((k, n, v, on) => { if (on) { vif.t = audio().currentTime; vif.v = v / 127; } }), onCC((k, num, val) => { if (num === 1) vif.cc = val / 127; })];
+    const envVivant = (src) => (src === 'voix' ? Math.min(1, (mic.level || 0) * 6) : src === 'clavier' ? vif.v * Math.exp(-(audio().currentTime - vif.t) * 4) : src === 'molette' ? vif.cc : null);
     let sorties = []; let suivre = false; let offNotes = null; let ecouteAudio = null; const tenues = new Set(); let attente = 0; let propose = null;
     const NOMS = ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
     async function remplirSorties() {
@@ -300,6 +357,6 @@ export default {
     new ResizeObserver(() => dessiner(lecteur ? lecteur.position() : -1)).observe(q('.ca-cv'));
     majTout();
     const offLampe = brancherLampe(el);
-    return () => { lecteur?.arreter(); anim?.(); offNotes?.(); ecouteAudio?.stop(); clearTimeout(attente); offLampe(); };
+    return () => { offVif.forEach((f) => f?.()); lecteur?.arreter(); anim?.(); offNotes?.(); ecouteAudio?.stop(); clearTimeout(attente); offLampe(); };
   },
 };

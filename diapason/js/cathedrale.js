@@ -21,7 +21,31 @@ const plier = (x) => ((x % 12) + 12) % 12;
 // La note la plus proche de « vise » qui garde la même classe de hauteur.
 const pres = (classe, vise) => { let m = vise - plier(vise) + classe; if (m - vise > 6) m -= 12; if (vise - m > 6) m += 12; return m; };
 
-export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 0.5, voix = [], parties = [] }) {
+// Les liens du labo, dans la cathédrale. Une source (un disque à chacune de ses frappes, la respiration, l'oscillation,
+// le hasard, le chaos) agit sur un disque ou sur tout un groupe : volume, hauteur, timbre, place gauche-droite. Ces
+// sources-là se calculent : elles sont écrites dans la partition, donc gardées dans le WAV et le MIDI. La voix, le
+// clavier et la molette, eux, n'existent qu'en direct : ils agissent pendant l'écoute seulement.
+export const SOURCES_VIVES = new Set(['voix', 'clavier', 'molette']);
+export const viseLien = (l, j, voix) => (String(l.cible).startsWith('g') ? !!voix[j]?.g && voix[j].g === l.cible.slice(1) : +l.cible === j) && String(j) !== String(l.src);
+export function moduler(n, liens, voix, envDe) {
+  liens.forEach((l) => {
+    if (n.d == null || !viseLien(l, n.d, voix)) return;
+    const env = envDe(l.src, n.t); if (env == null) return; const a = (l.force ?? 0.6) * env; const bas = l.sens === 'baisse'; const p = l.param || 'volume';
+    if (p === 'volume') n.vel *= bas ? 1 - a : 1 - (l.force ?? 0.6) + a;
+    if (p === 'hauteur') n.midi += (bas ? -1 : 1) * a * 2; // jusqu'à deux demi-tons, comme au labo
+    if (p === 'brillance') n.brille = (n.brille ?? 1) * (bas ? 1 - 0.9 * a : 1 + 2.5 * a);
+    if (p === 'pan') n.pan = Math.max(-1, Math.min(1, (n.pan || 0) + (bas ? -1 : 1) * a));
+  });
+}
+// Les nombres de la clé toujours rangés du plus petit au plus grand, sans doublon : les réglages des disques et les
+// liens suivent leur disque.
+export function ranger(cle, voix = [], liens = []) {
+  const o = cle.map((n, i) => ({ n: Math.round(n), i })).filter((x) => x.n > 0 && x.n <= 32).sort((a, b) => a.n - b.n).filter((x, k, l) => !k || l[k - 1].n !== x.n);
+  const neuf = new Map(o.map((x, k) => [x.i, k])); const re = (x) => (/^\d+$/.test(String(x)) ? (neuf.has(+x) ? String(neuf.get(+x)) : null) : String(x));
+  return { cle: o.map((x) => x.n), voix: o.map((x) => voix[x.i] || {}), liens: liens.map((l) => ({ ...l, src: re(l.src), cible: String(l.cible).startsWith('g') ? l.cible : re(l.cible) })).filter((l) => l.src != null && l.cible != null) };
+}
+
+export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 0.5, voix = [], parties = [], liens = [] }) {
   const r = [...new Set(cle.map((x) => Math.round(x)).filter((x) => x > 0 && x <= 32))].sort((a, b) => a - b);
   if (!r.length) return { sections: [], notes: [], duree: 0, r };
   const somme = r.reduce((a, b) => a + b, 0); const ecart = (x) => 12 * Math.log2(x / r[0]);
@@ -30,6 +54,18 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
   const coda = 7; const total = t + coda; const notes = [];
   const enveloppe = (u) => 0.55 + 0.45 * Math.sin(Math.PI * Math.min(1, u / t)) ** 0.8;
   const pousse = (n) => { if (n.vel > 0.02) notes.push(n); };
+  // Les sources qui se calculent, au moment exact de chaque note.
+  const chaos = [0.37]; const graine = (b) => { const x = Math.sin(b * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); };
+  const envCalc = (src, u) => {
+    if (SOURCES_VIVES.has(src)) return null;
+    if (src === 'souffle') return 0.5 - 0.5 * Math.cos((u * Math.PI * 2) / (4 * CYCLE));
+    if (src === 'vibrato') return 0.5 - 0.5 * Math.cos(u * 6 * Math.PI * 2);
+    const b = Math.floor((u * r[0]) / CYCLE);
+    if (src === 'hasard') return graine(b);
+    if (src === 'chaos') { while (chaos.length <= b) chaos.push(3.93 * chaos[chaos.length - 1] * (1 - chaos[chaos.length - 1])); return chaos[b]; }
+    const k = +src; if (!(k >= 0 && k < r.length) || voix[k]?.muet) return null; const pas = CYCLE / r[k]; const dep = (((u - (voix[k]?.dec || 0) * pas) % pas) + pas) % pas; return Math.exp(-dep * 9);
+  };
+  const calcules = liens.filter((l) => !SOURCES_VIVES.has(l.src));
   // Une partie peut se poser sur un accord joué par Frog : sa fondamentale et ses propres rapports.
   parties.forEach((p, i) => { if (p && sections[i]) { sections[i].racine = tonique + plier(p.racine - tonique); sections[i].forme = p; } });
   sections.forEach((s) => {
@@ -52,7 +88,11 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
       for (let u = s.a + (V.dec || 0) * pasR; u < s.b - 0.05; u += pasR, k++) {
         if (aer && ((k * 9301 + j * 49297 + 233) % 233280) / 233280 < aer) continue;
         const premier = k % x === 0;
-        pousse({ t: u, dur: V.dur ?? 0.3, banque, midi: pres(plier(accord[j % accord.length] ?? s.racine), haut), pan: V.pan || 0, vel: v0 * enveloppe(u) * (premier ? 1 + (V.acc ?? 0.15) : 1) });
+        // Un disque qui respire : son volume monte et descend sur quatre tours, comme au labo.
+        const souffle = V.respire ? 0.15 + 0.85 * (0.5 - 0.5 * Math.cos((u * Math.PI * 2) / (4 * CYCLE))) : 1;
+        const n = { t: u, dur: V.dur ?? 0.3, banque, midi: pres(plier(accord[j % accord.length] ?? s.racine), haut), pan: V.pan || 0, vel: v0 * souffle * enveloppe(u) * (premier ? 1 + (V.acc ?? 0.15) : 1), d: j };
+        if (calcules.length) moduler(n, calcules, voix, envCalc);
+        pousse(n);
       }
     });
     // La lumière : une mélodie dans la famille choisie, faite des notes de l'accord, au rythme du nombre de la partie.
@@ -79,7 +119,7 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
   pousse({ t, dur: 2, banque: 'timbales', midi: pres(plier(tonique), 41), vel: 0.8 });
   pousse({ t, dur: coda - 1, banque: 'cordes', midi: pres(plier(tonique), 38), vel: 0.5 });
   notes.sort((a, b) => a.t - b.t);
-  return { sections, notes, duree: total, r, coda: [t, total] };
+  return { sections, notes, duree: total, r, coda: [t, total], liens, voix };
 }
 
 export const charger = () => prechargerSons(BANQUES_UTILES);
@@ -155,14 +195,18 @@ export function cathedraleDuJeu({ accords }) {
 }
 
 // Jouer en direct : on programme les notes un peu à l'avance, au fil de la lecture.
-export function jouer(oeuvre, { depuis = 0, onFin, sortie = null } = {}) {
+export function jouer(oeuvre, { depuis = 0, onFin, sortie = null, vivant = null } = {}) {
   const c = audio(); const maitre = c.createGain(); maitre.gain.value = 0.42; maitre.connect(out()); /* la sortie de l'app double le volume : on entre plus bas, pour ne pas faire craquer le limiteur */ // par la lampe, si elle est allumée
   const pans = new Map(); const panDe = (p) => { const k = Math.round(p * 10) / 10; if (!pans.has(k)) { const sp = c.createStereoPanner(); sp.pan.value = k; sp.connect(maitre); pans.set(k, sp); } return pans.get(k); };
+  // Le timbre (brillance) : un filtre par palier, partagé par les notes qui tombent dedans.
+  const filtres = new Map(); const destDe = (n) => { const fin = n.pan ? panDe(n.pan) : maitre; if (n.brille == null || Math.abs(n.brille - 1) < 0.05) return fin; const k = `${Math.round(Math.log2(n.brille) * 6)}|${Math.round((n.pan || 0) * 10)}`; if (!filtres.has(k)) { const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = Math.max(250, Math.min(16000, 2400 * 2 ** (+k.split('|')[0] / 6))); f.connect(fin); filtres.set(k, f); } return filtres.get(k); };
+  const vives = (oeuvre.liens || []).filter((l) => SOURCES_VIVES.has(l.src)); const avance = vives.length && vivant ? 0.25 : 0.8;
   const t0 = c.currentTime + 0.15 - depuis; let i = oeuvre.notes.findIndex((n) => n.t >= depuis); if (i < 0) i = oeuvre.notes.length;
   const tic = () => {
-    const horizon = c.currentTime + 0.8;
+    const horizon = c.currentTime + avance;
     while (i < oeuvre.notes.length && t0 + oeuvre.notes[i].t < horizon) {
-      const n = oeuvre.notes[i++]; joue(n.banque, n.midi, { when: t0 + n.t, dur: n.dur, vel: n.vel, dest: n.pan ? panDe(n.pan) : maitre });
+      let n = oeuvre.notes[i++]; if (vives.length && vivant && n.d != null) { n = { ...n }; moduler(n, vives, oeuvre.voix || [], vivant); }
+      joue(n.banque, n.midi, { when: t0 + n.t, dur: n.dur, vel: Math.max(0, n.vel), dest: destDe(n) });
       // Et sur le matériel de Frog : la même note, arrondie au demi-ton (le MIDI ne connaît pas l'intonation juste).
       if (sortie) { const ch = canal(n.banque); const m = Math.max(0, Math.min(127, Math.round(n.midi))); const ts = performance.now() + (t0 + n.t - c.currentTime) * 1000; try { sortie.send([0x90 | ch, m, Math.max(1, Math.min(127, Math.round(n.vel * 140)))], ts); sortie.send([0x80 | ch, m, 0], ts + n.dur * 1000); } catch { /* appareil débranché */ } }
     }
@@ -185,7 +229,9 @@ export async function rendre(oeuvre, onProgres) {
     const src = ctx.createBufferSource(); src.playbackRate.value = 2 ** ((n.midi - s.midi) / 12); boucler(src, B, n.dur, s.buf);
     const g = ctx.createGain(); const v = B.gain * n.vel;
     g.gain.setValueAtTime(v, n.t); g.gain.setValueAtTime(v, n.t + n.dur); g.gain.exponentialRampToValueAtTime(0.0001, n.t + n.dur + B.release);
-    if (n.pan) { const sp = ctx.createStereoPanner(); sp.pan.value = n.pan; src.connect(g).connect(sp).connect(maitre); } else src.connect(g).connect(maitre);
+    let fin = maitre; if (n.pan) { const sp = ctx.createStereoPanner(); sp.pan.value = n.pan; sp.connect(maitre); fin = sp; }
+    if (n.brille != null && Math.abs(n.brille - 1) >= 0.05) { const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = Math.max(250, Math.min(16000, 2400 * n.brille)); f.connect(fin); fin = f; }
+    src.connect(g).connect(fin);
     src.start(n.t); src.stop(n.t + n.dur + B.release + 0.05);
   });
   onProgres?.(0.5);

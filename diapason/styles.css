@@ -3350,3 +3350,18 @@ a.md-lien { color: inherit; }
 .ar-mot-sign { color: #6d5a3a; font-size: 1rem; font-style: italic; }
 .ar-traits li.ar-cadence b:first-child { display: inline; font: inherit; font-weight: 700; }
 .ar-traits li:last-child { grid-column: 1 / -1; }
+/* Mon studio ↔ celui de l'autre : une bascule, pas un onglet de plus. */
+.m-qui { display: inline-flex; margin: 0 0 14px; border: 1.5px solid var(--ink); border-radius: 999px; overflow: hidden; }
+.m-qui a { padding: 7px 16px; font-weight: 700; text-decoration: none; color: var(--ink); }
+.m-qui a.on { background: var(--ink); color: var(--paper); }
+/* La cathédrale : les pupitres (groupes du labo) et les liens. */
+.ca-disque.en-g { box-shadow: inset 4px 0 0 var(--g); }
+.ca-dg { border-left: 6px solid var(--g) !important; }
+.ca-groupes { display: grid; gap: 8px; margin-bottom: 14px; }
+.ca-pup { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 12px; border-radius: 12px; border: 1.5px solid var(--g); background: color-mix(in srgb, var(--g) 12%, var(--card)); }
+.ca-pup-m { display: inline-flex; gap: 4px; } .ca-pup-m i { font: 700 .85rem var(--mono); font-style: normal; padding: 2px 8px; border-radius: 999px; background: var(--g); color: #141210; }
+.ca-liens h3 { margin: 0 0 6px; }
+.ca-li-faire { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 4px; } .ca-li-faire select { max-width: 100%; }
+.ca-vif { font-style: normal; font-size: .78rem; padding: 1px 8px; border-radius: 999px; background: #efe2c4; color: #6d4a00; }
+.ca-gl .li-liste { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; } .ca-gl .li-liste li { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 6px 10px; border-radius: 8px; background: var(--card); border: 1px solid var(--rule); }
+.ca-gl .li-liste li > span::first-letter { text-transform: uppercase; }

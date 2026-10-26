@@ -20,16 +20,23 @@ export default {
     // Chez l'autre : son studio en grand, tel qu'il l'a placé (lecture seule).
     const chez = decodeURIComponent((location.hash.match(/[?&]chez=([^&]+)/) || [])[1] || '');
     const st = chez && profileOf(chez)?.studio;
+    // La bascule : mon studio, ou celui de l'autre. Toujours en haut, au même endroit.
+    const qui = (c) => `<nav class="m-qui" aria-label="Quel studio"><a href="#/materiel" class="${c ? '' : 'on'}">Le mien</a><a href="#/materiel?chez=${encodeURIComponent(autre)}" class="${c ? 'on' : ''}">Celui de ${esc(autre)}</a></nav>`;
+    if (chez && !st) {
+      el.innerHTML = `${qui(true)}<div class="mod-head"><div><p class="eyebrow">Le studio de ${esc(chez)}</p><h1>Pas encore partagé.</h1>
+        <p class="muted">Quand ${esc(chez)} aura recréé sa pièce et coché « Montrer mon studio », elle apparaîtra ici, telle qu’il l’a placée : les meubles, les appareils, les câbles, et les photos s’il le veut.</p></div></div>`;
+      return () => {};
+    }
     if (st) {
       const ap = st.appareils.filter((a) => !a.hub);
-      el.innerHTML = `<div class="mod-head"><div><p class="eyebrow">Le studio de ${esc(chez)}</p><h1>Là où naît la musique.</h1>
+      el.innerHTML = `${qui(true)}<div class="mod-head"><div><p class="eyebrow">Le studio de ${esc(chez)}</p><h1>Là où naît la musique.</h1>
         <p class="muted">Tel que ${esc(chez)} l’a placé : la pièce, les meubles, les appareils, et les câbles jusqu’à l’ordinateur. En doré, ce qui est actif.</p></div></div>
         <section class="m-chez">${pieceSVG(st, { titre: `Le studio de ${chez}` })}${profileOf(chez)?.studioPhoto && profileOf(chez)?.studioPhotoPartagee !== false ? `<figure><img data-ph='${esc(JSON.stringify(profileOf(chez).studioPhoto))}' alt="La pièce, en photo"><figcaption>La vraie pièce, en photo</figcaption></figure>` : ''}</section>
         <section class="panel"><h2>Ce qu’il y a dans la pièce</h2><p class="m-liste">${ap.map((a) => { const f = ficheDe(chez, a.nom); return `<span class="${a.actif ? 'on' : ''}">${f.photo ? `<img data-ph='${esc(JSON.stringify(f.photo))}' alt="${esc(a.nom)}">` : dessin(a.sorte, a.couleur)}<b>${esc(a.nom)}</b>${f.marque || f.modele ? `<small>${esc([f.marque, f.modele].filter(Boolean).join(' · '))}</small>` : ''}${a.lie ? `<small>par ${esc(a.lie)}</small>` : ''}</span>`; }).join('')}</p>
-        <a class="btn" href="#/materiel">Mon studio à moi →</a></section>`;
+        </section>`;
       poser(el); return () => {};
     }
-    el.innerHTML = `
+    el.innerHTML = `${espace.connected ? qui(false) : ''}
       <div class="mod-head"><div>
         <p class="eyebrow">Mon studio</p>
         <h1>Ton studio, tel qu’il est vraiment.</h1>
