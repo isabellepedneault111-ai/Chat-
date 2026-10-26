@@ -237,6 +237,8 @@ function majNouvelles() {
   b.hidden = !n; b.textContent = n > 9 ? '9+' : n; b.title = n ? `${n} nouvelle${n > 1 ? 's' : ''} à voir` : '';
 }
 onEspace((what) => { if (what === 'entries' || what === 'meta') majNouvelles(); });
+// Toucher la pastille mène droit à Nos nouvelles (toucher « Plan » mène à l'accueil, où elles sont tout en haut).
+$('#nav [data-id=home]').addEventListener('click', (e) => { if (e.target.closest('.nv-badge')) { e.preventDefault(); location.hash = '#/nouvelles'; } });
 onEspace((what, extra) => {
   if (what === 'entries') $('#nav .nav-session').classList.toggle('live', !!activeSession());
   if (what === 'entries' && extra?.fresh?.length && currentId !== 'carnet') {

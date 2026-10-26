@@ -40,8 +40,19 @@ const ICONES = [
 const POINTS = (t) => t.split(/\s*;\s*/).flatMap((x) => (/\s:\s/.test(x) ? [x] : x.split(/\s*,\s+(?![^()]*\))/))).filter(Boolean);
 const replie = () => { try { return localStorage.getItem('diapason:mandatReplie') === '1'; } catch { return false; } };
 const idDe = () => (location.hash.replace(/^#\/?/, '').split(/[?#]/)[0]) || '';
+const esc = (x) => String(x ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 export function installerSommaire(vue) {
-  let t = 0; let sig = '';
+  let t = 0; let sig = ''; let observer = null;
+  // Plus bas dans la page : un petit bouton rouvre la même liste, en colonne.
+  const flottant = document.createElement('button'); flottant.type = 'button'; flottant.className = 'som-flot no-aide'; flottant.hidden = true;
+  flottant.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1.3"/><circle cx="4" cy="12" r="1.3"/><circle cx="4" cy="18" r="1.3"/></svg><span>Sur cette page</span>';
+  const pop = document.createElement('nav'); pop.className = 'som-pop no-aide'; pop.hidden = true; pop.setAttribute('aria-label', 'Sur cette page');
+  document.body.append(flottant, pop);
+  flottant.addEventListener('click', () => { pop.hidden = !pop.hidden; });
+  const majFlottant = (titres) => { pop.innerHTML = `<b>Sur cette page</b><ol>${titres.map((h, i) => `<li><button type="button" data-som="${i}">${esc(h.textContent.trim().replace(/\s+/g, ' ').slice(0, 48))}</button></li>`).join('')}</ol>`; if (titres.length < 2) { flottant.hidden = true; pop.hidden = true; } };
+  pop.addEventListener('click', (e) => { const b = e.target.closest('[data-som]'); if (!b) return; aller(+b.dataset.som); pop.hidden = true; });
+  const aller = (i) => { const h = vue._somTitres?.[i]; if (!h) return; const d = h.closest('details'); if (d && !d.open) d.open = true; h.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('.som-pop, .som-flot')) pop.hidden = true; });
   const construire = () => {
     const titres = [...vue.querySelectorAll('h2')].filter((h) => h.offsetParent && !h.closest('.tour, .coach, .sommaire, .mandat, .maj, .bulle-aide, .ar-scene') && h.textContent.trim());
     const s = titres.map((h) => h.textContent.trim()).join('|');
@@ -58,12 +69,15 @@ export function installerSommaire(vue) {
         + `<button type="button" class="md-plier" data-md="plier" aria-label="${replie() ? 'Déplier' : 'Replier'} le mandat de la page">${replie() ? 'À quoi sert cette page ▾' : '▴'}</button>`;
       tete.after(box);
     }
+    vue._somTitres = titres;
+    majFlottant(titres);
     if (titres.length < 2) return;
+    // « Sur cette page », en colonne : la 4e case du mandat, ou une petite carte seule s'il n'y a pas de mandat.
     const nav = document.createElement('nav'); nav.className = 'sommaire no-aide'; nav.setAttribute('aria-label', 'Sur cette page');
-    nav.innerHTML = `<span>Sur cette page</span>${titres.map((h, i) => `<button type="button" data-som="${i}">${h.textContent.trim().replace(/\s+/g, ' ').slice(0, 40)}</button>`).join('')}`;
-    nav._titres = titres;
-    const apres = vue.querySelector('.mandat') || tete;
-    if (apres) apres.after(nav); else vue.prepend(nav);
+    nav.innerHTML = `<b>Sur cette page</b><ol>${titres.map((h, i) => `<li><button type="button" data-som="${i}">${esc(h.textContent.trim().replace(/\s+/g, ' ').slice(0, 48))}</button></li>`).join('')}</ol>`;
+    const md = vue.querySelector('.mandat');
+    if (md) { nav.classList.add('md-case', 'md-som'); md.classList.add('avec-som'); md.querySelector('.md-plier').before(nav); } else if (tete) tete.after(nav); else vue.prepend(nav);
+    observer?.disconnect(); observer = new IntersectionObserver(([en]) => { flottant.hidden = en.isIntersecting || titres.length < 2; if (en.isIntersecting) pop.hidden = true; }); observer.observe(nav);
   };
   // Au plus une fois toutes les 400 ms, même sur une page qui bouge sans arrêt (Voix + piano, le studio).
   const passe = () => { if (!t) t = setTimeout(() => { t = 0; construire(); }, 400); };
@@ -81,10 +95,8 @@ export function installerSommaire(vue) {
       const b2 = box.querySelector('[data-md=plier]'); b2.textContent = r ? 'À quoi sert cette page ▾' : '▴'; return;
     }
     const b = e.target.closest('.sommaire [data-som]'); if (!b) return;
-    const h = b.closest('.sommaire')._titres[+b.dataset.som];
-    const d = h.closest('details'); if (d && !d.open) d.open = true;
-    h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    aller(+b.dataset.som);
   });
-  addEventListener('hashchange', () => { sig = ''; });
+  addEventListener('hashchange', () => { sig = ''; pop.hidden = true; flottant.hidden = true; });
   passe();
 }

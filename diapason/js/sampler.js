@@ -8,7 +8,21 @@ const BANQUES = {
   piano: { notes: ['C2', 'Ds2', 'Fs2', 'A2', 'C3', 'Ds3', 'Fs3', 'A3', 'C4', 'Ds4', 'Fs4', 'A4', 'C5', 'Ds5', 'Fs5', 'A5', 'C6'], gain: 0.9, release: 1.2 },
   rhodes: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.8, release: 0.9 },
   voix: { notes: ['C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5'], gain: 0.55, release: 0.5 },
+  // L'orchestre (FluidR3 GM, MIT) : de quoi bâtir une cathédrale, à la Wendy Carlos.
+  cordes: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.6, release: 0.9, nom: 'Cordes', famille: 'cordes' },
+  pizz: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.8, release: 0.25, nom: 'Pizzicati', famille: 'cordes' },
+  harpe: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.75, release: 1.6, nom: 'Harpe', famille: 'cordes' },
+  cor: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5'], gain: 0.6, release: 0.5, nom: 'Cor', famille: 'cuivres' },
+  cuivres: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5'], gain: 0.5, release: 0.4, nom: 'Cuivres', famille: 'cuivres' },
+  flute: { notes: ['C4', 'Gb4', 'C5', 'Gb5', 'C6', 'Gb6', 'C7'], gain: 0.6, release: 0.3, nom: 'Flûte', famille: 'bois' },
+  clarinette: { notes: ['C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.6, release: 0.3, nom: 'Clarinette', famille: 'bois' },
+  hautbois: { notes: ['Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.55, release: 0.3, nom: 'Hautbois', famille: 'bois' },
+  choeur: { notes: ['C3', 'Gb3', 'C4', 'Gb4', 'C5', 'Gb5', 'C6'], gain: 0.55, release: 0.8, nom: 'Chœur', famille: 'voix' },
+  timbales: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4'], gain: 0.9, release: 1.4, nom: 'Timbales', famille: 'percussions' },
+  celesta: { notes: ['C4', 'Gb4', 'C5', 'Gb5', 'C6', 'Gb6', 'C7'], gain: 0.6, release: 1.2, nom: 'Célesta', famille: 'percussions' },
 };
+export const ORCHESTRE = Object.entries(BANQUES).filter(([, b]) => b.famille).map(([k, b]) => ({ k, nom: b.nom, famille: b.famille, bas: midiDeNom(b.notes[0]), haut: midiDeNom(b.notes.at(-1)) + 6 }));
+function midiDeNom(n) { const m = n.match(/^([A-G][sb]?)(\d)$/); return 12 * (+m[2] + 1) + { C: 0, Ds: 3, Fs: 6, A: 9, Gb: 6 }[m[1]]; }
 const midiDe = (n) => { const m = n.match(/^([A-G][sb]?)(\d)$/); return 12 * (+m[2] + 1) + NOMS[m[1]]; };
 const tampons = {}; // banque → [{ midi, buf }]
 const charge = {};

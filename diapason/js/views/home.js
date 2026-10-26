@@ -11,6 +11,9 @@ import { pendantHTML } from '../traces.js';
 import { enAttenteDeMoi } from '../corbeille.js';
 import { lune, luneSVG, TEMPS } from '../lune.js';
 import { nouveautesHTML } from '../nouveautes.js';
+import { aVoir } from '../suivi.js';
+// Tout en haut de l'accueil : ce que l'autre a ajouté et que je n'ai pas vu. C'est là que mène la pastille de Plan.
+const nouvellesBandeau = () => { const n = aVoir(); if (!n.length) return ''; return `<a class="nv-bandeau" href="#/nouvelles"><b>${n.length}</b><span>${n.length > 1 ? 'nouvelles' : 'nouvelle'} de ${esc(n[0].author)} à voir : ${n.slice(0, 2).map((e) => `« ${esc((e.title || 'sans titre').slice(0, 40))} »`).join(', ')}${n.length > 2 ? '…' : ''}</span><em>Ouvrir Nos nouvelles →</em></a>`; };
 
 // Où aller : chaque outil rangé par ce qu'on veut faire, pas par son nom.
 // Par où commencer : trois gestes, dans l'ordre, cochés quand ils sont faits. Disparaît quand tout est fait.
@@ -172,6 +175,7 @@ export default {
       const v = espace.meta.vision || {};
       el.innerHTML = `
         ${head}
+        ${nouvellesBandeau()}
         ${commencerHTML()}
         <a class="arbre-teaser" href="#/arbre">${espace.me === (espace.meta.members || MEMBERS)[1] ? `Tu as demandé à ${esc((espace.meta.members || MEMBERS)[0])} d’où venaient certains sons et éléments de l’app. <b>Clique ici pour voir son arbre d’architecte d’environnement hybride à l’œuvre →</b>` : '<b>L’arbre de l’architecte</b> : toute l’architecture de Diapason Labo, à admirer →'}</a>
         ${luneHTML()}

@@ -27,6 +27,7 @@ const ARBRE = ['Diapason Labo', 'Un environnement hybride : des sons fabriqués 
       ['Piano à queue', 'Salamander Grand Piano, par Alexander Holm (licence CC BY 3.0). 17 notes enregistrées, de Do2 à Do6. Dans l’arbre : data/sons/piano-….mp3.', E, 'piano'],
       ['Piano électrique', 'Rhodes du jeu FluidR3, par Frank Wen (licence MIT). 9 notes. Dans l’arbre : data/sons/rhodes-….mp3.', E, 'rhodes'],
       ['Voix « ooh »', 'Chœur du jeu FluidR3 (licence MIT) : c’est le guide vocal de Placer mes paroles. Dans l’arbre : data/sons/voix-….mp3.', E, 'voix'],
+      ['L’orchestre de La cathédrale', 'Cordes, pizzicati, harpe, cor, cuivres, flûte, clarinette, hautbois, chœur, timbales et célesta, du jeu FluidR3 de Frank Wen (licence MIT). 92 notes enregistrées, accordées à la volée.', E, 'cordes'],
     ]],
     ['La musique de Frog', 'Tes propres pièces, utilisées dans la visite et pour écrire dessus.', E, null, [
       ['Projet 1, après la pause', 'Ré mineur, 120 BPM. La boucle va de 0:34,5 à 1:55,5.', E, 'projet1'],
@@ -85,6 +86,7 @@ function ecouter(son) {
   if (son === 'pad') { pad([48, 52, 55, 59].map(mtof), t, 2.5, 0.06); return; }
   if (son === 'pluck') { [60, 64, 67].forEach((m, i) => pluck(mtof(m), { when: t + i * 0.25 })); return; }
   if (son === 'labo') { const o = impulseOsc(2); const g = c.createGain(); g.gain.value = 0.08; o.frequency.setValueAtTime(2, t); o.frequency.exponentialRampToValueAtTime(220, t + 3); o.connect(g).connect(out()); o.start(t); o.stop(t + 3.6); return; }
+  if (son === 'cordes') { prechargerSons(['cordes', 'cor', 'harpe']).then(() => { const u = audio().currentTime + 0.05; accord('cordes', [48, 55, 60, 64, 67], { when: u, dur: 2.2, vel: 0.6, egrene: 0 }); joue('cor', 52, { when: u + 0.4, dur: 1.8, vel: 0.6 }); [60, 64, 67, 72].forEach((m, i) => joue('harpe', m, { when: u + 0.2 + i * 0.12, dur: 1.5, vel: 0.6 })); }); return; }
   if (['piano', 'rhodes', 'voix'].includes(son)) { prechargerSons([son]).then(() => { const u = audio().currentTime + 0.05; if (son === 'voix') [60, 64, 67].forEach((m, i) => joue('voix', m, { when: u + i * 0.5, dur: 0.45 })); else accord(son, [48, 52, 55, 60], { when: u, dur: 1.6 }); }); return; }
   if (son === 'projet1' || son === 'joywalk') { const a = new Audio(son === 'projet1' ? 'data/sons/frog-visite.mp3' : 'data/sons/frog-joywalk.mp3'); a.currentTime = son === 'projet1' ? 40 : 18; a.play(); setTimeout(() => a.pause(), 8000); }
 }
@@ -95,6 +97,7 @@ const COUL = { dossier: '#e8c27a', js: '#ff6fae', mjs: '#ff6fae', css: '#6f9fe0'
 const ORIGINE = (nom) => (/^piano-/.test(nom) ? 'Piano à queue Salamander, enregistré par Alexander Holm (CC BY 3.0)'
   : /^rhodes-/.test(nom) ? 'Piano électrique Rhodes du jeu FluidR3, par Frank Wen (MIT)'
     : /^voix-/.test(nom) ? 'Voix « ooh » du jeu FluidR3 (MIT) : le guide vocal'
+    : /^(cordes|pizz|harpe|cor|cuivres|flute|clarinette|hautbois|choeur|timbales|celesta)-/.test(nom) ? 'L’orchestre de La cathédrale : jeu FluidR3, par Frank Wen (MIT)'
       : /^frog-/.test(nom) ? 'La musique de Frog'
         : nom === 'audio.js' ? 'Ici naissent la batterie, la basse et les nappes, fabriquées en direct'
           : nom === 'sampler.js' ? 'Ici jouent les vrais instruments enregistrés (piano, Rhodes, voix)'
