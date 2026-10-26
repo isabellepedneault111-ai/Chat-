@@ -2939,3 +2939,16 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .ca-dplus { align-self: center; justify-self: start; }
 .ca-branche .ca-row { align-items: center; gap: 12px; } .ca-entendu { margin: 8px 0 0; } .ca-entendu b.mono { font-size: 1rem; }
 .ca-disques-p, .ca-branche { margin-bottom: 14px; }
+/* La cathédrale de mon jeu : les accords pris dans le filet */
+.ca-jeu { margin-top: 10px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2, rgba(232,194,122,.07)); border: 1px solid var(--line, rgba(0,0,0,.08)); }
+.ca-jeu p { margin: 0 0 8px; }
+.ca-jeu-l { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 4px; }
+.ca-jeu-l li { display: grid; grid-template-columns: minmax(70px, 120px) 1fr auto; gap: 10px; align-items: center; }
+.ca-jeu-b { height: 8px; border-radius: 4px; background: rgba(127,127,127,.15); overflow: hidden; }
+.ca-jeu-b i { display: block; height: 100%; background: linear-gradient(90deg, #e8c27a, #f0875a); border-radius: 4px; }
+@media (max-width: 560px) { .ca-jeu-l li { grid-template-columns: 70px 1fr; } .ca-jeu-l li .mono { grid-column: 1 / -1; } }
+/* La prise : la porte de Mon matériel, toujours en haut, à côté du filet */
+.prise-btn { position: relative; display: inline-grid; place-items: center; text-decoration: none; color: inherit; }
+.prise-btn .prise-n { position: absolute; top: 2px; right: 2px; min-width: 14px; height: 14px; padding: 0 3px; border-radius: 7px; font: 700 10px/14px "Atkinson Hyperlegible", sans-serif; background: #93b08e; color: #141210; }
+.prise-btn .prise-n:empty { display: none; }
+.prise-btn.on { color: #93b08e; border-color: #93b08e; }

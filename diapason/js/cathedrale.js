@@ -21,7 +21,7 @@ const plier = (x) => ((x % 12) + 12) % 12;
 // La note la plus proche de « vise » qui garde la même classe de hauteur.
 const pres = (classe, vise) => { let m = vise - plier(vise) + classe; if (m - vise > 6) m -= 12; if (vise - m > 6) m += 12; return m; };
 
-export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 0.5, voix = [] }) {
+export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 0.5, voix = [], parties = [] }) {
   const r = [...new Set(cle.map((x) => Math.round(x)).filter((x) => x > 0 && x <= 32))].sort((a, b) => a - b);
   if (!r.length) return { sections: [], notes: [], duree: 0, r };
   const somme = r.reduce((a, b) => a + b, 0); const ecart = (x) => 12 * Math.log2(x / r[0]);
@@ -30,8 +30,10 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
   const coda = 7; const total = t + coda; const notes = [];
   const enveloppe = (u) => 0.55 + 0.45 * Math.sin(Math.PI * Math.min(1, u / t)) ** 0.8;
   const pousse = (n) => { if (n.vel > 0.02) notes.push(n); };
+  // Une partie peut se poser sur un accord joué par Frog : sa fondamentale et ses propres rapports.
+  parties.forEach((p, i) => { if (p && sections[i]) { sections[i].racine = tonique + plier(p.racine - tonique); sections[i].forme = p; } });
   sections.forEach((s) => {
-    const accord = r.map((x) => s.racine + plier(ecart(x)));
+    const f = s.forme?.cle; const accord = f ? f.map((x) => s.racine + plier(12 * Math.log2(x / f[0]))) : r.map((x) => s.racine + plier(ecart(x)));
     // L'harmonie : l'accord tenu, réarticulé tous les deux tours. Plus l'axe va vers « harmonie », plus il est présent.
     if (axe > 0.12) for (let u = s.a; u < s.b - 0.3; u += CYCLE * 2) {
       const v = (0.12 + 0.3 * axe) * enveloppe(u);
@@ -44,7 +46,7 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
       if (voix[j]?.muet) return;
       const banque = voix[j]?.banque || RYTHME[j % RYTHME.length]; const v0 = (0.75 - 0.6 * axe) * (j === 0 ? 0.9 : 0.6) * (voix[j]?.vol ?? 1);
       const haut = { timbales: 41, celesta: 79, harpe: 64, flute: 76, choeur: 64, cor: 57, cuivres: 57, clarinette: 62, hautbois: 69 }[banque] || 60;
-      for (let u = s.a; u < s.b - 0.05; u += CYCLE / x) pousse({ t: u, dur: 0.3, banque, midi: pres(plier(accord[j] ?? s.racine), haut), vel: v0 * enveloppe(u) * (Math.abs(((u - s.a) % CYCLE)) < 0.01 ? 1.15 : 1) });
+      for (let u = s.a; u < s.b - 0.05; u += CYCLE / x) pousse({ t: u, dur: 0.3, banque, midi: pres(plier(accord[j % accord.length] ?? s.racine), haut), vel: v0 * enveloppe(u) * (Math.abs(((u - s.a) % CYCLE)) < 0.01 ? 1.15 : 1) });
     });
     // La lumière : une mélodie dans la famille choisie, faite des notes de l'accord, au rythme du nombre de la partie.
     const fam = FAMILLES.find((f) => f[0] === s.lumiere);
@@ -88,6 +90,61 @@ export function cleDepuisNotes(midis) {
   const g = cle.reduce((a, b) => pgcd(a, b)); cle = [...new Set(cle.map((x) => x / g))].sort((a, b) => a - b);
   if (cle.some((x) => x > 32)) return null;
   return { cle, tonique: 45 + ((((bas - 45) % 12) + 12) % 12) };
+}
+
+// Le jeu de Frog, pris dans le filet : quels accords ont sonné, combien de temps, combien de fois, et dans quel ordre.
+// Chaque accord est ramené en position serrée au-dessus de sa basse (les rapports restent petits), puis lu en nombres.
+const NOMS = ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
+const QUALITES = [['M', ''], ['m', 'm'], ['7', '7'], ['m7', 'm7'], ['maj7', 'maj7'], ['sus4', 'sus4'], ['sus2', 'sus2'], ['dim', 'dim']];
+const IV = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], m7: [0, 3, 7, 10], maj7: [0, 4, 7, 11], sus4: [0, 5, 7], sus2: [0, 2, 7], dim: [0, 3, 6] };
+export function nomAccord(pcs, basse) {
+  for (const r of pcs) for (const [q, suf] of QUALITES) { const iv = IV[q]; if (iv.length === pcs.length && iv.every((d) => pcs.includes((r + d) % 12))) return `${NOMS[r]}${suf}${r !== basse ? `/${NOMS[basse]}` : ''}`; }
+  return pcs.map((x) => NOMS[x]).join('-');
+}
+// segments : [{ notes: [midi…], a, b }] — d'un clavier MIDI ou de L'oreille.
+export function accordsDesSegments(segs) {
+  const par = new Map(); let avant = null; let total = 0;
+  segs.forEach(({ notes, a, b }) => {
+    const d = b - a; if (d < 0.25 || notes.length < 2) { if (d >= 0.25) avant = null; return; }
+    const basse = Math.min(...notes); const pcs = [...new Set(notes.map((m) => ((m % 12) + 12) % 12))]; if (pcs.length < 2) return;
+    const bpc = ((basse % 12) + 12) % 12; const k = `${bpc}|${[...pcs].sort((x, y) => x - y).join(',')}`;
+    let c = par.get(k);
+    if (!c) {
+      // Position serrée : la basse, puis les autres notes dans l'octave au-dessus. Trop complexe ? on retire une note.
+      let serre = [basse, ...pcs.filter((x) => x !== bpc).map((x) => basse + ((x - bpc + 12) % 12)).sort((x, y) => x - y)].slice(0, 6); let cle = null;
+      while (serre.length >= 2 && !(cle = cleDepuisNotes(serre))) serre = serre.slice(0, -1);
+      if (!cle) return;
+      c = { k, nom: nomAccord(pcs, bpc), notes: serre, cle: cle.cle, racine: basse, tonique: cle.tonique, duree: 0, fois: 0, premier: a }; par.set(k, c);
+    }
+    c.duree += d; total += d; if (avant !== k) c.fois++; avant = k;
+  });
+  return { accords: [...par.values()].sort((x, y) => y.duree - x.duree), total };
+}
+// Les notes MIDI du filet → des segments : ce qui sonne entre deux événements (la pédale de sustain compte).
+export function segmentsMidi(midi) {
+  const ev = [...midi].sort((a, b) => a.t - b.t); const doigts = new Set(); const sonnent = new Set(); let pedale = false; const segs = []; let t0 = null;
+  ev.forEach((m) => {
+    const c = m.d[0] & 0xf0; const n = m.d[1];
+    const avant = [...sonnent];
+    if (c === 0x90 && m.d[2]) { doigts.add(n); sonnent.add(n); }
+    else if (c === 0x80 || c === 0x90) { doigts.delete(n); if (!pedale) sonnent.delete(n); }
+    else if (c === 0xb0 && n === 64) { pedale = m.d[2] >= 64; if (!pedale) [...sonnent].forEach((x) => { if (!doigts.has(x)) sonnent.delete(x); }); }
+    else return;
+    if (t0 != null && avant.length) segs.push({ notes: avant, a: t0, b: m.t });
+    t0 = m.t;
+  });
+  // Les petits écarts entre les doigts (moins d'un dixième de seconde) ne font pas un nouvel accord.
+  const fus = [];
+  segs.forEach((s) => { const l = fus[fus.length - 1]; if (l && s.b - s.a < 0.1) { l.b = s.b; return; } if (l && l.notes.join() === s.notes.join() && Math.abs(l.b - s.a) < 0.01) l.b = s.b; else fus.push({ ...s }); });
+  return fus;
+}
+// Ce que le jeu donne à la cathédrale : la clé de voûte de l'accord qui revient le plus, et chaque partie posée sur un
+// des accords qui reviennent, dans l'ordre où ils sont apparus. La coda revient à l'accord principal.
+export function cathedraleDuJeu({ accords }) {
+  if (!accords.length) return null;
+  const tete = accords[0]; const n = tete.cle.length;
+  const choisis = accords.slice(0, Math.max(n, 1)).sort((a, b) => a.premier - b.premier).slice(0, n);
+  return { cle: tete.cle, tonique: tete.tonique, parties: choisis.map((c) => ({ racine: c.racine, cle: c.cle, nom: c.nom })) };
 }
 
 // Jouer en direct : on programme les notes un peu à l'avance, au fil de la lecture.
