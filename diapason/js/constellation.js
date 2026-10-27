@@ -16,6 +16,15 @@ const KEY_RE = /\b(?:en\s+(do|re|mi|fa|sol|la|si)(?:\s*(diese|bemol|#|b))?(?:\s*
 // La nature d’une trace du Mur : un son, une image, un lien ou des mots.
 export const kindOf = (e) => (e.image || e.type === 'image' ? 'image' : e.audio || e.type === 'audio' ? 'son' : e.type === 'lien' ? 'lien' : 'mots');
 const KIND_FR = { son: 'un son', mots: 'des mots', lien: 'une écoute', image: 'une image' };
+// Ce qu'une trace offre à une rencontre : un son, une image, ou des mots qu'on peut chanter (douze lettres au moins).
+// Un bilan, une séance, un essai, une chanson, une rencontre déjà faite : rien à faire rencontrer, ça reste hors du jeu.
+const MOTS_OK = new Set(['texte', 'paroles', 'note', 'carte']);
+export function matiere(e) {
+  if (!e || e.data?.rencontre || e.data?.corbeille || e.data?.pour === 'app') return null; // une idée pour l'app n'est pas de la musique
+  if (e.image || e.type === 'image') return 'image';
+  if ((e.audio && !e.audio.type?.startsWith('video')) || e.type === 'audio') return 'son';
+  return MOTS_OK.has(e.type) && (e.body || e.title || '').trim().length >= 12 ? 'mots' : null;
+}
 
 // Ce qu’on peut lire d’une trace : sa tonalité, ses mots importants et sa nature ; c’est ce qui permet de la relier à une autre.
 export function traitsOf(e) {
@@ -35,29 +44,31 @@ export const sleepingDays = (e, now = Date.now()) => Math.floor((now - lastTouch
 const daysFR = (d) => (d >= 14 ? `${Math.round(d / 7)} semaines` : `${d} jours`);
 
 // Les rencontres possibles, de la plus fertile à la moins fertile. Chaque idée n'apparaît qu'une fois.
-export function rencontres(board, { now = Date.now(), seed = 0, max = 3 } = {}) {
-  const ideas = board.filter((e) => stageOf(e) < 4);
-  const tr = new Map(ideas.map((e) => [e.id, traitsOf(e)]));
+// Pas toutes : seulement les paires qui ont une vraie raison de se croiser (un mot, une tonalité, deux mains, une idée
+// qui dort), jamais deux images, jamais une paire écartée (« Pas pour nous »). Mieux vaut zéro qu'une ligne pour rien.
+export function rencontres(board, { now = Date.now(), seed = 0, max = 3, non = new Set() } = {}) {
+  const ideas = board.filter((e) => stageOf(e) < 4 && matiere(e));
+  const tr = new Map(ideas.map((e) => [e.id, { ...traitsOf(e), kind: matiere(e) }]));
   const deja = new Set();
   board.forEach((e) => { const r = e.data?.rencontre; if (r?.length === 2) { deja.add(`${r[0]}|${r[1]}`); deja.add(`${r[1]}|${r[0]}`); } });
   const pairs = [];
   for (let i = 0; i < ideas.length; i++) {
     for (let j = i + 1; j < ideas.length; j++) {
       const a = ideas[i]; const b = ideas[j];
-      if (threadOf(a) === threadOf(b) || deja.has(`${a.id}|${b.id}`) || a.data?.rencontre?.includes(b.id) || b.data?.rencontre?.includes(a.id)) continue;
+      if (threadOf(a) === threadOf(b) || non.has(`${a.id}|${b.id}`) || (matiere(a) === 'image' && matiere(b) === 'image') || deja.has(`${a.id}|${b.id}`) || a.data?.rencontre?.includes(b.id) || b.data?.rencontre?.includes(a.id)) continue;
       const ta = tr.get(a.id); const tb = tr.get(b.id);
       let score = 0; const why = [];
       const shared = [...ta.words].filter((w) => tb.words.has(w));
       if (shared.length) { score += Math.min(3, shared.length * 1.5); why.push(`le même mot : « ${shared[0]} »`); }
       if (ta.key && ta.key === tb.key) { score += 2.5; why.push(`toutes deux en ${ta.key.replace(/^re/, 'ré')}`); }
-      if (a.author && b.author && a.author !== b.author) { score += 1.5; why.push(`${KIND_FR[ta.kind]} de ${a.author}, ${KIND_FR[tb.kind]} de ${b.author}`); }
+      if (a.author && b.author && a.author !== b.author) { score += ta.kind !== tb.kind ? 1.5 : 0.8; why.push(`${KIND_FR[ta.kind]} de ${a.author}, ${KIND_FR[tb.kind]} de ${b.author}`); }
       if (ta.kind !== tb.kind && ta.kind !== 'lien' && tb.kind !== 'lien') score += 1.2;
       const sa = sleepingDays(a, now); const sb = sleepingDays(b, now);
       const [old, young] = sa > sb ? [a, b] : [b, a];
       if (Math.max(sa, sb) >= 14 && Math.min(sa, sb) <= 5) { score += 1.5; why.push(`« ${old.title || 'sans titre'} » dort depuis ${daysFR(Math.max(sa, sb))}`); }
       if (songOf(a) && songOf(a) === songOf(b)) score += 0.4;
-      score += hash(`${a.id}${b.id}${seed}`) * 0.9; // un peu de hasard : le ciel bouge d'un jour à l'autre
-      if (!why.length) why.push('deux idées qui ne se sont jamais croisées');
+      if (score < 1.5 || !why.length) continue; // pas de vraie raison : on ne la propose pas
+      score += hash(`${a.id}${b.id}${seed}`) * 0.9; // un peu de hasard pour départager : le ciel bouge d'un jour à l'autre
       pairs.push({ a, b, score, why: why.slice(0, 2), consigne: consigneFor(ta.kind, tb.kind, a, b) });
     }
   }

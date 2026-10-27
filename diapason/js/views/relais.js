@@ -10,6 +10,7 @@ import { ecrire } from '../ecrire.js';
 import { togglePerle } from './coffre.js';
 import { vu, fait, marquer } from '../suivi.js';
 import { lune } from '../lune.js';
+import { avantPrise, arreterMetronome, metroHTML } from '../metronome.js';
 
 // Les intentions : ce qu'on aimerait que l'autre en fasse. On peut en choisir plusieurs, et l'écrire.
 export const GROUPES = [
@@ -148,7 +149,7 @@ export default {
         <section class="panel screen rl-launch">
           <div class="rl-work" hidden></div>
           <div class="rl-main">
-            <button class="rl-rec" data-r="rec" aria-label="Enregistrer"><span></span></button>
+            <button class="rl-rec" data-r="rec" aria-label="Enregistrer"><span></span></button>${metroHTML()}
             <div>
               <p class="rl-label"><b>Lancer un son à ${esc(other())}</b><span class="mono rl-time"></span></p>
               <p class="rl-sub">Une touche pour enregistrer, une pour arrêter.</p>
@@ -302,7 +303,7 @@ export default {
       recorder.ondataavailable = (ev) => ev.data.size && chunks.push(ev.data);
       recorder.onstart = () => { rec.recPerf = performance.now(); };
       recorder.onstop = () => {
-        stream.getTracks().forEach((t) => t.stop());
+        stream.getTracks().forEach((t) => t.stop()); arreterMetronome();
         const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
         const c = audio();
         // Latence aller-retour estimée : sortie (casque) + entrée (micro).
@@ -316,6 +317,7 @@ export default {
         el.querySelectorAll('[data-r=rec]').forEach((b) => b.classList.remove('on'));
         renderReview();
       };
+      await avantPrise(); // le décompte, s'il est demandé, avant le son de l'autre et la prise
       if (base) {
         await play(base, { onStart: (t0) => { rec.playPerf = performance.now() + (t0 - audio().currentTime) * 1000; } });
       }

@@ -1,5 +1,6 @@
 // Faire l'exercice : il se joue au lieu de se lire. Un minuteur, la consigne du moment en grand,
 // et ce dont l'exercice a besoin : un métronome, une boucle d'accords, le tour de parole, un souffle à suivre.
+import { avantPrise, arreterMetronome, metroHTML } from './metronome.js';
 import { audio, drums, pluck } from './audio.js';
 import { EXERCICES, MEMBERS, consignesDe } from './duo.js';
 import { espace } from './espace.js';
@@ -108,7 +109,7 @@ export async function faireExercice(id, { garderBoucle = false, solo = false } =
       </div>
       ${visuel}
       ${guide ? `<div class="exo-guide">${clavierHTML()}<p class="exo-phase" aria-live="polite"></p></div>` : ''}
-      <div class="exo-moi">${guide ? '<button class="btn" data-x="guide" aria-pressed="false">▶ L’exemple en boucle</button>' : ''}<button class="btn rec-btn" data-x="rec">● M’enregistrer</button><span class="exo-prise"></span></div>
+      <div class="exo-moi">${guide ? '<button class="btn" data-x="guide" aria-pressed="false">▶ L’exemple en boucle</button>' : ''}<button class="btn rec-btn" data-x="rec">● M’enregistrer</button>${metroHTML({ tempoFixe: bpm || 80 })}<span class="exo-prise"></span></div>
       <ol class="exo-steps">${steps.map((s, i) => `<li data-i="${i}">${esc(s)}</li>`).join('')}</ol>
       <div class="exo-ctrl">
         <button class="btn" data-x="pause">Pause</button>
@@ -219,12 +220,12 @@ export async function faireExercice(id, { garderBoucle = false, solo = false } =
       const bouts = []; rec = new MediaRecorder(flux); const debut = Date.now();
       rec.ondataavailable = (ev) => ev.data.size && bouts.push(ev.data);
       rec.onstop = () => {
-        flux.getTracks().forEach((t) => t.stop()); btn.textContent = '● Une autre prise'; btn.classList.remove('on');
+        flux.getTracks().forEach((t) => t.stop()); arreterMetronome(); btn.textContent = '● Une autre prise'; btn.classList.remove('on');
         prise = { blob: new Blob(bouts, { type: rec.mimeType || 'audio/webm' }), duree: (Date.now() - debut) / 1000 };
         const zone = q('.exo-prise'); if (!zone) return; const url = URL.createObjectURL(prise.blob);
         zone.innerHTML = `<audio controls src="${url}"></audio>${espace.connected ? '<button class="btn small" data-x="garder">Garder au mur</button>' : ''}`;
       };
-      rec.start(); btn.textContent = '■ Arrêter'; btn.classList.add('on');
+      await avantPrise(bpm || 80); rec.start(); btn.textContent = '■ Arrêter'; btn.classList.add('on');
     } catch { import('./ui.js').then(({ toast }) => toast('Le micro n’est pas accessible : autorise-le dans le navigateur, puis réessaie.')); }
   }
   box.addEventListener('click', (e) => {

@@ -1,5 +1,6 @@
 // La session guidée : une séance qui alterne exploration, sélection et stabilisation,
 // et qui finit toujours par une prise. Le minuteur est partagé entre les deux appareils.
+import { avantPrise, arreterMetronome, metroHTML } from '../metronome.js';
 import { FLAME } from '../marque.js';
 import { depuisHTML } from '../traces.js';
 import { exempleHTML, bindExemples } from '../exemples.js';
@@ -345,7 +346,7 @@ export default {
       const grid = `<div class="today-grid">${g.chords.map(([dg, q]) => `<span>${chordName(mod12(d.key + dg), q)}</span>`).join('')}</div>`;
       let extra = '';
       if (pid === 'prise' || pid === 'memo') {
-        extra = `<div class="take"><button class="btn rec big" data-a="rec">● Enregistrer la prise</button><p class="muted small take-status">${(d.takes || []).length ? `${d.takes.length} prise(s) déjà sur le mur.` : 'Elle part directement sur le mur, rangée avec la session.'}</p></div>`;
+        extra = `<div class="take"><button class="btn rec big" data-a="rec">● Enregistrer la prise</button>${metroHTML()}<p class="muted small take-status">${(d.takes || []).length ? `${d.takes.length} prise(s) déjà sur le mur.` : 'Elle part directement sur le mur, rangée avec la session.'}</p></div>`;
       }
       if (pid === 'debrief' || pid === 'tri' || pid === 'memo') {
         const db = d.debrief || {};
@@ -403,7 +404,7 @@ export default {
         recorder = new MediaRecorder(stream);
         recorder.ondataavailable = (ev) => ev.data.size && chunks.push(ev.data);
         recorder.onstop = async () => {
-          stream.getTracks().forEach((t) => t.stop());
+          stream.getTracks().forEach((t) => t.stop()); arreterMetronome();
           const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
           recorder = null;
           btn.classList.remove('on');
@@ -422,6 +423,7 @@ export default {
           } catch (err) { toast(err.message); }
           btn.textContent = '● Une autre prise';
         };
+        await avantPrise();
         recorder.start();
         takeStart = Date.now();
         btn.textContent = '■ Arrêter la prise';

@@ -60,6 +60,13 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.48', quand: '2026-10-28', titre: 'Le métronome, et des rencontres qui mènent quelque part', items: [
+    ['♩ Métronome pendant la prise', ['À côté de chaque bouton d’enregistrement (Jouer, Relais, séance, exercices) : un clic par temps dans tes écouteurs, une mesure de décompte avant de commencer. Le clic n’est pas enregistré.']],
+    ['La rencontre se fait pour vrai', ['« Les faire se rencontrer » ouvre l’exercice sur place : le son tourne et ses mots s’affichent pour chanter dessus, ou on enchaîne deux sons, ou on tresse deux textes. Rien n’arrive au mur tant que rien n’en est né. « Pas pour nous » écarte une paire pour de bon.']],
+    ['Moins de rencontres, de vraies raisons', ['Le ciel ne propose plus que les paires qui ont une raison de se croiser (un mot, une tonalité, un son et des mots de deux mains, une idée qui dort). Les bilans, les séances et les idées pour l’app restent hors du jeu.']],
+    ['Une chanson montre ses idées', ['Dans Jouer → Nos chansons : les sons et les mots du mur rangés dans ce morceau, à écouter sur place, avec « Trouver ses accords » vers L’oreille. La grille de départ (Do, Lam, Fa, Sol) est annoncée comme telle tant qu’on ne l’a pas changée.']],
+    ['Les étapes disent ce qu’elles sont', ['« À creuser » ne prétend plus qu’on a réécouté : c’est ce qu’il reste à faire, à deux.']],
+  ] },
   { v: '0.47', quand: '2026-10-28', titre: 'La cathédrale, en nef', items: [
     ['Tout se lit d’un coup d’œil', ['Une rangée par voix (son instrument, ses frappes par tour, sa note dans chaque partie), une arche par partie (aussi large que sa durée), les liens en flèches et les pupitres en accolades, comme au labo. Pendant l’écoute, la lumière avance dans la nef et chaque voix pulse quand elle frappe. <a href="#/cathedrale">Ouvrir la cathédrale →</a>']],
     ['Toucher pour régler', ['Une voix : son nombre, son instrument, son octave, son pupitre (des voix réglées d’un seul geste), ses liens. Une arche : qui chante la mélodie, et son accord. Et le tour : la mesure, donc le tempo de toute l’œuvre.']],

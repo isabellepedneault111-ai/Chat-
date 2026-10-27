@@ -1,7 +1,8 @@
 // Nos chansons dans le studio : une chanson a un nom, des parties (intro, couplet, refrain, pont…) avec chacune
 // sa suite d'accords, et un ordre (Couplet 1, Refrain, Couplet 2 = le même couplet…). On joue une partie ou
 // toute la chanson d'un bout à l'autre, avec le beat. Les chansons sont partagées dans l'espace : l'autre les voit.
-import { espace, saveEntry, uid } from './espace.js';
+import { espace, saveEntry, uid, audioURL } from './espace.js';
+import { memberColor } from './duo.js';
 import { clavierDe } from './doigte.js';
 import { store, toast } from './ui.js';
 import { FR, chordName, chordIntervals } from './music.js';
@@ -20,7 +21,7 @@ async function garder(ch) {
   const { id, ...data } = ch;
   await saveEntry({ id, type: 'chanson', title: ch.nom, data });
 }
-const neuve = (nom) => { const c = { id: uid(), nom: 'Couplet', chords: [[0, 'M', 4], [9, 'm', 4], [5, 'M', 4], [7, 'M', 4]] }; const r = { id: uid(), nom: 'Refrain', chords: [[5, 'M', 4], [7, 'M', 4], [0, 'M', 4], [0, 'M', 4]] }; return { id: uid(), nom, sections: [c, r], ordre: [c.id, r.id, c.id, r.id] }; };
+const neuve = (nom) => { const c = { id: uid(), nom: 'Couplet', chords: [[0, 'M', 4], [9, 'm', 4], [5, 'M', 4], [7, 'M', 4]] }; const r = { id: uid(), nom: 'Refrain', chords: [[5, 'M', 4], [7, 'M', 4], [0, 'M', 4], [0, 'M', 4]] }; return { id: uid(), nom, depart: true, sections: [c, r], ordre: [c.id, r.id, c.id, r.id] }; };
 
 // Créer un morceau de n'importe où (le mur, l'accueil) : il naît avec un couplet et un refrain à changer.
 export async function creerChanson(nom) { const ch = neuve(nom); await garder(ch); return ch; }
@@ -37,6 +38,26 @@ export function chansonTab(body, ctx) {
   const sec = (id) => ch.sections.find((s) => s.id === id);
   // Le numéro de passage : « Couplet 1 », « Couplet 2 »…
   const etiquettes = () => { const n = {}; return ch.ordre.map((id) => { const s = sec(id); if (!s) return ''; n[id] = (n[id] || 0) + 1; const total = ch.ordre.filter((x) => x === id).length; return total > 1 ? `${s.nom} ${n[id]}` : s.nom; }); };
+  // Les idées du mur rangées dans ce morceau (un son, des mots…) : on les entend ici, là où on cherche ses accords.
+  // Une rencontre rangée ici amène ses deux parents : le son de l'autre fait partie du morceau, même sans étiquette.
+  const idees = () => {
+    if (!espace.connected) return [];
+    const ici = espace.entries.filter((e) => e.type !== 'chanson' && !e.data?.corbeille && e.data?.song === ch.nom);
+    const parents = ici.flatMap((e) => e.data?.rencontre || []).map((id) => espace.entries.find((x) => x.id === id)).filter((x) => x && !x.data?.corbeille && !ici.includes(x));
+    return [...ici, ...new Set(parents)];
+  };
+  const sansMorceau = () => (espace.connected ? espace.entries.filter((e) => e.audio && !e.audio.type?.startsWith('video') && !e.data?.song && !e.data?.corbeille).slice(-12).reverse() : []);
+  function ideesHTML() {
+    if (!espace.connected) return '';
+    const l = idees(); const libres = sansMorceau().filter((e) => !l.includes(e));
+    const ajout = libres.length ? `<select data-ch="rejoindre" aria-label="Mettre un son dans ce morceau"><option value="">＋ Y mettre un son du mur…</option>${libres.map((e) => `<option value="${esc(e.id)}">${esc((e.title || 'Son').slice(0, 50))} (${esc(e.author)})</option>`).join('')}</select>` : '';
+    return `<section class="ch-idees"><h3>Ses idées au mur <small class="mono">${l.length}</small></h3>
+      ${l.length ? `<ul>${l.map((e) => `<li style="--c:${memberColor(e.author)}"><span class="ch-i-t"><b>${esc(e.title || 'Sans titre')}</b><small>${esc(e.author)}</small></span>${e.audio ? `<audio controls preload="none" data-ch-son="${esc(e.id)}"></audio><a class="ch-i-l" href="#/oreille?son=${esc(e.id)}">Trouver ses accords →</a>` : `<span class="ch-i-m">${esc((e.body || '').slice(0, 90))}</span>`}<a class="ch-i-l" href="#/carnet?voir=${esc(e.id)}">Au mur</a></li>`).join('')}</ul>` : `<p class="muted small">Aucune idée du mur n’est encore dans « ${esc(ch.nom)} ».</p>`}
+      ${ajout}</section>`;
+  }
+  // La grille posée à la naissance (Do Lam Fa Sol, Fa Sol Do Do), encore intacte : on le dit.
+  const grilleDepart = () => ch.depart || JSON.stringify(ch.sections.map((x) => x.chords)) === '[[[0,"M",4],[9,"m",4],[5,"M",4],[7,"M",4]],[[5,"M",4],[7,"M",4],[0,"M",4],[0,"M",4]]]';
+  async function chargerSons() { for (const a of body.querySelectorAll('audio[data-ch-son]')) { const e = espace.entries.find((x) => x.id === a.dataset.chSon); try { if (e?.audio) a.src = await audioURL(e.audio); } catch { /* introuvable */ } } }
   // Redessine l’atelier des chansons : la liste, ou la chanson ouverte avec ses parties et leurs accords.
   function rendre() {
     const toutes = lesChansons();
@@ -50,6 +71,7 @@ export function chansonTab(body, ctx) {
       <div class="panel-head"><h2>Nos chansons</h2>
         <select data-ch="choisir">${toutes.map((c) => `<option value="${esc(c.id)}" ${c.id === ch.id ? 'selected' : ''}>${esc(c.nom)}</option>`).join('')}<option value="+">+ Nouvelle chanson</option></select></div>
       <label class="field"><span>Nom</span><input class="input" data-ch="nom" value="${esc(ch.nom)}" maxlength="60"></label>
+      ${ideesHTML()}
       <h3>L’ordre de la chanson</h3>
       <p class="muted small">Ajoute les parties dans l’ordre où on les joue. Une partie qui revient garde ses accords : « Couplet 2 » = le même couplet.</p>
       <ol class="ch-ordre">${ch.ordre.map((id, i) => `<li data-o="${i}"><b>${esc(et[i])}</b><span class="ch-mini">${(sec(id)?.chords || []).map(([r, q]) => chordName(r, q)).join(' ')}</span>
@@ -57,6 +79,7 @@ export function chansonTab(body, ctx) {
       <div class="ch-ajout">${ch.sections.map((s) => `<button class="chip" data-ch="ajouter" data-s="${s.id}">+ ${esc(s.nom)}</button>`).join('')}</div>
       <div class="ec-row"><button class="btn primary" data-ch="tout">▶ Jouer toute la chanson</button><span class="muted small">${ch.ordre.length} parties · ${ch.ordre.reduce((a, id) => a + (sec(id)?.chords || []).reduce((x, c) => x + c[2], 0), 0) / 4} mesures</span></div>
       <h3>Les parties et leurs accords</h3>
+      ${grilleDepart() ? '<p class="ch-depart"><b>Accords de départ, pas les vôtres.</b> Do, Lam, Fa, Sol : une grille posée pour commencer, tirée d’aucune de vos idées. Écoute vos sons ci-dessus (ou « Trouver ses accords ») et remplace-la.</p>' : ''}
       <div class="ch-sections">${ch.sections.map((s) => `<article class="ch-sec" data-s="${s.id}">
         <header><input class="input ch-secnom" data-ch="secnom" value="${esc(s.nom)}" list="ch-noms" maxlength="30"><button class="btn small" data-ch="jouer">▶ Jouer</button><button class="btn small" data-ch="dupliquer">Dupliquer</button>${ch.sections.length > 1 ? '<button class="icon-btn tiny" data-ch="supprimer" aria-label="Supprimer la partie">✕</button>' : ''}</header>
         <ol class="ch-acc">${s.chords.map((c, i) => `<li data-i="${i}">
@@ -71,15 +94,17 @@ export function chansonTab(body, ctx) {
       <datalist id="ch-noms">${PARTIES.map((p) => `<option value="${p}">`).join('')}</datalist>
       <p class="muted small">${espace.connected ? 'Chaque changement est gardé et partagé : l’autre voit la chanson de son côté.' : 'Gardé sur cet appareil.'}</p>
     </div>`;
+    chargerSons();
   }
   body.addEventListener('change', (e) => {
     const k = e.target.dataset.ch; if (!k) return;
     if (k === 'choisir') { if (e.target.value === '+') { ch = null; rendre(); return; } ch = lesChansons().find((c) => c.id === e.target.value); rendre(); return; }
     if (k === 'nom') { ch.nom = e.target.value.trim() || ch.nom; sauver(); return; }
+    if (k === 'rejoindre' && e.target.value) { const en = espace.entries.find((x) => x.id === e.target.value); if (en) saveEntry({ ...en, data: { ...en.data, song: ch.nom } }, { baseUpdatedAt: en.updatedAt }).then(() => { toast(`« ${en.title || 'Le son'} » est dans « ${ch.nom} ».`); rendre(); }).catch((err) => toast(err.message)); return; }
     const se = e.target.closest('[data-s]'); const s = se && sec(se.dataset.s);
     if (k === 'secnom' && s) { s.nom = e.target.value.trim() || s.nom; sauver(); rendre(); return; }
     const li = e.target.closest('[data-i]');
-    if (s && li && ['r', 'q', 'b'].includes(k)) { const c = s.chords[+li.dataset.i]; c[{ r: 0, q: 1, b: 2 }[k]] = k === 'q' ? e.target.value : +e.target.value; sauver(); rendre(); }
+    if (s && li && ['r', 'q', 'b'].includes(k)) { const c = s.chords[+li.dataset.i]; c[{ r: 0, q: 1, b: 2 }[k]] = k === 'q' ? e.target.value : +e.target.value; delete ch.depart; sauver(); rendre(); }
   });
   body.addEventListener('click', (e) => {
     const b = e.target.closest('[data-ch]'); const k = b?.dataset.ch; if (!k || b.tagName === 'SELECT' || b.tagName === 'INPUT') return;
@@ -98,6 +123,7 @@ export function chansonTab(body, ctx) {
     if (k === 'supprimer' && s) { ch.sections = ch.sections.filter((x) => x !== s); ch.ordre = ch.ordre.filter((x) => x !== s.id); }
     if (k === 'nouvelle-partie') { const reste = PARTIES.find((p) => !ch.sections.some((x) => x.nom === p)) || 'Partie'; ch.sections.push({ id: uid(), nom: reste, chords: [[0, 'M', 4], [7, 'M', 4]] }); }
     if (k === 'depuis-studio') ch.sections.push({ id: uid(), nom: 'Partie en cours', chords: ctx.actuels() });
+    if (['plus', 'moins', 'depuis-studio'].includes(k)) delete ch.depart;
     sauver(); rendre();
   });
   // Les exports : la partition MIDI (deux pistes en une : les accords au piano, la basse), au tempo du studio,

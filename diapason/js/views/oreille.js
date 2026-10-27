@@ -176,6 +176,10 @@ export default {
         } catch { etat('Impossible de charger ce son.'); }
       }
     });
+    // Arrivée depuis une chanson ou le mur (#/oreille?son=<id>) : ce son-là est chargé et écouté tout de suite.
+    const voulu = (location.hash.match(/[?&]son=([\w-]+)/) || [])[1];
+    const sel = q('[data-o=choix]');
+    if (voulu && sel.querySelector(`option[value="id:${voulu}"]`)) { sel.value = `id:${voulu}`; sel.dispatchEvent(new Event('change', { bubbles: true })); }
     q('.or-canvas').addEventListener('click', (e) => {
       if (!res) return;
       const r = e.currentTarget.getBoundingClientRect(); const t = ((e.clientX - r.left) / r.width) * res.duree;

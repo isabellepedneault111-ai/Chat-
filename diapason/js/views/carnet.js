@@ -10,6 +10,7 @@ import { jeter } from '../corbeille.js';
 import { togglePerle } from './coffre.js';
 import { projets, projetCourant, setProjet, projetNom, creerProjet } from '../projets.js';
 import { skyHTML, rencontres, matches, kindOf, sleepingDays } from '../constellation.js';
+import { ouvrirRencontre, nonMerci, refuser } from '../rencontre.js';
 import { creerChanson, nomsDeChansons, chansonNommee } from '../chanson.js';
 
 // Échappe un texte avant de l’afficher dans la page : <, &, " et ' deviennent inoffensifs, pour qu’un mot tapé ne casse jamais l’affichage.
@@ -347,7 +348,7 @@ export default {
       const qv = el.querySelector('.search')?.value || '';
       const sky = filtered(false).filter(onBoard);
       if (!sky.length) { mur.innerHTML = emptyHTML(); return; }
-      pairs = rencontres(sky, { seed: seed + Math.floor(Date.now() / 864e5) });
+      pairs = rencontres(sky, { seed: seed + Math.floor(Date.now() / 864e5), non: nonMerci() });
       const found = qv ? sky.filter((e) => matches(e, qv)) : [];
       const dorment = sky.filter((e) => stageOf(e) < 3 && sleepingDays(e) >= 21).sort((a, b) => a.updatedAt - b.updatedAt).slice(0, 3);
       const idea = (x) => `<button class="ren-idea" data-open-id="${esc(x.id)}" style="--c:${memberColor(x.author)}"><small>${esc(x.author)} · ${esc(STAGES[stageOf(x)].label)}</small>${esc(x.title || 'Sans titre')}</button>`;
@@ -360,29 +361,24 @@ export default {
         </div>
         <aside class="sky-side">
           <h2 class="sky-h">Rencontres possibles</h2>
-          <p class="muted small">Des idées qui ne se sont jamais croisées. Le pointillé les relie sur la carte.</p>
+          <p class="muted small">Seulement des paires qui ont une raison de se croiser. « Les faire se rencontrer » ouvre l’exercice ici même (chanter, enchaîner, tresser) ; ce qui en naît va au mur avec ses deux parents. Rien ne s’ajoute tant que rien n’est fait.</p>
           ${pairs.map((p, i) => `
             <article class="ren${focus === String(i) ? ' on' : ''}" data-ren-i="${i}">
               <div class="ren-pair">${idea(p.a)}<span class="ren-x" aria-hidden="true">×</span>${idea(p.b)}</div>
               <p class="ren-why">${esc(p.why.join(' · '))}</p>
               <p class="ren-do">${esc(p.consigne)}</p>
-              <div class="ren-acts"><button class="btn small primary" data-ren="${i}">Les faire se rencontrer</button>${p.a.image || p.b.image ? `<a class="btn small" href="#/studio?tab=cover&img=${esc((p.a.image ? p.a : p.b).id)}&avec=${esc((p.a.image ? p.b : p.a).id)}">En faire une pochette</a>` : ''}</div>
-            </article>`).join('') || '<p class="muted small">Il faut au moins trois ou quatre idées pour que le ciel propose des rencontres.</p>'}
+              <div class="ren-acts"><button class="btn small primary" data-ren="${i}">Les faire se rencontrer</button><button class="btn small ghost" data-ren-non="${i}">Pas pour nous</button>${p.a.image || p.b.image ? `<a class="btn small" href="#/studio?tab=cover&img=${esc((p.a.image ? p.a : p.b).id)}&avec=${esc((p.a.image ? p.b : p.a).id)}">En faire une pochette</a>` : ''}</div>
+            </article>`).join('') || '<p class="muted small">Aucune paire n’a de vraie raison de se croiser en ce moment. Le ciel en proposera quand un mot, une tonalité ou une idée qui dort les reliera.</p>'}
           ${pairs.length ? '<button class="linklike" data-c="ren-next">D’autres rencontres ↻</button>' : ''}
           ${dorment.length ? `<h2 class="sky-h">Elles dorment</h2><p class="muted small">Pas touchées depuis trois semaines ou plus. Une écoute suffit parfois à les réveiller.</p><div class="sky-dort">${dorment.map(idea).join('')}</div>` : ''}
         </aside>
       </div>`;
     }
 
-    // Une rencontre devient une idée brute : elle garde la mémoire de ses deux parents.
-    async function meet(p) {
-      if (p.a.demo || p.b.demo) { toast('C’est un exemple : avec vos vraies idées, la rencontre arrive sur le mur.'); return; }
-      try {
-        const r = await saveEntry({ type: 'note', title: `${p.a.title || 'Sans titre'} × ${p.b.title || 'Sans titre'}`.slice(0, 200), body: p.consigne, data: { stage: 0, rencontre: [p.a.id, p.b.id], song: songOf(p.a) || songOf(p.b) || '' } });
-        focus = '';
-        toast(`Une nouvelle idée est née. ${other()} la voit déjà.`);
-        if (r.entry) openDetail(r.entry.id);
-      } catch (err) { toast(err.message); }
+    // La rencontre se fait dans l'atelier : rien n'arrive au mur tant que rien n'en est né.
+    function meet(p, existant = null) {
+      if (p.a.demo || p.b.demo) { toast('C’est un exemple : avec vos vraies idées, l’atelier de la rencontre s’ouvre ici.'); return; }
+      ouvrirRencontre({ a: p.a, b: p.b, consigne: p.consigne, existant, onFait: (en) => { focus = ''; renderAll(true); if (en?.id) openDetail(en.id); } });
     }
 
     // « Vers où ça nous mène » : l'entonnoir et l'objectif du mois.
@@ -491,9 +487,11 @@ export default {
     }
     // D'où vient une idée, et ce qu'elle a fait naître : on remonte le fil sans jamais se perdre.
     function originHTML(e) {
-      const t = (id) => { const x = espace.entries.find((y) => y.id === id); return x ? `<button class="linklike" data-open-id="${esc(id)}">« ${esc(x.title || 'Sans titre')} »</button>` : 'une idée jetée depuis'; };
+      const t = (id) => { const x = espace.entries.find((y) => y.id === id); return x && !x.data?.corbeille ? `<button class="linklike" data-open-id="${esc(id)}">« ${esc(x.title || 'Sans titre')} »</button>` : 'une idée jetée depuis'; };
       const enfants = espace.entries.filter((x) => x.data?.rencontre?.includes(e.id));
-      return `${e.data?.rencontre?.length === 2 ? `<p class="ren-origin">Née de la rencontre de ${t(e.data.rencontre[0])} et ${t(e.data.rencontre[1])}.</p>` : ''}${enfants.length ? `<p class="ren-origin">A fait naître ${enfants.map((x) => t(x.id)).join(', ')}.</p>` : ''}`;
+      // Une rencontre notée mais jamais faite (une simple note, sans son) : on peut enfin la faire.
+      const vide = e.data?.rencontre?.length === 2 && e.type === 'note' && !e.audio && e.data.rencontre.every((id) => { const x = espace.entries.find((y) => y.id === id); return x && !x.data?.corbeille; });
+      return `${e.data?.rencontre?.length === 2 ? `<p class="ren-origin">${vide ? 'Rencontre notée, pas encore faite' : 'Née de la rencontre'} de ${t(e.data.rencontre[0])} et ${t(e.data.rencontre[1])}.${vide ? ` <button class="btn small primary" data-ren-faire="${esc(e.id)}">Faire la rencontre</button>` : ''}</p>` : ''}${enfants.length ? `<p class="ren-origin">A fait naître ${enfants.map((x) => t(x.id)).join(', ')}.</p>` : ''}`;
     }
     // Ferme le détail d’une idée.
     function closeDetail() {
@@ -649,7 +647,11 @@ export default {
       const oid = e.target.closest('[data-open-id]');
       if (oid) { openDetail(oid.dataset.openId); return; }
       const rn = e.target.closest('[data-ren]');
-      if (rn) { const p = pairs[+rn.dataset.ren]; if (p) await meet(p); return; }
+      if (rn) { const p = pairs[+rn.dataset.ren]; if (p) meet(p); return; }
+      const rx = e.target.closest('[data-ren-non]');
+      if (rx) { const p = pairs[+rx.dataset.renNon]; if (p) { refuser(p.a, p.b); focus = ''; toast('Compris : cette paire ne reviendra plus.'); renderAll(true); } return; }
+      const rf = e.target.closest('[data-ren-faire]');
+      if (rf) { const en = espace.entries.find((x) => x.id === rf.dataset.renFaire); const [a, b] = (en?.data?.rencontre || []).map((id) => espace.entries.find((x) => x.id === id)); if (en && a && b && !a.data?.corbeille && !b.data?.corbeille) meet({ a, b, consigne: en.data.consigne || en.body || '' }, en); else toast('Un des deux parents a été jeté : la rencontre ne peut plus se faire.'); return; }
       const pp = e.target.closest('[data-pair]');
       if (pp) { focus = focus === pp.dataset.pair ? '' : pp.dataset.pair; renderAll(true); el.querySelector(`[data-ren-i="${focus}"]`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); return; }
       if (e.target.closest('[data-c=ren-next]')) { seed++; focus = ''; renderAll(true); return; }

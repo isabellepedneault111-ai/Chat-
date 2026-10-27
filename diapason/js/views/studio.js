@@ -1,6 +1,7 @@
 // Le studio : un beat, nos propres accords (durées libres, accord cliquable), le clavier en couleurs pour improviser, nos chansons, les prises et la scène.
 import { audio, drums, pad, bass, mic, startMic, finalOut, pluck } from '../audio.js';
 import { store, keyboard, toast, animate, autoCanvas, getProfile } from '../ui.js';
+import { avantPrise, arreterMetronome, metroHTML } from '../metronome.js';
 import { FR, mtof, chordIntervals, chordName, hash, rng, mod12, clamp, nameFR } from '../music.js';
 import { createListener, connectMIDI, chordLabel, estimateKey, suggestNext, diatonic, majorTonic } from '../instrument.js';
 import { DRUM_PRESETS, PROGRESSIONS, DEFIS_IMPRO } from '../data.js';
@@ -158,7 +159,7 @@ export default {
         <div class="field transpo" title="Tous les accords montent ou descendent d’un demi-ton. Guitare avec un capo à la 4e frette : +4."><span>Transposer</span><div><button class="btn small" data-act="transpo" data-d="-1" aria-label="Un demi-ton plus bas">−</button><b class="mono transpo-v"></b><button class="btn small" data-act="transpo" data-d="1" aria-label="Un demi-ton plus haut">+</button></div></div>
         <label class="field"><span>Accords</span><select data-in="prog" aria-label="Progression d’accords"></select></label>
         ${lampeHTML()}
-        <button class="rec-btn" data-act="rec" aria-label="Enregistrer une prise">● REC</button>
+        <button class="rec-btn" data-act="rec" aria-label="Enregistrer une prise">● REC</button>${metroHTML({ tempoFixe: S.bpm })}
       </div>
       <div class="chord-row"></div>
       <div class="panel grille-editeur" hidden></div>
@@ -187,7 +188,7 @@ export default {
     }
     refreshProgSelect();
     const syncTop = () => {
-      q('.bpm-out').textContent = S.bpm;
+      q('.bpm-out').textContent = S.bpm; { const m = q('.metro-t'); if (m) m.textContent = `${S.bpm} BPM`; }
       { const t = S.transpo || 0; q('.transpo-v').textContent = t > 0 ? `+${t}` : `${t}`; q('.transpo').classList.toggle('actif', !!t); }
       q('[data-act=play]').textContent = S.playing ? '■' : '▶';
       q('[data-act=play]').classList.toggle('on', S.playing);
@@ -230,6 +231,7 @@ export default {
         const blob = new Blob(chunks, { type });
         const ext = type.includes('ogg') ? 'ogg' : type.includes('mp4') ? 'm4a' : 'webm';
         S.takes.unshift({ blob, url: URL.createObjectURL(blob), ext, at: new Date(), bpm: S.bpm, chords: [0, 1, 2, 3].map((b) => { const ch = chordAt(b); return chordName(ch.root, ch.qual); }).join(' – ') });
+        arreterMetronome();
         try { finalOut().disconnect(dest); } catch { /* déjà déconnecté */ }
         mg.disconnect();
         S.recorder = null;
@@ -238,6 +240,8 @@ export default {
         if (tab === 'voix') renderTab();
       };
       S.recorder = r;
+      // Le métronome (s'il est allumé) : un décompte d'une mesure au tempo de Jouer, puis la boucle et la prise partent ensemble.
+      await avantPrise(S.bpm);
       if (!S.playing) play();
       r.start();
       syncTop();
