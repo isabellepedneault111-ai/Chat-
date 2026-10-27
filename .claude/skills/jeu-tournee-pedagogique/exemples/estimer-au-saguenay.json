@@ -1452,75 +1452,6 @@
  ],
  "reinvest": {
   "capsules": false,
-  "_panier": {
-   "titre": "Mon panier au Maxi",
-   "budget": 30,
-   "taxe": 0.14975,
-   "consigne": "Choisis ce qu’il te faut pour la semaine.",
-   "description": "Fais ton épicerie avec 30 $. Estime avant de passer à la caisse.",
-   "catalogue": [
-    [
-     "Lait 2 L",
-     5.29,
-     0
-    ],
-    [
-     "Pain",
-     3.79,
-     0
-    ],
-    [
-     "Bananes",
-     1.89,
-     0
-    ],
-    [
-     "Œufs (12)",
-     4.49,
-     0
-    ],
-    [
-     "Bleuets du Lac",
-     4.99,
-     0
-    ],
-    [
-     "Fromage en grains",
-     6.49,
-     0
-    ],
-    [
-     "Pâtes",
-     2.29,
-     0
-    ],
-    [
-     "Sauce tomate",
-     2.99,
-     0
-    ],
-    [
-     "Croustilles",
-     4.49,
-     1
-    ],
-    [
-     "Boisson gazeuse",
-     2.99,
-     1
-    ],
-    [
-     "Biscuits",
-     3.99,
-     1
-    ],
-    [
-     "Savon à vaisselle",
-     3.49,
-     1
-    ]
-   ]
-  },
   "defi": {
    "lieux": [
     "Tim Hortons (Jonquière)",
@@ -1577,7 +1508,81 @@
    "teams": {
     "equipe": "Budget et consommation PPS",
     "canal": "le canal de ton cours (PPS-Z128)"
-   }
+   },
+   "suggestions": [
+    [
+     "Café moyen",
+     2.39
+    ],
+    [
+     "Beigne",
+     1.79
+    ],
+    [
+     "Muffin aux bleuets",
+     2.5
+    ],
+    [
+     "Bagel",
+     3.49
+    ],
+    [
+     "Lait 2 L",
+     5.29
+    ],
+    [
+     "Pain",
+     3.79
+    ],
+    [
+     "Bleuets du Lac",
+     4.99
+    ],
+    [
+     "Fromage en grains",
+     6.49
+    ],
+    [
+     "Tourtière du Lac",
+     12.99
+    ],
+    [
+     "Croustilles",
+     4.49
+    ],
+    [
+     "Boisson gazeuse",
+     2.99
+    ],
+    [
+     "Billet de cinéma",
+     10.99
+    ],
+    [
+     "Popcorn moyen",
+     6.49
+    ],
+    [
+     "Pizza moyenne",
+     18.79
+    ],
+    [
+     "Billet des Saguenéens",
+     14.5
+    ],
+    [
+     "Tuque",
+     30.0
+    ],
+    [
+     "Shampoing",
+     7.99
+    ],
+    [
+     "Bonbons d’Halloween",
+     3.75
+    ]
+   ]
   }
  }
 }

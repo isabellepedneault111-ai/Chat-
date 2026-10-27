@@ -1384,7 +1384,67 @@
    "teams": {
     "equipe": "Alimentation saine PPS",
     "canal": "le canal « PPS-Z107 »"
-   }
+   },
+   "amorces": [
+    "Laquelle de ces collations…",
+    "Vrai ou faux :",
+    "Sur l’étiquette, …",
+    "Quel groupe d’aliments…",
+    "Quel est le meilleur choix pour…"
+   ],
+   "idees": [
+    {
+     "forme": "qcm",
+     "question": "Laquelle de ces collations est un aliment de tous les jours ?",
+     "choix": [
+      "Croustilles",
+      "Pomme et fromage",
+      "Boisson gazeuse"
+     ],
+     "bonne": 1,
+     "pourquoi": "Les fruits et le fromage sont des aliments de tous les jours. Les croustilles et la boisson gazeuse sont des aliments d’occasion."
+    },
+    {
+     "forme": "vf",
+     "question": "Vrai ou faux : 15 % de la valeur quotidienne en sodium, c’est beaucoup.",
+     "vf": true,
+     "pourquoi": "Le repère : 15 % ou plus, c’est beaucoup."
+    },
+    {
+     "forme": "courte",
+     "question": "Sur le tableau de la valeur nutritive, où lit-on la portion ?",
+     "reponse": "En haut du tableau",
+     "pourquoi": "Tous les nombres du tableau sont calculés pour cette portion."
+    },
+    {
+     "forme": "qcm",
+     "question": "Dans une liste d’ingrédients, le premier ingrédient est…",
+     "choix": [
+      "celui qu’il y a le plus",
+      "celui qu’il y a le moins",
+      "le plus santé"
+     ],
+     "bonne": 0,
+     "pourquoi": "Les ingrédients sont écrits du plus grand au plus petit poids."
+    },
+    {
+     "forme": "qcm",
+     "question": "Quelle boisson choisir le plus souvent ?",
+     "choix": [
+      "Eau",
+      "Jus de fruits",
+      "Boisson énergisante"
+     ],
+     "bonne": 0,
+     "pourquoi": "Le Guide alimentaire dit de faire de l’eau la boisson de choix."
+    },
+    {
+     "forme": "vf",
+     "question": "Vrai ou faux : 5 % de la valeur quotidienne en fibres, c’est beaucoup.",
+     "vf": false,
+     "pourquoi": "Le repère : 5 % ou moins, c’est peu."
+    }
+   ]
   },
   "dansBilan": false
  }
