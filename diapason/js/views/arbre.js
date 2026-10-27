@@ -231,7 +231,7 @@ export default {
         <aside class="ar-fiche gn-fiche" aria-live="polite"><p class="muted">Touche un point de la lignée pour lire l’étape.</p></aside>
         <p class="ar-cles gn-cles">${Object.entries(ERE_COUL).map(([k, c]) => `<i style="--c:${c}"></i>${k}`).join(' ')} <i style="--c:#6d655a"></i>autres chantiers</p>
       </section>
-      <section class="ar-mot">
+      <section class="ar-mot no-aide">
         <p class="eyebrow">La conception</p>
         <h2>Comment Diapason Labo a été conçu</h2>
         <p class="ar-def"><b>Définition.</b> Une pratique de conception où l’on ne délègue pas des tâches à l’IA : on lui <b>distribue des fonctions cognitives</b>. À l’agent, le calcul combinatoire (générer, structurer, coder, tester, déployer) ; à la conceptrice, la <b>gouvernance interprétative</b> : le symbole qui organise le système, le ton, la justesse relationnelle, le sens pédagogique, et la décision d’arrêter. Le travail part d’un <b>noyau symbolique</b>, avance par <b>variation contrôlée</b> (un axe à la fois) et se pilote <b>en vol</b>, pendant l’exécution. C’est une forme de cognition distribuée (Hutchins, 1995) et d’esprit étendu (Clark et Chalmers, 1998) appliquée à la conception d’un objet réel, utilisé par de vraies personnes. Elle se distingue du <i>vibe coding</i> (Karpathy, 2025), où l’on accepte ce que la machine produit, et de l’usage de l’IA comme guichet (une requête, une réponse).</p>
