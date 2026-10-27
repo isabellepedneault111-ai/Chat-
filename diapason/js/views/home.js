@@ -19,7 +19,7 @@ import { semaineHTML, echelleHTML, brancherObjectifs } from '../objectifs.js';
 // Tout en haut de l'accueil : ce que l'autre a ajouté et que je n'ai pas vu. C'est là que mène la pastille de Plan.
 const nouvellesBandeau = () => { const n = aVoir(); const t = mesTaches(); if (!n.length && !t.length) return ''; const tot = n.length + t.length;
   const quoi = [n.length ? `${n.length} ${n.length > 1 ? 'nouvelles' : 'nouvelle'} de ${esc(n[0].author)} à voir` : '', t.length ? `${t.length} prochain${t.length > 1 ? 's' : ''} pas pour toi : ${t.slice(0, 2).map((x) => esc(x.titre)).join(', ')}${t.length > 2 ? '…' : ''}` : ''].filter(Boolean).join(' · ');
-  return `<a class="nv-bandeau" href="#/nouvelles"><b>${tot}</b><span>${quoi}</span><em>Ouvrir →</em></a>`; };
+  return `<a class="nv-bandeau" href="#/nouvelles"><b>${tot}</b><span>${quoi}</span><span class="nv-ouvrir">Ouvrir →</span></a>`; };
 
 // Où aller : chaque outil rangé par ce qu'on veut faire, pas par son nom.
 // Par où commencer : trois gestes, dans l'ordre, cochés quand ils sont faits. Disparaît quand tout est fait.

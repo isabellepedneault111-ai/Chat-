@@ -3646,3 +3646,4 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .cl-moments .cl-rituel b { overflow: hidden; text-overflow: ellipsis; }
 .cl-plage { align-content: start; }
 @media (max-width: 760px) { .cl-sem.cl-moments { grid-template-columns: 1fr; grid-template-rows: none; } .cl-moments .cl-jour { display: flex; flex-direction: column; grid-row: auto; } .cl-moments .cl-moment:empty, .cl-moments .cl-j-lune:empty { display: none; } }
+.nv-bandeau .nv-ouvrir { flex: none; font-weight: 700; color: #e8c27a; padding: 4px 10px; border: 1px solid #e8c27a; border-radius: 999px; background: none; box-shadow: none; }
