@@ -18,15 +18,15 @@ const mots = (n) => n.replace(/^\$+/, '').replace(/([a-zà-ÿ])([A-Z])/g, '$1 $2
 
 // Ce qu'est chaque sorte d'élément, pour un développeur, en une phrase.
 const SORTE_EL = {
-  'export function': ['Fonction partagée', 'Un bloc de code nommé qui fait une chose précise ; « export » : les autres fichiers de l’app peuvent l’appeler (import).'],
-  'async export function': ['Fonction partagée, asynchrone', 'Partagée avec les autres fichiers ; asynchrone : elle attend quelque chose (le réseau, le micro, un fichier) sans figer l’app (async / await).'],
-  function: ['Fonction interne', 'Un bloc de code nommé, utilisé seulement à l’intérieur de ce fichier.'],
-  'async function': ['Fonction interne, asynchrone', 'Utilisée dans ce fichier ; elle attend une réponse (réseau, micro, fichier) sans figer l’app.'],
-  'export const': ['Valeur partagée', 'Une donnée fixe (une liste, un tableau de réglages, un texte) que d’autres fichiers importent.'],
-  'export const =>': ['Petite fonction partagée', 'Une fonction courte écrite en flèche (=>), partagée avec les autres fichiers.'],
-  section: ['Section', 'Une grande partie du fichier, annoncée par un commentaire : elle regroupe ce qui va ensemble.'],
-  def: ['Fonction Python', 'Une fonction de l’outil de construction (elle tourne avant la mise en ligne, pas dans l’app).'],
-  class: ['Classe Python', 'Un moule d’objets, dans l’outil de construction.'],
+  'export function': ['Fonction partagée', 'fonction exportée · module ES · <code>import</code>'],
+  'async export function': ['Fonction partagée', 'fonction exportée, asynchrone · <code>async</code> / <code>await</code>'],
+  function: ['Fonction interne', 'fonction locale au module'],
+  'async function': ['Fonction interne', 'fonction locale, asynchrone · <code>async</code> / <code>await</code>'],
+  'export const': ['Valeur partagée', 'constante exportée'],
+  'export const =>': ['Fonction partagée', 'fonction fléchée exportée · <code>=&gt;</code>'],
+  section: ['Section', 'section du fichier (commentaire de bloc)'],
+  def: ['Fonction Python', 'fonction Python · outil de build'],
+  class: ['Classe Python', 'classe Python · outil de build'],
 };
 const esc = (x) => String(x ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
