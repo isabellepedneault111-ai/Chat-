@@ -322,11 +322,11 @@ export default {
         const virg = (x) => (x < 10 ? x.toFixed(1) : String(Math.round(x))).replace('.', ',');
         const an = (j) => virg(j / 220); const mois = (j) => virg(j / 5 / 21);
         // Le coût. Salaire : le développeur au salaire médian du Québec (Guichet-Emplois, CNP 21232, 45,67 $/h, journées
-        // de 8 h) ; avec l'IA, la conceptrice au dernier échelon de conseillère pédagogique (102 857 $ au 1er avril 2025,
+        // de 8 h) ; avec l'IA, la conceptrice au dernier échelon de conseillère pédagogique (105 432 $ au 1er avril 2026, échelles 2023-2028,
         // sur 1 826,3 h par an). Gestion : l'usure des appareils (un ordinateur de 2 500 $ amorti sur trois ans de travail)
         // et, avec l'IA, un mois des abonnements utilisés (Claude, ChatGPT, Gemini, Copilot : ≈ 220 $ ; le calcul de l'IA
         // y est compris). Locaux et charges sociales ne sont pas comptés : une borne basse.
-        const TAUX = 45.67; const TAUX_CP = 102857 / 1826.3; const USURE = 2500 / (3 * 1826.3); const ABOS = 220;
+        const TAUX = 45.67; const TAUX_CP = 105432 / 1826.3; const USURE = 2500 / (3 * 1826.3); const ABOS = 220;
         const argent = (d) => (d >= 1e6 ? `${(d / 1e6).toFixed(2).replace('.', ',')} M$` : d >= 1e4 ? `${Math.round(d / 1000).toLocaleString('fr-CA')} k$` : `${Math.round(d).toLocaleString('fr-CA')} $`);
         const salaire = (j) => argent(j * 8 * TAUX); const cout = (j) => argent(j * 8 * (TAUX + USURE));
         const salaireIA = argent(cd.heuresActives * TAUX_CP); const coutIA = argent(cd.heuresActives * (TAUX_CP + USURE) + ABOS);
@@ -335,7 +335,7 @@ export default {
           <li>Repère du génie logiciel : <b>10 à 50 lignes</b> de code fini par développeur et par jour, conception et tests compris (McConnell, 2004)</li>
           <li>Sans IA, ce volume représenterait <b>${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours-personnes</b>. <b>Au mieux</b> (50 lignes par jour, l’<b>estimation basse</b>) : <b>${an(jp(50))} ans</b> pour une personne seule, <b>${mois(jp(50))} mois</b> pour une équipe de cinq. <b>Au pire</b> (10 lignes par jour, l’<b>estimation haute</b>) : <b>${an(jp(10))} ans</b>, ou <b>${mois(jp(10))} mois</b> à cinq</li>
           <li><b>Coût sans IA</b> : <b>${salaire(jp(50))} à ${salaire(jp(10))} en salaire</b> (salaire médian d’un développeur au Québec, 45,67 $/h, Guichet-Emplois). Avec la gestion, soit <b>l’usure des appareils</b> : <b>${cout(jp(50))} à ${cout(jp(10))}</b>. Seul ou à cinq, <b>la même somme</b> : cinq salaires, cinq fois moins longtemps</li>
-          <li><b>Coût avec l’IA</b> : <b>${salaireIA} en salaire</b>, soit ${String(cd.heuresActives).replace('.', ',')} h au salaire réel de la conceptrice, conseillère pédagogique au <b>dernier échelon</b> (102 857 $ par an). Avec la gestion, soit <b>l’usure des appareils</b> et <b>un mois d’abonnements IA</b> (Claude, ChatGPT, Gemini, Copilot, ≈ 220 $, le calcul de l’IA compris) : <b>${coutIA}</b></li>
+          <li><b>Coût avec l’IA</b> : <b>${salaireIA} en salaire</b>, soit ${String(cd.heuresActives).replace('.', ',')} h au salaire réel de la conceptrice, conseillère pédagogique au <b>dernier échelon</b> (105 432 $ par an depuis le 1er avril 2026). Avec la gestion, soit <b>l’usure des appareils</b> et <b>un mois d’abonnements IA</b> (Claude, ChatGPT, Gemini, Copilot, ≈ 220 $, le calcul de l’IA compris) : <b>${coutIA}</b></li>
           <li class="ar-cad-res">Lignes et salaires sont des mesures grossières : ils situent l’échelle, pas la qualité. Locaux et charges sociales ne sont pas comptés : c’est une <b>borne basse</b>.</li>`;
         // Le graphique comparatif : la durée, en jours de travail, sur une échelle logarithmique (2 jours et 2 000 jours
         // tiennent sur la même ligne). Une barre par scénario, de l'estimation basse à la haute.
