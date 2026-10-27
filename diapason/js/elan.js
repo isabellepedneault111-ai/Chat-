@@ -32,6 +32,15 @@ export const seances = () => espace.entries.filter((e) => e.type === 'session' &
 // Chaque fois qu’une trace a monté d’un cran (d’idée à brouillon, de brouillon à prise…).
 export const montees = () => espace.entries.flatMap((e) => (e.data?.moves || []).filter((m) => m.to > m.from).map((m) => ({ e, ...m })));
 
+// Les gestes d'une personne dans le temps : ce qu'elle crée, ce à quoi elle répond, ses séances, les idées qu'elle fait monter.
+export function gestes(qui) {
+  return [...creations().filter((e) => e.author === qui).map((e) => e.createdAt), ...echanges().filter((x) => x.vers === qui).map((x) => x.t1),
+    ...seances().filter((s) => s.e.author === qui || s.ensemble).map((s) => s.b), ...montees().filter((m) => m.by === qui).map((m) => m.at)].sort((a, b) => a - b);
+}
+// Combien un fil est vif à un moment : 1 le jour d'un geste, puis il perd la moitié de son éclat par jour calme.
+// Un miroir, pas une note : on voit qui chemine, sans reproche (Jermann et Dillenbourg, 2008 ; Janssen et Bodemer, 2013).
+export function vivacite(g, t) { let v = 0; for (const a of g) { if (a > t) break; v = Math.max(v, 0.5 ** ((t - a) / J)); } return v; }
+const ilYa = (t) => { const d = Date.now() - t; return d < 3600e3 ? 'il y a moins d’une heure' : d < J ? 'aujourd’hui' : d < 2 * J ? 'hier' : `il y a ${Math.round(d / J)} jours`; };
 const duree = (ms) => (ms < 3600e3 ? 'dans l’heure' : ms < J ? 'le jour même' : ms < 2 * J ? 'le lendemain' : ms < 7 * J ? `en ${Math.round(ms / J)} jours` : ms < 14 * J ? 'en une semaine environ' : 'après quelques semaines');
 const mediane = (l) => { if (!l.length) return null; const s = [...l].sort((a, b) => a - b); return s[Math.floor(s.length / 2)]; };
 
@@ -43,15 +52,21 @@ export function lecture(depuis = 0) {
   const lance = { [z]: cr.filter((e) => e.author === z).length, [f]: cr.filter((e) => e.author === f).length };
   if (cr.length) {
     const [a, b] = lance[z] >= lance[f] ? [z, f] : [f, z];
-    out.push(['Qui lance', lance[b] === 0 ? `Pour l’instant, c’est ${a} qui lance. La tresse attend le premier fil de ${b}.` : lance[a] > lance[b] * 1.6 ? `${a} lance plus souvent ; ${b} lance aussi, à son rythme.` : 'Vous lancez à peu près autant l’un que l’autre : la tresse est équilibrée.']);
+    // Des faits, pas des compliments : une rétroaction exacte aide, un éloge gonflé nuit (Hattie et Timperley, 2007 ; Brummelman et coll., 2014).
+    const n = (q) => `${lance[q]} fil${lance[q] > 1 ? 's' : ''}`;
+    out.push(['Qui lance', lance[b] === 0 ? `Pour l’instant, c’est ${a} qui lance (${n(a)}). La tresse attend le premier fil de ${b}.` : lance[a] >= lance[b] * 3 ? `Surtout ${a} : ${n(a)}, contre ${n(b)} pour ${b}.` : lance[a] > lance[b] * 1.6 ? `${a} lance plus souvent : ${n(a)}, contre ${n(b)} pour ${b}.` : `À peu près autant l’un que l’autre : ${n(a)} pour ${a}, ${n(b)} pour ${b}.`]);
   }
   if (ech.length) {
     const rep = { [z]: ech.filter((x) => x.vers === z).length, [f]: ech.filter((x) => x.vers === f).length };
     const t = mediane(ech.map((x) => x.t1 - x.t0));
-    out.push(['Qui répond', `${rep[f] && rep[z] ? 'Vous vous répondez tous les deux' : `C’est surtout ${rep[f] ? f : z} qui répond`}, et une réponse arrive en général ${duree(t)}.`]);
+    const fois = (q) => `${rep[q]} fois`;
+    out.push(['Qui répond', `${rep[f] && rep[z] ? `${z} a répondu ${fois(z)}, ${f} ${fois(f)}` : `Seulement ${rep[f] ? f : z} a répondu (${fois(rep[f] ? f : z)})`} ; une réponse arrive en général ${duree(t)}.`]);
     const k = {}; ech.forEach((x) => { k[x.quoi] = (k[x.quoi] || 0) + 1; }); const top = Object.entries(k).sort((a, b) => b[1] - a[1])[0];
     out.push(['Ce qui circule le plus', `${top[0][0].toUpperCase()}${top[0].slice(1)}.`]);
   } else if (cr.length) out.push(['Qui répond', 'Pas encore de réponse d’un fil à l’autre : la première fera le premier nœud.']);
+  // Ces jours-ci : le dernier geste de chacun, tel quel.
+  const derniers = [z, f].map((q) => { const g = gestes(q); return g.length ? `${q} : ${ilYa(g[g.length - 1])}` : `${q} : pas encore`; });
+  out.push(['Ces jours-ci', `Dernier geste. ${derniers.join(' · ')}.`]);
   const mt = montees().filter((m) => m.at >= depuis);
   if (mt.length) out.push(['Le mouvement', `${mt.length > 1 ? `${mt.length} fois` : 'Une fois'}, une idée a monté d’une étape${mt.some((m) => m.to >= 3) ? ', et l’une d’elles est maintenant fixée' : ''}.`]);
   const ss = seances().filter((s) => s.b >= depuis && s.ensemble);

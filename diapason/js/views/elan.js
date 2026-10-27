@@ -4,7 +4,7 @@
 import { espace, onEspace } from '../espace.js';
 import { MEMBERS, memberColor } from '../duo.js';
 import { esc, espaceGate } from './carnet.js';
-import { echanges, creations, seances, montees, lecture } from '../elan.js';
+import { echanges, creations, seances, montees, lecture, gestes, vivacite } from '../elan.js';
 
 const J = 864e5;
 const jourDe = (t) => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
@@ -36,7 +36,11 @@ function tresse(depuis) {
     if (prochain != null) { const u = (t - prochain) / (0.5 * J); const s0 = cote(prochain - 1); return C + (qui === f ? 1 : -1) * s0 * -Math.sin((u * Math.PI) / 2) * g(t) / 2; }
     return C + (qui === f ? 1 : -1) * cote(t) * g(t) / 2;
   };
-  const fil = (qui) => { const pts = []; for (let x = 40; x <= W - 40; x += 4) { const t = t0 + ((x - 40) / PX) * J; pts.push(`${x.toFixed(1)},${Y(qui, t).toFixed(1)}`); } return `<polyline points="${pts.join(' ')}" class="el-fil" style="stroke:${memberColor(qui)}"/>`; };
+  // Chaque fil, par petits tronçons : vif les jours où la personne crée, répond ou joue, il pâlit doucement les jours calmes.
+  const fil = (qui) => { const g = gestes(qui); let out = ''; let pts = [];
+    for (let x = 40; x <= W - 40; x += 4) { const t = t0 + ((x - 40) / PX) * J; pts.push(`${x.toFixed(1)},${Y(qui, t).toFixed(1)}`);
+      if (pts.length === 7 || x + 4 > W - 40) { const v = vivacite(g, t - 1.5 * (4 / PX) * J); out += `<polyline points="${pts.join(' ')}" class="el-fil ${v > 0.6 ? 'vif' : ''}" style="stroke:${memberColor(qui)};color:${memberColor(qui)};stroke-opacity:${(0.16 + 0.84 * v).toFixed(2)};stroke-width:${(2.5 + 3 * v).toFixed(1)}"/>`; pts = [pts[pts.length - 1]]; } }
+    return out; };
   const items = [];
   const pt = (o) => items.push(o) - 1;
   let svg = '';
@@ -79,12 +83,12 @@ export default {
         <div class="mod-head"><div>
           <p class="eyebrow">Notre élan</p>
           <h1>La tresse.</h1>
-          <p class="muted">Deux fils : <b style="color:${memberColor(z)}">${esc(z)}</b> et <b style="color:${memberColor(f)}">${esc(f)}</b>. Chaque création est un nœud sur son fil, chaque réponse un lien d’or d’un fil à l’autre. Plus vous échangez, plus les fils se rapprochent ; à chaque séance ensemble, ils se croisent : plus vous jouez ensemble, plus ils se tressent. Les jours calmes, ils respirent. Pas de score : un mouvement.</p>
+          <p class="muted">Deux fils : <b style="color:${memberColor(z)}">${esc(z)}</b> et <b style="color:${memberColor(f)}">${esc(f)}</b>. Chaque création est un nœud sur son fil, chaque réponse un lien d’or d’un fil à l’autre. Plus vous échangez, plus les fils se rapprochent ; à chaque séance ensemble, ils se croisent : plus vous jouez ensemble, plus ils se tressent. Chaque fil brille les jours où sa personne crée, répond ou joue, et pâlit doucement quand c’est calme. Pas de score ni de reproche : un miroir, fidèle.</p>
         </div></div>
         <div class="el-barre seg-tabs" role="tablist">${PERIODES.map(([k, l]) => `<button role="tab" data-per="${k}" aria-selected="${k === per}">${l}</button>`).join('')}</div>
         <section class="el-scene">${t.vide ? '<p class="el-vide">La tresse commence au premier son, au premier mot. Elle vous attend.</p>' : `<div class="el-host">${t.html}</div>`}
           <p class="el-fiche" aria-live="polite">Touche un nœud ou un lien : il raconte ce qui s’est passé.</p>
-          <p class="el-cles"><span><i class="k-n"></i>une création</span><span><i class="k-l"></i>une réponse</span><span><i class="k-m"></i>une idée qui monte</span><span><i class="k-s"></i>une séance</span></p>
+          <p class="el-cles"><span><i class="k-n"></i>une création</span><span><i class="k-l"></i>une réponse</span><span><i class="k-m"></i>une idée qui monte</span><span><i class="k-s"></i>une séance</span><span><i class="k-v"></i>un fil vif : on crée, on répond, on joue ; il pâlit après quelques jours calmes</span></p>
         </section>
         <section class="el-lecture"><h2>Ce que la tresse raconte</h2>
           ${lec.length ? `<dl>${lec.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : '<p class="muted">Rien encore sur cette période.</p>'}

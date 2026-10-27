@@ -3673,3 +3673,5 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .nv-taches a:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
 .nv-taches b { font-size: .95rem; font-weight: 700; } .nv-taches small { color: var(--muted); } .nv-taches span { color: var(--zaza); }
 .commencer .cm-go { display: inline-block; margin-top: 4px; color: #be331f; font-weight: 800; }
+.el-fil.vif { filter: drop-shadow(0 0 4px currentColor); }
+.el-cles .k-v { display: inline-block; width: 22px; height: 5px; border-radius: 3px; background: linear-gradient(90deg, color-mix(in srgb, var(--zaza) 20%, transparent), var(--zaza)); margin-right: 6px; vertical-align: middle; }
