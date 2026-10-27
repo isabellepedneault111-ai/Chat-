@@ -3538,3 +3538,9 @@ html.gv-on body { padding-right: 432px; }
 .ar-dessin.zoom .ar-radial { width: 160%; }
 @media (max-width: 860px) { .ar-dessin.zoom .ar-radial { width: 260%; } }
 .ar-zoom[aria-pressed=true] { background: #e8c27a; color: #1b1916; border-color: #e8c27a; opacity: 1; }
+.ar-valeur { margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: color-mix(in srgb, #aa4b00 7%, var(--card)); border: 1px solid color-mix(in srgb, #aa4b00 30%, transparent); }
+.ar-valeur p, .ar-traits .ar-valeur p { margin: 4px 0; font: .88rem/1.45 "Atkinson Hyperlegible", sans-serif !important; color: var(--ink); max-width: none; }
+.ar-valeur b { display: inline !important; font: inherit !important; font-weight: 700 !important; color: var(--ink) !important; }
+.ar-traits .ar-valeur .ar-v-tit { font: 700 1rem var(--display) !important; }
+.ar-traits .ar-valeur .ar-v-chiffre { font: 800 1.35rem/1.2 var(--display) !important; color: #aa4b00; } .ar-valeur .ar-v-chiffre b { color: #aa4b00 !important; }
+.ar-traits .ar-valeur .ar-v-limite { font-style: italic !important; color: var(--muted); }
