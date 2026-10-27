@@ -3570,3 +3570,8 @@ html.gv-on body { padding-right: 432px; }
 .ar-v-l b { font: 800 1rem var(--display) !important; color: #8a3c00 !important; display: inline !important; text-align: right; }
 @media (max-width: 560px) { .ar-v-duel { grid-template-columns: 1fr; } .ar-v-l { grid-template-columns: 1fr auto; } .ar-v-l .b { grid-column: 1 / -1; grid-row: 2; } }
 .ar-traits .ar-v-duel li::before, .ar-v-duel li::before { content: none !important; display: none !important; }
+.ar-v-l .n small { display: block; font-weight: 400; font-size: .76rem; color: var(--muted); }
+.ar-v-h { font-size: .7rem !important; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.ar-v-h span:last-child { text-align: right; }
+.ar-v-l { grid-template-columns: 150px 1fr minmax(150px, auto); }
+@media (max-width: 560px) { .ar-v-h span:nth-child(2) { display: none; } }

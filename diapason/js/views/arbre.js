@@ -373,11 +373,11 @@ export default {
               <p><span>À vie</span><b>199 $</b><small>une seule fois</small></p>
             </div>
             <p class="ar-v-note">Repères : Yousician, Flowkey ≈ 120 $ US par an · Simply Piano ≈ 170 $ US · BandLab ≈ 150 $ US · Soundtrap 10 à 15 $ US par mois</p>
-            <p class="ar-v-tit2">Si des gens s’abonnent</p>
-            <div class="ar-v-proj">
-              ${(() => { const L = [100, 500, 1000, 5000]; const haut = L[L.length - 1] * 99 * 4; return L.map((n) => { const an = n * 99; return `<div class="ar-v-l"><span class="n">${n.toLocaleString('fr-CA')} abonnés</span><span class="b"><i style="width:${Math.max(1.5, (an * 4 / haut) * 100)}%"></i></span><b>${argent(an * 2.5)} à ${argent(an * 4)}</b></div>`; }).join(''); })()}
+            <p class="ar-v-tit2">Si des gens s’abonnent : la valeur de l’app entière</p>
+            <div class="ar-v-proj"><div class="ar-v-l ar-v-h"><span>Abonnés (99 $/an) · revenus</span><span></span><span>L’app entière vaudrait, à la vente</span></div>
+              ${(() => { const L = [100, 500, 1000, 5000]; const haut = L[L.length - 1] * 99 * 4; return L.map((n) => { const an = n * 99; return `<div class="ar-v-l"><span class="n">${n.toLocaleString('fr-CA')} abonnés<small>${argent(an)} par an</small></span><span class="b"><i style="width:${Math.max(1.5, (an * 4 / haut) * 100)}%"></i></span><b>${argent(an * 2.5)} à ${argent(an * 4)}</b></div>`; }).join(''); })()}
             </div>
-            <p class="ar-v-note">Valeur de l’app entière : <b>2,5 à 4 fois</b> ses revenus annuels (abonnés solo à 99 $). Sans abonnés : <b>moins de 10 000 $ US</b>. La refaire sans IA coûterait ${cout(jp(50))} à ${cout(jp(10))}, mais personne ne paie ce prix pour du code sans utilisateurs.</p></div>`;
+            <p class="ar-v-note">Une app se vend <b>2,5 à 4 fois</b> ce qu’elle rapporte en un an : c’est un prix de vente, pas un revenu mensuel. Sans abonnés : <b>moins de 10 000 $ US</b>. La refaire sans IA coûterait ${cout(jp(50))} à ${cout(jp(10))}, mais personne ne paie ce prix pour du code sans utilisateurs.</p></div>`;
       }
     }
 
