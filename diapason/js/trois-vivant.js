@@ -4,6 +4,7 @@ import { troisReponse, TROIS, horloge } from './visite-sons.js';
 const NOMS = { 55: 'Sol', 57: 'La', 58: 'Si♭', 60: 'Do', 62: 'Ré', 64: 'Mi', 65: 'Fa', 67: 'Sol', 69: 'La' };
 const FOND = '#141210'; const ENCRE = '#efe6d2'; const OR = '#e8c27a'; const ROSE = '#ff6fae';
 
+// Anime le dessin de « la troisième voix » au rythme de l’horloge audio.
 export function troisVivant(cv) {
   const info = troisReponse();
   const t0p = performance.now() / 1000; const t0a = horloge();

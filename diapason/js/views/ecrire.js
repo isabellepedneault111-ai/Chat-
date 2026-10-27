@@ -68,6 +68,7 @@ export default {
         if (left <= 0) { clearInterval(flux); flux = null; coupeFond(); toast('Cinq minutes. Relis-toi : souligne une ligne vraie.'); }
       }, 1000);
     }
+    // Lance ou arrête l’enregistrement du mumble (chanter des sons sans mots sur le beat).
     async function toggleYaourt(btn) {
       if (yaourt) { yaourt.stop(); return; }
       try {
@@ -86,6 +87,7 @@ export default {
         setTimeout(() => yaourt === r && r.stop(), 90000);
       } catch { toast('Micro refusé : autorise-le dans la barre d’adresse.'); }
     }
+    // Monte la page Écrire : les chemins, la page du jour, écrire sur le beat, le journal.
     function shell() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: shell }); return; }
       el.innerHTML = `
@@ -133,11 +135,13 @@ export default {
       if (window.__flipFond) { el.querySelector('[data-e=sur]').dispatchEvent(new Event('change', { bubbles: true })); el.querySelector('.ec-flux').scrollIntoView({ block: 'start' }); }
       list(true); idees();
     }
+    // La liste de nos idées pour améliorer l’app.
     function idees() {
       const ul = el.querySelector('.ec-idees-l'); if (!ul) return;
       const l = espace.entries.filter((e) => e.data?.etincelle && e.data?.pour === 'app' && !e.demo && !e.data?.demo).sort((a, b) => b.createdAt - a.createdAt);
       ul.innerHTML = l.map((e) => `<li style="--c:${memberColor(e.author)}" data-id="${esc(e.id)}"><p>${esc(e.body || e.title)}</p><small><b>${esc(e.author)}</b> · ${ago(e.createdAt)}${e.data?.fait ? ' · <b class="fait">fait ✓</b>' : ''}</small></li>`).join('') || '<li class="muted">Aucune idée notée pour l’instant.</li>';
     }
+    // Le journal : nos textes, groupés par jour.
     function list(force) {
       const host = el.querySelector('.ec-list');
       if (!host) return;

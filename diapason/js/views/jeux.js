@@ -32,6 +32,7 @@ export const CARTES = [
 
 const other = () => (espace.meta?.members || MEMBERS).find((m) => m !== espace.me) || 'Frog';
 const find = (id) => espace.entries.find((e) => e.id === id);
+// Modifie un jeu en gérant le conflit si l’autre l’a changé entre-temps.
 async function merge(id, title, fn) {
   const cur = find(id);
   const r = await saveEntry({ id, type: 'jeu', title, data: fn(cur?.data || {}) }, { baseUpdatedAt: cur?.updatedAt });
@@ -48,6 +49,7 @@ export default {
     let tirage = null;
     let picker = null;
 
+    // Monte la page du grimoire : le champ de mots, la carte tirée, le cadavre exquis.
     function shell() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: shell }); return; }
       el.innerHTML = `
@@ -90,6 +92,7 @@ export default {
 
     const words = () => find(CHAMP)?.data?.words || [];
     const perso = () => (find(ATELIERS)?.data?.cards || []).map((c) => ({ ...c, perso: true }));
+    // Rafraîchit le grimoire quand l’espace change, sans déranger un champ en cours d’écriture.
     function refresh() {
       if (!el.querySelector('.jx-champ')) return;
       const th = el.querySelector('[data-j=theme]');
@@ -115,6 +118,7 @@ export default {
         onAccept: (t) => { tirage = t; logPractice('grimoire', 1, { carte: t.card.nom, mot: t.mots.join(', ') }); renderCard(); el.querySelector('.jx-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); },
       });
     }
+    // Affiche la carte tirée et son atelier d’écriture.
     function renderCard() {
       const box = el.querySelector('.jx-card');
       writer?.dispose(); writer = null;
@@ -142,6 +146,7 @@ export default {
 
     // ---------- Cadavre exquis ----------
     const cadavres = () => espace.entries.filter((e) => e.type === 'jeu' && e.data?.kind === 'cadavre').sort((a, b) => b.createdAt - a.createdAt);
+    // Affiche le cadavre exquis : seule la dernière ligne de l’autre est visible.
     function renderCadavre() {
       const box = el.querySelector('.jx-cad-body');
       if (!box || box.contains(document.activeElement)) return;
@@ -161,6 +166,7 @@ export default {
       html += done.map((c) => `<div class="jx-cad-done"><p class="mono small">Révélé ${ago(c.updatedAt)}</p>${c.data.lines.map((l) => `<p style="--c:${memberColor(l.by)}">${esc(l.text)}</p>`).join('')}</div>`).join('');
       box.innerHTML = html;
     }
+    // Ajoute ma ligne au cadavre exquis (ou en commence un nouveau).
     async function addLine(form) {
       const text = form.querySelector('[data-j=cadline]').value.trim();
       if (!text) return;

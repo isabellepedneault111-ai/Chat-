@@ -68,10 +68,12 @@ export default {
     const q = (s) => el.querySelector(s);
     const cv = autoCanvas(q('.gym-canvas'));
 
+    // Le record de justesse d’un exercice, ou « Nouveau » s’il n’a jamais été fait.
     function bestText(id) {
       const b = store.get('best', {})[id];
       return b != null ? `Record ${b} %` : 'Nouveau';
     }
+    // Dessine la forme d’un exercice (ses notes qui montent et descendent) en petit tracé.
     function shape(pattern) {
       const max = Math.max(...pattern.map((p) => p[0])) || 1;
       let x = 0;
@@ -84,6 +86,7 @@ export default {
       return `<svg viewBox="0 0 100 34" preserveAspectRatio="none">${rects.join('')}</svg>`;
     }
 
+    // Met à jour l’affichage de l’exercice : la note de départ, les répétitions, le conseil.
     function refresh() {
       q('.base-note').textContent = nameFR(base);
       q('.reps').textContent = reps;
@@ -91,6 +94,7 @@ export default {
       el.querySelectorAll('.ex-card').forEach((c) => c.classList.toggle('active', c.dataset.ex === ex.id));
     }
 
+    // Construit la suite de notes de l’exercice à partir de la note de départ et du tempo.
     function build() {
       const beat = 60 / ex.bpm;
       const notes = [];
@@ -105,6 +109,7 @@ export default {
       return { notes, beat, total: t };
     }
 
+    // Lance l’exercice : en écoute seulement, ou en chantant (le micro mesure la justesse note par note).
     async function start(mode) {
       if (mode === 'sing' && !(await startMic())) return;
       stopRun();
@@ -119,11 +124,13 @@ export default {
       q('.gym-overlay').hidden = true;
       el.querySelectorAll('[data-act=listen],[data-act=sing]').forEach((b) => { b.disabled = true; });
     }
+    // Arrête l’exercice en cours.
     function stopRun() {
       run = null;
       el.querySelectorAll('[data-act=listen],[data-act=sing]').forEach((b) => { b.disabled = false; });
     }
 
+    // Termine l’exercice : calcule le score de justesse, garde le record, et le note dans le bilan.
     function finish() {
       const r = run;
       stopRun();
@@ -288,6 +295,7 @@ export default {
   },
 };
 
+// Trace un rectangle aux coins arrondis sur un canvas.
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);

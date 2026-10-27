@@ -14,6 +14,7 @@ const TYPES = [['M', 'majeur'], ['m', 'mineur'], ['7', '7'], ['maj7', 'maj7'], [
 const DUREES = [[1, '1 t.'], [2, '2 t.'], [3, '3 t.'], [4, '1 mes.'], [6, '1½ mes.'], [8, '2 mes.']];
 
 const lesChansons = () => (espace.connected ? espace.entries.filter((e) => e.type === 'chanson').map((e) => ({ ...e.data, id: e.id })) : store.get('chansonsLocal', []));
+// Enregistre une chanson : dans l’espace partagé si on est connecté, sinon dans le navigateur.
 async function garder(ch) {
   if (!espace.connected) { const l = store.get('chansonsLocal', []).filter((x) => x.id !== ch.id); store.set('chansonsLocal', [ch, ...l]); return; }
   const { id, ...data } = ch;
@@ -23,7 +24,9 @@ const neuve = (nom) => { const c = { id: uid(), nom: 'Couplet', chords: [[0, 'M'
 
 // Créer un morceau de n'importe où (le mur, l'accueil) : il naît avec un couplet et un refrain à changer.
 export async function creerChanson(nom) { const ch = neuve(nom); await garder(ch); return ch; }
+// Les noms de toutes nos chansons, pour les menus.
 export const nomsDeChansons = () => lesChansons().map((c) => c.nom).filter(Boolean);
+// Retrouve une chanson par son nom.
 export const chansonNommee = (nom) => lesChansons().find((c) => c.nom === nom) || null;
 
 // ctx : { jouer(accords absolus [[note, qualité, temps]], nom, étiquettes par accord), actuels() → la grille du studio }
@@ -34,6 +37,7 @@ export function chansonTab(body, ctx) {
   const sec = (id) => ch.sections.find((s) => s.id === id);
   // Le numéro de passage : « Couplet 1 », « Couplet 2 »…
   const etiquettes = () => { const n = {}; return ch.ordre.map((id) => { const s = sec(id); if (!s) return ''; n[id] = (n[id] || 0) + 1; const total = ch.ordre.filter((x) => x === id).length; return total > 1 ? `${s.nom} ${n[id]}` : s.nom; }); };
+  // Redessine l’atelier des chansons : la liste, ou la chanson ouverte avec ses parties et leurs accords.
   function rendre() {
     const toutes = lesChansons();
     if (!ch) {

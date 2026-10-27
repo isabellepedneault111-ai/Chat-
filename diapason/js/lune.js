@@ -3,6 +3,7 @@
 const SYN = 29.530588853;
 const REF = Date.UTC(2000, 0, 6, 18, 14);
 
+// La lune à une date donnée : son âge dans le cycle (en jours), la part éclairée, son nom, notre « temps » (semer, grandir, entendre, laisser) et le cycle en cours.
 export function lune(date = new Date()) {
   const age = ((((date - REF) / 864e5) % SYN) + SYN) % SYN;
   const frac = age / SYN;
@@ -33,6 +34,7 @@ export function prochainTemps(date = new Date()) {
 // Le numéro de la lune dans nos six mois.
 export const numeroLune = (debutPlan, date = new Date()) => (debutPlan ? Math.max(1, Math.floor((date - debutPlan) / (SYN * 864e5)) + 1) : null);
 
+// Ce que chaque temps de la lune nous propose de faire, et où.
 export const TEMPS = {
   semer: ['le temps de semer', 'Posez chacun une intention pour ce cycle de 29 jours.', ''],
   grandir: ['le temps de faire grandir', 'Prenez une idée du mur et donnez-lui trois variations.', '#/carnet'],
@@ -56,6 +58,7 @@ export function luneSVG(l = lune(), size = 18) {
 // meta.lune : le cycle en cours ; meta.lunes : les cycles fermés (les 12 derniers) ; meta.luneProchaine : les intentions
 // semées pendant le passage, pour la lune qui vient.
 const vide = (cycle) => ({ cycle, intentions: {}, relue: {}, garde: {} });
+// Les intentions du cycle lunaire en cours (ou celles semées d’avance pour ce cycle), sinon un cycle vide.
 export function luneCourante(meta, date = new Date()) {
   const c = lune(date).cycle;
   if (meta?.lune?.cycle === c) return meta.lune;
@@ -87,6 +90,7 @@ export function patchLune(meta, change, date = new Date()) {
 // l'algorithme de Jean Meeus (Astronomical Algorithms, 1998, ch. 49), celui des éphémérides et des calendriers lunaires.
 // Le résultat est un instant : l'app l'affiche à l'heure de l'appareil (au Québec, l'heure de l'Est).
 const rad = Math.PI / 180; const sin = (x) => Math.sin(x * rad); const cos = (x) => Math.cos(x * rad);
+// L’instant exact d’une phase de la lune (k : numéro de la lunaison depuis 2000 ; q : 0 nouvelle, 1 premier quartier, 2 pleine, 3 dernier quartier), selon Meeus.
 function instantPhase(k, q) {
   const kk = k + q / 4; const T = kk / 1236.85;
   let jde = 2451550.09766 + 29.530588861 * kk + 0.00015437 * T * T - 0.00000015 * T ** 3 + 0.00000000073 * T ** 4;

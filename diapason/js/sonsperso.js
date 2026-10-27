@@ -5,8 +5,10 @@ import { espace, saveEntry, deleteEntry, uploadAudio, audioURL, onEspace } from 
 import { wav } from './oreille.js';
 import { toast } from './ui.js';
 
+// Les sons de batterie qu’on peut remplacer par les nôtres.
 export const SONS = [['kick', 'Grosse caisse'], ['snare', 'Caisse claire'], ['hat', 'Charley'], ['clap', 'Claps']];
 const vus = {};
+// Charge les sons de batterie enregistrés par le duo (gardés dans l’espace partagé) à la place de ceux d’origine.
 export async function chargerSonsPerso() {
   if (!espace.connected) return;
   for (const [nom] of SONS) {
@@ -17,6 +19,7 @@ export async function chargerSonsPerso() {
     try { const r = await fetch(await audioURL(e.audio)); sonsPerso[nom] = await audio().decodeAudioData(await r.arrayBuffer()); } catch { /* le son d'origine reste */ }
   }
 }
+// Qui a enregistré ce son de batterie (ou personne).
 export const auteurDe = (nom) => espace.entries.find((x) => x.id === `son-${nom}`)?.author || null;
 onEspace((w) => { if (w === 'entries') chargerSonsPerso(); });
 
@@ -30,12 +33,14 @@ function nettoyer(buf) {
   for (let i = 0; i < n; i++) { let v = 0; for (let ch = 0; ch < buf.numberOfChannels; ch++) v += buf.getChannelData(ch)[deb + i]; v /= buf.numberOfChannels; o[i] = (v / (pic || 1)) * 0.9 * (i > n - fin ? (n - i) / fin : 1); }
   return out;
 }
+// Garde un son de batterie : le nettoie, le fait entendre, et l’envoie dans l’espace partagé pour l’autre.
 async function garder(nom, buf) {
   const propre = nettoyer(buf); sonsPerso[nom] = propre; drums[nom](audio().currentTime + 0.05);
   if (!espace.connected) return;
   const a = await uploadAudio(wav(propre));
   await saveEntry({ id: `son-${nom}`, type: 'son', title: `Notre ${SONS.find((s) => s[0] === nom)[1].toLowerCase()}`, audio: a, data: { son: nom } }, { force: true });
 }
+// Enregistre un son de batterie au micro (un coup de main sur la table, une bouche…).
 export async function enregistrer(nom, bouton) {
   try {
     const flux = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
@@ -50,10 +55,12 @@ export async function enregistrer(nom, bouton) {
     setTimeout(() => r.state === 'recording' && r.stop(), 2000);
   } catch { toast('Micro refusé : autorise-le dans la barre d’adresse.'); }
 }
+// Importe un fichier son pour remplacer un son de batterie.
 export async function importer(nom, fichier, el) {
   try { const buf = await audio().decodeAudioData(await fichier.arrayBuffer()); await garder(nom, buf); toast('Ton son remplace celui d’origine, partout.'); } catch (err) { toast(err.message || 'Son illisible : essaie un wav ou un mp3.'); }
   el?.dispatchEvent(new CustomEvent('son-change', { bubbles: true }));
 }
+// Remet le son de batterie d’origine.
 export async function origine(nom, el) {
   delete sonsPerso[nom];
   if (espace.connected && espace.entries.some((x) => x.id === `son-${nom}`)) { try { await deleteEntry(`son-${nom}`); } catch (err) { toast(err.message); } }
@@ -68,6 +75,7 @@ export function sonsPersoHTML() {
     <span><button class="icon-btn tiny" data-spa="ecoute" aria-label="Écouter">▶</button><button class="btn small" data-spa="rec">● Mon son</button><label class="btn small">Fichier<input type="file" accept="audio/*" data-spa="fichier" hidden></label>${qui ? '<button class="linklike" data-spa="origine">son d’origine</button>' : ''}</span>
   </div>`; }).join('')}</div>`;
 }
+// Branche les boutons des sons perso (enregistrer, importer, réentendre, revenir à l’origine) sur une page.
 export function brancherSonsPerso(host, rerendre) {
   host.addEventListener('click', (e) => {
     const b = e.target.closest('[data-spa]'); const sp = e.target.closest('[data-sp]'); if (!b || !sp || b.tagName === 'INPUT') return;

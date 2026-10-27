@@ -24,6 +24,7 @@ function drone() {
   });
   return () => { const n = c.currentTime; g.gain.cancelScheduledValues(n); g.gain.setValueAtTime(g.gain.value, n); g.gain.linearRampToValueAtTime(0, n + 1.8); oscs.forEach((o) => o.stop(n + 2)); };
 }
+// La cloche du rituel : quelques notes aiguës qui s’éteignent lentement.
 function bell() {
   const c = audio();
   const t = c.currentTime;
@@ -162,6 +163,7 @@ function flottants(cv, words) {
 const FONDS = { arcanes: gravure, touche: encre, peurs: ombre };
 
 const BACK = `<div class="rc-back"><div class="rc-frame"></div><div class="rc-emblem">${FLAME('rc-flame')}</div><p class="rc-mark">FLIP</p></div>`;
+// Le recto d’une carte du rituel : son numéro (en chiffres romains), son image et son nom.
 function faceHTML(t) {
   return `<div class="rc-face"><div class="rc-frame"></div>
     ${t.num != null ? `<p class="rc-num">${typeof t.num === 'string' ? t.num : ROMAN[t.num % ROMAN.length]}</p>` : ''}

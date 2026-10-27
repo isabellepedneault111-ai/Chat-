@@ -5,15 +5,18 @@ import { MEMBERS } from './duo.js';
 import { toast } from './ui.js';
 
 const other = () => (espace.meta?.members || MEMBERS).find((m) => m !== espace.me) || 'l’autre';
+// Modifie une entrée en gérant le conflit : si l’autre l’a changée entre-temps, on repart de sa version.
 async function patch(e, data) {
   const r = await saveEntry({ ...e, data }, { baseUpdatedAt: e.updatedAt });
   if (r.conflict) await saveEntry({ ...r.current, data: { ...r.current.data, corbeille: data.corbeille } }, { baseUpdatedAt: r.current.updatedAt });
 }
+// Met une entrée à la corbeille : elle est masquée, jamais effacée, et on note qui l’a jetée et quand.
 export async function jeter(e) {
   const { corbeille, ...rest } = e.data || {};
   await patch(e, { ...rest, corbeille: { by: espace.me, at: Date.now() } });
   toast(`À la corbeille. Elle ne s’efface pour de bon que si ${other()} est d’accord.`);
 }
+// Sort une entrée de la corbeille.
 export async function restaurer(e) {
   const { corbeille, ...rest } = e.data || {};
   await patch(e, rest);
@@ -25,4 +28,5 @@ export async function effacer(e) {
   await deleteEntry(e.id);
   toast('Effacé pour de bon, d’un commun accord.');
 }
+// Ce que l’autre a jeté : c’est à moi de confirmer ou de restaurer.
 export const enAttenteDeMoi = () => espace.trash.filter((e) => e.data?.corbeille?.by && e.data.corbeille.by !== espace.me);

@@ -9,6 +9,7 @@ const BLANCHES = [0, 2, 4, 5, 7, 9, 11];
 const LETTRES = ['Do', 'Ré', 'Mi', 'Fa', 'Sol', 'La', 'Si']; const PAS = [0, 1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6];
 const RACINES = { 1: [0, 1], 3: [2, -1], 6: [3, 1], 8: [5, -1], 10: [6, -1] }; // Do♯, Mi♭, Fa♯, La♭, Si♭
 const ALT = { '-2': '𝄫', '-1': '♭', 0: '', 1: '♯', 2: '𝄪' };
+// Écrit correctement les notes d’un accord (Mi bémol plutôt que Ré dièse, selon la fondamentale).
 export function orthographe(midis) {
   const r = mod12(midis[0]); const [l0] = RACINES[r] || [BLANCHES.indexOf(r)];
   return midis.map((m) => { const iv = mod12(m - midis[0]); const l = (l0 + PAS[iv]) % 7; let a = mod12(m) - BLANCHES[l]; if (a > 6) a -= 12; if (a < -6) a += 12; return LETTRES[l] + (ALT[a] ?? ''); });
@@ -39,4 +40,5 @@ export function clavierAccord(midis, { compact = false, titre = '' } = {}) {
   const notes = orthographe(midis).join(' – ');
   return `<svg class="ka ${compact ? 'ka-c' : ''}" viewBox="-1 -1 ${larg + 2} ${H + (compact ? 2 : 12)}" role="img" aria-label="${titre ? `${titre} : ` : ''}${notes}"><title>${notes}</title>${blanches}${noires}${noms}</svg>`;
 }
+// Le dessin de clavier d’un accord, à partir de sa fondamentale, sa qualité et son renversement.
 export const clavierDe = (r, q, o) => clavierAccord(position(r, q), o);

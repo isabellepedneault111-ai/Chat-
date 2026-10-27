@@ -47,6 +47,7 @@ function noiseBuf(c, kind) {
   }
   return b;
 }
+// Fabrique une réverbération artificielle : un bruit qui s’éteint en 3 secondes, comme l’écho d’une grande salle.
 function impulse(c, sec = 3.2) {
   const len = c.sampleRate * sec;
   const b = c.createBuffer(2, len, c.sampleRate);
@@ -54,6 +55,7 @@ function impulse(c, sec = 3.2) {
   return b;
 }
 
+// Le moteur sonore des ambiances : réverbération, nappes, petites étincelles, gouttes, battements et textures (pluie, vent, foule).
 function engine() {
   const c = audio();
   const bus = c.createGain(); bus.gain.value = 0.9;
@@ -74,6 +76,7 @@ function engine() {
   let nextBar = 0; let barIdx = 0; let nextSpark = 0; let nextBeat = 0; let nextDrop = 0;
   const st = { light: 0.5, density: 0.5, chord: null, live: false };
 
+  // Une nappe d’accord douce qui monte et redescend lentement.
   function padChord(notes, t, dur) {
     const g = c.createGain();
     const peak = 0.16 / Math.sqrt(notes.length);
@@ -91,6 +94,7 @@ function engine() {
     return g;
   }
   let livePad = null;
+  // Une petite étincelle sonore : une note claire et brève, comme une cloche lointaine.
   function spark(m, t) {
     const o = c.createOscillator(); o.type = 'sine'; o.frequency.value = mtof(m);
     const o2 = c.createOscillator(); o2.type = 'triangle'; o2.frequency.value = mtof(m) * 2.001;
@@ -100,6 +104,7 @@ function engine() {
     o.connect(g); o2.connect(g2).connect(g); g.connect(rev); g.connect(bus);
     [o, o2].forEach((x) => { x.start(t); x.stop(t + 2.7); });
   }
+  // Une goutte d’eau : une note aiguë qui tombe très vite.
   function drop(t) {
     const o = c.createOscillator(); o.type = 'sine';
     const f = 1800 + Math.random() * 2600;
@@ -107,12 +112,14 @@ function engine() {
     const g = c.createGain(); g.gain.setValueAtTime(0.03 * Math.random(), t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
     o.connect(g).connect(texG); o.start(t); o.stop(t + 0.05);
   }
+  // Un battement sourd, comme un cœur ou un pas lointain.
   function thump(t) {
     const o = c.createOscillator(); o.type = 'sine';
     o.frequency.setValueAtTime(90, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.18);
     const g = c.createGain(); g.gain.setValueAtTime(0.22, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
     o.connect(g).connect(bus); o.start(t); o.stop(t + 0.32);
   }
+  // Une texture de fond faite de bruit filtré (pluie, vent, rumeur, crépitement), qui tourne en boucle.
   function texture(kind) {
     const src = (k) => { const s = c.createBufferSource(); s.buffer = noiseBuf(c, k); s.loop = true; s.start(); nodes.push(s); return s; };
     const filt = (type, f, q = 0.7) => { const x = c.createBiquadFilter(); x.type = type; x.frequency.value = f; x.Q.value = q; return x; };
@@ -127,6 +134,7 @@ function engine() {
   }
   const barDur = () => (8 * 60) / amb.bpm;
   const curNotes = () => st.chord || amb.chords[barIdx % amb.chords.length];
+  // Le planificateur de l’ambiance : programme les sons un peu à l’avance ; si Frog joue au clavier, ses notes tenues deviennent la nappe.
   function tick() {
     const now = c.currentTime;
     const ahead = now + 0.4;
@@ -236,6 +244,7 @@ export default {
     const cv = autoCanvas(q('.amb-canvas'));
     const lvl = new Uint8Array(eng.an.fftSize);
 
+    // Choisit une ambiance : son lieu, ses couleurs, ses sons, et ce qu’on peut écrire dedans.
     function choose(a) {
       cur = a;
       el.querySelectorAll('[data-amb]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.amb === a.id));
@@ -292,6 +301,7 @@ export default {
       q('.amb-chord').textContent = eng.on ? `${eng.st.live ? 'Clavier · ' : ''}${eng.chordLabel()}` : '';
     });
 
+    // Enregistre la voix au micro dans l’ambiance qui joue.
     async function toggleRec() {
       const btn = q('[data-x=rec]');
       if (rec) { rec.recorder.stop(); return; }
@@ -318,6 +328,7 @@ export default {
       btn.textContent = '■ Arrêter'; btn.classList.add('on');
       rec.timer = setInterval(() => { const s = Math.floor((performance.now() - rec.t) / 1000); q('.amb-time').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; if (s >= 600) recorder.stop(); }, 250);
     }
+    // Affiche la prise faite dans l’ambiance : la réécouter, la garder au mur.
     function showTake() {
       const box = q('.amb-take');
       box.hidden = !take;

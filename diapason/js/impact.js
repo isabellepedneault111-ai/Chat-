@@ -7,6 +7,7 @@ import { FLAME } from './marque.js';
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const NEXT = ['', 'Réécoutez-la ensemble à la prochaine écoute commune.', 'Prochaine séance : prenez-la comme cible, trois variations.', 'Elle est jouable : fixez qui mène les entrées, puis une prise complète.', 'Dans le set : jouez-la devant quelqu’un, même une seule personne.'];
 
+// Quand une trace monte d’un cran : ce que ce geste change pour l’objectif du mois.
 export function impact(e, from, to, before) {
   const m = currentMonth();
   const goal = m ? PLAN[m - 1] : null;

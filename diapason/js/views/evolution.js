@@ -95,6 +95,7 @@ function voiceChart(people) {
 export default {
   id: 'evolution',
   mount(el) {
+    // Redessine notre évolution : les graphiques de nos traces dans le temps.
     function render() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: render }); return; }
       const mem = espace.meta.members || MEMBERS;

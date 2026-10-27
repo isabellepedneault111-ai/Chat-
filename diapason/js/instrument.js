@@ -7,6 +7,7 @@ const QUALS = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], m7: [0, 3, 7, 10] 
 const MAJ = [6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88];
 const MIN = [6.33, 2.68, 3.52, 5.38, 2.6, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17];
 
+// Le nom d’un accord en français (Do, Lam, Sol7…).
 export const chordLabel = (c) => (c ? FR[c.root] + ({ M: '', m: 'm', 7: '7', m7: 'm7' }[c.qual]) : '—');
 
 // Meilleur accord pour un vecteur de 12 classes de hauteur.
@@ -27,6 +28,7 @@ export function matchChord(chroma) {
   return best;
 }
 
+// Devine la tonalité d’après les notes entendues (comparaison avec les profils de Krumhansl-Kessler, en majeur et en mineur).
 export function estimateKey(chroma) {
   const corr = (prof, shift) => {
     const xs = chroma;
@@ -50,11 +52,14 @@ export function estimateKey(chroma) {
 // Suggestions : accords de la tonalité et enchaînements fréquents (en degrés de la gamme majeure relative).
 const MAJOR_DEG = [[0, 'M', 'I'], [2, 'm', 'ii'], [4, 'm', 'iii'], [5, 'M', 'IV'], [7, 'M', 'V'], [9, 'm', 'vi']];
 const NEXT = { I: ['IV', 'V', 'vi'], ii: ['V', 'IV'], iii: ['vi', 'IV'], IV: ['V', 'I', 'ii'], V: ['I', 'vi', 'IV'], vi: ['IV', 'ii', 'V'] };
+// La tonique majeure d’une tonalité (pour La mineur : Do).
 export function majorTonic(key) { return key.mode === 'majeur' ? key.tonic : mod12(key.tonic + 3); }
+// Les sept accords naturels d’une tonalité, avec leur chiffre romain.
 export function diatonic(key) {
   const t = majorTonic(key);
   return MAJOR_DEG.map(([d, q, roman]) => ({ root: mod12(t + d), qual: q, roman, deg: d }));
 }
+// Propose les accords qui suivent bien celui qu’on joue, dans la tonalité.
 export function suggestNext(key, chord) {
   const dia = diatonic(key);
   const cur = chord && dia.find((c) => c.root === chord.root && (c.qual === chord.qual || (chord.qual === '7' && c.qual === 'M') || (chord.qual === 'm7' && c.qual === 'm')));

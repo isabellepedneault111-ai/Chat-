@@ -67,6 +67,7 @@ const hasardChords = (loop) => { const r = rng(hash(`hasard${loop}`)); return [[
 const accords = () => { const p = progression(); return p.hasard ? hasardChords(S.loop) : p.chords; };
 const tempsDe = (c) => c[2] || 4;
 const pasBoucle = () => Math.max(16, accords().reduce((a, c) => a + tempsDe(c), 0) * 4);
+// L’accord qui sonne à un pas donné de la boucle (selon la grille et la durée de chaque accord).
 function chordAtStep(step) {
   const l = accords(); const st = step % pasBoucle(); let deb = 0;
   for (let i = 0; i < l.length; i++) { const n = tempsDe(l[i]) * 4; if (st < deb + n) return { root: mod12(S.key + l[i][0]), qual: l[i][1], i, start: deb, len: n }; deb += n; }
@@ -74,6 +75,7 @@ function chordAtStep(step) {
 }
 const chordAt = (bar) => chordAtStep(bar * 16);
 
+// Programme ce qui joue à un pas de la boucle (doubles-croches) : la batterie, la basse, l’accord, et l’horloge MIDI vers le matériel de Frog.
 function scheduleStep(step, t) {
   const st = step % 16;
   const sixteenth = 60 / S.bpm / 4;
@@ -92,6 +94,7 @@ function scheduleStep(step, t) {
     });
   }
 }
+// Le planificateur de la boucle : programme les pas un peu à l’avance pour un tempo parfaitement régulier.
 function scheduler() {
   const c = audio();
   while (S.nextTime < c.currentTime + 0.12) {
@@ -110,6 +113,7 @@ function scheduler() {
     if (S.step % pasBoucle() === 0) { S.loop++; S.onLoop?.(); }
   }
 }
+// Lance la boucle.
 function play() {
   if (S.playing) return;
   const c = audio();
@@ -120,6 +124,7 @@ function play() {
   S.timer = setInterval(scheduler, 25);
   scheduler();
 }
+// Arrête la boucle (et l’horloge MIDI vers le matériel).
 function stopPlay() {
   if (S.playing) clockStop(S.nextTime); // après la dernière impulsion déjà programmée
   S.playing = false;
@@ -168,6 +173,7 @@ export default {
 
     q('[data-in=bpm]').value = S.bpm;
     q('[data-in=key]').value = S.key;
+    // Remplit la liste des grilles d’accords (mes accords, ceux de la séance, puis les grilles toutes faites).
     function refreshProgSelect() {
       const all = [...(S.custom ? [S.custom] : []), ...(S.seance ? [S.seance] : []), ...PROGRESSIONS];
       q('[data-in=prog]').innerHTML = all.map((p) => `<option value="${p.id}">${p.name} · ${p.roman}</option>`).join('');
@@ -201,6 +207,7 @@ export default {
       if (k === 'prog') { S.prog = e.target.value; save(); relay(); syncTop(); renderTab(); }
     });
 
+    // « ● REC » : enregistre la voix au micro par-dessus la boucle, puis garde la prise.
     async function toggleRec() {
       if (S.recorder) { S.recorder.stop(); return; }
       if (!(await startMic())) return;
@@ -253,10 +260,12 @@ export default {
     const DUREES = [[1, '1 temps'], [2, '2 temps'], [3, '3 temps'], [4, '1 mesure'], [6, '1 mesure ½'], [8, '2 mesures']];
     let ed = null;
     const depuisGrille = () => accords().map((c) => ({ r: mod12(S.key + c[0]), q: c[1], b: tempsDe(c) }));
+    // Applique la grille faite dans l’éditeur « Mes propres accords » : elle devient la boucle, en direct.
     function appliquer() {
       S.custom = { id: 'perso', name: 'Mes accords', roman: ed.map((c) => chordName(c.r, c.q)).join(' – '), chords: ed.map((c) => [mod12(c.r - S.key), c.q, c.b]), note: 'Ta grille à toi : change une note, une couleur ou une durée, ça s’entend au prochain accord.' };
       store.set('customProg', S.custom); S.prog = 'perso'; save(); refreshProgSelect(); relay(); syncTop(); safeBar = -1;
     }
+    // Dessine l’éditeur « Mes propres accords » : chaque accord, sa qualité, sa durée, et ▶ pour l’entendre seul.
     function rendreEditeur() {
       const box = q('.grille-editeur');
       box.innerHTML = `
@@ -311,6 +320,7 @@ export default {
     }
     // Taper le tempo : la moyenne des derniers intervalles entre les touches.
     const taps = [];
+    // Le tap tempo : on tape le temps trois fois ou plus, et le tempo se règle sur l’écart moyen entre les tapes.
     function taper() {
       const t = performance.now(); if (taps.length && t - taps[taps.length - 1] > 2000) taps.length = 0;
       taps.push(t); if (taps.length > 6) taps.shift();
@@ -344,6 +354,7 @@ export default {
       if (tab === 'instrument') instrumentTab(body);
     }
 
+    // L’onglet Beat : le séquenceur de batterie, pas par pas.
     function beatTab(body) {
       body.innerHTML = `
         <div class="panel">
@@ -404,6 +415,7 @@ export default {
       });
     }
 
+    // L’onglet des prises de voix : enregistrer sur la boucle, réécouter, garder.
     function voixTab(body) {
       body.innerHTML = `
         <div class="panel">
@@ -431,6 +443,7 @@ export default {
         t.gardee = true; toast('La prise est au mur, comme idée brute.'); if (tab === 'voix') renderTab();
       } catch (err) { b.disabled = false; b.textContent = 'Garder au mur'; toast(err.message); }
     });
+    // L’onglet Pochette : une couverture générée (titre, artiste, ambiance), qu’on peut partir d’une image du mur.
     function coverTab(body) {
       const c = store.get('cover', { title: '', artist: '', mood: 'Encre et or' });
       // Venue du mur : une image (et peut-être un son ou des mots) à transformer en pochette.
@@ -585,6 +598,7 @@ export default {
       const bars = [...body.querySelectorAll('.chroma i')];
       const showChroma = (c) => { const mx = Math.max(...c) || 1; bars.forEach((b, i) => { b.style.transform = `scaleY(${(c[i] / mx).toFixed(3)})`; }); };
 
+      // Quand l’instrument écouté joue un accord : l’affiche, dessine son clavier, et l’ajoute à la ligne du temps.
       function onChord(ch) {
         body.querySelector('.inst-chord').textContent = chordLabel(ch); body.querySelector('.inst-ka').innerHTML = clavierDe(ch.root, ch.qual, { titre: chordLabel(ch) });
         if (!timeline.length || chordLabel(timeline.at(-1)) !== chordLabel(ch)) timeline.push(ch);
@@ -592,10 +606,12 @@ export default {
         body.querySelector('.inst-timeline').innerHTML = timeline.map((c, i) => `<li class="${i === timeline.length - 1 ? 'now' : ''}">${chordLabel(c)}</li>`).join('');
         renderIdeas();
       }
+      // Devine la tonalité de ce qui a été joué (à partir des notes entendues).
       function sessionKey() {
         const ses = listener?.state.session || timeline.reduce((acc, c) => { chordIntervals(c.qual).forEach((iv) => { acc[mod12(c.root + iv)] += 1; }); acc[c.root] += 0.5; return acc; }, new Array(12).fill(0));
         return estimateKey(ses);
       }
+      // Propose des idées à partir de la tonalité devinée : des accords qui iraient bien ensuite.
       function renderIdeas() {
         if (timeline.length < 2) return;
         const key = sessionKey();
@@ -724,10 +740,12 @@ export default {
       const noteColor = (n) => (S.mode === 'duo' ? (who(n.slot) ? '#ff4fb3' : '#3ee6ff') : padColors[n.deg]);
       const bursts = [];
 
+      // Dessine les pads jouables (une note par pad, aux couleurs de la gamme).
       function renderPads() {
         body.querySelector('.pads').innerHTML = padMidis().map((m, i) => `
           <button class="pad" data-pad="${i}" style="--c:${padColors[i]}" aria-label="${FR[mod12(m)]}"><b>${FR[mod12(m)]}</b><kbd>${i + 1}</kbd></button>`).join('');
       }
+      // Met à jour la scène selon le mode (solo ou duo) et l’état de la boucle.
       function sync() {
         el.querySelectorAll('[data-mode]').forEach((b) => b.classList.toggle('active', b.dataset.mode === S.mode));
         body.querySelector('.duo-names').hidden = S.mode !== 'duo';
@@ -797,6 +815,7 @@ export default {
 
       // Le clip : la scène filmée (canvas) + le mixage final, pendant 2 tours de boucle.
       let rec = null;
+      // Enregistre un clip vidéo de la scène (image et son) et le télécharge.
       async function recordClip() {
         if (rec) return;
         const canvas = body.querySelector('.scene');
@@ -1007,6 +1026,7 @@ const PALETTES = {
   'Rose poudre': ['#231a1d', '#f4e7e4', '#da8aa6'],
   'Papier': ['#ece5d6', '#1b1915', '#d93a24'],
 };
+// Dessine la pochette sur un canvas : fond, titre, artiste, motifs selon l’ambiance choisie.
 function drawCover(canvas, { title, artist, mood }, art = {}) {
   const ctx = canvas.getContext('2d');
   const W = canvas.width;
@@ -1117,10 +1137,12 @@ export function setLoop(key, grille) {
 }
 // Venu du labo : les disques deviennent la grille de batterie.
 export function setGrid(g) { S.grid = g; save(); }
+// Lance ou arrête la boucle depuis une autre page (la séance, l’exercice) ; renvoie si elle joue.
 export function toggleLoop() {
   if (S.playing) stopPlay(); else play();
   return S.playing;
 }
+// Vrai si la boucle joue en ce moment.
 export const loopPlaying = () => S.playing;
 // La boucle suit l'horloge MIDI du matériel de Frog.
 export function setTempo(bpm) {

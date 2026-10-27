@@ -36,6 +36,7 @@ function fftMag(re) {
   const m = new Float32Array(n / 2); for (let i = 0; i < n / 2; i++) m[i] = Math.hypot(re[i], im[i]); return m;
 }
 
+// L’oreille : écoute un enregistrement et y repère l’énergie, les silences, les parties et le tempo.
 export async function ecouter(buf, onStep = () => {}) {
   const { x, sr } = mono(buf);
   const duree = x.length / sr;
@@ -146,6 +147,7 @@ export async function rendreBoucle(buf, { a, b }, tours = 4, xf = 0.12) {
   const r = await off.startRendering();
   return wav(r);
 }
+// Transforme un son en fichier WAV (16 bits) qu’on peut télécharger.
 export function wav(buf) {
   const ch = buf.numberOfChannels; const n = buf.length; const data = new DataView(new ArrayBuffer(44 + n * ch * 2));
   const w = (o, s) => [...s].forEach((c, i) => data.setUint8(o + i, c.charCodeAt(0)));
@@ -160,6 +162,7 @@ export function wav(buf) {
 // Des repères tirés du son, pas des jugements de goût : l'énergie qui retombe, une longue partie sans relief,
 // un groove régulier, des parties qui contrastent. À vous de décider quoi en faire.
 const mmss = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+// Traduit l’écoute en conseils : où ça manque de souffle, où ça s’emballe, ce qui ressort.
 export function diagnostic(res) {
   const { db, parties, duree } = res; const nE = db.length;
   const moy = (a, b) => { let s = 0; let c = 0; for (let i = Math.max(0, a); i < Math.min(nE, b); i++) { s += db[i]; c++; } return c ? s / c : -99; };
@@ -241,6 +244,7 @@ export async function notesVoix(buf, onStep = () => {}) {
   const aTravailler = bilan.filter((b) => b.n >= 2 && Math.abs(b.cents) >= 20).sort((a, b) => Math.abs(b.cents) - Math.abs(a.cents)).slice(0, 4);
   return { voix: true, notes: bilan, fortes, aTravailler, nNotes: notes.length };
 }
+// Le nom d’une note MIDI avec son octave (60 donne Do4).
 export const nomNote = (m) => `${NOTES[((m % 12) + 12) % 12]}${Math.floor(m / 12) - 1}`;
 
 // ---------- Les accords d'un enregistrement ----------
@@ -248,6 +252,7 @@ export const nomNote = (m) => `${NOTES[((m % 12) + 12) % 12]}${Math.floor(m / 12
 // voisins qui donnent le même accord. Fiable sur un clavier ou une guitare clairs ; moins sous une batterie chargée.
 const GABARITS = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], maj7: [0, 4, 7, 11], m7: [0, 3, 7, 10], sus2: [0, 2, 7], sus4: [0, 5, 7], dim: [0, 3, 6] };
 const SUF = { M: '', m: 'm', 7: '7', maj7: 'maj7', m7: 'm7', sus2: 'sus2', sus4: 'sus4', dim: 'dim' };
+// Trouve les accords d’un enregistrement, temps par temps, puis dégage la boucle qui se répète.
 export async function trouverAccords(buf, bpm, onStep = () => {}) {
   onStep('Je cherche les accords…'); await pause();
   const { x, sr } = mono(buf);
@@ -320,6 +325,7 @@ export function grilleMesures(accs, bpm, parMesure = 4) {
   const boucle = periode ? [...Array(periode)].map((_, j) => { const v = mesures.filter((_, i) => i % periode === j); const n = {}; v.forEach((x) => { n[x.cle] = (n[x.cle] || 0) + 1; }); const top = Object.entries(n).sort((a2, b2) => b2[1] - a2[1])[0][0]; return v.find((x) => x.cle === top); }) : null;
   return { mesures, periode, boucle, tours: periode ? Math.round(mesures.length / periode) : 0, tempo };
 }
+// La grille d’accords en texte, quatre mesures par ligne, prête à copier.
 export function grilleTexte(g, titre = '') {
   const l = g.boucle || g.mesures; const lignes = [];
   for (let i = 0; i < l.length; i += 4) lignes.push(`| ${l.slice(i, i + 4).map((x, k) => (i + k && x.cle === l[i + k - 1].cle ? '%' : x.cases.map((c) => c || '·').join(' '))).join(' | ')} |`);

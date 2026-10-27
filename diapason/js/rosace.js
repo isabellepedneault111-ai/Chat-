@@ -7,6 +7,7 @@
 const hasard = (graine) => { let x = graine >>> 0 || 1; return () => { x ^= x << 13; x ^= x >>> 17; x ^= x << 5; return ((x >>> 0) % 10000) / 10000; }; };
 const teinte = (hex, k) => { const n = parseInt(hex.slice(1), 16); const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.max(0, Math.min(255, Math.round(v * k)))); return `rgb(${c.join(',')})`; };
 
+// Dessine la rosace d’une clé : un anneau de vitraux par nombre, aux couleurs de sa partie ; l’anneau actif s’allume.
 export function dessinerRosace(ctx, taille, { cle, couleurs, lumiere = -1, actif = -1 }) {
   const R = taille / 2; const cx = R; const cy = R; const n = cle.length; const alea = hasard(cle.reduce((a, x) => a * 31 + x, 7));
   ctx.clearRect(0, 0, taille, taille);

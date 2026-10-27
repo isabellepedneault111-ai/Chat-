@@ -17,6 +17,7 @@ const IDEES = ['note', 'texte', 'audio', 'image', 'lien', 'paroles'];
 export default {
   id: 'passage',
   mount(el) {
+    // Redessine le passage : les quatre gestes pour fermer une lune et semer la suivante.
     function rendre() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: rendre }); return; }
       const mem = espace.meta.members || MEMBERS; const me = espace.me; const l = lune();
@@ -65,6 +66,7 @@ export default {
       if (espace.meta.lune?.cycle === f.cycle) await updateEspace({ lune: { ...espace.meta.lune, ...change(espace.meta.lune) } });
       else { const lunes = [...(espace.meta.lunes || [])]; const i = lunes.findIndex((x) => x.cycle === f.cycle); if (i >= 0) { lunes[i] = { ...lunes[i], ...change(lunes[i]) }; await updateEspace({ lunes }); } }
     }
+    // Sème mon intention pour la lune qui vient.
     async function semer(v) {
       const p = passage(espace.meta); const o = p.ouvre;
       if (o.cycle === lune().cycle) await updateEspace(patchLune(espace.meta, (b) => ({ intentions: { ...b.intentions, [espace.me]: v } })));

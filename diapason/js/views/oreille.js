@@ -58,6 +58,7 @@ export default {
     if (window.__flipOreille) { const f = window.__flipOreille; window.__flipOreille = null; setTimeout(async () => analyser(await f.blob.arrayBuffer(), f.nom), 0); }
     const arrete = () => { stopBoucle?.(); stopBoucle = null; lecture?.stop?.(); lecture = null; q('[data-o=boucle]').textContent = '▶ Écouter la boucle'; };
 
+    // Décode la pièce déposée et la fait écouter par l’oreille, en affichant chaque étape.
     async function analyser(arrayBuffer, n) {
       arrete(); nom = n;
       try {
@@ -72,6 +73,7 @@ export default {
         montrerVoix();
       } catch { etat('Je n’arrive pas à lire ce fichier. Essaie un mp3, un m4a ou un wav.'); }
     }
+    // Affiche ce que l’oreille a trouvé : tempo, tonalité, parties, conseils.
     function montrer() {
       q('.or-res').hidden = false;
       q('.or-titre').textContent = nom;
@@ -122,6 +124,7 @@ export default {
         <div class="ec-row"><button class="btn primary" data-o="studio">Jouer avec ces accords →</button><span class="muted small">Les 8 premiers changements, avec leur durée, deviennent « Mes accords ». La tonalité estimée (${esc(ton)}) colore le clavier.</span></div>`;
       box._noms = NOMS;
     }
+    // Dessine l’énergie de la pièce et ses parties dans le temps.
     function dessiner() {
       if (!res) return;
       const { ctx, w, h } = cv;

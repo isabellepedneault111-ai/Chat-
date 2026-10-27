@@ -6,6 +6,7 @@ let master = null;
 let bus = null;
 let noiseBuf = null;
 
+// Le moteur audio de l’app (Web Audio), créé une seule fois : la chaîne de sortie passe par la lampe, un compresseur et un limiteur avant les haut-parleurs.
 export function audio() {
   if (!ctx) {
     const C = window.AudioContext || window.webkitAudioContext;
@@ -37,6 +38,7 @@ export function audio() {
   if (ctx.state === 'suspended') ctx.resume();
   return ctx;
 }
+// L’entrée de la chaîne de sortie : tout ce qui doit sonner s’y branche (et passe par la lampe si elle est allumée).
 export const out = () => (audio(), master);
 
 // ---------- La lampe ----------
@@ -54,6 +56,7 @@ const courbeLampe = (ch) => {
   for (let i = 0; i < n; i++) { const x = (i / (n - 1)) * 2 - 1; c[i] = (Math.tanh(k * (x + b)) - Math.tanh(k * b)) / ref; }
   return c;
 };
+// Construit la lampe : un chemin sec (direct) et un chemin chaud (saturation douce, tassement, souffle) entre lesquels on bascule.
 function construireLampe(entree, sortie) {
   const sec = ctx.createGain(); sec.gain.value = 1; entree.connect(sec).connect(sortie);
   const chaud = ctx.createGain(); chaud.gain.value = 0;
@@ -77,6 +80,7 @@ function construireLampe(entree, sortie) {
   lampe.noeuds = { sec, chaud, forme, ton, dose, drive };
 }
 let chauffage = 0;
+// Applique l’état de la lampe (éteinte, ou allumée à telle chauffe) aux réglages sonores, en douceur pour éviter les clics.
 function appliquerLampe() {
   const n = lampe.noeuds; if (!n) return; const t = ctx.currentTime; const ch = lampe.on ? lampe.chauffe : 0;
   n.sec.gain.setTargetAtTime(lampe.on ? 0 : 1, t, 0.08);
@@ -85,6 +89,7 @@ function appliquerLampe() {
   n.dose.gain.setTargetAtTime(0.004 + 0.02 * ch, t, 0.2);
   n.drive.gain.setTargetAtTime(1 + 0.6 * ch, t, 0.2);
 }
+// Allume, éteint ou règle la chauffe de la lampe ; à l’allumage, elle met une dizaine de secondes à chauffer, comme un vrai tube.
 export function regler_lampe({ on = lampe.on, chauffe = lampe.chauffe } = {}) {
   const allume = on && !lampe.on; lampe.on = on; lampe.chauffe = chauffe; audio();
   clearInterval(chauffage);
@@ -95,10 +100,12 @@ export function regler_lampe({ on = lampe.on, chauffe = lampe.chauffe } = {}) {
   } else if (on) lampe.noeuds.forme.curve = courbeLampe(chauffe);
   appliquerLampe();
 }
+// L’état actuel de la lampe : allumée ou non, sa chauffe, et où en est son réchauffement.
 export const etatLampe = () => ({ on: lampe.on, chauffe: lampe.chauffe, tiede: lampe.tiede ?? 1 });
 // Sortie finale (après compresseur), pour l'enregistrement.
 export const finalOut = () => (audio(), bus);
 
+// Un tampon de bruit blanc d’une seconde, fabriqué une fois : la matière des caisses claires, des charleys et du souffle.
 function noise() {
   if (!noiseBuf) {
     const c = audio();
@@ -109,6 +116,7 @@ function noise() {
   return noiseBuf;
 }
 
+// Une enveloppe de volume : monte jusqu’au pic en « attack » secondes, puis s’éteint en « dur » secondes (courbes exponentielles, plus naturelles à l’oreille).
 function env(g, t, peak, attack, dur) {
   g.gain.setValueAtTime(0.0001, t);
   g.gain.exponentialRampToValueAtTime(peak, t + attack);
@@ -163,6 +171,7 @@ export function tone(freq, { when = 0, dur = 0.5, gain = 0.16 } = {}) {
   [a, b].forEach((o) => { o.start(t); o.stop(t + dur + 0.05); });
 }
 
+// Le clic du métronome (plus aigu sur le premier temps).
 export function click(when, accent = false) {
   const c = audio();
   const o = c.createOscillator();
@@ -243,6 +252,7 @@ for (const nom of ['kick', 'snare', 'hat', 'clap']) {
   drums[`${nom}Origine`] = origine;
 }
 
+// Une nappe synthétique douce (plusieurs fréquences tenues, filtrées) pour l’accompagnement.
 export function pad(freqs, t, dur, gain = 0.05) {
   const c = audio();
   const f = c.createBiquadFilter();
@@ -271,6 +281,7 @@ export function pad(freqs, t, dur, gain = 0.05) {
   return g; // pour l'éteindre en douceur quand un autre accord prend le relais
 }
 
+// Une note de basse synthétique, courte et ronde (onde triangle).
 export function bass(freq, t, dur = 0.35) {
   const c = audio();
   const o = c.createOscillator();
@@ -288,6 +299,7 @@ export function bass(freq, t, dur = 0.35) {
 
 // Train d'impulsions : à 2 Hz on entend des clics (un rythme), à 200 Hz une note.
 let impulseWave = null;
+// Un oscillateur en train d’impulsions : à basse fréquence on entend des clics (un rythme), en montant ils fusionnent en une note. Le cœur du labo « rythme ↔ note ».
 export function impulseOsc(freq) {
   const c = audio();
   if (!impulseWave) {
@@ -315,6 +327,7 @@ let raf = 0;
 let hist = [];
 let active = false;
 
+// Le micro, partagé par toute l’app : est-il ouvert, son analyseur, son niveau, la hauteur entendue.
 export const mic = {
   get active() { return active; },
   get analyser() { return analyser; },
@@ -323,6 +336,7 @@ export const mic = {
   level: 0,
 };
 
+// Ouvre le micro (le navigateur demande la permission) et commence à écouter : niveau et hauteur de la voix, en continu.
 export async function startMic() {
   if (active) return true;
   const c = audio();
@@ -348,6 +362,7 @@ export async function startMic() {
   return true;
 }
 
+// Ferme le micro et libère l’appareil.
 export function stopMic() {
   if (!active) return;
   stream.getTracks().forEach((t) => t.stop());
@@ -360,10 +375,14 @@ export function stopMic() {
   statusListeners.forEach((fn) => fn(false));
 }
 
+// Ouvre le micro s’il est fermé, le ferme s’il est ouvert.
 export const toggleMic = () => (active ? (stopMic(), Promise.resolve(false)) : startMic());
+// S’abonner à la hauteur entendue au micro (en continu, pour le miroir et la justesse).
 export function onPitch(fn) { pitchListeners.add(fn); return () => pitchListeners.delete(fn); }
+// S’abonner à l’état du micro (ouvert, fermé, refusé).
 export function onMicStatus(fn) { statusListeners.add(fn); return () => statusListeners.delete(fn); }
 
+// La boucle d’écoute du micro, à chaque image : mesure le niveau, cherche la hauteur de la voix, et la transmet aux pages abonnées.
 function loop() {
   analyser.getFloatTimeDomainData(buf);
   let rms = 0;

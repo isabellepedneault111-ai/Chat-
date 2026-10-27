@@ -13,6 +13,7 @@ const ICONE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5c3 2 13 
 const sec = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
 
 let bouton = null;
+// Met le bouton du filet à jour : armé ou non, pour l’œil et pour les lecteurs d’écran.
 function etat() {
   if (!bouton) return;
   bouton.classList.toggle('on', filet.arme);
@@ -23,6 +24,7 @@ function etat() {
 }
 // L'anneau d'or se remplit pendant que le filet se remplit : plein, il a toute sa durée.
 let anneau = 0;
+// Anime l’anneau du filet : il se remplit à mesure que la minute gardée se remplit.
 function remplir() {
   cancelAnimationFrame(anneau);
   const tour = () => {
@@ -34,6 +36,7 @@ function remplir() {
   tour();
 }
 
+// Installe le filet à côté du micro : tendu, il garde en continu la dernière minute, pour ne jamais perdre une bonne prise.
 export function installerFilet() {
   const ref = document.getElementById('micBtn'); if (!ref || bouton) return;
   bouton = document.createElement('button'); bouton.type = 'button'; bouton.className = 'icon-btn filet-btn'; bouton.id = 'filetBtn';

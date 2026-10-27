@@ -21,12 +21,15 @@ const BANQUES = {
   timbales: { notes: ['C2', 'Gb2', 'C3', 'Gb3', 'C4'], gain: 0.9, release: 1.4, nom: 'Timbales', famille: 'percussions' },
   celesta: { notes: ['C4', 'Gb4', 'C5', 'Gb5', 'C6', 'Gb6', 'C7'], gain: 0.6, release: 1.2, nom: 'Célesta', famille: 'percussions' },
 };
+// La liste des instruments d’orchestre disponibles, avec leur famille et leur étendue (note la plus basse, la plus haute).
 export const ORCHESTRE = Object.entries(BANQUES).filter(([, b]) => b.famille).map(([k, b]) => ({ k, nom: b.nom, famille: b.famille, bas: midiDeNom(b.notes[0]), haut: midiDeNom(b.notes.at(-1)) + 6 }));
+// « C4 », « Fs3 » → numéro MIDI : lit le nom d’un fichier d’échantillon pour savoir quelle note il contient.
 function midiDeNom(n) { const m = n.match(/^([A-G][sb]?)(\d)$/); return 12 * (+m[2] + 1) + { C: 0, Ds: 3, Fs: 6, A: 9, Gb: 6 }[m[1]]; }
 const midiDe = (n) => { const m = n.match(/^([A-G][sb]?)(\d)$/); return 12 * (+m[2] + 1) + NOMS[m[1]]; };
 const tampons = {}; // banque → [{ midi, buf }]
 const charge = {};
 
+// Télécharge et décode les échantillons des instruments demandés (une seule fois chacun) ; renvoie une promesse tenue quand tout est prêt.
 export function prechargerSons(liste = Object.keys(BANQUES)) {
   return Promise.all(liste.map((b) => {
     if (!charge[b]) {
@@ -39,12 +42,14 @@ export function prechargerSons(liste = Object.keys(BANQUES)) {
     return charge[b];
   }));
 }
+// Vrai si les échantillons de cet instrument sont déjà chargés.
 export const pret = (b) => !!tampons[b];
 // Les instruments tenus (cordes, chœur, cuivres, bois) : un échantillon dure ~3 s ; pour une note plus longue,
 // on fait tourner le milieu du son en boucle, là où il ne bouge plus.
 // La jointure de la boucle est fondue : les 120 dernières millisecondes avant la fin de la boucle glissent vers
 // ce qui précède son début. Au saut, l'onde continue sans rupture (sinon : un petit « coche » à chaque tour).
 const fondus = new WeakMap();
+// Fabrique (une fois, puis garde en mémoire) une copie de l’échantillon dont la jointure de boucle est fondue : plus de clic quand une note tenue tourne en boucle.
 function tamponBoucle(buf, a, b, ctx) {
   const deja = fondus.get(buf); if (deja && deja.sampleRate === ctx.sampleRate) return deja;
   const sr = buf.sampleRate; const ia = Math.round(a * sr); const ib = Math.round(b * sr); const xf = Math.min(Math.round(0.12 * sr), ia, ib - ia - 1);
@@ -64,6 +69,7 @@ export function boucler(src, B, dur, buf) {
 }
 // Pour rendre hors ligne (un fichier WAV) : les échantillons d'une banque, et ses réglages.
 export const echantillons = (b) => tampons[b] || null;
+// Les réglages d’un instrument (volume, relâchement, boucle, nom, famille).
 export const reglage = (b) => BANQUES[b];
 
 // Joue une note. vel : 0..1 ; dur : durée tenue avant le relâchement (en secondes).

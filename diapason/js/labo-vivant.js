@@ -6,6 +6,7 @@ const COUL = ['#3fd7f2', '#9a6bff', '#ff6fae'];
 const NOTES = ['Ré', 'Fa −33¢', 'La'];
 const SPIN_MAX = 1.1; // tours visibles par seconde, au-delà : ralenti
 
+// Fait vivre le dessin du labo au rythme de la musique : il suit l’horloge audio quand le son joue.
 export function laboVivant(cv) {
   const info = laboAccord();
   const t0Perf = performance.now() / 1000; const t0Audio = horloge();

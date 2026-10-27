@@ -111,6 +111,7 @@ export default {
       lastT = t;
     });
 
+    // Choisit une note cible au hasard, dans la zone confortable de la voix.
     function pickTarget() {
       const a = profile ? profile.low + 2 : 52;
       const b = profile ? profile.high - 2 : 67;

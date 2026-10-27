@@ -26,6 +26,7 @@ export default {
     const word = pick(mots);
     const texts = [];
     let i = 0; let pad = null; const t0 = Date.now();
+    // Affiche l’étape courante de la séance d’atelier d’écriture.
     function step() {
       pad?.dispose();
       const s = STEPS[i];

@@ -6,6 +6,7 @@ import { joue, accord, prechargerSons } from './sampler.js';
 const P = (seq, t0, n = 0.5, vel = 0.7) => { let t = t0; seq.forEach((m) => { if (Array.isArray(m)) accord('piano', m, { when: t, dur: n * 1.6, vel: vel * 0.8 }); else if (m) joue('piano', m, { when: t, dur: n * 0.95, vel }); t += n; }); return t; };
 const C = { do: [48, 52, 55, 60], fa: [53, 57, 60, 65], sol: [55, 59, 62, 67], lam: [57, 60, 64, 69] };
 
+// Pour chaque exercice : une phrase « Concrètement » et, quand c’est utile, un petit exemple joué au piano.
 export const CONCRET = {
   'p-renv': ['Joue Do, puis Fa en gardant le Do du haut : tes doigts bougent à peine. C’est ça, un renversement.', (t) => { accord('piano', [60, 64, 67], { when: t, dur: 1 }); accord('piano', [60, 65, 69], { when: t + 1.1, dur: 1 }); accord('piano', [59, 62, 67], { when: t + 2.2, dur: 1 }); }],
   'p-harmo': ['Elle chante surtout un Mi? Joue des accords qui contiennent Mi : Do, La mineur, Mi mineur.', null],
@@ -39,7 +40,9 @@ export const CONCRET = {
   'f-reecoute': ['Réécoutez la prise une fois sans parler, puis chacun nomme UNE chose à garder.', null],
 };
 
+// Le paragraphe « Concrètement » d’un exercice, avec son bouton d’exemple s’il en a un.
 export const concretHTML = (id) => { const c = CONCRET[id]; return c ? `<p class="concret"><b>Concrètement :</b> ${c[0]}${c[1] ? ` <button class="btn small" data-demo="${id}">▶ Entendre un exemple</button>` : ''}</p>` : ''; };
+// Joue l’exemple sonore d’un exercice, une fois le piano chargé.
 export function jouerDemo(id) {
   const c = CONCRET[id]; if (!c?.[1]) return;
   prechargerSons(['piano']).then(() => { const a = audio(); a.resume(); c[1](a.currentTime + 0.1); });

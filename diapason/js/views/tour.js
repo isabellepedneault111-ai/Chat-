@@ -15,6 +15,7 @@ const seenKey = () => `tourSeen:${espace.id}:${espace.me}`;
 // Vue une fois pour toutes, sur n'importe quel appareil : retenu dans l'espace.
 const seenInSpace = () => !!espace.meta?.tour?.[espace.me];
 
+// Lance la première visite de l’app quand c’est le moment (une seule fois par personne).
 export function maybeTour() {
   if (!espace.connected || !espace.me) return;
   if (store.get('apercuApres', false)) { store.set('apercuApres', false); startTour(true); return; }
@@ -23,6 +24,7 @@ export function maybeTour() {
   startTour(false);
 }
 
+// La première visite de l’app : l’accueil, puis le tour des grands lieux.
 export function startTour(preview) {
   if (document.querySelector('.tour')) return;
   const me = preview ? (espace.meta.members || ['Zaza', 'Frog']).find((m) => m !== espace.me) || 'Frog' : espace.me;

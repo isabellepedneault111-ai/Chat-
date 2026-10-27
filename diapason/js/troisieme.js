@@ -19,6 +19,7 @@ const GESTES = [
 ];
 const RYTHMES = [[1, 0.5, 0.5, 1, 1, 0.5, 0.5, 1, 2], [0.5, 0.5, 1, 0.5, 0.5, 1, 1.5, 0.5, 2], [1.5, 0.5, 1, 1, 1.5, 0.5, 2], [0.5, 0.5, 0.5, 0.5, 1, 1, 0.5, 0.5, 0.5, 0.5, 2]];
 
+// La troisième voix : l’app écoute ce qu’on joue et chante, et propose une note qui complète l’accord.
 export function troisieme({ key = 0 } = {}) {
   prechargerSons(['piano']);
   let heard = [];

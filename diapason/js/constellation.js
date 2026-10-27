@@ -13,9 +13,11 @@ const STOP = new Set(plain('avec dans pour sans sous plus moins tout tous toute 
 // Une tonalité écrite en toutes lettres : « en Ré », « Si mineur ».
 const KEY_RE = /\b(?:en\s+(do|re|mi|fa|sol|la|si)(?:\s*(diese|bemol|#|b))?(?:\s*(mineur|majeur|m|sus2|sus4|7))?|(do|re|mi|fa|sol|la|si)(?:\s*(diese|bemol))?\s+(mineur|majeur))\b/;
 
+// La nature d’une trace du Mur : un son, une image, un lien ou des mots.
 export const kindOf = (e) => (e.image || e.type === 'image' ? 'image' : e.audio || e.type === 'audio' ? 'son' : e.type === 'lien' ? 'lien' : 'mots');
 const KIND_FR = { son: 'un son', mots: 'des mots', lien: 'une écoute', image: 'une image' };
 
+// Ce qu’on peut lire d’une trace : sa tonalité, ses mots importants et sa nature ; c’est ce qui permet de la relier à une autre.
 export function traitsOf(e) {
   const txt = plain(`${e.title || ''} ${e.type === 'lien' ? '' : e.body || ''} ${e.data?.intent || ''}`);
   const k = txt.match(KEY_RE);
@@ -28,6 +30,7 @@ const threadOf = (e) => e.data?.thread || e.id;
 const stageOf = (e) => (e.data && Number.isInteger(e.data.stage) ? e.data.stage : e.type === 'paroles' ? 2 : 0);
 const songOf = (e) => (e.type === 'paroles' ? (e.title || '') : e.data?.song || '');
 const lastTouch = (e) => Math.max(e.updatedAt || 0, ...(e.data?.replies || []).map((r) => r.at || 0), ...(e.data?.moves || []).map((m) => m.at || 0));
+// Depuis combien de jours une trace n’a pas été touchée.
 export const sleepingDays = (e, now = Date.now()) => Math.floor((now - lastTouch(e)) / DAY);
 const daysFR = (d) => (d >= 14 ? `${Math.round(d / 7)} semaines` : `${d} jours`);
 
@@ -68,6 +71,7 @@ export function rencontres(board, { now = Date.now(), seed = 0, max = 3 } = {}) 
   return out;
 }
 
+// La consigne qui relie deux traces selon leur nature (par exemple : chanter ces mots sur ce son).
 function consigneFor(ka, kb, a, b) {
   const t = (e) => `« ${e.title || 'sans titre'} »`;
   if (ka === 'son' && kb === 'mots') return `Chante ${t(b)} sur ${t(a)}. Ce qui ne rentre pas, coupe-le.`;

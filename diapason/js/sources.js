@@ -69,6 +69,7 @@ const CONTRAINTES = [
 const pick = (l) => l[Math.floor(Math.random() * l.length)];
 const shuffle = (l) => [...l].sort(() => Math.random() - 0.5);
 
+// Les sources d’inspiration qu’on peut tirer (arcanes, etc.), chacune avec une phrase qui dit comment s’en servir.
 export const SOURCES = [
   { id: 'arcanes', nom: 'Les arcanes', sous: 'Les 22 arcanes majeurs du tarot de Marseille, comme images pour créer.', note: 'Une image pour créer, pas une prédiction.' },
   { id: 'touche', nom: 'Ce qui nous touche', sous: 'Des sujets profonds, pour écrire vrai.', note: 'Tu écris ce que tu veux bien montrer. Rien ne part sans toi.' },

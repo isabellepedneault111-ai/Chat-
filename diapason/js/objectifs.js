@@ -6,12 +6,15 @@ import { memberColor, MEMBERS } from './duo.js';
 import { esc } from './views/carnet.js';
 import { toast } from './ui.js';
 
+// Les trois réponses possibles quand on évalue un objectif ou une cible.
 export const VERDICTS = [['atteint', 'Atteint'], ['partie', 'En partie'], ['pas', 'Pas encore']];
 const nomV = (k) => VERDICTS.find((x) => x[0] === k)?.[1] || '';
 const JOUR = 864e5;
+// Le lundi (à minuit) de la semaine d’une date : toutes les semaines de l’app commencent un lundi.
 export const lundi = (t = Date.now()) => { const d = new Date(t); return new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() + 6) % 7)).getTime(); };
 const idDe = (l) => { const d = new Date(l); return `sem-${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
 const semaine = (l) => espace.entries.find((e) => e.id === idDe(l));
+// Toutes nos semaines qui ont un objectif fixé, de la plus récente à la plus ancienne.
 export const semaines = () => espace.entries.filter((e) => e.type === 'semaine' && e.data?.texte).sort((a, b) => b.data.debut - a.data.debut);
 const jourCourt = (t) => new Date(t).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' });
 const autre = () => (espace.meta?.members || MEMBERS).find((x) => x !== espace.me);
@@ -19,6 +22,7 @@ const autre = () => (espace.meta?.members || MEMBERS).find((x) => x !== espace.m
 // Les séances d'une semaine et leurs cibles : ce qui a nourri l'objectif.
 const seancesDe = (l) => espace.entries.filter((e) => e.type === 'session' && e.data?.done && e.data.doneAt >= l && e.data.doneAt < l + 7 * JOUR);
 
+// Le bloc d’évaluation d’une semaine : mes trois boutons (atteint, en partie, pas encore), mes deux mots, et ce que l’autre en a dit.
 function evalHTML(e, moi) {
   const ev = e.data.eval || {}; const mien = ev[moi] || {};
   const autres = Object.entries(ev).filter(([w, x]) => w !== moi && x?.v);
@@ -72,6 +76,7 @@ async function majSemaine(id, f) {
   const e = espace.entries.find((x) => x.id === id); if (!e) return;
   try { await saveEntry({ ...e, data: f(e.data) }); } catch (err) { toast(err.message); }
 }
+// Branche les gestes des objectifs sur une page : fixer l’objectif de la semaine, l’évaluer, écrire ses mots ; tout est sauvé dans l’espace partagé.
 export function brancherObjectifs(root, rendre) {
   root.addEventListener('submit', async (ev) => {
     const f = ev.target.closest('.ob-form'); if (!f) return; ev.preventDefault();
@@ -89,4 +94,5 @@ export function brancherObjectifs(root, rendre) {
     await majSemaine(id, (d) => ({ ...d, eval: { ...(d.eval || {}), [espace.me]: { ...(d.eval?.[espace.me] || {}), [k]: i.value.trim() } } }));
   });
 }
+// Le texte de l’objectif de cette semaine (vide s’il n’est pas fixé).
 export const objectifSemaine = () => semaine(lundi())?.data?.texte || '';

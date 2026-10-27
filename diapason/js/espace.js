@@ -6,6 +6,7 @@ const CHUNK = 3 * 1024 * 1024;
 const listeners = new Set();
 const audioCache = new Map();
 
+// L’état de notre espace partagé dans cet appareil : son identifiant, ses réglages (meta), toutes nos entrées (idées, séances, profils…), la corbeille, et qui je suis.
 export const espace = {
   id: store.get('espaceId', null),
   meta: null,
@@ -19,10 +20,13 @@ export const espace = {
   get link() { return this.id ? `${location.origin}${location.pathname}#/rejoindre/${this.id}` : ''; },
 };
 
+// S’abonner aux changements de l’espace (nouvelles entrées, réglages) : chaque page se redessine quand l’autre ajoute quelque chose. Renvoie de quoi se désabonner.
 export const onEspace = (fn) => { listeners.add(fn); return () => listeners.delete(fn); };
 const emit = (what, extra) => listeners.forEach((fn) => fn(what, extra));
+// Prévient toutes les pages abonnées que les entrées et les réglages ont changé (après un import, par exemple).
 export const emitEntries = () => { emit('meta'); emit('entries', { fresh: [] }); };
 
+// Parle au serveur de l’espace (Netlify Functions) : envoie la requête, lit la réponse JSON, et lève une erreur claire si ça échoue (sauf 409, le conflit, géré à part).
 async function api(path, opts = {}) {
   const r = await fetch(API + path, { ...opts, headers: { 'content-type': 'application/json', ...(opts.headers || {}) } });
   const data = r.headers.get('content-type')?.includes('json') ? await r.json() : null;
@@ -30,17 +34,20 @@ async function api(path, opts = {}) {
   return { status: r.status, data };
 }
 
+// Un identifiant unique et aléatoire (12 octets, en base64 lisible dans une adresse) pour nommer une nouvelle entrée sans risque de doublon.
 export const uid = () => {
   const a = new Uint8Array(12);
   crypto.getRandomValues(a);
   return btoa(String.fromCharCode(...a)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 };
 
+// Crée un nouvel espace pour le duo sur le serveur, puis s’y connecte.
 export async function createEspace(name, createdBy) {
   const { data } = await api('', { method: 'POST', body: JSON.stringify({ name, createdBy, members: ['Zaza', 'Frog'] }) });
   return joinEspace(data.meta.id);
 }
 
+// Se connecte à un espace existant : charge ses réglages et toutes ses entrées, le retient dans l’appareil, et commence à écouter les nouveautés.
 export async function joinEspace(id) {
   const { data } = await api(`/${id}`);
   espace.id = id;
@@ -59,6 +66,7 @@ export async function findEspace(secret) {
   return joinEspace((await r.json()).id);
 }
 
+// Quitte l’espace dans cet appareil (rien n’est effacé sur le serveur).
 export function leaveEspace() {
   espace.id = null;
   espace.meta = null;
@@ -78,8 +86,10 @@ export async function updateEspace(body) {
   espace.rev = data.rev;
   emit('meta');
 }
+// Les noms des deux membres (Zaza et Frog par défaut).
 export const members = () => espace.meta?.members || ['Zaza', 'Frog'];
 
+// Renomme l’espace ou change son objectif d’album.
 export async function renameEspace(name, goal) {
   const body = {};
   if (name != null) body.name = name;
@@ -90,11 +100,13 @@ export async function renameEspace(name, goal) {
   emit('meta');
 }
 
+// Efface tout l’espace sur le serveur, puis le quitte.
 export async function deleteEspace() {
   await api(`/${espace.id}`, { method: 'DELETE' });
   leaveEspace();
 }
 
+// Recharge les entrées depuis le serveur et repère ce qui est nouveau (ajouté ou modifié par l’autre) pour l’annoncer.
 async function refresh(force) {
   if (!espace.id) return;
   const { data } = await api(`/${espace.id}/entries`);
@@ -117,6 +129,7 @@ async function refresh(force) {
 // Sondage adaptatif : 2,5 s quand ça bouge, 10 s au repos, rien quand l'onglet est caché.
 let timer = 0;
 let lastChange = Date.now();
+// Vérifie régulièrement s’il y a du nouveau (souvent quand ça bouge, plus rarement quand c’est calme) : c’est ce qui synchronise les deux appareils.
 function startPolling() {
   stopPolling();
   const tick = async () => {
@@ -134,11 +147,13 @@ function startPolling() {
   };
   timer = setTimeout(tick, 2500);
 }
+// Arrête la vérification régulière.
 function stopPolling() { clearTimeout(timer); }
 document.addEventListener('visibilitychange', () => { if (!document.hidden && espace.id) { lastChange = Date.now(); startPolling(); } });
 
 // Enregistre une entrée. baseUpdatedAt : version connue, pour détecter un conflit.
 const PROJET_TYPES = new Set(['note', 'texte', 'audio', 'lien', 'essai', 'paroles']);
+// Enregistre une entrée (idée, séance, profil, plage…) dans l’espace partagé ; signale un conflit si l’autre l’a modifiée entre-temps.
 export async function saveEntry(entry, { baseUpdatedAt, force } = {}) {
   if (entry.demo || entry.data?.demo) return { entry }; // un exemple fictif ne s'enregistre jamais
   const id = entry.id || uid();
@@ -161,6 +176,7 @@ export async function saveEntry(entry, { baseUpdatedAt, force } = {}) {
   return { entry: data.entry };
 }
 
+// Efface une entrée de l’espace partagé (et de la corbeille).
 export async function deleteEntry(id) {
   const { data } = await api(`/${espace.id}/entries/${id}`, { method: 'DELETE' });
   espace.entries = espace.entries.filter((e) => e.id !== id);
@@ -199,6 +215,7 @@ export async function uploadImage(file, onProgress) {
   return { ...up, type: blob.type || 'image/jpeg', w, h };
 }
 
+// L’adresse d’écoute d’un son enregistré : il est téléchargé du serveur (en morceaux) une seule fois, puis gardé en mémoire.
 export async function audioURL(audio) {
   if (audio.src) return audio.src; // exemples du tour : un fichier du site
   if (audioCache.has(audio.id)) return audioCache.get(audio.id);
@@ -223,7 +240,9 @@ export async function boot() {
 
 // ---------- Profils : chacun écrit le sien (aucun conflit possible entre les deux) ----------
 export const profileId = (name) => `profil-${String(name).replace(/[^A-Za-z0-9_-]/g, '').slice(0, 30) || 'x'}`;
+// Le profil d’un membre (son étape 1, sa voix, son studio…), ou rien s’il ne l’a pas encore rempli.
 export const profileOf = (name) => espace.entries.find((e) => e.id === profileId(name))?.data || null;
+// Modifie le profil d’un membre : change(ancien) renvoie les champs à changer ; le reste est gardé. Synchronisé avec l’autre appareil.
 export async function saveProfile(change, name = espace.me) {
   const id = profileId(name);
   const cur = espace.entries.find((e) => e.id === id);

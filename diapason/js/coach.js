@@ -36,6 +36,7 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
   const hole = box.querySelector('.coach-hole');
   const bubble = box.querySelector('.coach-bubble');
   const end = (go) => { bandeStop(); if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {}); retirerExemples(); box.remove(); removeEventListener('resize', place); removeEventListener('keydown', key); onEnd?.(); if (go) location.hash = go; };
+  // Place le halo sur l’élément visé par l’étape et la bulle à côté, sans déborder de l’écran.
   function place() {
     const s = STEPS[i];
     const el = visible(s.sel);
@@ -63,6 +64,7 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
       Object.assign(bubble.style, { width: `${bw}px`, left: `${(vw - bw) / 2}px`, top: `${vh / 2 - 90}px`, bottom: 'auto' });
     }
   }
+  // Affiche l’étape courante de la visite : texte, boutons, position ; la musique continue d’un bout à l’autre.
   function show() {
     const s = STEPS[i];
     bandeSection('coach', i);
@@ -108,6 +110,7 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
     box.querySelector('.cq-rep').addEventListener('click', (e) => { const b = e.target.closest('[data-r]'); if (b) repondre(b.dataset.r); });
     box.querySelector('.cq-mots').addEventListener('submit', (e) => { e.preventDefault(); const m = e.target.mots.value.trim(); if (m) repondre('', m); });
   }
+  // Les flèches avancent ou reculent dans la visite ; Échap la ferme (sauf la toute première, obligatoire).
   function key(e) { if (e.key === 'ArrowRight' && !STEPS[i].final) { i++; show(); } if (e.key === 'ArrowLeft' && i) { i--; show(); } if (e.key === 'Escape' && (!premiere || apercu)) end(); }
   bubble.addEventListener('click', (e) => {
     const c = e.target.closest('[data-c]')?.dataset.c;

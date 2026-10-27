@@ -132,6 +132,7 @@ export default {
     const slotsDe = (pl) => (decale ? pl.slots.map((x) => ({ ...x, s: Math.min(31, x.s + 2), d: Math.max(1, Math.min(x.d, 32 - x.s - 2)) })) : pl.slots);
     const lignes = () => q('.pl-texte').value.split('\n').map((l) => l.trim()).filter(Boolean);
 
+    // Redessine les lignes de paroles à placer sur la pièce, avec leurs syllabes et leurs accents.
     function rendre() {
       const L = lignes(); actif = Math.min(actif, Math.max(0, L.length - 1));
       q('.pl-info').textContent = `${P().ton} · ${P().bpm} BPM · une ligne = deux mesures (${(8 * 60 / P().bpm).toFixed(1).replace('.', ',')} s)`;
@@ -158,10 +159,12 @@ export default {
       }).join('');
     }
 
+    // Charge (une seule fois) le son d’une pièce de Frog.
     async function tampon(id) {
       if (!tampons[id]) tampons[id] = fetch(PIECES[id].url).then((r) => r.arrayBuffer()).then((b) => audio().decodeAudioData(b));
       return tampons[id];
     }
+    // Arrête la lecture de la pièce.
     function arreter() {
       cancelAnimationFrame(raf);
       if (lecture) { lecture.src.forEach((s) => { try { s.stop(); } catch { /* déjà arrêtée */ } }); lecture = null; }

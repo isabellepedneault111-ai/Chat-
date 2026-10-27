@@ -23,6 +23,7 @@ const PRIORITES = [
 export default {
   id: 'etincelles',
   mount(el) {
+    // Redessine la liste de toutes nos étincelles.
     function render() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: render }); return; }
       const all = espace.entries.filter((e) => e.data?.etincelle).sort((a, b) => b.createdAt - a.createdAt);

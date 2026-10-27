@@ -5,9 +5,11 @@ import { tamponPiste, positionPiste } from './visite-sons.js';
 
 const FOND = '#141210'; const ENCRE = '#efe6d2'; const OR = '#c9a45c';
 let analyse = null; // une seule écoute par visite
+// Prépare (une seule fois) l’écoute de la pièce qui anime le portrait.
 export const preparerPortrait = () => (analyse ||= Promise.resolve(tamponPiste('projet1')).then((b) => (b ? ecouter(b) : null)).catch(() => null));
 const mmss = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
 
+// Le portrait vivant : un dessin qui bouge selon l’énergie de la pièce de Frog.
 export function visuelVivant(cv) {
   const ctx = cv.getContext('2d');
   let res = null; let raf = 0; let env = null; const t0 = performance.now();

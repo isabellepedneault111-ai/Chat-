@@ -14,6 +14,7 @@ export default {
   id: 'nouvelles',
   mount(el) {
     let onglet = 'pour-moi'; let tout = false;
+    // Redessine nos nouvelles : ce que l’autre a fait, ce qu’il me demande.
     function rendre() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: rendre }); return; }
       const o = autre(); const me = espace.me;
@@ -36,6 +37,7 @@ export default {
           : `<p class="nv-vide">${onglet === 'pour-moi' ? (recues.length ? `Tout est vu. ${esc(o)} sera content·e.` : `${esc(o)} n’a encore rien ajouté.`) : 'Tu n’as encore rien envoyé.'}</p>`}`;
       // (Les tâches se recalculent avec les nouvelles : elles s'effacent d'elles-mêmes quand c'est fait.)
     }
+    // Une nouvelle : ce qui s’est passé, le lien pour y aller, et les cases à cocher.
     function item(e, o) {
       const [quoi, lien] = decrire(e); const asks = asksOf(e); const me = espace.me;
       const pourMoi = e.author !== me;

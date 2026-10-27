@@ -104,6 +104,7 @@ installerMotOuvert(); // double-clic sur un mot : ses rimes et ses synonymes
 let cleanup = null;
 let currentId = 'home';
 
+// Le petit lien « Retour au plan » en haut de page : il nomme l’objectif du mois en cours, ou se cache s’il n’y a pas de plan.
 function majRetour() {
   const back = document.querySelector('.retour-plan');
   if (!back) return;
@@ -112,6 +113,7 @@ function majRetour() {
 }
 onEspace((w) => { if (w === 'meta') majRetour(); });
 
+// Le routeur : lit l’adresse après le #, choisit la vue, la monte dans la page et met à jour la navigation, le titre et l’aide.
 async function route() {
   const id = location.hash.replace(/^#\/?/, '').split(/[?/]/)[0];
   // Lien d'invitation : #/rejoindre/<espace>
@@ -203,6 +205,7 @@ onPitch((p, rms) => {
 // --- Pourquoi ça marche : la recherche, section par section ---
 const drawer = $('#drawer');
 const scrim = $('#scrim');
+// Remplit le tiroir « Pourquoi » avec les appuis de la page ouverte (les pages de la voix partagent les mêmes).
 function renderPistes() {
   const key = VOIX.includes(currentId) ? 'voix' : currentId;
   const p = POURQUOI[key] || POURQUOI.home;
@@ -212,6 +215,7 @@ function renderPistes() {
     <div class="hors"><b>La source</b><p>La recherche Consensus de Zaza : « deux personnes qui souhaitent jouer de la musique ensemble », de la préparation à la composition originale.</p></div>
     <p class="fineprint">Le micro est analysé en direct sur l’appareil. Ce que vous ajoutez au mur est stocké dans votre espace à deux.</p>`;
 }
+// Ouvre ou ferme le tiroir latéral, avec son voile, et garde l’accessibilité à jour (aria-hidden).
 function openDrawer(open) {
   drawer.classList.toggle('open', open);
   drawer.setAttribute('aria-hidden', !open);
@@ -232,6 +236,7 @@ scrim.addEventListener('click', () => openDrawer(false));
 // --- Contrainte surprise : la contrainte libère ---
 const modal = $('#modal');
 let lastDefi = -1;
+// Tire une contrainte créative au hasard, jamais deux fois la même de suite.
 function rollDefi() {
   const pool = CONTRAINTES;
   let i;
@@ -253,6 +258,7 @@ window.addEventListener('keydown', (e) => {
 
 // --- Mode projecteur ---
 const projBtn = $('#projBtn');
+// Bascule le mode projecteur (gros caractères, fort contraste) et s’en souvient pour la prochaine visite.
 function setProj(on) {
   document.documentElement.classList.toggle('projector', on);
   projBtn.setAttribute('aria-pressed', on);
@@ -278,6 +284,7 @@ setProj(store.get('projector', false));
 
 // Pastille « nouveau » sur Carnet quand le duo ajoute quelque chose ailleurs dans l'app.
 let unseen = 0;
+// La pastille du Mur : le nombre de nouveautés que je n’ai pas encore vues (9+ au-delà).
 function showBadge() {
   const b = $('#nav [data-id=carnet] .badge');
   b.hidden = !unseen;

@@ -62,6 +62,7 @@ const ONGLETS = {
 
 const SAUTER = new Set(['H1', 'A', 'BUTTON', 'SELECT', 'OPTION', 'TEXTAREA', 'INPUT', 'SCRIPT', 'STYLE', 'CANVAS', 'SVG', 'CODE', 'LABEL']);
 let bulle = null;
+// Affiche la bulle d’aide d’un mot sous l’élément visé.
 function montrer(cible, titre, texte) {
   if (!bulle) { bulle = document.createElement('div'); bulle.className = 'bulle-aide'; bulle.setAttribute('role', 'tooltip'); document.body.appendChild(bulle); }
   bulle.innerHTML = `<b>${titre}</b><span>${texte}</span>`;
@@ -102,6 +103,7 @@ function marquer(racine) {
   });
 }
 
+// Souligne les mots du glossaire dans une page, et le refait quand la page change (sans jamais la bloquer).
 export function installerGlossaire(vue) {
   let t = 0;
   const passe = () => { if (!t) t = setTimeout(() => { t = 0; try { marquer(vue); } catch { /* le glossaire n'est jamais bloquant */ } }, 300); };

@@ -10,6 +10,7 @@ import { photosDuStudio } from './piece.js';
 const autreDe = (me) => (espace.meta?.members || MEMBERS).find((m) => m !== me);
 const inspirationsDites = (m) => { const l = (profileOf(m)?.artistes || []).filter((a) => a?.nom); return l.length > 0 && l.every((a) => a.aime?.length || a.pourquoi); };
 
+// Mes prochains pas : ce que l’app voit à faire pour moi (plages à approuver, inspirations à expliquer…) et ceux qu’on s’est donnés.
 export function mesTaches(me = espace.me) {
   if (!espace.connected || !me) return [];
   const o = autreDe(me); const t = []; const moi = me === espace.me;

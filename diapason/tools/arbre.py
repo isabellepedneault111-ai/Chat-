@@ -27,6 +27,7 @@ FONCTION = re.compile(r'^\s*(?:export\s+)?(?:async\s+)?function\s+([\wÀ-ÿœ]+)
 CONSTE = re.compile(r'^export\s+const\s+([\wÀ-ÿœ]+)\s*=')
 CSS = re.compile(r'^/\*\s*(.+?)\s*\*/')
 DEF = re.compile(r'^(?:def|class)\s+(\w+)')
+# Les éléments d’un fichier : ses sections et ses fonctions (JavaScript), ses blocs commentés (CSS), ses fonctions (Python).
 def elements(f, texte=None):
     if texte is None:
         try: texte = (racine / f).read_text(errors='ignore')
@@ -73,6 +74,7 @@ def notes(f):
         if not com and marque + ' ' in l: com = [l.split(marque + ' ', 1)[1].strip()]
         out[nom] = [sorte, ' '.join(com)[:320]]
     return out
+# Le contenu d’un fichier avant sa dernière retouche, lu dans Git, pour repérer ce qui y est nouveau.
 def precedent(f):
     # Le contenu du fichier avant sa dernière retouche (vide s'il vient de naître).
     h = subprocess.run(['git', 'log', '-2', '--format=%h', '--', f], cwd=racine, capture_output=True, text=True).stdout.split()
@@ -81,10 +83,12 @@ def precedent(f):
 import re
 # La page sur la conception reste à part : on ne la nomme pas dans l'histoire des étapes.
 DISCRET = re.compile(r'fa[cç]on de faire|direction interpr|architecte d.environnement', re.I)
+# Retire d’un nom d’étape ce qui touche la page sur la conception (gardée hors de l’histoire des étapes).
 def discret(sujet):
     if not DISCRET.search(sujet): return sujet
     garde = [x for x in re.split(r' ; |, (?=[a-zé])', sujet) if not DISCRET.search(x)]
     return ' ; '.join(garde) if garde else 'L’arbre : retouches de mise en page'
+# Les dernières retouches d’un fichier, lues dans Git : la date et ce que l’étape a fait.
 def histoire(f):
     # Ses dernières retouches (depuis Diapason) : la date et ce que l'étape a fait, en une phrase.
     out = []
@@ -118,6 +122,7 @@ for f in fichiers:
     h = histoire(f)
     if h: fiche['h'] = h
     noeud['c'][parts[-1]] = fiche
+# Range l’arbre : les dossiers d’abord, puis les fichiers, par ordre alphabétique.
 def liste(n):
     if 'c' in n: return {'n': n['n'], 'c': sorted((liste(x) for x in n['c'].values()), key=lambda x: ('c' not in x, x['n']))}
     return n
@@ -130,6 +135,7 @@ print('data/arbre.json :', len(fichiers), 'fichiers,', lignes_total, 'lignes')
 # Les chantiers hors musique restent anonymes : on montre leur forme, pas leur contenu.
 def git(*a):
     return subprocess.run(['git', *a], cwd=racine, capture_output=True, text=True).stdout.strip()
+# Les étapes (commits) d’une branche : identifiant, date, parents, titre.
 def commits(spec, *opts):
     out = []
     for l in git('log', '--format=%h|%ad|%P|%s', '--date=short', *opts, spec).splitlines():
@@ -137,6 +143,7 @@ def commits(spec, *opts):
         out.append({'h': h, 'd': d, 'p': p.split(), 's': discret(s)})
     return out[::-1]
 ERES = [('Diapason :', 'Diapason'), ('Zaza × Frog', 'Zaza × Frog'), ('FLIP', 'FLIP'), ('Visite', 'La visite'), ('labo 0.5', 'Version 0.5'), ('Diapason Labo', 'Diapason Labo')]
+# L’ère d’une étape (Diapason, FLIP, la visite…), devinée d’après le début de son titre.
 def ere(s):
     for k, v in ERES:
         if s.startswith(k): return v

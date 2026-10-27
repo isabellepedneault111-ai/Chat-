@@ -34,6 +34,7 @@ function pistes(t) {
   return out.map(([txt, href]) => ({ txt, href }));
 }
 
+// Ce que l’autre a fait récemment, pendant mon absence.
 export function pendantHTML() {
   if (!espace.connected || !espace.me) return '';
   const o = other();

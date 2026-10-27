@@ -12,7 +12,9 @@ import { projets, projetCourant, setProjet, projetNom, creerProjet } from '../pr
 import { skyHTML, rencontres, matches, kindOf, sleepingDays } from '../constellation.js';
 import { creerChanson, nomsDeChansons, chansonNommee } from '../chanson.js';
 
+// Échappe un texte avant de l’afficher dans la page : <, &, " et ' deviennent inoffensifs, pour qu’un mot tapé ne casse jamais l’affichage.
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// Une date dite comme on parle : « à l’instant », « il y a 5 min », « hier »…
 export function ago(t) {
   const s = Math.round((Date.now() - t) / 1000);
   if (s < 45) return 'à l’instant';
@@ -113,6 +115,7 @@ const imgBox = (e, cls) => (e.image ? `<div class="${cls}" data-img="${esc(e.id)
 // Le journal et les séances d'atelier vivent dans « Écrire » ; on les envoie au mur d'un geste.
 const onBoard = (e) => BOARD_TYPES.has(e.type) && !e.data?.exemple && !((e.data?.journal || e.data?.atelier || e.data?.etincelle) && !e.data?.aumur);
 const URL_RE = /https?:\/\/[^\s<>"]+/i;
+// Reconnaît d’où vient un lien (Spotify, YouTube, SoundCloud…) pour l’afficher avec le bon lecteur.
 export function linkKind(url) {
   if (/open\.spotify\.com/.test(url)) return 'Spotify';
   if (/youtu\.?be/.test(url)) return 'YouTube';
@@ -131,6 +134,7 @@ export function embedHTML(url) {
 }
 // Une idée vit quand on lui répond : couches et réponses au relais, réponses au mur, bravos.
 const layersOf = (e) => espace.entries.filter((x) => x.id === e.id || x.data?.thread === (e.data?.thread || e.id)).length;
+// Propose la prochaine idée à faire avancer sur le mur : celle qui a le plus d’élan (réponses, couches) sans être finie.
 function nextStep(board) {
   const scored = board.filter((e) => stageOf(e) < 3 && e.type !== 'paroles').map((e) => {
     const layers = e.data?.relais ? layersOf(e) - 1 : 0;
@@ -184,6 +188,7 @@ export default {
       if (stage > from) impact(en, from, stage, before);
     }
 
+    // Dessine toute la page du mur : la capture rapide, les filtres, la carte des idées et le détail ouvert.
     function render() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: render }); return; }
       el.innerHTML = `
@@ -237,6 +242,7 @@ export default {
     }
     const other = () => (espace.meta.members || MEMBERS).find((m) => m !== espace.me) || 'l’autre';
 
+    // Le panneau des réglages de l’espace : le nom, le mot d’accueil, le mot secret.
     function renderSettings() {
       const w = espace.meta.welcome || {};
       el.querySelector('.settings').innerHTML = `
@@ -285,6 +291,7 @@ export default {
     // Signature de ce qui est visible : si rien de visible n'a changé, on ne touche pas au DOM
     // (un lecteur intégré continue de jouer, une saisie n'est pas perdue).
     let lastSig = '';
+    // Redessine les idées du mur seulement si quelque chose a vraiment changé (filtres, idées, recherche) : le mur reste fluide.
     function renderAll(force) {
       if (!el.querySelector('.mur')) return;
       const sig = JSON.stringify([view, fWho, fSong, fKind, fWhen, seed, focus, innerWidth < 700, el.querySelector('.search')?.value, espace.meta.plan, filtered(view !== 'ciel').map((e) => [e.id, e.title, e.author, e.data?.stage, e.data?.song, e.data?.replies?.length, e.data?.perle, e.audio?.id, e.image?.id, e.type === 'paroles' ? '' : e.body])]);
@@ -393,6 +400,7 @@ export default {
       </div>`;
     }
 
+    // La petite carte d’une idée sur le mur : son type, son étape, son titre, ses réponses.
     function cardHTML(e) {
       const t = CARNET_TYPES.find((x) => x.id === e.type) || { label: e.type === 'paroles' ? 'Paroles' : e.type };
       const st = stageOf(e);
@@ -416,6 +424,7 @@ export default {
         </article>`;
     }
 
+    // Le détail complet d’une idée : son contenu, son son, son image, ses réponses, et les gestes pour la faire avancer.
     function fullHTML(e) {
       const t = CARNET_TYPES.find((x) => x.id === e.type) || { label: e.type === 'paroles' ? 'Paroles' : e.type };
       let extra = '';
@@ -486,12 +495,14 @@ export default {
       const enfants = espace.entries.filter((x) => x.data?.rencontre?.includes(e.id));
       return `${e.data?.rencontre?.length === 2 ? `<p class="ren-origin">Née de la rencontre de ${t(e.data.rencontre[0])} et ${t(e.data.rencontre[1])}.</p>` : ''}${enfants.length ? `<p class="ren-origin">A fait naître ${enfants.map((x) => t(x.id)).join(', ')}.</p>` : ''}`;
     }
+    // Ferme le détail d’une idée.
     function closeDetail() {
       openId = null;
       el.querySelector('.detail').hidden = true;
       el.querySelector('.detail-scrim').hidden = true;
     }
 
+    // Ouvre le formulaire pour ajouter une idée d’un type donné (note, texte, son, lien, image).
     function openComposer(type) {
       composing = type;
       const box = el.querySelector('.composer');
@@ -525,6 +536,7 @@ export default {
         <div class="row"><button class="btn primary" data-c="post">Ajouter au mur</button></div>`;
     }
 
+    // Publie l’idée écrite dans le formulaire sur le mur.
     async function postFull() {
       const box = el.querySelector('.composer');
       const title = box.querySelector('[data-c=title]').value.trim();
@@ -553,6 +565,7 @@ export default {
       } catch (err) { toast(err.message); }
     }
 
+    // Envoie un son enregistré sur le serveur, puis le publie comme idée sur le mur.
     async function postAudio(blob, title) {
       const st = el.querySelector('.capture');
       const btn = st.querySelector('[data-c=rec]');
@@ -584,6 +597,7 @@ export default {
       if (f) { e.preventDefault(); postImage(f); }
     });
 
+    // Démarre ou arrête l’enregistrement au micro pour une idée sonore.
     async function toggleRec(btn, onDone) {
       if (recorder) { recorder.stop(); return; }
       try {

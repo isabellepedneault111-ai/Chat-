@@ -16,6 +16,7 @@ export const PHRASES = {
   appel: { nom: 'Appel-réponse', pas: [0, 2, 4, 6, 8, 10], len: 32, aide: 'Une mesure tu chantes, une mesure tu écoutes.' },
 };
 
+// Le petit lecteur de groove (style, tempo, phrase) qui joue sous un exercice.
 export function grooveHTML() {
   const st = store.get('groove', { style: 'Pop', bpm: 84, phrase: 'libre' });
   return `<div class="groove" data-groove>
@@ -28,6 +29,7 @@ export function grooveHTML() {
   </div>`;
 }
 
+// Branche le lecteur de groove ; renvoie la fonction qui l’arrête quand on quitte la page.
 export function bindGroove(root) {
   const box = root.querySelector('[data-groove]');
   if (!box) return () => {};

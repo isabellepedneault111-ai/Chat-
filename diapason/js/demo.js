@@ -2,6 +2,7 @@
 import { espace, emitEntries } from './espace.js';
 import { MEMBERS } from './duo.js';
 
+// Fabrique des entrées d’exemple (fausses, jamais sauvées) pour montrer à quoi ressemble un espace vivant.
 function exemples() {
   const [z, f] = espace.meta?.members || MEMBERS;
   const now = Date.now(); const day = 864e5;
@@ -29,6 +30,7 @@ function exemples() {
 }
 
 let saved = null;
+// Affiche les exemples dans l’espace, sans toucher aux vraies entrées.
 export function montrerExemples() {
   if (espace.demoEntries) return;
   espace.demoEntries = exemples().filter((d) => !espace.entries.some((x) => x.id === d.id));
@@ -38,6 +40,7 @@ export function montrerExemples() {
   if (espace.demoMeta) espace.meta = { ...espace.meta, ...espace.demoMeta };
   emitEntries();
 }
+// Retire les exemples et remet l’espace comme il était.
 export function retirerExemples() {
   if (!espace.demoEntries) return;
   const ids = new Set(espace.demoEntries.map((d) => d.id));

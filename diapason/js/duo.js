@@ -1,8 +1,11 @@
 // Le contenu de Zaza & Frog : tiré de la recherche Consensus de Zaza
 // (« deux personnes qui souhaitent jouer de la musique ensemble »). Chaque élément garde ses sources.
 
+// Les deux membres du duo, dans l’ordre : le premier crée l’espace (Zaza), le second le rejoint (Frog).
 export const MEMBERS = ['Zaza', 'Frog'];
+// Le rôle de chacun, affiché sous son nom.
 export const ROLES = { Zaza: 'voix · guitare · interprète', Frog: 'son · MIDI · piano · composition' };
+// La couleur de chacun (orange pour Zaza, mauve pour Frog) : partout où un nom apparaît, sa couleur le suit.
 export const memberColor = (name) => (name === MEMBERS[1] ? 'var(--frog)' : 'var(--zaza)');
 
 // Le pipeline d'une idée : générer → écouter et évaluer → construire → fixer → jouer (Biasutti 2018, Aslan 2016).
@@ -48,6 +51,7 @@ export const PHASES = {
   tri: { titre: 'Trier vers le mur', but: 'Chaque idée avance d’une étape, reste où elle est, ou part aux archives. Une seule cible pour la prochaine session.', pool: ['f-verbal'], src: 'Biasutti 2018' },
 };
 
+// Les formats de séance : leurs étapes et la durée de chacune, en minutes (duo 60, duo 90, solo, écoute).
 export const FORMATS = [
   { id: 'duo60', label: 'Session duo · 60 min', phases: [['checkin', 5], ['echauffement', 8], ['impro', 15], ['developper', 15], ['structure', 5], ['prise', 4], ['debrief', 8]] },
   { id: 'duo90', label: 'Session duo · 90 min', phases: [['checkin', 5], ['echauffement', 10], ['impro', 20], ['developper', 25], ['structure', 10], ['prise', 8], ['debrief', 12]] },
@@ -55,6 +59,7 @@ export const FORMATS = [
   { id: 'ecoute', label: 'Écoute commune · 20 min', phases: [['reecoute', 12], ['tri', 8]] },
 ];
 
+// Les cibles proposées pour une séance : une seule chose à travailler à la fois.
 export const CIBLES = ['Un groove', 'Un refrain', 'Une ambiance', 'Une transition', 'Les entrées ensemble', 'Le texte d’un couplet', 'Un son d’effet signature', 'La fin d’un morceau'];
 
 // Exercices : z = ce que fait Zaza (voix + guitare), f = ce que fait Frog (piano + effets).
@@ -110,6 +115,7 @@ export const SOLO_CONSIGNES = {
   'a-fragment': { voix: ['Choisis 10 à 30 secondes d’une prise qui t’a allumée.', 'Variation 1 : nuances. Variation 2 : accents. Variation 3 : densité (plus plein, plus vide).', 'Enregistre les trois, garde la meilleure pour Frog.'],
     clavier: ['Choisis 10 à 30 secondes d’une prise qui t’a allumé.', 'Variation 1 : nuances. Variation 2 : accents. Variation 3 : densité (plus plein, plus vide).', 'Enregistre les trois, garde la meilleure pour Zaza.'] },
 };
+// Les consignes d’un exercice : en séance solo, dites à la personne qui le fait (à la voix pour Zaza, au clavier pour Frog) ; sinon, les consignes à deux.
 export function consignesDe(id, { solo = false, moi = '', membres = MEMBERS } = {}) {
   const ex = EXERCICES[id]; if (!ex) return [];
   const v = solo && SOLO_CONSIGNES[id]; return v ? v[moi === membres[1] ? 'clavier' : 'voix'] : ex.comment;
@@ -194,6 +200,7 @@ export const OBJECTIFS = ['Finir 3 à 5 originaux', 'Jouer devant du monde', 'Un
 // Ce qu'on aime dans une chanson qui nous inspire : la précision qui rend le portrait utile (on ne copie pas un artiste,
 // on cherche sa rythmique, sa voix, sa façon de construire).
 export const ASPECTS = [['rythme', 'la rythmique, le groove'], ['voix', 'la voix'], ['texte', 'le texte'], ['melodie', 'la mélodie'], ['accords', 'les accords'], ['son', 'le son, la production'], ['ambiance', 'l’ambiance'], ['energie', 'l’énergie'], ['instrument', 'un instrument, l’arrangement'], ['structure', 'la structure, les surprises'], ['emotion', 'l’émotion']];
+// Le nom lisible d’un aspect aimé chez un artiste (« voix », « énergie »…).
 export const aspect = (k) => ASPECTS.find(([x]) => x === k)?.[1] || k;
 // Un lien YouTube ou Spotify peut s'ouvrir au bon moment (« à 2:14 »).
 export function lienAuMoment(lien, moment) {
@@ -203,7 +210,9 @@ export function lienAuMoment(lien, moment) {
   if (/spotify\.com\/track/.test(lien)) return `${lien.split('#')[0]}#${m[1]}:${m[2].padStart(2, '0')}`;
   return lien;
 }
+// Les styles qu’on peut cocher à l’étape 1.
 export const STYLES = ['Folk', 'Pop', 'Électro', 'Ambient', 'Rock', 'Indie', 'Soul / R&B', 'Jazz', 'Trip-hop', 'Chanson française', 'Trad québécois', 'Hip-hop', 'Musique de film', 'Expérimental'];
+// Les besoins de chacun en paires opposées (un cadre clair ↔ de la liberté…) : un curseur par paire, à l’étape 1.
 export const BESOINS = [
   ['cadre', 'Un cadre clair', 'De la liberté'],
   ['parole', 'On en parle avant', 'On joue, on verra'],
@@ -211,6 +220,7 @@ export const BESOINS = [
   ['seul', 'Préparer seul d’abord', 'Tout créer ensemble'],
   ['retour', 'Des retours doux', 'Des retours directs'],
 ];
+// Les questions à mots libres de l’étape 1 (ce que j’apporte, ce qui me bloque, ce dont j’ai besoin…).
 export const MOTS = [
   ['apporte', 'Ce que j’apporte au duo'],
   ['bloque', 'Ce qui me bloque parfois'],
@@ -227,4 +237,5 @@ export const EVAL = [
   { id: 'texte', label: 'Les mots', aide: 'Paroles, images, hooks' },
   { id: 'plaisir', label: 'Le plaisir', aide: 'Est-ce qu’on a eu du fun?' },
 ];
+// L’étiquette d’une note d’autoévaluation de 0 à 10 (« Pas encore » … « Feu sacré »).
 export const NIVEAUX = ['', 'Pas encore', 'Pas encore', 'Ça germe', 'Ça germe', 'En route', 'En route', 'Solide', 'Solide', 'Wow', 'Feu sacré'];

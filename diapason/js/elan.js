@@ -25,8 +25,11 @@ export function echanges() {
   return out.sort((x, y) => x.t1 - y.t1);
 }
 
+// Tout ce qu’on a créé (hors séances), du plus ancien au plus récent.
 export const creations = () => espace.entries.filter((e) => nouvelle(e) && e.type !== 'session').sort((a, b) => a.createdAt - b.createdAt);
+// Nos séances terminées, avec leur début, leur fin et si on était ensemble.
 export const seances = () => espace.entries.filter((e) => e.type === 'session' && e.data?.doneAt).map((e) => ({ e, a: e.data.startedAt, b: e.data.doneAt, ensemble: e.data.lieu !== 'solo' }));
+// Chaque fois qu’une trace a monté d’un cran (d’idée à brouillon, de brouillon à prise…).
 export const montees = () => espace.entries.flatMap((e) => (e.data?.moves || []).filter((m) => m.to > m.from).map((m) => ({ e, ...m })));
 
 const duree = (ms) => (ms < 3600e3 ? 'dans l’heure' : ms < J ? 'le jour même' : ms < 2 * J ? 'le lendemain' : ms < 7 * J ? `en ${Math.round(ms / J)} jours` : ms < 14 * J ? 'en une semaine environ' : 'après quelques semaines');

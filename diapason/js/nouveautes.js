@@ -11,6 +11,7 @@ const quand = (t) => new Date(t).toLocaleDateString('fr-CA', { weekday: 'long', 
 // La visite précédente est figée au premier affichage de la page : la liste ne s'efface pas sous les yeux.
 const fige = {};
 
+// Le bloc des nouveautés sur l’accueil : ce qui a changé depuis ma dernière visite.
 export function nouveautesHTML() {
   if (!espace.connected || !espace.me) return '';
   const k = `${espace.id}:${espace.me}`;
@@ -59,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.41', quand: '2026-10-27', titre: 'La grande visite, en profondeur', items: [
+    ['Le fil d’une idée', ['La grande visite suit maintenant le chemin d’une idée, en huit chapitres : l’attraper, se retrouver, la jouer, la chanter, l’écrire, la pousser au labo, mesurer le chemin, puis l’envers du décor. On peut sauter d’un chapitre à l’autre. <a href="#/coffre">Ouvrir le coffre →</a>']],
+    ['Chaque section, pas seulement chaque onglet', ['Les disques du labo (en haut), l’accélération jusqu’à la note, les liens, l’onde ; la cathédrale de la rosace jusqu’au MIDI ; des boutons pour entendre pendant la visite. Les icônes aussi : la prise, le filet, le micro et chaque outil du menu ⋯.']],
+    ['L’arbre se montre', ['La visite touche elle-même un fichier de l’arbre, ouvre sa fiche et descend jusqu’à « Ce qu’il contient ». Presque chaque élément de chaque fichier a désormais son explication concrète.']],
+  ] },
   { v: '0.40', quand: '2026-10-27', titre: 'La grande visite', items: [
     ['Tout Diapason Labo, en un tour', ['Trente arrêts : chaque onglet, chaque sous-onglet, chaque icône, un projecteur à la fois, environ cinq minutes. Elle est dans <b>le coffre</b> (menu ⋯, en haut à droite) : « La grande visite : tous les onglets ». <a href="#/coffre">Ouvrir le coffre →</a>', 'À sa prochaine ouverture, Frog la reçoit d’office : l’app a tellement changé depuis sa dernière visite qu’elle remplace, exceptionnellement, cette liste des nouveautés. Il peut la finir plus tard ; elle l’attendra.']],
     ['Le calendrier, cases égales', ['Toutes les cases du calendrier ont la même superficie, en semaine comme en mois.']],
@@ -246,12 +252,14 @@ export const VERSIONS = [
 ] },
 ];
 const cle = (v) => `diapason:maj:version ${v}:${espace.id}`;
+// La fenêtre de mise à jour, une seule fois par personne ; la grande visite la remplace quand l’app a beaucoup changé.
 export function majAvecAmour({ revoir = false } = {}) {
   if (!espace.connected || !espace.me) return;
   // Quand l'app a beaucoup changé depuis la dernière visite de Frog : la grande visite remplace, cette fois, la liste.
   if (!revoir) { import('./grandevisite.js').then((g) => { if (g.grandeVisiteDue()) g.lancerGrandeVisite({ obligatoire: true, onFin: () => VERSIONS.forEach((x) => { try { localStorage.setItem(cle(x.v), '1'); } catch { /* */ } }) }); else majListe(); }); return; }
   majListe({ revoir });
 }
+// La liste des versions que je n’ai pas encore vues.
 function majListe({ revoir = false } = {}) {
   const mem = espace.meta.members || MEMBERS; const frog = espace.me === mem[1];
   if (frog && !revoir && !espace.meta.tour?.[espace.me]) return; // la première fois, c'est la visite qui accueille
@@ -279,6 +287,7 @@ function majListe({ revoir = false } = {}) {
 // la nouvelle version. On regarde donc, quand on revient sur l'app et tous les quarts d'heure, si une version plus
 // récente est en ligne ; si oui, un bandeau propose de la charger (la fenêtre des nouveautés s'ouvre alors).
 let bandeau = null;
+// Va voir si une nouvelle version est en ligne, et propose de recharger.
 async function verifierVersion() {
   if (bandeau || document.visibilityState !== 'visible') return;
   try {
@@ -291,6 +300,7 @@ async function verifierVersion() {
     document.body.appendChild(bandeau);
   } catch { /* hors ligne : on regardera plus tard */ }
 }
+// Vérifie les versions au retour sur l’onglet et toutes les quinze minutes.
 export function guetterVersions() {
   document.addEventListener('visibilitychange', verifierVersion);
   addEventListener('focus', verifierVersion);

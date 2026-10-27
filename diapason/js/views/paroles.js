@@ -36,9 +36,11 @@ const songs = {
     store.set(LOCAL, store.get(LOCAL, []).filter((s) => s.id !== id));
   },
 };
+// Une chanson en texte simple : chaque section avec son nom entre crochets ([Couplet 1], [Refrain]…).
 function plain(song) {
   return song.data.sections.map((s) => `[${kindLabel(song, s)}]\n${s.text}`).join('\n\n');
 }
+// Le nom d’une section, numéroté s’il y en a plusieurs du même genre (Couplet 1, Couplet 2…).
 function kindLabel(song, sec) {
   const k = SECTION_KINDS.find((x) => x.id === sec.kind);
   if (!k?.numbered) return k?.label || sec.kind;
@@ -58,12 +60,14 @@ export default {
     let word = '';
     let dirty = false;
 
+    // Ouvre la chanson dont l’identifiant est dans l’adresse de la page.
     function openFromHash() {
       const id = location.hash.split('/')[2];
       const found = id && songs.list().find((s) => s.id === id);
       if (found) { song = JSON.parse(JSON.stringify(found)); base = found.updatedAt; }
     }
 
+    // Dessine l’atelier de paroles : la liste des chansons et l’éditeur.
     function render() {
       if (espace.id && !espace.connected) { el.innerHTML = '<p class="muted">Connexion à votre espace…</p>'; return; }
       const list = songs.list();
@@ -92,6 +96,7 @@ export default {
       if (word) lookup(word);
     }
 
+    // Dessine l’éditeur de la chanson ouverte : ses sections, le compte des syllabes, les rimes.
     function renderEditor() {
       const ed = el.querySelector('.editor');
       if (!song) {
@@ -113,6 +118,7 @@ export default {
       song.data.sections.forEach((s) => analyse(s.id));
     }
 
+    // Une section de la chanson : son genre, son texte, le compte de syllabes par ligne, les rimes, et les boutons pour la déplacer.
     function sectionHTML(s, i) {
       const n = song.data.sections.length;
       return `
@@ -172,6 +178,7 @@ export default {
       el.querySelector(`[data-sec="${id}"] .sec-label`).textContent = `${kindLabel(song, s)}${total ? ` · ${total} ligne${total > 1 ? 's' : ''}` : ''}${holes ? ` · ${holes} trou${holes > 1 ? 's' : ''}` : ''}${doubts ? ` · ${doubts} à revoir` : ''}`;
     }
 
+    // Prévoit une sauvegarde automatique un instant après la dernière frappe.
     function scheduleSave() {
       clearTimeout(saveTimer);
       dirty = true;
@@ -179,6 +186,7 @@ export default {
       if (st) st.textContent = 'Modification…';
       saveTimer = setTimeout(doSave, 1200);
     }
+    // Sauvegarde la chanson dans l’espace partagé (et signale si l’autre l’a modifiée entre-temps).
     async function doSave(force) {
       if (!song) return;
       try {
@@ -206,6 +214,7 @@ export default {
         saveTimer = setTimeout(doSave, 5000);
       }
     }
+    // Met à jour la liste des chansons.
     function refreshList() {
       const ul = el.querySelector('.song-list ul');
       if (!ul) return;
@@ -213,6 +222,7 @@ export default {
       ul.innerHTML = list.map((s) => `<li><a href="#/paroles/${s.id}" class="song-link${song?.id === s.id ? ' active' : ''}"><b>${esc(s.title || 'Sans titre')}</b><small>${esc(s.author || '')} · ${ago(s.updatedAt)}</small></a></li>`).join('');
     }
 
+    // Cherche un mot dans le lexique : ses rimes, ses syllabes, ses synonymes.
     async function lookup(w) {
       word = w;
       const out = el.querySelector('.wb-out');
@@ -238,6 +248,7 @@ export default {
       if (box && word === w) box.innerHTML = syn == null ? '<span class="muted small">Wiktionnaire inaccessible pour l’instant.</span>' : syn.length ? chips(syn) : '<span class="muted small">Aucun synonyme répertorié.</span>';
     }
 
+    // Insère un mot là où était le curseur dans les paroles (ou le copie s’il n’y a pas de champ ouvert).
     function insertWord(w) {
       const ta = lastField && el.contains(lastField) ? lastField : el.querySelector('.lyrics');
       if (!ta) { navigator.clipboard?.writeText(w); toast(`« ${w} » copié.`); return; }

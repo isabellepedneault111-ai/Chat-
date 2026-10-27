@@ -19,6 +19,7 @@ export const DESSIN = {
   ecoute: `<path d="M30 40V30a30 30 0 0 1 60 0v10" class="m-pied"/><rect x="22" y="36" width="14" height="20" rx="5" class="m-corps"/><rect x="84" y="36" width="14" height="20" rx="5" class="m-corps"/>`,
   autre: `<rect x="20" y="12" width="80" height="36" rx="5" class="m-corps"/><circle cx="40" cy="30" r="6" class="m-bouton"/><rect x="56" y="26" width="34" height="8" rx="2" class="m-ecran"/>`,
 };
+// Le dessin d’un appareil vu d’en haut (clavier, table, enceinte…), à sa couleur.
 export const dessin = (s, couleur) => `<svg viewBox="0 0 120 60" class="m-svg" aria-hidden="true"${couleur ? ` style="${COULEURS[couleur]?.[1] || ''}"` : ''}>${DESSIN[s] || DESSIN.autre}</svg>`;
 
 // Les couleurs du matériel : le corps et son contour (des variables CSS lues par .m-corps).
@@ -52,19 +53,25 @@ export const MEUBLES = {
   affiche: ['Affiche au mur', 12, 3, '<rect x="0" y="0" width="100" height="100" class="p-affiche"/>'],
   traitement: ['Panneaux acoustiques', 20, 4, [...Array(5)].map((_, i) => `<rect x="${1 + i * 20}" y="0" width="18" height="100" rx="2" class="p-mousse"/>`).join('')],
 };
+// Les planchers qu’on peut choisir pour sa pièce.
 export const SOLS = { vin: 'Tapis rouge vin', bois: 'Plancher de bois', sombre: 'Bois foncé', beton: 'Béton', tapis: 'Tapis mur à mur', carrelage: 'Carrelage' };
+// Les couleurs de murs qu’on peut choisir.
 export const MURS = { braise: '#3a2a22', nuit: '#1d2230', foret: '#1f2a22', craie: '#d9d2c3', brique: '#6b3324', noir: '#141210' };
 
 const DEFAUT = { sol: 'bois', mur: 'braise', meubles: [], partage: true, photo: null, photoOpacite: 0.35 };
 // Le studio de Frog a un tapis rouge vin au sol : c'est le point de départ, qu'il ajuste.
 export const piece = () => ({ ...DEFAUT, sol: espace.me === 'Frog' ? 'vin' : DEFAUT.sol, ...store.get('piece', {}) });
+// Change un réglage de la pièce (plancher, murs, meubles, photo) et le garde dans l’appareil.
 export function reglerPiece(change) { store.set('piece', { ...piece(), ...change }); }
+// Ajoute un meuble dans la pièce, à une place libre, à sa taille habituelle.
 export function ajouterMeuble(sorte) {
   const p = piece(); const [, w, h] = MEUBLES[sorte]; const n = p.meubles.length;
   const m = { id: `${sorte}-${Date.now().toString(36)}`, sorte, x: 30 + (n * 9) % 40, y: 35 + (n * 13) % 30, w, h, r: 0 };
   reglerPiece({ meubles: [...p.meubles, m] }); return m;
 }
+// Change un réglage d’un meuble (place, taille, rotation, couleur).
 export function reglerMeuble(id, change) { const p = piece(); reglerPiece({ meubles: p.meubles.map((m) => (m.id === id ? { ...m, ...change } : m)) }); }
+// Retire un meuble de la pièce.
 export function retirerMeuble(id) { const p = piece(); reglerPiece({ meubles: p.meubles.filter((m) => m.id !== id) }); }
 
 // Le studio en une image (pour l'accueil, ou chez l'autre) : la pièce, les meubles, les appareils, les câbles.
@@ -94,13 +101,17 @@ export function studioActuel() {
   return { sol: p.sol, mur: p.mur, meubles: p.meubles, at: Date.now(), appareils: l.map((a) => { const [x, y] = pos(a, autres.indexOf(a), autres.length);
     return { nom: a.nom, sorte: a.sorte, x: +x.toFixed(1), y: +y.toFixed(1), couleur: a.couleur, taille: a.taille, rot: a.rot, lie: a.lie ? l.find((b) => b.k === a.lie)?.nom || '' : '', actif: a.actif && a.branche, hub: a.k === 'app' }; }) };
 }
+// La place d’un appareil dans la pièce : la sienne s’il a été placé, sinon en cercle autour de l’ordinateur.
 export const pos = (a, i, n) => (a.x != null ? [a.x, a.y] : a.k === 'app' ? [50, 50] : [50 + 36 * Math.cos((i / Math.max(1, n)) * Math.PI * 2 - Math.PI / 2 + 0.5), 50 + 31 * Math.sin((i / Math.max(1, n)) * Math.PI * 2 - Math.PI / 2 + 0.5)]);
 
 // Les fiches : la photo, la marque et le modèle de chaque appareil. Gardées dans le profil (pas dans l'appareil) :
 // Frog prend les photos avec son cellulaire, elles apparaissent aussi sur l'ordinateur, et l'autre les voit.
 export const cleFiche = (nom) => String(nom || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+// Les fiches de tous les appareils d’un membre (photo, marque, modèle).
 export const fichesDe = (nom) => profileOf(nom)?.studioFiches || {};
+// La fiche d’un appareil précis d’un membre.
 export const ficheDe = (membre, nomAppareil) => fichesDe(membre)[cleFiche(nomAppareil)] || {};
+// Change la fiche d’un appareil (photo, marque, modèle), dans mon profil partagé.
 export async function reglerFiche(nomAppareil, change) {
   const k = cleFiche(nomAppareil); if (!k) return;
   await saveProfile((d) => ({ studioFiches: { ...(d.studioFiches || {}), [k]: { ...(d.studioFiches?.[k] || {}), ...change } } }));
@@ -124,6 +135,7 @@ export function restaurerDepuisProfil() {
 // La couleur d'un appareil, lue sur sa photo : on compte, au centre de l'image (là où est l'appareil), les pixels les plus
 // proches de chaque couleur du nuancier, et on garde celle qui domine.
 const RGB = { noir: [35, 33, 30], blanc: [230, 228, 222], argent: [165, 166, 162], bois: [140, 92, 52], rouge: [170, 40, 30], bleu: [36, 70, 120], vert: [45, 90, 58], creme: [216, 199, 160] };
+// Devine la couleur d’un appareil sur sa photo : compte les pixels du centre de l’image et garde la couleur du nuancier qui domine.
 export async function couleurDePhoto(file) {
   const bmp = await createImageBitmap(file); const c = document.createElement('canvas'); c.width = 60; c.height = 60;
   const g = c.getContext('2d'); g.drawImage(bmp, bmp.width * 0.2, bmp.height * 0.2, bmp.width * 0.6, bmp.height * 0.6, 0, 0, 60, 60);

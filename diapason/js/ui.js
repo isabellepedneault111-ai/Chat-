@@ -2,9 +2,12 @@
 import { isBlack, mtof, nameFR, nameEN } from './music.js';
 import { pluck } from './audio.js';
 
+// Raccourci : le premier élément de la page qui correspond au sélecteur.
 export const $ = (sel, root = document) => root.querySelector(sel);
+// Raccourci : tous les éléments de la page qui correspondent au sélecteur, en tableau.
 export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
+// Lit une variable CSS (une couleur, une mesure) définie dans la feuille de style.
 export function css(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
@@ -44,6 +47,7 @@ export function animate(fn) {
 }
 
 let toastTimer = 0;
+// Affiche un petit message en bas de l’écran, qui disparaît tout seul après quelques secondes.
 export function toast(msg) {
   const el = $('#toast');
   el.textContent = msg;
@@ -52,6 +56,7 @@ export function toast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
 }
 
+// La mémoire de l’appareil (localStorage, préfixe « diapason: ») : lire et écrire sans planter si le navigateur la refuse.
 export const store = {
   get(key, fallback) {
     try {
@@ -64,10 +69,12 @@ export const store = {
   },
 };
 
+// Le profil gardé dans cet appareil (l’ancien système, avant l’espace partagé).
 export const getProfile = () => store.get('profile', null);
 
 // Clavier de piano en DOM, jouable à la souris, au doigt et (optionnellement) au clavier d'ordi.
 const PC_KEYS = ['a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j', 'k', 'o', 'l', 'p', ';'];
+// Dessine un clavier de piano jouable (souris, doigt, et lettres du clavier d’ordi si demandé) dans un élément de la page.
 export function keyboard(host, { from = 48, to = 72, labels = true, playable = true, pcKeys = false, onPlay } = {}) {
   const el = document.createElement('div');
   el.className = 'kb';
@@ -137,6 +144,7 @@ export function keyboard(host, { from = 48, to = 72, labels = true, playable = t
   };
 }
 
+// Un anneau de progression en SVG (pct de 0 à 1) : le cercle se remplit à la proportion donnée.
 export function ring(pct, size = 64, stroke = 6) {
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;

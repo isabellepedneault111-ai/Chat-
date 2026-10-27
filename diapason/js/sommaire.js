@@ -87,6 +87,7 @@ const POINTS = (t) => t.split(/\s*;\s*/).flatMap((x) => (/\s:\s/.test(x) ? [x] :
 const replie = () => { try { return localStorage.getItem('diapason:mandatReplie') === '1'; } catch { return false; } };
 const idDe = () => (location.hash.replace(/^#\/?/, '').split(/[?#]/)[0]) || '';
 const esc = (x) => String(x ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// Installe le sommaire « Sur cette page » : la liste des sections, et un petit bouton qui la rouvre plus bas.
 export function installerSommaire(vue) {
   let t = 0; let sig = ''; let observer = null;
   // Plus bas dans la page : un petit bouton rouvre la même liste, en colonne.

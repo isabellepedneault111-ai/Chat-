@@ -85,6 +85,7 @@ export default {
 
     // ---------- Le partage : l'autre voit le studio ----------
     let dernier = ''; let minuterie = 0;
+    // Partage mon studio avec l’autre, un instant après le dernier changement.
     function partager() {
       clearTimeout(minuterie);
       minuterie = setTimeout(async () => {
@@ -93,6 +94,7 @@ export default {
         try { await saveProfile(() => ({ studio: st })); } catch { /* hors ligne : ce sera pour la prochaine fois */ }
       }, 1500);
     }
+    // La case « partager mon studio » et l’accès au studio de l’autre.
     function rendrePartage() {
       const p = piece(); const chez = profileOf(autre)?.studio;
       q('.m-partage').innerHTML = espace.connected ? `<label class="check"><input type="checkbox" data-p="partage" ${p.partage ? 'checked' : ''}> <b>Montrer mon studio à ${esc(autre)}</b> : il apparaît dans « Notre projet », à côté du sien (la pièce, les meubles, les appareils et leurs photos). Chacun garde son propre studio.</label>${profileOf(espace.me)?.studioPhoto ? `<label class="check"><input type="checkbox" data-p="partagephoto" ${profileOf(espace.me)?.studioPhotoPartagee !== false ? 'checked' : ''}> et la photo de la pièce</label>` : ''}${chez ? ` <a class="btn small" href="#/materiel?chez=${encodeURIComponent(autre)}">Voir le studio de ${esc(autre)} →</a>` : ''}` : '<p class="muted small">Connecte-toi à votre espace pour montrer ton studio à l’autre.</p>';
@@ -214,6 +216,7 @@ export default {
     });
     cartes.addEventListener('keydown', (e) => { const a = e.target.closest('.m-app'); if (a && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); choix = { t: 'a', k: a.dataset.k }; rendre(); } });
 
+    // Applique un changement fait dans la fiche d’un appareil (nom, photo, branchement…).
     async function ficheChange(champ, input) {
       const a = liste.find((x) => x.k === choix.k); if (!a) return;
       try {

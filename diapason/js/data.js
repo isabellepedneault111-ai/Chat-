@@ -2,6 +2,7 @@
 // Pour ajouter un exercice, une progression, une piste ou un défi : modifier ce fichier seulement.
 // (Voir .claude/skills/diapason/SKILL.md pour le format détaillé.)
 
+// Les modules de la voix (accord, miroir, tessiture…) : leur nom, leur couleur et leur promesse en une phrase.
 export const MODULES = [
   { id: 'accord', num: '★', name: 'Voix + piano', color: 'var(--rec)', tagline: 'Les claviers de Frog coachent la voix de Zaza, accord par accord.' },
   { id: 'miroir', num: '01', name: 'Miroir', color: 'var(--c-miroir)', tagline: 'La voix, dessinée en direct.' },
@@ -122,6 +123,7 @@ export const DRUM_PRESETS = {
   'Vide': { k: '0000000000000000', s: '0000000000000000', h: '0000000000000000', c: '0000000000000000' },
 };
 
+// Les rapports de pulsation de la cathédrale rythmique, du plus simple au plus riche.
 export const RATIO_PRESETS = [
   { id: 'uni', name: 'Une seule pulsation', ratios: [1], label: '1', rhythm: 'Un battement régulier, comme un cœur.', pitch: 'Une seule note.' },
   { id: 'oct', name: 'Octave', ratios: [1, 2], label: '1 : 2', rhythm: 'Un disque tourne deux fois plus vite : noires et croches.', pitch: 'Deux notes si semblables qu’elles portent le même nom.' },
@@ -152,6 +154,7 @@ export const BILAN_QUESTIONS = [
   'Notre prochaine étape, concrètement',
 ];
 
+// Les critères de l’autoévaluation, chacun avec une phrase « je » pour se situer.
 export const EVAL_CRITERES = [
   { label: 'Justesse et contrôle vocal', aide: 'Je tiens mes notes, je respire, je ne force pas.' },
   { label: 'Rythme et synchronisation', aide: 'On reste ensemble sur le tempo.' },

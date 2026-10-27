@@ -95,12 +95,14 @@ const ARBRE = ['Diapason Labo', 'Un environnement hybride : des sons fabriqués 
 ]];
 
 const ETQ = { [F]: 'f', [E]: 'e', [C]: 'c', [D]: 'd' };
+// Un nœud de l’arbre en liste : son nom, son étiquette et, s’il a un son, un bouton pour l’écouter.
 function noeud([nom, detail, etq, son, enfants], prof) {
   const tete = `<span class="ar-nom">${nom}</span>${etq ? `<em class="ar-etq ar-${ETQ[etq]}">${etq}</em>` : ''}${son ? `<button class="icon-btn tiny ar-son" data-son="${son}" aria-label="Écouter : ${nom}">▶</button>` : ''}<small class="ar-det">${detail}</small>`;
   if (!enfants) return `<li class="ar-feuille">${tete}</li>`;
   return `<li><details ${prof < 3 && !/^Les pièces|^Où vivent|^Les fondations|^Les mots/.test(nom) ? 'open' : ''}><summary>${tete}</summary><ul>${enfants.map((x) => noeud(x, prof + 1)).join('')}</ul></details></li>`;
 }
 
+// Joue le son d’un élément (batterie, basse…) pour l’entendre.
 function ecouter(son) {
   const c = audio(); c.resume(); const t = c.currentTime + 0.05;
   if (drums[son]) { [0, 0.5, 1].forEach((x) => drums[son](t + x)); return; }
@@ -130,6 +132,7 @@ const couleur = (n) => (n.c ? COUL.dossier : COUL[(n.n.split('.').pop() || '').t
 // Les fiches : chaque point cliquable garde ici ce qu'on sait de lui.
 let FICHES = []; let ETAPES = [];
 let RECENT = ''; // la date de la dernière retouche : ces fichiers brillent
+// Dessine l’arbre radial : un point par dossier et par fichier, en branches depuis le centre.
 function dessinArbre(data) {
   FICHES = [];
   const R = 330; let feuilles = 0; let prof = 0; let dossiers = 0;
@@ -170,6 +173,7 @@ function dessinArbre(data) {
 
 // La généalogie : chaque étape du projet (un point), chaque branche de travail (une ligne), les fusions.
 const ERE_COUL = { Diapason: '#6f9fe0', 'Zaza × Frog': '#93b08e', FLIP: '#e8c27a', 'La visite': '#ff6fae', 'Version 0.5': '#b58cf0', 'Diapason Labo': '#f3c77a' };
+// Dessine la généalogie : la lignée des étapes date par date, et les autres chantiers en branches.
 function dessinGenealogie(g) {
   ETAPES = [];
   const tous = g.lanes.flatMap((l, li) => l.c.map((c, k) => ({ ...c, li, k })));
@@ -205,6 +209,7 @@ function dessinGenealogie(g) {
 const SORTE = { js: 'Code (JavaScript) : ce que l’app fait', mjs: 'Code du serveur : là où nos données sont gardées', css: 'Styles : l’allure de l’app', html: 'La page d’entrée', mp3: 'Un son', json: 'Des données', tsv: 'Des données de langue', jpg: 'Une image', mp4: 'Une vidéo', svg: 'Une image dessinée', py: 'Un outil de construction', sh: 'Un outil de construction', toml: 'Les réglages de mise en ligne', md: 'Une note', txt: 'Une note' };
 const jour = (d) => (d ? new Date(`${d}T12:00`).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric' }) : '');
 const compteFeuilles = (n) => (n.c ? n.c.reduce((a, x) => a + compteFeuilles(x), 0) : 1);
+// La fiche d’un point de l’arbre : un dossier (ce qu’il contient) ou un fichier (son rôle, ses retouches, ses éléments).
 function ficheFichier(n) {
   const chemin = n.chemin.replace(/^Diapason Labo\//, '').replace(/^la base\//, '');
   if (n.c) {
@@ -222,6 +227,7 @@ function ficheFichier(n) {
     ${n.el?.length ? `<div class="ar-f-el"><b>Ce qu’il contient</b>${n.el.some((x) => x[1]) ? ' <span class="ar-nv">nouveau</span> = ajouté à sa dernière retouche' : ''}<p>${n.el.map(([x, nv, so, com], k) => `<button type="button" class="${x.startsWith('§') ? 'ar-sec' : 'ar-fn'} ${nv ? 'nv' : ''}" data-el="${k}" data-so="${esc(so || '')}" data-com="${esc(com || '')}" title="${esc(com || SORTE_EL[so]?.[0] || '')}">${esc(x.replace(/^§ /, ''))}</button>`).join('')}</p><div class="ar-el-quoi" hidden></div><p class="muted small">Touche un nom : ce que c’est pour un développeur, et ce que ça fait concrètement. Les sections (en gras) sont les grandes parties du fichier ; les autres noms, ses fonctions et ses valeurs.</p></div>` : ''}
     ${ext === 'mp3' && chemin.startsWith('data/sons/') ? `<button class="btn small" data-mp3="${esc(chemin)}">▶ Écouter ce son</button>` : ''}`;
 }
+// La fiche d’une étape de la généalogie : ce qui a changé, combien de fichiers et de lignes.
 function ficheEtape(c) {
   if (!c.lane.musique) {
     return `<p class="ar-f-sorte" style="--c:#6d655a">${esc(c.lane.nom)}</p><h3>Une étape le ${jour(c.d)}</h3>
@@ -301,6 +307,7 @@ export default {
       // Le temps réellement passé, et un repère du génie logiciel pour situer l'échelle (pas la qualité).
       gData = g; cadence();
     }).catch(() => { el.querySelector('.gn-host').innerHTML = '<p class="muted">La généalogie n’a pas pu se charger.</p>'; });
+    // La cadence : le rythme de travail mesuré dans l’historique, comparé à une équipe sans IA (durée et coût).
     function cadence() {
       const g = gData; const cd = g?.cadence; const cad = el.querySelector('.ar-cad');
       if (cd && cad && !cad.dataset.fait && /\d/.test(el.querySelector('.ar-mot-lignes').textContent)) {
@@ -309,11 +316,15 @@ export default {
         const jp = (n) => Math.round(lignes / n);
         const virg = (x) => (x < 10 ? x.toFixed(1) : String(Math.round(x))).replace('.', ',');
         const an = (j) => virg(j / 220); const mois = (j) => virg(j / 5 / 21);
+        // Le coût : le salaire horaire médian d'un développeur de logiciels au Québec (Guichet-Emplois, CNP 21232, 45,67 $),
+        // sur des journées de 8 h. Salaire seulement : sans charges sociales, matériel ni gestion, donc une borne basse.
+        const TAUX = 45.67; const cout = (j) => `${Math.round((j * 8 * TAUX) / 1000).toLocaleString('fr-CA')} k$`;
         cad.outerHTML = `<li class="ar-cad" data-fait="1"><b>${cd.etapes}</b> étapes validées, en ≈ <b>${String(cd.heuresActives).replace('.', ',')} h</b> d’activité mesurée sur ${cd.jours} jours (${String(cd.heuresTotales).replace('.', ',')} h écoulées)</li>
           <li>Une itération toutes les <b>${min} minutes</b> environ</li>
           <li>Repère du génie logiciel : <b>10 à 50 lignes</b> de code fini par développeur et par jour, conception et tests compris (McConnell, 2004)</li>
           <li>Sans IA, ce volume représenterait <b>${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours-personnes</b> : <b>${an(jp(50))} à ${an(jp(10))} années</b> pour une personne seule (220 jours ouvrables par an), ou <b>${mois(jp(50))} à ${mois(jp(10))} mois</b> pour une équipe de cinq (21 jours ouvrables par mois)</li>
-          <li class="ar-cad-res">Le nombre de lignes est une mesure grossière : il situe l’échelle, pas la qualité.</li>`;
+          <li>Coût moyen sans IA, au salaire médian d’un développeur au Québec (<b>45,67 $/h</b>, Guichet-Emplois) : <b>${cout(jp(50))} à ${cout(jp(10))}</b> pour une personne seule. Pour une équipe de cinq, <b>la même somme</b> : elle va cinq fois plus vite, mais paie cinq salaires (et la coordination en plus)</li>
+          <li class="ar-cad-res">Lignes et salaire sont des mesures grossières : ils situent l’échelle, pas la qualité. Le coût exclut les charges sociales, le matériel et la gestion : c’est une borne basse.</li>`;
         // Le graphique comparatif : la durée, en jours de travail, sur une échelle logarithmique (2 jours et 2 000 jours
         // tiennent sur la même ligne). Une barre par scénario, de l'estimation basse à la haute.
         // Le graphique comparatif, proportionnel : chaque barre part de zéro, sa longueur est la durée (en jours de travail).
@@ -321,8 +332,8 @@ export default {
         const jt = cd.heuresActives / 8; const fig = el.querySelector('.ar-cad-g'); const max = jp(10);
         const P = (v) => (v / max) * 100;
         const rangs = [['Avec l’IA', `réalisé : ${String(cd.heuresActives).replace('.', ',')} h actives`, jt, jt, 'ia', `${virg(jt)} j`, `${virg(jt)} jours de travail`],
-          ['Équipe de cinq', `estimé sans IA : ${mois(jp(50))} à ${mois(jp(10))} mois`, jp(50) / 5, jp(10) / 5, 'sans', `${Math.round(jp(50) / 5)}–${Math.round(jp(10) / 5)} j`, `${Math.round(jp(50) / 5)} à ${Math.round(jp(10) / 5)} jours ouvrables`],
-          ['Une personne seule', `estimé sans IA : ${an(jp(50))} à ${an(jp(10))} ans`, jp(50), jp(10), 'sans', `${jp(50).toLocaleString('fr-CA')}–${jp(10).toLocaleString('fr-CA')} j`, `${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours ouvrables`]];
+          ['Équipe de cinq', `estimé sans IA : ${mois(jp(50))} à ${mois(jp(10))} mois · ${cout(jp(50))} à ${cout(jp(10))}`, jp(50) / 5, jp(10) / 5, 'sans', `${Math.round(jp(50) / 5)}–${Math.round(jp(10) / 5)} j`, `${Math.round(jp(50) / 5)} à ${Math.round(jp(10) / 5)} jours ouvrables`],
+          ['Une personne seule', `estimé sans IA : ${an(jp(50))} à ${an(jp(10))} ans · ${cout(jp(50))} à ${cout(jp(10))}`, jp(50), jp(10), 'sans', `${jp(50).toLocaleString('fr-CA')}–${jp(10).toLocaleString('fr-CA')} j`, `${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours ouvrables`]];
         const pas = max > 1500 ? 500 : max > 600 ? 200 : 100; const reperes = []; for (let t = 0; t <= max; t += pas) reperes.push(t);
         const fois = Math.round(jp(50) / 5 / jt);
         fig.hidden = false;

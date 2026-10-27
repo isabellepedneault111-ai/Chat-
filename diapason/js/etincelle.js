@@ -5,6 +5,7 @@ import { toast } from './ui.js';
 import { FLAME } from './marque.js';
 
 let rec = null;
+// Installe le bouton flottant « Étincelle » : une idée attrapée au vol, en deux gestes.
 export function initEtincelle() {
   const btn = document.createElement('button');
   btn.className = 'etincelle';
@@ -16,6 +17,7 @@ export function initEtincelle() {
   btn.addEventListener('click', ouvrir);
 }
 
+// Ouvre la feuille de l’étincelle : un mot, un son ou une image, rangé tout de suite au Mur.
 function ouvrir() {
   if (!espace.connected || !espace.me) { toast('Entre d’abord dans votre espace.'); return; }
   if (document.querySelector('.et-sheet')) return;

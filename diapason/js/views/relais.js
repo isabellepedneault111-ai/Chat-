@@ -19,14 +19,17 @@ export const GROUPES = [
   ['La forme', [['refrain', 'Fais-en un refrain', 'vois si c’est un refrain'], ['coupe', 'Garde l’essentiel', 'coupe ce qui est de trop'], ['plus-tard', 'Pour plus tard', 'garde-le pour un autre morceau']]],
   ['Le cœur', [['ecoute', 'Juste écoute', 'écoute, c’est un cadeau'], ['bien', 'Pour te faire du bien', 'c’est pour te faire du bien']]],
 ];
+// Toutes les demandes qu’on peut faire à l’autre (chante dessus, réponds, développe…), à plat.
 export const ASKS = GROUPES.flatMap(([, l]) => l);
 const askOf = (id) => ASKS.find((a) => a[0] === id);
+// Les demandes jointes à une entrée du relais.
 export const asksOf = (e) => (e.data?.asks?.length ? e.data.asks : e.data?.ask ? [e.data.ask] : []).map(askOf).filter(Boolean);
 
 // Ce qu'on demande à l'autre, réutilisé partout (relais, ambiances, grimoire). La lune en suggère quelques-unes :
 // au temps de semer, on demande de créer ; de faire grandir, de développer ; de faire entendre, d'écouter ; de laisser aller, de trier.
 const PAR_TEMPS = { semer: ['chante', 'melodie', 'ecris', 'evoque'], grandir: ['harmonise', 'accords', 'rythme', 'continue', 'habille'], entendre: ['ecoute', 'bien', 'refrain'], laisser: ['coupe', 'plus-tard', 'titre'] };
 const NOM_TEMPS = { semer: 'nouvelle lune, le temps de créer', grandir: 'lune qui grossit, le temps de façonner', entendre: 'pleine lune, le temps de faire entendre', laisser: 'lune qui décroît, le temps de trier' };
+// Le choix de ce qu’on demande à l’autre (une ou plusieurs demandes, celles que la lune suggère marquées ☾), réutilisé dans plusieurs pages.
 export function intentions(host, { to = 'l’autre', dark = false } = {}) {
   const chosen = new Set(); const l = lune(); const sugg = new Set(PAR_TEMPS[l.temps] || []);
   host.innerHTML = `<div class="intents ${dark ? 'dark' : ''}">
@@ -44,6 +47,7 @@ export function intentions(host, { to = 'l’autre', dark = false } = {}) {
   });
   return { value: () => ({ asks: [...chosen], intent: host.querySelector('[data-int-free]').value.trim() }) };
 }
+// Les demandes et l’intention d’une entrée, en petites étiquettes.
 export function intentsHTML(e) {
   const a = asksOf(e);
   return `${a.map((x) => `<span class="rl-ask">${esc(x[1])}</span>`).join('')}${e.data?.intent ? `<span class="rl-intent">« ${esc(e.data.intent)} »</span>` : ''}`;
@@ -73,6 +77,7 @@ export async function sendSound(blob, { title, asks = [], intent = '', thread, o
 
 // ---------- Lecture par couches ----------
 const bufs = new Map();
+// Le son décodé d’une entrée du relais (téléchargé une seule fois).
 async function bufferOf(e) {
   if (e._buf) return e._buf;
   if (!bufs.has(e.audio.id)) bufs.set(e.audio.id, audioURL(e.audio).then((u) => fetch(u)).then((r) => r.arrayBuffer()).then((b) => audio().decodeAudioData(b)));
@@ -85,6 +90,7 @@ function chainOf(e) {
   while (cur.data?.over) { const base = espace.entries.find((x) => x.id === cur.data.over); if (!base || list.includes(base)) break; list.push(base); cur = base; }
   return list.reverse(); // du premier son à la dernière couche
 }
+// Prépare une chaîne de couches pour la lecture : chaque couche décodée et son décalage dans le temps.
 async function prepare(chain) {
   const bs = await Promise.all(chain.map(bufferOf));
   const starts = [0];
@@ -127,6 +133,7 @@ export default {
     let sig = '';
     let picker = null;
 
+    // Dessine la page du relais : enregistrer, écrire, et les fils de nos échanges.
     function shell() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: shell }); return; }
       el.innerHTML = `
@@ -163,6 +170,7 @@ export default {
       renderWork();
     }
 
+    // Remplit la liste des micros disponibles pour enregistrer.
     async function fillDevices() {
       const sel = el.querySelector('[data-r=dev]');
       if (!sel || !navigator.mediaDevices?.enumerateDevices) return;
@@ -194,6 +202,7 @@ export default {
         </section>`).join('');
       if (focus) host.querySelector('.rl-item.focus')?.scrollIntoView({ block: 'center' });
     }
+    // Un fil du relais : le son ou le texte, ses couches, ses demandes, et les boutons pour écouter ou répondre.
     function itemHTML(e, focus) {
       const base = e.data?.over && espace.entries.find((x) => x.id === e.data.over);
       const layers = e.audio ? chainOf(e).length : 0;
@@ -229,6 +238,7 @@ export default {
 
     // ---------- Atelier : écrire ou enregistrer sur un son ----------
     function stopPlay() { playing?.stop(); playing = null; clearTimeout(loopTimer); }
+    // Joue toutes les couches d’un fil ensemble, calées dans le temps (en boucle si demandé).
     async function play(e, { loop = false, onStart } = {}) {
       stopPlay();
       const prep = await prepare(chainOf(e));
@@ -244,6 +254,7 @@ export default {
       return prep;
     }
 
+    // La zone de travail : répondre par-dessus un son, habiller un texte, ou commencer un nouveau fil.
     function renderWork() {
       const box = el.querySelector('.rl-work');
       if (!box) return;
@@ -275,6 +286,7 @@ export default {
         box.innerHTML = `${head}`;
       }
     }
+    // Ferme la zone de travail et revient aux fils.
     function close() { stopPlay(); work = null; renderWork(); renderThreads(true); }
 
     // ---------- Enregistrement ----------
@@ -318,6 +330,7 @@ export default {
       }, 250);
     }
 
+    // La relecture avant l’envoi : réécouter sa prise, la caler, choisir ses demandes.
     function renderReview() {
       const box = el.querySelector('.rl-review');
       box.hidden = !pending;
@@ -343,6 +356,7 @@ export default {
       picker = intentions(box.querySelector('.rl-intents'), { to, dark: true });
     }
 
+    // Envoie au relais : le son sur le serveur, puis l’entrée avec ses demandes, pour l’autre.
     async function send() {
       const box = el.querySelector('.rl-review');
       const btn = box.querySelector('[data-r=send]');

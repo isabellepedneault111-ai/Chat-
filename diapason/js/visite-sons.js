@@ -63,6 +63,7 @@ const BASSE = [36, 33, 29, 31];
 const MELO = [[[76, 1.5], [74, 0.5], [72, 2]], [[0, 2], [69, 1], [72, 1]], [[72, 1.5], [71, 0.5], [69, 2]], [[0, 1], [67, 1], [74, 2]]];
 const hz = (m) => 440 * 2 ** ((m - 69) / 12);
 const bande = { t: 0, next: 0, bar: 0, t0: 0, section: 'accueil', couche: 0 };
+// Programme une mesure de la musique d’ambiance de la visite (seize doubles-croches), plus fournie selon la section.
 function mesure(w, n) {
   const sec = bande.section; const ch = n % 4;
   const lourd = sec === 'coach'; const c = bande.couche;
@@ -95,12 +96,14 @@ const PISTES = {
 const bufs = {}; const charges = {};
 let decal = 0; // transposition des accents dans la tonalité de la pièce qui joue
 let lecture = null;
+// Télécharge et décode une pièce de Frog (une seule fois).
 function chargePiste(id) {
   if (!charges[id]) charges[id] = fetch(PISTES[id].url).then((r) => (r.ok ? r.arrayBuffer() : Promise.reject())).then((b) => audio().decodeAudioData(b)).then((buf) => { bufs[id] = buf; return buf; }).catch(() => { bufs[id] = false; return false; });
   return charges[id];
 }
 const pisteDe = (section) => (section === 'coach' ? 'joywalk' : 'projet1');
 const niveau = () => (bande.section === 'coach' ? 0.95 : 0.8);
+// Joue une pièce de Frog à partir d’un moment donné, et retient où on en est.
 function jouePiste(l, offset, when) {
   const c = audio(); const P = PISTES[l.id];
   const src = c.createBufferSource(); src.buffer = bufs[l.id];
@@ -118,16 +121,19 @@ function jouePiste(l, offset, when) {
     jouePiste(l, A - P.xf, fin - P.xf);
   }, Math.max(0, (fin - c.currentTime - 2.5) * 1000));
 }
+// Fait monter ou descendre le volume de la pièce en cours, en douceur.
 function fondu(l, vers, duree) {
   const c = audio(); const gg = l.master.gain;
   gg.cancelScheduledValues(c.currentTime); gg.setValueAtTime(Math.max(0.0001, gg.value), c.currentTime); gg.linearRampToValueAtTime(vers, c.currentTime + duree);
 }
+// Arrête la pièce en cours avec un fondu.
 function arretePiste(duree = 1.5) {
   if (!lecture) return;
   const l = lecture; lecture = null;
   clearTimeout(l.timer); fondu(l, 0.0001, duree);
   setTimeout(() => l.src.forEach((x) => { try { x.stop(); } catch { /* déjà arrêtée */ } }), duree * 1000 + 200);
 }
+// Démarre une pièce de Frog (si le son est permis), en fondu enchaîné avec la précédente.
 function demarrePiste(id) {
   const c = audio();
   if (c.state !== 'running' || !bufs[id] || (lecture && lecture.id === id)) return;
@@ -153,6 +159,7 @@ function laissePasser(duree = 2.6, creux = 0.32) {
   gg.linearRampToValueAtTime(n * creux, c.currentTime + 0.15);
   gg.setValueAtTime(n * creux, c.currentTime + duree); gg.linearRampToValueAtTime(n, c.currentTime + duree + 0.8);
 }
+// Démarre une pièce dès que le navigateur permet le son (après un premier geste).
 function lancerPiste(id) {
   const c = audio();
   const go = () => demarrePiste(id);
@@ -166,6 +173,7 @@ function lancerPiste(id) {
   }
 }
 
+// Lance la bande-son de la visite pour une section.
 export function bandeStart(section = 'accueil') {
   bande.section = section;
   if (!sonActif()) return;
@@ -190,15 +198,21 @@ export function bandeStart(section = 'accueil') {
     addEventListener('keydown', once, { once: true });
   }
 }
+// Change de section dans la visite : la bande-son suit (sans couper la musique si c’est la même pièce).
 export function bandeSection(section, couche = 0) {
   bande.section = section; bande.couche = couche;
   if (lecture && lecture.id !== pisteDe(section)) bandeStart(section);
 }
+// Arrête la bande-son de la visite.
 export function bandeStop() { clearInterval(bande.t); bande.t = 0; bande.couche = 0; arretePiste(); }
 
+// Vrai si le son de la visite est activé.
 export const sonActif = () => store.get('visiteSon', true);
+// Active ou coupe le son de la visite.
 export function basculerSon() { const v = !sonActif(); store.set('visiteSon', v); if (!v) bandeStop(); return v; }
+// Précharge les pièces et les instruments de la visite.
 export const prechargerVisite = () => { chargePiste('projet1'); chargePiste('joywalk'); return prechargerSons(['piano', 'rhodes', 'voix']); };
+// Joue un petit son d’illustration de la visite, par son nom.
 export function jouer(nom) {
   if (!nom || !sonActif() || !SONS[nom]) return;
   try {
@@ -214,6 +228,7 @@ export function jouer(nom) {
 // accélèrent ensemble jusqu'à chanter Ré, Fa et La dans le rapport 6:7:9. C'est un ré mineur plus sombre, à la tierce
 // 33 cents plus basse que celle du piano : un accord qu'aucun clavier ne peut jouer, dans la tonalité de Projet 1.
 export const LABO = { n: [6, 7, 9], monte: 3.6, tient: 2.6, fin: 146.83 / 6 }; // fin : tours par seconde où le disque à 6 bosses chante Ré3
+// Joue l’exemple du labo pendant la visite : des clics qui accélèrent jusqu’à devenir un accord.
 export function laboAccord() {
   const c = audio();
   let t = c.currentTime + 0.15; let mesure = 2;
@@ -238,10 +253,12 @@ export function laboAccord() {
   } catch (e) { console.debug('labo', e); }
   return info;
 }
+// L’heure du moteur audio (en secondes), pour caler les animations sur le son.
 export const horloge = () => audio().currentTime;
 
 // La pièce de Frog telle qu'elle est chargée, et où on en est dans le fichier en ce moment (pour le portrait de la chanson).
 export const tamponPiste = (id = 'projet1') => (bufs[id] ? bufs[id] : chargePiste(id));
+// Où on en est dans la pièce de Frog qui joue (pour le portrait de la chanson).
 export function positionPiste() {
   if (!lecture?.pos?.length) return null;
   const t = audio().currentTime;
@@ -252,6 +269,7 @@ export function positionPiste() {
 // Le troisième musicien, sur la pièce de Frog : notre phrase (Ré Fa Sol La), puis sa réponse, la même renversée
 // autour du Ré (Ré Si♭ La Sol : ce qui montait descend), toutes deux dans le ré mineur de Projet 1 et sur son temps.
 export const TROIS = { a: [62, 65, 67, 69], b: [62, 58, 57, 55], ryt: [1, 1, 1, 2], pause: 1 };
+// La réponse musicale du « troisième membre » pendant la visite, calée sur le tempo de la pièce en cours.
 export function troisReponse() {
   const c = audio(); let t = c.currentTime + 0.15; let noire = 0.5;
   const son = sonActif() && c.state === 'running';

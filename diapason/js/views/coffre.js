@@ -7,6 +7,7 @@ import { intentsHTML } from './relais.js';
 import { toast } from '../ui.js';
 import { hydrateImages } from './carnet.js';
 
+// Met une trace dans le coffre, ou l’en retire (une perle).
 export async function togglePerle(e) {
   const r = await saveEntry({ ...e, data: { ...(e.data || {}), perle: !e.data?.perle } }, { baseUpdatedAt: e.updatedAt });
   if (r.conflict) await saveEntry({ ...r.current, data: { ...(r.current.data || {}), perle: !e.data?.perle } }, { baseUpdatedAt: r.current.updatedAt });
@@ -16,6 +17,7 @@ export async function togglePerle(e) {
 export default {
   id: 'coffre',
   mount(el) {
+    // Redessine le coffre : le mot d’accueil, nos perles et les visites à refaire.
     function render() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: render }); return; }
       const w = espace.meta.welcome || {};
@@ -30,7 +32,7 @@ export default {
           <article class="cf-perle cf-video">
             <p class="cf-k">La première fois</p>
             <p class="cf-body">Les quatre façons d’être ensemble, puis le tour de l’app avec des exemples.</p>
-            <button class="btn small primary" data-c="grande">La grande visite : tous les onglets</button>
+            <button class="btn small primary" data-c="grande">La grande visite : le fil d’une idée</button>
             <button class="btn small" data-c="tour">Revoir la première visite</button>
           </article>
           <article class="cf-perle cf-mot">

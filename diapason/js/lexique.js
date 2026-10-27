@@ -8,6 +8,7 @@ let words = null; // mot → { phon, nb, parts, freq }
 let byRime = null; // clé de rime → [mots], du plus fréquent au moins fréquent
 let loading = null;
 
+// Charge le lexique (140 000 mots, avec prononciation et syllabes) une seule fois, quand on en a besoin.
 export function loadLexique() {
   if (!loading) {
     loading = fetch('data/lexique-fr.tsv').then((r) => r.text()).then((txt) => {
@@ -30,6 +31,7 @@ export function loadLexique() {
   }
   return loading;
 }
+// Vrai si le lexique est chargé.
 export const lexiqueReady = () => !!words;
 
 // La rime « suffisante » : la dernière voyelle prononcée et ce qui suit.
@@ -38,22 +40,26 @@ function lastVowel(phon) {
   for (let i = p.length - 1; i >= 0; i--) if (VOWELS.includes(p[i])) return [p, i];
   return [p, -1];
 }
+// La clé de rime d’un mot : sa dernière voyelle prononcée et ce qui suit (« chanson » et « maison » partagent « ɔ̃ »).
 export function rimeKey(phon) {
   const [p, i] = lastVowel(phon || '');
   return i < 0 ? '' : p.slice(i);
 }
 
 const norm = (w) => w.toLowerCase().replace(/[’']/g, "'");
+// Ce que le lexique sait d’un mot (prononciation, syllabes, fréquence), ou rien s’il ne le connaît pas.
 export const info = (w) => words?.get(norm(w)) || null;
 
 // Découpage orthographique de secours pour les mots absents du lexique.
 const V = 'aeiouyàâäéèêëîïôöùûüœæ';
+// Découpe un mot inconnu du lexique en syllabes, à partir de l’orthographe (une solution de secours).
 function guessParts(w) {
   const re = new RegExp(`[^${V}]*[${V}]+(?:[^${V}]*$)?`, 'gi');
   // « qu » et « gu » (devant e, i) : le u ne se prononce pas.
   const flat = w.replace(/qu/gi, 'k').replace(/gu(?=[eiéèêy])/gi, 'g');
   return flat.match(re) || [w];
 }
+// Devine si un mot finit par un e muet (qui ne compte pas en fin de vers chanté).
 function guessMute(w) { return /[^aeiouyéè]e(s|nt)?$/i.test(w) && w.length > 2; }
 
 // Syllabes d'un mot : { parts, mute } — mute = la dernière syllabe est un e muet.
@@ -116,6 +122,7 @@ export function rhymes(w, limit = 80) {
   return { phon: i.phon, riches: riches.slice(0, limit), suffisantes: suff.slice(0, limit), assonances: asson.slice(0, 40) };
 }
 
+// La rime d’une ligne de paroles : celle de son dernier mot.
 export function rimeOf(line) {
   const last = lineSyll(line).last;
   const i = last && info(last);
@@ -144,6 +151,7 @@ let thes = null;
 const chargerThes = () => (thes ||= fetch('data/synonymes-fr.tsv').then((r) => r.text()).then((t) => {
   const m = new Map(); for (const l of t.split('\n')) { if (!l || l[0] === '#') continue; const [w, s] = l.split('\t'); m.set(w, s); } return m;
 }).catch(() => new Map()));
+// Les synonymes d’un mot, groupés par sens et par nature (nom, verbe…), tirés du dictionnaire myThes gardé dans l’app.
 export async function synonymesParSens(w) {
   const m = await chargerThes(); const k = norm(w);
   let brut = m.get(k) || m.get(k.replace(/s$/, '')) || m.get(k.replace(/es$/, 'e')) || m.get(k.replace(/x$/, ''));
@@ -154,6 +162,7 @@ export async function synonymesParSens(w) {
 
 // Synonymes : section « Synonymes » du Wiktionnaire (et quasi-synonymes).
 const synCache = new Map();
+// Les synonymes d’un mot cherchés dans le Wiktionnaire (en ligne), en dernier recours.
 export async function synonyms(w) {
   const key = norm(w);
   if (synCache.has(key)) return synCache.get(key);

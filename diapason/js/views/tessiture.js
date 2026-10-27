@@ -8,6 +8,7 @@ import { espace, profileOf, saveProfile } from '../espace.js';
 const FROM = 36;
 const TO = 88;
 
+// La voix guide parle (synthèse vocale), si on ne l’a pas coupée.
 function speak(text) {
   if (!store.get('voiceGuide', true) || !window.speechSynthesis) return;
   speechSynthesis.cancel();
@@ -17,6 +18,7 @@ function speak(text) {
   speechSynthesis.speak(u);
 }
 
+// Classe une voix (soprano, alto, ténor…) d’après sa note la plus grave et la plus aiguë.
 function classify(low, high) {
   return VOICE_TYPES
     .map((v) => ({ ...v, score: 1.3 * Math.abs(low - v.low) + Math.abs(high - v.high) }))
@@ -79,6 +81,7 @@ export default {
       if (!e.target.checked) speechSynthesis?.cancel();
     });
 
+    // Colore sur le clavier le plancher, le plafond et l’étendue de la voix.
     function paintRange() {
       kb.clear('k-low'); kb.clear('k-high'); kb.clear('k-range');
       const lo = recLow;
@@ -88,6 +91,7 @@ export default {
       if (lo != null && hi != null) for (let m = lo + 1; m < hi; m++) kb.mark(m, 'k-range');
     }
 
+    // Affiche l’étape courante de la mesure de tessiture.
     function render() {
       const p = q('.step-panel');
       if (step === 'intro') {
@@ -140,6 +144,7 @@ export default {
       }
     }
 
+    // Termine la mesure : le type de voix et l’étendue, gardés dans le profil.
     function finish() {
       if (recHigh <= recLow) { toast('Ton plafond doit être plus haut que ton plancher. Réessaie l’étape 2.'); return; }
       const types = classify(recLow, recHigh);
@@ -191,6 +196,7 @@ export default {
       }
     });
 
+    // Nos deux voix côte à côte sur le même clavier.
     function renderGroup() {
       // Connectés : les deux voix viennent de l'espace partagé ; sinon, ce qu'on a ajouté sur cet appareil.
       const shared = espace.connected ? (espace.meta.members || []).map((n) => ({ name: n, ...(profileOf(n)?.voix || {}) })).filter((g) => g.low != null) : [];

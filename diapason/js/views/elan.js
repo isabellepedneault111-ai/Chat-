@@ -12,6 +12,7 @@ const date = (t) => new Date(t).toLocaleDateString('fr-CA', { day: 'numeric', mo
 const PERIODES = [['14', 'Ces deux semaines', 14], ['31', 'Ce mois-ci', 31], ['tout', 'Depuis le début', 0]];
 const delai = (ms) => (ms < 3600e3 ? 'dans l’heure' : ms < J ? 'le jour même' : ms < 2 * J ? 'le lendemain' : `${Math.round(ms / J)} jours après`);
 
+// La tresse : nos créations et nos échanges, à deux fils qui se rapprochent quand on se répond.
 function tresse(depuis) {
   const [z, f] = espace.meta?.members || MEMBERS;
   const cr = creations().filter((e) => e.createdAt >= depuis); const ech = echanges().filter((x) => x.t1 >= depuis);
@@ -55,6 +56,7 @@ function tresse(depuis) {
   return { html: `<svg class="el-svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="La tresse de ${esc(z)} et ${esc(f)} dans le temps">${svg}</svg>`, items, vide: !cr.length && !ech.length };
 }
 
+// La petite fiche d’un événement de la tresse (création, réponse…).
 function fiche(o) {
   if (o.k === 'creation') { const e = o.e; return `<b style="color:${memberColor(e.author)}">${esc(e.author)}</b> a ajouté « ${esc(e.title || 'sans titre')} », le ${date(e.createdAt)}.`; }
   if (o.k === 'echange') { const x = o.x; return `<b style="color:${memberColor(x.vers)}">${esc(x.vers)}</b> a répondu à « ${esc(x.a.title || 'sans titre')} » de ${esc(x.de)} : ${esc(x.quoi)}, ${delai(x.t1 - x.t0)}.`; }
@@ -67,6 +69,7 @@ export default {
   id: 'elan',
   mount(el) {
     let per = '14'; let items = [];
+    // Redessine notre élan sur la période choisie.
     function rendre() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: rendre }); return; }
       const [z, f] = espace.meta?.members || MEMBERS;

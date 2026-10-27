@@ -3,9 +3,13 @@
 import { espace, profileOf, saveProfile } from './espace.js';
 import { MEMBERS } from './duo.js';
 
+// Le nom de l’autre membre.
 export const autre = () => (espace.meta?.members || MEMBERS).find((m) => m !== espace.me) || MEMBERS[1];
+// Vrai si ce membre a déjà vu cette entrée.
 export const vu = (nom, id) => !!profileOf(nom)?.vus?.[id];
+// Vrai si ce membre a coché « J’ai fait ça » pour cette entrée.
 export const fait = (nom, id) => !!profileOf(nom)?.faits?.[id];
+// Marque des entrées comme vues (ou faites) dans mon profil ; l’autre le voit.
 export async function marquer(ids, champ, oui = true) {
   if (!ids.length) return;
   await saveProfile((d) => { const m = { ...(d[champ] || {}) }; ids.forEach((id) => { if (oui) m[id] = Date.now(); else delete m[id]; }); return { [champ]: m }; });
@@ -13,9 +17,13 @@ export async function marquer(ids, champ, oui = true) {
 
 // Ce qui compte comme une nouvelle : ce qu'une personne a créé, pas les traces techniques.
 const CACHES = new Set(['profil', 'parcours', 'trace', 'evaluation']);
+// Vrai si une entrée compte comme une nouvelle (ni un exemple, ni un profil, ni une séance pas finie).
 export const nouvelle = (e) => e.author && !CACHES.has(e.type) && !e.demo && !e.data?.demo && !(e.type === 'session' && !e.data?.done);
+// Les nouvelles ajoutées par l’autre, de la plus récente à la plus ancienne.
 export const deLautre = () => espace.entries.filter((e) => nouvelle(e) && e.author === autre()).sort((a, b) => b.createdAt - a.createdAt);
+// Ce que j’ai ajouté, du plus récent au plus ancien.
 export const deMoi = () => espace.entries.filter((e) => nouvelle(e) && e.author === espace.me).sort((a, b) => b.createdAt - a.createdAt);
+// Les nouvelles de l’autre que je n’ai pas encore vues (ce que compte la pastille d’Accueil).
 export const aVoir = () => (espace.connected && espace.me ? deLautre().filter((e) => !vu(espace.me, e.id)) : []);
 
 // Une nouvelle en mots : ce que c'est, et où l'ouvrir.

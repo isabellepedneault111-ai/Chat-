@@ -6,8 +6,10 @@ const CREATIVE = new Set(['note', 'texte', 'audio', 'essai', 'paroles']);
 const stageOf = (e) => (e.data && Number.isInteger(e.data.stage) ? e.data.stage : e.type === 'paroles' ? 2 : 0);
 const songOf = (e) => (e.type === 'paroles' ? (e.title || 'Sans titre') : e.data?.song || '');
 
+// Le jour où notre plan de six mois a commencé.
 export const planStart = () => (espace.meta?.plan?.start ? new Date(`${espace.meta.plan.start}T12:00`).getTime() : null);
 
+// Le mois du plan où on est (de 1 à 6), ou 0 s’il n’y a pas de plan.
 export function currentMonth() {
   const s = planStart();
   if (!s) return 0;

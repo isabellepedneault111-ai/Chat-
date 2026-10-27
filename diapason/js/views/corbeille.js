@@ -7,6 +7,7 @@ import { restaurer, effacer } from '../corbeille.js';
 export default {
   id: 'corbeille',
   mount(el) {
+    // Redessine la corbeille : ce que j’ai jeté, et ce que l’autre a jeté (à confirmer).
     function render() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: render }); return; }
       const o = (espace.meta.members || MEMBERS).find((m) => m !== espace.me) || 'l’autre';

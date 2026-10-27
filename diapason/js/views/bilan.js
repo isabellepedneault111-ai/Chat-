@@ -58,6 +58,7 @@ function traceHTML(e) {
     ${takes ? '<a class="btn small" href="#/carnet">Réécouter les prises →</a>' : ''}
   </article>`;
 }
+// L’onglet Séance du bilan : nos dernières séances, ce qu’on visait et ce qu’on en a dit.
 function seanceHTML() {
   const list = espace.entries.filter((e) => e.type === 'session' && e.data?.done).sort((a, b) => b.data.doneAt - a.data.doneAt).slice(0, 12);
   if (!list.length) return '<div class="rl-empty"><p>Aucune séance rangée pour l’instant. À la fin de chaque séance, vous notez le feu (1 à 5 flammes) et un mot : la trace arrive ici, avec le debrief et les prises.</p><a class="btn primary" href="#/session">Lancer une séance</a></div>';
@@ -117,6 +118,7 @@ const KINDS = [
   ['bravo', 'Bravo', (e) => e.type === 'bravo'],
   ['jeu', 'Jeu d’écriture', (e) => e.type === 'jeu'],
 ];
+// Notre route : les six mois en une ligne, avec où on est rendus.
 function routeHTML(start, mem) {
   const end = start + 6 * 30.44 * DAY;
   const now = Date.now();
@@ -172,6 +174,7 @@ const DONNEES = [
 export default {
   id: 'bilan',
   mount(el) {
+    // Redessine le bilan selon l’onglet choisi (semaine, mois, séance…).
     function render() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: render }); return; }
       const tab = TABS.find((t) => t[0] === location.hash.split('/')[2])?.[0] || 'semaine';

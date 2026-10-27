@@ -1,17 +1,30 @@
 // Utilitaires musicaux et mathématiques partagés.
+
+// Les 12 notes en français, de Do à Si (l’index 0 = Do, 1 = Do♯…) : on écrit les noms de notes avec cette liste partout.
 export const FR = ['Do', 'Do♯', 'Ré', 'Ré♯', 'Mi', 'Fa', 'Fa♯', 'Sol', 'Sol♯', 'La', 'La♯', 'Si'];
+// Les mêmes 12 notes en notation anglaise (C, C♯, D…).
 export const EN = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
 
+// Ramène une note MIDI à sa place dans l’octave (0 = Do … 11 = Si), quelle que soit sa hauteur : 60, 72 et 48 donnent 0.
 export const mod12 = (m) => ((Math.round(m) % 12) + 12) % 12;
+// Vrai si la note tombe sur une touche noire du piano.
 export const isBlack = (m) => [1, 3, 6, 8, 10].includes(mod12(m));
+// MIDI → hertz : le numéro d’une touche devient sa fréquence (69 = La 440 Hz, 60 = Do 261,6 Hz).
 export const mtof = (m) => 440 * 2 ** ((m - 69) / 12);
+// Hertz → MIDI : une fréquence entendue (au micro) devient un numéro de note, avec des décimales (les cents de justesse).
 export const ftom = (f) => 69 + 12 * Math.log2(f / 440);
+// Le numéro d’octave d’une note MIDI (60 → 4, comme dans « Do4 »).
 export const octave = (m) => Math.floor(Math.round(m) / 12) - 1;
+// Le nom complet d’une note en français, avec son octave : 60 → « Do4 ».
 export const nameFR = (m) => FR[mod12(m)] + octave(m);
+// Le nom complet d’une note en notation anglaise : 60 → « C4 ».
 export const nameEN = (m) => EN[mod12(m)] + octave(m);
+// Le nom d’une note sans octave (« Do », « Fa♯ »).
 export const pcFR = (m) => FR[mod12(m)];
 
+// Borne une valeur entre un minimum et un maximum (un curseur qui ne dépasse jamais ses bords).
 export const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+// Interpolation linéaire : la valeur entre a et b, à la proportion t (0 = a, 1 = b) ; sert aux animations et aux fondus.
 export const lerp = (a, b, t) => a + (b - a) * t;
 
 // « 1 octave et 5 demi-tons »
@@ -32,6 +45,7 @@ export function pitchClassDiff(a, b) {
   return d;
 }
 
+// Transforme un texte en nombre stable (FNV-1a) : le même mot donne toujours le même nombre, pour des couleurs ou des formes reproductibles.
 export function hash(str) {
   let h = 2166136261;
   for (let i = 0; i < str.length; i++) {
@@ -67,5 +81,7 @@ const QUALITY = {
   5: { iv: [0, 7, 12], suf: '5' },
   q: { iv: [0, 5, 10, 15], suf: ' en quartes' },
 };
+// Les intervalles d’un accord, en demi-tons au-dessus de la fondamentale (majeur → 0, 4, 7).
 export const chordIntervals = (q) => QUALITY[q].iv;
+// Le nom d’un accord en français : fondamentale + qualité (Do + m7 → « Dom7 »).
 export const chordName = (root, q) => FR[mod12(root)] + QUALITY[q].suf;

@@ -26,6 +26,7 @@ const nouvellesBandeau = () => { const n = aVoir(); const t = mesTaches(); if (!
 // Notre vision, comme un manifeste : les tonalités allumées sur un clavier, nos instruments côte à côte,
 // le genre en grand, nos références avec leur pourquoi, et ce qu'on veut faire ressentir.
 const NOTES_V = { do: 0, 'do♯': 1, 'ré♭': 1, ré: 2, 'ré♯': 3, 'mi♭': 3, mi: 4, fa: 5, 'fa♯': 6, 'sol♭': 6, sol: 7, 'sol♯': 8, 'la♭': 8, la: 9, 'la♯': 10, 'si♭': 10, si: 11 };
+// Notre vision en un coup d’œil : tonalités, instruments, genre et références.
 function visionHTML(v, mem) {
   const tons = new Set((v.tonalite || '').toLowerCase().replace(/#/g, '♯').split(/[,·/]+|\s+et\s+/).map((x) => NOTES_V[x.trim().split(/\s+/)[0]]).filter((x) => x != null));
   const blanches = [0, 2, 4, 5, 7, 9, 11]; const noires = [[1, 0], [3, 1], [6, 3], [8, 4], [10, 5]];
@@ -45,6 +46,7 @@ function visionHTML(v, mem) {
     </div></div>`;
 }
 
+// « Par où commencer » : les prochains pas, dans l’ordre, pour la personne connectée.
 function commencerHTML() {
   const mem = espace.meta.members || MEMBERS; const frog = espace.me === mem[1];
   const ents = espace.entries.filter((e) => !e.demo && !e.data?.demo);
@@ -95,6 +97,7 @@ export default {
     // Tant que l'autre n'est pas entré : le mot secret, prêt en un clic.
     // Tant que l'autre n'est pas entré : le mot secret s'active tout seul (bell), et le message est prêt à copier.
     let secretTry = false; let secretErr = '';
+    // L’invitation à faire venir l’autre dans l’espace, tant qu’il n’est pas encore venu.
     function inviteHTML() {
       const mem = espace.meta.members || MEMBERS;
       const o = mem.find((x) => x !== espace.me) || 'Frog';
@@ -174,6 +177,7 @@ export default {
       </section>`;
     }
 
+    // Redessine l’accueil (ou Notre projet), et note ma visite pour que l’autre sache ce que j’ai vu.
     function render() {
       // La dernière visite de chacun, partagée : elle dit à l'autre ce qu'il n'a pas encore vu.
       const vu = espace.meta?.seen?.[espace.me];
@@ -320,6 +324,7 @@ export default {
       return cartes.length ? `<section class="studio-band" aria-label="Le studio">${cartes.join('')}</section>` : '';
     }
 
+    // Le formulaire de notre vision et du début du plan.
     function setupHTML(edit) {
       const v = espace.meta.vision || {};
       const today = new Date().toISOString().slice(0, 10);

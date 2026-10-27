@@ -32,6 +32,7 @@ const ORCH = { kick: 'timbales', snare: 'pizz', hat: 'celesta', clap: 'harpe', c
 const GROUPES = { A: '#e8c27a', B: '#9fe0c3', C: '#f0875a' };
 const SOURCES = { souffle: 'la respiration lente', vibrato: 'une oscillation rapide', hasard: 'le hasard', chaos: 'le chaos', voix: 'ta voix au micro', clavier: 'le clavier MIDI', molette: 'la molette du clavier' };
 const PARAMS = { volume: ['le volume', 'plus doux', 'plus fort'], hauteur: ['la hauteur', 'plus grave', 'plus aigu'], brillance: ['le timbre', 'plus sourd', 'plus brillant'], pan: ['l’espace gauche-droite', 'vers la gauche', 'vers la droite'] };
+// Traduit l’état du labo pour la cathédrale : les disques deviennent des voix, les sons de batterie leurs équivalents d’orchestre, les groupes des pupitres, et les liens suivent.
 function depuisLabo(L) {
   if (!L?.tracks?.length) return null;
   const voix = L.tracks.map((t) => ({ banque: ORCH[t.inst] || undefined, vol: t.vol ?? 1, muet: t.muted || undefined, g: t.g || undefined, respire: t.respire || undefined }));
@@ -102,7 +103,9 @@ export default {
     // Les disques : un par nombre de la clé de voûte, réglable (nombre, instrument, volume, sourdine), qui tournent à l'écoute.
     const INSTR = [['timbales', 'Timbales'], ['pizz', 'Pizzicati'], ['harpe', 'Harpe'], ['celesta', 'Célesta'], ['cor', 'Cor'], ['cuivres', 'Cuivres'], ['flute', 'Flûte'], ['clarinette', 'Clarinette'], ['choeur', 'Chœur']];
     const DCOUL = ['#e8c27a', '#93b08e', '#f0875a', '#b89be6', '#7fb1f0', '#9fe0c3'];
+    // Le petit dessin d’un disque : autant de points que son nombre, et une aiguille qui tourne à l’écoute.
     function disqueSVG(n, c) { const pts = [...Array(n)].map((_, i) => { const a = (i / n) * Math.PI * 2 - Math.PI / 2; return `<circle cx="${(30 + 22 * Math.cos(a)).toFixed(1)}" cy="${(30 + 22 * Math.sin(a)).toFixed(1)}" r="3.2"/>`; }).join(''); return `<svg viewBox="0 0 60 60" class="ca-dsvg" style="--c:${c}"><circle cx="30" cy="30" r="22" class="anneau"/><g class="tourne">${pts}<line x1="30" y1="30" x2="30" y2="8"/></g><text x="30" y="35" text-anchor="middle">${n}</text></svg>`; }
+    // Dessine les disques de la cathédrale : leur nombre, leur instrument, leur pupitre, leur volume et leurs réglages ajoutés.
     function rendreDisques() {
       const voix = etat.voix || [];
       q('.ca-disques').innerHTML = etat.cle.map((n, j) => { const v = voix[j] || {}; const b = v.banque || RYTHME_DEFAUT[j % RYTHME_DEFAUT.length];
@@ -147,6 +150,7 @@ export default {
     }
     const majDisque = (j, change) => { const voix = [...(etat.voix || [])]; voix[j] = { ...(voix[j] || {}), ...change }; return voix; };
 
+    // Recompose l’œuvre à partir de l’état actuel (clé, lumière, disques, liens) et redessine tout.
     function majTout() {
       oeuvre = composer({ cle: etat.cle, tonique: etat.tonique, duree: etat.duree, lumieres: etat.lumieres, axe: etat.axe, voix: etat.voix || [], parties: etat.parties || [], liens: etat.liens || [] });
       rendreDisques(); rendreGL();
@@ -165,6 +169,7 @@ export default {
 
     const ros = q('.ca-ros'); const rctx = ros.getContext('2d');
     let rosaceT = 0;
+    // Dessine la rosace de la clé de voûte ; pendant l’écoute, la lumière tourne (huit images par seconde suffisent).
     function rosace(pos = -1) {
       if (!oeuvre?.sections?.length) return;
       // Pendant l'écoute, huit images par seconde suffisent à une lumière qui tourne lentement (et l'ordi respire).
@@ -172,6 +177,7 @@ export default {
       const couleurs = oeuvre.sections.map((s) => COUL[s.lumiere] || '#e8c27a'); const actif = pos < 0 ? -1 : oeuvre.sections.findIndex((s) => pos >= s.a && pos < s.b);
       dessinerRosace(rctx, ros.width, { cle: oeuvre.r, couleurs, lumiere: pos < 0 ? -1 : (pos / oeuvre.duree) % 1, actif });
     }
+    // Dessine la cathédrale : une arche par partie, les vitraux du rythme, la rosace, la coda, et la lumière qui avance pendant l’écoute.
     function dessiner(pos) {
       rosace(pos);
       const { ctx, w, h } = cv; if (!w || !oeuvre) return;
@@ -207,6 +213,7 @@ export default {
     }
 
     const arreter = () => { lecteur?.arreter(); lecteur = null; anim?.(); anim = null; q('[data-ca=jouer]').textContent = '▶ Bâtir et écouter'; dessiner(-1); q('.ca-temps').textContent = `0:00 / ${mmss(oeuvre.duree)}`; };
+    // « ▶ Bâtir et écouter » : charge l’orchestre, puis joue l’œuvre (et les sources vivantes en direct).
     async function lancer() {
       if (lecteur) { arreter(); return; }
       const b = q('[data-ca=jouer]'); b.textContent = 'L’orchestre s’installe…'; await charger();
@@ -287,18 +294,22 @@ export default {
     const envVivant = (src) => (src === 'voix' ? Math.min(1, (mic.level || 0) * 6) : src === 'clavier' ? vif.v * Math.exp(-(audio().currentTime - vif.t) * 4) : src === 'molette' ? vif.cc : null);
     let sorties = []; let suivre = false; let offNotes = null; let ecouteAudio = null; const tenues = new Set(); let attente = 0; let propose = null;
     const NOMS = ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
+    // Remplit la liste des appareils MIDI sur lesquels la cathédrale peut aussi jouer.
     async function remplirSorties() {
       sorties = await sortiesMidi(); const sel = q('[data-ca=sortie]'); const cur = store.get('caSortie', '');
       sel.innerHTML = `<option value="">Aucun appareil MIDI</option>${sorties.map((o) => `<option value="${esc(o.id)}" ${o.id === cur ? 'selected' : ''}>${esc(o.name)}</option>`).join('')}`;
     }
+    // Propose une clé de voûte à partir d’un accord entendu (sur un clavier ou une entrée audio).
     function proposer(notes, source) {
       const r = cleDepuisNotes(notes); const box = q('.ca-entendu'); if (!r) { box.textContent = 'Accord trop complexe pour une clé de voûte (des nombres au-delà de 32) : essaie trois ou quatre notes.'; return; }
       propose = r; const noms = [...new Set(notes.map((m) => NOMS[((m % 12) + 12) % 12]))].join(' ');
       box.innerHTML = `${esc(source)} : <b>${noms}</b> → la clé <b class="mono">${r.cle.join(' : ')}</b>, depuis ${NOMS[r.tonique % 12]}. ${suivre ? '<i>Appliquée.</i>' : '<button class="btn small" data-ca="appliquer">En faire la clé de voûte</button>'}`;
       if (suivre) appliquer();
     }
+    // Fait de l’accord proposé la nouvelle clé de voûte.
     function appliquer() { if (!propose) return; q('[data-ca=nombres]').value = propose.cle.join(' '); q('[data-ca=tonique]').value = String(propose.tonique); changer({ cle: propose.cle, tonique: propose.tonique, lumieres: [], voix: [], parties: [] }); }
     el.addEventListener('click', (e) => { if (e.target.closest('[data-ca=appliquer]')) appliquer(); });
+    // Écoute le matériel branché : chaque accord tenu au clavier, ou entendu à l’entrée audio, propose une clé.
     async function ecouterMateriel() {
       const b = q('[data-ca=ecouter]');
       if (offNotes || ecouteAudio) { offNotes?.(); offNotes = null; ecouteAudio?.stop(); ecouteAudio = null; b.textContent = '● Écouter mon matériel'; return; }
@@ -321,6 +332,7 @@ export default {
     // Le plus présent donne la clé de voûte ; les parties se posent sur ceux qui reviennent, dans l'ordre du jeu.
     let jeu = null;
     const sec = (x) => `${x.toFixed(x < 10 ? 1 : 0).replace('.', ',')} s`;
+    // Analyse une minute de jeu (notes MIDI, sinon le son) : quels accords, combien de temps, combien de fois ; puis propose la cathédrale de ce jeu.
     async function depuisJeu({ midi = [], buf = null, nom = 'le filet' }) {
       const box = q('.ca-jeu'); box.hidden = false;
       const frappes = midi.filter((m) => (m.d[0] & 0xf0) === 0x90 && m.d[2]).length; let res = null; let via = '';
@@ -336,12 +348,14 @@ export default {
         <p class="small">Celui qui revient le plus, <b>${esc(t.nom)}</b>, devient la clé de voûte <b class="mono">${t.cle.join(' : ')}</b>. Les parties se posent sur ${c.parties.map((p) => `<b>${esc(p.nom)}</b>`).join(', ')}, dans l’ordre où tu les as joués ; la coda revient à ${esc(t.nom)}. Chaque accord sonne en intonation juste.</p>
         <button class="btn primary" data-ca="batir">Bâtir la cathédrale de ce jeu</button>`;
     }
+    // Bâtit la cathédrale sur le jeu analysé : la clé de l’accord le plus présent, une partie par accord qui revient.
     function batirDuJeu() {
       if (!jeu) return; const c = cathedraleDuJeu(jeu.res);
       q('[data-ca=nombres]').value = c.cle.join(' '); q('[data-ca=tonique]').value = String(c.tonique); q('[data-ca=titre]').value = 'La cathédrale de mon jeu';
       changer({ cle: c.cle, tonique: c.tonique, parties: c.parties, lumieres: [], voix: [] }); toast('La cathédrale est bâtie sur ton jeu. Touche ▶ pour l’entendre.');
       q('.ca-scene').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+    // Prend la dernière minute gardée par le filet et l’analyse.
     function depuisFilet() {
       const box = q('.ca-jeu'); box.hidden = false;
       if (!filet.arme) { box.innerHTML = '<p class="muted">Le filet n’est pas tendu. Touche le filet, en haut (l’anneau d’or), improvise une minute sur ton clavier ou ton instrument branché, puis reviens toucher « La cathédrale de mon jeu ». <a href="#/materiel">Mon matériel</a></p>'; return; }

@@ -19,6 +19,7 @@ const SENS = [
 
 const MOTS = ['fleuve', 'cuisine à 2 h', 'autoroute', 'fenêtre', 'premier hiver', 'quai de gare', 'chalet', 'néon', 'grand-mère', 'feu de camp', 'patinoire', 'dernière cigarette', 'parking vide', 'lac gelé', 'radio', 'tempête', 'ruelle', 'lit défait', 'aurore', 'manteau'];
 
+// L’atelier d’écriture minuté : un mot imposé, un chrono, les sens détectés dans le texte et un bouton pour garder.
 export function ecrire(host, { mots = MOTS, minutes = 10, initial = '', title = '', onSave, saveLabel = 'Garder', song = '', how = null, senses = true, check = null } = {}) {
   let word = mots[Math.floor(Math.random() * mots.length)];
   let left = minutes * 60;
@@ -45,6 +46,7 @@ export function ecrire(host, { mots = MOTS, minutes = 10, initial = '', title = 
   const showClock = () => { q('.ecr-clock span').textContent = timer || left < minutes * 60 ? `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}` : ''; };
   showWord();
 
+  // Relit le texte en direct : quels sens (vue, ouïe, toucher…) il touche déjà.
   function analyse() {
     const text = ta.value;
     q('.ecr-sens').hidden = !senses;
@@ -94,6 +96,7 @@ export function ecrire(host, { mots = MOTS, minutes = 10, initial = '', title = 
       toast('Dans l’atelier de paroles, prêt à être sculpté.');
     }
   });
+  // Insère un mot là où est le curseur.
   function insert(s) {
     const i = ta.selectionEnd;
     ta.value = ta.value.slice(0, i) + s + ta.value.slice(i);

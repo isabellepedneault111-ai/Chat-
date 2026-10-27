@@ -6,12 +6,14 @@
 import { audio, out, lampeHorsLigne } from './audio.js';
 import { joue, prechargerSons, echantillons, reglage, boucler } from './sampler.js';
 
+// Les familles de l’orchestre qu’on peut mettre en lumière sur chaque partie.
 export const FAMILLES = [
   ['cordes', 'Les cordes', 'cordes'], ['bois', 'Les bois', 'flute'], ['cuivres', 'Les cuivres', 'cor'],
   ['choeur', 'Le chœur', 'choeur'], ['harpe', 'La harpe', 'harpe'], ['celesta', 'Le célesta', 'celesta'], ['silence', 'Presque rien', null],
 ];
 const RYTHME = ['timbales', 'pizz', 'harpe', 'celesta', 'pizz', 'harpe'];
 const BOIS = ['flute', 'hautbois', 'clarinette'];
+// Les instruments que la cathédrale charge avant de jouer.
 export const BANQUES_UTILES = ['cordes', 'pizz', 'harpe', 'cor', 'cuivres', 'flute', 'clarinette', 'hautbois', 'choeur', 'timbales', 'celesta'];
 const CYCLE = 2.4; // un tour de rythme, en secondes
 // n frappes réparties au mieux sur len pas (rythme euclidien, Toussaint 2005).
@@ -26,7 +28,9 @@ const pres = (classe, vise) => { let m = vise - plier(vise) + classe; if (m - vi
 // sources-là se calculent : elles sont écrites dans la partition, donc gardées dans le WAV et le MIDI. La voix, le
 // clavier et la molette, eux, n'existent qu'en direct : ils agissent pendant l'écoute seulement.
 export const SOURCES_VIVES = new Set(['voix', 'clavier', 'molette']);
+// Vrai si un lien vise ce disque (directement, ou par son pupitre) ; un disque n’agit jamais sur lui-même.
 export const viseLien = (l, j, voix) => (String(l.cible).startsWith('g') ? !!voix[j]?.g && voix[j].g === l.cible.slice(1) : +l.cible === j) && String(j) !== String(l.src);
+// Applique les liens à une note : la source (un disque, la respiration, le chaos…) change son volume, sa hauteur, son timbre ou sa place.
 export function moduler(n, liens, voix, envDe) {
   liens.forEach((l) => {
     if (n.d == null || !viseLien(l, n.d, voix)) return;
@@ -45,6 +49,7 @@ export function ranger(cle, voix = [], liens = []) {
   return { cle: o.map((x) => x.n), voix: o.map((x) => voix[x.i] || {}), liens: liens.map((l) => ({ ...l, src: re(l.src), cible: String(l.cible).startsWith('g') ? l.cible : re(l.cible) })).filter((l) => l.src != null && l.cible != null) };
 }
 
+// Compose l’œuvre : les parties (la forme), les frappes de chaque disque (le rythme), les accords tenus (l’harmonie), la lumière, les liens et la coda, en une liste de notes datées.
 export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 0.5, voix = [], parties = [], liens = [] }) {
   const r = [...new Set(cle.map((x) => Math.round(x)).filter((x) => x > 0 && x <= 32))].sort((a, b) => a - b);
   if (!r.length) return { sections: [], notes: [], duree: 0, r };
@@ -122,7 +127,9 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
   return { sections, notes, duree: total, r, coda: [t, total], liens, voix };
 }
 
+// Précharge tous les instruments de l’orchestre.
 export const charger = () => prechargerSons(BANQUES_UTILES);
+// L’instrument par défaut de chaque disque, dans l’ordre (timbales, pizzicati, harpe…).
 export const RYTHME_DEFAUT = RYTHME;
 
 // Un accord joué (sur un clavier MIDI, ou entendu par une entrée audio) devient une clé de voûte : chaque intervalle
@@ -130,6 +137,7 @@ export const RYTHME_DEFAUT = RYTHME;
 // septième « naturelle » = 7/4…), puis on ramène le tout à des entiers. Do Mi Sol → 4:5:6 ; Ré Fa La → 10:12:15.
 const JUSTE = [[1, 1], [16, 15], [9, 8], [6, 5], [5, 4], [4, 3], [7, 5], [3, 2], [8, 5], [5, 3], [7, 4], [15, 8]];
 const pgcd = (a, b) => (b ? pgcd(b, a % b) : a);
+// Un accord joué devient une clé de voûte : chaque intervalle lu comme le rapport simple le plus proche, ramené à des entiers (Do Mi Sol → 4:5:6).
 export function cleDepuisNotes(midis) {
   const l = [...new Set(midis)].sort((a, b) => a - b); if (l.length < 2) return null;
   const bas = l[0]; const fr = l.map((m) => { const d = m - bas; const [n, q] = JUSTE[d % 12]; return [n * 2 ** Math.floor(d / 12), q]; });
@@ -144,6 +152,7 @@ export function cleDepuisNotes(midis) {
 const NOMS = ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
 const QUALITES = [['M', ''], ['m', 'm'], ['7', '7'], ['m7', 'm7'], ['maj7', 'maj7'], ['sus4', 'sus4'], ['sus2', 'sus2'], ['dim', 'dim']];
 const IV = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], m7: [0, 3, 7, 10], maj7: [0, 4, 7, 11], sus4: [0, 5, 7], sus2: [0, 2, 7], dim: [0, 3, 6] };
+// Nomme un accord à partir de ses notes (« Lam/Do », « Sol7 ») ; sinon, la liste de ses notes.
 export function nomAccord(pcs, basse) {
   for (const r of pcs) for (const [q, suf] of QUALITES) { const iv = IV[q]; if (iv.length === pcs.length && iv.every((d) => pcs.includes((r + d) % 12))) return `${NOMS[r]}${suf}${r !== basse ? `/${NOMS[basse]}` : ''}`; }
   return pcs.map((x) => NOMS[x]).join('-');
@@ -245,6 +254,7 @@ export async function rendre(oeuvre, onProgres) {
 // Le fichier MIDI : une piste par famille (programmes General MIDI), les hauteurs arrondies au demi-ton.
 const PROGRAMMES = { cordes: 48, pizz: 45, harpe: 46, cor: 60, cuivres: 61, flute: 73, clarinette: 71, hautbois: 68, choeur: 52, timbales: 47, celesta: 8 };
 const canal = (b) => { const k = Object.keys(PROGRAMMES).indexOf(b); return k >= 9 ? k + 1 : Math.max(0, k); }; // le canal 10 est réservé aux batteries
+// L’œuvre en événements MIDI : une piste par famille, ses programmes General MIDI, chaque note arrondie au demi-ton.
 export function evenementsMidi(oeuvre) {
   const canaux = Object.keys(PROGRAMMES); const can = canal;
   const ev = canaux.map((b) => ({ t: 0, d: [0xc0 | can(b), PROGRAMMES[b]] }));

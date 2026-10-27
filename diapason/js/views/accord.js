@@ -29,10 +29,12 @@ function chordsWith(pc) {
 
 // ---------- La carte de nos accords : où la voix de Zaza est chez elle ----------
 const CARTE = 'carte-accords';
+// La carte de nos accords : pour chacun, combien de temps la voix y a chanté et avec quelle justesse.
 export function carte() {
   const c = espace.entries.find((e) => e.id === CARTE)?.data?.chords || {};
   return Object.entries(c).map(([label, v]) => ({ label, s: v.s, j: v.s ? v.j / v.s : 0, t: v.t })).filter((x) => x.s >= 4).sort((a, b) => b.s - a.s);
 }
+// Dessine la carte de nos accords.
 export function carteHTML(list = carte()) {
   if (!list.length) return '<p class="muted small">La carte se dessine toute seule pendant que vous jouez : chaque accord où Zaza chante y prend sa place.</p>';
   const max = list[0].s;
@@ -47,11 +49,13 @@ export function notesMagiques(n = 4) {
   const notes = espace.entries.find((e) => e.id === CARTE)?.data?.notes || {};
   return Object.entries(notes).filter(([, v]) => v.s >= 3).map(([m, v]) => ({ m: +m, r: v.j / v.s, s: v.s })).sort((a, b) => b.r - a.r).slice(0, n);
 }
+// Les notes magiques : celles où la voix est la plus stable et la plus juste.
 export function magiquesHTML() {
   const l = notesMagiques();
   if (!l.length) return '<p class="muted small">Elles apparaissent quand la voix a tenu quelques notes : celles où elle est la plus stable et la plus juste.</p>';
   return `<div class="magiques">${l.map((x) => `<span><b>${nameFR(x.m)}</b><small>${Math.round(x.r * 100)} % stable</small></span>`).join('')}</div><p class="carte-read">Bâtissez les notes longues du refrain là-dessus : c’est là que la voix brille.</p>`;
 }
+// Ajoute à la carte ce qu’on vient de chanter, en fusionnant avec ce que l’autre y a mis.
 async function saveCarte(delta, ndelta = {}) {
   if (!espace.connected || (!Object.keys(delta).length && !Object.keys(ndelta).length)) return;
   const merge = (src, d) => { const c = { ...(src || {}) }; for (const [k, v] of Object.entries(d)) { const o = c[k] || { s: 0, j: 0 }; c[k] = { s: Math.round((o.s + v.s) * 10) / 10, j: Math.round((o.j + v.j) * 10) / 10, t: Date.now() }; } return c; };
@@ -127,6 +131,7 @@ export default {
     } });
 
     const notes = () => (consoleState.on && heldNotes().length ? heldNotes() : [...screenNotes].sort((a, b) => a - b));
+    // L’accord que joue le clavier en ce moment : son nom et ses notes.
     function chordInfo() {
       const ns = notes();
       if (!ns.length) return null;
@@ -148,6 +153,7 @@ export default {
       return ci.pcs;
     }
 
+    // Met à jour les textes selon le mode choisi (dans l’accord, harmonie, duel…).
     function refreshTexts() {
       el.querySelectorAll('[data-mode]').forEach((b) => b.setAttribute('aria-selected', b.dataset.mode === mode));
       q('.acc-hint').textContent = MODES.find((m) => m[0] === mode)[2];

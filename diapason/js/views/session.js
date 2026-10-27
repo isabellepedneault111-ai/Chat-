@@ -47,6 +47,7 @@ function elapsed(d, now = Date.now()) {
   const paused = (d.pausedTotal || 0) + (d.pausedAt ? now - d.pausedAt : 0);
   return Math.max(0, (now - d.startedAt - paused) / 1000 + (d.offset || 0));
 }
+// Où on en est dans une séance : l’étape en cours et le temps écoulé dans cette étape.
 function phaseAt(d, now) {
   const f = FORMATS.find((x) => x.id === d.format);
   const t = elapsed(d, now);
@@ -60,6 +61,7 @@ function phaseAt(d, now) {
 }
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
+// La séance en cours (pas finie, lancée il y a moins de quelques heures), s’il y en a une.
 export const activeSession = () => espace.entries
   .filter((e) => e.type === 'session' && !e.data?.done && Date.now() - (e.data?.startedAt || 0) < MAX_AGE)
   .sort((a, b) => b.data.startedAt - a.data.startedAt)[0] || null;
@@ -88,6 +90,7 @@ export default {
       const seen = new Set();
       return [...(s?.data.markers || []), ...pending].filter((m) => { const k = `${m.at}|${m.text}`; if (seen.has(k)) return false; seen.add(k); return true; }).sort((a, b) => a.at - b.at);
     };
+    // Note un repère pendant la séance (« le refrain marche ! »), horodaté, à envoyer avec la prochaine sauvegarde.
     function addMarker(kind, text) {
       const s = activeSession();
       if (!s) return;
@@ -96,6 +99,7 @@ export default {
       clearTimeout(flushT);
       flushT = setTimeout(flush, 4000);
     }
+    // Envoie les repères notés à la séance partagée.
     async function flush() {
       if (!pending.length) return;
       const batch = pending;
@@ -104,6 +108,7 @@ export default {
         pending = pending.filter((m) => !batch.includes(m));
       } catch { flushT = setTimeout(flush, 6000); }
     }
+    // Affiche les derniers repères de la séance.
     function renderMarkers() {
       const box = el.querySelector('.markers');
       if (!box) return;
@@ -138,6 +143,7 @@ export default {
       if (['tempo', 'transport', 'program', 'device'].includes(ev.kind) || (recorder && ['chord', 'cc'].includes(ev.kind))) addMarker(ev.kind, ev.text);
     });
 
+    // Modifie la séance partagée (de façon sûre : si l’autre l’a changée entre-temps, on repart de sa version).
     async function patch(change) {
       const cur = activeSession();
       if (!cur) return;
@@ -145,6 +151,7 @@ export default {
       if (r.conflict) await saveEntry({ ...r.current, data: { ...r.current.data, ...change(r.current.data) } }, { baseUpdatedAt: r.current.updatedAt });
     }
 
+    // Dessine la page : le réglage d’une nouvelle séance, ou la séance en cours.
     function render() {
       stopTick();
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: render }); return; }
@@ -152,6 +159,7 @@ export default {
       if (s) renderRunning(s); else renderSetup();
     }
 
+    // Le réglage d’une séance : où, combien de temps, sur quoi, sur quels accords.
     function renderSetup() {
       const m = currentMonth();
       const r = weekRhythm();
@@ -212,6 +220,7 @@ export default {
         </div>`;
     }
 
+    // La séance en cours : le minuteur, l’étape, la boucle, la console, les repères.
     function renderRunning(s) {
       const d = s.data;
       const f = FORMATS.find((x) => x.id === d.format);
@@ -267,6 +276,7 @@ export default {
 
     let lastTickT = 0;
     let lastMarkerCount = -1;
+    // À chaque instant (cinq fois par seconde) : avance le minuteur et passe à l’étape suivante quand son temps est écoulé.
     function tick() {
       const now = performance.now();
       if (now - lastTickT < 200) return;
@@ -305,6 +315,7 @@ export default {
       }
     }
 
+    // Le contenu d’une étape : son but, son exercice (dit à la personne en solo), sa prise, son debrief ; ou la fin de la séance.
     function renderPhase(s, i) {
       const d = s.data;
       const f = FORMATS.find((x) => x.id === d.format);
@@ -366,6 +377,7 @@ export default {
         </section>`;
     }
 
+    // Lance la séance : choisit un exercice par étape (faisable seul en solo), règle la boucle, et la partage.
     async function start() {
       const custom = el.querySelector('[data-s=cible]')?.value.trim();
       const ex = {};
@@ -382,6 +394,7 @@ export default {
       } catch (err) { toast(err.message); }
     }
 
+    // Enregistre une prise pendant la séance : elle part sur le mur, avec les repères tombés pendant qu’elle jouait.
     async function recordTake(btn) {
       if (recorder) { recorder.stop(); return; }
       try {

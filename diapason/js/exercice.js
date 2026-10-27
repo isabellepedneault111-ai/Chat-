@@ -51,6 +51,7 @@ const GUIDES = {
 const guideDe = (id, m) => (GUIDES[id] ? GUIDES[id]() : m.notes && m.bpm ? (() => { const g = montee(m.notes.map((iv) => 60 + iv)); return { motif: g.map((x, i) => [i, x, 0.9]), long: g.length }; })() : null);
 // Un clavier d'une octave et demie, de Do 4 à Sol 5 : il s'allume sur ce que l'app joue, et se joue au doigt.
 const BL = [0, 2, 4, 5, 7, 9, 11]; const NO = { 1: 0, 3: 1, 6: 3, 8: 4, 10: 5 };
+// Dessine en SVG le clavier de l’app (Do à Sol, une octave et demie) dont les touches s’allument quand l’exemple joue.
 function clavierHTML() {
   let b = ''; let n = ''; let x = 0;
   for (let m = 60; m <= 79; m++) { const pc = m % 12;
@@ -59,11 +60,14 @@ function clavierHTML() {
   return `<svg class="exo-clavier" viewBox="0 0 ${x * 20} 70" role="group" aria-label="Le clavier de l’app : il s’allume sur ce qu’il joue ; touche une note pour l’entendre">${b}${n}</svg>`;
 }
 
+// Le réglage d’un exercice (son tempo, sa boucle, ses consignes).
 export function exoMode(id) { return MODES[id] || {}; }
+// Les exercices de piano, reconnus à leur préfixe p-.
 export const PIANO = Object.keys(MODES).filter((k) => k.startsWith('p-'));
 
 // Le dernier mumble de Zaza (une page du journal avec un enregistrement), s'il existe.
 const dernierYaourt = (mem) => espace.entries?.filter((e) => e.author === mem[0] && e.audio && (e.data?.flux || e.data?.journal || e.data?.relais)).sort((a, b) => b.createdAt - a.createdAt)[0];
+// Le bouton qui fait réentendre le dernier mumble de Zaza, s’il y en a un.
 function yaourtHTML(mem) {
   const y = dernierYaourt(mem);
   return y ? `<button class="exo-add3" data-yaourt="${esc(y.id)}">▶ Le dernier mumble de ${esc(mem[0])} : « ${esc(y.title || 'sans titre')} »</button>`
@@ -191,6 +195,7 @@ export async function faireExercice(id, { garderBoucle = false, solo = false } =
     raf = requestAnimationFrame(frame);
   };
   raf = requestAnimationFrame(frame);
+  // Termine l’exercice : arrête l’animation, les minuteries, l’enregistrement et la boucle, puis rend la main.
   function end(done) {
     cancelAnimationFrame(raf); clearInterval(sched); trois?.dispose(); timers.forEach(clearTimeout); if (rec?.state === 'recording') rec.stop();
     if (studio?.loopPlaying() && !boucleAvant) studio.toggleLoop();
@@ -204,6 +209,7 @@ export async function faireExercice(id, { garderBoucle = false, solo = false } =
   addEventListener('keydown', onKey);
   // M'enregistrer : la voix (ou le clavier branché), pendant que l'exemple joue ; on réécoute, et on peut le garder au mur.
   let rec = null; let prise = null;
+  // « M’enregistrer » : capte le micro sans traitement, puis propose d’écouter la prise et de la garder au Mur.
   async function enregistrer(btn) {
     if (rec?.state === 'recording') { rec.stop(); return; }
     try {

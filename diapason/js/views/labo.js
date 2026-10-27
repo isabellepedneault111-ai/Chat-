@@ -32,6 +32,7 @@ const SPIN_MAX = 1.2; // tours de disque visibles par seconde, au maximum (au-de
 const octavesUp = (fr) => Math.max(0, Math.ceil(Math.log2(mtof(KB_FROM - 0.5) / fr)));
 const gcd = (a, b) => (b ? gcd(b, a % b) : a);
 const INTERVALS = ['Unisson', 'Seconde mineure', 'Seconde majeure', 'Tierce mineure', 'Tierce majeure', 'Quarte', 'Triton', 'Quinte', 'Sixte mineure', 'Sixte majeure', 'Septième mineure', 'Septième majeure', 'Octave'];
+// Le nom de l’intervalle qui correspond à un rapport de vitesses (3/2 → une quinte, 5/4 → une tierce majeure), avec l’écart au piano en cents.
 function intervalName(ratio) {
   const semis = 12 * Math.log2(ratio);
   const s = Math.round(semis);
@@ -164,6 +165,7 @@ export default {
     // Le disque mis en avant en haut (sa fréquence en gros, réglable) ; et ceux qu'on voit dans la grande fenêtre.
     let focus = 0;
     const visibles = () => tracks.map((t, i) => i).filter((i) => !tracks[i].cache);
+    // Redessine la grande fenêtre du haut pour le disque mis en avant : son titre, son rapport au disque 1, ses réglages.
     function renderFocus() {
       if (focus >= tracks.length) focus = 0;
       const t = tracks[focus];
@@ -175,6 +177,7 @@ export default {
     const freqOf = (i) => f * ratio(i);
     const live = () => tracks.map((t, i) => i).filter((i) => !tracks[i].muted);
 
+    // Charge un préréglage de disques (une clé comme 4:5:6, ou des nombres tirés au hasard) et repart de zéro.
     function loadPreset(id) {
       presetId = id; choisis.clear();
       if (id === 'random') {
@@ -191,22 +194,26 @@ export default {
     // Mes réglages : un instantané nommé du labo (disques, groupes, liens, vitesse), gardé dans l'espace du duo.
     // Il suit d'un appareil à l'autre, et l'autre le voit (et peut le charger) chez lui.
     const instantane = () => ({ tracks: tracks.map(({ n, muted, inst, vol, g, respire, cache }) => ({ n, muted, inst, vol, g, respire, cache })), liens: liens.map((l) => ({ ...l })), focus, presetId, f });
+    // Tous les réglages gardés (« Mes réglages »), les miens et ceux de l’autre, depuis nos profils (ou cet appareil si on n’est pas connecté).
     function tousReglages() {
       if (!espace.connected) return (store.get('laboReglages', [])).map((r) => ({ ...r, de: '' }));
       return (espace.meta?.members || MEMBERS).flatMap((m) => (profileOf(m)?.laboReglages || []).map((r) => ({ ...r, de: m })));
     }
+    // Affiche la liste « Mes réglages » : garder l’état actuel du labo sous un nom, le recharger, l’effacer.
     function renderReglages() {
       const l = tousReglages();
       q('.reglages').innerHTML = `<h3>Mes réglages</h3>
         <div class="rg-faire"><input class="input" data-rg="nom" maxlength="40" placeholder="Nom du réglage (ex. : la pompe du chaos)"><button class="btn small primary" data-rg="garder">Garder ce réglage</button></div>
         ${l.length ? `<div class="rg-liste">${l.map((r) => `<span class="rg" style="--c:${r.de ? memberColor(r.de) : '#8a7f6c'}"><button class="rg-charger" data-rg="charger" data-id="${r.id}" data-de="${r.de}" title="Charger : ${r.tracks.map((t) => t.n).join(':')}${r.liens?.length ? `, ${r.liens.length} lien${r.liens.length > 1 ? 's' : ''}` : ''}">${r.nom.replace(/[<>&"]/g, '')}${r.de && r.de !== espace.me ? ` <small>· ${r.de}</small>` : ''}</button>${!r.de || r.de === espace.me ? `<button class="rg-x" data-rg="retirer" data-id="${r.id}" aria-label="Retirer ce réglage">×</button>` : ''}</span>`).join('')}</div>` : '<p class="muted small">Rien de gardé encore. Ce que tu fais ici reste aussi tout seul, même si tu actualises : ce bouton sert à garder plusieurs versions, avec un nom.</p>'}`;
     }
+    // Modifie la liste des réglages gardés (dans mon profil partagé, ou dans l’appareil) puis la réaffiche.
     async function majReglages(fn) {
       if (espace.connected) { await saveProfile((d) => ({ laboReglages: fn(d.laboReglages || []) })); }
       else store.set('laboReglages', fn(store.get('laboReglages', [])));
       renderReglages();
     }
     const garder = () => store.set('laboEtat', { tracks: tracks.map(({ n, muted, inst, vol, g, respire, cache }) => ({ n, muted, inst, vol, g, respire, cache })), liens, focus, presetId, f });
+    // Après un changement de disques : retire les liens devenus orphelins, retient la clé pour La cathédrale, et redessine tout.
     function tracksChanged() {
       liens = liens.filter((l) => (SOURCES[l.src] || +l.src < tracks.length) && (l.cible.startsWith('g') ? tracks.some((t) => t.g === l.cible.slice(1)) : +l.cible < tracks.length));
       store.set('laboCle', tracks.map((t) => t.n)); // la clé de voûte de La cathédrale
@@ -224,6 +231,7 @@ export default {
     let choisis = new Set();
     let souffle = 0; // la respiration des groupes qui « respirent » (volume qui monte et descend sur 4 tours)
     const disqueMini = (n, c) => `<svg viewBox="0 0 60 60" class="tr-svg" aria-hidden="true"><circle cx="30" cy="30" r="22" fill="none" stroke="${c}" stroke-width="2.5"/>${[...Array(Math.min(n, 16))].map((_, k) => { const a = (k / n) * Math.PI * 2 - Math.PI / 2; return `<circle cx="${(30 + 22 * Math.cos(a)).toFixed(1)}" cy="${(30 + 22 * Math.sin(a)).toFixed(1)}" r="3.4" fill="${c}"/>`; }).join('')}<text x="30" y="36" text-anchor="middle">${n}</text></svg>`;
+    // Dessine la liste des disques : leur nombre, leur son, leur volume, leur groupe, et les boutons pour les choisir ou les retirer.
     function renderTracks() {
       q('.tracks').innerHTML = tracks.map((t, i) => `
         <li class="track ${t.muted ? 'muted' : ''} ${choisis.has(i) ? 'choisi' : ''} ${t.g ? 'en-groupe' : ''}" style="--c:${colors[i]};--g:${GROUPES[t.g] || 'transparent'}">
@@ -292,6 +300,7 @@ export default {
     }
     // Le nœud sous un point : le plus petit qui le contient (un disque dans un anneau gagne sur l'anneau).
     const nœudA = (l, x, y) => l.filter((n) => Math.hypot(n.x - x, n.y - y) <= n.r + 6).sort((a, b) => a.r - b.r)[0];
+    // Le schéma des liens en SVG : les disques, les groupes et les déclencheurs comme des nœuds, chaque lien comme une flèche (vert : fait monter ; orange : fait baisser).
     function schemaSVG() {
       const { l, W, H } = noeuds(); const at = (id) => l.find((x) => x.id === id);
       const fl = liens.map((x, k) => {
@@ -315,6 +324,7 @@ export default {
         <defs>${Object.entries(SENS).map(([k, c]) => `<marker id="ls-fl-${k}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker>`).join('')}</defs>
         ${anneaux}${fl}${nd}<path class="ls-trace" d="" /></svg>`;
     }
+    // Le panneau des liens : le schéma, la liste des liens en phrases, et le formulaire pour en écrire un.
     function renderLiens() {
       const lettres = [...new Set(tracks.map((t) => t.g).filter(Boolean))].sort();
       const cibles = [...tracks.map((_, i) => [String(i), `du disque ${i + 1}`]), ...lettres.map((l) => [`g${l}`, `du groupe ${l}`])];
@@ -348,6 +358,7 @@ export default {
       });
       svg.addEventListener('pointermove', (e) => { if (!trace) return; const [x, y] = pt(e); svg.querySelector('.ls-trace').setAttribute('d', `M${trace.x} ${trace.y} L${x} ${y}`); });
       svg.addEventListener('pointerup', (e) => finir(e));
+      // Quand on relâche le doigt sur le schéma : un simple toucher met le disque en avant ; un glisser d’un nœud à un autre crée un lien.
       function finir(e) {
         if (!trace) return; const t = trace; trace = null; svg.querySelector('.ls-trace').setAttribute('d', '');
         // Un simple toucher sur un disque (sans tirer) : il passe en avant, dans la grande fenêtre du haut.
@@ -381,6 +392,7 @@ export default {
       const s = tracks[+src]; if (!s || s.muted) return null; const fr = freqOf(+src); const depuis = ((now * fr) % 1) / fr; return Math.exp(-depuis * 9);
     }
     const viseLien = (l, i) => (l.cible.startsWith('g') ? tracks[i].g === l.cible.slice(1) : +l.cible === i) && String(i) !== l.src;
+    // L’effet combiné des liens sur un disque à un instant donné, pour un paramètre (volume, hauteur, timbre ou place gauche-droite).
     function effetLiens(i, now, param = 'volume') {
       let x = param === 'pan' ? 0 : 1;
       liens.forEach((l) => {
@@ -393,6 +405,7 @@ export default {
       });
       return param === 'pan' ? Math.max(-1, Math.min(1, x)) : x;
     }
+    // Le panneau des groupes : les disques choisis, le bouton pour les grouper, et les réglages de chaque groupe (son, volume, sourdine, solo, respirer).
     function renderGroupes() {
       const lettres = [...new Set(tracks.map((t) => t.g).filter(Boolean))].sort();
       const libre = Object.keys(GROUPES).find((l) => !lettres.includes(l));
@@ -412,6 +425,7 @@ export default {
 
     // Enregistrer le labo : ce qui sort vraiment des haut-parleurs (après la lampe et les compresseurs), en WAV stéréo.
     let prise = null;
+    // « ● Enregistrer » : capte ce qui sort de l’app (disques, liens, lampe compris), puis le télécharge en WAV quand on arrête.
     function enregistrer(b) {
       const c = audio();
       if (prise) {
@@ -431,6 +445,7 @@ export default {
       finalOut().connect(proc); const muet = c.createGain(); muet.gain.value = 0; proc.connect(muet).connect(c.destination);
       prise = { proc, morceaux }; b.textContent = '■ Arrêter et télécharger'; b.classList.add('rec-on');
     }
+    // Change la vitesse du disque 1 (en tours par seconde) et met à jour le curseur, le champ en hertz et le son.
     function setF(nf, fromInput) {
       f = clamp(nf, FMIN, FMAX);
       if (fromInput !== 'range') range.value = toV(f);
@@ -448,6 +463,7 @@ export default {
     const gainFor = (fr) => clamp(1 / Math.sqrt(Math.max(1, fr / 6)), 0.2, 1);
 
     let lastText = 0;
+    // Met à jour les textes qui décrivent ce qu’on entend (rythme ou note, nom de la note), au plus dix fois par seconde.
     function updateText(force) {
       const now = performance.now();
       if (!force && now - lastText < 90) return;
@@ -477,6 +493,7 @@ export default {
     // Allume la touche de chaque disque. Sous le seuil, on « monte » le rythme
     // d'octave en octave (×2) jusqu'au clavier : sa note fantôme apparaît.
     let kbKey = '';
+    // Allume sur le petit clavier les notes que forment les disques quand ils tournent assez vite pour devenir des notes.
     function updateKeyboard(zone) {
       const ids = live();
       const n = ids.length ? octavesUp(Math.min(...ids.map(freqOf))) : 0;
@@ -496,6 +513,7 @@ export default {
         : `Trop lent pour être une note… double-le ${n} fois (×${2 ** n}) et ce rythme <em>est</em> ${names}. Touches pointillées = notes fantômes.`);
     }
 
+    // Le texte qui explique la clé actuelle : ce que ces nombres donnent en rythme et en accord.
     function updateExplain() {
       const p = RATIO_PRESETS.find((x) => x.id === presetId);
       const ids = live();
@@ -510,6 +528,7 @@ export default {
         <p class="muted small">Même fraction, deux sensations. Les petites fractions (2/1, 3/2, 4/3) sonnent « simples » dans les deux mondes.</p>`);
     }
 
+    // Démarre le son du labo : un oscillateur et un filtre par disque, avec leur volume et leur place gauche-droite.
     function startAudio() {
       const c = audio();
       const gain = c.createGain();
@@ -553,9 +572,11 @@ export default {
     }
     // 0 sous 8 Hz (on entend la batterie), 1 au-delà de 20 Hz (on entend la note).
     function smooth(fr) { const x = clamp((fr - 8) / 12, 0, 1); return x * x * (3 - 2 * x); }
+    // Le dosage entre le clic et l’oscillateur pour un disque (selon son son et sa vitesse).
     function oscMix(i) { return (tracks[i].inst || 'clic') === 'clic' ? 1 : smooth(freqOf(i)); }
     // Le volume d'un disque : son réglage, et la respiration de son groupe (de 15 % à 100 %, sur quatre tours du disque 1).
     function niveau(i) { const t = tracks[i]; const b = t.respire ? 0.15 + 0.85 * (0.5 - 0.5 * Math.cos(souffle)) : 1; return (t.vol ?? 1) * b * (liens.length ? effetLiens(i, audio().currentTime) : 1); }
+    // Applique les volumes de chaque disque (sourdine, solo, respiration, liens), en douceur.
     function updateMutes(vite) {
       if (!nodes) return;
       const c = audio();
@@ -569,6 +590,7 @@ export default {
         nodes.pans[i].pan.setTargetAtTime(effetLiens(i, now, 'pan'), now, k);
       });
     }
+    // Arrête le son du labo et libère ses oscillateurs.
     function stopAudio() {
       clearInterval(drumT);
       if (!nodes) return;
@@ -578,6 +600,7 @@ export default {
       setTimeout(() => { n.oscs.forEach((o) => o.stop()); n.lp.disconnect(); }, 200);
       nodes = null;
     }
+    // Lance ou arrête la lecture du labo et met les boutons à jour.
     function setPlaying(on) {
       playing = on;
       if (on) { realPhase = tracks.map(() => 0); spin = 0; startAudio(); } else { stopAudio(); sweep = null; }
@@ -675,6 +698,7 @@ export default {
         }
       }
     });
+    // Met à jour les boutons et la légende de la vue « vague » (sinus ou impulsions).
     function syncWaveButtons() {
       el.querySelectorAll('[data-wave]').forEach((b) => b.classList.toggle('active', b.dataset.wave === waveMode));
       q('.wave-caption').textContent = waveMode === 'sin'
@@ -812,6 +836,7 @@ export default {
       ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI * 2); ctx.fill();
     }
 
+    // Dessine les vagues de chaque disque et leur somme (ce que le tympan reçoit), sur deux tours du disque 1.
     function drawWave() {
       const periods = 2; // la fenêtre montre 2 tours de disque
       const { ctx, w, h } = wave;

@@ -22,6 +22,7 @@ export default {
     let step = Math.min(4, Math.max(0, (+(location.hash.match(/etape=(\d)/) || [])[1] || 1) - 1));
     let saveT = 0;
 
+    // Redessine notre point de départ : le questionnaire de chacun, étape par étape.
     function render() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: render }); return; }
       const mem = espace.meta.members || MEMBERS;
@@ -47,6 +48,7 @@ export default {
     const me = () => profileOf(espace.me) || {};
     // Les modifications s'accumulent, puis partent ensemble (rien ne se perd si on tape vite).
     let pending = {};
+    // Sauve une réponse (en regroupant les changements rapides) et l’affiche comme enregistrée.
     function save(change) {
       Object.assign(pending, change(me()));
       const st = el.querySelector('.save-state');
@@ -60,6 +62,7 @@ export default {
     }
     const otherName = () => (espace.meta.members || MEMBERS).find((m) => m !== espace.me) || 'l’autre';
 
+    // Affiche l’étape courante du point de départ (goûts, artistes, envies…).
     function renderStep() {
       const p = me();
       const b = el.querySelector('.dbody');
@@ -97,6 +100,7 @@ export default {
       }
     }
 
+    // Le bloc d’un artiste aimé : son nom, et ce qu’on aime chez lui.
     function artBloc(a, i) {
       const aime = a.aime || [];
       return `<div class="art-bloc" data-bloc="${i}">

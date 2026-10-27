@@ -22,6 +22,7 @@ export const SORTES = {
 // Nos rituels lunaires : les quatre moments du cycle, à l'heure exacte (phases astronomiques, heure de l'appareil).
 const RITUELS = [['Nouvelle lune', 'Le passage : fermer le cycle, semer nos intentions', '#/passage'], ['Premier quartier', 'Faire grandir : une idée du mur, trois variations', '#/carnet'],
   ['Pleine lune', 'Faire entendre : 60 secondes, à une personne', '#/session'], ['Dernier quartier', 'Laisser aller : relire nos intentions, trier le mur', '#/passage']];
+// Le rituel lunaire d’un jour, s’il y en a un : le moment exact de la phase, son nom, ce qu’elle nous propose et où aller.
 export function rituelDu(jour) {
   const p = phasesEntre(jour, jour + JOUR)[0]; if (!p) return null;
   const [nom, quoi, lien] = RITUELS[p.q]; return [p.t, `${nom}, ${heure(p.t)}`, quoi, lien];
@@ -47,11 +48,13 @@ export default {
     let semaine = lundi(); let vue = store.get('calVue', 'semaine'); let mois = new Date(); mois.setDate(1);
     const mem = () => espace.meta?.members || MEMBERS; const autre = () => mem().find((m) => m !== espace.me);
 
+    // Une plage dans le calendrier : son heure, sa sorte, son mot, et son état (proposée par l’un, ou à nous deux).
     function chip(e) {
       const d = e.data; const S = SORTES[d.sorte] || SORTES.jalon; const ok = d.statut === 'confirme';
       return `<button class="cl-plage ${ok ? 'ok' : 'propose'}" data-plage="${esc(e.id)}" style="--s:${S[1]};--p:${memberColor(d.par)}" title="${esc(S[0])}${d.note ? ` : ${esc(d.note)}` : ''}">
         <b>${heure(d.debut)}</b><span>${esc(S[0])}</span>${d.note ? `<small>${esc(d.note)}</small>` : ''}<em>${ok ? 'nous deux ✓' : `proposée par ${esc(d.par)}`}</em></button>`;
     }
+    // La vue Semaine : notre rythme, l’objectif de la semaine, et sept jours avec leurs plages et leurs rituels lunaires.
     function semaineHTML() {
       const fin = semaine + 7 * JOUR; const l = plages().filter((e) => e.data.debut >= semaine && e.data.debut < fin);
       const conf = (s) => l.filter((e) => e.data.sorte === s && e.data.statut === 'confirme').length;
@@ -69,6 +72,7 @@ export default {
           const ri = rituelDu(j);
           return `<div class="cl-jour ${auj ? 'auj' : ''} ${ri ? 'lune' : ''}"><button class="cl-j-t" data-jour="${j}" title="Proposer une plage ce jour-là"><b>${JOURS[i]}</b> ${new Date(j).getDate()}<span>＋</span></button>${ri ? `<a class="cl-rituel" href="${ri[3]}">${luneSVG(lune(new Date(j + JOUR / 2)), 16)}<b>${ri[1]}</b><small>${ri[2]}</small></a>` : ''}${du.map(chip).join('')}</div>`; }).join('')}</div>`;
     }
+    // La vue Mois : chaque jour avec ses plages en pastilles et ses lunes ; toucher un jour ouvre sa semaine.
     function moisHTML() {
       const y = mois.getFullYear(); const m = mois.getMonth(); const debut = lundi(new Date(y, m, 1).getTime()); const l = plages();
       const cases = []; for (let t = debut; t < new Date(y, m + 1, 1).getTime() || new Date(t).getDay() !== 1; t += JOUR) cases.push(t);
@@ -77,6 +81,7 @@ export default {
         return `<button class="cl-m-j ${new Date(t).getMonth() !== m ? 'hors' : ''}" data-va="${lundi(t)}" ${ri ? `title="${ri[1]} : ${ri[2]}"` : ''}><b>${new Date(t).getDate()}${ri ? ` ${luneSVG(lune(new Date(t + JOUR / 2)), 12)}` : ''}</b><span>${du.map((e) => `<i class="${e.data.statut === 'confirme' ? 'ok' : ''}" style="--s:${SORTES[e.data.sorte]?.[1]};--p:${memberColor(e.data.par)}" title="${esc(SORTES[e.data.sorte]?.[0] || '')} ${heure(e.data.debut)}"></i>`).join('')}</span></button>`; }).join('')}</div>
         ${(() => { const mm = currentMonth(); return mm ? `<p class="muted small">Ce mois-ci, au plan : <b>${esc(PLAN[mm - 1].titre)}</b>.</p>` : ''; })()}</div>`;
     }
+    // Les plages en attente : celles que l’autre me propose (approuver ou proposer autre chose), les miennes sans réponse, et les réponses à mes propositions.
     function attenteHTML() {
       const l = plages().filter((e) => e.data.statut === 'propose' && e.data.debut > Date.now() - JOUR).sort((a, b) => a.data.debut - b.data.debut);
       const refus = espace.entries.filter((e) => e.type === 'plage' && e.data?.statut === 'refuse' && e.data.par === espace.me && !e.data.vuRefus);
@@ -89,6 +94,7 @@ export default {
         ${refus.map((e) => `<div class="cl-a refus"><p>${esc(autre())} propose autre chose pour ta plage du ${jourLong(e.data.debut)}${e.data.reponse ? ` : <b>« ${esc(e.data.reponse)} »</b>` : '.'}</p><button class="btn small" data-vu="${esc(e.id)}">Compris</button></div>`).join('')}
       </section>`;
     }
+    // Nos prochains pas : les deux listes côte à côte (ceux que l’app voit, ceux qu’on se donne à cocher) et le formulaire pour en ajouter.
     function pasHTML() {
       const ligne = (x, qui) => `<li class="${x.fait ? 'fait' : ''}">${x.manuel != null ? `<label><input type="checkbox" data-pas="${esc(x.manuel)}" ${x.fait ? 'checked' : ''}> <b>${esc(x.titre)}</b></label>` : `<a href="${x.lien}"><b>${esc(x.titre)}</b></a>`}<small>${esc(x.pourquoi || '')}</small>${x.manuel != null && (x.auteur === espace.me) ? `<button class="icon-btn tiny" data-pas-x="${esc(x.manuel)}" aria-label="Effacer ce pas">×</button>` : ''}</li>`;
       const auto = (qui) => mesTaches(qui).filter((x) => !x.manuel);
@@ -98,6 +104,7 @@ export default {
         <div class="cl-pas-g">${mem().map((qui) => `<div class="cl-pas-c" style="--c:${memberColor(qui)}"><h3>${esc(qui)}${qui === espace.me ? ' (toi)' : ''}</h3><ul>${[...manuels(qui), ...auto(qui), ...faits(qui)].map((x) => ligne(x, qui)).join('') || '<li class="vide">Rien qui attend.</li>'}</ul></div>`).join('')}</div>
         <form class="cl-pas-f"><input class="input" name="t" maxlength="120" placeholder="Un pas à faire (ex. : apprendre les paroles du refrain)" required><select name="pour" aria-label="Pour qui">${mem().map((m) => `<option value="${esc(m)}" ${m === espace.me ? 'selected' : ''}>pour ${esc(m)}</option>`).join('')}<option value="deux">pour nous deux</option></select><button class="btn small">Ajouter</button></form></section>`;
     }
+    // Le formulaire pour proposer une plage : le jour, l’heure, la durée, la sorte, un mot.
     function proposerHTML() {
       const d = new Date(); d.setDate(d.getDate() + 1);
       return `<form class="panel cl-prop" hidden><h2>Proposer une plage</h2><div class="cl-prop-g">
@@ -109,6 +116,7 @@ export default {
         <p class="muted small cl-sorte-aide"></p>
         <div class="cl-prop-b"><button class="btn primary">Proposer à ${esc(autre())}</button><button class="btn ghost" type="button" data-fermer>Annuler</button></div></form>`;
     }
+    // Dessine toute la page du calendrier.
     function render() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: render }); return; }
       const titreSem = `${new Date(semaine).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' })} au ${new Date(semaine + 6 * JOUR).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' })}`;
@@ -126,10 +134,12 @@ export default {
         ${pasHTML()}`;
     }
     const q = (s) => el.querySelector(s);
+    // Ouvre le formulaire de proposition (au jour touché, s’il y en a un).
     function ouvrirProposer(jour) {
       const f = q('.cl-prop'); f.hidden = false; if (jour) f.jour.value = new Date(+jour).toLocaleDateString('fr-CA');
       q('.cl-sorte-aide').textContent = SORTES[f.sorte.value][2]; f.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+    // La fiche d’une plage : quand, combien de temps, qui l’a proposée, et les gestes (approuver, l’ajouter à son agenda, retirer).
     function fiche(id) {
       const e = espace.entries.find((x) => x.id === id); if (!e) return; const d = e.data; const S = SORTES[d.sorte] || SORTES.jalon; const fi = q('.cl-fiche');
       fi.hidden = false; fi.innerHTML = `<section class="panel" style="--s:${S[1]}"><div class="panel-head"><h2>${esc(S[0])}</h2><button class="icon-btn tiny" data-fiche-x aria-label="Fermer">✕</button></div>

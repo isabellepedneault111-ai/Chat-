@@ -11,6 +11,7 @@ const syll = (w) => { const s = wordSyll(w); return s.parts.length - (s.mute ? 1
 const casse = (modele, w) => (modele[0] && modele[0] === modele[0].toUpperCase() && modele[0] !== modele[0].toLowerCase() ? w[0].toUpperCase() + w.slice(1) : w);
 let boite = null; let cible = null;
 
+// Ferme la boîte du mot ouvert.
 function fermer() { boite?.remove(); boite = null; cible = null; }
 
 // Le mot sous la sélection d'un champ : on élargit jusqu'aux lettres (le double-clic prend parfois l'espace ou l'apostrophe).
@@ -24,6 +25,7 @@ function motDuChamp(f) {
   return w.length > 1 ? { w, a, b } : null;
 }
 
+// Ouvre la boîte d’un mot double-cliqué : ses rimes, ses synonymes, son nombre de syllabes.
 async function ouvrir(f, mot, x, y) {
   fermer(); cible = { f, ...mot };
   boite = document.createElement('div'); boite.className = 'mo-boite no-aide'; boite.setAttribute('role', 'dialog'); boite.setAttribute('aria-label', `Le mot ${mot.w}`);
@@ -61,6 +63,7 @@ async function ouvrir(f, mot, x, y) {
   boite.addEventListener('change', (e) => { if (e.target.dataset.mo === 'meme') { meme = e.target.checked; rendre(); } });
 }
 
+// Remplace le mot dans le champ en gardant sa casse et l’annulation (Ctrl+Z).
 function remplacer(nouveau) {
   const { f, a, b, w } = cible; const v = f.value; const mis = casse(w, nouveau);
   f.focus(); f.setSelectionRange(a, b);
@@ -70,6 +73,7 @@ function remplacer(nouveau) {
   toast(`« ${w} » → « ${mis} »`); fermer();
 }
 
+// Le double-clic sur un mot, dans n’importe quel champ de texte, ouvre sa boîte.
 export function installerMotOuvert() {
   document.addEventListener('dblclick', (e) => {
     const f = e.target.closest?.('textarea, input[type=text], input:not([type])');

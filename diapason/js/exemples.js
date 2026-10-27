@@ -7,6 +7,7 @@ import { memberColor } from './duo.js';
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const exempleDe = (id) => espace.entries.filter((e) => e.type === 'audio' && e.data?.exemple === id).sort((a, b) => b.createdAt - a.createdAt)[0];
 
+// Le bloc « Notre exemple » d’un exercice : la prise qu’on garde comme modèle, ou l’invitation à en choisir une.
 export function exempleHTML(id, nom) {
   if (!espace.connected) return '';
   const ex = exempleDe(id);
@@ -17,6 +18,7 @@ export function exempleHTML(id, nom) {
 }
 
 let rec = null;
+// Branche les boutons des exemples : écouter, choisir, remplacer.
 export function bindExemples(root) {
   root.addEventListener('click', async (e) => {
     const b = e.target.closest('[data-ex]');

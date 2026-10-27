@@ -3490,3 +3490,18 @@ a.md-lien { color: inherit; }
 .ar-el-k { display: block; font: 700 .68rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #b8ae9b; }
 .ar-mot-sign { font-style: normal !important; line-height: 1.6; } .ar-mot-sign b { color: var(--ink) !important; font-weight: 800; } .ar-mot-sign span { color: var(--muted); font-size: .9rem; }
 .ar-traits .ar-g-fois { margin: 8px 0 0; font: .88rem "Atkinson Hyperlegible", sans-serif !important; color: var(--ink); max-width: none; } .ar-g-fois b { display: inline !important; font: inherit !important; font-weight: 800 !important; color: var(--zaza) !important; }
+/* La grande visite : le fil des chapitres, le sommaire, les cartes de chapitre */
+.gv .coach-bubble { max-height: calc(100vh - 24px); overflow-y: auto; }
+.gv-fil { display: flex; gap: 3px; margin: 0 0 10px; padding: 0; list-style: none; flex-wrap: wrap; }
+.gv-fil button { border: 0; border-radius: 999px; padding: 2px 8px; font: 600 .68rem/1.4 inherit; font-family: inherit; background: rgba(243, 234, 214, .08); color: #a8a093; cursor: pointer; }
+.gv-fil button.fait { color: #d9c9a3; background: rgba(217, 181, 106, .16); }
+.gv-fil button.on { color: #1b1915; background: #d9b56a; }
+.gv-som { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.gv-som button { text-align: left; border: 1px solid rgba(201, 164, 92, .35); background: rgba(243, 234, 214, .04); color: #f3ead6; border-radius: 10px; padding: 7px 9px; cursor: pointer; font: inherit; font-size: .88rem; }
+.gv-som button:hover, .gv-som button:focus-visible { border-color: #d9b56a; background: rgba(217, 181, 106, .12); }
+.gv-som b { color: #d9b56a; margin-right: 4px; } .gv-som small { display: block; color: #b8ad98; font-size: .76rem; margin-top: 2px; }
+.gv-quoi { display: flex; flex-wrap: wrap; gap: 4px; } .gv-quoi span { font-size: .78rem; padding: 2px 8px; border-radius: 8px; background: rgba(243, 234, 214, .08); color: #d8d0c1; }
+.gv-suite { font-style: italic; color: #e8d29c; border-left: 2px solid #d9b56a; padding-left: 10px; }
+.gv-carte h3 { font-size: 1.7rem; }
+.gv .coach-bubble .muted { color: #b8ad98; }
+html.gv-on body { padding-right: 432px; }

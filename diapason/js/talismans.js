@@ -1,6 +1,7 @@
 // Nos talismans. Zaza : une demi-lune dont une corde relie les pointes ; elle devient un arc, la flèche tendue, prête à partir.
 // Frog : le triskel, trois spirales nées d'un même centre, qui tournent, reviennent et grandissent.
 
+// Le talisman en arc (un croissant de lune), dessiné en SVG.
 export function arcSVG(cls = '') {
   return `<svg class="tal tal-arc ${cls}" viewBox="0 0 200 200" aria-hidden="true">
     <path class="tal-lune" d="M104 18 A86 86 0 0 1 104 182 A64 64 0 0 0 104 18 Z"/>
@@ -14,6 +15,7 @@ export function arcSVG(cls = '') {
   </svg>`;
 }
 
+// Le triskèle, trois branches qui tournent, dessiné en SVG.
 export function triskelSVG(cls = '') {
   const C = 100; const R = 44; let d = '';
   for (let a = 0; a < 3; a++) {
