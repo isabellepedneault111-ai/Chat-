@@ -244,7 +244,7 @@ export default {
           <li><b>Finalité relationnelle.</b> Le critère de réussite n’est pas technique : l’outil sert un lien et une création à deux.</li>
           <li><b>Ancrage dans la recherche.</b> Chaque mécanisme pédagogique cite ses appuis (Rohrer, 2004 ; Cepeda et al., 2006 ; Biasutti, 2017 ; Pattison, 2009…) ; l’exactitude prime sur l’effet.</li>
           <li><b>Triangulation réflexive.</b> Un même protocole d’analyse de pratique, appliqué à plusieurs systèmes d’IA (Claude, ChatGPT, Gemini, Copilot), chacun sur son propre historique d’utilisation, puis comparé.</li>
-          <li class="ar-cadence"><b>Cadence</b> : <span class="ar-cad">mesurée dans l’historique…</span> Traçabilité : chaque décision est versionnée (Git) ; la généalogie ci-dessus en est la trace : <b class="ar-mot-etapes">—</b> étapes, <b class="ar-mot-lignes">—</b> lignes. Vérification : des tests de bout en bout dans un vrai navigateur (Playwright) avant chaque mise en ligne.</li>
+          <li class="ar-cadence"><b>Cadence</b><ul class="ar-cad-l"><li class="ar-cad">mesurée dans l’historique…</li><li>Traçabilité : chaque décision est versionnée (Git) ; la généalogie ci-dessus en est la trace : <b class="ar-mot-etapes">—</b> étapes, <b class="ar-mot-lignes">—</b> lignes.</li><li>Vérification : des tests de bout en bout dans un vrai navigateur (Playwright) avant chaque mise en ligne.</li></ul><figure class="ar-cad-g" hidden></figure></li>
           <li><b>Limite nommée.</b> Penser en couches reliées expose à la surcomplexité et au raffinement au-delà du seuil d’utilité. Contre-mesures : des itérations numérotées, des versions datées, un journal, et une question de contrôle à chaque étape : est-ce que ça sert Frog et Zaza, maintenant ?</li>
         </ul>
         <p class="ar-verdict">Sur la base de ces traces (la cadence mesurée, la traçabilité de chaque décision, la triangulation sur quatre systèmes d’IA), la conceptrice de Diapason Labo est en fait une <b>architecte d’environnements hybrides humain-IA</b> : elle ne conçoit pas seulement l’objet, mais l’environnement où l’humain et l’agent travaillent ensemble, et la répartition de ce que chacun y fait.</p>
@@ -281,13 +281,32 @@ export default {
     }).catch(() => { el.querySelector('.gn-host').innerHTML = '<p class="muted">La généalogie n’a pas pu se charger.</p>'; });
     function cadence() {
       const g = gData; const cd = g?.cadence; const cad = el.querySelector('.ar-cad');
-      if (cd && cad && /\d/.test(el.querySelector('.ar-mot-lignes').textContent)) {
+      if (cd && cad && !cad.dataset.fait && /\d/.test(el.querySelector('.ar-mot-lignes').textContent)) {
         const lignes = +(el.querySelector('.ar-mot-lignes').textContent.replace(/\D/g, '')) || 0;
         const min = Math.round((cd.heuresActives * 60) / Math.max(1, cd.etapes - 1));
         const jp = (n) => Math.round(lignes / n);
         const virg = (x) => (x < 10 ? x.toFixed(1) : String(Math.round(x))).replace('.', ',');
         const an = (j) => virg(j / 220); const mois = (j) => virg(j / 5 / 21);
-        cad.innerHTML = `${cd.etapes} étapes validées en ≈ ${String(cd.heuresActives).replace('.', ',')} h d’activité mesurée, sur ${cd.jours} jours (${String(cd.heuresTotales).replace('.', ',')} h écoulées) : une itération toutes les ${min} minutes environ. Repère : les estimations classiques du génie logiciel comptent de 10 à 50 lignes de code fini par développeur et par jour, conception et tests compris (McConnell, 2004). Sans IA, ce volume représenterait de l’ordre de ${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours-personnes, soit ${an(jp(50))} à ${an(jp(10))} années de travail pour une personne seule (environ 220 jours ouvrables par an), ou une équipe de cinq développeurs pendant ${mois(jp(50))} à ${mois(jp(10))} mois (21 jours ouvrables par mois). Le nombre de lignes est une mesure grossière : il situe l’échelle, pas la qualité.`;
+        cad.outerHTML = `<li class="ar-cad" data-fait="1"><b>${cd.etapes}</b> étapes validées, en ≈ <b>${String(cd.heuresActives).replace('.', ',')} h</b> d’activité mesurée sur ${cd.jours} jours (${String(cd.heuresTotales).replace('.', ',')} h écoulées)</li>
+          <li>Une itération toutes les <b>${min} minutes</b> environ</li>
+          <li>Repère du génie logiciel : <b>10 à 50 lignes</b> de code fini par développeur et par jour, conception et tests compris (McConnell, 2004)</li>
+          <li>Sans IA, ce volume représenterait <b>${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours-personnes</b> : <b>${an(jp(50))} à ${an(jp(10))} années</b> pour une personne seule (220 jours ouvrables par an), ou <b>${mois(jp(50))} à ${mois(jp(10))} mois</b> pour une équipe de cinq (21 jours ouvrables par mois)</li>
+          <li class="ar-cad-res">Le nombre de lignes est une mesure grossière : il situe l’échelle, pas la qualité.</li>`;
+        // Le graphique comparatif : la durée, en jours de travail, sur une échelle logarithmique (2 jours et 2 000 jours
+        // tiennent sur la même ligne). Une barre par scénario, de l'estimation basse à la haute.
+        const jt = cd.heuresActives / 8; const fig = el.querySelector('.ar-cad-g'); const hi = Math.max(3000, jp(10) * 1.2);
+        const P = (v) => (Math.log10(Math.max(1, v)) / Math.log10(hi)) * 100; // position en %, échelle logarithmique de 1 jour à hi
+        const rangs = [['Avec l’IA', 'Diapason Labo, réalisé', jt, jt, 'ia', `${virg(jt)} jours`, `${String(cd.heuresActives).replace('.', ',')} h actives, sur ${cd.jours} jours`],
+          ['Équipe de cinq', 'estimation sans IA', jp(50) / 5, jp(10) / 5, 'sans', `${mois(jp(50))} à ${mois(jp(10))} mois`, `${Math.round(jp(50) / 5)} à ${Math.round(jp(10) / 5)} jours ouvrables`],
+          ['Une personne seule', 'estimation sans IA', jp(50), jp(10), 'sans', `${an(jp(50))} à ${an(jp(10))} ans`, `${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours ouvrables`]];
+        fig.hidden = false;
+        fig.innerHTML = `<figcaption><b>La même app, trois façons de la faire</b> <span>durée en jours de travail · échelle logarithmique : chaque trait vaut dix fois le précédent</span></figcaption>
+          <div class="ar-g" role="img" aria-label="${rangs.map((r) => `${r[0]} : ${r[5]}`).join(' ; ')}">
+            ${rangs.map(([n, sous, a, b, c, val, tip]) => `<div class="ar-g-r" title="${n} : ${val} (${tip})"><div class="ar-g-t"><b>${n}</b><small>${sous}</small></div>
+              <div class="ar-g-p">${[1, 10, 100, 1000].map((t) => `<i class="ar-g-l" style="left:${P(t)}%"></i>`).join('')}<span class="ar-g-b ${c}" style="left:${P(a)}%;width:max(10px, ${P(b) - P(a)}%)"></span><span class="ar-g-v" style="${P(b) > 62 ? `right:${100 - P(a) + 1.5}%` : `left:calc(${P(b)}% + 14px)`}">${val}</span></div></div>`).join('')}
+            <div class="ar-g-r ar-g-axe"><div></div><div class="ar-g-p">${[1, 10, 100, 1000].map((t) => `<span style="left:${P(t)}%">${t.toLocaleString('fr-CA')} j</span>`).join('')}</div></div>
+          </div>
+          <p class="ar-g-leg"><span><i class="ia"></i>réalisé, avec l’IA</span><span><i class="sans"></i>estimé sans IA (de 50 à 10 lignes par jour)</span></p>`;
       }
     }
 
