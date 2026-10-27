@@ -273,7 +273,7 @@ export default {
       const lm = luneCourante(espace.meta);
       return `<div class="mod-head"><div><p class="eyebrow">Notre projet</p><h1>Ce qu’on bâtit, à deux.</h1>
         <p class="muted">Le cap, les intentions, la vision, les inspirations, et ce que nos traces disent de nous. L’accueil, lui, garde le quotidien.</p></div></div>
-        <section class="panel pj-obj"><h2>Nos objectifs, du plus loin au plus près</h2>${echelleHTML(v, m, goal)}</section>
+        <section class="panel pj-obj"><h2>Nos objectifs, du plus près au plus loin</h2>${echelleHTML(v, m, goal)}</section>
         <section class="panel pj-plan"><h2>Le plan des six mois</h2>
           <ol class="pj-mois">${PLAN.map((g, i) => `<li class="${i + 1 === m ? 'now' : i + 1 < m ? 'fait' : ''}"><span class="mono">Mois ${i + 1}</span><b>${esc(g.titre)}</b><small>${esc(g.sortie)}</small></li>`).join('')}</ol>
           <p class="small">Ce mois-ci : <b>${Math.min(got, goal.cible)} / ${goal.cible}</b> · ${esc(goal.src)}</p></section>

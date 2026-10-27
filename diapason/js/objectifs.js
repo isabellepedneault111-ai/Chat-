@@ -43,17 +43,17 @@ export function semaineHTML() {
   </div>`;
 }
 
-// Sur « Notre projet » : les quatre paliers, du plus loin au plus près.
+// Sur « Notre projet » : les quatre paliers, du plus près (la séance) au plus loin (le cap des six mois).
 export function echelleHTML(v, m, plan) {
   const l = lundi(); const e = semaine(l);
   const sessions = espace.entries.filter((x) => x.type === 'session' && x.data?.done && x.data.cible).sort((a, b) => b.data.doneAt - a.data.doneAt);
   const der = sessions[0]; const dv = der && Object.entries(der.data.traces || {}).filter(([, t]) => t?.cible);
   const passees = semaines().filter((x) => x.data.debut < l).slice(0, 4);
   return `<ol class="ob-echelle">
-    <li><span class="ob-quand">Dans six mois</span><b>${v.intention ? esc(v.intention) : '<span class="muted">notre cap, à poser ensemble (Modifier, plus bas)</span>'}</b><small>Le cap. Il ne bouge presque pas.</small></li>
-    <li><span class="ob-quand">Ce mois-ci</span><b>${esc(plan.titre)}</b><small>Sortie visée : ${esc(plan.sortie)}</small></li>
-    <li><span class="ob-quand">Cette semaine</span><b>${e?.data?.texte ? `« ${esc(e.data.texte)} »` : '<span class="muted">pas encore fixé : sur l’accueil, dans la carte du mois</span>'}</b><small>Fixé à deux, évalué chacun à la fin de la semaine.</small></li>
     <li><span class="ob-quand">Cette séance</span><b>${der ? `« ${esc(der.data.cible)} »` : '<span class="muted">la cible, choisie en lançant la séance</span>'}</b><small>${dv?.length ? `La dernière : ${dv.map(([w, t]) => `<i style="color:${memberColor(w)}">${esc(w)}</i> ${nomV(t.cible).toLowerCase()}`).join(', ')}` : 'Une seule cible par séance, évaluée en la rangeant.'}</small></li>
+    <li><span class="ob-quand">Cette semaine</span><b>${e?.data?.texte ? `« ${esc(e.data.texte)} »` : '<span class="muted">pas encore fixé : sur l’accueil, dans la carte du mois</span>'}</b><small>Fixé à deux, évalué chacun à la fin de la semaine.</small></li>
+    <li><span class="ob-quand">Ce mois-ci</span><b>${esc(plan.titre)}</b><small>Sortie visée : ${esc(plan.sortie)}</small></li>
+    <li><span class="ob-quand">Dans six mois</span><b>${v.intention ? esc(v.intention) : '<span class="muted">notre cap, à poser ensemble (Modifier, plus bas)</span>'}</b><small>Le cap. Il ne bouge presque pas.</small></li>
   </ol>
   ${passees.length ? `<details class="ob-passees"><summary>Nos semaines passées (${passees.length})</summary>${passees.map((x) => `<div class="ob-p"><p><span class="mono">${jourCourt(x.data.debut)}</span> « ${esc(x.data.texte)} » · ${seancesDe(x.data.debut).length} séance${seancesDe(x.data.debut).length > 1 ? 's' : ''}</p>${evalHTML(x, espace.me)}</div>`).join('')}</details>` : ''}`;
 }

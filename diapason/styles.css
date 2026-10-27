@@ -3311,8 +3311,8 @@ a.md-lien { color: inherit; }
 .ob-echelle { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 0; border: 1.5px solid var(--ink); border-radius: 12px; overflow: hidden; }
 .ob-echelle li { position: relative; display: grid; gap: 4px; align-content: start; padding: 14px 16px 14px 18px; background: var(--card); border-right: 1.5px solid var(--rule); }
 .ob-echelle li:last-child { border-right: 0; }
-.ob-echelle li:first-child { background: #1b1916; color: #efe6d2; } .ob-echelle li:first-child small { color: #b8ae9b; } .ob-echelle li:first-child .ob-quand { color: #e8c27a; }
-.ob-echelle li:nth-child(2) b { font-size: 1.05rem; } .ob-echelle li:nth-child(3) b, .ob-echelle li:nth-child(4) b { font-size: 1rem; }
+.ob-echelle li:last-child { background: #1b1916; color: #efe6d2; border-right: 0; } .ob-echelle li:last-child small { color: #b8ae9b; } .ob-echelle li:last-child .ob-quand { color: #e8c27a; }
+.ob-echelle li:nth-child(3) b { font-size: 1.05rem; } .ob-echelle li:nth-child(1) b, .ob-echelle li:nth-child(2) b { font-size: 1rem; }
 .ob-echelle b { font: 700 1.15rem/1.25 var(--display); }
 .ob-quand { font: 700 .7rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: #75591a; }
 .ob-echelle small { color: var(--muted); font-size: .82rem; }
