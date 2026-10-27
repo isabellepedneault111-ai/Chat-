@@ -3517,7 +3517,7 @@ html.gv-on body { padding-right: 432px; }
 .ar-traits .ar-g-cout span, .ar-g-cout span { font: .86rem "Atkinson Hyperlegible", sans-serif !important; color: var(--muted); }
 /* Le tableau de la cadence : trois lignes, la durée en gros, le coût, une barre à la même échelle */
 .ar-t { display: grid; margin-top: 8px; }
-.ar-t-r { display: grid; grid-template-columns: minmax(130px, 1fr) minmax(120px, 1.2fr) minmax(120px, 1.2fr); gap: 4px 16px; align-items: baseline; padding: 10px 0 12px; border-top: 1px solid var(--rule); }
+.ar-t-r { display: grid; grid-template-columns: minmax(130px, 1fr) minmax(130px, 1.2fr) minmax(110px, 1fr) minmax(110px, 1fr); gap: 4px 16px; align-items: baseline; padding: 10px 0 12px; border-top: 1px solid var(--rule); }
 .ar-t-h { padding: 0 0 4px; border-top: 0; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .ar-t-r small { display: block; color: var(--muted); font: .78rem "Atkinson Hyperlegible", sans-serif; }
 .ar-t-r b { display: block !important; font: 700 .95rem "Atkinson Hyperlegible", sans-serif !important; color: var(--ink) !important; }
@@ -3526,7 +3526,15 @@ html.gv-on body { padding-right: 432px; }
 .ar-t-barre { grid-column: 1 / -1; display: block; height: 8px; border-radius: 4px; background: color-mix(in srgb, var(--ink) 8%, transparent); margin-top: 4px; }
 .ar-t-barre i { display: block; height: 100%; border-radius: 4px; } .ar-t-barre .ia { background: #aa4b00; } .ar-t-barre .sans { background: #3f6fa8; }
 .ar-t-note, .ar-traits .ar-t-note { margin: 4px 0 0; font: .8rem "Atkinson Hyperlegible", sans-serif !important; color: var(--muted); max-width: none; }
-@media (max-width: 560px) { .ar-t-r { grid-template-columns: 1fr 1fr; } .ar-t-r > span:first-child { grid-column: 1 / -1; } .ar-t-h { display: none; } .ar-t-big { font-size: 1.2rem; } }
+@media (max-width: 560px) { .ar-t-r { grid-template-columns: 1fr 1fr; } .ar-t-r > span:first-child, .ar-t-r > .ar-t-big { grid-column: 1 / -1; } .ar-t-h { display: none; } .ar-t-r .ar-t-prix::before { display: block; font: 400 .7rem "Atkinson Hyperlegible", sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); } .ar-t-r > span:nth-child(3) .ar-t-prix::before { content: 'Salaire'; } .ar-t-r > span:nth-child(4) .ar-t-prix::before { content: 'Salaire + gestion'; } .ar-t-big { font-size: 1.2rem; } }
 .gv-fil button:disabled, .gv-som button:disabled { opacity: .4; cursor: not-allowed; }
 .gv-reprise { color: #e8d29c; font-weight: 700; }
 .coach-skip.gv-sur { color: #ffd36b; font-weight: 700; }
+/* L'arbre : recadré sur son contenu, pleine largeur, et un mode agrandi où l'on se promène */
+.ar-radial { width: 100%; max-width: none; }
+.ar-dessin { position: relative; }
+.ar-zoom { position: sticky; top: 8px; left: 8px; z-index: 2; margin-bottom: -36px; background: #2a2620; color: #efe6d2; border-color: #4a4338; }
+.ar-dessin.zoom { overflow: auto; max-height: 80vh; border-radius: 12px; outline: 1px solid #3a352d; }
+.ar-dessin.zoom .ar-radial { width: 160%; }
+@media (max-width: 860px) { .ar-dessin.zoom .ar-radial { width: 260%; } }
+.ar-zoom[aria-pressed=true] { background: #e8c27a; color: #1b1916; border-color: #e8c27a; opacity: 1; }

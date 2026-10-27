@@ -297,7 +297,10 @@ export default {
       const retouches = feuilles.filter((x) => x.mod === RECENT); const nes = feuilles.filter((x) => x.nee === RECENT);
       const { svg } = dessinArbre(data);
       el.querySelector('.ar-mot-lignes').textContent = data.lignes.toLocaleString('fr-CA'); cadence();
-      el.querySelector('.ar-dessin').innerHTML = svg;
+      const dessin = el.querySelector('.ar-dessin');
+      dessin.innerHTML = `<button type="button" class="btn small ar-zoom" data-zoom aria-pressed="false">⤢ Agrandir l’arbre</button>${svg}`;
+      // Recadre le dessin sur ce qu'il contient vraiment (les noms compris) : l'arbre prend toute la place, sans marge vide.
+      requestAnimationFrame(() => { const r = dessin.querySelector('.ar-radial'); try { const b = r.getBBox(); r.setAttribute('viewBox', `${b.x - 8} ${b.y - 8} ${b.width + 16} ${b.height + 16}`); } catch { /* le dessin garde son cadre */ } });
       el.querySelector('.ar-stats').innerHTML = `<b>${data.fichiers}</b> fichiers · <b>${dossiers - 1}</b> dossiers · <b>${data.lignes.toLocaleString('fr-CA')}</b> lignes écrites
         ${RECENT ? `<span class="ar-recents">Le ${jour(RECENT)} : <b>${retouches.length}</b> fichier${retouches.length > 1 ? 's' : ''} retouché${retouches.length > 1 ? 's' : ''}${nes.length ? `, dont <b>${nes.length}</b> né${nes.length > 1 ? 's' : ''} ce jour-là` : ''} (ils brillent dans le dessin) : ${retouches.sort((a, b) => b.l - a.l).slice(0, 6).map((x) => x.n).join(', ')}${retouches.length > 6 ? '…' : ''}</span>` : ''}`;
     }).catch(() => { el.querySelector('.ar-dessin').innerHTML = '<p class="muted">L’arbre n’a pas pu se charger.</p>'; });
@@ -318,15 +321,21 @@ export default {
         const jp = (n) => Math.round(lignes / n);
         const virg = (x) => (x < 10 ? x.toFixed(1) : String(Math.round(x))).replace('.', ',');
         const an = (j) => virg(j / 220); const mois = (j) => virg(j / 5 / 21);
-        // Le coût : le salaire horaire médian d'un développeur de logiciels au Québec (Guichet-Emplois, CNP 21232, 45,67 $),
-        // sur des journées de 8 h. Salaire seulement : sans charges sociales, matériel ni gestion, donc une borne basse.
-        const TAUX = 45.67; const cout = (j) => `${Math.round((j * 8 * TAUX) / 1000).toLocaleString('fr-CA')}\u00a0k$`;
+        // Le coût, tout compris : le salaire, plus les charges de l'employeur (+25 %) et, pour un projet sans IA, la gestion
+        // de projet et la coordination (+15 %). Le développeur : salaire médian au Québec (Guichet-Emplois, CNP 21232,
+        // 45,67 $/h), journées de 8 h. La conceptrice : conseillère pédagogique au dernier échelon (102 857 $ au
+        // 1er avril 2025, sur 1 826,3 h par an). Le matériel et les locaux ne sont pas comptés : une borne basse.
+        const TAUX = 45.67; const TAUX_CP = 102857 / 1826.3; const CHARGES = 1.25; const GESTION = 1.15;
+        const argent = (d) => (d >= 1e6 ? `${(d / 1e6).toFixed(2).replace('.', ',')} M$` : d >= 1e4 ? `${Math.round(d / 1000).toLocaleString('fr-CA')} k$` : `${Math.round(d).toLocaleString('fr-CA')} $`);
+        const salaire = (j) => argent(j * 8 * TAUX); const cout = (j) => argent(j * 8 * TAUX * CHARGES * GESTION);
+        const salaireIA = argent(cd.heuresActives * TAUX_CP); const coutIA = argent(cd.heuresActives * TAUX_CP * CHARGES);
         cad.outerHTML = `<li class="ar-cad" data-fait="1"><b>${cd.etapes}</b> étapes validées, en ≈ <b>${String(cd.heuresActives).replace('.', ',')} h</b> d’activité mesurée sur ${cd.jours} jours (${String(cd.heuresTotales).replace('.', ',')} h écoulées)</li>
           <li>Une itération toutes les <b>${min} minutes</b> environ</li>
           <li>Repère du génie logiciel : <b>10 à 50 lignes</b> de code fini par développeur et par jour, conception et tests compris (McConnell, 2004)</li>
-          <li>Sans IA, ce volume représenterait <b>${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours-personnes</b> : <b>${an(jp(50))} à ${an(jp(10))} années</b> pour une personne seule (220 jours ouvrables par an), ou <b>${mois(jp(50))} à ${mois(jp(10))} mois</b> pour une équipe de cinq (21 jours ouvrables par mois)</li>
-          <li>Coût moyen sans IA, au salaire médian d’un développeur au Québec (<b>45,67 $/h</b>, Guichet-Emplois) : <b>${cout(jp(50))} à ${cout(jp(10))}</b> pour une personne seule. Pour une équipe de cinq, <b>la même somme</b> : elle va cinq fois plus vite, mais paie cinq salaires (et la coordination en plus)</li>
-          <li class="ar-cad-res">Lignes et salaire sont des mesures grossières : ils situent l’échelle, pas la qualité. Le coût exclut les charges sociales, le matériel et la gestion : c’est une borne basse.</li>`;
+          <li>Sans IA, ce volume représenterait <b>${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours-personnes</b>. <b>Au mieux</b> (50 lignes par jour, l’<b>estimation basse</b>) : <b>${an(jp(50))} ans</b> pour une personne seule, <b>${mois(jp(50))} mois</b> pour une équipe de cinq. <b>Au pire</b> (10 lignes par jour, l’<b>estimation haute</b>) : <b>${an(jp(10))} ans</b>, ou <b>${mois(jp(10))} mois</b> à cinq</li>
+          <li><b>Coût sans IA</b> : <b>${salaire(jp(50))} à ${salaire(jp(10))} en salaire</b> (salaire médian d’un développeur au Québec, 45,67 $/h, Guichet-Emplois), et <b>${cout(jp(50))} à ${cout(jp(10))} avec la gestion</b> : <b>25 % de charges de l’employeur</b> et <b>15 % de gestion de projet et de coordination</b>. Seul ou à cinq, <b>la même somme</b> : cinq salaires, cinq fois moins longtemps</li>
+          <li><b>Coût avec l’IA</b> : <b>${salaireIA} en salaire</b>, soit ${String(cd.heuresActives).replace('.', ',')} h au salaire réel de la conceptrice, conseillère pédagogique au <b>dernier échelon</b> (102 857 $ par an), et <b>${coutIA} avec la gestion</b> (les charges de l’employeur ; la gestion du projet, c’est elle qui la fait, dans ces heures). Plus les abonnements aux outils d’IA</li>
+          <li class="ar-cad-res">Lignes et salaires sont des mesures grossières : ils situent l’échelle, pas la qualité. Le matériel et les locaux ne sont pas comptés : c’est une <b>borne basse</b>.</li>`;
         // Le graphique comparatif : la durée, en jours de travail, sur une échelle logarithmique (2 jours et 2 000 jours
         // tiennent sur la même ligne). Une barre par scénario, de l'estimation basse à la haute.
         // Le graphique comparatif, proportionnel : chaque barre part de zéro, sa longueur est la durée (en jours de travail).
@@ -337,22 +346,21 @@ export default {
         const ANNEE = 220; const P = (v) => (v / jp(50)) * 100;
         const enMots = (j) => (j < 20 ? `${Math.max(1, Math.round(j))} jours` : j < ANNEE ? `${Math.round(j / 21)} mois` : `${Math.round(j / ANNEE)} ans`);
         const plage = (a, b) => { const [x, y] = [enMots(a), enMots(b)]; return x.split(' ')[1] === y.split(' ')[1] ? `${x.split(' ')[0]} à ${y}` : `${x} à ${y}`; };
-        const coutIA = `${Math.round(cd.heuresActives * TAUX).toLocaleString('fr-CA')}\u00a0$`;
-        const rangs = [['Avec l’IA', 'ce qui a été fait', enMots(jt), coutIA, 'si ces heures étaient payées au même salaire', jt, 'ia'],
-          ['Équipe de cinq', 'sans IA, estimé', plage(jp(50) / 5, jp(10) / 5), `${cout(jp(50))} à\u00a0${cout(jp(10))}`, 'cinq salaires', jp(50) / 5, 'sans'],
-          ['Une personne seule', 'sans IA, estimé', plage(jp(50), jp(10)), `${cout(jp(50))} à\u00a0${cout(jp(10))}`, 'un salaire, cinq fois plus longtemps', jp(50), 'sans']];
+        const rangs = [['Avec l’IA', 'ce qui a été fait', enMots(jt), salaireIA, coutIA, jt, 'ia'],
+          ['Équipe de cinq', 'sans IA, estimé', plage(jp(50) / 5, jp(10) / 5), `${salaire(jp(50))} à\u00a0${salaire(jp(10))}`, `${cout(jp(50))} à\u00a0${cout(jp(10))}`, jp(50) / 5, 'sans'],
+          ['Une personne seule', 'sans IA, estimé', plage(jp(50), jp(10)), `${salaire(jp(50))} à\u00a0${salaire(jp(10))}`, `${cout(jp(50))} à\u00a0${cout(jp(10))}`, jp(50), 'sans']];
         const fois = Math.round(jp(50) / 5 / jt);
         fig.hidden = false;
         fig.innerHTML = `<figcaption><b>Même au mieux, sans IA, c’est ${fois.toLocaleString('fr-CA')} fois plus long</b></figcaption>
           <div class="ar-t" role="table" aria-label="Combien de temps et combien d’argent pour bâtir cette app">
-            <div class="ar-t-r ar-t-h" role="row"><span role="columnheader"></span><span role="columnheader">Durée</span><span role="columnheader">Coût en salaire</span></div>
-            ${rangs.map(([n, sous, duree, prix, note, v, c]) => `<div class="ar-t-r" role="row">
+            <div class="ar-t-r ar-t-h" role="row"><span role="columnheader"></span><span role="columnheader">Durée</span><span role="columnheader">Salaire</span><span role="columnheader">Salaire + gestion</span></div>
+            ${rangs.map(([n, sous, duree, sal, tout, v, c]) => `<div class="ar-t-r" role="row">
               <span role="rowheader"><b>${n}</b><small>${sous}</small></span>
               <span role="cell" class="ar-t-big ${c}">${duree}</span>
-              <span role="cell"><b class="ar-t-prix">${prix}</b><small>${note}</small></span>
+              <span role="cell"><b class="ar-t-prix">${sal}</b></span><span role="cell"><b class="ar-t-prix">${tout}</b></span>
               <i class="ar-t-barre" aria-hidden="true"><i class="${c}" style="width:max(3px, ${P(v)}%)"></i></i></div>`).join('')}
           </div>
-          <p class="ar-t-note">La barre compare les durées dans le meilleur cas, à la même échelle. Salaire médian d’un développeur au Québec (45,67 $/h), sans les charges ; l’IA coûte aussi ses abonnements.</p>`;
+          <p class="ar-t-note">La barre compare les durées dans le meilleur cas, à la même échelle. Salaire : développeur au salaire médian du Québec ; avec l’IA, la conceptrice au dernier échelon de conseillère pédagogique. Gestion : charges de l’employeur (+25 %) et, sans IA, gestion de projet et coordination (+15 %). L’IA coûte aussi ses abonnements.</p>`;
       }
     }
 
@@ -374,6 +382,10 @@ export default {
     el.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && lePoint(e)) e.preventDefault(); });
     let mp3 = null;
     el.addEventListener('click', (e) => {
+      // « Agrandir » : l'arbre double de taille dans son cadre, et on s'y promène (on revient au centre).
+      const z = e.target.closest('[data-zoom]');
+      if (z) { const d = z.closest('.ar-dessin'); const on = d.classList.toggle('zoom'); z.setAttribute('aria-pressed', on); z.textContent = on ? '⤡ Réduire l’arbre' : '⤢ Agrandir l’arbre';
+        if (on) requestAnimationFrame(() => d.scrollTo({ left: (d.scrollWidth - d.clientWidth) / 2, top: (d.scrollHeight - d.clientHeight) / 2 })); return; }
       if (lePoint(e)) return;
       const m = e.target.closest('[data-mp3]'); if (m) { mp3?.pause(); mp3 = new Audio(m.dataset.mp3); mp3.play().catch(() => {}); return; }
       const gp = e.target.closest('[data-gpas]'); if (gp) { const c = ETAPES[gIci]; const k = ETAPES.findIndex((x) => x.lane === c.lane && x.rang === c.rang + +gp.dataset.gpas); if (k >= 0) montrerEtape(k); return; }
