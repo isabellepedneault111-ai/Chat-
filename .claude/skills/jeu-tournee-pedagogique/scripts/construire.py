@@ -28,7 +28,8 @@ def construire(cfg_path, out):
     os.makedirs(os.path.join(out, "fonts"), exist_ok=True); os.makedirs(os.path.join(out, "lib"), exist_ok=True)
     for f in ("PatrickHand-Regular.ttf", "Nunito-VF.ttf"):
         shutil.copy(os.path.join(RAC, "assets", "fonts", f), os.path.join(out, "fonts", f))
-    shutil.copy(os.path.join(RAC, "assets", "jspdf.umd.min.js"), os.path.join(out, "lib", "jspdf.umd.min.js"))
+    for f in ("jspdf.umd.min.js", "html2canvas.min.js"):
+        shutil.copy(os.path.join(RAC, "assets", f), os.path.join(out, "lib", f))
     print(os.path.join(out, nom))
     return os.path.join(out, nom)
 
