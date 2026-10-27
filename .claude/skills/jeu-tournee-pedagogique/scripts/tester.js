@@ -67,36 +67,29 @@ fs.mkdirSync(OUT, { recursive: true });
     await p.fill('#es', '10'); await p.click('#cs'); await p.waitForTimeout(400);
     await p.screenshot({ path: OUT + '/91_panier.png', fullPage: true }); await p.click('#rt');
   }
-  if (await p.$('#r3')) { // défi guidé (assistant en 6 étapes)
-    await p.click('#r3'); await p.waitForTimeout(200);
-    await p.selectOption('#fq', 'assez'); await p.check('#dt'); await p.screenshot({ path: OUT + '/92a_defi_etape1.png', fullPage: true }); await p.click('#sv');
-    await p.screenshot({ path: OUT + '/92b_defi_etape2.png', fullPage: true }); await p.click('#sv');
-    await p.fill('#an0', 'Café'); await p.fill('#ap0', '2,39'); await p.fill('#an1', 'Beigne'); await p.fill('#ap1', '1,79'); await p.fill('#an2', 'Bagel'); await p.fill('#ap2', '3,49');
-    if (await p.$('#aa')) { await p.click('#aa'); await p.fill('#an3', 'Jus'); await p.fill('#ap3', '2,99'); }
-    if (await p.$('#db')) await p.fill('#db', '15');
-    if (await p.isDisabled('#sv')) errs.push('défi : étape 3 bloquée'); await p.click('#sv');
-    await p.fill('#rp', 'Environ 12 $ avec les taxes, donc assez.'); await p.click('#vc2'); await p.waitForTimeout(200);
-    await p.screenshot({ path: OUT + '/92c_defi_etape4.png', fullPage: true }); await p.click('#sv');
-    const [dd] = await Promise.all([p.waitForEvent('download'), p.click('#dpdf')]); await dd.saveAs(OUT + '/' + dd.suggestedFilename());
-    await p.waitForTimeout(300); await p.click('#sv'); await p.waitForTimeout(1200);
-    if (!(await p.$('.tm'))) errs.push('défi : étapes Teams absentes');
-    await p.screenshot({ path: OUT + '/92d_defi_teams.png', fullPage: true });
-    const formes = await p.evaluate(() => Object.keys(FORMES).map(f => corrige({ forme: f, taxes: f === 'reste', b: 10, items: [['A', 4.49], ['B', 6.25]] }).v));
-    console.log('Corrigés des formes :\n  ' + formes.join('\n  '));
-    await p.click('#fn');
-  }
-  if (await p.$('#r4')) { // création guidée d'une question
-    await p.click('#r4'); await p.selectOption('#fq', 'qcm'); await p.click('#sv');
-    await p.fill('#cq', 'Quelle est la bonne réponse à ma question de test ?'); await p.fill('#ch0', 'Choix A'); await p.fill('#ch1', 'Choix B'); await p.fill('#ch2', 'Choix C'); await p.check('input[name=bn][value="1"]');
-    if (await p.isDisabled('#sv')) errs.push('création : étape 2 bloquée'); await p.click('#sv');
-    await p.fill('#cw', 'Parce que c’est expliqué en classe.'); await p.click('#sv');
-    const [dq] = await Promise.all([p.waitForEvent('download'), p.click('#dpdf')]); await dq.saveAs(OUT + '/' + dq.suggestedFilename());
-    await p.click('#sv'); await p.waitForTimeout(1200); if (!(await p.$('.tm'))) errs.push('création : étapes Teams absentes');
-    await p.screenshot({ path: OUT + '/94_creation.png', fullPage: true }); await p.click('#fn');
+  for (const [bt, kind] of [['#r3', 'argent'], ['#r4', 'question']]) { // studio de création (affiche TNI)
+    if (!(await p.$(bt))) continue;
+    await p.click(bt); await p.waitForTimeout(300);
+    const st = await p.$$('[data-st]'); if (st.length > 1) await st[1].click();
+    await p.screenshot({ path: OUT + `/97_${kind}_1lieu.png`, fullPage: true }); await p.click('#sv');
+    if (kind === 'argent') { await p.click('[data-f="assez"]'); await p.check('#dt'); } else await p.click('[data-f="qcm"]');
+    await p.click('#sv');
+    if (await p.$('#insp')) await p.click('#insp');
+    else { await p.fill('#qq', 'Quelle est la bonne réponse à ma question de test ?'); const cc = await p.$$('.cc'); for (const [k, i] of cc.entries()) await i.fill('Choix ' + k); }
+    await p.waitForTimeout(300); await p.screenshot({ path: OUT + `/97_${kind}_3contenu.png`, fullPage: true });
+    await p.click('#sv'); if (await p.isVisible('#msg') && (await p.textContent('#msg'))) errs.push(kind + ' : étape contenu refusée : ' + await p.textContent('#msg'));
+    if (kind === 'argent') { await p.fill('#rp', 'J’arrondis et j’additionne : environ 12 $.'); await p.click('#vc2'); }
+    else if (await p.$('#pq')) await p.fill('#pq', 'Parce que c’est ce qu’on a appris en classe.');
+    await p.click('#sv');
+    await p.click('[data-sk="eclair"]'); await p.click('[data-et="2"]'); await p.click('[data-ch="30"]');
+    await p.waitForTimeout(400); await p.screenshot({ path: OUT + `/97_${kind}_5finition.png`, fullPage: true }); await p.click('#sv');
+    const [dd] = await Promise.all([p.waitForEvent('download', { timeout: 60000 }), p.click('#dpdf')]); await dd.saveAs(OUT + '/' + dd.suggestedFilename());
+    await p.waitForTimeout(1200); if (!(await p.$('.tm'))) errs.push(kind + ' : étapes Teams absentes');
+    await p.screenshot({ path: OUT + `/97_${kind}_6publier.png`, fullPage: true }); await p.click('#fn'); await p.waitForTimeout(300);
   }
   if (await p.$('#r1')) { await p.click('#r1'); await p.click('.choix[data-k]'); await p.waitForTimeout(500); await p.screenshot({ path: OUT + '/93_capsule.png', fullPage: true }); await p.click('#rt'); }
   await p.fill('#pp', 'Testeur Éloïse');
-  const [dl] = await Promise.all([p.waitForEvent('download'), p.click('#dl')]); await dl.saveAs(OUT + '/' + dl.suggestedFilename());
+  const [dl] = await Promise.all([p.waitForEvent('download', { timeout: 60000 }), p.click('#dl')]); await dl.saveAs(OUT + '/' + dl.suggestedFilename());
   // arrêt en cours de route
   const p2 = await ctx.newPage(); p2.on('pageerror', e => errs.push('arrêt : ' + e.message));
   await p2.goto(URL); await p2.waitForTimeout(300); await p2.click('#nv'); await p2.waitForTimeout(300);

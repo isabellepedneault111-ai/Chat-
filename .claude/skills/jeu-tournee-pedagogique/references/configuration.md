@@ -120,3 +120,18 @@ Pour `erreur`, une valeur peut être un nombre (formaté selon l'unité) ou un t
 - `dansBilan` : `true` pour ajouter ces activités au bilan PDF. Par défaut, elles n'y sont pas, et l'enseignant vérifie le travail publié dans Teams.
 - **Lien direct** vers l'activité, sans faire la tournée : `?mode=defi` ou `?mode=question`. Il est affiché dans l'espace enseignant.
 - Pour désactiver une activité, retire sa clé ou préfixe-la de `_`.
+
+### Le studio de création (défi ou question)
+`defi` (argent) et `creation` (toutes les matières) ouvrent le même **studio guidé en 6 étapes**, avec un aperçu en direct de l'affiche paysage (TNI) :
+1. **Le lieu** : un décor parmi ceux des stations du jeu, le nom du lieu et la couleur.
+2. **La forme** : avec `defi`, c'est assez ?, combien ?, combien reste-t-il ? ou quoi enlever ?, et l'option des taxes. Avec `creation` : choix multiples, vrai ou faux, ou réponse courte.
+3. **Le contenu** : pour `defi`, des produits suggérés, de vrais prix et un curseur pour le budget. Pour `creation`, des débuts de phrase et une étoile ⭐ qui marque la bonne réponse. Les deux offrent « Inspire-moi ».
+4. **Le corrigé** : avec `defi`, le corrigé est calculé et l'élève le compare à sa réponse. Avec `creation`, l'élève explique son « pourquoi » à l'aide de débuts de phrase.
+5. **La touche finale** : titre, autocollant (étoile, éclair, cœur, érable, flocon, citrouille, pomme, fusée, trophée), difficulté, chrono, phrase de la mascotte.
+6. **Publier** : un PDF de 2 pages (affiche et corrigé), identique à l'aperçu, et les étapes Teams illustrées.
+
+Champs pour enrichir le studio en lien avec le cours :
+- `defi.suggestions: [[nom, prix], …]` : les produits proposés en un clic et pour « Inspire-moi ». Reprends les articles du jeu.
+- `defi.liens: [{nom, lien}]` : les circulaires et menus pour trouver de vrais prix.
+- `creation.amorces: ["Laquelle de ces collations…", …]` : les débuts de phrase.
+- `creation.idees: [{forme: "qcm"|"vf"|"courte", question, choix, bonne, vf, reponse, pourquoi}, …]` : des exemples à modifier, pour « Inspire-moi ». Prévois-en 5 ou 6, en lien direct avec le cours.

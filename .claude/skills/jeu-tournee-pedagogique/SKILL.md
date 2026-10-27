@@ -20,7 +20,7 @@ Ce skill produit un site statique : une page HTML, des polices et jsPDF. Le site
   - une autoévaluation ;
   - une **grille descriptive** au « je », avec la case « Tu es ici » et une **prochaine étape** par élément. Les élèves voient ce qu'ils savent faire et quoi faire ensuite, sans note chiffrée ;
   - un PDF pour l'enseignant (grille au complet, détail des défis, réponses écrites), téléchargeable seulement après avoir écrit son prénom.
-- **Défi supplémentaire :** un assistant en étapes numérotées, avec une forme de question à choisir dans un menu déroulant. Il produit un PDF paysage pour le TNI (le défi en page 1, le corrigé en page 2) et donne les étapes illustrées pour le publier dans Teams. L'enseignant vérifie le corrigé ; ce défi n'entre pas dans le bilan.
+- **Défi supplémentaire, un studio de création :** l'élève est guidé en 6 étapes, avec un aperçu en direct de son affiche paysage pour le TNI. Il choisit un décor du cours, une forme de défi, un autocollant, la difficulté et un chrono. Il a des suggestions, des débuts de phrase et un bouton « Inspire-moi ». Le PDF fait 2 pages, l'affiche et le corrigé, et des étapes Teams illustrées l'accompagnent. L'enseignant vérifie le corrigé ; ce défi n'entre pas dans le bilan. Remplis `suggestions`, ou `amorces` et `idees`, pour que le studio soit en lien avec le cours.
 - **Espace enseignant :** `?mode=<cleEnseignant>`. On y trouve l'intention, la grille, le calcul de la cote, le corrigé et les capsules à projeter.
 
 ## Démarche
