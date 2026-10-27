@@ -46,6 +46,33 @@ def elements(f, texte=None):
             m = DEF.match(l) or SECTION.match(l.replace('#', '//', 1))
             if m: out.append(m.group(1))
     vus = set(); return [x for x in out if not (x in vus or vus.add(x))]
+# Pour chaque élément : sa sorte (fonction partagée, interne, asynchrone, valeur partagée, section) et le commentaire écrit
+# juste au-dessus dans le code (ou au bout de sa ligne) : ce qu'il fait, concrètement.
+def notes(f):
+    try: L = (racine / f).read_text(errors='ignore').splitlines()
+    except OSError: return {}
+    out = {}
+    for i, l in enumerate(L):
+        nom = sorte = None
+        if f.endswith(('.js', '.mjs')):
+            m = SECTION.match(l)
+            if m: out.setdefault('§ ' + m.group(1), ['section', '']); continue
+            m = FONCTION.match(l)
+            if m: nom = m.group(1); sorte = ('async ' if 'async' in l.split('function')[0] else '') + ('export ' if l.lstrip().startswith('export') else '') + 'function'
+            else:
+                m = CONSTE.match(l)
+                if m: nom = m.group(1); sorte = 'export const' + (' =>' if '=>' in l else '')
+        elif f.endswith('.py'):
+            m = DEF.match(l)
+            if m: nom = m.group(1); sorte = l.split()[0]
+        if not nom or nom in out: continue
+        com = []; j = i - 1
+        marque = '#' if f.endswith('.py') else '//'
+        while j >= 0 and L[j].strip().startswith(marque): com.insert(0, L[j].strip()[len(marque):].strip()); j -= 1
+        if j < 0: com = []  # le commentaire d'en-tête du fichier parle du fichier, pas de son premier élément
+        if not com and marque + ' ' in l: com = [l.split(marque + ' ', 1)[1].strip()]
+        out[nom] = [sorte, ' '.join(com)[:320]]
+    return out
 def precedent(f):
     # Le contenu du fichier avant sa dernière retouche (vide s'il vient de naître).
     h = subprocess.run(['git', 'log', '-2', '--format=%h', '--', f], cwd=racine, capture_output=True, text=True).stdout.split()
@@ -86,7 +113,8 @@ for f in fichiers:
     el = elements(f)
     if el:
         avant = set(elements(f, precedent(f)))
-        fiche['el'] = [[x, 1] if avant and x not in avant else [x] for x in el][:48]
+        nt = notes(f)
+        fiche['el'] = [[x, 1 if avant and x not in avant else 0, *nt.get(x, ['section' if x.startswith('§') else '', ''])] for x in el][:48]
     h = histoire(f)
     if h: fiche['h'] = h
     noeud['c'][parts[-1]] = fiche

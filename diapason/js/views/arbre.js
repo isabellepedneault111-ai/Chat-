@@ -6,6 +6,28 @@ import { joue, accord, prechargerSons } from '../sampler.js';
 import { mtof } from '../music.js';
 import { espace } from '../espace.js';
 import { VERSIONS } from '../nouveautes.js';
+// Les abréviations qui reviennent dans le code, en clair.
+const ABREV = { mtof: 'MIDI vers fréquence : le numéro d’une touche (60 = Do du milieu) devient des hertz (261,6 Hz)', ftom: 'fréquence vers MIDI : des hertz deviennent le numéro de la touche la plus proche',
+  mod12: 'modulo 12 : ramène une note dans l’octave (Do, Do♯… Si), peu importe sa hauteur', esc: 'échapper : protège un texte avant de l’afficher, pour qu’un caractère spécial (<, &, ") ne casse pas la page',
+  uid: 'identifiant unique : un code aléatoire qui nomme une entrée sans risque de doublon', css: 'lit une couleur ou une mesure définie dans la feuille de style', q: 'raccourci pour trouver un élément de la page (querySelector)',
+  $: 'raccourci pour trouver un élément de la page', $$: 'raccourci pour trouver tous les éléments d’une sorte', clamp: 'borne une valeur entre un minimum et un maximum', pick: 'tire un élément au hasard dans une liste',
+  FR: 'les noms des 12 notes en français (Do, Do♯, Ré…)', EN: 'les noms des 12 notes en anglais (C, C#, D…)', isBlack: 'dit si une touche du clavier est noire', toast: 'affiche un petit message qui disparaît tout seul',
+  store: 'la mémoire de l’appareil (localStorage) : ce qui reste entre deux visites', api: 'parle au serveur de l’espace partagé (requête réseau)', render: 'redessine la page à partir des données', mount: 'installe la page quand on l’ouvre' };
+const MOTS_COURTS = { maj: 'mise à jour de', nb: 'nombre de', cle: 'clé', ctx: 'contexte', el: 'élément', btn: 'bouton', ev: 'événement', init: 'initialiser', aff: 'afficher', calc: 'calculer', prev: 'précédent', suiv: 'suivant' };
+const mots = (n) => n.replace(/^\$+/, '').replace(/([a-zà-ÿ])([A-Z])/g, '$1 $2').replace(/_/g, ' ').toLowerCase().split(' ').map((w) => MOTS_COURTS[w] || w).join(' ');
+
+// Ce qu'est chaque sorte d'élément, pour un développeur, en une phrase.
+const SORTE_EL = {
+  'export function': ['Fonction partagée', 'Un bloc de code nommé qui fait une chose précise ; « export » : les autres fichiers de l’app peuvent l’appeler (import).'],
+  'async export function': ['Fonction partagée, asynchrone', 'Partagée avec les autres fichiers ; asynchrone : elle attend quelque chose (le réseau, le micro, un fichier) sans figer l’app (async / await).'],
+  function: ['Fonction interne', 'Un bloc de code nommé, utilisé seulement à l’intérieur de ce fichier.'],
+  'async function': ['Fonction interne, asynchrone', 'Utilisée dans ce fichier ; elle attend une réponse (réseau, micro, fichier) sans figer l’app.'],
+  'export const': ['Valeur partagée', 'Une donnée fixe (une liste, un tableau de réglages, un texte) que d’autres fichiers importent.'],
+  'export const =>': ['Petite fonction partagée', 'Une fonction courte écrite en flèche (=>), partagée avec les autres fichiers.'],
+  section: ['Section', 'Une grande partie du fichier, annoncée par un commentaire : elle regroupe ce qui va ensemble.'],
+  def: ['Fonction Python', 'Une fonction de l’outil de construction (elle tourne avant la mise en ligne, pas dans l’app).'],
+  class: ['Classe Python', 'Un moule d’objets, dans l’outil de construction.'],
+};
 const esc = (x) => String(x ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 const F = 'fabriqué en direct'; const E = 'enregistré'; const C = 'calculé'; const D = 'données';
@@ -197,7 +219,7 @@ function ficheFichier(n) {
     ${o ? `<p><b>D’où il vient :</b> ${esc(o)}</p>` : ''}
     <p class="ar-f-meta">${n.l ? `<span><b>${n.l.toLocaleString('fr-CA')}</b> lignes</span>` : ''}${n.nee ? `<span>né le <b>${jour(n.nee)}</b></span>` : ''}${n.mod && n.mod !== n.nee ? `<span>retouché le <b>${jour(n.mod)}</b></span>` : ''}</p>
     ${n.h?.length ? `<div class="ar-f-h"><b>Ses dernières retouches</b><ul>${n.h.map(([d, t]) => `<li><span>${jour(d).replace(/ \d{4}$/, '')}</span> ${esc(t)}</li>`).join('')}</ul></div>` : ''}
-    ${n.el?.length ? `<div class="ar-f-el"><b>Ce qu’il contient</b>${n.el.some((x) => x[1]) ? ' <span class="ar-nv">nouveau</span> = ajouté à sa dernière retouche' : ''}<p>${n.el.map(([x, nv]) => `<span class="${x.startsWith('§') ? 'ar-sec' : 'ar-fn'} ${nv ? 'nv' : ''}">${esc(x.replace(/^§ /, ''))}</span>`).join('')}</p><p class="muted small">Les sections (en gras) sont les grandes parties du fichier ; les autres noms, ses fonctions : ce qu’il sait faire.</p></div>` : ''}
+    ${n.el?.length ? `<div class="ar-f-el"><b>Ce qu’il contient</b>${n.el.some((x) => x[1]) ? ' <span class="ar-nv">nouveau</span> = ajouté à sa dernière retouche' : ''}<p>${n.el.map(([x, nv, so, com], k) => `<button type="button" class="${x.startsWith('§') ? 'ar-sec' : 'ar-fn'} ${nv ? 'nv' : ''}" data-el="${k}" data-so="${esc(so || '')}" data-com="${esc(com || '')}" title="${esc(com || SORTE_EL[so]?.[0] || '')}">${esc(x.replace(/^§ /, ''))}</button>`).join('')}</p><div class="ar-el-quoi" hidden></div><p class="muted small">Touche un nom : ce que c’est pour un développeur, et ce que ça fait concrètement. Les sections (en gras) sont les grandes parties du fichier ; les autres noms, ses fonctions et ses valeurs.</p></div>` : ''}
     ${ext === 'mp3' && chemin.startsWith('data/sons/') ? `<button class="btn small" data-mp3="${esc(chemin)}">▶ Écouter ce son</button>` : ''}`;
 }
 function ficheEtape(c) {
@@ -248,7 +270,7 @@ export default {
           <li><b>Limite nommée.</b> Penser en couches reliées expose à la surcomplexité et au raffinement au-delà du seuil d’utilité. Contre-mesures : des itérations numérotées, des versions datées, un journal, et une question de contrôle à chaque étape : est-ce que ça sert Frog et Zaza, maintenant ?</li>
         </ul>
         <p class="ar-verdict">Sur la base de ces traces (la cadence mesurée, la traçabilité de chaque décision, la triangulation sur quatre systèmes d’IA), la conceptrice de Diapason Labo est en fait une <b>architecte d’environnements hybrides humain-IA</b> : elle ne conçoit pas seulement l’objet, mais l’environnement où l’humain et l’agent travaillent ensemble, et la répartition de ce que chacun y fait.</p>
-        <p class="ar-mot-sign">— ${esc((espace.meta?.members || ['Zaza'])[0])}, architecte d’environnements hybrides humain-IA · Frog, architecte sonore : il valide, il éprouve et il améliore · l’agent : Claude (Anthropic), via Claude Code · sources : nos traces de travail, et l’historique de mon utilisation de Claude, ChatGPT, Gemini et Copilot</p>
+        <p class="ar-mot-sign"><b>Zaza</b>, architecte d’environnements hybrides humain-IA<br><b>Frog</b>, architecte sonore<br><span>Développé avec l’aide d’Anthropic, d’Antigravity et de Google AI Studio.</span></p>
       </section>
       <details class="panel ar-versions"><summary><h2>Le journal des versions</h2></summary>
         ${VERSIONS.map((x) => `<section><h3>Version ${x.v} · ${x.titre} <small class="muted">${new Date(`${x.quand}T12:00`).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' })}</small></h3>${x.items.map(([t, l]) => `<p><b>${t}</b></p><ul>${l.map((y) => `<li>${y}</li>`).join('')}</ul>`).join('')}</section>`).join('')}
@@ -294,19 +316,23 @@ export default {
           <li class="ar-cad-res">Le nombre de lignes est une mesure grossière : il situe l’échelle, pas la qualité.</li>`;
         // Le graphique comparatif : la durée, en jours de travail, sur une échelle logarithmique (2 jours et 2 000 jours
         // tiennent sur la même ligne). Une barre par scénario, de l'estimation basse à la haute.
-        const jt = cd.heuresActives / 8; const fig = el.querySelector('.ar-cad-g'); const hi = Math.max(3000, jp(10) * 1.2);
-        const P = (v) => (Math.log10(Math.max(1, v)) / Math.log10(hi)) * 100; // position en %, échelle logarithmique de 1 jour à hi
-        const rangs = [['Avec l’IA', 'Diapason Labo, réalisé', jt, jt, 'ia', `${virg(jt)} jours`, `${String(cd.heuresActives).replace('.', ',')} h actives, sur ${cd.jours} jours`],
-          ['Équipe de cinq', 'estimation sans IA', jp(50) / 5, jp(10) / 5, 'sans', `${mois(jp(50))} à ${mois(jp(10))} mois`, `${Math.round(jp(50) / 5)} à ${Math.round(jp(10) / 5)} jours ouvrables`],
-          ['Une personne seule', 'estimation sans IA', jp(50), jp(10), 'sans', `${an(jp(50))} à ${an(jp(10))} ans`, `${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours ouvrables`]];
+        // Le graphique comparatif, proportionnel : chaque barre part de zéro, sa longueur est la durée (en jours de travail).
+        // Plein : l'estimation basse ; plus pâle : jusqu'à l'estimation haute. À cette échelle, l'IA n'est qu'un trait.
+        const jt = cd.heuresActives / 8; const fig = el.querySelector('.ar-cad-g'); const max = jp(10);
+        const P = (v) => (v / max) * 100;
+        const rangs = [['Avec l’IA', `réalisé : ${String(cd.heuresActives).replace('.', ',')} h actives`, jt, jt, 'ia', `${virg(jt)} j`, `${virg(jt)} jours de travail`],
+          ['Équipe de cinq', `estimé sans IA : ${mois(jp(50))} à ${mois(jp(10))} mois`, jp(50) / 5, jp(10) / 5, 'sans', `${Math.round(jp(50) / 5)}–${Math.round(jp(10) / 5)} j`, `${Math.round(jp(50) / 5)} à ${Math.round(jp(10) / 5)} jours ouvrables`],
+          ['Une personne seule', `estimé sans IA : ${an(jp(50))} à ${an(jp(10))} ans`, jp(50), jp(10), 'sans', `${jp(50).toLocaleString('fr-CA')}–${jp(10).toLocaleString('fr-CA')} j`, `${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours ouvrables`]];
+        const pas = max > 1500 ? 500 : max > 600 ? 200 : 100; const reperes = []; for (let t = 0; t <= max; t += pas) reperes.push(t);
+        const fois = Math.round(jp(50) / 5 / jt);
         fig.hidden = false;
-        fig.innerHTML = `<figcaption><b>La même app, trois façons de la faire</b> <span>durée en jours de travail · échelle logarithmique : chaque trait vaut dix fois le précédent</span></figcaption>
+        fig.innerHTML = `<figcaption><b>La même app, trois façons de la faire</b> <span>durée en jours de travail, à la même échelle : la longueur de chaque barre est proportionnelle à sa durée</span></figcaption>
           <div class="ar-g" role="img" aria-label="${rangs.map((r) => `${r[0]} : ${r[5]}`).join(' ; ')}">
             ${rangs.map(([n, sous, a, b, c, val, tip]) => `<div class="ar-g-r" title="${n} : ${val} (${tip})"><div class="ar-g-t"><b>${n}</b><small>${sous}</small></div>
-              <div class="ar-g-p">${[1, 10, 100, 1000].map((t) => `<i class="ar-g-l" style="left:${P(t)}%"></i>`).join('')}<span class="ar-g-b ${c}" style="left:${P(a)}%;width:max(10px, ${P(b) - P(a)}%)"></span><span class="ar-g-v" style="${P(b) > 62 ? `right:${100 - P(a) + 1.5}%` : `left:calc(${P(b)}% + 14px)`}">${val}</span></div></div>`).join('')}
-            <div class="ar-g-r ar-g-axe"><div></div><div class="ar-g-p">${[1, 10, 100, 1000].map((t) => `<span style="left:${P(t)}%">${t.toLocaleString('fr-CA')} j</span>`).join('')}</div></div>
+              <div class="ar-g-p">${reperes.map((t) => `<i class="ar-g-l" style="left:${P(t)}%"></i>`).join('')}<span class="ar-g-b ${c}" style="left:0;width:max(3px, ${P(a)}%)"></span>${b > a ? `<span class="ar-g-b ${c} pale" style="left:${P(a)}%;width:${P(b) - P(a)}%"></span>` : ''}<span class="ar-g-v" style="left:${P(b) > 60 ? `calc(${P(a)}% + 8px)` : `calc(${Math.max(P(b), 0.5)}% + 8px)`}">${val}</span></div></div>`).join('')}
+            <div class="ar-g-r ar-g-axe"><div></div><div class="ar-g-p">${reperes.map((t) => `<span style="left:${P(t)}%">${t.toLocaleString('fr-CA')}</span>`).join('')}</div></div>
           </div>
-          <p class="ar-g-leg"><span><i class="ia"></i>réalisé, avec l’IA</span><span><i class="sans"></i>estimé sans IA (de 50 à 10 lignes par jour)</span></p>`;
+          <p class="ar-g-leg"><span><i class="ia"></i>réalisé, avec l’IA</span><span><i class="sans"></i>estimé sans IA : plein jusqu’à l’estimation basse (50 lignes par jour), pâle jusqu’à la haute (10 lignes)</span></p><p class="ar-g-fois">Même l’équipe de cinq, au mieux, prendrait environ <b>${fois.toLocaleString('fr-CA')} fois</b> plus de temps.</p>`;
       }
     }
 
@@ -317,6 +343,10 @@ export default {
       const pt = el.querySelector(`.gn-svg [data-g="${i}"]`); if (pt) { choisir(pt); const host = el.querySelector('.gn-host'); const x = +pt.getAttribute('cx'); if (x < host.scrollLeft + 40 || x > host.scrollLeft + host.clientWidth - 40) host.scrollTo({ left: x - host.clientWidth / 2, behavior: 'smooth' }); }
     };
     const lePoint = (e) => {
+      const be = e.target.closest('[data-el]');
+      if (be) { const box = be.closest('.ar-f-el').querySelector('.ar-el-quoi'); const [nom, so, com] = [be.textContent, be.dataset.so, be.dataset.com]; const S = SORTE_EL[so];
+        be.parentElement.querySelectorAll('[data-el]').forEach((x) => x.classList.toggle('on', x === be));
+        box.hidden = false; box.innerHTML = `<p class="ar-el-nom"><code>${esc(nom)}</code>${S ? ` · <b>${S[0]}</b>` : ''}</p>${S ? `<p><span class="ar-el-k">Pour un développeur</span> ${S[1]}</p>` : ''}<p><span class="ar-el-k">Concrètement</span> ${com ? esc(com) : so === 'section' ? `Cette partie du fichier s’occupe de : ${esc(nom)}.` : ABREV[nom] ? esc(ABREV[nom]) : `Pas de commentaire écrit au-dessus dans le code. Son nom, en mots : « ${esc(mots(nom))} ».`}</p>`; return true; }
       const f = e.target.closest('[data-f]'); if (f) { choisir(f); el.querySelector('.ar-dessin + .ar-fiche').innerHTML = ficheFichier(FICHES[+f.dataset.f]); return true; }
       const g = e.target.closest('[data-g]'); if (g) { montrerEtape(+g.dataset.g); return true; }
       return false;

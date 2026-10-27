@@ -60,7 +60,7 @@ export function nouveautesHTML() {
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
   { v: '0.40', quand: '2026-10-27', titre: 'La grande visite', items: [
-    ['Tout Diapason Labo, en un tour', ['Trente arrêts : chaque onglet, chaque sous-onglet, chaque icône, un projecteur à la fois, environ cinq minutes. Elle est dans <b>le coffre</b> (menu ⋯) : « La grande visite ».', 'À sa prochaine ouverture, Frog la reçoit d’office : l’app a tellement changé depuis sa dernière visite qu’elle remplace, exceptionnellement, cette liste des nouveautés. Il peut la finir plus tard ; elle l’attendra.']],
+    ['Tout Diapason Labo, en un tour', ['Trente arrêts : chaque onglet, chaque sous-onglet, chaque icône, un projecteur à la fois, environ cinq minutes. Elle est dans <b>le coffre</b> (menu ⋯, en haut à droite) : « La grande visite : tous les onglets ». <a href="#/coffre">Ouvrir le coffre →</a>', 'À sa prochaine ouverture, Frog la reçoit d’office : l’app a tellement changé depuis sa dernière visite qu’elle remplace, exceptionnellement, cette liste des nouveautés. Il peut la finir plus tard ; elle l’attendra.']],
     ['Le calendrier, cases égales', ['Toutes les cases du calendrier ont la même superficie, en semaine comme en mois.']],
   ] },
   { v: '0.39', quand: '2026-10-27', titre: 'Notre calendrier sacré', items: [

@@ -3481,3 +3481,12 @@ a.md-lien { color: inherit; }
 .ar-traits .ar-g-leg { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 10px 0 0; font: .8rem "Atkinson Hyperlegible", sans-serif !important; color: var(--muted); max-width: none; }
 .ar-g-leg span { display: inline-flex; gap: 6px; align-items: center; } .ar-g-leg i { width: 14px; height: 10px; border-radius: 3px; display: inline-block; }
 @media (max-width: 560px) { .ar-g-r { grid-template-columns: 1fr; gap: 2px; } .ar-g-axe > div:first-child { display: none; } }
+.ar-g-b.pale { opacity: .38; } .ar-g-leg b { display: inline !important; font: inherit !important; font-weight: 700 !important; color: var(--ink) !important; }
+/* Les éléments d'un fichier : on les touche pour savoir ce qu'ils sont et ce qu'ils font. */
+.ar-f-el p button.ar-fn, .ar-f-el p button.ar-sec { font-family: inherit; cursor: pointer; border: 1px solid transparent; }
+.ar-f-el p button.on { outline: 2px solid var(--zaza); outline-offset: 1px; }
+.ar-el-quoi { margin: 8px 0; padding: 10px 12px; border-radius: 10px; background: #1b1916; color: #efe6d2; font-size: .88rem; }
+.ar-el-quoi p { margin: 0 0 6px; } .ar-el-quoi code { font: 700 .95rem var(--mono); color: #f3c77a; } .ar-el-quoi b { color: #f3c77a; }
+.ar-el-k { display: block; font: 700 .68rem var(--mono); letter-spacing: .08em; text-transform: uppercase; color: #b8ae9b; }
+.ar-mot-sign { font-style: normal !important; line-height: 1.6; } .ar-mot-sign b { color: var(--ink) !important; font-weight: 800; } .ar-mot-sign span { color: var(--muted); font-size: .9rem; }
+.ar-traits .ar-g-fois { margin: 8px 0 0; font: .88rem "Atkinson Hyperlegible", sans-serif !important; color: var(--ink); max-width: none; } .ar-g-fois b { display: inline !important; font: inherit !important; font-weight: 800 !important; color: var(--zaza) !important; }
