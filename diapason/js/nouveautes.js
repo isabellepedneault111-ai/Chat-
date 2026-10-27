@@ -60,6 +60,9 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.45', quand: '2026-10-28', titre: 'La relance douce', items: [
+    ['Quand le fil de l’autre pâlit', ['Après cinq jours calmes de son côté, tes prochains pas te proposent de lui lancer quelque chose de simple : un son de 10 secondes, un mot, une photo. Une invitation, pas un rappel ; et elle se tait dès que tu viens de lui lancer quelque chose. <a href="#/relais">Ouvrir le relais →</a>']],
+  ] },
   { v: '0.44', quand: '2026-10-28', titre: 'La tresse, un miroir fidèle', items: [
     ['Des faits, pas des compliments', ['La tresse dit les choses telles qu’elles sont, avec les chiffres : qui lance, combien de fois, qui répond. Une rétroaction exacte aide ; un éloge gonflé nuit. <a href="#/elan">Ouvrir la tresse →</a>']],
     ['Un fil qui brille quand on chemine', ['Chaque fil s’allume les jours où sa personne crée, répond ou joue, et pâlit doucement quand c’est calme. Pas de score, pas de reproche : un miroir, pour se voir à deux.']],

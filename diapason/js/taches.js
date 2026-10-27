@@ -4,7 +4,7 @@
 import { espace, profileOf } from './espace.js';
 import { MEMBERS } from './duo.js';
 import { lune, luneCourante } from './lune.js';
-import { attendMoi } from './elan.js';
+import { attendMoi, gestes } from './elan.js';
 import { photosDuStudio } from './piece.js';
 import { deLautre, fait, decrire } from './suivi.js';
 import { asksOf } from './views/relais.js';
@@ -46,6 +46,13 @@ export function mesTaches(me = espace.me) {
     if (!objectifSemaine()) t.push({ id: 'objectif', titre: 'Fixer l’objectif de la semaine', pourquoi: `Un objectif qu’on pourra vérifier dimanche, à deux${o ? ` avec ${o}` : ''}.`, lien: '#/' });
     const avant = semaines().find((x) => x.data.debut === l0 - 7 * 864e5);
     if (avant && !avant.data.eval?.[me]?.v) t.push({ id: 'eval-semaine', titre: 'Évaluer la semaine passée', pourquoi: `Vous visiez « ${avant.data.texte} » : atteint, en partie, pas encore? Deux mots pour toi, deux pour ${o}.`, lien: '#/' });
+  }
+  if (moi && o) {
+    // La relance douce : le fil de l'autre pâlit depuis cinq jours. Une invitation simple, pas un rappel à l'ordre ;
+    // et pas deux fois de suite : si je viens de lui lancer quelque chose (moins de deux jours), on attend sa réponse.
+    const go = gestes(o); const dernier = go[go.length - 1] || 0; const calme = Math.floor((Date.now() - dernier) / 864e5);
+    const jeViensDeLancer = espace.entries.some((e) => e.author === me && e.data?.relais && Date.now() - e.createdAt < 2 * 864e5);
+    if (dernier && calme >= 5 && !jeViensDeLancer) t.push({ id: 'relance', titre: `Lancer quelque chose de simple à ${o}`, pourquoi: `Son fil est calme depuis ${calme} jours. Un son de 10 secondes, un mot, une photo : une invitation, sans attente.`, lien: '#/relais' });
   }
   const l = lune(); const lm = luneCourante(espace.meta);
   if (!lm.intentions?.[me] && l.age < 18) t.push({ id: 'semer', titre: 'Semer ton intention du cycle', pourquoi: 'Une phrase pour cette lune. On la relira la dernière semaine du cycle.', lien: '#/' });
