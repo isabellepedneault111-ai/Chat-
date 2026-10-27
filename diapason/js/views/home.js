@@ -18,7 +18,7 @@ import { pieceSVG, studioActuel, piece } from '../piece.js';
 import { semaineHTML, echelleHTML, brancherObjectifs } from '../objectifs.js';
 // Tout en haut de l'accueil : ce que l'autre a ajouté et que je n'ai pas vu. C'est là que mène la pastille de Plan.
 const nouvellesBandeau = () => { const n = aVoir(); const t = mesTaches(); if (!n.length && !t.length) return ''; const tot = n.length + t.length;
-  const quoi = [n.length ? `${n.length} ${n.length > 1 ? 'nouvelles' : 'nouvelle'} de ${esc(n[0].author)} à voir` : '', t.length ? `${t.length} chose${t.length > 1 ? 's' : ''} à faire pour toi : ${t.slice(0, 2).map((x) => esc(x.titre)).join(', ')}${t.length > 2 ? '…' : ''}` : ''].filter(Boolean).join(' · ');
+  const quoi = [n.length ? `${n.length} ${n.length > 1 ? 'nouvelles' : 'nouvelle'} de ${esc(n[0].author)} à voir` : '', t.length ? `${t.length} prochain${t.length > 1 ? 's' : ''} pas pour toi : ${t.slice(0, 2).map((x) => esc(x.titre)).join(', ')}${t.length > 2 ? '…' : ''}` : ''].filter(Boolean).join(' · ');
   return `<a class="nv-bandeau" href="#/nouvelles"><b>${tot}</b><span>${quoi}</span><em>Ouvrir →</em></a>`; };
 
 // Où aller : chaque outil rangé par ce qu'on veut faire, pas par son nom.
@@ -232,6 +232,7 @@ export default {
             <p class="tape red">${live ? 'En direct' : 'Prochaine séance'}</p>
             <h3>${esc(next.label)}</h3>
             <p>${esc(next.why)}</p>
+            ${(() => { const pl = espace.entries.filter((e) => e.type === 'plage' && e.data?.statut === 'confirme' && e.data.debut > Date.now()).sort((x, y) => x.data.debut - y.data.debut)[0]; return pl ? `<p class="last-target"><span class="mono">Au calendrier, à nous deux :</span> ${new Date(pl.data.debut).toLocaleString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}${pl.data.note ? ` · ${esc(pl.data.note)}` : ''}</p>` : '<p class="last-target"><span class="mono">Au calendrier :</span> rien de fixé. Proposez une plage →</p>'; })()}
             ${last ? `<p class="last-target"><span class="mono">La dernière fois, vous vous êtes dit :</span> « ${esc(last.data.debrief.prochaine)} »</p>` : ''}
             <span class="btn primary">● ${live ? 'Rejoindre' : 'Lancer la session'}</span>
           </a>

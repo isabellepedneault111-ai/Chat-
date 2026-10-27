@@ -3403,3 +3403,52 @@ a.md-lien { color: inherit; }
 .m-t { background: var(--t) !important; } .m-t[data-teinte=""] { background: repeating-linear-gradient(45deg, #ddd 0 4px, #fff 4px 8px) !important; }
 .m-libre { position: relative; overflow: hidden; background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red); }
 .m-libre input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+/* Notre calendrier sacré. Approuvée : nos deux couleurs ; proposée : en pointillé, à la couleur de qui propose. */
+.cl-barre { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.cl-nav { display: flex; gap: 8px; align-items: center; } .cl-nav b { min-width: 12ch; text-align: center; font-family: var(--display); }
+.cl-rythme { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; } .cl-r-t { font-weight: 700; }
+.cl-r { padding: 4px 10px; border-radius: 999px; border: 1.5px solid var(--s); background: color-mix(in srgb, var(--s) 10%, var(--card)); font-size: .88rem; }
+.cl-r.atteint { background: var(--s); color: #fff; } .cl-r.atteint small { color: #fff; } .cl-r.libre { border-style: dashed; }
+.cl-obj { margin: 4px 0 10px; }
+.cl-sem { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.cl-jour { min-height: 150px; padding: 6px; border-radius: 10px; background: var(--card); border: 1px solid var(--rule); display: flex; flex-direction: column; gap: 6px; }
+.cl-jour.auj { border: 2px solid var(--zaza); }
+.cl-j-t { display: flex; justify-content: space-between; align-items: baseline; gap: 4px; border: 0; background: none; padding: 2px 2px 4px; cursor: pointer; font: inherit; color: var(--ink); border-bottom: 1px solid var(--rule); }
+.cl-j-t span { opacity: 0; font-weight: 700; color: var(--zaza); } .cl-j-t:hover span, .cl-j-t:focus span { opacity: 1; }
+.cl-plage { display: grid; gap: 1px; text-align: left; padding: 6px 8px; border-radius: 8px; cursor: pointer; font: inherit; font-size: .8rem; color: var(--ink); background: color-mix(in srgb, var(--s) 16%, var(--card)); border: 2px dashed var(--p); }
+.cl-plage b { font-size: .86rem; } .cl-plage small { color: var(--muted); } .cl-plage em { font-style: normal; font-size: .72rem; color: var(--muted); }
+.cl-plage.ok { border: 0; background: color-mix(in srgb, var(--s) 22%, var(--card)); box-shadow: inset 5px 0 0 var(--zaza), inset 10px 0 0 var(--frog); padding-left: 16px; }
+.cl-plage.ok em { color: var(--ink); font-weight: 700; }
+.cl-mois .cl-m-tete, .cl-m-grille { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; } .cl-m-tete span { font-size: .78rem; color: var(--muted); text-align: center; }
+.cl-m-j { min-height: 64px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 6px; border-radius: 8px; border: 1px solid var(--rule); background: var(--card); cursor: pointer; font: inherit; color: var(--ink); }
+.cl-m-j.hors { opacity: .45; } .cl-m-j span { display: flex; flex-wrap: wrap; gap: 3px; }
+.cl-m-j i { width: 10px; height: 10px; border-radius: 50%; background: var(--s); border: 2px dashed var(--p); } .cl-m-j i.ok { border: 2px solid; border-color: var(--zaza) var(--frog) var(--frog) var(--zaza); }
+.cl-leg { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 12px 0 0; font-size: .8rem; color: var(--muted); }
+.cl-leg span { display: inline-flex; gap: 5px; align-items: center; } .cl-leg i { width: 12px; height: 12px; border-radius: 3px; background: var(--s); }
+.cl-leg-ok i { background: linear-gradient(90deg, var(--zaza) 50%, var(--frog) 50%) !important; } .cl-leg-p i { background: transparent !important; border: 2px dashed var(--muted); }
+.cl-attente .cl-a { padding: 10px 12px; border-left: 5px solid var(--s); background: var(--card); border-radius: 8px; margin-top: 8px; } .cl-a p { margin: 0 0 6px; }
+.cl-a.refus { border-left-color: var(--muted); } .cl-a-b { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; } .cl-a-b .input { flex: 1 1 220px; min-width: 0; }
+.cl-prop-g { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; } .cl-note { grid-column: 1 / -1; } .cl-prop-b { display: flex; gap: 8px; }
+.cl-pas-g { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.cl-pas-c { border-top: 4px solid var(--c); padding-top: 6px; } .cl-pas-c h3 { margin: 0 0 6px; color: var(--c); }
+.cl-pas-c ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.cl-pas-c li { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; padding: 8px 10px; border-radius: 8px; background: var(--card); border: 1px solid var(--rule); }
+.cl-pas-c li small { grid-column: 1; color: var(--muted); } .cl-pas-c li.fait b { text-decoration: line-through; opacity: .6; } .cl-pas-c li.vide { color: var(--muted); }
+.cl-pas-c li label { display: flex; gap: 8px; align-items: baseline; cursor: pointer; } .cl-pas-c li input { width: 18px; height: 18px; accent-color: var(--c); }
+.cl-pas-c li a { color: var(--ink); text-decoration: none; } .cl-pas-c li a::after { content: ' →'; color: var(--zaza); }
+.cl-pas-f { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; } .cl-pas-f .input { flex: 1 1 260px; min-width: 0; }
+@media (max-width: 760px) { .cl-sem { grid-template-columns: 1fr; } .cl-jour { min-height: 0; } .cl-j-t span { opacity: 1; } }
+.cl-pas-c li::before, .cl-attente li::before { content: none !important; display: none !important; }
+.cl-plage em { background: none !important; padding: 0 !important; box-shadow: none !important; }
+.m-cables { pointer-events: none; }
+.m-meubles-l { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 8px; font-size: .88rem; } .m-meubles-l:empty { display: none; }
+.m-ml { padding: 4px 10px; border-radius: 999px; border: 1.5px solid var(--ink); background: var(--card); cursor: pointer; font: inherit; color: var(--ink); } .m-ml.on { background: var(--ink); color: var(--paper); }
+.cl-rituel { display: grid; grid-template-columns: auto 1fr; gap: 0 6px; align-items: center; padding: 6px 8px; border-radius: 8px; background: #1b1916; color: #efe6d2; text-decoration: none; font-size: .78rem; }
+.cl-rituel b { color: #f3c77a; } .cl-rituel small { grid-column: 1 / -1; color: #d8cfbd; line-height: 1.3; } .cl-rituel svg { flex: none; }
+.cl-m-j b { display: inline-flex; gap: 4px; align-items: center; } .cl-leg-lune { display: inline-flex; gap: 5px; align-items: center; }
+.cl-invite { margin: 4px 0 10px; font-size: .92rem; color: var(--muted); }
+/* Les lunes du calendrier : un petit ciel de nuit, la partie éclairée claire (comme dans la carte du cycle). */
+.cl-rituel .lune-ico, .cl-m-j .lune-ico, .cl-leg-lune .lune-ico { color: #f3e7c9; background: #1b1916; border-radius: 50%; }
+.cl-rituel .lune-ico circle, .cl-m-j .lune-ico circle, .cl-leg-lune .lune-ico circle { stroke: #6d655a; }
+.cl-m-j.hors b { color: var(--muted); }
+.cl-m-grille { align-items: stretch; } .cl-m-j { margin: 0; align-self: stretch; vertical-align: top; }

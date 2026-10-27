@@ -26,7 +26,7 @@ export default {
           <h1>${onglet === 'pour-moi' ? `Ce que ${esc(o)} a ajouté` : 'Ce que j’ai envoyé'}</h1>
           <p class="muted"><a href="#/elan">Voir notre élan, la tresse →</a></p><p class="muted">${onglet === 'pour-moi' ? `Coche <b>Vu</b> quand tu l’as regardé, <b>J’ai fait ça</b> quand tu as répondu à ce que ${esc(o)} demandait. ${esc(o)} le verra.` : `Ce que ${esc(o)} a vu et fait de tes envois.`}</p>
         </div></div>
-        ${(() => { const t = mesTaches(); return t.length ? `<section class="nv-taches"><h2>À faire pour toi</h2><ul>${t.map((x) => `<li><a href="${x.lien}"><b>${esc(x.titre)}</b><small>${esc(x.pourquoi)}</small><span>→</span></a></li>`).join('')}</ul></section>` : ''; })()}
+        ${(() => { const t = mesTaches(); return t.length ? `<section class="nv-taches"><h2>Tes prochains pas <a class="small" href="#/calendrier">(tous nos pas, à cocher →)</a></h2><ul>${t.map((x) => `<li><a href="${x.lien}"><b>${esc(x.titre)}</b><small>${esc(x.pourquoi)}</small><span>→</span></a></li>`).join('')}</ul></section>` : ''; })()}
         <p class="nv-maj"><button class="btn small" data-nv="revoir-maj" type="button">Revoir les dernières mises à jour de l’app</button></p>
         <div class="nv-barre">
           <div class="seg-tabs" role="tablist"><button role="tab" data-nv="pour-moi" aria-selected="${onglet === 'pour-moi'}">Pour moi${nonVues.length ? ` <b class="nv-n">${nonVues.length}</b>` : ''}</button><button role="tab" data-nv="de-moi" aria-selected="${onglet === 'de-moi'}">Ce que j’ai envoyé</button></div>

@@ -85,8 +85,13 @@ export function planAjuste(PLAN) {
   if (dorment >= 3) out.push({ id: 'dorment', fait: `${dorment} idées pas touchées depuis trois semaines.`, titre: 'Réveiller les idées qui dorment', action: 'Les rencontres du mur', href: '#/carnet' });
   // 3. L'équilibre entre seul et ensemble.
   const r = weekRhythm();
-  const solos = Object.values(r.solo).reduce((a, b) => a + b, 0) + e.filter((x) => x.type === 'trace' && recent(x, 7)).length;
-  if (solos >= 3 && r.duo === 0) out.push({ id: 'commun', fait: `${solos} pratiques en solo cette semaine, aucune séance à deux.`, titre: 'Mettre en commun ce que chacun a trouvé', action: 'Une séance duo', href: `#/session?cible=${encodeURIComponent('Un groove')}`, src: 'Cepeda et al. 2006' });
+  // Une pratique solo : une séance solo, ou un moment d'au moins 3 minutes hors séance (un coup d'œil d'une minute ne
+  // compte pas, et un exercice fait pendant une séance solo est déjà dans la séance).
+  const seancesSolo = e.filter((x) => x.type === 'session' && x.data?.done && x.data.format === 'solo' && recent(x, 7));
+  const dansSeance = (t) => seancesSolo.some((x) => x.author === t.author && Math.abs((t.createdAt || 0) - (x.data.doneAt || x.createdAt)) < 2 * 3600e3);
+  const pratiques = [...seancesSolo, ...e.filter((x) => x.type === 'trace' && recent(x, 7) && (x.data?.minutes || 0) >= 3 && !dansSeance(x))];
+  const solos = pratiques.length; const parQui = [...new Set(pratiques.map((x) => x.author))];
+  if (solos >= 3 && r.duo === 0) out.push({ id: 'commun', fait: `${solos} pratiques en solo cette semaine (${parQui.join(' et ')}), aucune séance à deux.`, titre: 'Mettre en commun ce que chacun a trouvé', action: 'Une séance duo', href: `#/session?cible=${encodeURIComponent('Un groove')}`, src: 'Cepeda et al. 2006' });
   // 4. Ce que vous vous êtes dit : la prochaine cible devient la prochaine séance.
   const last = e.filter((x) => x.type === 'session' && x.data?.debrief?.prochaine).sort((a, b) => b.data.doneAt - a.data.doneAt)[0];
   if (last) out.push({ id: 'cible', fait: `À la dernière séance, vous vous êtes dit : « ${last.data.debrief.prochaine} ».`, titre: 'Votre prochaine cible, prête à jouer', action: 'La lancer', href: `#/session?cible=${encodeURIComponent(last.data.debrief.prochaine)}` });

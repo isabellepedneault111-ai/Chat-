@@ -27,6 +27,7 @@ import nouvelles from './views/nouvelles.js';
 import elan from './views/elan.js';
 import cathedrale from './views/cathedrale.js';
 import passage from './views/passage.js';
+import calendrier from './views/calendrier.js';
 import { aVoir } from './suivi.js';
 import { mesTaches } from './taches.js';
 import { installerFilet } from './filet.js';
@@ -60,6 +61,7 @@ const APPUIS = {
   bilan: ['Voir ses progrès et nommer la prochaine cible soutient la motivation et la pratique délibérée.', 'Miksza 2023 · Biasutti 2017'],
   paroles: ['Les syllabes chantées et la place des rimes font qu’un texte se chante.', 'Pattison 2009'],
   ames: ['Une vision commune avant de composer : savoir ensemble d’où on part et où on va.', 'Merchán-Sánchez-Jara 2023'],
+  calendrier: ['Des séances courtes, régulières et planifiées d’avance tiennent mieux que les élans de dernière minute ; un rendez-vous fixé à deux est un engagement.', 'Rohrer 2004 · Gollwitzer 1999'],
   miroir: ['Voir sa hauteur pendant qu’on chante corrige la justesse plus vite que l’oreille seule.', 'Welch, Howard & Rush 1989'],
   tessiture: ['Chanter dans sa tessiture confortable ménage la voix : moins d’effort, moins de fatigue.', 'Titze 1994'],
   gym: ['Les exercices à conduit vocal semi-fermé (paille, lèvres, « vv ») échauffent la voix avec moins d’effort.', 'Titze 2006'],
@@ -75,7 +77,7 @@ const APPUIS = {
   placer: ['La prosodie : quand les syllabes accentuées tombent sur les temps forts, le texte se chante tout seul ; à côté, il boite.', 'Pattison 2009'],
 };
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles, elan, cathedrale, passage, projet: home };
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles, elan, cathedrale, passage, calendrier, projet: home };
 // Onglet en arrière-plan : le titre compte ce que l'autre vient d'ajouter, « (2) FLIP ». Revenir remet à zéro.
 {
   const base = document.title; let n = 0;
@@ -92,8 +94,8 @@ const LABO = ['labo', 'cathedrale'];
 // Jouer : jouer, mon studio (le matériel, tel qu'il est), l'oreille (trouver les accords d'un enregistrement).
 const JOUER = ['studio', 'materiel', 'oreille'];
 // L'accueil : aujourd'hui, et ce qui se relit (le projet, le bilan, les lunes passées). Chaque page a sa place fixe.
-const ACCUEIL = ['', 'projet', 'bilan', 'passage'];
-const NOMS_FRATRIE = { '': ['☼', 'Aujourd’hui'], projet: ['✦', 'Notre projet'], bilan: ['↗', 'Notre bilan'], passage: ['☾', 'Nos lunes'], studio: ['♪', 'Jouer'], materiel: ['⌂', 'Mon studio'], oreille: ['◎', 'L’oreille'] };
+const ACCUEIL = ['', 'calendrier', 'projet', 'bilan', 'passage'];
+const NOMS_FRATRIE = { '': ['☼', 'Aujourd’hui'], calendrier: ['◷', 'Calendrier'], projet: ['✦', 'Notre projet'], bilan: ['↗', 'Notre bilan'], passage: ['☾', 'Nos lunes'], studio: ['♪', 'Jouer'], materiel: ['⌂', 'Mon studio'], oreille: ['◎', 'L’oreille'] };
 const view = $('#view');
 installerGlossaire(view); // les mots de musique s'expliquent au survol
 installerSommaire(view); // en haut de chaque page : tout ce qu'on peut y faire
@@ -165,7 +167,7 @@ async function route() {
   cleanup = v.mount(host) || null;
   const ap = APPUIS[ici === 'projet' ? 'projet' : v.id];
   if (ap) { const f = document.createElement('p'); f.className = 'appui'; f.innerHTML = `<span>Pourquoi :</span> ${ap[0]} <cite>${ap[1]}</cite>`; view.appendChild(f); }
-  const group = VOIX.includes(v.id) ? 'voix' : LABO.includes(v.id) ? 'labo' : JOUER.includes(v.id) ? 'studio' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' || v.id === 'passage' || v.id === 'ames' || v.id === 'arbre' ? 'home' : ['jeux', 'paroles', 'atelier', 'ecrire', 'placer'].includes(v.id) ? 'ecrire' : v.id;
+  const group = VOIX.includes(v.id) ? 'voix' : LABO.includes(v.id) ? 'labo' : JOUER.includes(v.id) ? 'studio' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' || v.id === 'passage' || v.id === 'calendrier' || v.id === 'ames' || v.id === 'arbre' ? 'home' : ['jeux', 'paroles', 'atelier', 'ecrire', 'placer'].includes(v.id) ? 'ecrire' : v.id;
   $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.id === group));
   if (v.id === 'carnet') { unseen = 0; showBadge(); }
   document.title = mod ? `${mod.name} · Diapason Labo` : 'Diapason Labo · FLIP';

@@ -82,3 +82,35 @@ export function patchLune(meta, change, date = new Date()) {
   const lunes = meta?.lune && meta.lune.cycle !== c && !(meta.lunes || []).some((x) => x.cycle === meta.lune.cycle) ? [...(meta.lunes || []), meta.lune].slice(-12) : meta?.lunes;
   return { lune: { ...base, ...change(base) }, ...(lunes ? { lunes } : {}) };
 }
+
+// Les phases exactes (nouvelle lune, premier quartier, pleine lune, dernier quartier), à quelques minutes près :
+// l'algorithme de Jean Meeus (Astronomical Algorithms, 1998, ch. 49), celui des éphémérides et des calendriers lunaires.
+// Le résultat est un instant : l'app l'affiche à l'heure de l'appareil (au Québec, l'heure de l'Est).
+const rad = Math.PI / 180; const sin = (x) => Math.sin(x * rad); const cos = (x) => Math.cos(x * rad);
+function instantPhase(k, q) {
+  const kk = k + q / 4; const T = kk / 1236.85;
+  let jde = 2451550.09766 + 29.530588861 * kk + 0.00015437 * T * T - 0.00000015 * T ** 3 + 0.00000000073 * T ** 4;
+  const E = 1 - 0.002516 * T - 0.0000074 * T * T;
+  const M = 2.5534 + 29.1053567 * kk - 0.0000014 * T * T - 0.00000011 * T ** 3;
+  const Mp = 201.5643 + 385.81693528 * kk + 0.0107582 * T * T + 0.00001238 * T ** 3 - 0.000000058 * T ** 4;
+  const F = 160.7108 + 390.67050284 * kk - 0.0016118 * T * T - 0.00000227 * T ** 3 + 0.000000011 * T ** 4;
+  const O = 124.7746 - 1.56375588 * kk + 0.0020672 * T * T + 0.00000215 * T ** 3;
+  if (q === 0 || q === 2) {
+    const [a, b, c, d] = q === 0 ? [-0.4072, 0.17241, 0.01608, 0.01039] : [-0.40614, 0.17302, 0.01614, 0.01043];
+    const [e1, e2] = q === 0 ? [0.00739, -0.00514] : [0.00734, -0.00515];
+    jde += a * sin(Mp) + b * E * sin(M) + c * sin(2 * Mp) + d * sin(2 * F) + e1 * E * sin(Mp - M) + e2 * E * sin(Mp + M) + (q === 0 ? 0.00208 : 0.00209) * E * E * sin(2 * M)
+      - 0.00111 * sin(Mp - 2 * F) - 0.00057 * sin(Mp + 2 * F) + 0.00056 * E * sin(2 * Mp + M) - 0.00042 * sin(3 * Mp) + 0.00042 * E * sin(M + 2 * F) + 0.00038 * E * sin(M - 2 * F) - 0.00024 * E * sin(2 * Mp - M) - 0.00017 * sin(O);
+  } else {
+    jde += -0.62801 * sin(Mp) + 0.17172 * E * sin(M) - 0.01183 * E * sin(Mp + M) + 0.00862 * sin(2 * Mp) + 0.00804 * sin(2 * F) + 0.00454 * E * sin(Mp - M) + 0.00204 * E * E * sin(2 * M)
+      - 0.0018 * sin(Mp - 2 * F) - 0.0007 * sin(Mp + 2 * F) - 0.0004 * sin(3 * Mp) - 0.00034 * E * sin(2 * Mp - M) + 0.00032 * E * sin(M + 2 * F) + 0.00032 * E * sin(M - 2 * F) - 0.00028 * E * E * sin(Mp + 2 * M);
+    const W = 0.00306 - 0.00038 * E * cos(M) + 0.00026 * cos(Mp) - 0.00002 * cos(Mp - M) + 0.00002 * cos(Mp + M) + 0.00002 * cos(2 * F);
+    jde += q === 1 ? W : -W;
+  }
+  return (jde - 2440587.5) * 864e5 - 69e3; // jour julien (temps terrestre) → instant (temps universel, ΔT ≈ 69 s)
+}
+// Toutes les phases entre deux instants : [{ t, q }] où q = 0 nouvelle lune, 1 premier quartier, 2 pleine lune, 3 dernier quartier.
+export function phasesEntre(debut, fin) {
+  const k0 = Math.floor((new Date(debut).getUTCFullYear() + new Date(debut).getUTCMonth() / 12 - 2000) * 12.3685) - 1; const out = [];
+  for (let k = k0; k < k0 + 40; k++) for (let q = 0; q < 4; q++) { const t = instantPhase(k, q); if (t >= debut && t < fin) out.push({ t, q }); if (t > fin + 30 * 864e5) return out.sort((a, b) => a.t - b.t); }
+  return out.sort((a, b) => a.t - b.t);
+}

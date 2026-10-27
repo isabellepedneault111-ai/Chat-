@@ -64,6 +64,7 @@ export default {
           <span class="muted small">Cette photo sert de calque : glisse tes appareils et tes meubles par-dessus, à leur vraie place.</span>
         </div>
       </section>
+      <div class="m-meubles-l" aria-label="Mes meubles : touche-en un pour le choisir, même s’il est caché sous un appareil"></div>
       <div class="m-wrap">
         <section class="m-scene" aria-label="Le studio, vu d’en haut"><img class="m-photo" alt=""><div class="m-meubles"></div><svg class="m-cables" aria-hidden="true"></svg><div class="m-cartes"></div></section>
         <aside class="m-fiche panel" hidden></aside>
@@ -99,6 +100,8 @@ export default {
 
     // ---------- La pièce ----------
     function rendrePiece() {
+      // Mes meubles, en rangée : on les choisit d'ici même quand un appareil les couvre (le bureau sous l'ordi).
+      { const ms = piece().meubles; const n = {}; q('.m-meubles-l').innerHTML = ms.length ? `<span>Mes meubles :</span>${ms.map((m) => { const nom = MEUBLES[m.sorte]?.[0] || m.sorte; n[nom] = (n[nom] || 0) + 1; return `<button class="m-ml ${choix?.t === 'm' && choix.k === m.id ? 'on' : ''}" data-choisir-m="${esc(m.id)}">${esc(nom)}${ms.filter((x) => x.sorte === m.sorte).length > 1 ? ` ${n[nom]}` : ''}</button>`; }).join('')}` : ''; }
       const p = piece();
       scene.className = `m-scene sol-${p.sol}`; scene.style.setProperty('--mur', MURS[p.mur] || MURS.braise);
       const ph = q('.m-photo'); const enLigne = espace.connected && profileOf(espace.me)?.studioPhoto;
@@ -253,6 +256,7 @@ export default {
     el.addEventListener('click', async (e) => {
       const mur = e.target.closest('[data-mur]'); if (mur) { reglerPiece({ mur: mur.dataset.mur }); rendrePiece(); partager(); return; }
       const coul = e.target.closest('[data-coul]'); if (coul && choix?.t === 'a') { regler(choix.k, { couleur: coul.dataset.coul }); return; }
+      const cm = e.target.closest('[data-choisir-m]'); if (cm) { choix = { t: 'm', k: cm.dataset.choisirM }; rendrePiece(); rendre(); fiche.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); return; }
       const tei = e.target.closest('[data-teinte]'); if (tei && choix?.t === 'm') { reglerMeuble(choix.k, { teinte: tei.dataset.teinte || undefined }); rendrePiece(); rendre(); partager(); return; }
       const pr = e.target.closest('[data-pr]'); if (pr) { if (pr.dataset.pr === 'virtuels') proposes().filter((a) => a.virtuel).forEach((a) => ignorer(a.k)); else ({ garder, ignorer, retablir })[pr.dataset.pr](pr.dataset.k); return; }
       if (e.target.closest('[data-mk=retirer]') && choix) { retirer(choix.k); choix = null; return; }
