@@ -172,7 +172,9 @@ function dessinArbre(data) {
 }
 
 // La généalogie : chaque étape du projet (un point), chaque branche de travail (une ligne), les fusions.
-const ERE_COUL = { Diapason: '#6f9fe0', 'Zaza × Frog': '#93b08e', FLIP: '#e8c27a', 'La visite': '#ff6fae', 'Version 0.5': '#b58cf0', 'Diapason Labo': '#f3c77a' };
+const ERE_COUL = { 'La refonte': '#6f9fe0', 'L’app à deux': '#93b08e', 'La marque FLIP': '#e8c27a', 'La visite de Frog': '#ff6fae', 'Les versions': '#b58cf0', 'Diapason Labo': '#5fc4b8' };
+// Ce que chaque ère a apporté, en une ligne (les ères se lisent dans le titre des étapes).
+const ERE_SENS = { 'La refonte': 'l’app musicale d’avant, refaite de zéro', 'L’app à deux': 'le plan de six mois, la séance partagée, le Mur', 'La marque FLIP': 'le mot secret du duo, le relais, les bilans, la nouvelle identité', 'La visite de Frog': 'sa visite d’accueil, sur ses propres pièces', 'Les versions': 'les mises à jour numérotées, chacune annoncée', 'Diapason Labo': 'le nom actuel : le labo, la cathédrale, le studio' };
 // Dessine la généalogie : la lignée des étapes date par date, et les autres chantiers en branches.
 function dessinGenealogie(g) {
   ETAPES = [];
@@ -234,7 +236,7 @@ function ficheEtape(c) {
       <p>Un autre chantier, mené avec Claude dans le même dépôt. On montre sa forme (quand, combien d’étapes), pas son contenu : ce n’est pas de la musique.</p><p class="ar-f-meta"><span>${c.lane.c.length} étapes sur cette branche</span></p>`;
   }
   const [fic, plus, moins] = c.t || [];
-  return `<p class="ar-f-sorte" style="--c:${ERE_COUL[c.e] || '#cfc6b4'}">${esc(c.e || 'Avant Diapason')}${c.rang ? ` · étape ${c.rang} sur ${c.sur}` : ''}</p>
+  return `<p class="ar-f-sorte" style="--c:${ERE_COUL[c.e] || '#cfc6b4'}">${esc(c.e || 'Avant Diapason')}${ERE_SENS[c.e] ? ` : ${ERE_SENS[c.e]}` : ''}${c.rang ? ` · étape ${c.rang} sur ${c.sur}` : ''}</p>
     <h3>${esc(c.s)}</h3><p class="ar-f-ch">${jour(c.d)} · empreinte ${esc(c.h)}</p>
     ${c.f ? '<p>Ici, une branche de travail est revenue dans la lignée : son contenu a été fusionné.</p>' : ''}
     ${fic != null ? `<p class="ar-f-meta"><span><b>${fic}</b> fichier${fic > 1 ? 's' : ''} touché${fic > 1 ? 's' : ''}</span><span class="ar-plus">+${plus.toLocaleString('fr-CA')} lignes</span><span class="ar-moins">−${moins.toLocaleString('fr-CA')}</span></p>` : ''}
@@ -257,7 +259,7 @@ export default {
         <p class="muted small">Chaque point est une étape du projet, chaque ligne une branche de travail avec Claude. Tout commence le 13 août 2025 par « Create Flip ». Les branches qui reviennent dans la lignée ont été fusionnées ; les autres sont d’autres chantiers, dessinés sans leur contenu. Touche un point pour ouvrir l’étape : ce qu’elle a fait, quand, combien de lignes.</p>
         <div class="gn-host"><p class="muted">La généalogie se dessine…</p></div>
         <aside class="ar-fiche gn-fiche" aria-live="polite"><p class="muted">Touche un point de la lignée pour lire l’étape.</p></aside>
-        <p class="ar-cles gn-cles">${Object.entries(ERE_COUL).map(([k, c]) => `<i style="--c:${c}"></i>${k}`).join(' ')} <i style="--c:#6d655a"></i>autres chantiers</p>
+        <ul class="gn-eres">${Object.entries(ERE_COUL).map(([k, c]) => `<li><i style="--c:${c}"></i><b>${k}</b> ${ERE_SENS[k]}</li>`).join('')}<li><i style="--c:#6d655a"></i><b>Autres chantiers</b> d’autres projets menés dans le même dépôt</li></ul>
       </section>
       <section class="ar-mot no-aide">
         <p class="eyebrow">La conception</p>
@@ -330,20 +332,25 @@ export default {
         // Le graphique comparatif, proportionnel : chaque barre part de zéro, sa longueur est la durée (en jours de travail).
         // Plein : l'estimation basse ; plus pâle : jusqu'à l'estimation haute. À cette échelle, l'IA n'est qu'un trait.
         const jt = cd.heuresActives / 8; const fig = el.querySelector('.ar-cad-g'); const max = jp(10);
-        const P = (v) => (v / max) * 100;
-        const rangs = [['Avec l’IA', `réalisé : ${String(cd.heuresActives).replace('.', ',')} h actives`, jt, jt, 'ia', `${virg(jt)} j`, `${virg(jt)} jours de travail`],
-          ['Équipe de cinq', `estimé sans IA : ${mois(jp(50))} à ${mois(jp(10))} mois · ${cout(jp(50))} à ${cout(jp(10))}`, jp(50) / 5, jp(10) / 5, 'sans', `${Math.round(jp(50) / 5)}–${Math.round(jp(10) / 5)} j`, `${Math.round(jp(50) / 5)} à ${Math.round(jp(10) / 5)} jours ouvrables`],
-          ['Une personne seule', `estimé sans IA : ${an(jp(50))} à ${an(jp(10))} ans · ${cout(jp(50))} à ${cout(jp(10))}`, jp(50), jp(10), 'sans', `${jp(50).toLocaleString('fr-CA')}–${jp(10).toLocaleString('fr-CA')} j`, `${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours ouvrables`]];
-        const pas = max > 1500 ? 500 : max > 600 ? 200 : 100; const reperes = []; for (let t = 0; t <= max; t += pas) reperes.push(t);
+        // L'axe est en années de travail (220 jours) : « 2 à 10 ans » se lit mieux que « 436–2 178 j ».
+        const P = (v) => (v / max) * 100; const ANNEE = 220;
+        const enMots = (j) => (j < 20 ? `${Math.round(j)} jours` : j < ANNEE ? `${Math.round(j / 21)} mois` : `${Math.round(j / ANNEE)} ans`);
+        const plage = (a, b) => { const [x, y] = [enMots(a), enMots(b)]; const u = (t) => t.split(' ')[1]; return u(x) === u(y) ? `${x.split(' ')[0]} à ${y}` : `${x} à ${y}`; };
+        const rangs = [['Avec l’IA', jt, jt, 'ia', `${Math.max(1, Math.round(jt))} jours`, `réalisé : ${String(cd.heuresActives).replace('.', ',')} h actives, soit ${virg(jt)} jours de travail`],
+          ['Équipe de cinq, sans IA', jp(50) / 5, jp(10) / 5, 'sans', plage(jp(50) / 5, jp(10) / 5), `estimé : ${Math.round(jp(50) / 5)} à ${Math.round(jp(10) / 5)} jours ouvrables (${mois(jp(50))} à ${mois(jp(10))} mois)`],
+          ['Une personne seule, sans IA', jp(50), jp(10), 'sans', plage(jp(50), jp(10)), `estimé : ${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours ouvrables (${an(jp(50))} à ${an(jp(10))} ans)`]];
+        const reperes = []; for (let t = 0; t <= max / ANNEE; t += 2) reperes.push(t);
         const fois = Math.round(jp(50) / 5 / jt);
         fig.hidden = false;
-        fig.innerHTML = `<figcaption><b>La même app, trois façons de la faire</b> <span>durée en jours de travail, à la même échelle : la longueur de chaque barre est proportionnelle à sa durée</span></figcaption>
-          <div class="ar-g" role="img" aria-label="${rangs.map((r) => `${r[0]} : ${r[5]}`).join(' ; ')}">
-            ${rangs.map(([n, sous, a, b, c, val, tip]) => `<div class="ar-g-r" title="${n} : ${val} (${tip})"><div class="ar-g-t"><b>${n}</b><small>${sous}</small></div>
-              <div class="ar-g-p">${reperes.map((t) => `<i class="ar-g-l" style="left:${P(t)}%"></i>`).join('')}<span class="ar-g-b ${c}" style="left:0;width:max(3px, ${P(a)}%)"></span>${b > a ? `<span class="ar-g-b ${c} pale" style="left:${P(a)}%;width:${P(b) - P(a)}%"></span>` : ''}<span class="ar-g-v" style="left:${P(b) > 60 ? `calc(${P(a)}% + 8px)` : `calc(${Math.max(P(b), 0.5)}% + 8px)`}">${val}</span></div></div>`).join('')}
-            <div class="ar-g-r ar-g-axe"><div></div><div class="ar-g-p">${reperes.map((t) => `<span style="left:${P(t)}%">${t.toLocaleString('fr-CA')}</span>`).join('')}</div></div>
+        fig.innerHTML = `<figcaption><b>Même à cinq, sans IA : au moins ${fois.toLocaleString('fr-CA')} fois plus long</b> <span>combien de temps pour bâtir cette app ; chaque barre est proportionnelle à sa durée</span></figcaption>
+          <div class="ar-g" role="img" aria-label="${rangs.map((r) => `${r[0]} : ${r[4]}`).join(' ; ')}">
+            ${rangs.map(([n, a, b, c, val, tip]) => { const dedans = P(b) > 70; const v = `<span class="ar-g-v${dedans ? ' dedans' : ''}" style="${dedans ? 'left:8px' : `left:calc(${Math.max(P(b), 0.4)}% + 8px)`}">${val}</span>`;
+              return `<div class="ar-g-r" title="${n} : ${tip}"><div class="ar-g-t"><b>${n}</b></div>
+              <div class="ar-g-p">${reperes.map((t) => `<i class="ar-g-l" style="left:${P(t * ANNEE)}%"></i>`).join('')}<span class="ar-g-b ${c}" style="left:0;width:max(4px, ${P(a)}%)">${dedans ? v : ''}</span>${b > a ? `<span class="ar-g-b ${c} pale" style="left:${P(a)}%;width:${P(b) - P(a)}%"></span>` : ''}${dedans ? '' : v}</div></div>`; }).join('')}
+            <div class="ar-g-r ar-g-axe"><div></div><div class="ar-g-p">${reperes.map((t) => `<span style="left:${P(t * ANNEE)}%">${t ? `${t} ans` : '0'}</span>`).join('')}</div></div>
           </div>
-          <p class="ar-g-leg"><span><i class="ia"></i>réalisé, avec l’IA</span><span><i class="sans"></i>estimé sans IA : plein jusqu’à l’estimation basse (50 lignes par jour), pâle jusqu’à la haute (10 lignes)</span></p><p class="ar-g-fois">Même l’équipe de cinq, au mieux, prendrait environ <b>${fois.toLocaleString('fr-CA')} fois</b> plus de temps.</p>`;
+          <p class="ar-g-leg"><span><i class="sans"></i>plein : l’estimation basse</span><span><i class="sans pale"></i>pâle : jusqu’à la haute</span></p>
+          <p class="ar-g-cout"><b>Coût sans IA : ${cout(jp(50))} à ${cout(jp(10))}</b> <span>Seul ou à cinq, c’est la même somme : cinq salaires, cinq fois moins longtemps (salaire médian d’un développeur au Québec, sans les charges).</span></p>`;
       }
     }
 

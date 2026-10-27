@@ -142,7 +142,7 @@ def commits(spec, *opts):
         h, d, p, s = l.split('|', 3)
         out.append({'h': h, 'd': d, 'p': p.split(), 's': discret(s)})
     return out[::-1]
-ERES = [('Diapason :', 'Diapason'), ('Zaza × Frog', 'Zaza × Frog'), ('FLIP', 'FLIP'), ('Visite', 'La visite'), ('labo 0.5', 'Version 0.5'), ('Diapason Labo', 'Diapason Labo')]
+ERES = [('Diapason :', 'La refonte'), ('Zaza × Frog', 'L’app à deux'), ('FLIP', 'La marque FLIP'), ('Visite', 'La visite de Frog'), ('labo 0.5', 'Les versions'), ('Diapason Labo', 'Diapason Labo')]
 # L’ère d’une étape (Diapason, FLIP, la visite…), devinée d’après le début de son titre.
 def ere(s):
     for k, v in ERES:
