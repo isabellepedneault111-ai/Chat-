@@ -4,11 +4,11 @@ Affiche les ERREURS (bloquantes) et les AVERTISSEMENTS (à regarder), puis une e
 import json, sys, os
 
 DECORS = ["cafe", "depanneur", "magasin", "epicerie", "cinema", "restaurant", "arena", "grande-surface", "pharmacie",
-          "centre-commercial", "maison-halloween", "ecole", "bibliotheque", "parc", "banque", "clinique", "maison", "cuisine", "gare"]
+          "centre-commercial", "maison-halloween", "ecole", "bibliotheque", "parc", "banque", "clinique", "maison", "cuisine", "gare", "casse-croute", "cafeteria"]
 TYPES = {"droite": ["a", "p"], "tri": ["boites", "etiquettes"], "jetons": ["articles"], "qcm": ["choix", "bonne"],
          "num": ["accepteMin", "accepteMax"], "assez": ["budget", "reponse"], "ordre": ["etapes"],
          "curseur": ["min", "max", "accepteMin", "accepteMax"], "vf": ["reponse"], "erreur": ["lignes", "fausses"], "texte": []}
-VISUELS = {"droite", "recu", "recuArrondi", "billets", "taxes", "grand", "colonnes", "mascotte", "decor", "image", "html"}
+VISUELS = {"tableauNutritif", "droite", "recu", "recuArrondi", "billets", "taxes", "grand", "colonnes", "mascotte", "decor", "image", "html"}
 
 def valider(cfg):
     err, warn = [], []
@@ -82,13 +82,20 @@ def valider(cfg):
             err.append(f"Le niveau {n} n’a aucune question.")
     for e in els:
         if not any(q.get("element") == e for q in cfg["questions"]): warn.append(f"L’élément « {e} » n’est évalué par aucune question.")
+    if "unite" in cfg and not isinstance(cfg["unite"], str): err.append("« unite » doit être un texte (\"$\", \"g\", \"\" …).")
+    for q in cfg["questions"]:
+        if "unite" in q and not isinstance(q["unite"], str): err.append(f"Question {q.get('id')} : « unite » doit être un texte.")
+    re_ = cfg.get("reinvest") or {}
+    for k in ("defi", "creation"):
+        if re_.get(k) and not (re_[k].get("teams") or re_.get("teams")): warn.append(f"reinvest.{k} : pas de « teams » (équipe et canal) — les étapes de publication seront génériques.")
     for a in cfg.get("autoeval", []):
         if a.get("element") not in els: err.append(f"Autoévaluation : élément inconnu « {a.get('element')} ».")
     return err, warn
 
 def duree(cfg):
     sc = sum(len(c["scenes"]) for c in cfg.get("capsules", {}).values())
-    return round(len(cfg["questions"]) * 0.9 + sc * 0.3 + len(cfg["stations"]) * 0.3 + 2)
+    x = len(cfg["questions"]) * 0.9 + sc * 0.3 + len(cfg["stations"]) * 0.3 + 2
+    return int(x + 0.5)
 
 if __name__ == "__main__":
     cfg = json.load(open(sys.argv[1], encoding="utf-8"))

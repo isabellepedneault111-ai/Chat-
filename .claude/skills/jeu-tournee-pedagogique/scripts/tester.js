@@ -2,7 +2,8 @@
 // Usage : node tester.js <chemin du jeu .html ou URL> <dossier de captures>
 // Produit : captures de l'accueil, de la carte, de chaque station (décor), de quelques défis, du bilan,
 // des activités de réinvestissement, de l'espace enseignant, une vue mobile, et les PDF (bilan, défi).
-const { chromium } = require('playwright');
+let pw; try { pw = require('playwright'); } catch (e) { pw = require(require.resolve('playwright', { paths: [process.cwd(), ...(process.env.NODE_PATH || '').split(':').filter(Boolean)] })); }
+const { chromium } = pw;
 const path = require('path');
 const fs = require('fs');
 const CIBLE = process.argv[2], OUT = process.argv[3];
@@ -26,7 +27,7 @@ fs.mkdirSync(OUT, { recursive: true });
     const scr = await p.evaluate(() => document.getElementById('vb') ? 'autoeval' : document.getElementById('dl') ? 'bilan' :
       document.getElementById('qc') ? 'q' : document.getElementById('sk') ? 'intro' : document.querySelector('svg.decor') ? 'station' : document.getElementById('go') ? 'go' : 'autre');
     if (scr === 'intro') { if (nSt === 0) { await p.waitForTimeout(800); await p.screenshot({ path: OUT + '/03_capsule.png', fullPage: true }); } await p.click('#sk'); await p.waitForTimeout(250); continue; }
-    if (scr === 'station') { await p.waitForTimeout(700); await p.screenshot({ path: OUT + `/st_${String(nSt++).padStart(2, '0')}.png` }); await p.click('#go'); await p.waitForTimeout(250); continue; }
+    if (scr === 'station') { await p.waitForTimeout(700); if (await p.$('#sk2')) { await p.screenshot({ path: OUT + `/st_${String(nSt++).padStart(2, '0')}.png` }); await p.click('#sk2'); await p.waitForTimeout(250); continue; } await p.screenshot({ path: OUT + `/st_${String(nSt++).padStart(2, '0')}.png` }); await p.click('#go'); await p.waitForTimeout(250); continue; }
     if (scr === 'go') { await p.click('#go'); await p.waitForTimeout(250); continue; }
     if (scr === 'autoeval') { for (const gr of await p.$$('.av')) await (await gr.$$('button'))[0].click(); await p.click('#vb'); await p.waitForTimeout(600); continue; }
     if (scr === 'bilan') { fini = true; break; }
@@ -43,7 +44,7 @@ fs.mkdirSync(OUT, { recursive: true });
         case 'num': z.querySelector('#ni').value = w ? String(q.okMax + 100) : String(q.okMin); c(z.querySelector('#nv')); break;
         case 'assez': case 'vf': c(z.querySelector(`[data-v="${(w ? !q.rep : q.rep) ? 1 : 0}"]`)); break;
         case 'ordre': if (w) { [...q.steps.keys()].reverse().forEach(k => c(z.querySelector(`.ord [data-k="${k}"]`))); } else { q.steps.forEach((s, k) => c(z.querySelector(`.ord [data-k="${k}"]`))); } c(z.querySelector('#ov')); break;
-        case 'curseur': { const r = z.querySelector('#rg'); r.value = w ? q.max : q.okMin; r.dispatchEvent(new Event('input')); c(z.querySelector('#vc')); break; }
+        case 'curseur': { const r = z.querySelector('#rg'); r.value = w ? (q.max > q.okMax ? q.max : q.min) : q.okMin; r.dispatchEvent(new Event('input')); c(z.querySelector('#vc')); break; }
         case 'erreur': c(z.querySelector(`[data-k="${w ? q.lignes.findIndex((l, i) => !q.bad.includes(i)) : q.bad[0]}"]`)); break;
         case 'texte': { const t = z.querySelector('#tx'); t.value = 'Voici mon explication avec mes mots, étape par étape.'; t.dispatchEvent(new Event('input')); c(z.querySelector('#tv')); break; }
       } };
@@ -77,7 +78,7 @@ fs.mkdirSync(OUT, { recursive: true });
     await p.fill('#rp', 'Environ 12 $ avec les taxes, donc assez.'); await p.click('#vc2'); await p.waitForTimeout(200);
     await p.screenshot({ path: OUT + '/92c_defi_etape4.png', fullPage: true }); await p.click('#sv');
     const [dd] = await Promise.all([p.waitForEvent('download'), p.click('#dpdf')]); await dd.saveAs(OUT + '/' + dd.suggestedFilename());
-    await p.waitForTimeout(300); await p.click('#sv'); await p.waitForTimeout(500);
+    await p.waitForTimeout(300); await p.click('#sv'); await p.waitForTimeout(1200);
     if (!(await p.$('.tm'))) errs.push('défi : étapes Teams absentes');
     await p.screenshot({ path: OUT + '/92d_defi_teams.png', fullPage: true });
     const formes = await p.evaluate(() => Object.keys(FORMES).map(f => corrige({ forme: f, taxes: f === 'reste', b: 10, items: [['A', 4.49], ['B', 6.25]] }).v));
@@ -90,7 +91,7 @@ fs.mkdirSync(OUT, { recursive: true });
     if (await p.isDisabled('#sv')) errs.push('création : étape 2 bloquée'); await p.click('#sv');
     await p.fill('#cw', 'Parce que c’est expliqué en classe.'); await p.click('#sv');
     const [dq] = await Promise.all([p.waitForEvent('download'), p.click('#dpdf')]); await dq.saveAs(OUT + '/' + dq.suggestedFilename());
-    await p.click('#sv'); if (!(await p.$('.tm'))) errs.push('création : étapes Teams absentes');
+    await p.click('#sv'); await p.waitForTimeout(1200); if (!(await p.$('.tm'))) errs.push('création : étapes Teams absentes');
     await p.screenshot({ path: OUT + '/94_creation.png', fullPage: true }); await p.click('#fn');
   }
   if (await p.$('#r1')) { await p.click('#r1'); await p.click('.choix[data-k]'); await p.waitForTimeout(500); await p.screenshot({ path: OUT + '/93_capsule.png', fullPage: true }); await p.click('#rt'); }

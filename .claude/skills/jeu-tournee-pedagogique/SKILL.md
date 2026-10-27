@@ -32,7 +32,7 @@ Ce qu'il faut savoir avant d'écrire. Propose des choix par défaut plutôt que 
 - **La grille :** de 3 à 6 éléments **observables**, liés au programme, chacun avec 4 descripteurs.
 - **Le contexte :** des lieux réels et proches des élèves ; c'est ce qui rend le jeu vivant.
 - **Les visuels :** les décors (montre `assets/galerie-decors.png`), la mascotte (`renard`, `hibou` ou `aucune`), la couleur d'accent.
-- **La durée :** environ 1 minute par défi, plus les capsules. Une trentaine de minutes, c'est environ 25 défis.
+- **La durée :** `valider.py` l'estime (environ 1 min par défi, plus les capsules et les stations). 25 min ≈ 18 à 20 défis, 30 min ≈ 22 à 26 défis.
 - **L'équipe et le canal Teams** où publier les défis des élèves.
 
 Lis `references/pedagogie.md` pour bâtir les niveaux, les descripteurs, les prochaines étapes et les explications.
@@ -49,7 +49,7 @@ python3 scripts/valider.py config.json                 # erreurs bloquantes + du
 python3 scripts/construire.py config.json <dossier>     # <dossier>/<fichier>.html + fonts/ + lib/
 node scripts/tester.js <dossier>/<fichier>.html <captures>   # joue toute la tournée (Playwright + Chromium)
 ```
-`tester.js` joue chaque défi (avec quelques erreurs volontaires), fait une capture de chaque décor, du bilan, de la vue mobile et de l'espace enseignant, et télécharge les PDF. **Regarde les captures** (montage avec PIL) et les PDF (`pdftoppm`) avant de livrer. Si `require('playwright')` échoue, lance le script depuis un dossier où Playwright est installé, ou règle `NODE_PATH`.
+`tester.js` joue chaque défi (avec quelques erreurs volontaires), fait une capture de chaque décor, du bilan, de la vue mobile et de l'espace enseignant, et télécharge les PDF. **Regarde les captures** (montage avec PIL) et les PDF (`pdftoppm`) avant de livrer. Le script cherche Playwright normalement, puis dans le dossier courant et dans `NODE_PATH` ; s'il ne le trouve pas, installe-le (`npm i playwright`) ou règle `NODE_PATH`.
 
 Pour aider l'enseignant à choisir les décors : `python3 scripts/galerie.py galerie.html --png galerie.png`.
 
@@ -70,6 +70,8 @@ Si l'élève ouvre le jeu **à l'intérieur de Teams**, les téléchargements pe
 ## Points d'attention
 - **Pas de noms d'élèves** dans la configuration ni dans un dépôt public. Le prénom n'existe que dans le navigateur de l'élève et dans son PDF.
 - **Le texte affiché aux élèves :** phrases courtes, un verbe d'action, une idée par ligne. On peut mettre du `<b>` dans `titre`, mais pas ailleurs.
+- **Le contenu à vérifier par l'enseignant :** signale-lui ce que tu as dû supposer (valeurs nutritives génériques, classement d'un aliment, prix). Il connaît ses élèves et son programme.
+- **Pour les matières autres que l'argent,** mets `"unite": ""` au niveau global et une `unite` par défi (`g`, `mg`, `%`). Pour un tableau de la valeur nutritive, utilise le visuel `tableauNutritif`, qui est lu à voix haute.
 - **Les modalités « argent »** (`droite`, `jetons`, `assez`, les visuels `billets` et `taxes`, et les activités `panier` et `defi`) servent la littératie financière. Pour les autres matières, utilise `qcm`, `vf`, `tri`, `ordre`, `num`, `curseur`, `erreur` et `texte` (avec `unite` au besoin), et le défi supplémentaire `creation`.
 - **Les taxes au Québec :** TPS 5 % + TVQ 9,975 % = 14,975 %, soit environ 15 %. Les aliments de base ne sont pas taxés ; les grignotines, les sucreries, le restaurant et les produits de soins ou ménagers le sont.
 - **Faire évoluer le moteur :** modifie `moteur/moteur.html` ou `moteur/decors.js`, puis reconstruis **et reteste** le jeu d'exemple pour éviter les régressions.

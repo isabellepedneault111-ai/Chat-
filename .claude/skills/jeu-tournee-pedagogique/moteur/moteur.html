@@ -72,6 +72,7 @@ svg.map{width:100%;display:block}#tok{transition:transform 1.5s cubic-bezier(.5,
 .cap-v{min-height:220px;display:flex;align-items:center;justify-content:center;flex-direction:column}
 .cap-txt{font-size:24px;text-align:center;font-weight:700;min-height:70px}.eq{font-family:PH;font-size:46px;text-align:center}
 .taxb{width:100%;max-width:560px;margin:auto}.taxb .seg{height:54px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;color:#fff;border-radius:10px;animation:grandit .7s ease-out both;transform-origin:left;vertical-align:top}@keyframes grandit{from{transform:scaleX(0)}}
+.tvn{border:3px solid #111;border-radius:6px;background:#fff;padding:8px 12px;max-width:340px;width:100%;margin:8px auto;font-size:16px;text-align:left;color:#111}.tvn-t{font-weight:900;font-size:21px}.tvn-cal{display:flex;justify-content:space-between;align-items:flex-end;border-top:8px solid #111;border-bottom:3px solid #111;padding:3px 0;margin-top:4px}.tvn-l{display:flex;justify-content:space-between;border-bottom:1px solid #999;padding:3px 0}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}.cols>div{border-radius:16px;padding:10px 14px}
 .ge{padding:10px 0;border-bottom:2px dotted #eadfd4}.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}.gc{position:relative;background:#F7F2EC;border-radius:12px;padding:8px 9px;font-size:14px;line-height:1.3;opacity:.55}.gc.ici{background:var(--or2);outline:3px solid var(--or);opacity:1;font-weight:700;padding-top:22px}.icit{position:absolute;top:3px;left:8px;font-size:12px;color:var(--or);font-weight:900}.pe{margin:6px 0 0;font-size:16px}
 .el{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 0;border-bottom:2px dotted #eadfd4}
@@ -157,8 +158,8 @@ function droite(a,p,o={}){
   if(o.fleche){const xn=X(near),d=xn>xp?-1:1;s+=`<g class="fl"><line x1="${xp}" y1="${y-14}" x2="${xn+d*10}" y2="${y-14}" stroke="#C9733A" stroke-width="6" marker-end="url(#ah${a})"/><text x="${(xp+xn)/2}" y="${y+40}" class="dm" style="fill:#C9733A">plus proche de ${near}${u}</text></g>`}
   s+=`<g class="mk" style="--x:${(xp-x0).toFixed(1)}px"><g transform="translate(${x0},0)"><path d="M0,${y-10} l-13,-24 h26 z" fill="#C9733A"/><rect x="-50" y="${y-74}" width="100" height="40" rx="11" fill="#C9733A"/><text x="0" y="${y-46}" class="mkt">${fr(p)}</text></g></g>`}
  return s+"</svg>"}
-const val=v=>typeof v=="number"?fr(v):E(v);
-function recu(items,note){return `<div class="recu">${items.map((it,k)=>`<div class="rl" style="animation-delay:${k*.1}s"><span>${E(it[0])}</span><b>${val(it[1])}</b></div>`).join("")}${note?`<div class="rn">${E(note)}</div>`:""}</div>`}
+const valU=(v,u)=>typeof v=="number"?(u==="$"?v.toFixed(2).replace(".",",")+" $":fmU(v,u)):E(v);const val=v=>valU(v,U);
+function recu(items,note,u){return `<div class="recu">${items.map((it,k)=>`<div class="rl" style="animation-delay:${k*.1}s"><span>${E(it[0])}</span><b>${valU(it[1],u==null?U:u)}</b></div>`).join("")}${note?`<div class="rn">${E(note)}</div>`:""}</div>`}
 function recuArr(items){return `<div class="recu">${items.map((it,k)=>`<div class="rl" style="animation-delay:${k*.25}s"><span>${E(it[0])}</span><b>${fr(it[1])}<span class="arr">→ ${rond(it[1])}${U?" "+U:""}</span></b></div>`).join("")}</div>`}
 const coin=(cl="")=>`<svg class="coin ${cl}" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20" fill="#D9AE45" stroke="#8a6d1f" stroke-width="3"/><circle cx="22" cy="22" r="14" fill="none" stroke="#b58d2c" stroke-width="1.5"/><text x="22" y="27" text-anchor="middle" font-size="13" font-weight="900" fill="#5a4410" font-family="Arial">1 $</text></svg>`;
 const BILL={50:"#C2453D",20:"#4E9A5B",10:"#7B5AA6",5:"#3D7CC9"};
@@ -177,7 +178,16 @@ function vis(v){if(!v)return "";if(typeof v==="string")return v;switch(v.type){
  case"mascotte":return mascotte(v.taille||140)+(v.html?`<div class="eq">${v.html}</div>`:"");
  case"decor":return decor(v.decor,{n:v.nom||"",c:v.couleur});
  case"image":return `<img src="${E(v.src)}" alt="${E(v.alt||"")}" style="max-width:100%;max-height:260px;border-radius:14px">`;
+ case"tableauNutritif":return tableauNutritif(v);
  case"html":return v.html;default:return ""}}
+function tableauNutritif(v){const r=v.lignes||[],c=p=>p==null?"":p>=15?"background:#FBE2CE;color:#8f4f24":p<=5?"background:#E3F3E8;color:#2E6B45":"";
+ return `<div class="tvn pop"><div class="tvn-t">${E(v.titre||"Valeur nutritive")}</div><div class="small">${E(v.portion||"")}</div><div class="tvn-cal"><b>Calories ${E(v.calories==null?"":v.calories)}</b><span class="small">% valeur quotidienne*</span></div>
+ ${r.map(l=>`<div class="tvn-l"><span><b>${E(l[0])}</b> ${E(l[1]||"")}</span><b style="border-radius:6px;padding:0 6px;${v.repere?c(l[2]):""}">${l[2]==null?"":E(l[2])+" %"}</b></div>`).join("")}
+ <div class="small" style="margin-top:4px">${v.repere!==false?"*5 % ou moins, c’est <b>peu</b> · 15 % ou plus, c’est <b>beaucoup</b>":""}${v.note?" "+E(v.note):""}</div>${v.ingredients?`<div class="small" style="margin-top:6px;border-top:2px solid #111;padding-top:4px"><b>Ingrédients :</b> ${E(v.ingredients)}</div>`:""}</div>`}
+function visTexte(v){if(!v||typeof v==="string")return "";if(v.dit)return v.dit;switch(v.type){
+ case"tableauNutritif":return `${v.titre||"Valeur nutritive"}, ${v.portion||""}. Calories ${v.calories==null?"":v.calories}. `+(v.lignes||[]).map(l=>l[0]+" "+(l[1]||"")+(l[2]==null?"":", "+l[2]+" %")).join(". ")+(v.ingredients?". Ingrédients : "+v.ingredients:"");
+ case"colonnes":return v.colonnes.map(c=>c.titre+" : "+c.texte).join(". ");case"recu":case"recuArrondi":return v.articles.map(a=>a[0]+" "+valU(a[1],U)).join(". ");
+ case"grand":return String(v.html).replace(/<[^>]+>/g," ").replace(/&[a-z]+;/g," ");default:return ""}}
 
 /* ================= capsules ================= */
 function capsule(el,keys,fin,finTxt){
@@ -253,21 +263,21 @@ function intro(lv){majFin(true);
  capsule(document.getElementById("cp"),INTRO[lv].k,go,"Je suis prêt ! ▶");document.getElementById("sk").onclick=go;haut()}
 function station(k){majFin(true);const st=ST[k];
  app.innerHTML=`<div class="row sp"><span class="pill" style="background:${LV[st.lv].c}">Niveau ${LV[st.lv].n}</span><span class="small">Arrêt ${k+1} sur ${ST.length}</span></div>
- <div class="card">${decor(st.decor,st)}<h2 style="text-align:center;margin-top:10px">${E(st.n)}</h2>${st.l?`<p style="text-align:center;margin:0" class="small">${E(st.l)}</p>`:""}<p class="monte" style="text-align:center">${E(st.txt)}</p><div class="row ctr">${say(st.n+". "+st.txt)}<button class="go" id="go">Commencer ▶</button></div></div>
- ${st.caps?`<h3>Avant de commencer : un nouveau truc</h3><div id="cp"></div>`:""}`;
+ <div class="card">${decor(st.decor,st)}<h2 style="text-align:center;margin-top:10px">${E(st.n)}</h2>${st.l?`<p style="text-align:center;margin:0" class="small">${E(st.l)}</p>`:""}<p class="monte" style="text-align:center">${E(st.txt)}</p><div class="row ctr">${say(st.n+". "+st.txt)}${st.caps?"":`<button class="go" id="go">Commencer ▶</button>`}</div></div>
+ ${st.caps?`<h3>Avant de commencer : un nouveau truc ${E(DU)}</h3><div id="cp"></div><div class="row ctr mt"><button class="lien" id="sk2">Passer le truc et commencer</button></div>`:""}`;
  const go=()=>{try{speechSynthesis.cancel()}catch(e){}S.vus["S"+k]=1;save();question()};
- document.getElementById("go").onclick=go;if(st.caps)capsule(document.getElementById("cp"),st.caps,go,"Commencer les défis ▶");haut()}
+ if(st.caps){capsule(document.getElementById("cp"),st.caps,go,"Commencer les défis ▶");document.getElementById("sk2").onclick=go}else document.getElementById("go").onclick=go;haut()}
 
 /* ================= questions ================= */
 let cur=null;
 function question(){
  const q=Q[S.i],st=ST[q.st],lv=LV[st.lv];cur={q,tries:0,hint:false,done:false,t0:Date.now()};majFin(true);
- const vocal=q.titre.replace(/<[^>]+>/g,"")+(q.items&&q.type!=="tri"?" "+q.items.map(it=>it[0]+" : "+(typeof it[1]=="number"?fr(it[1]):it[1])).join(". "):"");
+ const vocal=q.titre.replace(/<[^>]+>/g,"")+(q.visuel?" "+visTexte(q.visuel):"")+(q.items&&q.type!=="tri"?" "+q.items.map(it=>it[0]+" : "+String(valU(it[1],q.u)).replace(/&[a-z]+;/g," ")).join(". "):"");
  app.innerHTML=`<div class="row sp"><span class="pill" style="background:${lv.c}">${lv.n} · ${E(st.n)}</span><span class="small">Défi ${S.i+1} sur ${Q.length}</span></div>
  <div class="bar"><i style="width:${S.i/Q.length*100}%"></i></div>
  <div class="card monte" id="qc"><div class="row sp" style="align-items:flex-start;flex-wrap:nowrap"><h2 style="font-family:NU,Arial;font-size:23px;font-weight:700;margin:0">${q.titre}</h2><div class="qfox" style="flex:none">${mascotte(70)}</div></div>
  <div class="row" style="margin-top:6px">${say(vocal)}</div>${q.visuel?`<div class="cap-v" style="min-height:0">${vis(q.visuel)}</div>`:""}
- ${q.items&&!["tri","jetons"].includes(q.type)?recu(q.items,q.note):""}<div id="zone"></div>
+ ${q.items&&!["tri","jetons"].includes(q.type)?recu(q.items,q.note,q.u):""}<div id="zone"></div>
  ${q.truc&&TRUCS[q.truc]?`<div class="row" style="margin-top:14px"><button class="truc" id="hb">💡 Le truc ${E(DU)}</button></div>`:""}<div id="hint"></div><div id="fb"></div></div>`;
  const hb=document.getElementById("hb");if(hb)hb.onclick=indice;T[q.type](q);haut()}
 function indice(){cur.hint=true;const t=TRUCS[cur.q.truc];
@@ -336,7 +346,7 @@ const T={
   z.innerHTML=`<div class="row ctr mt"><button class="big" data-v="1">Vrai</button><button class="big" data-v="0">Faux</button></div>`;
   z.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{const v=b.dataset.v==="1",ok=v===q.rep;b.classList.add(ok?"bonne":"mauvaise");if(!ok)b.disabled=true;repondre(ok,v?"Vrai":"Faux")})},
  erreur(q){const z=document.getElementById("zone");
-  z.innerHTML=`<div class="recu" style="padding:6px 10px">${q.lignes.map((l,k)=>`<button class="rl" data-k="${k}" style="width:100%;background:none;box-shadow:none;border-radius:8px;padding:8px 6px;font-weight:700;animation-delay:${k*.1}s"><span>${E(l[0])}</span><b>${val(l[1])}</b></button>`).join("")}${q.note?`<div class="rn">${E(q.note)}</div>`:""}</div><p class="consigne" style="text-align:center">Touche la ligne qui est fausse.</p>`;
+  z.innerHTML=`<div class="recu" style="padding:6px 10px">${q.lignes.map((l,k)=>`<button class="rl" data-k="${k}" style="width:100%;background:none;box-shadow:none;border-radius:8px;padding:8px 6px;font-weight:700;animation-delay:${k*.1}s"><span>${E(l[0])}</span><b>${valU(l[1],q.u)}</b></button>`).join("")}${q.note?`<div class="rn">${E(q.note)}</div>`:""}</div><p class="consigne" style="text-align:center">Touche la ligne qui est fausse.</p>`;
   z.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const k=+b.dataset.k,ok=q.bad.includes(k);b.classList.add(ok?"bonne":"mauvaise");if(!ok)b.disabled=true;repondre(ok,q.lignes[k][0])});
   T.erreur.fin=()=>q.bad.forEach(k=>z.querySelector(`[data-k="${k}"]`).classList.add("bonne"))},
  texte(q){const z=document.getElementById("zone");const SR=window.SpeechRecognition||window.webkitSpeechRecognition;

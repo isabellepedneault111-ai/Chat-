@@ -7,7 +7,7 @@ NOMS = {"cafe": "Café", "depanneur": "Dépanneur", "magasin": "Magasin (Hallowe
         "cinema": "Cinéma", "restaurant": "Restaurant / pizzéria", "arena": "Aréna", "grande-surface": "Grande surface",
         "pharmacie": "Pharmacie", "centre-commercial": "Centre commercial", "maison-halloween": "Maison d’Halloween",
         "ecole": "École", "bibliotheque": "Bibliothèque", "parc": "Parc", "banque": "Banque", "clinique": "Clinique",
-        "maison": "Maison", "cuisine": "Cuisine", "gare": "Arrêt d’autobus"}
+        "maison": "Maison", "cuisine": "Cuisine", "gare": "Arrêt d’autobus", "casse-croute": "Casse-croûte", "cafeteria": "Cafétéria"}
 def main():
     out = sys.argv[1]
     js = open(os.path.join(MOT, "decors.js"), encoding="utf-8").read()

@@ -1,6 +1,6 @@
 # Référence de la configuration
 
-Un jeu = un fichier JSON. L'exemple complet est `exemples/estimer-au-saguenay.json`. `scripts/valider.py` vérifie tout ce qui est décrit ici.
+Un jeu = un fichier JSON. L'exemple complet est `exemples/estimer-au-saguenay.json`. **Clés de premier niveau** : `id`, `fichier`, `titre`, …, `niveaux`, `elements`, `autoeval`, `stations`, `trucs`, `capsules`, **`questions`** (la liste des défis) et `reinvest`. `scripts/valider.py` vérifie tout ce qui est décrit ici.
 
 ## Sommaire
 1. Champs généraux
@@ -21,7 +21,7 @@ Un jeu = un fichier JSON. L'exemple complet est `exemples/estimer-au-saguenay.js
 | `cleEnseignant` | Mot de l'URL de l'espace enseignant : `?mode=<cle>` (`?mode=enseignant` marche aussi). |
 | `intention` | L'intention pédagogique : elle figure dans l'espace enseignant et dans le bilan PDF. |
 | `duree` | Durée annoncée, en minutes. |
-| `unite` | Unité par défaut des nombres (`"$"` par défaut, `""` pour aucune unité). |
+| `unite` | Unité par défaut des nombres (`"$"` par défaut, `""` pour aucune unité). Avec `"$"`, un nombre s'affiche avec 2 décimales (4,99 $). Avec une autre unité, il s'affiche tel quel (280 mg, 12,5 g). Chaque défi peut avoir son propre `unite`, qui s'applique à ses `articles`, à ses `lignes`, à `num` et à `curseur`. |
 | `mascotte` | `{fichier: "renard" \| "hibou" \| "aucune", nom: "le renard", du: "du renard"}`. Le champ `du` forme les libellés « Le truc du renard », « Les trucs du renard ». |
 | `theme` | `{accent, accentFonce, accentPale, formes: [4 couleurs des formes de fond]}`. |
 | `carte` | `{trajet: "de Jonquière à Chicoutimi", depart, arrivee, riviere}`. La rivière est facultative. |
@@ -56,7 +56,8 @@ Un jeu = un fichier JSON. L'exemple complet est `exemples/estimer-au-saguenay.js
 ```
 - `court` est l'étiquette sur la carte (16 caractères au maximum).
 - `capsules` (facultatif) joue une capsule sur l'écran de la station, juste avant ses défis. C'est l'endroit idéal pour un nouveau truc difficile.
-- **Décors disponibles** : `cafe`, `depanneur`, `magasin` (avec citrouilles et ballons), `epicerie`, `cinema`, `restaurant`, `arena`, `grande-surface`, `pharmacie`, `centre-commercial` (avec neige), `maison-halloween`, `ecole`, `bibliotheque`, `parc`, `banque`, `clinique`, `maison`, `cuisine` (intérieur), `gare` (arrêt d'autobus). Ils sont tous animés : fumée, néon, chauves-souris, autobus, flocons… Pour voir la galerie : `python3 scripts/galerie.py`.
+- **Décors disponibles** : `cafe`, `depanneur`, `magasin` (avec citrouilles et ballons), `epicerie`, `cinema`, `restaurant` (pizzéria), `casse-croute` (frites et table à pique-nique), `cafeteria` (intérieur, menu du jour), `arena`, `grande-surface`, `pharmacie`, `centre-commercial` (avec neige), `maison-halloween`, `ecole`, `bibliotheque`, `parc`, `banque`, `clinique`, `maison`, `cuisine` (intérieur), `gare` (arrêt d'autobus).
+- Quand une station a des `capsules`, la capsule s'affiche **avant** le bouton de départ (avec un lien « Passer le truc »). Ils sont tous animés : fumée, néon, chauves-souris, autobus, flocons… Pour voir la galerie : `python3 scripts/galerie.py`.
 
 ## 4. Trucs et capsules
 ```json
@@ -76,12 +77,15 @@ Un jeu = un fichier JSON. L'exemple complet est `exemples/estimer-au-saguenay.js
 | `mascotte` | `taille`, `html` | Mascotte, avec un texte au besoin |
 | `decor` | `decor`, `nom`, `couleur` | Un décor |
 | `image` | `src`, `alt` | Image (URL ou fichier placé à côté du jeu) |
-| `html` | `html` | HTML libre |
+| `tableauNutritif` | `titre`, `portion`, `calories`, `lignes: [[nom, quantité, %VQ]]`, `repere` (couleurs peu/beaucoup), `ingredients`, `note` | Tableau de la valeur nutritive, lu à voix haute |
+| `html` | `html` | HTML libre (non lu à voix haute : ajoute `dit` pour la voix) |
+
+Tout visuel accepte `dit` : le texte lu par le bouton « Écouter » du défi.
 
 Une capsule fait de 3 à 6 scènes, chacune avec une seule idée. Le texte est lu à voix haute.
 
 ## 5. Types de défis
-Champs communs : `id`, `station` (l'index), `element` (l'id de la grille), `type`, `truc` (l'id du truc, sauf pour `texte`), `titre` (on peut y mettre `<b>`), `resume` (court, pour le PDF), `explication` (une étape par ligne). Champs facultatifs : `articles` + `note` (un reçu affiché au-dessus), `visuel`, `unite`.
+La liste des défis est la clé **`questions`**. Champs communs : `id`, `station` (l'index), `element` (l'id de la grille), `type`, `truc` (l'id du truc, sauf pour `texte`), `titre` (on peut y mettre `<b>`), `resume` (court, pour le PDF), `explication` (une étape par ligne). Champs facultatifs : `articles` + `note` (un reçu affiché au-dessus), `visuel`, `unite`.
 
 | type | champs propres | l'élève… |
 |---|---|---|
@@ -109,8 +113,9 @@ Pour `erreur`, une valeur peut être un nombre (formaté selon l'unité) ou un t
   "dansBilan": false}
 ```
 - `defi` (argent) : un assistant en 6 étapes. L'élève choisit la forme de question (« As-tu assez d'argent ? », « Environ combien ça coûte ? », « Combien va-t-il rester ? », « Quel article enlever ? ») et peut ajouter les taxes. Il trouve de vrais prix grâce aux liens, écrit sa réponse et la compare au corrigé calculé. Il télécharge ensuite un PDF paysage pour le TNI (défi en page 1, corrigé en page 2), puis suit les étapes illustrées pour le publier dans Teams.
-- `creation` (toutes les matières) : un assistant en 5 étapes. La forme se choisit dans un menu (choix multiples, vrai ou faux, réponse courte). L'élève écrit la question et la réponse, puis explique pourquoi. Il télécharge un PDF paysage et le publie dans Teams.
+- `creation` (toutes les matières) : `{"titre": "Crée ta question", "description": "(texte de la carte dans le bilan)", "consigne": "…", "teams": {"equipe": "Alimentation saine PPS", "canal": "le canal « PPS-Z107 »"}}`. Le moteur affiche « Choisis » suivi de `canal` : écris donc `canal` comme une suite de phrase (« le canal « PPS-Z107 » »). C'est un assistant en 5 étapes. un assistant en 5 étapes. La forme se choisit dans un menu (choix multiples, vrai ou faux, réponse courte). L'élève écrit la question et la réponse, puis explique pourquoi. Il télécharge un PDF paysage et le publie dans Teams.
 - `panier` : une épicerie virtuelle avec budget (boutons + et −, « Retirer »).
 - `capsules` : permet de revoir les capsules.
 - `dansBilan` : `true` pour ajouter ces activités au bilan PDF. Par défaut, elles n'y sont pas, et l'enseignant vérifie le travail publié dans Teams.
+- **Lien direct** vers l'activité, sans faire la tournée : `?mode=defi` ou `?mode=question`. Il est affiché dans l'espace enseignant.
 - Pour désactiver une activité, retire sa clé ou préfixe-la de `_`.

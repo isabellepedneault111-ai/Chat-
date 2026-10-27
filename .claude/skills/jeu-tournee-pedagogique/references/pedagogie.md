@@ -37,7 +37,7 @@
 - Rien de stigmatisant ni d'enfantin pour les adolescents. Si la mascotte est perçue comme « bébé », choisis `aucune` ou `hibou`.
 
 ## La durée
-Compte environ 0,9 minute par défi, 0,3 minute par scène de capsule et 2 minutes pour l'accueil et le bilan (c'est l'estimation de `valider.py`). Pour 30 minutes : environ 24 à 28 défis et 3 ou 4 capsules courtes.
+`valider.py` estime : 0,9 min par défi + 0,3 min par scène de capsule + 0,3 min par station + 2 min (accueil et bilan). Repères : 25 min ≈ 18 à 20 défis; 30 min ≈ 22 à 26 défis, selon le nombre de capsules. Vise la durée annoncée à ± 3 minutes.
 
 ## Le défi supplémentaire
 L'élève devient créateur : il crée un défi ou une question, avec le corrigé, et le publie dans Teams. L'enseignant vérifie le corrigé et peut projeter les meilleurs défis au TNI. C'est une façon simple de rendre visible la compréhension et de bâtir une banque de défis par et pour les élèves.
