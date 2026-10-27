@@ -3553,3 +3553,20 @@ html.gv-on body { padding-right: 432px; }
 .ar-traits .ar-valeur .ar-v-tit2 { margin-top: 12px !important; font: 700 .92rem "Atkinson Hyperlegible", sans-serif !important; letter-spacing: .04em; text-transform: uppercase; color: #8a3c00; }
 .ar-v-prix small, .ar-traits .ar-v-prix small { display: block; font: .78rem "Atkinson Hyperlegible", sans-serif; color: var(--muted); }
 .ar-traits .ar-valeur .ar-v-note { font-size: .8rem !important; color: var(--muted); }
+/* Combien vaut Diapason Labo : deux colonnes, des cases, des barres */
+.ar-v-duel { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0 4px; }
+.ar-v-duel > div { padding: 10px 12px; border-radius: 8px; background: var(--card); border: 1px solid var(--rule); }
+.ar-v-duel > div.moi { border-color: #aa4b00; box-shadow: inset 3px 0 0 #aa4b00; }
+.ar-traits .ar-v-duel .ar-v-k { margin: 0 0 4px !important; font: 700 .78rem "Atkinson Hyperlegible", sans-serif !important; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.ar-traits .ar-v-duel .moi .ar-v-k { color: #8a3c00; }
+.ar-v-duel ul { margin: 0; padding-left: 16px; display: grid; gap: 2px; }
+.ar-traits .ar-v-duel li { list-style: disc !important; display: list-item !important; padding: 0 !important; border: 0 !important; background: none !important; font: .86rem "Atkinson Hyperlegible", sans-serif !important; }
+.ar-traits .ar-valeur .ar-v-phrase { font: 600 .95rem "Atkinson Hyperlegible", sans-serif !important; margin: 6px 0 0 !important; }
+.ar-v-proj { display: grid; gap: 6px; margin: 6px 0; }
+.ar-v-l { display: grid; grid-template-columns: 110px 1fr minmax(140px, auto); gap: 10px; align-items: center; font: .86rem "Atkinson Hyperlegible", sans-serif; }
+.ar-v-l .n { color: var(--ink); font-weight: 700; }
+.ar-v-l .b { height: 10px; border-radius: 5px; background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.ar-v-l .b i { display: block; height: 100%; border-radius: 5px; background: #aa4b00; }
+.ar-v-l b { font: 800 1rem var(--display) !important; color: #8a3c00 !important; display: inline !important; text-align: right; }
+@media (max-width: 560px) { .ar-v-duel { grid-template-columns: 1fr; } .ar-v-l { grid-template-columns: 1fr auto; } .ar-v-l .b { grid-column: 1 / -1; grid-row: 2; } }
+.ar-traits .ar-v-duel li::before, .ar-v-duel li::before { content: none !important; display: none !important; }
