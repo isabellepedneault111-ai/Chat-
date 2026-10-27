@@ -30,7 +30,7 @@ export function rituelDu(jour) {
 // Notre rythme : au moins deux séances en présence et une à distance par semaine.
 const RYTHME = { presence: 2, distance: 1 };
 const JOURS = ['lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.', 'dim.'];
-const heure = (t) => new Date(t).toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' }).replace(':', ' h ').replace(/ h 00$/, ' h');
+const heure = (t) => new Date(t).toLocaleTimeString('fr-CA', { hour: 'numeric', minute: '2-digit' }).replace(':', ' h ').replace(/ h 00$/, ' h');
 const jourLong = (t) => new Date(t).toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long' });
 const plages = () => espace.entries.filter((e) => e.type === 'plage' && e.data?.debut && e.data.statut !== 'refuse');
 const pas = () => espace.entries.filter((e) => e.type === 'pas').sort((a, b) => (a.data?.fait - b.data?.fait) || b.createdAt - a.createdAt);
@@ -51,7 +51,7 @@ export default {
     // Une plage dans le calendrier : son heure, sa sorte, son mot, et son état (proposée par l’un, ou à nous deux).
     function chip(e) {
       const d = e.data; const S = SORTES[d.sorte] || SORTES.jalon; const ok = d.statut === 'confirme';
-      return `<button class="cl-plage ${ok ? 'ok' : 'propose'}" data-plage="${esc(e.id)}" style="--s:${S[1]};--p:${memberColor(d.par)}" title="${esc(S[0])}${d.note ? ` : ${esc(d.note)}` : ''}">
+      return `<button class="cl-plage ${ok ? 'ok' : 'propose'}" data-plage="${esc(e.id)}" style="--s:${S[1]};--p:${memberColor(d.par)};min-height:${Math.round(56 + (d.duree / 60) * 22)}px" title="${esc(S[0])}${d.note ? ` : ${esc(d.note)}` : ''}">
         <b>${heure(d.debut)} – ${heure(d.debut + d.duree * 6e4)}</b><span>${esc(S[0])}</span>${d.note ? `<small>${esc(d.note)}</small>` : ''}<em>${ok ? 'nous deux ✓' : `proposée par ${esc(d.par)}`}</em></button>`;
     }
     // La vue Semaine : notre rythme, l’objectif de la semaine, et sept jours avec leurs plages et leurs rituels lunaires.
@@ -68,21 +68,15 @@ export default {
         ${obj ? `<p class="cl-obj">Cette semaine, on vise : <b>« ${esc(obj)} »</b></p>` : ''}
         ${rienDeMoi ? `<p class="cl-invite">Tu n’as encore rien proposé cette semaine. Un moment qui te va ? <button class="linklike" data-proposer>Proposer une plage →</button></p>` : ''}
         ${(() => {
-          // Une échelle d'heures commune aux sept jours (8 h à 23 h, élargie au besoin) : la hauteur d'une plage est sa durée.
+          // Chaque jour, trois moments invisibles (avant-midi, après-midi, soirée), alignés d'un jour à l'autre ; une plage
+          // reste une vraie carte, et sa hauteur suit à peu près sa durée.
           const jours = [...Array(7)].map((_, i) => semaine + i * JOUR); const auj = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
           const dans = l.filter((e) => e.data.debut >= semaine && e.data.debut < semaine + 7 * JOUR);
-          const hDe = (t) => new Date(t).getHours() + new Date(t).getMinutes() / 60;
-          const h0 = Math.min(8, ...dans.map((e) => Math.floor(hDe(e.data.debut)))); const h1 = Math.max(23, ...dans.map((e) => Math.ceil(hDe(e.data.debut) + e.data.duree / 60)));
-          const PX = 18; const haut = (h1 - h0) * PX; const heures = []; for (let h = h0; h <= h1; h += 2) heures.push(h);
-          const bloc = (e) => { const d = e.data; const S = SORTES[d.sorte] || SORTES.jalon; const ok = d.statut === 'confirme'; const top = (hDe(d.debut) - h0) * PX; const ht = Math.max(PX, (d.duree / 60) * PX);
-            return `<button class="cl-bloc ${ok ? 'ok' : 'propose'} ${ht < 40 ? 'court' : ''}" data-plage="${esc(e.id)}" style="--s:${S[1]};top:${top}px;height:${ht}px" title="${esc(S[0])}, ${heure(d.debut)} à ${heure(d.debut + d.duree * 6e4)}${d.note ? ` · ${esc(d.note)}` : ''} · ${ok ? 'à nous deux' : `proposée par ${esc(d.par)}`}"><b>${heure(d.debut)}–${heure(d.debut + d.duree * 6e4)}</b> <span>${esc(S[0].replace(/^Séance /, ''))}</span>${ht >= 54 && d.note ? `<small>${esc(d.note)}</small>` : ''}</button>`; };
-          return `<div class="cl-sem cl-grille" style="--haut:${haut}px">
-            <div class="cl-jour cl-gout" aria-hidden="true"><span class="cl-j-t"><b>&nbsp;</b></span><div class="cl-j-lune"></div><div class="cl-g-heures">${heures.map((h) => `<span style="top:${(h - h0) * PX}px">${h} h</span>`).join('')}</div></div>
-            ${jours.map((j, i) => { const du = dans.filter((e) => e.data.debut >= j && e.data.debut < j + JOUR).sort((a, b) => a.data.debut - b.data.debut); const ri = rituelDu(j);
-              return `<div class="cl-jour ${j === auj ? 'auj' : ''}"><button class="cl-j-t" data-jour="${j}" title="Proposer une plage ce jour-là"><b>${JOURS[i]}</b> ${new Date(j).getDate()}<span>＋</span></button>
-                <div class="cl-j-lune">${ri ? `<button type="button" class="cl-rituel" data-rituel="${j}" title="${esc(ri[1])} : ${esc(ri[2])}">${luneSVG(lune(new Date(j + JOUR / 2)), 14)}<b>${esc(ri[1])}</b></button>` : ''}</div>
-                <div class="cl-j-heures">${heures.map((h) => `<i style="top:${(h - h0) * PX}px"></i>`).join('')}${du.map(bloc).join('')}</div>
-                <div class="cl-j-liste">${du.map(chip).join('')}</div></div>`; }).join('')}</div>`;
+          const moment = (t) => { const h = new Date(t).getHours(); return h < 12 ? 0 : h < 17 ? 1 : 2; };
+          return `<div class="cl-sem cl-moments">${jours.map((j, i) => { const du = dans.filter((e) => e.data.debut >= j && e.data.debut < j + JOUR).sort((a, b) => a.data.debut - b.data.debut); const ri = rituelDu(j);
+            return `<div class="cl-jour ${j === auj ? 'auj' : ''}"><button class="cl-j-t" data-jour="${j}" title="Proposer une plage ce jour-là"><b>${JOURS[i]}</b> ${new Date(j).getDate()}<span>＋</span></button>
+              <div class="cl-j-lune">${ri ? `<button type="button" class="cl-rituel" data-rituel="${j}" title="${esc(ri[1])} : ${esc(ri[2])}">${luneSVG(lune(new Date(j + JOUR / 2)), 14)}<b>${esc(ri[1])}</b></button>` : ''}</div>
+              ${[0, 1, 2].map((m) => `<div class="cl-moment">${du.filter((e) => moment(e.data.debut) === m).map(chip).join('')}</div>`).join('')}</div>`; }).join('')}</div>`;
         })()}`;
     }
     // La vue Mois : chaque jour avec ses plages en pastilles et ses lunes ; toucher un jour ouvre sa semaine.

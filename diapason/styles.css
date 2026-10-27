@@ -3637,3 +3637,12 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 @media (max-width: 760px) { .cl-sem.cl-grille { grid-template-columns: 1fr; } .cl-gout, .cl-j-heures { display: none; } .cl-j-liste { display: flex; } .cl-j-lune { height: auto; } .cl-j-lune:empty { display: none; } }
 .cl-jour.cl-gout { background: none; border-color: transparent; padding-left: 0; padding-right: 0; }
 .cl-gout .cl-j-t { border-bottom-color: transparent; }
+/* La semaine en trois moments invisibles : avant-midi, après-midi, soirée, alignés d'un jour à l'autre */
+.cl-sem.cl-moments { grid-template-rows: auto auto minmax(70px, auto) minmax(70px, auto) minmax(90px, auto); grid-auto-rows: auto; row-gap: 0; }
+.cl-moments .cl-jour { display: grid; grid-row: span 5; grid-template-rows: subgrid; gap: 0; min-height: 0; }
+.cl-moments .cl-j-lune { min-height: 26px; padding: 2px 0 4px; }
+.cl-moments .cl-moment { display: flex; flex-direction: column; gap: 6px; padding: 3px 0; }
+.cl-moments .cl-rituel { display: flex; align-items: center; gap: 4px; padding: 3px 6px; font-size: .7rem; white-space: nowrap; overflow: hidden; }
+.cl-moments .cl-rituel b { overflow: hidden; text-overflow: ellipsis; }
+.cl-plage { align-content: start; }
+@media (max-width: 760px) { .cl-sem.cl-moments { grid-template-columns: 1fr; grid-template-rows: none; } .cl-moments .cl-jour { display: flex; flex-direction: column; grid-row: auto; } .cl-moments .cl-moment:empty, .cl-moments .cl-j-lune:empty { display: none; } }
