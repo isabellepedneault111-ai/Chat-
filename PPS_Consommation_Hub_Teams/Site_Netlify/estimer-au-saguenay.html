@@ -7,20 +7,19 @@
 <style>
 @font-face{font-family:PH;src:url(fonts/PatrickHand-Regular.ttf)}
 @font-face{font-family:NU;src:url(fonts/Nunito-VF.ttf);font-weight:200 1000}
-:root{--ard:#4A4F55;--men:#DDF5F2;--rose:#F6D1D6;--mou:#E3BF6A;--beige:#D8C7BB;--or:#C9733A;--or2:#FBE9DC;
---er:#F5C6C2;--erf:#A9372B;--bo:#F6E3A6;--bof:#8A6100;--sa:#CFE9D7;--saf:#2E6B45;--bon:#2E6B45;--mal:#A9372B}
+:root{--ard:#4A4F55;--men:#DDF5F2;--beige:#D8C7BB;--or:#C9733A;--orf:#8f4f24;--or2:#FBE9DC;--bon:#2E6B45;--mal:#A9372B}
 *{box-sizing:border-box}
 html,body{background:#FFFDF9}
 body{margin:0;font-family:NU,Nunito,Calibri,Arial,sans-serif;color:var(--ard);font-size:19px;line-height:1.45;overflow-x:hidden}
 .blob{position:fixed;border-radius:47% 53% 61% 39%/45% 41% 59% 55%;z-index:-1;opacity:.8;pointer-events:none}
-main{max-width:860px;margin:0 auto;padding:14px 16px 70px}
+main{max-width:860px;margin:0 auto;padding:14px 16px 80px}
 h1,h2,h3,.hand{font-family:PH,'Patrick Hand','Segoe Print',cursive;font-weight:400}
 h1{font-size:48px;margin:4px 0;line-height:1.08}h2{font-size:32px;margin:2px 0 8px;line-height:1.15}h3{font-size:25px;margin:4px 0}
 p{margin:8px 0}.small{font-size:15px}.ctr{justify-content:center}.mt{margin-top:14px}
 button{font:inherit;font-weight:800;cursor:pointer;border:0;border-radius:16px;padding:12px 20px;background:var(--men);color:var(--ard);box-shadow:0 4px 0 #BFCFCC;transition:transform .08s}
 button:active{transform:translateY(3px);box-shadow:0 1px 0 #BFCFCC}
 button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,.bin:focus-visible{outline:4px solid var(--or);outline-offset:3px}
-button.go{background:var(--or);color:#fff;box-shadow:0 4px 0 #8f4f24}
+button.go{background:var(--or);color:#fff;box-shadow:0 4px 0 var(--orf)}
 button.say{background:#fff;border:2px solid var(--beige);box-shadow:none;padding:5px 12px;font-size:15px;white-space:nowrap}
 button.truc{background:var(--or2);box-shadow:0 4px 0 #e2c3aa}
 button.lien{background:none;box-shadow:none;text-decoration:underline;padding:4px 6px;font-weight:600}
@@ -33,115 +32,177 @@ button.mauvaise{background:#F3C0BA!important;box-shadow:0 4px 0 #c98a83!importan
 .pill{display:inline-block;border-radius:99px;padding:3px 14px;font-weight:800;font-size:15px}
 .bar{height:10px;background:#EEE6DE;border-radius:99px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--or);border-radius:99px;transition:width .6s}
 .consigne{font-weight:700;margin:12px 0 6px}
-input[type=text],input[type=number],textarea,select{font:inherit;font-size:22px;padding:10px 14px;border:3px solid var(--beige);border-radius:14px;background:#fff;color:var(--ard)}
+input[type=text],textarea,select{font:inherit;font-size:22px;padding:10px 14px;border:3px solid var(--beige);border-radius:14px;background:#fff;color:var(--ard)}
 textarea{width:100%;min-height:130px;font-size:19px}
-/* entrée */
-.pop{animation:pop .5s cubic-bezier(.3,1.5,.5,1)}
-@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
-.monte{animation:monte .45s ease-out both}
-@keyframes monte{from{transform:translateY(18px);opacity:0}to{transform:none;opacity:1}}
-.shake{animation:shake .45s}
-@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
-.fox{animation:flotte 3s ease-in-out infinite}
-@keyframes flotte{50%{transform:translateY(-6px)}}
-.saute{animation:saute .7s}
-@keyframes saute{30%{transform:translateY(-26px) rotate(-6deg)}60%{transform:translateY(0)}75%{transform:translateY(-8px)}}
-.cf{position:fixed;top:-20px;width:12px;height:18px;border-radius:3px;z-index:50;pointer-events:none;animation:tombe linear forwards}
-@keyframes tombe{to{transform:translateY(110vh) rotate(720deg)}}
-/* reçu */
+svg.decor{width:100%;max-width:440px;display:block;margin:auto;border-radius:18px}
+.pop{animation:pop .5s cubic-bezier(.3,1.5,.5,1)}@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+.monte{animation:monte .45s ease-out both}@keyframes monte{from{transform:translateY(18px);opacity:0}to{transform:none;opacity:1}}
+.shake{animation:shake .45s}@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.fox{animation:flotte 3s ease-in-out infinite}@keyframes flotte{50%{transform:translateY(-6px)}}
+.saute{animation:saute .7s}@keyframes saute{30%{transform:translateY(-26px) rotate(-6deg)}60%{transform:translateY(0)}75%{transform:translateY(-8px)}}
+.cf{position:fixed;top:-20px;width:12px;height:18px;border-radius:3px;z-index:50;pointer-events:none;animation:tombe linear forwards}@keyframes tombe{to{transform:translateY(110vh) rotate(720deg)}}
 .recu{background:#FFFEFA;border:2px dashed var(--beige);border-radius:14px;padding:10px 16px;max-width:460px;margin:10px auto;font-size:20px}
 .rl{display:flex;justify-content:space-between;gap:16px;padding:4px 0;border-bottom:1px dotted #e6dcd2;animation:monte .35s ease-out both}
-.rl:last-of-type{border-bottom:0}.rl b{white-space:nowrap}
-.rn{font-size:15px;font-style:italic;text-align:center;margin-top:4px}
-.rl .arr{color:var(--or);font-weight:900;margin-left:10px}
-/* droite */
+.rl:last-of-type{border-bottom:0}.rl b{white-space:nowrap}.rn{font-size:15px;font-style:italic;text-align:center;margin-top:4px}.rl .arr{color:var(--or);font-weight:900;margin-left:10px}
 svg.dr{width:100%;max-width:640px;display:block;margin:6px auto;overflow:visible}
-.dl{font-family:PH;font-size:32px;text-anchor:middle;fill:#4A4F55}
-.dm{font-size:15px;text-anchor:middle;fill:#8a7f76;font-weight:700}
-.mkt{font-size:22px;font-weight:900;text-anchor:middle;fill:#fff}
-.mk{animation:glisse 1.3s cubic-bezier(.3,1.25,.5,1) .2s both}
-@keyframes glisse{from{transform:translateX(0)}to{transform:translateX(var(--x))}}
-.fl{opacity:0;animation:fade .5s 1.5s forwards}.midS{animation:pulse 1.2s 3}
-@keyframes fade{to{opacity:1}}@keyframes pulse{50%{transform:scale(1.4)}}
-/* tri */
+.dl{font-family:PH;font-size:32px;text-anchor:middle;fill:#4A4F55}.dm{font-size:15px;text-anchor:middle;fill:#8a7f76;font-weight:700}.mkt{font-size:22px;font-weight:900;text-anchor:middle;fill:#fff}
+.mk{animation:glisse 1.3s cubic-bezier(.3,1.25,.5,1) .2s both}@keyframes glisse{from{transform:translateX(0)}to{transform:translateX(var(--x))}}
+.fl{opacity:0;animation:fade .5s 1.5s forwards}.midS{animation:pulse 1.2s 3}@keyframes fade{to{opacity:1}}@keyframes pulse{50%{transform:scale(1.4)}}
 .tags{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:54px;margin:8px 0}
-.tag{background:#FFF6D8;box-shadow:0 3px 0 #e4d3a0;font-size:18px;padding:9px 14px}
-.tag.sel{outline:4px solid var(--or);transform:scale(1.06)}
-.bins{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.bin{border:3px dashed var(--beige);border-radius:18px;padding:10px;min-height:150px;text-align:center;cursor:pointer;background:#FFFCF7}
-.bin.vise{border-color:var(--or);background:var(--or2)}
+.tag{background:#FFF6D8;box-shadow:0 3px 0 #e4d3a0;font-size:18px;padding:9px 14px}.tag.sel{outline:4px solid var(--or);transform:scale(1.06)}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.bin{border:3px dashed var(--beige);border-radius:18px;padding:10px;min-height:150px;text-align:center;cursor:pointer;background:#FFFCF7}.bin.vise{border-color:var(--or);background:var(--or2)}
 .bin .in{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
-/* jetons */
-.jrow{border-bottom:2px dotted #e6dcd2;padding:10px 0}
-.jl{display:flex;justify-content:space-between;font-size:21px}
-.jc{display:flex;align-items:center;gap:10px;margin-top:6px}
+.jrow{border-bottom:2px dotted #e6dcd2;padding:10px 0}.jl{display:flex;justify-content:space-between;font-size:21px}.jc{display:flex;align-items:center;gap:10px;margin-top:6px}
 .pm{font-size:28px;width:56px;height:56px;padding:0;border-radius:50%}
 .tray{flex:1;min-height:52px;display:flex;flex-wrap:wrap;gap:4px;align-items:center;background:#FBF6EE;border-radius:14px;padding:4px 8px}
-.coin{width:44px;height:44px}.coin.drop{animation:drop .45s cubic-bezier(.3,1.5,.5,1)}
-@keyframes drop{from{transform:translateY(-40px) scale(.6);opacity:0}}
+.coin{width:44px;height:44px}.coin.drop{animation:drop .45s cubic-bezier(.3,1.5,.5,1)}@keyframes drop{from{transform:translateY(-40px) scale(.6);opacity:0}}
 .tot{font-weight:800;text-align:center;font-size:22px}
-/* portefeuille */
-.wallet{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;background:#EFE6DA;border-radius:20px;padding:12px;margin:10px auto;max-width:520px}
-.bill{width:120px;height:58px}
-/* ordre */
+.wallet{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;background:#EFE6DA;border-radius:20px;padding:12px;margin:10px auto;max-width:520px}.bill{width:120px;height:58px}
 .ord button{display:block;width:100%;text-align:left;margin:8px 0;font-weight:700;background:#FFF6D8;box-shadow:0 3px 0 #e4d3a0}
 .ord .num{display:inline-block;width:34px;height:34px;border-radius:50%;background:var(--or);color:#fff;text-align:center;line-height:34px;margin-right:10px}
-/* curseur */
-.cv{font-family:PH;font-size:64px;text-align:center;color:var(--or);line-height:1}
-input[type=range]{width:100%;height:44px;accent-color:var(--or)}
-/* explication */
-.expl{border-radius:18px;padding:14px 18px;margin-top:14px;animation:monte .4s both}
-.expl.bon{background:#E3F3E8}.expl.pasbon{background:#FBEDE4}
+.cv{font-family:PH;font-size:64px;text-align:center;color:var(--or);line-height:1}input[type=range]{width:100%;height:44px;accent-color:var(--or)}
+.expl{border-radius:18px;padding:14px 18px;margin-top:14px;animation:monte .4s both}.expl.bon{background:#E3F3E8}.expl.pasbon{background:#FBEDE4}
 .expl ol{margin:8px 0 10px;padding-left:24px}.expl li{margin:5px 0}
 .oups{background:#FBEDE4;border-radius:14px;padding:10px 14px;font-weight:700}
-.hint{display:flex;gap:14px;align-items:flex-start;background:var(--or2);border-radius:18px;padding:12px 16px;margin-top:12px;animation:monte .4s both}
-.hint svg.fx{flex:none;width:90px;height:auto}
-.hint ul{margin:4px 0;padding-left:20px}
+.hint{display:flex;gap:14px;align-items:flex-start;background:var(--or2);border-radius:18px;padding:12px 16px;margin-top:12px;animation:monte .4s both}.hint svg.fx{flex:none;width:90px;height:auto}.hint ul{margin:4px 0;padding-left:20px}
 .fini button:not(.say):not(.go){pointer-events:none}
-/* carte */
-svg.map{width:100%;display:block}
-.stop circle{transition:fill .4s}
-#tok{transition:transform 1.5s cubic-bezier(.5,0,.3,1)}
-/* capsule */
+svg.map{width:100%;display:block}#tok{transition:transform 1.5s cubic-bezier(.5,0,.3,1)}
 .cap{background:#fff;border-radius:24px;padding:16px;box-shadow:0 8px 24px rgba(74,79,85,.1)}
 .cap-v{min-height:220px;display:flex;align-items:center;justify-content:center;flex-direction:column}
-.cap-txt{font-size:24px;text-align:center;font-weight:700;min-height:70px}
-.eq{font-family:PH;font-size:46px;text-align:center}
-.taxb{width:100%;max-width:560px;margin:auto}
-.taxb .seg{height:54px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;color:#fff;border-radius:10px;animation:grandit .7s ease-out both;transform-origin:left;vertical-align:top}
-@keyframes grandit{from{transform:scaleX(0)}}
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
-.cols>div{border-radius:16px;padding:10px 14px}
-/* bilan */
+.cap-txt{font-size:24px;text-align:center;font-weight:700;min-height:70px}.eq{font-family:PH;font-size:46px;text-align:center}
+.taxb{width:100%;max-width:560px;margin:auto}.taxb .seg{height:54px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;color:#fff;border-radius:10px;animation:grandit .7s ease-out both;transform-origin:left;vertical-align:top}@keyframes grandit{from{transform:scaleX(0)}}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}.cols>div{border-radius:16px;padding:10px 14px}
+.ge{padding:10px 0;border-bottom:2px dotted #eadfd4}.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}.gc{position:relative;background:#F7F2EC;border-radius:12px;padding:8px 9px;font-size:14px;line-height:1.3;opacity:.55}.gc.ici{background:var(--or2);outline:3px solid var(--or);opacity:1;font-weight:700;padding-top:22px}.icit{position:absolute;top:3px;left:8px;font-size:12px;color:var(--or);font-weight:900}.pe{margin:6px 0 0;font-size:16px}
 .el{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 0;border-bottom:2px dotted #eadfd4}
 .meter{display:flex;gap:4px}.meter i{width:26px;height:16px;border-radius:5px;background:#EEE6DE}.meter i.on{background:var(--or)}
-.dots span{display:inline-block;width:18px;height:18px;border-radius:50%;margin:2px;border:3px solid var(--or)}
-.dots .d1{background:var(--or)}.dots .d0{border-color:#D8C7BB;border-style:dashed}
-#fin{position:fixed;left:14px;bottom:14px;z-index:40;background:#fff;border:2px solid var(--or);box-shadow:0 4px 0 #e2c3aa;font-size:16px;padding:10px 16px}.dots .d2{background:linear-gradient(90deg,var(--or) 50%,#fff 50%)}
+.dots span{display:inline-block;width:18px;height:18px;border-radius:50%;margin:2px;border:3px solid var(--or)}.dots .d1{background:var(--or)}.dots .d2{background:linear-gradient(90deg,var(--or) 50%,#fff 50%)}.dots .d0{border-color:#D8C7BB;border-style:dashed}
 .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
-.choix{border-radius:22px;padding:18px;text-align:left;box-shadow:0 5px 0 rgba(0,0,0,.08);display:block;width:100%}
-.choix b{display:block;font-family:PH;font-size:27px;font-weight:400}
-.cat{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
-.cat button{text-align:left;font-weight:700;background:#FFFCF7;border:2px solid var(--beige);box-shadow:none;font-size:17px}
-.cat button.pris{background:#E3F3E8;border-color:#7fb08e}
-.av{display:flex;gap:8px;flex-wrap:wrap}.av button{font-size:16px;padding:8px 12px}
-.av button.on{background:var(--or);color:#fff;box-shadow:0 4px 0 #8f4f24}
+.choix{border-radius:22px;padding:18px;text-align:left;box-shadow:0 5px 0 rgba(0,0,0,.08);display:block;width:100%}.choix b{display:block;font-family:PH;font-size:27px;font-weight:400}
+.cat{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.cat button{text-align:left;font-weight:700;background:#FFFCF7;border:2px solid var(--beige);box-shadow:none;font-size:17px}.cat button.pris{background:#E3F3E8;border-color:#7fb08e}.qc{border-radius:16px;padding:10px 12px;font-size:17px;font-weight:700;border:2px solid #7fb08e;background:#E3F3E8}.pm2{width:40px;height:40px;padding:0;border-radius:50%;font-size:22px}
+.av{display:flex;gap:8px;flex-wrap:wrap}.av button{font-size:16px;padding:8px 12px}.av button.on{background:var(--or);color:#fff;box-shadow:0 4px 0 var(--orf)}
 table.t{border-collapse:collapse;width:100%;font-size:15px}table.t td,table.t th{border:1px solid #e6dcd2;padding:6px 8px;text-align:left;vertical-align:top}table.t th{background:#F5EEE6}
-@media (max-width:560px){.fox svg{width:84px;height:auto}h1{font-size:38px}h2{font-size:27px}button.big{font-size:24px;min-width:100px}.bins{grid-template-columns:1fr}.cap-txt{font-size:20px}.bill{width:96px;height:46px}}
-@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+.stepper{display:flex;gap:6px;justify-content:space-between;margin:6px 0 2px}.stp{flex:1;text-align:center;opacity:.55}.stp span{display:inline-block;width:38px;height:38px;line-height:38px;border-radius:50%;background:#EEE6DE;font-weight:900}.stp small{display:block;font-size:13px;font-weight:700;margin-top:2px}.stp.ici{opacity:1}.stp.ici span{background:var(--or);color:#fff;transform:scale(1.15)}.stp.fait{opacity:.9}.stp.fait span{background:#BFE3C9}
+.lk{display:inline-block;background:#fff;border:2px solid var(--beige);border-radius:14px;padding:8px 14px;font-weight:800;color:var(--ard);text-decoration:none}
+.tm{display:flex;flex-direction:column;gap:8px;margin:8px 0}.tmr{display:flex;align-items:center;gap:12px;background:#F4F5FC;border-radius:14px;padding:8px 12px}.tmr .num{flex:none;width:32px;height:32px;line-height:32px;border-radius:50%;background:#5B5FC7;color:#fff;text-align:center;font-weight:900}.tmi svg{width:44px;height:44px;display:block}
+#fin{position:fixed;left:14px;bottom:14px;z-index:40;background:#fff;border:2px solid var(--or);box-shadow:0 4px 0 #e2c3aa;font-size:16px;padding:10px 16px}
+@media (max-width:560px){.g4{grid-template-columns:1fr 1fr}h1{font-size:38px}h2{font-size:27px}button.big{font-size:24px;min-width:100px}.cap-txt{font-size:20px}.bill{width:96px;height:46px}.fox svg{width:84px;height:auto}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}}
 </style>
 </head>
 <body>
-<div class="blob" style="width:420px;height:380px;background:var(--beige);left:-190px;top:-180px"></div>
-<div class="blob" style="width:300px;height:280px;background:var(--mou);right:-120px;top:-140px;opacity:.55"></div>
-<div class="blob" style="width:380px;height:340px;background:var(--men);right:-170px;bottom:-170px"></div>
-<div class="blob" style="width:300px;height:280px;background:var(--rose);left:-150px;bottom:-160px"></div>
+<div id="formes"></div>
 <main id="app" aria-live="polite"></main>
 <button id="fin" hidden>📄 Terminer et voir mon bilan</button>
 <script src="lib/jspdf.umd.min.js"></script>
 <script>
+/* Bibliothèque de décors : decor(cle, {n: nom affiché, c: couleur}) -> SVG 360 × 210.
+   Chaque décor a des éléments propres au lieu et une petite animation CSS (classes an-*). */
+const _E=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const _fs=(t,w)=>Math.max(14,Math.min(30,Math.floor(w/(Math.max(String(t).length,4)*0.52))));
+const _sky=(c="#EAF6FB")=>`<rect width="360" height="210" fill="${c}"/>`;
+const _sol=(c="#D8C7BB")=>`<rect x="0" y="196" width="360" height="14" fill="${c}"/>`;
+const _sign=(x,y,w,h,c,t)=>{const f=_fs(t,w-16);return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${c}"/><text x="${x+w/2}" y="${y+h/2+f*.34}" text-anchor="middle" font-family="PH,'Patrick Hand',cursive" font-size="${f}" fill="#fff">${_E(t)}</text>`};
+const _win=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" fill="#CFE7F1"/><path d="M${x+6},${y+6} l${(w*.3).toFixed(0)},0 l${(-w*.22).toFixed(0)},${(h*.5).toFixed(0)} z" fill="#fff" opacity=".6"/>`;
+const _door=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" fill="#8a7f76"/><rect x="${x+5}" y="${y+5}" width="${w-10}" height="${(h*.55).toFixed(0)}" rx="3" fill="#CFE7F1"/><circle cx="${x+w-9}" cy="${(y+h*.7).toFixed(0)}" r="2.5" fill="#FFFDF9"/>`;
+const _awn=(x,y,w,n,c)=>{let s="";const d=w/n;for(let k=0;k<n;k++)s+=`<path d="M${(x+k*d).toFixed(1)},${y} h${d.toFixed(1)} v14 q${(-d/2).toFixed(1)},11 ${(-d).toFixed(1)},0 z" fill="${k%2?"#fff":c}"/>`;return s};
+const _cart=(x,y)=>`<g transform="translate(${x},${y})" stroke="#6b6f75" stroke-width="2.5" fill="none" stroke-linejoin="round"><path d="M0,0 h6 l6,18 h20 l5,-13 h-28"/><circle cx="13" cy="24" r="2.6" fill="#6b6f75"/><circle cx="29" cy="24" r="2.6" fill="#6b6f75"/></g>`;
+const _tree=(x,y,s=1)=>`<g transform="translate(${x},${y}) scale(${s})"><rect x="-4" y="0" width="8" height="34" fill="#8a6d4f"/><circle cx="0" cy="-8" r="22" fill="#9CCB9F"/><circle cx="-14" cy="4" r="14" fill="#86BC8A"/><circle cx="14" cy="2" r="15" fill="#86BC8A"/></g>`;
+const _steam=(x,y)=>[0,1,2].map(k=>`<path class="an-smoke" style="animation-delay:${k*.7}s" d="M${x+k*9},${y} q-5,-8 0,-14 q5,-7 0,-14" fill="none" stroke="#B9B2AA" stroke-width="3" stroke-linecap="round"/>`).join("");
+const _flag=(x,y,c)=>`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+46}" stroke="#6b6f75" stroke-width="3"/><path class="an-wave" d="M${x},${y} h30 l-6,9 l6,9 h-30 z" fill="${c}"/>`;
+const DECORS={
+ cafe:(n,c)=>_sky()+_sol()+`<rect x="40" y="82" width="280" height="114" rx="6" fill="#F3E7DA"/><path d="M28,86 L180,40 L332,86 Z" fill="${c}"/>`+_sign(100,90,160,34,c,n)
+  +`<g transform="translate(58,132)"><path d="M0,0 h34 l-4,34 h-26 z" fill="#fff" stroke="#8a7f76" stroke-width="2.5"/><path d="M34,8 q12,2 0,16" fill="none" stroke="#8a7f76" stroke-width="3"/><rect x="-2" y="-4" width="38" height="6" rx="3" fill="${c}"/></g>`+_steam(64,122)
+  +_win(112,134,96,48)+`<rect x="112" y="166" width="96" height="6" fill="#B9A08A"/>`+_door(222,128,44,68)
+  +`<rect x="300" y="120" width="6" height="76" fill="#6b6f75"/><rect x="284" y="104" width="44" height="34" rx="5" fill="#4A4F55"/><path d="M290,112 h30 M290,120 h24 M290,128 h28" stroke="#E3BF6A" stroke-width="3"/>`,
+ depanneur:(n,c)=>_sky()+_sol()+`<rect x="92" y="62" width="180" height="134" rx="4" fill="#EADBC8"/><rect x="86" y="58" width="192" height="8" rx="3" fill="#B9A08A"/>`+_sign(100,70,164,34,c,n)
+  +_win(104,116,90,58)+`<rect x="112" y="126" width="74" height="24" rx="12" fill="none" stroke="#E2463B" stroke-width="3" class="an-blink"/><text x="149" y="143" text-anchor="middle" font-size="14" font-weight="900" fill="#E2463B" class="an-blink" font-family="Arial">OUVERT</text><rect x="118" y="154" width="22" height="16" fill="#F6D1D6"/><rect x="146" y="154" width="22" height="16" fill="#F6E3A6"/>`
+  +_door(206,120,52,76)+`<rect x="16" y="146" width="64" height="50" rx="5" fill="#fff" stroke="#9CC3DD" stroke-width="3"/><text x="48" y="176" text-anchor="middle" font-size="15" font-weight="900" fill="#3B6EA5" font-family="Arial">GLACE</text>`
+  +`<rect x="318" y="96" width="5" height="100" fill="#6b6f75"/><path d="M320,96 q-16,0 -18,-10" stroke="#6b6f75" stroke-width="4" fill="none"/><circle cx="302" cy="90" r="8" fill="#F6E3A6" class="an-glow"/>`,
+ magasin:(n,c)=>_sky()+_sol()+`<rect x="20" y="76" width="320" height="120" rx="6" fill="#F3E7DA"/>`+_sign(60,82,240,38,c,n)+_awn(20,120,320,10,c)
+  +_win(36,140,110,50)+_win(214,140,110,50)+_door(156,136,48,60)
+  +[56,86,116].map((x,k)=>`<g class="an-flicker" style="animation-delay:${k*.4}s"><ellipse cx="${x}" cy="178" rx="12" ry="10" fill="#E07A1F"/><rect x="${x-2}" y="164" width="4" height="6" fill="#5c7a3a"/><path d="M${x-6},176 l3,-4 l3,4 z M${x+1},176 l3,-4 l3,4 z" fill="#F6E3A6"/></g>`).join("")
+  +[[236,"#F5C6C2"],[262,"#DDF5F2"],[288,"#F6E3A6"],[312,"#CFE9D7"]].map(([x,f],k)=>`<g class="an-float" style="animation-delay:${k*.5}s"><line x1="${x}" y1="150" x2="${x}" y2="186" stroke="#8a7f76"/><ellipse cx="${x}" cy="146" rx="10" ry="12" fill="${f}" stroke="#8a7f76" stroke-width="1.5"/></g>`).join(""),
+ epicerie:(n,c)=>_sky()+_sol()+`<rect x="18" y="70" width="324" height="126" rx="6" fill="#EFE6DA"/>`+_sign(70,76,220,40,c,n)
+  +`<rect x="130" y="126" width="100" height="70" rx="4" fill="#CFE7F1" stroke="#8a7f76" stroke-width="3"/><line x1="180" y1="126" x2="180" y2="196" stroke="#8a7f76" stroke-width="3"/>`+_win(32,126,86,46)+_win(242,126,86,46)
+  +`<rect x="26" y="174" width="96" height="22" rx="3" fill="#A8794F"/>`+[36,48,60,72].map(x=>`<circle cx="${x}" cy="172" r="6" fill="#D9473C"/>`).join("")+[88,100,112].map(x=>`<path d="M${x-7},168 q7,9 14,0" fill="none" stroke="#E8C547" stroke-width="5" stroke-linecap="round"/>`).join("")
+  +`<g class="an-roule">`+_cart(244,168)+_cart(262,168)+_cart(280,168)+`</g>`,
+ cinema:(n,c)=>_sky("#E9E4F2")+_sol()+`<rect x="40" y="52" width="280" height="144" rx="6" fill="#F0E6F5"/>`+_sign(70,58,220,36,c,n)
+  +`<rect x="58" y="100" width="244" height="42" rx="6" fill="#fff" stroke="${c}" stroke-width="4"/><text x="180" y="127" text-anchor="middle" font-size="16" font-weight="900" fill="${c}" font-family="Arial">À L’AFFICHE CE SOIR</text>`
+  +Array.from({length:16},(x,k)=>`<circle cx="${66+k*15.2}" cy="104" r="3.2" fill="#F6C945" class="${k%2?"an-blink":"an-blink2"}"/><circle cx="${66+k*15.2}" cy="138" r="3.2" fill="#F6C945" class="${k%2?"an-blink2":"an-blink"}"/>`).join("")
+  +`<rect x="60" y="150" width="42" height="46" rx="3" fill="#fff" stroke="#8a7f76" stroke-width="2"/><rect x="65" y="155" width="32" height="36" fill="#C9B6DD"/><rect x="258" y="150" width="42" height="46" rx="3" fill="#fff" stroke="#8a7f76" stroke-width="2"/><rect x="263" y="155" width="32" height="36" fill="#F5C6C2"/>`+_door(146,150,68,46)
+  +`<g transform="translate(326,166)"><path d="M0,0 h22 l-3,30 h-16 z" fill="#fff" stroke="#D9473C" stroke-width="2"/><path d="M5,0 v30 M11,0 v30 M17,0 v30" stroke="#D9473C" stroke-width="2"/><circle cx="4" cy="-3" r="5" fill="#FFF6D8"/><circle cx="11" cy="-6" r="5" fill="#FFF6D8"/><circle cx="18" cy="-3" r="5" fill="#FFF6D8"/></g>`,
+ restaurant:(n,c)=>_sky()+_sol()+`<rect x="248" y="38" width="26" height="50" fill="#A9583D"/>`+[0,1,2].map(k=>`<circle class="an-smoke" style="animation-delay:${k*.8}s" cx="${261+k*4}" cy="30" r="${7+k*2}" fill="#D9D2CB"/>`).join("")
+  +`<rect x="50" y="82" width="260" height="114" rx="6" fill="#E9D3C0"/>`+[100,120,140,160,180].map((y,k)=>`<path d="M50,${y} h260" stroke="#DCC1AA" stroke-width="2"/>`).join("")+_sign(80,88,200,36,c,n)
+  +`<g transform="translate(96,160)"><circle r="24" fill="#E8B25C"/><circle r="19" fill="#E46A3B"/><circle cx="-7" cy="-6" r="4" fill="#A9372B"/><circle cx="8" cy="-3" r="4" fill="#A9372B"/><circle cx="-2" cy="9" r="4" fill="#A9372B"/><path d="M0,0 L0,-24 M0,0 L21,12 M0,0 L-21,12" stroke="#E8B25C" stroke-width="2"/></g>`
+  +_win(132,136,90,46)+_door(240,132,46,64)+`<path d="M8,128 q22,-22 44,0 z" fill="${c}"/><line x1="30" y1="128" x2="30" y2="176" stroke="#6b6f75" stroke-width="3"/><rect x="14" y="174" width="32" height="5" rx="2" fill="#8a7f76"/>`,
+ arena:(n,c)=>_sky()+_sol()+`<path d="M24,196 V112 Q180,24 336,112 V196 Z" fill="#DCE6F2"/><path d="M24,112 Q180,24 336,112" fill="none" stroke="${c}" stroke-width="6"/>`+_flag(180,22,c).replace('y2="'+(22+46)+'"','y2="70"')
+  +_sign(80,98,200,34,c,n)+`<g stroke-linecap="round"><path d="M150,134 L196,164" stroke="#8a6d4f" stroke-width="6"/><path d="M196,164 h12" stroke="#4A4F55" stroke-width="7"/><path d="M210,134 L164,164" stroke="#8a6d4f" stroke-width="6"/><path d="M164,164 h-12" stroke="#4A4F55" stroke-width="7"/></g>`
+  +`<ellipse cx="180" cy="152" rx="9" ry="4" fill="#2b2f33"/>`+_door(150,166,60,30)+_win(48,150,52,34)+_win(260,150,52,34),
+ "grande-surface":(n,c)=>_sky()+_sol("#C9C2BA")+`<rect x="8" y="94" width="344" height="102" rx="4" fill="#ECE6DC"/><rect x="8" y="94" width="344" height="10" fill="${c}"/>`+_sign(90,108,180,34,c,n)
+  +`<rect x="136" y="146" width="88" height="10" rx="3" fill="${c}"/>`+_door(148,156,64,40)+_win(26,124,52,40)+_win(282,124,52,40)
+  +`<g class="an-roule">`+_cart(28,168)+_cart(48,168)+_cart(68,168)+`</g>`+[244,276,308].map(x=>`<line x1="${x}" y1="200" x2="${x+16}" y2="200" stroke="#fff" stroke-width="3"/>`).join(""),
+ pharmacie:(n,c)=>_sky()+_sol()+`<rect x="58" y="64" width="244" height="132" rx="6" fill="#F2ECE4"/>`+_sign(78,70,204,36,c,n)
+  +`<g class="an-glow" transform="translate(180,128)"><rect x="-16" y="-6" width="32" height="12" rx="3" fill="#2E9E5B"/><rect x="-6" y="-16" width="12" height="32" rx="3" fill="#2E9E5B"/></g>`
+  +_win(70,124,74,52)+_win(216,124,74,52)+[136,152,168].map(y=>`<line x1="74" y1="${y}" x2="140" y2="${y}" stroke="#B9A08A" stroke-width="2"/><line x1="220" y1="${y}" x2="286" y2="${y}" stroke="#B9A08A" stroke-width="2"/>`).join("")
+  +[80,92,104,228,240,252,264].map((x,k)=>`<rect x="${x}" y="${k%2?140:156}" width="7" height="12" rx="2" fill="${["#F5C6C2","#CFE9D7","#F6E3A6","#DDF5F2"][k%4]}"/>`).join("")+_door(156,148,48,48),
+ "centre-commercial":(n,c)=>_sky("#E3EEF6")+_sol()+`<rect x="10" y="88" width="340" height="108" rx="6" fill="#EDE5DA"/><path d="M126,90 L180,38 L234,90 Z" fill="#CFE7F1" stroke="#8a7f76" stroke-width="2"/><path d="M180,38 V90 M153,64 h54" stroke="#8a7f76" stroke-width="1.5"/>`+_sign(108,94,144,30,c,n)
+  +[22,64,262,304].map((x,k)=>`<rect x="${x}" y="130" width="36" height="40" rx="3" fill="#CFE7F1"/><rect x="${x-2}" y="124" width="40" height="8" rx="3" fill="${["#F5C6C2","#F6E3A6","#CFE9D7","#C9B6DD"][k]}"/>`).join("")+_door(146,140,68,56)
+  +_flag(110,40,c)+_flag(240,40,c)+[30,90,150,210,270,330].map((x,k)=>`<circle class="an-snow" style="animation-delay:${k*.6}s" cx="${x}" cy="0" r="3" fill="#fff" stroke="#B9CCD8"/>`).join(""),
+ "maison-halloween":(n,c)=>_sky("#2E3350")+`<circle cx="300" cy="42" r="22" fill="#F6E3A6"/>`+[0,1].map(k=>`<path class="an-bat" style="animation-delay:${k*2}s" d="M60,40 q6,-8 12,0 q6,-8 12,0 q-6,2 -12,8 q-6,-6 -12,-8 z" fill="#1d2033"/>`).join("")
+  +`<rect x="0" y="196" width="360" height="14" fill="#4a4a3a"/><path d="M68,106 L180,40 L292,106 Z" fill="#3F3448"/><rect x="82" y="104" width="196" height="92" fill="#6B5A73"/>`
+  +`<rect x="98" y="122" width="40" height="34" rx="4" fill="#F6C945" class="an-flicker"/><rect x="222" y="122" width="40" height="34" rx="4" fill="#F6C945" class="an-flicker" style="animation-delay:.6s"/>`+_door(160,140,40,56)+_sign(118,108,124,26,c,n)
+  +[110,250].map((x,k)=>`<g class="an-flicker" style="animation-delay:${k*.3}s"><ellipse cx="${x}" cy="186" rx="16" ry="12" fill="#E07A1F"/><rect x="${x-2}" y="170" width="4" height="6" fill="#5c7a3a"/><path d="M${x-8},184 l4,-5 l4,5 z M${x+1},184 l4,-5 l4,5 z M${x-7},190 q7,5 14,0" fill="#F6E3A6"/></g>`).join(""),
+ ecole:(n,c)=>_sky()+_sol()+`<rect x="34" y="84" width="292" height="112" rx="4" fill="#E5C9B5"/><rect x="150" y="40" width="60" height="50" fill="#DDBBA3"/><path d="M144,42 L180,16 L216,42 Z" fill="${c}"/><circle cx="180" cy="64" r="15" fill="#fff" stroke="#8a7f76" stroke-width="2"/><path d="M180,64 V54 M180,64 h7" stroke="#4A4F55" stroke-width="2.5" stroke-linecap="round"/>`
+  +_sign(92,92,176,30,c,n)+[48,92,232,276].map(x=>_win(x,130,36,28)).join("")+_door(156,134,48,62)+_flag(46,38,c)
+  +`<g class="an-bus"><rect x="250" y="166" width="96" height="30" rx="7" fill="#F6C945"/>`+[258,276,294,312].map(x=>`<rect x="${x}" y="171" width="14" height="10" rx="2" fill="#CFE7F1"/>`).join("")+`<circle cx="268" cy="196" r="6" fill="#4A4F55"/><circle cx="328" cy="196" r="6" fill="#4A4F55"/></g>`,
+ bibliotheque:(n,c)=>_sky()+_sol()+`<rect x="44" y="94" width="272" height="94" fill="#EFE8DD"/><path d="M34,96 L180,46 L326,96 Z" fill="#E3D7C7"/>`+_sign(104,100,152,28,c,n)
+  +[64,112,236,284].map(x=>`<rect x="${x}" y="132" width="14" height="56" fill="#F7F2EA" stroke="#D8C7BB"/>`).join("")+_door(154,136,52,52)
+  +`<rect x="30" y="188" width="300" height="8" fill="#D8C7BB"/>`+[0,1,2,3,4,5].map(k=>`<rect x="${84+k*5}" y="${150+(k%2)*3}" width="4" height="${24-(k%2)*3}" fill="${["#D9473C","#3B6EA5","#E8C547","#2E9E5B"][k%4]}"/>`).join("")
+  +`<g class="an-float"><path d="M288,56 q12,-8 24,0 v18 q-12,-8 -24,0 z M312,56 q12,-8 24,0 v18 q-12,-8 -24,0 z" fill="#fff" stroke="#8a7f76" stroke-width="2"/></g>`,
+ parc:(n,c)=>_sky()+`<rect x="0" y="150" width="360" height="60" fill="#BFE3C9"/><path d="M150,210 q30,-40 60,-60" stroke="#E9DCC9" stroke-width="22" fill="none"/>`+`<g class="an-spin" style="transform-origin:46px 40px"><circle cx="46" cy="40" r="16" fill="#F6C945"/>`+[0,45,90,135,180,225,270,315].map(a=>`<line x1="46" y1="16" x2="46" y2="8" stroke="#F6C945" stroke-width="3" transform="rotate(${a} 46 40)"/>`).join("")+`</g>`
+  +_tree(70,138,1.1)+_tree(300,132,1.2)+_tree(250,150,.8)+`<rect x="128" y="104" width="6" height="56" fill="#8a6d4f"/><rect x="226" y="104" width="6" height="56" fill="#8a6d4f"/>`+_sign(110,84,140,40,c,n)
+  +`<rect x="30" y="178" width="60" height="6" rx="2" fill="#8a6d4f"/><rect x="34" y="184" width="4" height="12" fill="#8a6d4f"/><rect x="82" y="184" width="4" height="12" fill="#8a6d4f"/>`,
+ banque:(n,c)=>_sky()+_sol()+`<rect x="50" y="80" width="260" height="116" fill="#EEE8DF"/><path d="M40,84 L180,44 L320,84 Z" fill="#DCD2C4"/>`+_sign(94,88,172,30,c,n)
+  +[70,110,238,278].map(x=>`<rect x="${x}" y="126" width="12" height="70" fill="#F7F2EA" stroke="#D8C7BB"/>`).join("")+_door(152,136,56,60)
+  +`<rect x="322" y="140" width="30" height="56" rx="4" fill="#8a7f76"/><rect x="327" y="146" width="20" height="14" fill="#CFE7F1"/><g class="an-float"><circle cx="24" cy="120" r="14" fill="#D9AE45" stroke="#8a6d1f" stroke-width="2"/><text x="24" y="126" text-anchor="middle" font-size="16" font-weight="900" fill="#5a4410" font-family="Arial">$</text></g>`,
+ clinique:(n,c)=>_sky()+_sol()+`<rect x="52" y="66" width="256" height="130" rx="6" fill="#F7F4F0"/>`+_sign(76,72,208,34,c,n)
+  +`<g transform="translate(180,128)"><rect x="-15" y="-5" width="30" height="10" rx="3" fill="${c}"/><rect x="-5" y="-15" width="10" height="30" rx="3" fill="${c}"/></g>`+_win(66,118,70,44)+_win(224,118,70,44)+_door(156,148,48,48)
+  +`<rect x="8" y="14" width="104" height="44" rx="8" fill="#fff" stroke="#D8C7BB" stroke-width="2"/><polyline class="an-pouls" points="14,38 40,38 48,24 56,52 64,38 106,38" fill="none" stroke="${c}" stroke-width="3" stroke-linejoin="round"/>`,
+ maison:(n,c)=>_sky()+`<rect x="0" y="176" width="360" height="34" fill="#BFE3C9"/><rect x="214" y="44" width="20" height="40" fill="#A9583D"/>`+_steam(216,40)
+  +`<path d="M80,104 L180,40 L280,104 Z" fill="${c}"/><rect x="96" y="102" width="168" height="84" fill="#F3E7DA"/>`+_win(112,118,44,36)+_win(204,118,44,36)+_door(160,130,40,56)
+  +_tree(316,152,.9)+[30,46,62].map((x,k)=>`<circle cx="${x}" cy="182" r="6" fill="${["#F5C6C2","#F6E3A6","#C9B6DD"][k]}"/><line x1="${x}" y1="188" x2="${x}" y2="198" stroke="#5c7a3a" stroke-width="2"/>`).join("")
+  +`<rect x="44" y="148" width="4" height="32" fill="#8a6d4f"/>`+_sign(4,126,88,24,c,n),
+ cuisine:(n,c)=>`<rect width="360" height="210" fill="#FBF3E6"/><rect x="0" y="96" width="360" height="44" fill="#F2E7D8"/>`+Array.from({length:12},(x,k)=>`<line x1="${k*30}" y1="96" x2="${k*30}" y2="140" stroke="#E6D7C3"/>`).join("")
+  +_sign(120,22,140,30,c,n)+`<rect x="0" y="140" width="360" height="70" fill="#D8C7BB"/><rect x="0" y="140" width="360" height="8" fill="#B9A08A"/>`
+  +`<rect x="18" y="52" width="66" height="144" rx="6" fill="#fff" stroke="#D8C7BB" stroke-width="3"/><line x1="18" y1="102" x2="84" y2="102" stroke="#D8C7BB" stroke-width="3"/><rect x="72" y="66" width="4" height="22" fill="#B9A08A"/><rect x="72" y="112" width="4" height="30" fill="#B9A08A"/>`
+  +`<rect x="200" y="148" width="100" height="48" rx="4" fill="#fff" stroke="#D8C7BB" stroke-width="2"/><rect x="214" y="124" width="44" height="22" rx="4" fill="${c}"/><rect x="208" y="122" width="56" height="5" rx="2" fill="#4A4F55"/>`+_steam(222,116)
+  +_win(282,40,60,48)+`<path d="M282,40 q14,26 0,48 M342,40 q-14,26 0,48" fill="#F5C6C2"/>`+[110,128,146].map((x,k)=>`<rect x="${x}" y="70" width="12" height="20" rx="3" fill="${["#F6E3A6","#CFE9D7","#F5C6C2"][k]}"/>`).join("")+`<rect x="104" y="90" width="60" height="4" fill="#B9A08A"/>`,
+ gare:(n,c)=>_sky()+`<rect x="0" y="176" width="360" height="34" fill="#8a8f95"/><path d="M0,192 h360" stroke="#fff" stroke-width="3" stroke-dasharray="16 14"/><rect x="0" y="160" width="360" height="16" fill="#D8C7BB"/>`
+  +`<rect x="24" y="84" width="96" height="76" rx="4" fill="#CFE7F1" opacity=".75" stroke="#8a7f76" stroke-width="3"/><rect x="18" y="78" width="108" height="10" rx="3" fill="#8a7f76"/><rect x="34" y="138" width="76" height="6" rx="2" fill="#8a6d4f"/>`
+  +`<rect x="146" y="70" width="5" height="90" fill="#6b6f75"/>`+_sign(120,46,140,30,c,n)
+  +`<g class="an-bus"><rect x="190" y="112" width="160" height="62" rx="10" fill="${c}"/>`+[200,228,256,284,312].map(x=>`<rect x="${x}" y="122" width="22" height="20" rx="3" fill="#CFE7F1"/>`).join("")+`<rect x="330" y="122" width="14" height="40" rx="3" fill="#CFE7F1"/><circle cx="222" cy="176" r="10" fill="#4A4F55"/><circle cx="318" cy="176" r="10" fill="#4A4F55"/></g>`
+};
+const DECORS_CSS=`.an-smoke{animation:anSmoke 2.4s ease-out infinite;transform-box:fill-box}@keyframes anSmoke{0%{opacity:0;transform:translateY(6px)}30%{opacity:.9}100%{opacity:0;transform:translateY(-16px)}}
+.an-blink{animation:anBlink 1.4s steps(2,jump-none) infinite}.an-blink2{animation:anBlink 1.4s steps(2,jump-none) infinite .7s}@keyframes anBlink{50%{opacity:.25}}
+.an-glow{animation:anGlow 2s ease-in-out infinite}@keyframes anGlow{50%{opacity:.55}}
+.an-flicker{animation:anFlick 2.2s infinite}@keyframes anFlick{0%,100%{opacity:1}45%{opacity:.75}50%{opacity:.4}55%{opacity:.9}}
+.an-float{animation:anFloat 3s ease-in-out infinite;transform-box:fill-box}@keyframes anFloat{50%{transform:translateY(-7px)}}
+.an-wave{animation:anWave 1.6s ease-in-out infinite;transform-box:fill-box;transform-origin:left center}@keyframes anWave{50%{transform:skewY(6deg) scaleX(.92)}}
+.an-bat{animation:anBat 6s linear infinite}@keyframes anBat{0%{transform:translate(-80px,30px)}50%{transform:translate(120px,-10px)}100%{transform:translate(320px,20px)}}
+.an-snow{animation:anSnow 5s linear infinite}@keyframes anSnow{from{transform:translateY(-10px)}to{transform:translateY(215px)}}
+.an-bus{animation:anBus 1.6s cubic-bezier(.2,.9,.3,1) both}@keyframes anBus{from{transform:translateX(260px)}}
+.an-roule{animation:anRoule 1.4s ease-out both}@keyframes anRoule{from{transform:translateX(-40px);opacity:0}}
+.an-spin{animation:anSpin 14s linear infinite}@keyframes anSpin{to{transform:rotate(360deg)}}
+.an-pouls{stroke-dasharray:140;animation:anPouls 2.2s linear infinite}@keyframes anPouls{from{stroke-dashoffset:140}to{stroke-dashoffset:-140}}`;
+function decor(cle,st){const f=DECORS[cle]||DECORS.magasin;return `<svg viewBox="0 0 360 210" class="decor pop" role="img" aria-label="${_E(st.n)}">${f(st.n,st.c||"#C9733A")}</svg>`}
+
+</script>
+<script>
 "use strict";
-const FOX=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 210" width="150" height="143"><g transform="translate(5,0) scale(1.0)">
+/* ================= configuration ================= */
+const CFG={"id": "estimer-saguenay-v2", "fichier": "estimer-au-saguenay", "titre": "Estimer au Saguenay", "sousTitre": "PPS-Z128 · Budget et consommation · avec Mélanie", "cours": "PPS-Z128", "matiere": "Budget et consommation", "enseignant": "Mélanie", "cleEnseignant": "melanie", "accroche": "La grande révision, du niveau Érable au niveau Sapin.", "duree": 30, "unite": "$", "intention": "Estimer le coût d’un achat pour savoir si on a assez d’argent : arrondir au dollar le plus proche, additionner, comparer avec son budget, puis tenir compte des taxes et des rabais (progression concret → imagé → abstrait).", "mascotte": {"fichier": "renard", "nom": "le renard", "du": "du renard"}, "theme": {"accent": "#C9733A", "accentFonce": "#8f4f24", "accentPale": "#FBE9DC", "formes": ["#D8C7BB", "#E3BF6A", "#DDF5F2", "#F6D1D6"]}, "carte": {"trajet": "de Jonquière à Chicoutimi", "depart": "Jonquière", "arrivee": "Chicoutimi", "riviere": "rivière Saguenay"}, "remise": "Remets-le à Mélanie : dans le devoir Teams, dans ton OneDrive (partagé avec Mélanie) ou par courriel.", "niveaux": [{"id": "E", "nom": "Érable", "clair": "#F5C6C2", "fonce": "#A9372B", "description": "je manipule et je visualise", "intro": {"texte": "Au niveau Érable, tu apprends à trouver le dollar le plus proche.", "capsules": ["arrondir"]}}, {"id": "B", "nom": "Bouleau", "clair": "#F6E3A6", "fonce": "#8A6100", "description": "j’estime un total et je compare", "intro": {"texte": "Au niveau Bouleau, tu estimes un total et tu compares avec ton argent.", "capsules": ["total", "assez"]}}, {"id": "S", "nom": "Sapin", "clair": "#CFE9D7", "fonce": "#2E6B45", "description": "j’estime avec les taxes", "intro": {"texte": "Au niveau Sapin, tu ajoutes les taxes. Le truc des rabais viendra plus loin.", "capsules": ["taxes"]}}], "elements": [{"id": "arr", "nom": "Arrondir un prix au dollar", "descripteurs": ["Arrondit seul et explique « plus proche de ».", "Arrondit avec un rappel (droite, truc du renard).", "Arrondit seulement avec beaucoup d’aide.", "N’arrondit pas encore."], "descripteursEleve": ["J’arrondis seul et j’explique « plus proche de ».", "J’arrondis avec un rappel (la droite, le truc du renard).", "J’arrondis avec beaucoup d’aide.", "Je n’arrondis pas encore."], "prochaines": ["Aide un ami à arrondir, ou relève le défi supplémentaire.", "Essaie d’arrondir sans le truc : regarde seulement les cents.", "Revois la capsule « Arrondir » et utilise la droite, un prix à la fois.", "Avec un adulte, place des prix sur la droite au sol."]}, {"id": "est", "nom": "Estimer un total", "descripteurs": ["Additionne ses arrondis et obtient un total raisonnable, seul.", "Y arrive avec un rappel de la démarche.", "Y arrive étape par étape, avec de l’aide.", "Calcule au sou près ou devine."], "descripteursEleve": ["J’additionne mes dollars ronds et mon total est proche, seul.", "J’y arrive avec un rappel des étapes.", "J’y arrive étape par étape, avec de l’aide.", "Je calcule au sou près ou je devine."], "prochaines": ["Estime des paniers de 5 ou 6 articles, ou crée ton défi.", "Écris tes dollars ronds sur un papier avant d’additionner.", "Arrondis un prix à la fois, puis additionne avec des jetons ou ta bande numérique.", "Commence avec 2 articles et des pièces de 1 $, avec un adulte."]}, {"id": "cmp", "nom": "Comparer avec son argent", "descripteurs": ["Conclut « assez » ou « pas assez » seul; vérifie quand c’est serré.", "Conclut après un rappel ou un 2e essai.", "Conclut avec beaucoup d’aide.", "Ne fait pas encore le lien avec l’argent disponible."], "descripteursEleve": ["Je sais seul si j’ai assez; je vérifie quand c’est serré.", "Je trouve après un rappel ou un 2e essai.", "Je trouve avec beaucoup d’aide.", "Je ne fais pas encore le lien avec mon argent."], "prochaines": ["Calcule aussi combien d’argent il te restera.", "Compare toujours ton estimation avec ton argent, et vérifie quand c’est serré.", "Place ton argent à côté de ton estimation (billets ou jetons) pour comparer.", "Avec un adulte, compte tes jetons et ceux du panier : lequel est le plus grand ?"]}, {"id": "tax", "nom": "Tenir compte des taxes", "descripteurs": ["Ajoute environ 15 % et sait quels articles sont taxables.", "Ajoute les taxes avec un rappel du repère.", "Sait qu’il y a des taxes, sans les estimer.", "Ne tient pas compte des taxes."], "descripteursEleve": ["J’ajoute environ 15 % et je sais ce qui est taxé.", "J’ajoute les taxes avec un rappel du truc.", "Je sais qu’il y a des taxes, sans les calculer.", "J’oublie les taxes."], "prochaines": ["Essaie un défi avec un rabais et les taxes.", "Pratique le truc sans le regarder : 10 %, puis la moitié.", "Revois la capsule « Les taxes de tête » avec 10 $ ou 20 $.", "Retiens une phrase : « À la caisse, je paie un peu plus à cause des taxes. »"]}, {"id": "exp", "nom": "Expliquer sa stratégie", "descripteurs": ["Explique avec ses mots.", "Explique quand on le questionne.", "Montre sans pouvoir l’expliquer.", "Ne peut pas encore montrer comment."], "descripteursEleve": ["J’explique avec mes mots.", "J’explique quand on me pose des questions.", "Je montre, mais j’ai du mal à expliquer.", "Je ne peux pas encore montrer comment."], "prochaines": ["Explique ta méthode à un ami ou dans ton défi.", "Utilise les mots : j’arrondis, j’additionne, je compare.", "Remets les étapes dans l’ordre, puis dis-les à voix haute.", "Avec un adulte, montre une étape à la fois avec le matériel."]}], "autoeval": [{"element": "arr", "phrase": "Je suis capable d’arrondir un prix au dollar le plus proche."}, {"element": "est", "phrase": "Je suis capable d’estimer le total d’un panier."}, {"element": "cmp", "phrase": "Je sais si j’ai assez d’argent."}, {"element": "tax", "phrase": "Je suis capable d’estimer les taxes."}], "stations": [{"nom": "Tim Hortons", "lieu": "boulevard Harvey, Jonquière", "niveau": "E", "couleur": "#B5121B", "decor": "cafe", "texte": "Avant le cours, tu arrêtes déjeuner. Le renard te montre comment trouver le dollar le plus proche."}, {"nom": "Dépanneur du quartier", "court": "Dépanneur", "lieu": "rue Saint-Dominique, Jonquière", "niveau": "E", "couleur": "#3B6EA5", "decor": "depanneur", "texte": "Tu passes au dépanneur. Tu tries les prix : plus proches de 4 $ ou de 5 $ ?"}, {"nom": "Dollarama", "lieu": "Jonquière", "niveau": "E", "couleur": "#2E7D32", "decor": "magasin", "texte": "Halloween approche ! Tu prépares tes pièces de 1 $ pour quelques achats."}, {"nom": "Maxi", "lieu": "Jonquière", "niveau": "B", "couleur": "#D7261E", "decor": "epicerie", "texte": "C’est l’épicerie de la semaine. Tu estimes ton panier sans calculatrice."}, {"nom": "Cinéma Jonquière", "court": "Cinéma", "lieu": "Jonquière", "niveau": "B", "couleur": "#5B3F8C", "decor": "cinema", "texte": "Soirée cinéma avec des amis. Les prix affichés incluent les taxes. As-tu assez d’argent ?"}, {"nom": "Pizzéria du coin", "court": "Pizzéria", "lieu": "Jonquière", "niveau": "B", "couleur": "#C0551F", "decor": "restaurant", "texte": "Après le film, une pizza ! Les prix incluent les taxes. Tu expliques ta façon de faire à un ami."}, {"nom": "Centre Georges-Vézina", "court": "Saguenéens", "lieu": "Chicoutimi · match des Saguenéens", "niveau": "B", "couleur": "#1F3A93", "decor": "arena", "texte": "Direction Chicoutimi pour voir jouer les Saguenéens ! Les prix incluent les taxes."}, {"nom": "Walmart", "lieu": "Jonquière", "niveau": "S", "couleur": "#0B6FC4", "decor": "grande-surface", "texte": "Niveau Sapin : les taxes. Qu’est-ce qui est taxé ? Et ce reçu est-il correct ?"}, {"nom": "Jean Coutu", "lieu": "Jonquière", "niveau": "S", "couleur": "#00539B", "decor": "pharmacie", "texte": "À la pharmacie, les produits de soins sont taxés. Tu estimes avec le repère de 15 %."}, {"nom": "Place du Royaume", "court": "Place du Royaume", "lieu": "Chicoutimi", "niveau": "S", "couleur": "#7A4E2D", "decor": "centre-commercial", "texte": "L’hiver s’en vient : tuques et bottes en solde ! Regarde d’abord le truc des rabais.", "capsules": ["rabais"]}, {"nom": "Party d’Halloween", "court": "Halloween", "lieu": "chez toi", "niveau": "S", "couleur": "#D9661B", "decor": "maison-halloween", "texte": "Grande finale : tu organises un party d’Halloween avec 30 $."}], "trucs": {"t1": {"titre": "Le dollar le plus proche", "lignes": ["Je regarde les cents.", "50 ¢ ou plus : je monte au dollar suivant.", "Moins de 50 ¢ : je garde le même dollar."], "visuel": {"type": "droite", "a": 2, "p": 2.85, "fleche": true}}, "t2": {"titre": "J’additionne des dollars ronds", "lignes": ["J’arrondis chaque prix au dollar le plus proche.", "J’additionne les dollars ronds de tête.", "Mon estimation est proche du vrai total."], "visuel": {"type": "recuArrondi", "articles": [["Lait", 5.29], ["Pain", 3.79]]}}, "t3": {"titre": "Assez ou pas assez ?", "lignes": ["J’estime le total.", "Je compare avec mon argent.", "Si c’est serré, je vérifie avec la calculatrice."], "visuel": {"type": "billets", "montant": 20}}, "t4": {"titre": "Les taxes de tête", "lignes": ["Au Québec, les taxes font environ 15 %.", "10 % : je recule la virgule (20 $ → 2 $).", "J’ajoute la moitié du 10 % (2 $ → 1 $).", "Repère : environ 1,50 $ pour chaque 10 $.", "Pas de taxes sur les aliments de base. Taxés : grignotines, sucreries, restaurant, produits ménagers et de soins."], "visuel": {"type": "taxes", "base": 20, "etape": 3}}, "t5": {"titre": "Rabais d’abord, taxes ensuite", "lignes": ["J’enlève le rabais d’abord : 50 %, c’est la moitié.", "Ensuite, j’ajoute environ 15 % de taxes sur le nouveau prix."], "visuel": {"type": "grand", "html": "30 $ → 15 $ → ≈ 17 $"}}, "t6": {"titre": "Plusieurs fois le même produit", "lignes": ["J’arrondis le prix d’un seul produit.", "Je multiplie par le nombre de produits."], "visuel": {"type": "grand", "html": "4,89 $ → 5 $ &nbsp; 3 × 5 $ = 15 $"}}}, "capsules": {"arrondir": {"titre": "Arrondir au dollar le plus proche", "scenes": [{"texte": "Un café coûte 2,39 $. Regarde où il se place sur la droite.", "visuel": {"type": "droite", "a": 2, "p": 2.39}}, {"texte": "Le milieu entre 2 $ et 3 $, c’est 2,50 $.", "visuel": {"type": "droite", "a": 2, "p": null, "milieu": true}}, {"texte": "2,39 $ est avant le milieu. Il est plus proche de 2 $.", "visuel": {"type": "droite", "a": 2, "p": 2.39, "fleche": true}}, {"texte": "Un muffin coûte 2,85 $. Il est après le milieu : plus proche de 3 $.", "visuel": {"type": "droite", "a": 2, "p": 2.85, "fleche": true}}, {"texte": "Le truc du renard : je regarde les cents. 50 ¢ ou plus, je monte. Moins de 50 ¢, je garde le dollar.", "visuel": {"type": "mascotte", "taille": 130, "html": "2,39 $ → 2 $<br>2,85 $ → 3 $<br>2,50 $ → 3 $"}}]}, "total": {"titre": "Estimer un total", "scenes": [{"texte": "Au Maxi, ton panier contient 4 articles.", "visuel": {"type": "recu", "articles": [["Lait 2 L", 5.29], ["Pain", 3.79], ["Bleuets du Lac", 4.99], ["Sac de pommes", 5.49]]}}, {"texte": "J’arrondis chaque prix au dollar le plus proche.", "visuel": {"type": "recuArrondi", "articles": [["Lait 2 L", 5.29], ["Pain", 3.79], ["Bleuets du Lac", 4.99], ["Sac de pommes", 5.49]]}}, {"texte": "J’additionne les dollars ronds : 5 + 4 + 5 + 5 = 19 $.", "visuel": {"type": "grand", "html": "5 + 4 + 5 + 5 = 19 $"}}, {"texte": "Le vrai total est 19,56 $. Mon estimation est très proche !", "visuel": {"type": "grand", "html": "≈ 19 $ &nbsp;|&nbsp; vrai : 19,56 $"}}]}, "assez": {"titre": "Assez ou pas assez ?", "scenes": [{"texte": "Tu as 20 $ pour le cinéma.", "visuel": {"type": "billets", "montant": 20}}, {"texte": "Billet 10,99 $, popcorn 6,49 $, boisson 3,79 $. J’arrondis et j’additionne : 11 + 6 + 4 = 21 $.", "visuel": {"type": "recuArrondi", "articles": [["Billet", 10.99], ["Popcorn", 6.49], ["Boisson", 3.79]]}}, {"texte": "21 $, c’est plus que 20 $. Je n’ai pas assez !", "visuel": {"type": "grand", "html": "21 $ &gt; 20 $"}}, {"texte": "Si c’est serré, je vérifie avec la calculatrice avant de passer à la caisse.", "visuel": {"type": "mascotte", "taille": 150}}]}, "taxes": {"titre": "Les taxes de tête", "scenes": [{"texte": "Au Québec, on paie environ 15 % de taxes sur plusieurs produits. Exemple : un achat de 20 $.", "visuel": {"type": "taxes", "base": 20, "etape": 0}}, {"texte": "10 % de 20 $ : je recule la virgule. Ça fait 2 $.", "visuel": {"type": "taxes", "base": 20, "etape": 1}}, {"texte": "J’ajoute la moitié de 2 $, donc 1 $. Les taxes font environ 3 $.", "visuel": {"type": "taxes", "base": 20, "etape": 2}}, {"texte": "Total : 20 $ + 3 $ = environ 23 $. Repère : environ 1,50 $ pour chaque 10 $.", "visuel": {"type": "taxes", "base": 20, "etape": 3}}, {"texte": "Pas de taxes sur les aliments de base. Taxés : grignotines, sucreries, boissons gazeuses, restaurant, produits ménagers et de soins.", "visuel": {"type": "colonnes", "colonnes": [{"titre": "Pas taxé", "texte": "fruits, légumes, lait, pain, œufs, viande"}, {"titre": "Taxé", "texte": "croustilles, bonbons, boisson gazeuse, restaurant, savon, shampoing"}]}}]}, "rabais": {"titre": "Rabais d’abord, taxes ensuite", "scenes": [{"texte": "Une tuque coûte 30 $. Elle est en solde à 50 %.", "visuel": {"type": "grand", "html": "30 $ &nbsp; − 50 %"}}, {"texte": "50 %, c’est la moitié. La moitié de 30 $, c’est 15 $.", "visuel": {"type": "grand", "html": "30 $ ÷ 2 = 15 $"}}, {"texte": "Le prix en solde est 15 $. Ensuite seulement, j’ajoute les taxes.", "visuel": {"type": "taxes", "base": 15, "etape": 0}}, {"texte": "10 % de 15 $ : 1,50 $. La moitié de 1,50 $ : 0,75 $.", "visuel": {"type": "taxes", "base": 15, "etape": 2}}, {"texte": "Prix final : environ 17,25 $. Rabais d’abord, taxes ensuite !", "visuel": {"type": "taxes", "base": 15, "etape": 3}}]}}, "questions": [{"id": "E1", "station": 0, "element": "arr", "type": "droite", "truc": "t1", "a": 2, "p": 2.39, "titre": "Un café moyen coûte <b>2,39 $<\/b>. Il est plus proche de quel dollar ?", "resume": "Café 2,39 $ : dollar le plus proche", "explication": ["Le prix est entre 2 $ et 3 $.", "Je regarde les cents : 39 ¢.", "39 ¢, c’est moins que 50 ¢.", "Je garde le même dollar : environ 2 $."]}, {"id": "E2", "station": 0, "element": "arr", "type": "droite", "truc": "t1", "a": 1, "p": 1.79, "titre": "Un beigne glacé coûte <b>1,79 $<\/b>. Il est plus proche de quel dollar ?", "resume": "Beigne 1,79 $ : dollar le plus proche", "explication": ["Le prix est entre 1 $ et 2 $.", "Je regarde les cents : 79 ¢.", "79 ¢, c’est plus que 50 ¢.", "Je monte au dollar suivant : environ 2 $."]}, {"id": "E3", "station": 0, "element": "arr", "type": "droite", "truc": "t1", "a": 3, "p": 3.49, "titre": "Un bagel au fromage à la crème coûte <b>3,49 $<\/b>. Il est plus proche de quel dollar ?", "resume": "Bagel 3,49 $ : dollar le plus proche", "explication": ["Le prix est entre 3 $ et 4 $.", "Je regarde les cents : 49 ¢.", "49 ¢, c’est très proche du milieu, mais c’est moins que 50 ¢.", "Je garde le même dollar : environ 3 $."]}, {"id": "E4", "station": 0, "element": "arr", "type": "droite", "truc": "t1", "a": 2, "p": 2.5, "titre": "Un muffin aux bleuets coûte <b>2,50 $<\/b>. On l’arrondit à quel dollar ?", "resume": "Muffin 2,50 $ : le milieu", "explication": ["2,50 $, c’est exactement le milieu entre 2 $ et 3 $.", "Le truc du renard : à 50 ¢, on monte.", "Donc environ 3 $."]}, {"id": "E5", "station": 1, "element": "arr", "type": "tri", "truc": "t1", "titre": "Trie les prix : plus proches de 4 $ ou de 5 $ ?", "resume": "Trier 6 prix entre 4 $ et 5 $", "boites": ["Plus proche de 4 $", "Plus proche de 5 $"], "etiquettes": [["Croustilles 4,29 $", 0], ["Lait au chocolat 4,59 $", 1], ["Pain tranché 4,49 $", 0], ["Gomme 4,05 $", 0], ["Boisson gazeuse 4,79 $", 1], ["Sac de bonbons 4,50 $", 1]], "explication": ["Je regarde les cents de chaque prix.", "Moins de 50 ¢ : plus proche de 4 $. C’est 4,05 $, 4,29 $ et 4,49 $.", "50 ¢ ou plus : plus proche de 5 $. C’est 4,50 $, 4,59 $ et 4,79 $."]}, {"id": "E6", "station": 2, "element": "est", "type": "jetons", "truc": "t2", "titre": "Pour chaque article, mets le bon nombre de pièces de 1 $.", "resume": "Pièces de 1 $ : bonbons, maquillage, citrouille", "articles": [["Bonbons d’Halloween", 3.75], ["Maquillage", 2.25], ["Citrouille en plastique", 1.5]], "explication": ["3,75 $ : 75 ¢, je monte. Je mets 4 pièces.", "2,25 $ : 25 ¢, je garde. Je mets 2 pièces.", "1,50 $ : c’est le milieu, je monte. Je mets 2 pièces.", "En tout : 4 + 2 + 2 = 8 pièces. Mon achat coûte environ 8 $."]}, {"id": "E7", "station": 2, "element": "est", "type": "jetons", "truc": "t2", "titre": "Des fournitures pour l’école. Mets le bon nombre de pièces de 1 $.", "resume": "Pièces de 1 $ : cahier, crayons, colle", "articles": [["Cahier", 1.25], ["Crayons de couleur", 4.85], ["Bâton de colle", 2.5]], "explication": ["1,25 $ : 25 ¢, je garde. Je mets 1 pièce.", "4,85 $ : 85 ¢, je monte. Je mets 5 pièces.", "2,50 $ : le milieu, je monte. Je mets 3 pièces.", "En tout : 1 + 5 + 3 = 9 pièces. Environ 9 $."]}, {"id": "B1", "station": 3, "element": "est", "type": "qcm", "truc": "t2", "titre": "Environ combien coûte ton panier ?", "resume": "Panier Maxi (4 articles)", "articles": [["Lait 2 L", 5.29], ["Pain", 3.79], ["Bleuets du Lac", 4.99], ["Sac de pommes", 5.49]], "note": "Aliments de base : pas de taxes.", "choix": ["Environ 17 $", "Environ 19 $", "Environ 23 $"], "bonne": 1, "explication": ["J’arrondis chaque prix : 5 $, 4 $, 5 $ et 5 $.", "J’additionne les dollars ronds : 5 + 4 + 5 + 5 = 19 $.", "Le vrai total est 19,56 $. Mon estimation est très proche !"]}, {"id": "B2", "station": 3, "element": "est", "type": "num", "truc": "t2", "titre": "Écris ton estimation du total, en dollars ronds.", "resume": "Tourtière, fromage en grains, soupe aux gourganes", "articles": [["Tourtière du Lac", 12.99], ["Fromage en grains", 6.49], ["Soupe aux gourganes", 3.29]], "note": "Aliments de base : pas de taxes.", "accepteMin": 22, "accepteMax": 23, "explication": ["J’arrondis : 12,99 $ devient 13 $.", "6,49 $ devient 6 $ (49 ¢, je garde).", "3,29 $ devient 3 $.", "13 + 6 + 3 = 22 $. Le vrai total est 22,77 $."]}, {"id": "B3", "station": 3, "element": "est", "type": "qcm", "truc": "t6", "titre": "Tu achètes 3 boîtes de céréales à <b>4,89 $<\/b> chacune. Environ combien ?", "resume": "3 boîtes de céréales à 4,89 $", "choix": ["Environ 12 $", "Environ 15 $", "Environ 18 $"], "bonne": 1, "explication": ["J’arrondis le prix d’une boîte : 4,89 $ devient 5 $.", "3 boîtes × 5 $ = 15 $.", "Le vrai total est 14,67 $."]}, {"id": "B4", "station": 4, "element": "cmp", "type": "assez", "truc": "t3", "budget": 20, "titre": "Tu as <b>20 $<\/b>. As-tu assez d’argent ?", "resume": "Cinéma avec 20 $ (billet, popcorn, boisson)", "articles": [["Billet", 10.99], ["Popcorn moyen", 6.49], ["Boisson", 3.79]], "note": "Taxes incluses.", "reponse": false, "explication": ["J’arrondis : 11 $ + 6 $ + 4 $ = 21 $.", "21 $, c’est plus que 20 $.", "Je n’ai pas assez d’argent. Le vrai total est 21,27 $."]}, {"id": "B5", "station": 4, "element": "cmp", "type": "assez", "truc": "t3", "budget": 15, "titre": "Mardi, c’est moins cher ! Tu as <b>15 $<\/b>. As-tu assez ?", "resume": "Cinéma du mardi avec 15 $", "articles": [["Billet du mardi", 7.5], ["Bonbons", 2.19], ["Bouteille d’eau", 1.99]], "note": "Taxes incluses.", "reponse": true, "explication": ["J’arrondis : 8 $ + 2 $ + 2 $ = 12 $.", "12 $, c’est moins que 15 $, et ce n’est pas serré.", "J’ai assez d’argent. Le vrai total est 11,68 $."]}, {"id": "B6", "station": 4, "element": "cmp", "type": "assez", "truc": "t3", "budget": 10, "titre": "Il te reste <b>10 $<\/b>. As-tu assez pour ce combo ?", "resume": "Combo avec 10 $ (cas serré)", "articles": [["Popcorn moyen", 6.49], ["Boisson", 3.79]], "note": "Taxes incluses.", "reponse": false, "explication": ["J’arrondis : 6 $ + 4 $ = 10 $.", "10 $, c’est exactement mon argent : c’est serré !", "Quand c’est serré, je vérifie : 6,49 $ + 3,79 $ = 10,28 $.", "Il manque 28 ¢. Je n’ai pas assez."]}, {"id": "B7", "station": 5, "element": "exp", "type": "ordre", "truc": "t3", "titre": "Remets les étapes dans l’ordre pour savoir si tu as assez d’argent.", "resume": "Ordonner les étapes de la stratégie", "etapes": ["J’arrondis chaque prix au dollar le plus proche.", "J’additionne les dollars ronds.", "Je compare mon estimation avec mon argent.", "Si c’est serré, je vérifie avec la calculatrice."], "explication": ["J’arrondis chaque prix au dollar le plus proche.", "J’additionne les dollars ronds.", "Je compare mon estimation avec mon argent.", "Si c’est serré, je vérifie avec la calculatrice."]}, {"id": "B8", "station": 5, "element": "cmp", "type": "assez", "truc": "t3", "budget": 25, "titre": "Tu as <b>25 $<\/b> pour la pizza et 2 boissons. As-tu assez ?", "resume": "Pizza et 2 boissons avec 25 $", "articles": [["Pizza moyenne", 18.79], ["Boisson", 2.49], ["Boisson", 2.49]], "note": "Taxes incluses.", "reponse": true, "explication": ["J’arrondis : 19 $ + 2 $ + 2 $ = 23 $.", "23 $, c’est moins que 25 $ : il reste environ 2 $.", "J’ai assez. Le vrai total est 23,77 $."]}, {"id": "B9", "station": 5, "element": "exp", "type": "texte", "truc": "t3", "titre": "Explique à un ami comment tu as su si 25 $ suffisait pour la pizza et les boissons.", "resume": "Explication écrite : la pizza", "explication": ["J’ai arrondi chaque prix : 19 $, 2 $ et 2 $.", "J’ai additionné : 23 $.", "23 $, c’est moins que 25 $, donc j’ai assez."]}, {"id": "B10", "station": 6, "element": "est", "type": "curseur", "truc": "t2", "titre": "Environ combien vas-tu dépenser au match ?", "resume": "Billet, hot-dog, chocolat chaud", "articles": [["Billet étudiant", 14.5], ["Hot-dog", 4.75], ["Chocolat chaud", 2.95]], "note": "Taxes incluses.", "min": 10, "max": 35, "pas": 1, "depart": 10, "accepteMin": 22, "accepteMax": 24, "explication": ["J’arrondis : 14,50 $ devient 15 $ (le milieu, je monte).", "4,75 $ devient 5 $ et 2,95 $ devient 3 $.", "15 + 5 + 3 = 23 $. Le vrai total est 22,20 $."]}, {"id": "B11", "station": 6, "element": "est", "type": "vf", "truc": "t6", "titre": "Ton ami dit : « 4 billets à 14,50 $, ça fait environ 60 $. » Vrai ou faux ?", "resume": "4 billets à 14,50 $ : environ 60 $ ?", "reponse": true, "explication": ["J’arrondis le prix d’un billet : 14,50 $ devient 15 $.", "4 × 15 $ = 60 $.", "C’est vrai ! Le vrai total est 58 $."]}, {"id": "S1", "station": 7, "element": "tax", "type": "tri", "truc": "t4", "titre": "Trie les produits : taxés ou pas taxés ?", "resume": "Trier : taxé ou pas taxé", "boites": ["Pas taxé", "Taxé"], "etiquettes": [["Pommes", 0], ["Lait", 0], ["Pain", 0], ["Œufs", 0], ["Croustilles", 1], ["Boisson gazeuse", 1], ["Bonbons", 1], ["Savon à vaisselle", 1]], "explication": ["Les aliments de base ne sont pas taxés : pommes, lait, pain, œufs.", "Les grignotines et les sucreries sont taxées : croustilles, bonbons, boisson gazeuse.", "Les produits ménagers sont taxés : savon à vaisselle."]}, {"id": "S2", "station": 7, "element": "est", "type": "erreur", "truc": "t2", "titre": "Un montant du reçu est faux. Estime, puis touche la ligne qui est fausse.", "resume": "Trouver l’erreur dans un reçu", "lignes": [["Céréales", 4.99], ["Lait 2 L", 5.29], ["Bananes", 1.89], ["Croustilles (T)", 4.49], ["Sous-total", 26.66], ["TPS + TVQ", 0.67], ["Total", 27.33]], "fausses": [4, 6], "note": "(T) = article taxé", "explication": ["J’estime les articles : 5 + 5 + 2 + 4 = 16 $.", "Le sous-total devrait être environ 16 $, pas 26,66 $.", "Il y a une erreur de 10 $ ! Le vrai sous-total est 16,66 $ et le vrai total, 17,33 $."]}, {"id": "S3", "station": 8, "element": "tax", "type": "qcm", "truc": "t4", "titre": "Avec les taxes, environ combien vas-tu payer ?", "resume": "Jean Coutu : 3 produits de soins + taxes", "articles": [["Shampoing", 7.99], ["Déodorant", 5.49], ["Baume à lèvres", 3.29]], "note": "Tous ces produits sont taxés.", "choix": ["Environ 16 $", "Environ 18 $ à 19 $", "Environ 24 $"], "bonne": 1, "explication": ["J’arrondis : 8 + 5 + 3 = 16 $.", "10 % de 16 $ : je recule la virgule, 1,60 $.", "La moitié de 1,60 $ : 0,80 $.", "Taxes : environ 1,60 $ + 0,80 $ = 2,40 $.", "16 $ + 2,40 $ = environ 18,40 $. Le vrai total est 19,28 $."]}, {"id": "S4", "station": 8, "element": "tax", "type": "curseur", "truc": "t4", "titre": "Avec les taxes, environ combien ?", "resume": "Brosse à dents, dentifrice, savon + taxes", "articles": [["Brosse à dents", 4.49], ["Dentifrice", 3.79], ["Savon", 2.89]], "note": "Tous ces produits sont taxés.", "min": 8, "max": 20, "pas": 0.5, "depart": 8, "accepteMin": 12, "accepteMax": 14, "explication": ["J’arrondis : 4 + 4 + 3 = 11 $.", "10 % de 11 $ : 1,10 $. La moitié : 0,55 $.", "Taxes : environ 1,65 $.", "11 $ + 1,65 $ = environ 12,65 $. Le vrai total est 12,84 $."]}, {"id": "S5", "station": 9, "element": "est", "type": "qcm", "truc": "t5", "titre": "Une tuque à <b>30 $<\/b> est en solde à <b>50 %<\/b>. Quel est le prix en solde ?", "resume": "Tuque 30 $ à 50 % : prix en solde", "choix": ["10 $", "15 $", "25 $"], "bonne": 1, "explication": ["50 %, c’est la moitié.", "La moitié de 30 $, c’est 15 $.", "Le prix en solde est 15 $."]}, {"id": "S6", "station": 9, "element": "tax", "type": "qcm", "truc": "t5", "titre": "Avec les taxes, environ combien vas-tu payer pour la tuque en solde ?", "resume": "Tuque en solde 15 $ + taxes", "articles": [["Tuque en solde", 15]], "choix": ["15 $", "Environ 17 $", "Environ 34 $", "30 $"], "bonne": 1, "explication": ["Le prix en solde est 15 $.", "Taxes : 10 % de 15 $ = 1,50 $. La moitié = 0,75 $.", "15 $ + 2,25 $ = environ 17 $. Le vrai total est 17,25 $."]}, {"id": "S7", "station": 9, "element": "cmp", "type": "assez", "truc": "t5", "budget": 40, "titre": "Des bottes à <b>60 $<\/b>, en solde à <b>50 %<\/b>. Tu as <b>40 $<\/b>. Avec les taxes, as-tu assez ?", "resume": "Bottes 60 $ à 50 % + taxes, avec 40 $", "articles": [["Bottes d’hiver", 60], ["Rabais", "− 50 %"], ["Taxes", "+ environ 15 %"]], "reponse": true, "explication": ["Rabais d’abord : la moitié de 60 $, c’est 30 $.", "Taxes ensuite : 3 $ + 1,50 $ = 4,50 $.", "30 $ + 4,50 $ = environ 34,50 $.", "34,50 $, c’est moins que 40 $ : j’ai assez. Le vrai total est 34,49 $."]}, {"id": "F1", "station": 10, "element": "tax", "type": "curseur", "truc": "t4", "titre": "Avec les taxes, environ combien coûte ton party ?", "resume": "Party : 5 articles taxés", "articles": [["Gros sac de bonbons", 9.97], ["Croustilles", 4.49], ["Croustilles", 4.49], ["Boisson gazeuse 2 L", 2.99], ["Décorations", 6.25]], "note": "Tous ces articles sont taxés.", "min": 20, "max": 45, "pas": 0.5, "depart": 20, "accepteMin": 30.5, "accepteMax": 34, "explication": ["J’arrondis : 10 + 4 + 4 + 3 + 6 = 27 $.", "10 % de 27 $ : 2,70 $. La moitié : 1,35 $.", "Taxes : environ 4,05 $.", "27 $ + 4,05 $ = environ 31 $. Le vrai total est 32,41 $."]}, {"id": "F2", "station": 10, "element": "cmp", "type": "assez", "truc": "t3", "budget": 30, "titre": "Tu as <b>30 $<\/b>. As-tu assez pour tout acheter ?", "resume": "Party avec 30 $", "articles": [["Mon estimation avec les taxes", "environ 31 $"]], "reponse": false, "explication": ["Mon estimation avec les taxes : environ 31 $.", "31 $, c’est plus que 30 $.", "Je n’ai pas assez : le vrai total est 32,41 $, il manque 2,41 $."]}, {"id": "F3", "station": 10, "element": "exp", "type": "texte", "truc": "t3", "titre": "Il te manque un peu d’argent. Quel article enlèves-tu pour respecter ton budget de 30 $ ? Explique comment tu le sais.", "resume": "Explication écrite : le party", "explication": ["Il me manque environ 2 $ ou 3 $.", "J’enlève un sac de croustilles : environ 4,50 $ + 0,70 $ de taxes = environ 5 $ de moins.", "Mon party coûtera environ 27 $. C’est moins que 30 $."]}], "reinvest": {"capsules": false, "_panier": {"titre": "Mon panier au Maxi", "budget": 30, "taxe": 0.14975, "consigne": "Choisis ce qu’il te faut pour la semaine.", "description": "Fais ton épicerie avec 30 $. Estime avant de passer à la caisse.", "catalogue": [["Lait 2 L", 5.29, 0], ["Pain", 3.79, 0], ["Bananes", 1.89, 0], ["Œufs (12)", 4.49, 0], ["Bleuets du Lac", 4.99, 0], ["Fromage en grains", 6.49, 0], ["Pâtes", 2.29, 0], ["Sauce tomate", 2.99, 0], ["Croustilles", 4.49, 1], ["Boisson gazeuse", 2.99, 1], ["Biscuits", 3.99, 1], ["Savon à vaisselle", 3.49, 1]]}, "defi": {"lieux": ["Tim Hortons (Jonquière)", "Maxi (Jonquière)", "Dollarama", "Walmart", "Jean Coutu", "Metro", "Canadian Tire", "Place du Royaume", "Cinéma Jonquière", "Centre Georges-Vézina", "Dépanneur du quartier", "Autre lieu du Saguenay"], "liens": [{"nom": "Toutes les circulaires (Flipp)", "lien": "https://flipp.com/fr-ca"}, {"nom": "Maxi", "lien": "https://www.maxi.ca/fr"}, {"nom": "Circulaire Walmart", "lien": "https://www.walmart.ca/fr/flyer"}, {"nom": "Menu Tim Hortons", "lien": "https://www.timhortons.ca/fr/menu"}, {"nom": "Dollarama", "lien": "https://www.dollarama.com/fr-CA"}, {"nom": "Jean Coutu", "lien": "https://www.jeancoutu.com"}, {"nom": "Metro", "lien": "https://www.metro.ca"}, {"nom": "Canadian Tire", "lien": "https://www.canadiantire.ca/fr.html"}, {"nom": "Place du Royaume", "lien": "https://placeduroyaume.com"}], "teams": {"equipe": "Budget et consommation PPS", "canal": "le canal de ton cours (PPS-Z128)"}}}};
+const MASCOTTE=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 210" width="150" height="143"><g transform="translate(5,0) scale(1.0)">
 <ellipse cx="100" cy="190" rx="70" ry="9" fill="#000" opacity=".07"/>
 <path d="M140,170 C200,165 205,95 168,92 C150,90 150,112 165,118 C182,126 172,160 132,160 Z" fill="#C9733A"/>
 <path d="M168,92 C150,90 150,112 165,118 C160,108 162,98 168,92 Z" fill="#F3E7DA"/>
@@ -157,315 +218,192 @@ const FOX=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 210" width="
 <path d="M88,115 Q95,121 102,115" fill="none" stroke="#3b2a22" stroke-width="2.2" stroke-linecap="round"/>
 <path d="M62,98 Q60,96 56,97" stroke="#e7a37f" stroke-width="2" fill="none"/>
 </g></svg>`;
+const U=CFG.unite==null?"$":CFG.unite;
+const DU=(CFG.mascotte&&CFG.mascotte.du)||"";
+const PROF=CFG.enseignant||"ton enseignant";
+const LV={},LVHEX={};CFG.niveaux.forEach(n=>{LV[n.id]={n:n.nom,c:n.clair,f:n.fonce,d:n.description||""};LVHEX[n.id]=[n.clair,n.fonce]});
+const NIVS=CFG.niveaux.map(n=>n.id);
+const ELN={},DESC={},DESCE={},PROCH={};CFG.elements.forEach(e=>{ELN[e.id]=e.nom;DESC[e.id]=e.descripteurs;DESCE[e.id]=e.descripteursEleve||e.descripteurs;PROCH[e.id]=e.prochaines||null});
+const prochaine=(el,c)=>PROCH[el]?PROCH[el][c-1]:(c>1?"Vise : "+DESCE[el][c-2]:"Bravo ! Aide un ami ou relève le défi supplémentaire.");
+const ECH=CFG.echelle||["Avec facilité","Un peu de soutien","Beaucoup d’aide","N’y arrive pas"];
+const ELEVE=CFG.echelleEleve||["Je le fais seul","Je le fais avec un peu d’aide","J’ai besoin de beaucoup d’aide","À retravailler"];
+const ST=CFG.stations.map(s=>({n:s.nom,s:s.court,l:s.lieu||"",lv:s.niveau,c:s.couleur||"#C9733A",txt:s.texte||"",decor:s.decor,caps:s.capsules||null}));
+const Q=CFG.questions.map(q=>Object.assign({},q,{st:q.station,el:q.element,court:q.resume||"",ex:q.explication||[],
+ items:q.type==="tri"?q.etiquettes:q.articles,bins:q.boites,opts:q.choix,rep:q.type==="qcm"?q.bonne:q.reponse,
+ okMin:q.accepteMin,okMax:q.accepteMax,steps:q.etapes,bad:q.fausses,step:q.pas,ini:q.depart,u:q.unite==null?U:q.unite}));
+const TRUCS={};for(const k in (CFG.trucs||{}))TRUCS[k]={titre:CFG.trucs[k].titre,l:CFG.trucs[k].lignes,v:CFG.trucs[k].visuel};
+const CAPS={};for(const k in (CFG.capsules||{}))CAPS[k]={titre:CFG.capsules[k].titre,sc:CFG.capsules[k].scenes.map(s=>({t:s.texte,v:s.visuel}))};
+const INTRO={};CFG.niveaux.forEach(n=>INTRO[n.id]={k:(n.intro&&n.intro.capsules)||[],t:(n.intro&&n.intro.texte)||""});
+const AV=(CFG.autoeval||[]).map(a=>[a.element,a.phrase]);
+const AVO=["Oui, seul","Avec un peu d’aide","Pas encore"];
+const RE=CFG.reinvest||{capsules:true};
+(function(){const t=CFG.theme||{},r=document.documentElement.style;if(t.accent)r.setProperty("--or",t.accent);if(t.accentFonce)r.setProperty("--orf",t.accentFonce);if(t.accentPale)r.setProperty("--or2",t.accentPale);
+ const f=t.formes||["#D8C7BB","#E3BF6A","#DDF5F2","#F6D1D6"],pos=["width:420px;height:380px;left:-190px;top:-180px","width:300px;height:280px;right:-120px;top:-140px;opacity:.55","width:380px;height:340px;right:-170px;bottom:-170px","width:300px;height:280px;left:-150px;bottom:-160px"];
+ document.getElementById("formes").innerHTML=f.map((c,k)=>`<div class="blob" style="${pos[k%4]};background:${c}"></div>`).join("");
+ document.head.insertAdjacentHTML("beforeend","<style>"+DECORS_CSS+"</style>")})();
+
+/* ================= outils ================= */
 const app=document.getElementById("app");
 const E=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-const fr=n=>n.toFixed(2).replace(".",",")+" $";
-const fm=v=>(Math.abs(v%1)>1e-9?v.toFixed(2).replace(".",","):String(v))+" $";
+const nb=(n,d)=>(d==null?(Math.abs(n%1)>1e-9?2:0):d);
+const fmU=(v,u)=>{const t=v.toFixed(nb(v)).replace(".",",");return u?t+" "+u:t};
+const fr=n=>n.toFixed(2).replace(".",",")+(U?" "+U:"");
+const fm=v=>fmU(v,U);
 const rond=p=>Math.floor(p+0.5+1e-9);
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-
-/* ---------------- voix (seulement au clic) ---------------- */
+const haut=()=>window.scrollTo({top:0,behavior:"smooth"});
 const voix=()=>{try{const v=speechSynthesis.getVoices();return v.find(x=>x.lang==="fr-CA")||v.find(x=>x.lang&&x.lang.startsWith("fr"))}catch(e){return null}};
-function pourVoix(t){return String(t).replace(/<[^>]+>/g," ").replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,"")
- .replace(/→/g,", ").replace(/×/g," fois ").replace(/−/g," moins ").replace(/≈/g," environ ").replace(/%/g," pour cent").replace(/¢/g," cents")
- .replace(/(\d+),(\d\d) \$/g,"$1 dollars $2").replace(/(\d+) \$/g,"$1 dollars")}
+function pourVoix(t){return String(t).replace(/<[^>]+>/g," ").replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,"").replace(/→/g,", ").replace(/×/g," fois ").replace(/−/g," moins ").replace(/≈/g," environ ").replace(/%/g," pour cent").replace(/¢/g," cents").replace(/(\d+),(\d\d) \$/g,"$1 dollars $2").replace(/(\d+) \$/g,"$1 dollars")}
 function dire(t,fin){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(pourVoix(t));u.lang="fr-CA";const v=voix();if(v)u.voice=v;u.rate=.92;if(fin){u.onend=fin;u.onerror=fin}speechSynthesis.speak(u)}catch(e){if(fin)setTimeout(fin,2500+String(t).length*45)}}
 if("speechSynthesis" in window){speechSynthesis.onvoiceschanged=()=>{}}
 const SAY={};let sayN=0;
 function say(t,lab){const k="s"+(sayN++);SAY[k]=t;return `<button class="say" onclick="dire(SAY['${k}'])" aria-label="Écouter">🔊 ${lab||"Écouter"}</button>`}
+function mascotte(w){if(!MASCOTTE)return "";return MASCOTTE.replace(/width="\d+"/,`width="${w}" class="fx"`).replace(/height="\d+"/,"")}
 
-/* ---------------- données ---------------- */
-const LV={E:{n:"Érable",c:"var(--er)",f:"var(--erf)",d:"Je manipule et je visualise"},
- B:{n:"Bouleau",c:"var(--bo)",f:"var(--bof)",d:"J’estime un total et je compare"},
- S:{n:"Sapin",c:"var(--sa)",f:"var(--saf)",d:"J’estime avec les taxes et les rabais"}};
-const LVHEX={E:["#F5C6C2","#A9372B"],B:["#F6E3A6","#8A6100"],S:["#CFE9D7","#2E6B45"]};
-const ELN={arr:"Arrondir un prix au dollar",est:"Estimer un total",cmp:"Comparer avec son argent",tax:"Tenir compte des taxes",exp:"Expliquer sa stratégie"};
-const DESC={arr:["Arrondit seul et explique « plus proche de ».","Arrondit avec un rappel (droite, truc du renard).","Arrondit seulement avec beaucoup d’aide.","N’arrondit pas encore."],
- est:["Additionne ses arrondis et obtient un total raisonnable, seul.","Y arrive avec un rappel de la démarche.","Y arrive étape par étape, avec de l’aide.","Calcule au sou près ou devine."],
- cmp:["Conclut « assez » ou « pas assez » seul; vérifie quand c’est serré.","Conclut après un rappel ou un 2e essai.","Conclut avec beaucoup d’aide.","Ne fait pas encore le lien avec l’argent disponible."],
- tax:["Ajoute environ 15 % et sait quels articles sont taxables.","Ajoute les taxes avec un rappel du repère.","Sait qu’il y a des taxes, sans les estimer.","Ne tient pas compte des taxes."],
- exp:["Explique avec ses mots.","Explique quand on le questionne.","Montre sans pouvoir l’expliquer.","Ne peut pas encore montrer comment."]};
-const ECH=["Avec facilité","Un peu de soutien","Beaucoup d’aide","N’y arrive pas"];
-const ELEVE=["Je le fais seul","Je le fais avec un peu d’aide","J’ai besoin de beaucoup d’aide","À retravailler"];
-
-const ST=[
- {n:"Tim Hortons",l:"boulevard Harvey, Jonquière",lv:"E",c:"#B5121B",txt:"Avant le cours, tu arrêtes déjeuner. Le renard te montre comment trouver le dollar le plus proche."},
- {n:"Dépanneur du quartier",s:"Dépanneur",l:"rue Saint-Dominique, Jonquière",lv:"E",c:"#3B6EA5",txt:"Tu passes au dépanneur. Tu tries les prix : plus proches de 4 $ ou de 5 $ ?"},
- {n:"Dollarama",l:"Jonquière",lv:"E",c:"#2E7D32",txt:"Halloween approche ! Tu prépares tes pièces de 1 $ pour quelques achats."},
- {n:"Maxi",l:"Jonquière",lv:"B",c:"#D7261E",txt:"C’est l’épicerie de la semaine. Tu estimes ton panier sans calculatrice."},
- {n:"Cinéma Jonquière",s:"Cinéma",l:"Jonquière",lv:"B",c:"#5B3F8C",txt:"Soirée cinéma avec des amis. Les prix affichés incluent les taxes. As-tu assez d’argent ?"},
- {n:"Pizzéria du coin",s:"Pizzéria",l:"Jonquière",lv:"B",c:"#C0551F",txt:"Après le film, une pizza ! Les prix incluent les taxes. Tu expliques ta façon de faire à un ami."},
- {n:"Centre Georges-Vézina",s:"Saguenéens",l:"Chicoutimi · match des Saguenéens",lv:"B",c:"#1F3A93",txt:"Direction Chicoutimi pour voir jouer les Saguenéens ! Les prix incluent les taxes."},
- {n:"Walmart",l:"Jonquière",lv:"S",c:"#0B6FC4",txt:"Niveau Sapin : les taxes. Qu’est-ce qui est taxé ? Et ce reçu est-il correct ?"},
- {n:"Jean Coutu",l:"Jonquière",lv:"S",c:"#00539B",txt:"À la pharmacie, les produits de soins sont taxés. Tu estimes avec le repère de 15 %."},
- {n:"Place du Royaume",l:"Chicoutimi",lv:"S",c:"#7A4E2D",txt:"L’hiver s’en vient : manteau et bottes en solde. Rabais d’abord, taxes ensuite !"},
- {n:"Party d’Halloween",s:"Halloween",l:"chez toi",lv:"S",c:"#D9661B",txt:"Grande finale : tu organises un party d’Halloween avec 30 $."}
-];
-
-const Q=[
- {id:"E1",st:0,el:"arr",type:"droite",truc:"t1",a:2,p:2.39,titre:"Un café moyen coûte <b>2,39 $</b>. Il est plus proche de quel dollar ?",court:"Café 2,39 $ : dollar le plus proche",
-  ex:["Le prix est entre 2 $ et 3 $.","Je regarde les cents : 39 ¢.","39 ¢, c’est moins que 50 ¢.","Je garde le même dollar : environ 2 $."]},
- {id:"E2",st:0,el:"arr",type:"droite",truc:"t1",a:1,p:1.79,titre:"Un beigne glacé coûte <b>1,79 $</b>. Il est plus proche de quel dollar ?",court:"Beigne 1,79 $ : dollar le plus proche",
-  ex:["Le prix est entre 1 $ et 2 $.","Je regarde les cents : 79 ¢.","79 ¢, c’est plus que 50 ¢.","Je monte au dollar suivant : environ 2 $."]},
- {id:"E3",st:0,el:"arr",type:"droite",truc:"t1",a:3,p:3.49,titre:"Un bagel au fromage à la crème coûte <b>3,49 $</b>. Il est plus proche de quel dollar ?",court:"Bagel 3,49 $ : dollar le plus proche",
-  ex:["Le prix est entre 3 $ et 4 $.","Je regarde les cents : 49 ¢.","49 ¢, c’est très proche du milieu, mais c’est moins que 50 ¢.","Je garde le même dollar : environ 3 $."]},
- {id:"E4",st:0,el:"arr",type:"droite",truc:"t1",a:2,p:2.50,titre:"Un muffin aux bleuets coûte <b>2,50 $</b>. On l’arrondit à quel dollar ?",court:"Muffin 2,50 $ : le milieu",
-  ex:["2,50 $, c’est exactement le milieu entre 2 $ et 3 $.","Le truc du renard : à 50 ¢, on monte.","Donc environ 3 $."]},
- {id:"E5",st:1,el:"arr",type:"tri",truc:"t1",titre:"Trie les prix : plus proches de 4 $ ou de 5 $ ?",court:"Trier 6 prix entre 4 $ et 5 $",
-  bins:["Plus proche de 4 $","Plus proche de 5 $"],items:[["Croustilles 4,29 $",0],["Lait au chocolat 4,59 $",1],["Pain tranché 4,49 $",0],["Gomme 4,05 $",0],["Boisson gazeuse 4,79 $",1],["Sac de bonbons 4,50 $",1]],
-  ex:["Je regarde les cents de chaque prix.","Moins de 50 ¢ : plus proche de 4 $. C’est 4,05 $, 4,29 $ et 4,49 $.","50 ¢ ou plus : plus proche de 5 $. C’est 4,50 $, 4,59 $ et 4,79 $."]},
- {id:"E6",st:2,el:"est",type:"jetons",truc:"t2",titre:"Pour chaque article, mets le bon nombre de pièces de 1 $.",court:"Pièces de 1 $ : bonbons, maquillage, citrouille",
-  items:[["Bonbons d’Halloween",3.75],["Maquillage",2.25],["Citrouille en plastique",1.50]],
-  ex:["3,75 $ : 75 ¢, je monte. Je mets 4 pièces.","2,25 $ : 25 ¢, je garde. Je mets 2 pièces.","1,50 $ : c’est le milieu, je monte. Je mets 2 pièces.","En tout : 4 + 2 + 2 = 8 pièces. Mon achat coûte environ 8 $."]},
- {id:"E7",st:2,el:"est",type:"jetons",truc:"t2",titre:"Des fournitures pour l’école. Mets le bon nombre de pièces de 1 $.",court:"Pièces de 1 $ : cahier, crayons, colle",
-  items:[["Cahier",1.25],["Crayons de couleur",4.85],["Bâton de colle",2.50]],
-  ex:["1,25 $ : 25 ¢, je garde. Je mets 1 pièce.","4,85 $ : 85 ¢, je monte. Je mets 5 pièces.","2,50 $ : le milieu, je monte. Je mets 3 pièces.","En tout : 1 + 5 + 3 = 9 pièces. Environ 9 $."]},
- {id:"B1",st:3,el:"est",type:"qcm",truc:"t2",titre:"Environ combien coûte ton panier ?",court:"Panier Maxi (4 articles)",
-  items:[["Lait 2 L",5.29],["Pain",3.79],["Bleuets du Lac",4.99],["Sac de pommes",5.49]],note:"Aliments de base : pas de taxes.",
-  opts:["Environ 17 $","Environ 19 $","Environ 23 $"],rep:1,
-  ex:["J’arrondis chaque prix : 5 $, 4 $, 5 $ et 5 $.","J’additionne les dollars ronds : 5 + 4 + 5 + 5 = 19 $.","Le vrai total est 19,56 $. Mon estimation est très proche !"]},
- {id:"B2",st:3,el:"est",type:"num",truc:"t2",titre:"Écris ton estimation du total, en dollars ronds.",court:"Tourtière, fromage en grains, soupe aux gourganes",
-  items:[["Tourtière du Lac",12.99],["Fromage en grains",6.49],["Soupe aux gourganes",3.29]],note:"Aliments de base : pas de taxes.",okMin:22,okMax:23,
-  ex:["J’arrondis : 12,99 $ devient 13 $.","6,49 $ devient 6 $ (49 ¢, je garde).","3,29 $ devient 3 $.","13 + 6 + 3 = 22 $. Le vrai total est 22,77 $."]},
- {id:"B3",st:3,el:"est",type:"qcm",truc:"t6",titre:"Tu achètes 3 boîtes de céréales à <b>4,89 $</b> chacune. Environ combien ?",court:"3 boîtes de céréales à 4,89 $",
-  opts:["Environ 12 $","Environ 15 $","Environ 18 $"],rep:1,
-  ex:["J’arrondis le prix d’une boîte : 4,89 $ devient 5 $.","3 boîtes × 5 $ = 15 $.","Le vrai total est 14,67 $."]},
- {id:"B4",st:4,el:"cmp",type:"assez",truc:"t3",budget:20,titre:"Tu as <b>20 $</b>. As-tu assez d’argent ?",court:"Cinéma avec 20 $ (billet, popcorn, boisson)",
-  items:[["Billet",10.99],["Popcorn moyen",6.49],["Boisson",3.79]],note:"Taxes incluses.",rep:false,
-  ex:["J’arrondis : 11 $ + 6 $ + 4 $ = 21 $.","21 $, c’est plus que 20 $.","Je n’ai pas assez d’argent. Le vrai total est 21,27 $."]},
- {id:"B5",st:4,el:"cmp",type:"assez",truc:"t3",budget:15,titre:"Mardi, c’est moins cher ! Tu as <b>15 $</b>. As-tu assez ?",court:"Cinéma du mardi avec 15 $",
-  items:[["Billet du mardi",7.50],["Bonbons",2.19],["Bouteille d’eau",1.99]],note:"Taxes incluses.",rep:true,
-  ex:["J’arrondis : 8 $ + 2 $ + 2 $ = 12 $.","12 $, c’est moins que 15 $, et ce n’est pas serré.","J’ai assez d’argent. Le vrai total est 11,68 $."]},
- {id:"B6",st:4,el:"cmp",type:"assez",truc:"t3",budget:10,titre:"Il te reste <b>10 $</b>. As-tu assez pour ce combo ?",court:"Combo avec 10 $ (cas serré)",
-  items:[["Popcorn moyen",6.49],["Boisson",3.79]],note:"Taxes incluses.",rep:false,
-  ex:["J’arrondis : 6 $ + 4 $ = 10 $.","10 $, c’est exactement mon argent : c’est serré !","Quand c’est serré, je vérifie : 6,49 $ + 3,79 $ = 10,28 $.","Il manque 28 ¢. Je n’ai pas assez."]},
- {id:"B7",st:5,el:"exp",type:"ordre",truc:"t3",titre:"Remets les étapes dans l’ordre pour savoir si tu as assez d’argent.",court:"Ordonner les étapes de la stratégie",
-  steps:["J’arrondis chaque prix au dollar le plus proche.","J’additionne les dollars ronds.","Je compare mon estimation avec mon argent.","Si c’est serré, je vérifie avec la calculatrice."],
-  ex:["J’arrondis chaque prix au dollar le plus proche.","J’additionne les dollars ronds.","Je compare mon estimation avec mon argent.","Si c’est serré, je vérifie avec la calculatrice."]},
- {id:"B8",st:5,el:"cmp",type:"assez",truc:"t3",budget:25,titre:"Tu as <b>25 $</b> pour la pizza et 2 boissons. As-tu assez ?",court:"Pizza et 2 boissons avec 25 $",
-  items:[["Pizza moyenne",18.79],["Boisson",2.49],["Boisson",2.49]],note:"Taxes incluses.",rep:true,
-  ex:["J’arrondis : 19 $ + 2 $ + 2 $ = 23 $.","23 $, c’est moins que 25 $ : il reste environ 2 $.","J’ai assez. Le vrai total est 23,77 $."]},
- {id:"B9",st:5,el:"exp",type:"texte",truc:"t3",titre:"Explique à un ami comment tu as su si 25 $ suffisait pour la pizza et les boissons.",court:"Explication écrite : la pizza",
-  ex:["J’ai arrondi chaque prix : 19 $, 2 $ et 2 $.","J’ai additionné : 23 $.","23 $, c’est moins que 25 $, donc j’ai assez."]},
- {id:"B10",st:6,el:"est",type:"curseur",truc:"t2",titre:"Environ combien vas-tu dépenser au match ?",court:"Billet, hot-dog, chocolat chaud",
-  items:[["Billet étudiant",14.50],["Hot-dog",4.75],["Chocolat chaud",2.95]],note:"Taxes incluses.",min:10,max:35,step:1,ini:10,okMin:22,okMax:24,
-  ex:["J’arrondis : 14,50 $ devient 15 $ (le milieu, je monte).","4,75 $ devient 5 $ et 2,95 $ devient 3 $.","15 + 5 + 3 = 23 $. Le vrai total est 22,20 $."]},
- {id:"B11",st:6,el:"est",type:"vf",truc:"t6",titre:"Ton ami dit : « 4 billets à 14,50 $, ça fait environ 60 $. » Vrai ou faux ?",court:"4 billets à 14,50 $ : environ 60 $ ?",rep:true,
-  ex:["J’arrondis le prix d’un billet : 14,50 $ devient 15 $.","4 × 15 $ = 60 $.","C’est vrai ! Le vrai total est 58 $."]},
- {id:"S1",st:7,el:"tax",type:"tri",truc:"t4",titre:"Trie les produits : taxés ou pas taxés ?",court:"Trier : taxé ou pas taxé",
-  bins:["Pas taxé","Taxé"],items:[["Pommes",0],["Lait",0],["Pain",0],["Œufs",0],["Croustilles",1],["Boisson gazeuse",1],["Bonbons",1],["Savon à vaisselle",1]],
-  ex:["Les aliments de base ne sont pas taxés : pommes, lait, pain, œufs.","Les grignotines et les sucreries sont taxées : croustilles, bonbons, boisson gazeuse.","Les produits ménagers sont taxés : savon à vaisselle."]},
- {id:"S2",st:7,el:"est",type:"erreur",truc:"t2",titre:"Un montant du reçu est faux. Estime, puis touche la ligne qui est fausse.",court:"Trouver l’erreur dans un reçu",
-  lignes:[["Céréales",4.99],["Lait 2 L",5.29],["Bananes",1.89],["Croustilles (T)",4.49],["Sous-total",26.66],["TPS + TVQ",0.67],["Total",27.33]],bad:[4,6],
-  ex:["J’estime les articles : 5 + 5 + 2 + 4 = 16 $.","Le sous-total devrait être environ 16 $, pas 26,66 $.","Il y a une erreur de 10 $ ! Le vrai sous-total est 16,66 $ et le vrai total, 17,33 $."]},
- {id:"S3",st:8,el:"tax",type:"qcm",truc:"t4",titre:"Avec les taxes, environ combien vas-tu payer ?",court:"Jean Coutu : 3 produits de soins + taxes",
-  items:[["Shampoing",7.99],["Déodorant",5.49],["Baume à lèvres",3.29]],note:"Tous ces produits sont taxés.",
-  opts:["Environ 16 $","Environ 18 $ à 19 $","Environ 24 $"],rep:1,
-  ex:["J’arrondis : 8 + 5 + 3 = 16 $.","10 % de 16 $ : je recule la virgule, 1,60 $.","La moitié de 1,60 $ : 0,80 $.","Taxes : environ 1,60 $ + 0,80 $ = 2,40 $.","16 $ + 2,40 $ = environ 18,40 $. Le vrai total est 19,28 $."]},
- {id:"S4",st:8,el:"tax",type:"curseur",truc:"t4",titre:"Avec les taxes, environ combien ?",court:"Brosse à dents, dentifrice, savon + taxes",
-  items:[["Brosse à dents",4.49],["Dentifrice",3.79],["Savon",2.89]],note:"Tous ces produits sont taxés.",min:8,max:20,step:.5,ini:8,okMin:12,okMax:14,
-  ex:["J’arrondis : 4 + 4 + 3 = 11 $.","10 % de 11 $ : 1,10 $. La moitié : 0,55 $.","Taxes : environ 1,65 $.","11 $ + 1,65 $ = environ 12,65 $. Le vrai total est 12,84 $."]},
- {id:"S5",st:9,el:"tax",type:"qcm",truc:"t5",titre:"Un manteau d’hiver à <b>120 $</b> est en solde à <b>25 %</b>. Avec les taxes, environ combien ?",court:"Manteau 120 $ − 25 % + taxes",
-  opts:["90 $","Environ 103,50 $","Environ 138 $","120 $"],rep:1,
-  ex:["Rabais d’abord : 25 %, c’est le quart. Le quart de 120 $, c’est 30 $.","120 $ − 30 $ = 90 $.","Taxes ensuite : 10 % de 90 $ = 9 $, et la moitié = 4,50 $.","90 $ + 13,50 $ = environ 103,50 $."]},
- {id:"S6",st:9,el:"cmp",type:"assez",truc:"t5",budget:75,titre:"Des bottes à <b>79,99 $</b>, en solde à <b>20 %</b>. Avec les taxes, as-tu assez avec 75 $ ?",court:"Bottes 79,99 $ − 20 % + taxes, avec 75 $",
-  items:[["Bottes d’hiver",79.99],["Rabais","− 20 %"],["Taxes","+ environ 15 %"]],rep:true,
-  ex:["Rabais : 79,99 $ est presque 80 $. 20 % de 80 $ = 16 $.","80 $ − 16 $ = 64 $.","Taxes : 6,40 $ + 3,20 $ = 9,60 $.","64 $ + 9,60 $ = environ 73,60 $. C’est serré avec 75 $ !","Je vérifie : le vrai total est 73,57 $. J’ai assez, il reste 1,43 $."]},
- {id:"F1",st:10,el:"tax",type:"curseur",truc:"t4",titre:"Avec les taxes, environ combien coûte ton party ?",court:"Party : 5 articles taxés",
-  items:[["Gros sac de bonbons",9.97],["Croustilles",4.49],["Croustilles",4.49],["Boisson gazeuse 2 L",2.99],["Décorations",6.25]],note:"Tous ces articles sont taxés.",min:20,max:45,step:.5,ini:20,okMin:30.5,okMax:34,
-  ex:["J’arrondis : 10 + 4 + 4 + 3 + 6 = 27 $.","10 % de 27 $ : 2,70 $. La moitié : 1,35 $.","Taxes : environ 4,05 $.","27 $ + 4,05 $ = environ 31 $. Le vrai total est 32,41 $."]},
- {id:"F2",st:10,el:"cmp",type:"assez",truc:"t3",budget:30,titre:"Tu as <b>30 $</b>. As-tu assez pour tout acheter ?",court:"Party avec 30 $",
-  items:[["Mon estimation avec les taxes","environ 31 $"]],rep:false,
-  ex:["Mon estimation avec les taxes : environ 31 $.","31 $, c’est plus que 30 $.","Je n’ai pas assez : le vrai total est 32,41 $, il manque 2,41 $."]},
- {id:"F3",st:10,el:"exp",type:"texte",truc:"t3",titre:"Il te manque un peu d’argent. Quel article enlèves-tu pour respecter ton budget de 30 $ ? Explique comment tu le sais.",court:"Explication écrite : le party",
-  ex:["Il me manque environ 2 $ ou 3 $.","J’enlève un sac de croustilles : environ 4,50 $ + 0,70 $ de taxes = environ 5 $ de moins.","Mon party coûtera environ 27 $. C’est moins que 30 $."]}
-];
-
-const TRUCS={
- t1:{titre:"Le dollar le plus proche",l:["Je regarde les cents.","50 ¢ ou plus : je monte au dollar suivant.","Moins de 50 ¢ : je garde le même dollar."],v:()=>droite(2,2.85,{fleche:1})},
- t2:{titre:"J’additionne des dollars ronds",l:["J’arrondis chaque prix au dollar le plus proche.","J’additionne les dollars ronds de tête.","Mon estimation est proche du vrai total."],v:()=>recuArr([["Lait",5.29],["Pain",3.79]])},
- t3:{titre:"Assez ou pas assez ?",l:["J’estime le total.","Je compare avec mon argent.","Si c’est serré, je vérifie avec la calculatrice."],v:()=>billets(20)},
- t4:{titre:"Les taxes de tête",l:["Au Québec, les taxes font environ 15 %.","10 % : je recule la virgule (20 $ → 2 $).","J’ajoute la moitié du 10 % (2 $ → 1 $).","Repère : environ 1,50 $ pour chaque 10 $.","Pas de taxes sur les aliments de base. Taxés : grignotines, sucreries, restaurant, produits ménagers et de soins."],v:()=>taxBar(20,3)},
- t5:{titre:"Rabais d’abord, taxes ensuite",l:["J’enlève le rabais : 25 %, c’est le quart; 50 %, c’est la moitié; 10 %, je recule la virgule.","Ensuite, j’ajoute environ 15 % de taxes sur le nouveau prix."],v:()=>""},
- t6:{titre:"Plusieurs fois le même produit",l:["J’arrondis le prix d’un seul produit.","Je multiplie par le nombre de produits."],v:()=>`<div class="eq">4,89 $ → 5 $ &nbsp; 3 × 5 $ = 15 $</div>`}
-};
-
-/* ---------------- visuels ---------------- */
+/* ================= visuels ================= */
 function droite(a,p,o={}){
- const W=640,x0=50,x1=590,y=100,X=t=>x0+(t-a)*(x1-x0);
- let s=`<svg viewBox="0 0 ${W} 180" class="dr" role="img" aria-label="Droite de ${a} $ à ${a+1} $"><defs><marker id="ah${a}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#C9733A"/></marker></defs>`;
+ const W=640,x0=50,x1=590,y=100,X=t=>x0+(t-a)*(x1-x0),u=U?" "+U:"";
+ let s=`<svg viewBox="0 0 ${W} 180" class="dr" role="img" aria-label="Droite de ${a} à ${a+1}"><defs><marker id="ah${a}" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#C9733A"/></marker></defs>`;
  s+=`<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="#4A4F55" stroke-width="6" stroke-linecap="round"/>`;
  for(let k=0;k<=10;k++){const xx=X(a+k/10),big=k%5==0;s+=`<line x1="${xx}" y1="${y-(big?22:11)}" x2="${xx}" y2="${y+(big?22:11)}" stroke="#4A4F55" stroke-width="${big?5:3}"/>`}
- s+=`<text x="${x0}" y="${y+62}" class="dl">${a} $</text><text x="${x1}" y="${y+62}" class="dl">${a+1} $</text>`;
- s+=`<text x="${X(a+.5)}" y="${y+50}" class="dm">milieu</text>`;
+ s+=`<text x="${x0}" y="${y+62}" class="dl">${a}${u}</text><text x="${x1}" y="${y+62}" class="dl">${a+1}${u}</text><text x="${X(a+.5)}" y="${y+50}" class="dm">milieu</text>`;
  if(o.mid)s+=`<circle cx="${X(a+.5)}" cy="${y}" r="13" fill="#E3BF6A" class="midS" style="transform-origin:${X(a+.5)}px ${y}px"/>`;
  if(p!=null){const xp=X(p),near=p-a>=.5-1e-9?a+1:a;
-  if(o.fleche){const xn=X(near),d=xn>xp?-1:1;s+=`<g class="fl"><line x1="${xp}" y1="${y-14}" x2="${xn+d*10}" y2="${y-14}" stroke="#C9733A" stroke-width="6" marker-end="url(#ah${a})"/><text x="${(xp+xn)/2}" y="${y+40}" class="dm" style="fill:#C9733A">plus proche de ${near} $</text></g>`}
+  if(o.fleche){const xn=X(near),d=xn>xp?-1:1;s+=`<g class="fl"><line x1="${xp}" y1="${y-14}" x2="${xn+d*10}" y2="${y-14}" stroke="#C9733A" stroke-width="6" marker-end="url(#ah${a})"/><text x="${(xp+xn)/2}" y="${y+40}" class="dm" style="fill:#C9733A">plus proche de ${near}${u}</text></g>`}
   s+=`<g class="mk" style="--x:${(xp-x0).toFixed(1)}px"><g transform="translate(${x0},0)"><path d="M0,${y-10} l-13,-24 h26 z" fill="#C9733A"/><rect x="-50" y="${y-74}" width="100" height="40" rx="11" fill="#C9733A"/><text x="0" y="${y-46}" class="mkt">${fr(p)}</text></g></g>`}
  return s+"</svg>"}
-function recu(items,note){return `<div class="recu">${items.map((it,k)=>`<div class="rl" style="animation-delay:${k*.1}s"><span>${E(it[0])}</span><b>${typeof it[1]=="number"?fr(it[1]):E(it[1])}</b></div>`).join("")}${note?`<div class="rn">${E(note)}</div>`:""}</div>`}
-function recuArr(items){return `<div class="recu">${items.map((it,k)=>`<div class="rl" style="animation-delay:${k*.25}s"><span>${E(it[0])}</span><b>${fr(it[1])}<span class="arr">→ ${rond(it[1])} $</span></b></div>`).join("")}</div>`}
+const val=v=>typeof v=="number"?fr(v):E(v);
+function recu(items,note){return `<div class="recu">${items.map((it,k)=>`<div class="rl" style="animation-delay:${k*.1}s"><span>${E(it[0])}</span><b>${val(it[1])}</b></div>`).join("")}${note?`<div class="rn">${E(note)}</div>`:""}</div>`}
+function recuArr(items){return `<div class="recu">${items.map((it,k)=>`<div class="rl" style="animation-delay:${k*.25}s"><span>${E(it[0])}</span><b>${fr(it[1])}<span class="arr">→ ${rond(it[1])}${U?" "+U:""}</span></b></div>`).join("")}</div>`}
 const coin=(cl="")=>`<svg class="coin ${cl}" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20" fill="#D9AE45" stroke="#8a6d1f" stroke-width="3"/><circle cx="22" cy="22" r="14" fill="none" stroke="#b58d2c" stroke-width="1.5"/><text x="22" y="27" text-anchor="middle" font-size="13" font-weight="900" fill="#5a4410" font-family="Arial">1 $</text></svg>`;
 const BILL={50:"#C2453D",20:"#4E9A5B",10:"#7B5AA6",5:"#3D7CC9"};
 function billets(m){let r=m,out=[];for(const b of [50,20,10,5]){while(r>=b){out.push(b);r-=b}}
  return `<div class="wallet">${out.map((b,k)=>`<svg class="bill pop" style="animation-delay:${k*.15}s" viewBox="0 0 120 58" aria-hidden="true"><rect width="120" height="58" rx="7" fill="${BILL[b]}"/><rect x="5" y="5" width="110" height="48" rx="5" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2"/><circle cx="34" cy="29" r="15" fill="#fff" fill-opacity=".3"/><text x="86" y="38" text-anchor="middle" font-size="24" font-weight="900" fill="#fff" font-family="Arial">${b} $</text></svg>`).join("")}<span class="hand" style="font-size:26px">Dans mon portefeuille : ${m} $</span></div>`}
 function taxBar(base,step){const t10=base/10,t5=base/20,tot=base+t10+t5,W=v=>(v/tot*100).toFixed(1)+"%";
- return `<div class="taxb"><div style="white-space:nowrap"><span class="seg" style="width:${W(base)};background:#8a7f76">${fm(base)}</span>${step>=1?`<span class="seg" style="width:${W(t10)};background:#C9733A;animation-delay:.2s">${step>=1?fm(t10):""}</span>`:""}${step>=2?`<span class="seg" style="width:${W(t5)};background:#E3BF6A;animation-delay:.2s;color:#4A4F55">${fm(t5)}</span>`:""}</div>
+ return `<div class="taxb"><div style="white-space:nowrap"><span class="seg" style="width:${W(base)};background:#8a7f76">${fm(base)}</span>${step>=1?`<span class="seg" style="width:${W(t10)};background:#C9733A;animation-delay:.2s">${fm(t10)}</span>`:""}${step>=2?`<span class="seg" style="width:${W(t5)};background:#E3BF6A;animation-delay:.2s;color:#4A4F55">${fm(t5)}</span>`:""}</div>
  <div class="row sp small" style="margin-top:6px"><span>prix</span>${step>=1?"<span>+ 10 %</span>":""}${step>=2?"<span>+ la moitié</span>":""}</div>${step>=3?`<p class="eq pop">≈ ${fm(tot)}</p>`:""}</div>`}
-function facade(st){const c=st.c;let aw="";for(let k=0;k<10;k++)aw+=`<path d="M${20+k*32},70 h32 v16 q-16,12 -32,0 z" fill="${k%2?"#fff":c}"/>`;
- return `<svg viewBox="0 0 360 210" style="width:100%;max-width:420px;display:block;margin:auto" class="pop" role="img" aria-label="${E(st.n)}">
- <rect x="20" y="40" width="320" height="160" rx="8" fill="#F3E7DA"/><rect x="8" y="18" width="344" height="52" rx="12" fill="${c}"/>
- <text x="180" y="55" text-anchor="middle" font-family="PH,cursive" font-size="${st.n.length>18?24:30}" fill="#fff">${E(st.n)}</text>${aw}
- <rect x="42" y="104" width="86" height="62" rx="6" fill="#CFE7F1"/><path d="M50,112 l24,0 l-18,30 z" fill="#fff" opacity=".6"/>
- <rect x="232" y="104" width="86" height="62" rx="6" fill="#CFE7F1"/><path d="M240,112 l24,0 l-18,30 z" fill="#fff" opacity=".6"/>
- <rect x="150" y="100" width="60" height="100" rx="6" fill="#8a7f76"/><rect x="156" y="106" width="48" height="60" rx="4" fill="#CFE7F1"/><circle cx="198" cy="160" r="3" fill="#FFFDF9"/>
- <rect x="0" y="198" width="360" height="12" rx="4" fill="#D8C7BB"/></svg>`}
-function foxFace(w){return FOX.replace(/width="\d+"/,`width="${w}" class="fx"`).replace(/height="\d+"/,"")}
+/* visuel déclaratif (config) -> HTML */
+function vis(v){if(!v)return "";if(typeof v==="string")return v;switch(v.type){
+ case"droite":return droite(v.a,v.p==null?null:v.p,{fleche:v.fleche,mid:v.milieu});
+ case"recu":return recu(v.articles,v.note);case"recuArrondi":return recuArr(v.articles);
+ case"billets":return billets(v.montant);case"taxes":return taxBar(v.base,v.etape==null?3:v.etape);
+ case"grand":return `<div class="eq pop">${v.html}</div>`;
+ case"colonnes":return `<div class="cols">${v.colonnes.map((c,k)=>`<div style="background:${c.couleur||(k?"#FBEDE4":"#E3F3E8")}"><b>${E(c.titre)}</b><br>${E(c.texte)}</div>`).join("")}</div>`;
+ case"mascotte":return mascotte(v.taille||140)+(v.html?`<div class="eq">${v.html}</div>`:"");
+ case"decor":return decor(v.decor,{n:v.nom||"",c:v.couleur});
+ case"image":return `<img src="${E(v.src)}" alt="${E(v.alt||"")}" style="max-width:100%;max-height:260px;border-radius:14px">`;
+ case"html":return v.html;default:return ""}}
 
-/* ---------------- capsules ---------------- */
-const MAXI=[["Lait 2 L",5.29],["Pain",3.79],["Bleuets du Lac",4.99],["Sac de pommes",5.49]];
-const CAPS={
- arrondir:{titre:"Arrondir au dollar le plus proche",sc:[
-  {t:"Un café coûte 2,39 $. Regarde où il se place sur la droite.",v:()=>droite(2,2.39)},
-  {t:"Le milieu entre 2 $ et 3 $, c’est 2,50 $.",v:()=>droite(2,null,{mid:1})},
-  {t:"2,39 $ est avant le milieu. Il est plus proche de 2 $.",v:()=>droite(2,2.39,{fleche:1})},
-  {t:"Un muffin coûte 2,85 $. Il est après le milieu : plus proche de 3 $.",v:()=>droite(2,2.85,{fleche:1})},
-  {t:"Le truc du renard : je regarde les cents. 50 ¢ ou plus, je monte. Moins de 50 ¢, je garde le dollar.",v:()=>`${foxFace(130)}<div class="eq">2,39 $ → 2 $<br>2,85 $ → 3 $<br>2,50 $ → 3 $</div>`}]},
- total:{titre:"Estimer un total",sc:[
-  {t:"Au Maxi, ton panier contient 4 articles.",v:()=>recu(MAXI)},
-  {t:"J’arrondis chaque prix au dollar le plus proche.",v:()=>recuArr(MAXI)},
-  {t:"J’additionne les dollars ronds : 5 + 4 + 5 + 5 = 19 $.",v:()=>`<div class="eq pop">5 + 4 + 5 + 5 = 19 $</div>`},
-  {t:"Le vrai total est 19,56 $. Mon estimation est très proche !",v:()=>`<div class="eq pop">≈ 19 $ &nbsp;|&nbsp; vrai : 19,56 $</div>`}]},
- assez:{titre:"Assez ou pas assez ?",sc:[
-  {t:"Tu as 20 $ pour le cinéma.",v:()=>billets(20)},
-  {t:"Billet 10,99 $, popcorn 6,49 $, boisson 3,79 $. J’arrondis et j’additionne : 11 + 6 + 4 = 21 $.",v:()=>recuArr([["Billet",10.99],["Popcorn",6.49],["Boisson",3.79]])},
-  {t:"21 $, c’est plus que 20 $. Je n’ai pas assez !",v:()=>`<div class="eq pop">21 $ &gt; 20 $</div>`},
-  {t:"Si c’est serré, je vérifie avec la calculatrice avant de passer à la caisse.",v:()=>foxFace(150)}]},
- taxes:{titre:"Les taxes de tête",sc:[
-  {t:"Au Québec, on paie environ 15 % de taxes sur plusieurs produits. Exemple : un achat de 20 $.",v:()=>taxBar(20,0)},
-  {t:"10 % de 20 $ : je recule la virgule. Ça fait 2 $.",v:()=>taxBar(20,1)},
-  {t:"J’ajoute la moitié de 2 $, donc 1 $. Les taxes font environ 3 $.",v:()=>taxBar(20,2)},
-  {t:"Total : 20 $ + 3 $ = environ 23 $. Repère : environ 1,50 $ pour chaque 10 $.",v:()=>taxBar(20,3)},
-  {t:"Pas de taxes sur les aliments de base. Taxés : grignotines, sucreries, boissons gazeuses, restaurant, produits ménagers et de soins.",v:()=>`<div class="cols"><div style="background:#E3F3E8"><b>Pas taxé</b><br>fruits, légumes, lait, pain, œufs, viande</div><div style="background:#FBEDE4"><b>Taxé</b><br>croustilles, bonbons, boisson gazeuse, restaurant, savon, shampoing</div></div>`}]},
- rabais:{titre:"Rabais d’abord, taxes ensuite",sc:[
-  {t:"Un manteau coûte 120 $. Il est en solde à 25 %.",v:()=>`<div class="eq pop">120 $ &nbsp; − 25 %</div>`},
-  {t:"25 %, c’est le quart. Le quart de 120 $, c’est 30 $.",v:()=>`<div class="eq">30 $ + 30 $ + 30 $ + <s style="color:#A9372B">30 $</s></div>`},
-  {t:"120 $ − 30 $ = 90 $. C’est le prix en solde.",v:()=>`<div class="eq pop">120 $ − 30 $ = 90 $</div>`},
-  {t:"Ensuite, les taxes sur 90 $ : 9 $ + 4,50 $ = 13,50 $.",v:()=>taxBar(90,2)},
-  {t:"Prix final : environ 103,50 $.",v:()=>taxBar(90,3)}]}
-};
+/* ================= capsules ================= */
 function capsule(el,keys,fin,finTxt){
- const sc=keys.flatMap(k=>CAPS[k].sc.map(s=>Object.assign({cap:CAPS[k].titre},s)));let i=0,auto=false;
+ const sc=keys.filter(k=>CAPS[k]).flatMap(k=>CAPS[k].sc.map(s=>Object.assign({cap:CAPS[k].titre},s)));if(!sc.length){if(fin)fin();return}let i=0,auto=false;
  el.innerHTML=`<div class="cap"><div class="row sp small"><b id="cpT"></b><span id="cpN"></span></div><div class="bar"><i id="cpB"></i></div><div class="cap-v" id="cpV"></div><p class="cap-txt" id="cpX"></p>
  <div class="row ctr"><button id="cpP" aria-label="Précédent">◀</button><button class="say" id="cpS">🔊 Écouter</button><button class="truc" id="cpA">▶ Lecture avec la voix</button><button class="go" id="cpN2">Suivant ▶</button></div></div>`;
  const q=s=>el.querySelector(s);
  function show(){const s=sc[i];q("#cpT").textContent=s.cap;q("#cpN").textContent=(i+1)+" / "+sc.length;q("#cpB").style.width=((i+1)/sc.length*100)+"%";
-  q("#cpV").innerHTML=s.v();q("#cpX").textContent=s.t;q("#cpX").classList.remove("monte");void q("#cpX").offsetWidth;q("#cpX").classList.add("monte");
+  q("#cpV").innerHTML=vis(s.v);q("#cpX").textContent=s.t;q("#cpX").classList.remove("monte");void q("#cpX").offsetWidth;q("#cpX").classList.add("monte");
   q("#cpP").disabled=i==0;q("#cpN2").textContent=i==sc.length-1?(finTxt||"Terminé ✓"):"Suivant ▶";
   if(auto)dire(s.t,()=>{if(!auto)return;if(i<sc.length-1){setTimeout(()=>{if(auto){i++;show()}},700)}else auto=false})}
  q("#cpP").onclick=()=>{auto=false;try{speechSynthesis.cancel()}catch(e){}if(i>0){i--;show()}};
- q("#cpS").onclick=()=>{auto=false;dire(sc[i].t)};
- q("#cpA").onclick=()=>{auto=true;show()};
- q("#cpN2").onclick=()=>{auto=false;try{speechSynthesis.cancel()}catch(e){}if(i<sc.length-1){i++;show()}else if(fin)fin()};
- show()}
+ q("#cpS").onclick=()=>{auto=false;dire(sc[i].t)};q("#cpA").onclick=()=>{auto=true;show()};
+ q("#cpN2").onclick=()=>{auto=false;try{speechSynthesis.cancel()}catch(e){}if(i<sc.length-1){i++;show()}else if(fin)fin()};show()}
 
-/* ---------------- état ---------------- */
-const CLE="estimer-saguenay-v1";
+/* ================= état ================= */
+const CLE="tournee-"+(CFG.id||"jeu");
 let S=nouvel();
-function nouvel(){return {prenom:"",i:0,rec:{},textes:{},vus:{},debut:null,fin:null,auto:{},reinv:{caps:[],panier:null,defi:null},etape:"accueil",tps:0,partiel:false}}
+function nouvel(){return {prenom:"",i:0,rec:{},textes:{},vus:{},debut:null,fin:null,auto:{},reinv:{caps:[],panier:null,defi:null,creation:null},etape:"accueil",tps:0,partiel:false}}
+function save(){try{localStorage.setItem(CLE,JSON.stringify(S))}catch(e){}}
+function charge(){try{const s=JSON.parse(localStorage.getItem(CLE)||"null");if(s&&s.rec)return s}catch(e){}return null}
 function majFin(on){const b=document.getElementById("fin");b.hidden=!(on&&Object.keys(S.rec).length>0)}
 const nbFaits=()=>Q.filter(q=>S.rec[q.id]).length;
 const dernierNiv=()=>{const f=Q.filter(q=>S.rec[q.id]);return LV[ST[(f.length?f[f.length-1]:Q[0]).st].lv].n};
 const dureeMin=()=>Math.max(1,Math.round((S.tps||0)/60000));
-function save(){try{localStorage.setItem(CLE,JSON.stringify(S))}catch(e){}}
-function charge(){try{const s=JSON.parse(localStorage.getItem(CLE)||"null");if(s&&s.rec)return s}catch(e){}return null}
-const haut=()=>window.scrollTo({top:0,behavior:"smooth"});
-
 function fete(){const c=["#C9733A","#E3BF6A","#F5C6C2","#CFE9D7","#DDF5F2","#8A6100"];for(let k=0;k<30;k++){const d=document.createElement("i");d.className="cf";d.style.left=Math.random()*100+"vw";d.style.background=c[k%c.length];d.style.animationDuration=(1+Math.random()*1.2)+"s";d.style.animationDelay=Math.random()*.3+"s";document.body.appendChild(d);setTimeout(()=>d.remove(),2800)}
  const f=document.querySelector(".qfox");if(f){f.classList.remove("saute");void f.offsetWidth;f.classList.add("saute")}}
 
-/* ---------------- écrans ---------------- */
-function accueil(){
- majFin(false);const s=charge(),reprise=s&&s.debut&&s.i<Q.length,vuBilan=s&&s.fin;
- app.innerHTML=`<div class="row" style="flex-wrap:nowrap;gap:16px;align-items:center;margin-top:10px"><div class="fox">${foxFace(150)}</div><div><p class="small" style="margin:0">PPS-Z128 · Budget et consommation · avec Mélanie</p><h1>Estimer au Saguenay</h1><p style="margin:0">La grande révision, du niveau Érable au niveau Sapin. Environ 30 minutes.</p></div></div>
- <div class="card monte"><h3>Comment ça marche</h3><ul style="margin:6px 0;padding-left:22px"><li>Tu fais une tournée de Jonquière à Chicoutimi : 11 arrêts, 27 défis.</li><li>À chaque niveau, le renard te montre ses trucs. Tu peux les revoir pendant les défis.</li><li>Tu as 2 essais par défi. Après chaque réponse, tu vois l’explication étape par étape.</li><li>À la fin, tu télécharges ton bilan en PDF pour Mélanie.</li></ul>${say("Tu fais une tournée de Jonquière à Chicoutimi : 11 arrêts, 27 défis. À chaque niveau, le renard te montre ses trucs. Tu as 2 essais par défi. À la fin, tu télécharges ton bilan pour Mélanie.")}</div>
+/* ================= accueil, carte, intro, station ================= */
+function accueil(){majFin(false);
+ const s=charge(),reprise=s&&s.debut&&s.i<Q.length,vuBilan=s&&s.fin;
+ const txtM=`Tu fais une tournée ${CFG.carte&&CFG.carte.trajet?CFG.carte.trajet+" ":""}: ${ST.length} arrêts, ${Q.length} défis. À chaque niveau, ${CFG.mascotte&&CFG.mascotte.nom||"ton guide"} te montre ses trucs. Tu as 2 essais par défi. À la fin, tu télécharges ton bilan pour ${PROF}.`;
+ app.innerHTML=`<div class="row" style="flex-wrap:nowrap;gap:16px;align-items:center;margin-top:10px"><div class="fox">${mascotte(150)}</div><div><p class="small" style="margin:0">${E(CFG.sousTitre||"")}</p><h1>${E(CFG.titre)}</h1><p style="margin:0">${E(CFG.accroche||"")} Environ ${CFG.duree||30} minutes.</p></div></div>
+ <div class="card monte"><h3>Comment ça marche</h3><ul style="margin:6px 0;padding-left:22px"><li>Tu fais une tournée ${E(CFG.carte&&CFG.carte.trajet||"")} : ${ST.length} arrêts, ${Q.length} défis.</li><li>À chaque niveau, ${E(CFG.mascotte&&CFG.mascotte.nom||"ton guide")} te montre ses trucs. Tu peux les revoir pendant les défis.</li><li>Tu as 2 essais par défi. Après chaque réponse, tu vois l’explication étape par étape.</li><li>Tu peux t’arrêter quand tu veux et voir ton bilan.</li><li>À la fin, tu télécharges ton bilan en PDF pour ${E(PROF)}.</li></ul>${say(txtM)}</div>
  <div class="card monte" style="animation-delay:.1s"><label for="pn"><b>Ton prénom</b></label><div class="row" style="margin-top:6px"><input type="text" id="pn" autocomplete="given-name" maxlength="30" value="${E(s&&s.prenom||"")}" style="flex:1;min-width:200px"></div>
  <div class="row mt">${reprise?`<button class="go" id="rep">Reprendre où j’étais (défi ${s.i+1})</button>`:""}${vuBilan?`<button id="vbi">Revoir mon bilan</button>`:""}<button class="${reprise||vuBilan?"":"go"}" id="nv">${reprise||vuBilan?"Recommencer au début":"C’est parti !"}</button></div></div>
  <p class="small" style="text-align:center">Rien n’est envoyé sur Internet : tes réponses restent sur cet appareil jusqu’à ce que tu télécharges ton bilan.</p>`;
  const pn=document.getElementById("pn");
  document.getElementById("nv").onclick=()=>{S=nouvel();S.prenom=pn.value.trim();S.debut=Date.now();S.etape="carte";save();carte(-1,0)};
  if(reprise)document.getElementById("rep").onclick=()=>{S=s;if(pn.value.trim())S.prenom=pn.value.trim();save();reprendre()};
- if(vuBilan)document.getElementById("vbi").onclick=()=>{S=s;if(pn.value.trim())S.prenom=pn.value.trim();save();bilan()};
-}
+ if(vuBilan)document.getElementById("vbi").onclick=()=>{S=s;if(pn.value.trim())S.prenom=pn.value.trim();save();bilan()}}
 function reprendre(){if(S.i>=Q.length){S.etape==="bilan"?bilan():autoeval();return}S.fin=null;S.partiel=false;save();const st=Q[S.i].st;if(!S.vus["L"+ST[st].lv])return intro(ST[st].lv);if(!S.vus["S"+st])return station(st);question()}
-
 function arreter(direct){majFin(false);try{speechSynthesis.cancel()}catch(e){}
  const go=()=>{S.fin=Date.now();S.partiel=S.i<Q.length;S.etape="autoeval";save();autoeval()};if(direct)return go();
- const n=nbFaits(),lv=dernierNiv();
- app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox">${foxFace(110)}</div><div><h2>Tu veux arrêter ici ?</h2><p style="margin:0">Tu as fait <b>${n} défi${n>1?"s":""} sur ${Q.length}</b> (niveau ${lv}).</p></div></div>
+ const n=nbFaits();
+ app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox">${mascotte(110)}</div><div><h2>Tu veux arrêter ici ?</h2><p style="margin:0">Tu as fait <b>${n} défi${n>1?"s":""} sur ${Q.length}</b> (niveau ${dernierNiv()}).</p></div></div>
  <div class="card"><p>C’est correct d’arrêter ! Ton bilan va montrer ce que tu as réussi. Les niveaux que tu n’as pas faits seront marqués « pas encore fait ».</p><p>Tu pourras continuer la tournée une autre fois, sur cet appareil.</p>${say("C’est correct d’arrêter ! Ton bilan va montrer ce que tu as réussi. Tu pourras continuer la tournée une autre fois.")}
  <div class="row mt"><button class="go" id="oui">Oui, voir mon bilan</button><button id="non">Non, je continue</button></div></div>`;
  document.getElementById("oui").onclick=go;document.getElementById("non").onclick=reprendre;haut()}
 document.getElementById("fin").onclick=()=>arreter();
-
-const POS=[[80,70],[240,62],[400,70],[560,62],[715,150],[560,228],[400,236],[240,228],[90,310],[300,350],[520,350]];
+function positions(n){const par=4,rows=Math.ceil(n/par),P=[];for(let k=0;k<n;k++){const r=Math.floor(k/par),j=k%par,x=r%2==0?90+j*206:708-j*206;P.push([x,70+r*130])}return {P,h:70+(rows-1)*130+70}}
 function carte(de,a){majFin(true);
- const finNiv=de>=0&&ST[de].lv!==ST[a].lv;const nom=S.prenom?", "+E(S.prenom):"";
- let road=`<polyline points="${POS.map(p=>p.join(",")).join(" ")}" fill="none" stroke="#D8C7BB" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${POS.map(p=>p.join(",")).join(" ")}" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="10 12"/>`;
- let stops=POS.map((p,k)=>{const lv=ST[k].lv,fait=k<a,ici=k==a;return `<g class="stop"><circle cx="${p[0]}" cy="${p[1]}" r="${ici?26:21}" fill="${fait?LVHEX[lv][1]:LVHEX[lv][0]}" stroke="${LVHEX[lv][1]}" stroke-width="4"/><text x="${p[0]}" y="${p[1]+7}" text-anchor="middle" font-weight="900" font-size="19" fill="${fait?"#fff":"#4A4F55"}">${fait?"✓":k+1}</text><text x="${p[0]}" y="${p[1]+(k>=8?48:-32)}" text-anchor="middle" font-size="15" font-weight="800" fill="#4A4F55">${E(ST[k].s||ST[k].n)}</text></g>`}).join("");
- const from=POS[Math.max(de,0)],to=POS[a];
+ const {P,h}=positions(ST.length),finNiv=de>=0&&ST[de].lv!==ST[a].lv,nom=S.prenom?", "+E(S.prenom):"",C=CFG.carte||{};
+ const pts=P.map(p=>p.join(",")).join(" ");
+ const stops=P.map((p,k)=>{const lv=ST[k].lv,fait=k<a,ici=k==a;return `<g><circle cx="${p[0]}" cy="${p[1]}" r="${ici?26:21}" fill="${fait?LVHEX[lv][1]:LVHEX[lv][0]}" stroke="${LVHEX[lv][1]}" stroke-width="4"/><text x="${p[0]}" y="${p[1]+7}" text-anchor="middle" font-weight="900" font-size="19" fill="${fait?"#fff":"#4A4F55"}">${fait?"✓":k+1}</text><text x="${p[0]}" y="${p[1]-32}" text-anchor="middle" font-size="15" font-weight="800" fill="#4A4F55">${E(ST[k].s||ST[k].n)}</text></g>`}).join("");
+ const ry=h>220?P[Math.min(P.length-1,4)][1]+65:h-20;
+ const from=P[Math.max(de,0)],to=P[a];
  app.innerHTML=`<div class="row sp"><h2>La tournée${nom}</h2><span class="pill" style="background:${LV[ST[a].lv].c}">Niveau ${LV[ST[a].lv].n}</span></div>
- <div class="card" style="padding:10px"><svg class="map" viewBox="0 0 800 400" role="img" aria-label="Carte de la tournée, arrêt ${a+1} sur 11">
- <path d="M0,282 C150,262 260,300 400,284 S650,262 800,286" fill="none" stroke="#CFE7F1" stroke-width="26" stroke-linecap="round" opacity=".8"/><text x="640" y="300" font-size="14" fill="#6b8fa0" font-style="italic">rivière Saguenay</text>
- <text x="40" y="128" font-size="15" fill="#8a7f76" font-weight="800">Jonquière</text><text x="700" y="392" font-size="15" fill="#8a7f76" font-weight="800">Chicoutimi</text>
- ${road}${stops}<g id="tok" style="transform:translate(${from[0]+12}px,${from[1]-10}px)"><g transform="scale(.26)">${FOX.replace(/<svg[^>]*>/,"").replace("</svg>","")}</g></g></svg></div>
+ <div class="card" style="padding:10px"><svg class="map" viewBox="0 0 800 ${h}" role="img" aria-label="Carte de la tournée, arrêt ${a+1} sur ${ST.length}">
+ ${C.riviere?`<path d="M0,${ry} C150,${ry-20} 260,${ry+18} 400,${ry} S650,${ry-22} 800,${ry+4}" fill="none" stroke="#CFE7F1" stroke-width="26" stroke-linecap="round" opacity=".8"/><text x="640" y="${ry+18}" font-size="14" fill="#6b8fa0" font-style="italic">${E(C.riviere)}</text>`:""}
+ <polyline points="${pts}" fill="none" stroke="#D8C7BB" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${pts}" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="10 12"/>
+ ${C.depart?`<text x="${P[0][0]}" y="${P[0][1]+46}" text-anchor="middle" font-size="15" fill="#8a7f76" font-weight="800">${E(C.depart)}</text>`:""}${C.arrivee&&P.length>1?`<text x="${P[P.length-1][0]}" y="${P[P.length-1][1]+46}" text-anchor="middle" font-size="15" fill="#8a7f76" font-weight="800">${E(C.arrivee)}</text>`:""}
+ ${stops}<g id="tok" style="transform:translate(${from[0]+12}px,${from[1]-10}px)"><g transform="scale(.26)">${MASCOTTE.replace(/<svg[^>]*>/,"").replace("</svg>","")}</g></g></svg></div>
  ${finNiv?`<div class="card monte" style="background:${LV[ST[de].lv].c}"><h3 style="margin:0">Bravo ! Tu as terminé le niveau ${LV[ST[de].lv].n}.</h3><p style="margin:4px 0 0">Tu peux continuer vers le niveau ${LV[ST[a].lv].n}, ou t’arrêter ici et voir ton bilan.</p></div>`:""}
- <div class="card monte"><p style="margin:0"><b>Prochain arrêt : ${E(ST[a].n)}</b> · ${E(ST[a].l)}</p><div class="row mt"><button class="go" id="go">Continuer ▶</button>${finNiv?`<button id="stop">Terminer ici et voir mon bilan</button>`:""}</div></div>`;
- if(finNiv)document.getElementById("stop").onclick=()=>arreter(true);
+ <div class="card monte"><p style="margin:0"><b>Prochain arrêt : ${E(ST[a].n)}</b>${ST[a].l?" · "+E(ST[a].l):""}</p><div class="row mt"><button class="go" id="go">Continuer ▶</button>${finNiv?`<button id="stop">Terminer ici et voir mon bilan</button>`:""}</div></div>`;
  requestAnimationFrame(()=>requestAnimationFrame(()=>{const t=document.getElementById("tok");if(t)t.style.transform=`translate(${to[0]+12}px,${to[1]-10}px)`}));
- document.getElementById("go").onclick=()=>{const lv=ST[a].lv;if(!S.vus["L"+lv])intro(lv);else station(a)};haut()}
-
-const INTRO={E:{k:["arrondir"],t:"Au niveau Érable, tu apprends à trouver le dollar le plus proche."},B:{k:["total","assez"],t:"Au niveau Bouleau, tu estimes un total et tu compares avec ton argent."},S:{k:["taxes","rabais"],t:"Au niveau Sapin, tu ajoutes les taxes et tu calcules les rabais."}};
+ document.getElementById("go").onclick=()=>{const lv=ST[a].lv;if(!S.vus["L"+lv])intro(lv);else station(a)};
+ if(finNiv)document.getElementById("stop").onclick=()=>arreter(true);haut()}
 function intro(lv){majFin(true);
- app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox">${foxFace(110)}</div><div><span class="pill" style="background:${LV[lv].c}">Niveau ${LV[lv].n}</span><h2>Les trucs du renard</h2><p style="margin:0">${INTRO[lv].t}</p></div></div><div id="cp" class="mt"></div><div class="row ctr mt"><button class="lien" id="sk">Passer et commencer les défis</button></div>`;
  const go=()=>{try{speechSynthesis.cancel()}catch(e){}S.vus["L"+lv]=1;save();station(Q[S.i].st)};
+ if(!INTRO[lv].k.length&&!INTRO[lv].t)return go();
+ app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox">${mascotte(110)}</div><div><span class="pill" style="background:${LV[lv].c}">Niveau ${LV[lv].n}</span><h2>Les trucs ${E(DU)}</h2><p style="margin:0">${E(INTRO[lv].t)}</p></div></div><div id="cp" class="mt"></div><div class="row ctr mt"><button class="lien" id="sk">Passer et commencer les défis</button></div>`;
  capsule(document.getElementById("cp"),INTRO[lv].k,go,"Je suis prêt ! ▶");document.getElementById("sk").onclick=go;haut()}
-
 function station(k){majFin(true);const st=ST[k];
- app.innerHTML=`<div class="row sp"><span class="pill" style="background:${LV[st.lv].c}">Niveau ${LV[st.lv].n}</span><span class="small">Arrêt ${k+1} sur 11</span></div>
- <div class="card">${facade(st)}<h2 style="text-align:center;margin-top:10px">${E(st.n)}</h2><p style="text-align:center;margin:0" class="small">${E(st.l)}</p><p class="monte" style="text-align:center">${E(st.txt)}</p><div class="row ctr">${say(st.n+". "+st.txt)}<button class="go" id="go">Commencer ▶</button></div></div>`;
- document.getElementById("go").onclick=()=>{S.vus["S"+k]=1;save();question()};haut()}
+ app.innerHTML=`<div class="row sp"><span class="pill" style="background:${LV[st.lv].c}">Niveau ${LV[st.lv].n}</span><span class="small">Arrêt ${k+1} sur ${ST.length}</span></div>
+ <div class="card">${decor(st.decor,st)}<h2 style="text-align:center;margin-top:10px">${E(st.n)}</h2>${st.l?`<p style="text-align:center;margin:0" class="small">${E(st.l)}</p>`:""}<p class="monte" style="text-align:center">${E(st.txt)}</p><div class="row ctr">${say(st.n+". "+st.txt)}<button class="go" id="go">Commencer ▶</button></div></div>
+ ${st.caps?`<h3>Avant de commencer : un nouveau truc</h3><div id="cp"></div>`:""}`;
+ const go=()=>{try{speechSynthesis.cancel()}catch(e){}S.vus["S"+k]=1;save();question()};
+ document.getElementById("go").onclick=go;if(st.caps)capsule(document.getElementById("cp"),st.caps,go,"Commencer les défis ▶");haut()}
 
-/* ---------------- questions ---------------- */
+/* ================= questions ================= */
 let cur=null;
 function question(){
  const q=Q[S.i],st=ST[q.st],lv=LV[st.lv];cur={q,tries:0,hint:false,done:false,t0:Date.now()};majFin(true);
+ const vocal=q.titre.replace(/<[^>]+>/g,"")+(q.items&&q.type!=="tri"?" "+q.items.map(it=>it[0]+" : "+(typeof it[1]=="number"?fr(it[1]):it[1])).join(". "):"");
  app.innerHTML=`<div class="row sp"><span class="pill" style="background:${lv.c}">${lv.n} · ${E(st.n)}</span><span class="small">Défi ${S.i+1} sur ${Q.length}</span></div>
  <div class="bar"><i style="width:${S.i/Q.length*100}%"></i></div>
- <div class="card monte" id="qc"><div class="row sp" style="align-items:flex-start;flex-wrap:nowrap"><h2 style="font-family:NU,Arial;font-size:23px;font-weight:700;margin:0">${q.titre}</h2><div class="qfox" style="flex:none">${foxFace(70)}</div></div>
- <div class="row" style="margin-top:6px">${say(q.titre.replace(/<[^>]+>/g,"")+(q.items&&q.type!=="tri"?" "+q.items.map(it=>it[0]+" : "+(typeof it[1]=="number"?fr(it[1]):it[1])).join(". "):""))}</div>
+ <div class="card monte" id="qc"><div class="row sp" style="align-items:flex-start;flex-wrap:nowrap"><h2 style="font-family:NU,Arial;font-size:23px;font-weight:700;margin:0">${q.titre}</h2><div class="qfox" style="flex:none">${mascotte(70)}</div></div>
+ <div class="row" style="margin-top:6px">${say(vocal)}</div>${q.visuel?`<div class="cap-v" style="min-height:0">${vis(q.visuel)}</div>`:""}
  ${q.items&&!["tri","jetons"].includes(q.type)?recu(q.items,q.note):""}<div id="zone"></div>
- <div class="row" style="margin-top:14px"><button class="truc" id="hb">🦊 Le truc du renard</button></div><div id="hint"></div><div id="fb"></div></div>`;
- document.getElementById("hb").onclick=indice;T[q.type](q);haut()}
+ ${q.truc&&TRUCS[q.truc]?`<div class="row" style="margin-top:14px"><button class="truc" id="hb">💡 Le truc ${E(DU)}</button></div>`:""}<div id="hint"></div><div id="fb"></div></div>`;
+ const hb=document.getElementById("hb");if(hb)hb.onclick=indice;T[q.type](q);haut()}
 function indice(){cur.hint=true;const t=TRUCS[cur.q.truc];
- document.getElementById("hint").innerHTML=`<div class="hint">${foxFace(90)}<div style="flex:1"><b>${E(t.titre)}</b><ul>${t.l.map(x=>`<li>${E(x)}</li>`).join("")}</ul>${t.v()}${say(t.titre+". "+t.l.join(" "))}</div></div>`}
-function repondre(ok,val){
+ document.getElementById("hint").innerHTML=`<div class="hint">${mascotte(90)}<div style="flex:1"><b>${E(t.titre)}</b><ul>${t.l.map(x=>`<li>${E(x)}</li>`).join("")}</ul>${vis(t.v)}${say(t.titre+". "+t.l.join(" "))}</div></div>`}
+function repondre(ok,v){
  if(cur.done)return;cur.tries++;const fb=document.getElementById("fb");
  if(ok||cur.tries>=2){cur.done=true;const pts=ok?(cur.tries==1?(cur.hint?.75:1):(cur.hint?.5:.6)):0;
-  S.rec[cur.q.id]={ok,t:cur.tries,h:cur.hint,pts,rep:val};S.tps=(S.tps||0)+Math.min(Date.now()-cur.t0,600000);save();majFin(true);if(ok)fete();explique(ok)}
- else{fb.innerHTML=`<p class="oups monte">Pas tout à fait. Regarde encore et essaie une 2<sup>e</sup> fois. Le truc du renard peut t’aider.</p>`;const c=document.getElementById("qc");c.classList.remove("shake");void c.offsetWidth;c.classList.add("shake")}}
+  S.rec[cur.q.id]={ok,t:cur.tries,h:cur.hint,pts,rep:v};S.tps=(S.tps||0)+Math.min(Date.now()-cur.t0,600000);save();majFin(true);if(ok)fete();explique(ok)}
+ else{fb.innerHTML=`<p class="oups monte">Pas tout à fait. Regarde encore et essaie une 2<sup>e</sup> fois.${cur.q.truc?" Le truc "+E(DU)+" peut t’aider.":""}</p>`;const c=document.getElementById("qc");c.classList.remove("shake");void c.offsetWidth;c.classList.add("shake")}}
 function explique(ok,titre){const q=cur.q;document.getElementById("zone").classList.add("fini");if(T[q.type].fin)T[q.type].fin(q);
  const tt=titre||(ok?"Bravo !":"Voici comment faire");
  document.getElementById("fb").innerHTML=`<div class="expl ${ok?"bon":"pasbon"}"><div class="row sp"><b style="font-size:21px">${tt}</b>${say(tt+" "+q.ex.join(" "),"Écouter l’explication")}</div><ol>${q.ex.map(x=>`<li>${E(x)}</li>`).join("")}</ol><div class="row"><button class="go" id="nx">${S.i==Q.length-1?"Terminer ▶":"Suivant ▶"}</button></div></div>`;
  const nx=document.getElementById("nx");nx.onclick=suivant;setTimeout(()=>{nx.scrollIntoView({behavior:"smooth",block:"center"});nx.focus({preventScroll:true})},350)}
 function suivant(){try{speechSynthesis.cancel()}catch(e){}const prev=Q[S.i].st;S.i++;save();
- if(S.i>=Q.length){S.fin=Date.now();S.etape="autoeval";save();return autoeval()}
+ if(S.i>=Q.length){S.fin=Date.now();S.partiel=false;S.etape="autoeval";save();return autoeval()}
  const st=Q[S.i].st;if(st!==prev)carte(prev,st);else question()}
-
+const numLu=s=>parseFloat(String(s).replace(",",".").replace(/[^\d.\-]/g,""));
 const T={
  droite(q){const z=document.getElementById("zone");
-  z.innerHTML=`<div id="dw">${droite(q.a,q.p)}</div><p class="consigne" style="text-align:center">Touche le dollar le plus proche.</p><div class="row ctr"><button class="big" data-v="${q.a}">${q.a} $</button><button class="big" data-v="${q.a+1}">${q.a+1} $</button></div>`;
-  z.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{const v=+b.dataset.v,ok=v===rond(q.p);b.classList.add(ok?"bonne":"mauvaise");if(!ok)b.disabled=true;repondre(ok,v+" $")})},
+  z.innerHTML=`<div id="dw">${droite(q.a,q.p)}</div><p class="consigne" style="text-align:center">Touche le nombre le plus proche.</p><div class="row ctr"><button class="big" data-v="${q.a}">${q.a}${U?" "+U:""}</button><button class="big" data-v="${q.a+1}">${q.a+1}${U?" "+U:""}</button></div>`;
+  z.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{const v=+b.dataset.v,ok=v===rond(q.p);b.classList.add(ok?"bonne":"mauvaise");if(!ok)b.disabled=true;repondre(ok,v+(U?" "+U:""))})},
  tri(q){const z=document.getElementById("zone");let sel=null;const place={};
   z.innerHTML=`<p class="consigne">Touche une étiquette, puis touche la bonne boîte.</p><div class="tags" id="tags">${shuffle(q.items.map((it,k)=>k)).map(k=>`<button class="tag" data-k="${k}">${E(q.items[k][0])}</button>`).join("")}</div>
   <div class="bins">${q.bins.map((b,j)=>`<div class="bin" data-j="${j}" tabindex="0" role="button" aria-label="${E(b)}"><b>${E(b)}</b><div class="in"></div></div>`).join("")}</div><div class="row ctr mt"><button class="go" id="vt" disabled>Vérifier</button></div>`;
@@ -476,9 +414,8 @@ const T={
   bins.forEach(b=>{b.onclick=()=>pose(b);b.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pose(b)}}});
   vt.onclick=()=>{const faux=q.items.map((it,k)=>k).filter(k=>place[k]!==q.items[k][1]);
    tags.forEach(t=>{const k=+t.dataset.k;t.classList.remove("bonne","mauvaise");t.classList.add(faux.includes(k)?"mauvaise":"bonne")});
-   const ok=!faux.length;const val=ok?"Tout bien trié":faux.length+" étiquette(s) mal placée(s)";
-   if(!ok&&cur.tries===0){faux.forEach(k=>{const t=z.querySelector(`.tag[data-k="${k}"]`);z.querySelector("#tags").appendChild(t);delete place[k]});maj()}
-   repondre(ok,val)};
+   const ok=!faux.length;if(!ok&&cur.tries===0){faux.forEach(k=>{const t=z.querySelector(`.tag[data-k="${k}"]`);z.querySelector("#tags").appendChild(t);delete place[k]});maj()}
+   repondre(ok,ok?"Tout bien trié":faux.length+" étiquette(s) mal placée(s)")};
   T.tri.fin=()=>{tags.forEach(t=>{const k=+t.dataset.k;bins[q.items[k][1]].querySelector(".in").appendChild(t)})}},
  jetons(q){const z=document.getElementById("zone");const n=q.items.map(()=>0);
   z.innerHTML=`<p class="consigne">Mets autant de pièces de 1 $ que le dollar le plus proche.</p>`+q.items.map((it,k)=>`<div class="jrow" id="jr${k}"><div class="jl"><span>${E(it[0])}</span><b>${fr(it[1])}</b></div><div class="jc"><button class="pm" data-k="${k}" data-d="-1" aria-label="Enlever une pièce">−</button><div class="tray" id="tr${k}" aria-live="polite"></div><button class="pm" data-k="${k}" data-d="1" aria-label="Ajouter une pièce">+</button></div></div>`).join("")+`<p class="tot" id="jt">En tout : 0 pièce</p><div class="row ctr"><button class="go" id="vj">Vérifier</button></div>`;
@@ -492,9 +429,9 @@ const T={
   z.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const k=+b.dataset.k,ok=k===q.rep;b.classList.add(ok?"bonne":"mauvaise");if(!ok)b.disabled=true;repondre(ok,q.opts[k])});
   T.qcm.fin=()=>z.querySelector(`[data-k="${q.rep}"]`).classList.add("bonne")},
  num(q){const z=document.getElementById("zone");
-  z.innerHTML=`<p class="consigne">Mon estimation :</p><div class="row"><input type="text" inputmode="decimal" id="ni" style="width:150px;text-align:center" aria-label="Mon estimation en dollars"><span style="font-size:28px;font-weight:900">$</span><button class="go" id="nv">Vérifier</button></div>`;
+  z.innerHTML=`<p class="consigne">Ma réponse :</p><div class="row"><input type="text" inputmode="decimal" id="ni" style="width:150px;text-align:center" aria-label="Ma réponse">${q.u?`<span style="font-size:28px;font-weight:900">${E(q.u)}</span>`:""}<button class="go" id="nv">Vérifier</button></div>`;
   const ni=z.querySelector("#ni");ni.focus({preventScroll:true});
-  const v=()=>{const x=parseFloat(ni.value.replace(",",".").replace(/[^\d.]/g,""));if(isNaN(x)){ni.classList.add("shake");return}repondre(x>=q.okMin&&x<=q.okMax,fm(x))};
+  const v=()=>{const x=numLu(ni.value);if(isNaN(x)){ni.classList.add("shake");return}repondre(x>=q.okMin&&x<=q.okMax,fmU(x,q.u))};
   z.querySelector("#nv").onclick=v;ni.onkeydown=e=>{if(e.key==="Enter")v()}},
  assez(q){const z=document.getElementById("zone");
   z.innerHTML=billets(q.budget)+`<div class="row ctr"><button class="big" style="font-size:24px" data-v="1">J’ai assez</button><button class="big" style="font-size:24px" data-v="0">Pas assez</button></div>`;
@@ -503,34 +440,38 @@ const T={
   const dessine=()=>{z.innerHTML=`<p class="consigne">Touche les étapes dans l’ordre : la 1<sup>re</sup>, puis la 2<sup>e</sup>…</p><div class="ord">${mel.map(k=>{const p=pris.indexOf(k);return `<button data-k="${k}" ${p>=0?'style="background:#FBE9DC"':""}><span class="num" style="${p>=0?"":"background:#D8C7BB"}">${p>=0?p+1:"?"}</span>${E(q.steps[k])}</button>`}).join("")}</div><div class="row ctr"><button id="oz">Recommencer</button><button class="go" id="ov" ${pris.length<q.steps.length?"disabled":""}>Vérifier</button></div>`;
    z.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{if(cur.done)return;const k=+b.dataset.k;if(!pris.includes(k))pris.push(k);dessine()});
    z.querySelector("#oz").onclick=()=>{if(cur.done)return;pris=[];dessine()};
-   z.querySelector("#ov").onclick=()=>{const ok=pris.every((k,j)=>k===j);const val=pris.map(k=>k+1).join("-");if(!ok&&cur.tries===0){pris=[]}repondre(ok,val);if(!cur.done)dessine()}};
+   z.querySelector("#ov").onclick=()=>{const ok=pris.every((k,j)=>k===j);const v=pris.map(k=>k+1).join("-");if(!ok&&cur.tries===0){pris=[]}repondre(ok,v);if(!cur.done)dessine()}};
   dessine()},
- curseur(q){const z=document.getElementById("zone");let v=q.ini;
-  z.innerHTML=`<p class="consigne">Glisse le curseur sur ton estimation.</p><div class="cv" id="cv">${fm(v)}</div><input type="range" id="rg" min="${q.min}" max="${q.max}" step="${q.step}" value="${v}" aria-label="Mon estimation"><div class="row sp small"><span>${q.min} $</span><span>${q.max} $</span></div><div class="row ctr"><button class="pm" id="rm" aria-label="Moins">−</button><button class="pm" id="rp" aria-label="Plus">+</button><button class="go" id="vc">C’est mon estimation</button></div>`;
-  const rg=z.querySelector("#rg"),cv=z.querySelector("#cv"),m=()=>{cv.textContent=fm(v);rg.value=v};
-  rg.oninput=()=>{v=+rg.value;m()};z.querySelector("#rm").onclick=()=>{v=Math.max(q.min,+(v-q.step).toFixed(2));m()};z.querySelector("#rp").onclick=()=>{v=Math.min(q.max,+(v+q.step).toFixed(2));m()};
-  z.querySelector("#vc").onclick=()=>repondre(v>=q.okMin&&v<=q.okMax,fm(v))},
+ curseur(q){const z=document.getElementById("zone");let v=q.ini==null?q.min:q.ini;
+  z.innerHTML=`<p class="consigne">Glisse le curseur sur ta réponse.</p><div class="cv" id="cv">${fmU(v,q.u)}</div><input type="range" id="rg" min="${q.min}" max="${q.max}" step="${q.step||1}" value="${v}" aria-label="Ma réponse"><div class="row sp small"><span>${fmU(q.min,q.u)}</span><span>${fmU(q.max,q.u)}</span></div><div class="row ctr"><button class="pm" id="rm" aria-label="Moins">−</button><button class="pm" id="rp" aria-label="Plus">+</button><button class="go" id="vc">C’est ma réponse</button></div>`;
+  const rg=z.querySelector("#rg"),cv=z.querySelector("#cv"),st=q.step||1,m=()=>{cv.textContent=fmU(v,q.u);rg.value=v};
+  rg.oninput=()=>{v=+rg.value;m()};z.querySelector("#rm").onclick=()=>{v=Math.max(q.min,+(v-st).toFixed(2));m()};z.querySelector("#rp").onclick=()=>{v=Math.min(q.max,+(v+st).toFixed(2));m()};
+  z.querySelector("#vc").onclick=()=>repondre(v>=q.okMin&&v<=q.okMax,fmU(v,q.u))},
  vf(q){const z=document.getElementById("zone");
   z.innerHTML=`<div class="row ctr mt"><button class="big" data-v="1">Vrai</button><button class="big" data-v="0">Faux</button></div>`;
   z.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{const v=b.dataset.v==="1",ok=v===q.rep;b.classList.add(ok?"bonne":"mauvaise");if(!ok)b.disabled=true;repondre(ok,v?"Vrai":"Faux")})},
  erreur(q){const z=document.getElementById("zone");
-  z.innerHTML=`<div class="recu" style="padding:6px 10px">${q.lignes.map((l,k)=>`<button class="rl" data-k="${k}" style="width:100%;background:none;box-shadow:none;border-radius:8px;padding:8px 6px;font-weight:${k>=4?800:600};animation-delay:${k*.1}s"><span>${E(l[0])}</span><b>${fr(l[1])}</b></button>`).join("")}<div class="rn">(T) = article taxé</div></div><p class="consigne" style="text-align:center">Touche la ligne qui est fausse.</p>`;
+  z.innerHTML=`<div class="recu" style="padding:6px 10px">${q.lignes.map((l,k)=>`<button class="rl" data-k="${k}" style="width:100%;background:none;box-shadow:none;border-radius:8px;padding:8px 6px;font-weight:700;animation-delay:${k*.1}s"><span>${E(l[0])}</span><b>${val(l[1])}</b></button>`).join("")}${q.note?`<div class="rn">${E(q.note)}</div>`:""}</div><p class="consigne" style="text-align:center">Touche la ligne qui est fausse.</p>`;
   z.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const k=+b.dataset.k,ok=q.bad.includes(k);b.classList.add(ok?"bonne":"mauvaise");if(!ok)b.disabled=true;repondre(ok,q.lignes[k][0])});
   T.erreur.fin=()=>q.bad.forEach(k=>z.querySelector(`[data-k="${k}"]`).classList.add("bonne"))},
  texte(q){const z=document.getElementById("zone");const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  z.innerHTML=`<p class="consigne">Écris ton explication. Mélanie va la lire.</p><textarea id="tx" aria-label="Mon explication">${E(S.textes[q.id]||"")}</textarea><div class="row">${SR?`<button id="mic">🎤 Dicter</button>`:""}<span class="small" id="tn"></span><button class="go" id="tv" style="margin-left:auto" disabled>J’ai fini d’écrire</button></div>`;
+  z.innerHTML=`<p class="consigne">Écris ta réponse. ${E(PROF)} va la lire.</p><textarea id="tx" aria-label="Ma réponse">${E(S.textes[q.id]||"")}</textarea><div class="row">${SR?`<button id="mic">🎤 Dicter</button>`:""}<span class="small" id="tn"></span><button class="go" id="tv" style="margin-left:auto" disabled>J’ai fini d’écrire</button></div>`;
   const tx=z.querySelector("#tx"),tv=z.querySelector("#tv"),tn=z.querySelector("#tn"),m=()=>{const n=tx.value.trim().length;tv.disabled=n<15;tn.textContent=n<15?"Écris au moins une phrase.":""};tx.oninput=m;m();
-  if(SR)z.querySelector("#mic").onclick=()=>{try{const r=new SR();r.lang="fr-CA";r.interimResults=false;r.onresult=e=>{tx.value+=(tx.value?" ":"")+e.results[0][0].transcript;m()};r.onend=()=>z.querySelector("#mic").textContent="🎤 Dicter";z.querySelector("#mic").textContent="🎤 J’écoute…";r.start()}catch(e){}};
-  tv.onclick=()=>{S.textes[q.id]=tx.value.trim();S.rec[q.id]={ok:true,t:1,h:cur.hint,pts:null,rep:"(explication écrite)"};S.tps=(S.tps||0)+Math.min(Date.now()-cur.t0,600000);cur.done=true;save();majFin(true);tx.readOnly=true;explique(true,"Merci ! Compare avec cet exemple")}}
+  if(SR){let rec=null,actif=false,base="";const mic=z.querySelector("#mic");
+   const stop=()=>{actif=false;mic.textContent="🎤 Dicter";try{rec&&rec.stop()}catch(e){}};
+   const go=()=>{rec=new SR();rec.lang="fr-CA";rec.continuous=true;rec.interimResults=true;base=tx.value;
+    rec.onresult=e=>{let fin="",tmp="";for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=t;else tmp+=t}if(fin){base=(base?base.trim()+" ":"")+fin.trim();}tx.value=base+(tmp?" "+tmp:"");m()};
+    rec.onerror=e=>{if(e.error==="not-allowed"){stop();tn.textContent="Le micro n’est pas permis dans ce navigateur."}};
+    rec.onend=()=>{if(actif){try{go()}catch(e){stop()}}};rec.start()};
+   mic.onclick=()=>{if(actif){stop();return}actif=true;mic.textContent="⏹ Arrêter la dictée";try{go()}catch(e){stop()}}}
+  tv.onclick=()=>{if(z.querySelector("#mic")&&z.querySelector("#mic").textContent.startsWith("⏹"))z.querySelector("#mic").click();S.textes[q.id]=tx.value.trim();S.rec[q.id]={ok:true,t:1,h:cur.hint,pts:null,rep:"(réponse écrite)"};S.tps=(S.tps||0)+Math.min(Date.now()-cur.t0,600000);cur.done=true;save();majFin(true);tx.readOnly=true;explique(true,"Merci ! Compare avec cet exemple")}}
 };
-
 T.droite.fin=q=>{document.getElementById("dw").innerHTML=droite(q.a,q.p,{fleche:1})};
 
-/* ---------------- autoévaluation et bilan ---------------- */
-const AV=[["arr","Je suis capable d’arrondir un prix au dollar le plus proche."],["est","Je suis capable d’estimer le total d’un panier."],["cmp","Je sais si j’ai assez d’argent."],["tax","Je suis capable d’estimer les taxes."]];
-const AVO=["Oui, seul","Avec un peu d’aide","Pas encore"];
+/* ================= autoévaluation et bilan ================= */
 function autoeval(){majFin(false);const faits=new Set(Q.filter(q=>S.rec[q.id]).map(q=>q.el)),AVf=AV.filter(([k])=>faits.has(k));
- app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox">${foxFace(110)}</div><div><h2>${S.partiel?"Bravo pour ton travail !":"Bravo, tu as terminé la tournée !"}</h2><p style="margin:0">Avant ton bilan, dis comment tu te sens.</p></div></div>
+ if(!AVf.length){S.etape="bilan";save();return bilan()}
+ app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox">${mascotte(110)}</div><div><h2>${S.partiel?"Bravo pour ton travail !":"Bravo, tu as terminé la tournée !"}</h2><p style="margin:0">Avant ton bilan, dis comment tu te sens.</p></div></div>
  <div class="card">${AVf.map(([k,t])=>`<div style="padding:10px 0;border-bottom:2px dotted #eadfd4"><div class="row sp"><b>${E(t)}</b>${say(t)}</div><div class="av mt" data-k="${k}">${AVO.map((o,j)=>`<button data-j="${j}" class="${S.auto[k]===j?"on":""}">${E(o)}</button>`).join("")}</div></div>`).join("")}
  <div class="row mt"><button class="go" id="vb" disabled>Voir mon bilan ▶</button></div></div>`;
  const vb=document.getElementById("vb"),m=()=>vb.disabled=AVf.some(([k])=>S.auto[k]==null);
@@ -539,128 +480,224 @@ function autoeval(){majFin(false);const faits=new Set(Q.filter(q=>S.rec[q.id]).m
 function cotes(){const r={};for(const el in ELN){const qs=Q.filter(q=>q.el===el&&S.rec[q.id]&&S.rec[q.id].pts!=null);if(!qs.length){r[el]=null;continue}
  const m=qs.reduce((a,q)=>a+S.rec[q.id].pts,0)/qs.length;r[el]=m>=.85?1:m>=.6?2:m>=.35?3:4}return r}
 const etat=q=>{const r=S.rec[q.id];if(!r)return 0;if(r.pts==null)return 4;if(r.ok&&r.t==1&&!r.h)return 1;if(r.ok)return 2;return 3};
+const ecrit=el=>Q.some(q=>q.el===el&&q.type==="texte");
 function bilan(){majFin(false);
  const c=cotes(),dur=S.tps?dureeMin():null;
- app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox saute">${foxFace(110)}</div><div><h1 style="font-size:40px">Mon bilan${S.prenom?", "+E(S.prenom):""}</h1><p style="margin:0">${S.partiel?`${nbFaits()} défis faits sur ${Q.length}. `:""}${dur?`Temps passé sur les défis : ${dur} min. `:""}Voici où tu en es.</p></div></div>
+ const R=[];if(RE.capsules!==false&&Object.keys(CAPS).length)R.push(["r1","var(--men)",`Les capsules ${DU}`,"Revois un truc en animation, avec la voix.",S.reinv.caps.length?"✓ "+S.reinv.caps.length+" vue(s)":""]);
+ if(RE.panier)R.push(["r2","#F6E3A6",RE.panier.titre,RE.panier.description||`Fais tes achats avec ${RE.panier.budget} $. Estime avant de passer à la caisse.`,S.reinv.panier?"✓ fait":""]);
+ if(RE.defi)R.push(["r3","#F5C6C2","Crée ton défi","Choisis une question, trouve de vrais prix en ligne, puis publie ton défi dans Teams. On te guide étape par étape.",S.reinv.defi?"✓ fait":""]);
+ if(RE.creation)R.push(["r4","#CFE9D7",RE.creation.titre||"Crée ta question",RE.creation.description||"Invente une question pour la classe, avec la réponse, et publie-la dans Teams. On te guide étape par étape.",S.reinv.creation?"✓ fait":""]);
+ app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox saute">${mascotte(110)}</div><div><h1 style="font-size:40px">Mon bilan${S.prenom?", "+E(S.prenom):""}</h1><p style="margin:0">${S.partiel?`${nbFaits()} défis faits sur ${Q.length}. `:""}${dur?`Temps passé sur les défis : ${dur} min. `:""}Voici où tu en es.</p></div></div>
  ${S.i<Q.length?`<div class="row"><button id="cont">▶ Continuer la tournée (défi ${S.i+1})</button></div>`:""}
- <div class="card">${Object.keys(ELN).map(el=>`<div class="el"><div><b>${ELN[el]}</b><br><span class="small">${c[el]?ELEVE[c[el]-1]:"Pas encore fait"}${el==="exp"?" · Mélanie lira aussi tes explications.":""}</span></div><div class="meter" aria-label="${c[el]?ELEVE[c[el]-1]:""}">${[1,2,3,4].map(j=>`<i class="${c[el]&&j<=5-c[el]?"on":""}"></i>`).join("")}</div></div>`).join("")}
- <div class="mt">${["E","B","S"].map(lv=>`<div class="row" style="margin:6px 0"><span class="pill" style="background:${LV[lv].c};min-width:96px">${LV[lv].n}</span><span class="dots">${Q.filter(q=>ST[q.st].lv===lv&&q.type!=="texte").map(q=>`<span class="d${etat(q)}" title="${E(q.court)}"></span>`).join("")}</span></div>`).join("")}
+ <div class="card"><h3 style="margin:0">Ma grille</h3><div class="g4 small" style="margin-top:6px;font-weight:800"><span>Je débute</span><span></span><span></span><span style="text-align:right">J’y arrive seul ➜</span></div>${Object.keys(ELN).map(el=>`<div class="ge"><div class="row sp"><b>${E(ELN[el])}</b><span class="small">${c[el]?E(ELEVE[c[el]-1]):"Pas encore fait"}</span></div>
+ <div class="g4">${[4,3,2,1].map(j=>`<div class="gc ${c[el]===j?"ici":""}">${c[el]===j?`<span class="icit">Tu es ici</span>`:""}${E(DESCE[el][j-1])}</div>`).join("")}</div>
+ <p class="pe">${c[el]?`➜ <b>${c[el]===1?"Pour aller plus loin":"Ma prochaine étape"} :</b> ${E(prochaine(el,c[el]))}`:"Ce niveau n’a pas encore été fait."}${ecrit(el)?` <span class="small">(${E(PROF)} lira aussi tes réponses écrites.)</span>`:""}</p></div>`).join("")}
+ <div class="mt">${NIVS.map(lv=>`<div class="row" style="margin:6px 0"><span class="pill" style="background:${LV[lv].c};min-width:96px">${E(LV[lv].n)}</span><span class="dots">${Q.filter(q=>ST[q.st].lv===lv&&q.type!=="texte").map(q=>`<span class="d${etat(q)}" title="${E(q.court)}"></span>`).join("")}</span></div>`).join("")}
  <p class="small"><span class="dots"><span class="d1"></span></span> réussi du premier coup · <span class="dots"><span class="d2"></span></span> réussi avec de l’aide · <span class="dots"><span></span></span> à revoir · <span class="dots"><span class="d0"></span></span> pas encore fait</p></div></div>
- <div class="card" style="background:#FFF6EE"><h3>Mon bilan pour Mélanie (PDF)</h3><label for="pp"><b>Mon prénom (obligatoire)</b></label><div class="row" style="margin-top:6px"><input type="text" id="pp" maxlength="30" value="${E(S.prenom)}" style="flex:1;min-width:200px"><button class="go" id="dl">⬇ Télécharger mon bilan</button></div><p class="small" id="pm" style="color:var(--mal)"></p>
- <ol class="small" style="padding-left:22px;margin:6px 0"><li>Télécharge ton bilan (fichier PDF).</li><li>Remets-le à Mélanie : dans le devoir Teams, dans ton OneDrive (partagé avec Mélanie) ou par courriel.</li></ol></div>
- <h2 class="mt">Pour aller plus loin</h2><p style="margin-top:0">Choisis une activité. Ce que tu fais ici s’ajoute à ton bilan : télécharge-le de nouveau après.</p>
- <div class="grid3"><button class="choix" id="r1" style="background:var(--men)"><b>Les capsules du renard</b>Revois un truc en animation, avec la voix.${S.reinv.caps.length?"<br><i>✓ "+S.reinv.caps.length+" vue(s)</i>":""}</button>
- <button class="choix" id="r2" style="background:var(--bo)"><b>Mon panier au Maxi</b>Fais ton épicerie avec 30 $. Estime avant de passer à la caisse.${S.reinv.panier?"<br><i>✓ fait</i>":""}</button>
- <button class="choix" id="r3" style="background:var(--er)"><b>Crée ton défi</b>Invente un défi d’estimation dans un commerce du Saguenay pour un ami.${S.reinv.defi?"<br><i>✓ fait</i>":""}</button></div>
+ <div class="card" style="background:#FFF6EE"><h3>Mon bilan pour ${E(PROF)} (PDF)</h3><label for="pp"><b>Mon prénom (obligatoire)</b></label><div class="row" style="margin-top:6px"><input type="text" id="pp" maxlength="30" value="${E(S.prenom)}" style="flex:1;min-width:200px"><button class="go" id="dl">⬇ Télécharger mon bilan</button></div><p class="small" id="pm" style="color:var(--mal)"></p><div id="pdfok"></div>
+ <ol class="small" style="padding-left:22px;margin:6px 0"><li>Télécharge ton bilan (fichier PDF).</li><li>${E(CFG.remise||`Remets-le à ${PROF} : dans le devoir Teams, dans ton OneDrive (partagé avec ${PROF}) ou par courriel.`)}</li></ol></div>
+ ${R.length?`<h2 class="mt">${R.length===1?"Défi supplémentaire":"Pour aller plus loin"}</h2><p style="margin-top:0">${RE.dansBilan?"Ce que tu fais ici s’ajoute à ton bilan : télécharge-le de nouveau après.":E(PROF)+" va vérifier ton travail."}</p><div class="grid3">${R.map(r=>`<button class="choix" id="${r[0]}" style="background:${r[1]}"><b>${E(r[2])}</b>${E(r[3])}${r[4]?"<br><i>"+r[4]+"</i>":""}</button>`).join("")}</div>`:""}
  <div class="row ctr mt"><button class="lien" id="rz">Recommencer toute la tournée</button></div>`;
  const pp=document.getElementById("pp"),pm=document.getElementById("pm");
  document.getElementById("dl").onclick=()=>{const p=pp.value.trim();if(p.length<2){pm.textContent="Écris ton prénom avant de télécharger.";pp.focus();pp.classList.remove("shake");void pp.offsetWidth;pp.classList.add("shake");return}pm.textContent="";S.prenom=p;save();pdf()};
- if(S.i<Q.length)document.getElementById("cont").onclick=reprendre;document.getElementById("r1").onclick=capsulesMenu;document.getElementById("r2").onclick=panier;document.getElementById("r3").onclick=defi;
+ const on=(id,f)=>{const b=document.getElementById(id);if(b)b.onclick=f};
+ on("cont",reprendre);on("r1",capsulesMenu);on("r2",panier);on("r3",defi);on("r4",creation);
  document.getElementById("rz").onclick=()=>{if(confirm("Effacer tes réponses et recommencer ?")){S=nouvel();save();accueil()}};haut()}
 
-/* ---------------- réinvestissement ---------------- */
+/* ================= réinvestissement ================= */
+const retour=()=>DIRECT?`<a href="?" style="font-weight:800;color:var(--or)">Aller au jeu</a><button id="rt" hidden></button>`:`<button id="rt">◀ Mon bilan</button>`;
 function capsulesMenu(){majFin(false);
- app.innerHTML=`<div class="row sp"><h2>Les capsules du renard</h2><button id="rt">◀ Mon bilan</button></div><div class="grid3">${Object.keys(CAPS).map(k=>`<button class="choix" data-k="${k}" style="background:#fff"><b>${E(CAPS[k].titre)}</b>${CAPS[k].sc.length} étapes${S.reinv.caps.includes(k)?" · ✓ vue":""}</button>`).join("")}</div><div id="cp" class="mt"></div>`;
+ app.innerHTML=`<div class="row sp"><h2>Les capsules ${E(DU)}</h2>${retour()}</div><div class="grid3">${Object.keys(CAPS).map(k=>`<button class="choix" data-k="${k}" style="background:#fff"><b>${E(CAPS[k].titre)}</b>${CAPS[k].sc.length} étapes${S.reinv.caps.includes(k)?" · ✓ vue":""}</button>`).join("")}</div><div id="cp" class="mt"></div>`;
  document.getElementById("rt").onclick=bilan;
  app.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(!S.reinv.caps.includes(k)){S.reinv.caps.push(k);save()}capsule(document.getElementById("cp"),[k],capsulesMenu,"Retour aux capsules");document.getElementById("cp").scrollIntoView({behavior:"smooth"})});haut()}
-const CAT=[["Lait 2 L",5.29,0],["Pain",3.79,0],["Bananes",1.89,0],["Œufs (12)",4.49,0],["Bleuets du Lac",4.99,0],["Fromage en grains",6.49,0],["Pâtes",2.29,0],["Sauce tomate",2.99,0],["Croustilles",4.49,1],["Boisson gazeuse",2.99,1],["Biscuits",3.99,1],["Savon à vaisselle",3.49,1]];
-function panier(){majFin(false);const qte=CAT.map(()=>0);
- const vue=()=>{app.innerHTML=`<div class="row sp"><h2>Mon panier au Maxi</h2><button id="rt">◀ Mon bilan</button></div><p style="margin-top:0">Tu as <b>30 $</b>. Choisis ce qu’il te faut pour la semaine. Les articles marqués (T) sont taxés.</p>${billets(30)}
- <div class="cat">${CAT.map((c,k)=>`<button data-k="${k}" class="${qte[k]?"pris":""}">${E(c[0])}${c[2]?" (T)":""}<br><b>${fr(c[1])}</b>${qte[k]?` · × ${qte[k]}`:""}</button>`).join("")}</div>
- <p class="small">Touche un article pour l’ajouter. Touche-le encore pour en prendre plus (jusqu’à 3), une 4<sup>e</sup> fois pour l’enlever.</p>
- <div class="card"><b>Mon panier :</b> ${qte.some(x=>x)?CAT.map((c,k)=>qte[k]?`${qte[k]} × ${E(c[0])}`:"").filter(Boolean).join(", "):"vide"}<p class="consigne">Avant la caisse : mon estimation, avec les taxes s’il y a des articles (T).</p><div class="row"><input type="text" inputmode="decimal" id="es" style="width:140px;text-align:center" aria-label="Mon estimation"><b>$</b><button class="go" id="cs" ${qte.some(x=>x)?"":"disabled"}>Passer à la caisse</button></div><div id="res"></div></div>`;
+function panier(){majFin(false);const P=RE.panier,CAT=P.catalogue,qte=CAT.map(()=>0),tx=P.taxe==null?0.14975:P.taxe;
+ const vue=()=>{const n=qte.reduce((a,b)=>a+b,0);
+ app.innerHTML=`<div class="row sp"><h2>${E(P.titre)}</h2>${retour()}</div><p style="margin-top:0">Tu as <b>${P.budget} $</b>. ${E(P.consigne||"Choisis ce qu’il te faut.")}${CAT.some(c=>c[2])?" Les articles marqués (T) sont taxés.":""}</p>${billets(P.budget)}
+ <div class="cat">${CAT.map((c,k)=>qte[k]?`<div class="qc pris"><div>${E(c[0])}${c[2]?" (T)":""}<br><b>${fr(c[1])}</b></div><div class="row" style="gap:6px;margin-top:6px"><button class="pm2" data-k="${k}" data-d="-1" aria-label="Un de moins">−</button><b style="min-width:22px;text-align:center">${qte[k]}</b><button class="pm2" data-k="${k}" data-d="1" aria-label="Un de plus">+</button><button class="lien" data-k="${k}" data-d="0">Retirer</button></div></div>`
+   :`<button data-k="${k}" data-d="1">${E(c[0])}${c[2]?" (T)":""}<br><b>${fr(c[1])}</b><br><span class="small">＋ Ajouter</span></button>`).join("")}</div>
+ <div class="card"><b>Mon panier (${n} article${n>1?"s":""}) :</b> ${n?CAT.map((c,k)=>qte[k]?`${qte[k]} × ${E(c[0])}`:"").filter(Boolean).join(", "):"vide"}<p class="consigne">Avant la caisse : mon estimation${CAT.some(c=>c[2])?", avec les taxes s’il y a des articles (T)":""}.</p><div class="row"><input type="text" inputmode="decimal" id="es" style="width:140px;text-align:center" aria-label="Mon estimation"><b>$</b><button class="go" id="cs" ${n?"":"disabled"}>Passer à la caisse</button></div><div id="res"></div></div>`;
   document.getElementById("rt").onclick=bilan;
-  app.querySelectorAll(".cat [data-k]").forEach(b=>b.onclick=()=>{const k=+b.dataset.k;qte[k]=(qte[k]+1)%4;const y=window.scrollY;vue();window.scrollTo(0,y)});
-  document.getElementById("cs").onclick=()=>{const e=parseFloat(document.getElementById("es").value.replace(",",".").replace(/[^\d.]/g,""));if(isNaN(e)){document.getElementById("es").classList.add("shake");return}
-   let st=0,tx=0;CAT.forEach((c,k)=>{st+=c[1]*qte[k];if(c[2])tx+=c[1]*qte[k]*0.14975});st=Math.round(st*100)/100;tx=Math.round(tx*100)/100;const tot=Math.round((st+tx)*100)/100,ec=Math.abs(e-tot);
-   const lignes=CAT.map((c,k)=>qte[k]?[qte[k]+" × "+c[0]+(c[2]?" (T)":""),c[1]*qte[k]]:null).filter(Boolean).concat([["Sous-total",st],["TPS + TVQ",tx],["Total",tot]]);
-   S.reinv.panier={articles:lignes.slice(0,-3).map(l=>l[0]),estimation:e,total:tot,assez:tot<=30};save();
-   document.getElementById("res").innerHTML=recu(lignes)+`<p style="text-align:center;font-size:22px"><b>Ton estimation : ${fm(e)} · Vrai total : ${fr(tot)}</b><br>${ec<=2?"Excellente estimation ! Moins de 2 $ d’écart.":ec<=4?"Pas mal ! Environ "+Math.round(ec)+" $ d’écart.":"Écart de "+Math.round(ec)+" $. Revois le truc des dollars ronds."}<br>${tot<=30?"✓ Tu as assez avec 30 $. Il te reste "+fr(30-tot)+".":"✗ Ça dépasse 30 $. Il manque "+fr(tot-30)+". Que vas-tu enlever ?"}</p>`;
+  app.querySelectorAll(".cat [data-k]").forEach(b=>b.onclick=()=>{const k=+b.dataset.k,d=+b.dataset.d;qte[k]=d===0?0:Math.max(0,Math.min(9,qte[k]+d));const y=window.scrollY;vue();window.scrollTo(0,y)});
+  document.getElementById("cs").onclick=()=>{const e=numLu(document.getElementById("es").value);if(isNaN(e)){document.getElementById("es").classList.add("shake");return}
+   let st=0,t=0;CAT.forEach((c,k)=>{st+=c[1]*qte[k];if(c[2])t+=c[1]*qte[k]*tx});st=Math.round(st*100)/100;t=Math.round(t*100)/100;const tot=Math.round((st+t)*100)/100,ec=Math.abs(e-tot);
+   const lignes=CAT.map((c,k)=>qte[k]?[qte[k]+" × "+c[0]+(c[2]?" (T)":""),c[1]*qte[k]]:null).filter(Boolean).concat([["Sous-total",st],["Taxes",t],["Total",tot]]);
+   S.reinv.panier={articles:lignes.slice(0,-3).map(l=>l[0]),estimation:e,total:tot,assez:tot<=P.budget};save();
+   document.getElementById("res").innerHTML=recu(lignes)+`<p style="text-align:center;font-size:22px"><b>Ton estimation : ${fm(e)} · Vrai total : ${fr(tot)}</b><br>${ec<=2?"Excellente estimation ! Moins de 2 $ d’écart.":ec<=4?"Pas mal ! Environ "+Math.round(ec)+" $ d’écart.":"Écart de "+Math.round(ec)+" $. Revois le truc des dollars ronds."}<br>${tot<=P.budget?"✓ Tu as assez avec "+P.budget+" $. Il te reste "+fr(P.budget-tot)+".":"✗ Ça dépasse "+P.budget+" $. Il manque "+fr(tot-P.budget)+". Que vas-tu enlever ?"}</p>`;
    if(ec<=2)fete()}};vue();haut()}
-const LIEUX=["Tim Hortons (Jonquière)","Maxi (Jonquière)","Dollarama","Cinéma Jonquière","Centre Georges-Vézina","Place du Royaume","Jean Coutu","Walmart","Dépanneur du quartier","Autre lieu du Saguenay"];
-function defi(){majFin(false);const d=S.reinv.defi||{lieu:LIEUX[0],art:[["",""],["",""],["",""]],budget:"",est:""};
- app.innerHTML=`<div class="row sp"><h2>Crée ton défi</h2><button id="rt">◀ Mon bilan</button></div><p style="margin-top:0">Invente un défi pour un ami : un lieu, 3 articles avec leur prix, et un budget.</p>
- <div class="card"><label><b>Où ?</b><br><select id="dl">${LIEUX.map(l=>`<option ${l===d.lieu?"selected":""}>${E(l)}</option>`).join("")}</select></label>
- ${d.art.map((a,k)=>`<div class="row mt"><input type="text" id="an${k}" placeholder="Article ${k+1}" value="${E(a[0])}" style="flex:2;min-width:160px;font-size:19px"><input type="text" inputmode="decimal" id="ap${k}" placeholder="Prix" value="${E(a[1])}" style="width:110px;font-size:19px"><b>$</b></div>`).join("")}
- <div class="row mt"><label><b>Budget :</b> <input type="text" inputmode="decimal" id="db" value="${E(d.budget)}" style="width:110px;font-size:19px"> $</label></div>
- <div class="row mt"><label><b>Ma propre estimation du total :</b> <input type="text" inputmode="decimal" id="de" value="${E(d.est)}" style="width:110px;font-size:19px"> $</label></div>
- <div class="row mt"><button class="go" id="dv">Vérifier mon défi</button></div><div id="dr"></div></div>`;
- document.getElementById("rt").onclick=bilan;
- const num=s=>parseFloat(String(s).replace(",",".").replace(/[^\d.]/g,""));
- document.getElementById("dv").onclick=()=>{const v=id=>document.getElementById(id).value.trim();
-  const art=[0,1,2].map(k=>[v("an"+k),v("ap"+k)]),b=num(v("db")),e=num(v("de"));const r=document.getElementById("dr");
-  if(art.some(a=>!a[0]||isNaN(num(a[1])))||isNaN(b)||isNaN(e)){r.innerHTML=`<p class="oups">Remplis les 3 articles avec un prix, le budget et ton estimation.</p>`;return}
-  const tot=Math.round(art.reduce((s,a)=>s+num(a[1]),0)*100)/100,ar=art.reduce((s,a)=>s+rond(num(a[1])),0);
-  S.reinv.defi={lieu:v("dl"),art,budget:v("db"),est:v("de"),total:tot,arr:ar};save();
-  const txt=`Défi au ${v("dl")} : ${art.map(a=>a[0]+" à "+fr(num(a[1]))).join(", ")}. Tu as ${fm(b)}. As-tu assez d’argent ? Estime sans calculatrice !`;
-  r.innerHTML=`<div class="expl bon"><b>Ton défi est prêt !</b><p>${E(txt)}</p><p class="small">Corrigé pour toi : en dollars ronds, ${art.map(a=>rond(num(a[1]))).join(" + ")} = ${ar} $. Vrai total : ${fr(tot)} (sans taxes). ${tot<=b?"Assez":"Pas assez"} avec ${fm(b)}.</p><div class="row"><button id="cpy">Copier le défi pour l’envoyer à un ami</button></div></div>`;
-  document.getElementById("cpy").onclick=e2=>{try{navigator.clipboard.writeText(txt);e2.target.textContent="Copié ✓"}catch(x){}}};haut()}
-
-/* ---------------- PDF ---------------- */
+const lieuNom=l=>typeof l==="string"?l:l.nom;
+const FORMES={assez:{q:"As-tu assez d’argent ?",budget:true,aide:"La classe compare le total avec le budget."},
+ total:{q:"Environ combien ça coûte ?",budget:false,aide:"La classe estime le total."},
+ reste:{q:"Environ combien d’argent va-t-il te rester ?",budget:true,aide:"La classe estime le total, puis l’enlève du budget."},
+ enlever:{q:"Tu n’as pas assez. Quel article enlèves-tu ?",budget:true,aide:"Le budget doit être plus petit que le total. La classe trouve quoi enlever."}};
+function corrige(D){const ar=D.items.reduce((s,a)=>s+rond(a[1]),0),est=D.taxes?Math.round(ar*1.15*100)/100:ar,tot=D.taxes?Math.round(D.items.reduce((s,a)=>s+a[1],0)*1.14975*100)/100:Math.round(D.items.reduce((s,a)=>s+a[1],0)*100)/100,b=D.b;
+ const L=["En dollars ronds : "+D.items.map(a=>rond(a[1])).join(" + ")+" = "+ar+" $"];if(D.taxes)L.push("Taxes : 10 % = "+fm(ar/10)+", la moitié = "+fm(ar/20)+", donc environ "+fm(est));
+ L.push("Vrai total"+(D.taxes?" avec les taxes":"")+" : "+fr(tot));let v,ok=true;
+ if(D.forme==="total")v="Environ "+fm(est)+" (vrai total : "+fr(tot)+").";
+ else if(D.forme==="assez"){ok=tot<=b;v=ok?`Oui, ${fm(b)}, c’est assez ! Il reste ${fr(b-tot)}.`:`Non, ${fm(b)}, ce n’est pas assez. Il manque ${fr(tot-b)}.`}
+ else if(D.forme==="reste"){ok=tot<=b;v=ok?`Il reste environ ${fm(Math.max(0,b-est))} (vrai : ${fr(b-tot)}).`:`Il ne reste rien : il manque ${fr(tot-b)}.`}
+ else{const exc=tot-b;if(exc<=0){ok=false;v="Avec ce budget, on n’a rien à enlever : choisis un budget plus petit."}else{const f=D.taxes?1.14975:1,c=D.items.filter(a=>a[1]*f>=exc).map(a=>a[0]);v=`Il manque environ ${fr(exc)}. `+(c.length?`On peut enlever : ${c.join(" ou ")}.`:"Il faut enlever plus d’un article.")}}
+ return {L,v,ok,ar,est,tot}}
+const IC={app:`<svg viewBox="0 0 48 48"><rect x="4" y="8" width="40" height="30" rx="8" fill="#7B83EB"/><path d="M14,38 l-4,8 l12,-8" fill="#7B83EB"/><circle cx="16" cy="23" r="3" fill="#fff"/><circle cx="24" cy="23" r="3" fill="#fff"/><circle cx="32" cy="23" r="3" fill="#fff"/></svg>`,
+ equipe:`<svg viewBox="0 0 48 48"><circle cx="17" cy="16" r="7" fill="#7B83EB"/><circle cx="33" cy="18" r="6" fill="#A6ABF2"/><path d="M4,40 q13,-20 26,0 z" fill="#7B83EB"/><path d="M24,40 q10,-17 21,0 z" fill="#A6ABF2"/></svg>`,
+ canal:`<svg viewBox="0 0 48 48"><rect x="4" y="4" width="40" height="40" rx="10" fill="#EEF0FB"/><path d="M18,10 l-4,28 M32,10 l-4,28 M10,19 h30 M8,31 h30" stroke="#5B5FC7" stroke-width="4" stroke-linecap="round"/></svg>`,
+ publier:`<svg viewBox="0 0 48 48"><rect x="2" y="14" width="44" height="20" rx="10" fill="#5B5FC7"/><text x="24" y="28" text-anchor="middle" font-size="11" font-weight="900" fill="#fff" font-family="Arial">Publier</text></svg>`,
+ trombone:`<svg viewBox="0 0 48 48"><path d="M30,14 l-12,12 a5,5 0 0 0 7,7 l13,-13 a9,9 0 0 0 -13,-13 l-14,14 a12,12 0 0 0 17,17 l10,-10" fill="none" stroke="#4A4F55" stroke-width="3.5" stroke-linecap="round"/></svg>`,
+ fichier:`<svg viewBox="0 0 48 48"><path d="M10,4 h20 l10,10 v30 h-30 z" fill="#fff" stroke="#A9372B" stroke-width="3"/><rect x="10" y="26" width="30" height="12" fill="#A9372B"/><text x="25" y="35.5" text-anchor="middle" font-size="9" font-weight="900" fill="#fff" font-family="Arial">PDF</text></svg>`,
+ message:`<svg viewBox="0 0 48 48"><rect x="4" y="10" width="40" height="26" rx="6" fill="#fff" stroke="#8a7f76" stroke-width="3"/><path d="M11,19 h26 M11,27 h18" stroke="#8a7f76" stroke-width="3" stroke-linecap="round"/></svg>`,
+ envoyer:`<svg viewBox="0 0 48 48"><path d="M6,40 L44,24 L6,8 L10,22 L28,24 L10,26 Z" fill="#5B5FC7"/></svg>`};
+function etapesTeams(mot){const t=RE.teams||(RE.defi&&RE.defi.teams)||(RE.creation&&RE.creation.teams)||{},eq=t.equipe||"de ton cours",ca=t.canal||"le canal de ton cours";
+ const et=[["app","Ouvre Teams (l’application ou teams.microsoft.com)."],["equipe",`À gauche, clique sur « Équipes », puis sur l’équipe « ${eq} ».`],["canal",`Choisis ${ca}.`],["publier","Clique sur « Publier » (ou « Démarrer une publication »)."],
+  ["trombone","Clique sur le trombone (ou sur ＋, puis « Joindre un fichier »), puis « Charger à partir de cet appareil »."],["fichier",`Choisis ton fichier « ${mot==="Question"?"Question":"Defi"}-… .pdf » dans le dossier Téléchargements.`],["message",mot==="Question"?"Écris un message : « Voici ma question ! Qui peut répondre ? »":"Écris un message : « Voici mon défi ! Qui peut le relever ? »"],["envoyer","Clique sur la flèche pour envoyer. Bravo !"]];
+ return `<div class="tm">${et.map(([i,x],k)=>`<div class="tmr monte" style="animation-delay:${k*.08}s"><span class="num">${k+1}</span><span class="tmi">${IC[i]}</span><span>${E(x)}</span></div>`).join("")}</div>${say("Publie ton défi dans Teams. "+et.map(e=>e[1]).join(" "))}`}
+function defi(){majFin(false);const DF=RE.defi,L=DF.lieux||["Un commerce"],liens=(DF.liens||[]).concat(L.filter(l=>l.lien).map(l=>({nom:l.nom,lien:l.lien})));
+ const D=S.reinv.defiBrouillon||{forme:"assez",lieu:lieuNom(L[0]),art:[["",""],["",""],["",""]],budget:"",taxes:false,rep:""};let etape=0;
+ const ETAPES=["Ma question","Vrais prix","Mes articles","Ma réponse","Mon PDF","Teams"];
+ const garde=()=>{S.reinv.defiBrouillon=D;save()};
+ const prets=()=>{const ok=D.art.filter(a=>a[0].trim()&&!isNaN(numLu(a[1])));return ok.length>=2&&(!FORMES[D.forme].budget||!isNaN(numLu(D.budget)))};
+ const donnees=()=>({forme:D.forme,lieu:D.lieu,taxes:D.taxes,b:numLu(D.budget),items:D.art.filter(a=>a[0].trim()&&!isNaN(numLu(a[1]))).map(a=>[a[0].trim(),numLu(a[1])])});
+ function vue(){const nav=`<div class="stepper">${ETAPES.map((e,k)=>`<div class="stp ${k<etape?"fait":k==etape?"ici":""}"><span>${k<etape?"✓":k+1}</span><small>${e}</small></div>`).join("")}</div>`;let corps="",pret=true;
+  if(etape==0)corps=`<h3>1. Choisis la forme de ta question</h3><select id="fq" style="width:100%">${Object.keys(FORMES).map(k=>`<option value="${k}" ${D.forme===k?"selected":""}>${E(FORMES[k].q)}</option>`).join("")}</select><p class="small">${E(FORMES[D.forme].aide)}</p>
+   <label class="row mt" style="gap:8px"><input type="checkbox" id="dt" ${D.taxes?"checked":""} style="width:26px;height:26px"> <b>Ajouter les taxes</b> (défi de niveau Sapin)</label>`;
+  if(etape==1)corps=`<h3>2. Trouve de vrais prix</h3><p>Ouvre une circulaire ou un menu. Note le <b>nom</b> et le <b>prix</b> de 2 à 5 articles.</p><div class="row">${liens.map(l=>`<a class="lk" href="${E(l.lien)}" target="_blank" rel="noopener">🔗 ${E(l.nom)}</a>`).join("")}</div>
+   <label class="mt" style="display:block"><b>Où se passe ton défi ?</b><br><select id="dlx">${L.map(l=>`<option ${lieuNom(l)===D.lieu?"selected":""}>${E(lieuNom(l))}</option>`).join("")}</select></label>`;
+  if(etape==2){corps=`<h3>3. Écris tes articles et leur prix</h3>${D.art.map((a,k)=>`<div class="row mt"><input type="text" id="an${k}" placeholder="Article ${k+1}" value="${E(a[0])}" style="flex:2;min-width:150px;font-size:19px"><input type="text" inputmode="decimal" id="ap${k}" placeholder="Prix" value="${E(a[1])}" style="width:110px;font-size:19px"><b>$</b></div>`).join("")}
+   ${D.art.length<5?`<button class="lien" id="aa">＋ Ajouter un article</button>`:""}${FORMES[D.forme].budget?`<div class="row mt"><label><b>Budget :</b> <input type="text" inputmode="decimal" id="db" value="${E(D.budget)}" style="width:110px;font-size:19px"> $</label></div>`:""}`;pret=prets()}
+  if(etape==3){const X=donnees(),c=corrige(X);corps=`<h3>4. Trouve la réponse toi-même</h3>${recu(X.items,X.taxes?"+ taxes (environ 15 %)":"")}${X.b&&FORMES[X.forme].budget?billets(Math.round(X.b)):""}<p class="consigne">${E(FORMES[X.forme].q)}</p><textarea id="rp" style="min-height:70px" placeholder="Ma réponse et comment je l’ai trouvée">${E(D.rep)}</textarea>
+   <div class="row"><button class="truc" id="vc2">Voir le corrigé</button></div><div id="cr">${D.vu?`<div class="expl bon"><b>Corrigé</b><ol>${c.L.map(x=>`<li>${E(x)}</li>`).join("")}</ol><p style="margin:0"><b>${E(c.v)}</b></p></div>`:""}</div>`;pret=!!D.vu&&D.rep.trim().length>1}
+  if(etape==4)corps=`<h3>5. Télécharge ton défi</h3><p>Ton défi devient un PDF en format paysage : page 1, le défi pour la classe; page 2, le corrigé.</p>${S.prenom?"":`<label><b>Ton prénom</b> <input type="text" id="dpn" maxlength="30" style="font-size:19px"></label>`}<div class="row mt"><button class="go" id="dpdf">⬇ Télécharger mon défi (PDF)</button></div><p class="small" id="dpm" style="color:var(--mal)"></p><div id="pdfok2"></div>`,pret=!!D.telecharge;
+  if(etape==5)corps=`<h3>6. Publie ton défi dans Teams</h3>${etapesTeams()}<p class="mt"><b>${E(PROF)} va vérifier ton corrigé.</b> Bravo pour ton défi !</p>`;
+  app.innerHTML=`<div class="row sp"><h2>Défi supplémentaire : crée ton défi</h2>${retour()}</div>${nav}<div class="card monte">${corps}<div class="row sp mt"><button id="pv" ${etape==0?"disabled":""}>◀ Précédent</button>${etape<5?`<button class="go" id="sv" ${pret?"":"disabled"}>Suivant ▶</button>`:`<button class="go" id="fn">Terminé ✓</button>`}</div></div>`;
+  const $=id=>document.getElementById(id),lire=()=>{D.art.forEach((a,k)=>{if($("an"+k)){a[0]=$("an"+k).value;a[1]=$("ap"+k).value}});if($("db"))D.budget=$("db").value;if($("dlx"))D.lieu=$("dlx").value;if($("rp"))D.rep=$("rp").value;garde()};
+  $("rt").onclick=()=>{lire();bilan()};$("pv").onclick=()=>{lire();etape--;vue();haut()};if($("sv"))$("sv").onclick=()=>{lire();etape++;vue();haut()};if($("fn"))$("fn").onclick=()=>DIRECT?(etape=0,vue()):bilan();
+  if($("fq"))$("fq").onchange=()=>{D.forme=$("fq").value;garde();vue()};if($("dt"))$("dt").onchange=()=>{D.taxes=$("dt").checked;garde()};
+  if(etape==2){app.querySelectorAll("input").forEach(i=>i.oninput=()=>{lire();$("sv").disabled=!prets()});if($("aa"))$("aa").onclick=()=>{lire();D.art.push(["",""]);vue()}}
+  if(etape==3){$("rp").oninput=()=>{lire();$("sv").disabled=!(D.vu&&D.rep.trim().length>1)};$("vc2").onclick=()=>{lire();D.vu=true;garde();vue()}}
+  if(etape==4)$("dpdf").onclick=()=>{const pn=$("dpn");if(pn){const x=pn.value.trim();if(x.length<2){$("dpm").textContent="Écris ton prénom avant de télécharger.";pn.focus();return}S.prenom=x;save()}
+   $("dpm").textContent="";defiPdf(Object.assign(donnees(),{rep:D.rep}));D.telecharge=true;S.reinv.defi={fait:true};garde();$("sv").disabled=false}}
+ vue();haut()}
+function defiPdf(D){const {jsPDF}=window.jspdf,d=new jsPDF({unit:"mm",format:"letter",orientation:"landscape"}),W=279.4,H=215.9,M=14,c=corrige(D);
+ const T=(t,x,y,o)=>d.text(pdfTxt(t),x,y,o),hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),acc=hex((CFG.theme&&CFG.theme.accent)||"#C9733A");
+ const entete=(t1,t2)=>{d.setFillColor(...acc);d.rect(0,0,W,30,"F");d.setTextColor(255);d.setFont("helvetica","bold");d.setFontSize(30);T(t1,M,18);d.setFontSize(13);d.setFont("helvetica","normal");T(t2,M,26);d.setTextColor(60)};
+ const pied=()=>{d.setFontSize(10);d.setTextColor(140);T(CFG.titre+" · "+(CFG.cours||"")+" · défi créé par "+S.prenom,W/2,H-7,{align:"center"});d.setTextColor(60)};
+ entete("Le défi de "+S.prenom,D.lieu);const bud=FORMES[D.forme].budget;
+ const n=D.items.length,lh=Math.min(21,104/n),fs=Math.min(32,lh*1.55),bw=bud?154:W-2*M;
+ d.setFillColor(255,254,250);d.setDrawColor(216,199,187);d.setLineWidth(.8);d.setLineDashPattern([2,2],0);d.roundedRect(M,40,bw,26+n*lh,4,4,"FD");d.setLineDashPattern([],0);
+ d.setFontSize(fs);D.items.forEach((a,k)=>{const y=40+lh*.5+fs*.35+k*lh+6;d.setFont("helvetica","normal");T(a[0],M+8,y);d.setFont("helvetica","bold");T(fr(a[1]),M+bw-8,y,{align:"right"})});
+ if(D.taxes){d.setFont("helvetica","italic");d.setFontSize(16);T("+ taxes (environ 15 %)",M+8,40+n*lh+18)}
+ if(bud){d.setFillColor(239,230,218);d.roundedRect(176,40,90,104,5,5,"F");d.setFont("helvetica","normal");d.setFontSize(18);T("Tu as",221,56,{align:"center"});d.setFont("helvetica","bold");d.setFontSize(56);T(fm(D.b),221,82,{align:"center"});
+  let r=D.b,bl=[];for(const v of [50,20,10,5]){while(r>=v&&bl.length<4){bl.push(v);r-=v}}bl.forEach((v,k)=>{d.setFillColor(...hex(BILL[v]));d.roundedRect(184+(k%2)*40,96+Math.floor(k/2)*18,34,15,2,2,"F");d.setTextColor(255);d.setFontSize(12);T(v+" $",201+(k%2)*40,105.5+Math.floor(k/2)*18,{align:"center"});d.setTextColor(60)})}
+ d.setFillColor(...acc);d.roundedRect(M,H-58,W-2*M,34,5,5,"F");d.setTextColor(255);d.setFont("helvetica","bold");d.setFontSize(28);T(FORMES[D.forme].q,W/2,H-41,{align:"center"});d.setFontSize(16);d.setFont("helvetica","normal");T("Estime sans calculatrice : arrondis, additionne"+(D.taxes?", ajoute les taxes":"")+(bud?", compare avec ton argent":"")+".",W/2,H-30,{align:"center"});d.setTextColor(60);pied();
+ d.addPage("letter","landscape");entete("Corrigé du défi de "+S.prenom,"À montrer après que la classe a répondu");
+ let y=50;d.setFontSize(20);D.items.forEach(a=>{d.setFont("helvetica","normal");T(a[0],M+6,y);d.setFont("helvetica","bold");T(fr(a[1])+"  >  "+rond(a[1])+" $",W/2+20,y,{align:"right"});y+=11});
+ d.setDrawColor(216,199,187);d.line(M,y-5,W-M,y-5);y+=6;c.L.forEach((x,k)=>{d.setFont("helvetica",k?"normal":"bold");d.setFontSize(k?19:22);T(x,M+6,y);y+=12});y+=4;
+ d.setFillColor(...(c.ok?[227,243,232]:[251,237,228]));d.roundedRect(M,y-10,W-2*M,22,4,4,"F");d.setFont("helvetica","bold");d.setFontSize(22);d.splitTextToSize(pdfTxt(c.v),W-2*M-10).slice(0,2).forEach((l,k)=>T(l,W/2,y+3+k*9,{align:"center"}));
+ if(D.rep&&D.rep.trim()){y+=28;d.setFont("helvetica","italic");d.setFontSize(14);d.splitTextToSize(pdfTxt("Réponse de "+S.prenom+" : "+D.rep.trim()),W-2*M).slice(0,3).forEach(l=>{T(l,M,y);y+=6})}
+ pied();const nom=S.prenom.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9-]+/g,"-");sauver(d,`Defi-${nom}.pdf`,"pdfok2")}
+function sauver(d,nom,boite){let url=null;try{const blob=d.output("blob");url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=nom;document.body.appendChild(a);a.click();a.remove()}catch(e){try{d.save(nom)}catch(x){}}
+ const el=document.getElementById(boite);if(el&&url)el.innerHTML=`<p class="small monte" style="background:#F2F8FB;border-radius:12px;padding:8px 12px">✓ Ton PDF est prêt (dossier Téléchargements). Il ne s’est pas ouvert ? <a href="${url}" target="_blank" rel="noopener" download="${E(nom)}"><b>Clique ici pour l’ouvrir</b></a>. Si tu utilises le jeu à l’intérieur de Teams, ouvre plutôt le lien dans Edge ou Chrome.</p>`}
+const FQ={qcm:"Question à choix multiples",vf:"Vrai ou faux",courte:"Question à réponse courte"};
+function creation(){majFin(false);const C=RE.creation,D=S.reinv.creaBrouillon||{forme:"qcm",question:"",choix:["","",""],bonne:0,vf:true,reponse:"",pourquoi:""};let etape=0;
+ const ET=["Ma forme","Ma question","Ma réponse","Mon PDF","Teams"],garde=()=>{S.reinv.creaBrouillon=D;save()};
+ const okQ=()=>D.question.trim().length>=10&&(D.forme!=="qcm"||D.choix.filter(c=>c.trim()).length>=2&&D.choix[D.bonne]&&D.choix[D.bonne].trim());
+ const okR=()=>(D.forme!=="courte"||D.reponse.trim())&&D.pourquoi.trim().length>=5;
+ function vue(){let corps="",pret=true;const nav=`<div class="stepper">${ET.map((e,k)=>`<div class="stp ${k<etape?"fait":k==etape?"ici":""}"><span>${k<etape?"✓":k+1}</span><small>${e}</small></div>`).join("")}</div>`;
+  if(etape==0)corps=`<h3>1. Choisis la forme de ta question</h3><select id="fq" style="width:100%">${Object.keys(FQ).map(k=>`<option value="${k}" ${D.forme===k?"selected":""}>${FQ[k]}</option>`).join("")}</select>${C.consigne?`<p class="small">${E(C.consigne)}</p>`:""}`;
+  if(etape==1){corps=`<h3>2. Écris ta question</h3><textarea id="cq" style="min-height:90px" placeholder="Ma question">${E(D.question)}</textarea>${D.forme==="qcm"?`<p class="consigne">Les choix de réponse (coche la bonne) :</p>${D.choix.map((c,k)=>`<div class="row" style="margin:6px 0"><input type="radio" name="bn" value="${k}" ${D.bonne===k?"checked":""} style="width:24px;height:24px" aria-label="Bonne réponse"><input type="text" id="ch${k}" value="${E(c)}" placeholder="Choix ${k+1}" style="flex:1;font-size:19px"></div>`).join("")}${D.choix.length<4?`<button class="lien" id="ac">＋ Ajouter un choix</button>`:""}`:""}`;pret=okQ()}
+  if(etape==2){corps=`<h3>3. La bonne réponse</h3>${D.forme==="vf"?`<div class="row"><label><input type="radio" name="vv" value="1" ${D.vf?"checked":""}> <b>Vrai</b></label><label><input type="radio" name="vv" value="0" ${D.vf?"":"checked"}> <b>Faux</b></label></div>`:D.forme==="courte"?`<textarea id="cr" style="min-height:60px" placeholder="La bonne réponse">${E(D.reponse)}</textarea>`:`<p>Bonne réponse : <b>${E(D.choix[D.bonne]||"")}</b></p>`}<p class="consigne">Pourquoi c’est la bonne réponse ?</p><textarea id="cw" style="min-height:80px">${E(D.pourquoi)}</textarea>`;pret=okR()}
+  if(etape==3)corps=`<h3>4. Télécharge ta question</h3><p>Ta question devient un PDF en format paysage : page 1, la question pour la classe; page 2, la réponse.</p>${S.prenom?"":`<label><b>Ton prénom</b> <input type="text" id="dpn" maxlength="30" style="font-size:19px"></label>`}<div class="row mt"><button class="go" id="dpdf">⬇ Télécharger ma question (PDF)</button></div><p class="small" id="dpm" style="color:var(--mal)"></p><div id="pdfok2"></div>`,pret=!!D.telecharge;
+  if(etape==4)corps=`<h3>5. Publie ta question dans Teams</h3>${etapesTeams("Question")}<p class="mt"><b>${E(PROF)} va vérifier ta réponse.</b> Bravo !</p>`;
+  app.innerHTML=`<div class="row sp"><h2>${E(C.titre||"Crée ta question")}</h2>${retour()}</div>${nav}<div class="card monte">${corps}<div class="row sp mt"><button id="pv" ${etape==0?"disabled":""}>◀ Précédent</button>${etape<4?`<button class="go" id="sv" ${pret?"":"disabled"}>Suivant ▶</button>`:`<button class="go" id="fn">Terminé ✓</button>`}</div></div>`;
+  const $=id=>document.getElementById(id),lire=()=>{if($("cq"))D.question=$("cq").value;D.choix.forEach((c,k)=>{if($("ch"+k))D.choix[k]=$("ch"+k).value});const bn=app.querySelector('input[name=bn]:checked');if(bn)D.bonne=+bn.value;const vv=app.querySelector('input[name=vv]:checked');if(vv)D.vf=vv.value==="1";if($("cr"))D.reponse=$("cr").value;if($("cw"))D.pourquoi=$("cw").value;garde()};
+  const maj=()=>{lire();if($("sv"))$("sv").disabled=!(etape==1?okQ():etape==2?okR():true)};
+  $("rt").onclick=()=>{lire();bilan()};$("pv").onclick=()=>{lire();etape--;vue();haut()};if($("sv"))$("sv").onclick=()=>{lire();etape++;vue();haut()};if($("fn"))$("fn").onclick=bilan;
+  if($("fq"))$("fq").onchange=()=>{D.forme=$("fq").value;garde()};app.querySelectorAll("input,textarea").forEach(i=>{i.oninput=maj;i.onchange=maj});
+  if($("ac"))$("ac").onclick=()=>{lire();D.choix.push("");vue()};
+  if(etape==3)$("dpdf").onclick=()=>{const pn=$("dpn");if(pn){const x=pn.value.trim();if(x.length<2){$("dpm").textContent="Écris ton prénom avant de télécharger.";pn.focus();return}S.prenom=x;save()}
+   $("dpm").textContent="";creaPdf(D);D.telecharge=true;S.reinv.creation={question:D.question,reponse:D.forme==="vf"?(D.vf?"Vrai":"Faux"):D.forme==="qcm"?D.choix[D.bonne]:D.reponse,pourquoi:D.pourquoi};garde();$("sv").disabled=false}}
+ vue();haut()}
+function creaPdf(D){const {jsPDF}=window.jspdf,d=new jsPDF({unit:"mm",format:"letter",orientation:"landscape"}),W=279.4,H=215.9,M=14;
+ const T=(t,x,y,o)=>d.text(pdfTxt(t),x,y,o),hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),acc=hex((CFG.theme&&CFG.theme.accent)||"#C9733A");
+ const entete=(t1,t2)=>{d.setFillColor(...acc);d.rect(0,0,W,30,"F");d.setTextColor(255);d.setFont("helvetica","bold");d.setFontSize(30);T(t1,M,18);d.setFontSize(13);d.setFont("helvetica","normal");T(t2,M,26);d.setTextColor(60)};
+ const pied=()=>{d.setFontSize(10);d.setTextColor(140);T(CFG.titre+" · "+(CFG.cours||"")+" · question créée par "+S.prenom,W/2,H-7,{align:"center"});d.setTextColor(60)};
+ const bloc=(t,y,fs,st="normal")=>{d.setFont("helvetica",st);d.setFontSize(fs);const l=d.splitTextToSize(pdfTxt(t),W-2*M-10);l.forEach((x,k)=>T(x,M+5,y+k*fs*.45));return y+l.length*fs*.45};
+ entete("La question de "+S.prenom,FQ[D.forme]);let y=bloc(D.question,50,30,"bold")+8;
+ if(D.forme==="qcm")D.choix.filter(c=>c.trim()).forEach((c,k)=>{d.setFillColor(239,230,218);d.roundedRect(M,y-9,W-2*M,15,4,4,"F");y=bloc(String.fromCharCode(65+k)+") "+c,y,22)+9});
+ if(D.forme==="vf"){d.setFillColor(227,243,232);d.roundedRect(M,y,110,24,5,5,"F");d.setFillColor(251,237,228);d.roundedRect(W-M-110,y,110,24,5,5,"F");d.setFont("helvetica","bold");d.setFontSize(28);T("VRAI",M+55,y+16,{align:"center"});T("FAUX",W-M-55,y+16,{align:"center"})}
+ pied();d.addPage("letter","landscape");entete("Réponse de la question de "+S.prenom,"À montrer après que la classe a répondu");
+ const rep=D.forme==="vf"?(D.vf?"Vrai":"Faux"):D.forme==="qcm"?String.fromCharCode(65+D.choix.filter(c=>c.trim()).indexOf(D.choix[D.bonne]))+") "+D.choix[D.bonne]:D.reponse;
+ y=bloc(D.question,48,18,"italic")+8;d.setFillColor(227,243,232);d.roundedRect(M,y-10,W-2*M,22,4,4,"F");y=bloc("Bonne réponse : "+rep,y+3,26,"bold")+12;bloc("Pourquoi : "+D.pourquoi,y,20);pied();
+ const nom=S.prenom.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9-]+/g,"-");sauver(d,`Question-${nom}.pdf`,"pdfok2")}
+/* ================= PDF ================= */
 function pdfTxt(s){return String(s).replace(/<[^>]+>/g,"").replace(/[’‘]/g,"'").replace(/[“”]/g,'"').replace(/œ/g,"oe").replace(/Œ/g,"Oe").replace(/≈/g,"env.").replace(/→/g,">").replace(/[−–—]/g,"-").replace(/…/g,"...").replace(/[  ]/g," ").replace(/✓/g,"").replace(/[^\x00-\xFF]/g,"")}
 function pdf(){
- if(!window.jspdf){alert("Le module PDF ne s’est pas chargé. Vérifie ta connexion et recharge la page.");return}
+ if(!window.jspdf){alert("Le module PDF ne s’est pas chargé. Recharge la page.");return}
  const {jsPDF}=window.jspdf,d=new jsPDF({unit:"mm",format:"letter"}),W=215.9,H=279.4,M=14;let y=M;
  const c=cotes(),now=new Date(),dur=S.tps?dureeMin():null;
  const date=now.toLocaleDateString("fr-CA",{day:"numeric",month:"long",year:"numeric"})+", "+now.getHours()+" h "+String(now.getMinutes()).padStart(2,"0");
- const T=(t,x,yy,o)=>d.text(pdfTxt(t),x,yy,o);
- const fond=(r,g,b)=>d.setFillColor(r,g,b);
- const pied=()=>{d.setFontSize(8);d.setTextColor(140);T("PPS-Z128 · Estimer au Saguenay · bilan de "+S.prenom+" · page "+d.getNumberOfPages(),W/2,H-7,{align:"center"});d.setTextColor(60)};
+ const T=(t,x,yy,o)=>d.text(pdfTxt(t),x,yy,o),fond=(r,g,b)=>d.setFillColor(r,g,b),hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+ const pied=()=>{d.setFontSize(8);d.setTextColor(140);T((CFG.cours||"")+" · "+CFG.titre+" · bilan de "+S.prenom+" · page "+d.getNumberOfPages(),W/2,H-7,{align:"center"});d.setTextColor(60)};
  const besoin=h=>{if(y+h>H-14){pied();d.addPage();y=M}};
- const para=(t,size=10,st="normal",w=W-2*M,x=M)=>{d.setFont("helvetica",st);d.setFontSize(size);const l=d.splitTextToSize(pdfTxt(t),w);l.forEach(li=>{besoin(size*.45);T(li,x,y);y+=size*.45});};
- d.setTextColor(60);fond(201,115,58);d.rect(0,0,W,24,"F");d.setTextColor(255);d.setFont("helvetica","bold");d.setFontSize(18);T("Estimer au Saguenay · Mon bilan",M,11);
- d.setFontSize(10);d.setFont("helvetica","normal");T("PPS-Z128 · Budget et consommation · pour Mélanie",M,18);d.setTextColor(60);y=32;
+ const para=(t,size=10,st="normal")=>{d.setFont("helvetica",st);d.setFontSize(size);d.splitTextToSize(pdfTxt(t),W-2*M).forEach(li=>{besoin(size*.45);T(li,M,y);y+=size*.45})};
+ const acc=hex((CFG.theme&&CFG.theme.accent)||"#C9733A");
+ d.setTextColor(60);fond(...acc);d.rect(0,0,W,24,"F");d.setTextColor(255);d.setFont("helvetica","bold");d.setFontSize(18);T(CFG.titre+" · Mon bilan",M,11);
+ d.setFontSize(10);d.setFont("helvetica","normal");T([CFG.cours,CFG.matiere].filter(Boolean).join(" · ")+" · pour "+PROF,M,18);d.setTextColor(60);y=32;
  d.setFont("helvetica","bold");d.setFontSize(13);T("Prénom : "+S.prenom,M,y);d.setFont("helvetica","normal");d.setFontSize(10);T("Remis le "+date+(dur?" · temps sur les défis : "+dur+" min":""),W-M,y,{align:"right"});y+=6;
  if(S.i<Q.length){d.setFont("helvetica","bold");d.setFontSize(9.5);const l=d.splitTextToSize(pdfTxt("Tournée partielle : "+nbFaits()+" défis faits sur "+Q.length+" (dernier niveau travaillé : "+dernierNiv()+"). Les éléments pas encore travaillés sont « non évalué »."),W-2*M-4);fond(246,227,166);d.roundedRect(M,y-1,W-2*M,l.length*4.3+4,2,2,"F");l.forEach((li,j)=>T(li,M+2,y+4+j*4.3));y+=l.length*4.3+8}else y+=2;
- d.setFont("helvetica","bold");d.setFontSize(12);T("Grille d'observation (cote proposée par le jeu)",M,y);y+=3;
+ d.setFont("helvetica","bold");d.setFontSize(12);T("Grille d'observation (cote proposée par le jeu)"+(CFG.intention?"":""),M,y);y+=3;
+ if(CFG.intention){y+=2;para("Intention : "+CFG.intention,8.5,"italic");y+=1}
  const cw=[38,36.5,36.5,36.5,36.5],cx=[M];for(let k=1;k<5;k++)cx.push(cx[k-1]+cw[k-1]);
- const head=["Élément observé","1 · "+ECH[0],"2 · "+ECH[1],"3 · "+ECH[2],"4 · "+ECH[3]];
- fond(245,238,230);d.rect(M,y,W-2*M,7,"F");d.setFontSize(8.5);head.forEach((h,k)=>T(h,cx[k]+1.5,y+4.8));y+=7;
+ fond(245,238,230);d.rect(M,y,W-2*M,7,"F");d.setFontSize(8.5);d.setFont("helvetica","bold");["Élément observé"].concat(ECH.map((e,k)=>(k+1)+" · "+e)).forEach((h,k)=>T(h,cx[k]+1.5,y+4.8));y+=7;
  Object.keys(ELN).forEach(el=>{d.setFontSize(8);const cells=[ELN[el]+(c[el]?"":" (non évalué)")].concat(DESC[el]);const lines=cells.map((t,k)=>{d.setFont("helvetica",k==0||k==c[el]?"bold":"normal");return d.splitTextToSize(pdfTxt(t),cw[k]-3)});const h=Math.max(...lines.map(l=>l.length))*3.4+4;besoin(h);
-  if(c[el]){fond(251,226,206);d.rect(cx[c[el]],y,cw[c[el]],h,"F");d.setDrawColor(201,115,58);d.setLineWidth(.8);d.rect(cx[c[el]]+.4,y+.4,cw[c[el]]-.8,h-.8,"S")}
+  if(c[el]){fond(251,226,206);d.rect(cx[c[el]],y,cw[c[el]],h,"F");d.setDrawColor(...acc);d.setLineWidth(.8);d.rect(cx[c[el]]+.4,y+.4,cw[c[el]]-.8,h-.8,"S")}
   d.setDrawColor(220);d.setLineWidth(.2);cells.forEach((t,k)=>{d.rect(cx[k],y,cw[k],h,"S");d.setFont("helvetica",k==0||k==c[el]?"bold":"normal");lines[k].forEach((li,j)=>T(li,cx[k]+1.5,y+4+j*3.4))});y+=h});
- y+=4;para("Cote calculée à partir des réponses : réussi au 1er essai sans aide, réussi avec le truc du renard ou au 2e essai, ou à revoir. Mélanie peut l'ajuster. « Expliquer sa stratégie » est à confirmer en lisant les explications écrites (page suivante).",8.5,"italic");y+=3;
+ y+=4;para(`Cote calculée à partir des réponses : réussi au 1er essai sans aide, réussi avec le truc ou au 2e essai, ou à revoir. ${PROF} peut l'ajuster. Les éléments évalués par des réponses écrites sont à confirmer en les lisant.`,8.5,"italic");y+=3;
  d.setFont("helvetica","bold");d.setFontSize(12);besoin(10);T("Résultats par niveau",M,y);y+=6;
- ["E","B","S"].forEach(lv=>{const qs=Q.filter(q=>ST[q.st].lv===lv&&q.type!=="texte"),n=[1,2,3,0].map(e=>qs.filter(q=>etat(q)===e).length);const hx=LVHEX[lv][0];fond(parseInt(hx.slice(1,3),16),parseInt(hx.slice(3,5),16),parseInt(hx.slice(5,7),16));d.roundedRect(M,y-4,32,6,2,2,"F");d.setFontSize(10);d.setFont("helvetica","bold");T(LV[lv].n,M+2,y);d.setFont("helvetica","normal");T(`${n[0]} réussi(s) du premier coup · ${n[1]} réussi(s) avec de l'aide · ${n[2]} à revoir${n[3]?" · "+n[3]+" pas encore fait(s)":""} (sur ${qs.length})`,M+36,y);y+=7});
- y+=2;d.setFont("helvetica","bold");d.setFontSize(12);besoin(10);T("Autoévaluation de l'élève",M,y);y+=6;d.setFontSize(10);
- AV.forEach(([k,t])=>{besoin(6);d.setFont("helvetica","normal");T(t,M,y);d.setFont("helvetica","bold");T(S.auto[k]!=null?AVO[S.auto[k]]:"non demandé",W-M,y,{align:"right"});y+=5.5});
+ NIVS.forEach(lv=>{const qs=Q.filter(q=>ST[q.st].lv===lv&&q.type!=="texte"),n=[1,2,3,0].map(e=>qs.filter(q=>etat(q)===e).length);besoin(7);fond(...hex(LVHEX[lv][0]));d.roundedRect(M,y-4,32,6,2,2,"F");d.setFontSize(10);d.setFont("helvetica","bold");T(LV[lv].n,M+2,y);d.setFont("helvetica","normal");T(`${n[0]} réussi(s) du premier coup · ${n[1]} réussi(s) avec de l'aide · ${n[2]} à revoir${n[3]?" · "+n[3]+" pas encore fait(s)":""} (sur ${qs.length})`,M+36,y);y+=7});
+ y+=2;d.setFont("helvetica","bold");d.setFontSize(12);besoin(10);T("Mes prochaines étapes",M,y);y+=6;Object.keys(ELN).forEach(el=>{if(!c[el])return;para("- "+ELN[el]+" : "+prochaine(el,c[el]),9.5)});y+=2;
+ if(AV.length){y+=2;d.setFont("helvetica","bold");d.setFontSize(12);besoin(10);T("Autoévaluation de l'élève",M,y);y+=6;d.setFontSize(10);
+  AV.forEach(([k,t])=>{besoin(6);d.setFont("helvetica","normal");T(t,M,y);d.setFont("helvetica","bold");T(S.auto[k]!=null?AVO[S.auto[k]]:"non demandé",W-M,y,{align:"right"});y+=5.5})}
  pied();d.addPage();y=M;
  d.setFont("helvetica","bold");d.setFontSize(12);T("Détail des défis",M,y);y+=4;
  const tw=[9,32,72,40,34.9],tx=[M];for(let k=1;k<5;k++)tx.push(tx[k-1]+tw[k-1]);const RES=["","1er essai","Avec aide","À revoir","Écrit"];
  const row=(cells,hd)=>{d.setFontSize(8);d.setFont("helvetica",hd?"bold":"normal");const ls=cells.map((t,k)=>d.splitTextToSize(pdfTxt(t),tw[k]-2.5));const h=Math.max(...ls.map(l=>l.length))*3.3+3;besoin(h);if(hd){fond(245,238,230);d.rect(M,y,W-2*M,h,"F")}d.setDrawColor(225);ls.forEach((l,k)=>{d.rect(tx[k],y,tw[k],h,"S");l.forEach((li,j)=>T(li,tx[k]+1.2,y+3.6+j*3.3))});y+=h};
  row(["N°","Lieu","Défi","Réponse de l'élève","Résultat"],1);
- Q.forEach((q,k)=>{const r=S.rec[q.id];const e=etat(q);row([String(k+1),ST[q.st].n,q.court,r?r.rep:"(non fait)",(RES[e]||"Non fait")+(r&&r.h?" · truc du renard":"")+(r&&r.t==2&&r.ok?" · 2e essai":"")])});
- y+=6;d.setFont("helvetica","bold");d.setFontSize(12);besoin(12);T("Explications écrites",M,y);y+=6;
- Q.filter(q=>q.type==="texte").forEach(q=>{para(q.titre,9.5,"bold");para(S.textes[q.id]||"(pas de réponse)",10,"normal");y+=3});
- const R=S.reinv;if(R.caps.length||R.panier||R.defi){y+=3;d.setFont("helvetica","bold");d.setFontSize(12);besoin(12);T("Pour aller plus loin",M,y);y+=6;
-  if(R.caps.length)para("Capsules du renard revues : "+R.caps.map(k=>CAPS[k].titre).join(", ")+".",10);
-  if(R.panier)para(`Mon panier au Maxi (30 $) : ${R.panier.articles.join(", ")}. Estimation : ${fm(R.panier.estimation)} · vrai total : ${fr(R.panier.total)} · écart : ${fr(Math.abs(R.panier.estimation-R.panier.total))} · ${R.panier.assez?"assez":"dépasse le budget"}.`,10);
-  if(R.defi)para(`Défi créé (${R.defi.lieu}) : ${R.defi.art.map(a=>a[0]+" "+a[1]+" $").join(", ")} · budget ${R.defi.budget} $ · estimation de l'élève : ${R.defi.est} $ · vrai total : ${fr(R.defi.total)}.`,10)}
+ Q.forEach((q,k)=>{const r=S.rec[q.id],e=etat(q);row([String(k+1),ST[q.st].n,q.court,r?r.rep:"(non fait)",(RES[e]||"Non fait")+(r&&r.h?" · avec le truc":"")+(r&&r.t==2&&r.ok?" · 2e essai":"")])});
+ const textes=Q.filter(q=>q.type==="texte");if(textes.length){y+=6;d.setFont("helvetica","bold");d.setFontSize(12);besoin(12);T("Réponses écrites",M,y);y+=6;
+  textes.forEach(q=>{para(q.titre,9.5,"bold");para(S.textes[q.id]||"(pas de réponse)",10,"normal");y+=3})}
+ const R=S.reinv;if(RE.dansBilan&&(R.caps.length||R.panier||R.defi&&R.defi.items||R.creation)){y+=3;d.setFont("helvetica","bold");d.setFontSize(12);besoin(12);T("Pour aller plus loin",M,y);y+=6;
+  if(R.caps.length)para("Capsules revues : "+R.caps.map(k=>CAPS[k]?CAPS[k].titre:k).join(", ")+".",10);
+  if(R.panier)para(`${RE.panier.titre} (${RE.panier.budget} $) : ${R.panier.articles.join(", ")}. Estimation : ${fm(R.panier.estimation)} · vrai total : ${fr(R.panier.total)} · écart : ${fr(Math.abs(R.panier.estimation-R.panier.total))} · ${R.panier.assez?"assez":"dépasse le budget"}.`,10);
+  if(R.defi&&R.defi.items)para(`Défi créé (${R.defi.lieu}) : ${R.defi.art.map(a=>a[0]+" "+a[1]+" $").join(", ")}${R.defi.taxes?" + taxes":""} · budget ${R.defi.budget} $ · estimation de l'élève : ${R.defi.est} $ · vrai total : ${fr(R.defi.total)}.`,10);
+  if(R.creation){para("Question créée : "+R.creation.question,10);para("Réponse : "+R.creation.reponse+(R.creation.pourquoi?" · Pourquoi : "+R.creation.pourquoi:""),10)}}
  pied();
  const nom=S.prenom.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9-]+/g,"-");
- d.save(`Bilan-Estimer_${nom}_${now.toISOString().slice(0,10)}.pdf`)}
+ sauver(d,`Bilan-${(CFG.fichier||"jeu")}_${nom}_${now.toISOString().slice(0,10)}.pdf`,"pdfok")}
 
-/* ---------------- espace Mélanie ---------------- */
-function repTxt(q){switch(q.type){case"droite":return rond(q.p)+" $";case"tri":return q.bins.map((b,j)=>b+" : "+q.items.filter(i=>i[1]===j).map(i=>i[0]).join(", ")).join(" | ");
- case"jetons":return q.items.map(i=>i[0]+" "+rond(i[1])).join(", ");case"qcm":return q.opts[q.rep];case"num":case"curseur":return "accepté de "+fm(q.okMin)+" à "+fm(q.okMax);
- case"assez":return q.rep?"Assez":"Pas assez";case"vf":return q.rep?"Vrai":"Faux";case"ordre":return q.steps.join(" > ");case"erreur":return q.lignes[q.bad[0]][0];default:return "réponse libre"}}
-function melanie(){majFin(false);
- app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div>${foxFace(100)}</div><div><p class="small" style="margin:0">Espace enseignante · ce lien n’est pas affiché aux élèves</p><h1 style="font-size:40px">Estimer au Saguenay · Mélanie</h1></div></div>
- <div class="card"><h3>En bref</h3><ul style="padding-left:22px;margin:6px 0"><li>27 défis dans 11 lieux, du niveau Érable (arrondir) au niveau Bouleau (total, assez ou pas) au niveau Sapin (taxes, rabais). Environ 30 minutes.</li>
- <li>Au début de chaque niveau, une capsule animée présente les trucs du renard. Dans chaque défi, le bouton « Le truc du renard » sert d’indice (il est noté dans le bilan).</li>
+/* ================= espace enseignant ================= */
+function repTxt(q){switch(q.type){case"droite":return rond(q.p)+(U?" "+U:"");case"tri":return q.bins.map((b,j)=>b+" : "+q.items.filter(i=>i[1]===j).map(i=>i[0]).join(", ")).join(" | ");
+ case"jetons":return q.items.map(i=>i[0]+" "+rond(i[1])).join(", ");case"qcm":return q.opts[q.rep];case"num":case"curseur":return "accepté de "+fmU(q.okMin,q.u)+" à "+fmU(q.okMax,q.u);
+ case"assez":return q.rep?"Assez":"Pas assez";case"vf":return q.rep?"Vrai":"Faux";case"ordre":return q.steps.join(" > ");case"erreur":return q.bad.map(b=>q.lignes[b][0]).join(" ou ");default:return "réponse libre"}}
+function enseignant(){majFin(false);
+ const types=[...new Set(Q.map(q=>q.type))];
+ app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div>${mascotte(100)}</div><div><p class="small" style="margin:0">Espace enseignant · ce lien n’est pas affiché aux élèves</p><h1 style="font-size:40px">${E(CFG.titre)} · ${E(PROF)}</h1></div></div>
+ ${CFG.intention?`<div class="card"><h3>Intention pédagogique</h3><p>${E(CFG.intention)}</p></div>`:""}
+ <div class="card"><h3>En bref</h3><ul style="padding-left:22px;margin:6px 0"><li>${Q.length} défis dans ${ST.length} lieux, sur ${NIVS.length} niveaux : ${CFG.niveaux.map(n=>E(n.nom)+" ("+E(n.description||"")+")").join(", ")}. Environ ${CFG.duree||30} minutes.</li>
+ <li>Au début de chaque niveau, une capsule animée présente les trucs. Dans chaque défi, le bouton « Le truc » sert d’indice (il est noté dans le bilan).</li>
  <li>2 essais par défi, puis l’explication étape par étape. La voix se fait seulement au clic.</li>
- <li>Modalités : droite numérique, tri d’étiquettes, pièces de 1 $, choix multiples, réponse au clavier, assez ou pas assez, ordre des étapes, curseur, vrai ou faux, erreur dans un reçu, explication écrite (avec dictée vocale si le navigateur le permet).</li>
- <li>À la fin : autoévaluation, puis un bilan PDF qu’on ne peut télécharger qu’après avoir écrit son prénom. Rien n’est envoyé en ligne : l’élève vous remet le PDF (le plus simple : un devoir Teams « Remets ton bilan »).</li>
- <li>Le bouton « Terminer et voir mon bilan » est toujours visible : un élève peut s’arrêter au niveau Érable, par exemple. À la fin de chaque niveau, le jeu propose aussi de continuer ou de s’arrêter. Le bilan indique alors « tournée partielle » et « non évalué » pour ce qui n’a pas été fait.</li>
- <li>Le travail est sauvegardé sur l’appareil : l’élève peut reprendre la tournée plus tard, même après avoir vu son bilan.</li></ul></div>
- <div class="card"><h3>Comment la cote est proposée</h3><p>Chaque défi vaut : 1 (1<sup>er</sup> essai sans aide), 0,75 (1<sup>er</sup> essai avec le truc), 0,6 (2<sup>e</sup> essai), 0,5 (2<sup>e</sup> essai avec le truc), 0 (à revoir). Moyenne par élément : 0,85 et plus = 1 Avec facilité · 0,6 = 2 Un peu de soutien · 0,35 = 3 Beaucoup d’aide · moins = 4 N’y arrive pas. Même échelle que l’outil de suivi.</p></div>
- <div class="card"><h3>Projeter une capsule</h3><div class="row">${Object.keys(CAPS).map(k=>`<button data-k="${k}">${E(CAPS[k].titre)}</button>`).join("")}</div><div id="cp" class="mt"></div></div>
- <div class="card"><h3>Corrigé</h3><table class="t"><tr><th>N°</th><th>Lieu</th><th>Défi</th><th>Élément</th><th>Réponse</th></tr>${Q.map((q,k)=>`<tr><td>${k+1}</td><td>${E(ST[q.st].n)}</td><td>${E(q.court)}</td><td>${ELN[q.el]}</td><td>${E(repTxt(q))}</td></tr>`).join("")}</table></div>
+ <li>Modalités utilisées : ${types.join(", ")}.</li>
+ <li>Le bouton « Terminer et voir mon bilan » est toujours visible. Le bilan PDF exige le prénom, indique « tournée partielle » au besoin et « non évalué » pour ce qui n’a pas été fait.</li>
+ <li>Rien n’est envoyé en ligne : l’élève vous remet le PDF. Le travail est sauvegardé sur l’appareil et peut être repris.</li></ul></div>
+ <div class="card"><h3>Grille et cote</h3><table class="t"><tr><th>Élément</th>${ECH.map((e,k)=>`<th>${k+1} · ${E(e)}</th>`).join("")}</tr>${CFG.elements.map(e=>`<tr><td><b>${E(e.nom)}</b></td>${e.descripteurs.map(x=>`<td>${E(x)}</td>`).join("")}</tr>`).join("")}</table>
+ <p class="small">Chaque défi vaut 1 (1<sup>er</sup> essai sans aide), 0,75 (avec le truc), 0,6 (2<sup>e</sup> essai), 0,5 (2<sup>e</sup> essai avec le truc) ou 0. Moyenne par élément : 0,85 et plus = 1 · 0,6 = 2 · 0,35 = 3 · moins = 4.</p></div>
+ ${Object.keys(CAPS).length?`<div class="card"><h3>Projeter une capsule</h3><div class="row">${Object.keys(CAPS).map(k=>`<button data-k="${k}">${E(CAPS[k].titre)}</button>`).join("")}</div><div id="cp" class="mt"></div></div>`:""}
+ <div class="card"><h3>Corrigé</h3><table class="t"><tr><th>N°</th><th>Lieu</th><th>Défi</th><th>Élément</th><th>Réponse</th></tr>${Q.map((q,k)=>`<tr><td>${k+1}</td><td>${E(ST[q.st].n)}</td><td>${E(q.court)}</td><td>${E(ELN[q.el])}</td><td>${E(repTxt(q))}</td></tr>`).join("")}</table></div>
+ ${RE.defi||RE.creation?`<div class="card"><h3>Lien direct vers le défi supplémentaire</h3><p>À donner aux élèves qui veulent créer un défi sans refaire la tournée :</p><p><b>${E(location.origin+location.pathname+(RE.defi?"?mode=defi":"?mode=question"))}</b></p></div>`:""}
  <div class="row ctr"><a href="?" style="font-weight:800;color:var(--or)">Ouvrir le jeu comme un élève</a></div>`;
  app.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>capsule(document.getElementById("cp"),[b.dataset.k]))}
 
-/* ---------------- départ ---------------- */
-if(/mode=melanie/.test(location.search))melanie();else accueil();
+/* ================= départ ================= */
+const DIRECT=/mode=defi/.test(location.search)&&RE.defi?"defi":/mode=question/.test(location.search)&&RE.creation?"creation":null;
+if(new RegExp("mode=("+(CFG.cleEnseignant||"enseignant")+"|enseignant)").test(location.search))enseignant();else if(DIRECT){const s0=charge();if(s0)S=s0;DIRECT==="defi"?defi():creation()}else accueil();
 </script>
 </body>
 </html>

@@ -1,0 +1,100 @@
+/* Bibliothèque de décors : decor(cle, {n: nom affiché, c: couleur}) -> SVG 360 × 210.
+   Chaque décor a des éléments propres au lieu et une petite animation CSS (classes an-*). */
+const _E=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const _fs=(t,w)=>Math.max(14,Math.min(30,Math.floor(w/(Math.max(String(t).length,4)*0.52))));
+const _sky=(c="#EAF6FB")=>`<rect width="360" height="210" fill="${c}"/>`;
+const _sol=(c="#D8C7BB")=>`<rect x="0" y="196" width="360" height="14" fill="${c}"/>`;
+const _sign=(x,y,w,h,c,t)=>{const f=_fs(t,w-16);return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${c}"/><text x="${x+w/2}" y="${y+h/2+f*.34}" text-anchor="middle" font-family="PH,'Patrick Hand',cursive" font-size="${f}" fill="#fff">${_E(t)}</text>`};
+const _win=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" fill="#CFE7F1"/><path d="M${x+6},${y+6} l${(w*.3).toFixed(0)},0 l${(-w*.22).toFixed(0)},${(h*.5).toFixed(0)} z" fill="#fff" opacity=".6"/>`;
+const _door=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" fill="#8a7f76"/><rect x="${x+5}" y="${y+5}" width="${w-10}" height="${(h*.55).toFixed(0)}" rx="3" fill="#CFE7F1"/><circle cx="${x+w-9}" cy="${(y+h*.7).toFixed(0)}" r="2.5" fill="#FFFDF9"/>`;
+const _awn=(x,y,w,n,c)=>{let s="";const d=w/n;for(let k=0;k<n;k++)s+=`<path d="M${(x+k*d).toFixed(1)},${y} h${d.toFixed(1)} v14 q${(-d/2).toFixed(1)},11 ${(-d).toFixed(1)},0 z" fill="${k%2?"#fff":c}"/>`;return s};
+const _cart=(x,y)=>`<g transform="translate(${x},${y})" stroke="#6b6f75" stroke-width="2.5" fill="none" stroke-linejoin="round"><path d="M0,0 h6 l6,18 h20 l5,-13 h-28"/><circle cx="13" cy="24" r="2.6" fill="#6b6f75"/><circle cx="29" cy="24" r="2.6" fill="#6b6f75"/></g>`;
+const _tree=(x,y,s=1)=>`<g transform="translate(${x},${y}) scale(${s})"><rect x="-4" y="0" width="8" height="34" fill="#8a6d4f"/><circle cx="0" cy="-8" r="22" fill="#9CCB9F"/><circle cx="-14" cy="4" r="14" fill="#86BC8A"/><circle cx="14" cy="2" r="15" fill="#86BC8A"/></g>`;
+const _steam=(x,y)=>[0,1,2].map(k=>`<path class="an-smoke" style="animation-delay:${k*.7}s" d="M${x+k*9},${y} q-5,-8 0,-14 q5,-7 0,-14" fill="none" stroke="#B9B2AA" stroke-width="3" stroke-linecap="round"/>`).join("");
+const _flag=(x,y,c)=>`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+46}" stroke="#6b6f75" stroke-width="3"/><path class="an-wave" d="M${x},${y} h30 l-6,9 l6,9 h-30 z" fill="${c}"/>`;
+const DECORS={
+ cafe:(n,c)=>_sky()+_sol()+`<rect x="40" y="82" width="280" height="114" rx="6" fill="#F3E7DA"/><path d="M28,86 L180,40 L332,86 Z" fill="${c}"/>`+_sign(100,90,160,34,c,n)
+  +`<g transform="translate(58,132)"><path d="M0,0 h34 l-4,34 h-26 z" fill="#fff" stroke="#8a7f76" stroke-width="2.5"/><path d="M34,8 q12,2 0,16" fill="none" stroke="#8a7f76" stroke-width="3"/><rect x="-2" y="-4" width="38" height="6" rx="3" fill="${c}"/></g>`+_steam(64,122)
+  +_win(112,134,96,48)+`<rect x="112" y="166" width="96" height="6" fill="#B9A08A"/>`+_door(222,128,44,68)
+  +`<rect x="300" y="120" width="6" height="76" fill="#6b6f75"/><rect x="284" y="104" width="44" height="34" rx="5" fill="#4A4F55"/><path d="M290,112 h30 M290,120 h24 M290,128 h28" stroke="#E3BF6A" stroke-width="3"/>`,
+ depanneur:(n,c)=>_sky()+_sol()+`<rect x="92" y="62" width="180" height="134" rx="4" fill="#EADBC8"/><rect x="86" y="58" width="192" height="8" rx="3" fill="#B9A08A"/>`+_sign(100,70,164,34,c,n)
+  +_win(104,116,90,58)+`<rect x="112" y="126" width="74" height="24" rx="12" fill="none" stroke="#E2463B" stroke-width="3" class="an-blink"/><text x="149" y="143" text-anchor="middle" font-size="14" font-weight="900" fill="#E2463B" class="an-blink" font-family="Arial">OUVERT</text><rect x="118" y="154" width="22" height="16" fill="#F6D1D6"/><rect x="146" y="154" width="22" height="16" fill="#F6E3A6"/>`
+  +_door(206,120,52,76)+`<rect x="16" y="146" width="64" height="50" rx="5" fill="#fff" stroke="#9CC3DD" stroke-width="3"/><text x="48" y="176" text-anchor="middle" font-size="15" font-weight="900" fill="#3B6EA5" font-family="Arial">GLACE</text>`
+  +`<rect x="318" y="96" width="5" height="100" fill="#6b6f75"/><path d="M320,96 q-16,0 -18,-10" stroke="#6b6f75" stroke-width="4" fill="none"/><circle cx="302" cy="90" r="8" fill="#F6E3A6" class="an-glow"/>`,
+ magasin:(n,c)=>_sky()+_sol()+`<rect x="20" y="76" width="320" height="120" rx="6" fill="#F3E7DA"/>`+_sign(60,82,240,38,c,n)+_awn(20,120,320,10,c)
+  +_win(36,140,110,50)+_win(214,140,110,50)+_door(156,136,48,60)
+  +[56,86,116].map((x,k)=>`<g class="an-flicker" style="animation-delay:${k*.4}s"><ellipse cx="${x}" cy="178" rx="12" ry="10" fill="#E07A1F"/><rect x="${x-2}" y="164" width="4" height="6" fill="#5c7a3a"/><path d="M${x-6},176 l3,-4 l3,4 z M${x+1},176 l3,-4 l3,4 z" fill="#F6E3A6"/></g>`).join("")
+  +[[236,"#F5C6C2"],[262,"#DDF5F2"],[288,"#F6E3A6"],[312,"#CFE9D7"]].map(([x,f],k)=>`<g class="an-float" style="animation-delay:${k*.5}s"><line x1="${x}" y1="150" x2="${x}" y2="186" stroke="#8a7f76"/><ellipse cx="${x}" cy="146" rx="10" ry="12" fill="${f}" stroke="#8a7f76" stroke-width="1.5"/></g>`).join(""),
+ epicerie:(n,c)=>_sky()+_sol()+`<rect x="18" y="70" width="324" height="126" rx="6" fill="#EFE6DA"/>`+_sign(70,76,220,40,c,n)
+  +`<rect x="130" y="126" width="100" height="70" rx="4" fill="#CFE7F1" stroke="#8a7f76" stroke-width="3"/><line x1="180" y1="126" x2="180" y2="196" stroke="#8a7f76" stroke-width="3"/>`+_win(32,126,86,46)+_win(242,126,86,46)
+  +`<rect x="26" y="174" width="96" height="22" rx="3" fill="#A8794F"/>`+[36,48,60,72].map(x=>`<circle cx="${x}" cy="172" r="6" fill="#D9473C"/>`).join("")+[88,100,112].map(x=>`<path d="M${x-7},168 q7,9 14,0" fill="none" stroke="#E8C547" stroke-width="5" stroke-linecap="round"/>`).join("")
+  +`<g class="an-roule">`+_cart(244,168)+_cart(262,168)+_cart(280,168)+`</g>`,
+ cinema:(n,c)=>_sky("#E9E4F2")+_sol()+`<rect x="40" y="52" width="280" height="144" rx="6" fill="#F0E6F5"/>`+_sign(70,58,220,36,c,n)
+  +`<rect x="58" y="100" width="244" height="42" rx="6" fill="#fff" stroke="${c}" stroke-width="4"/><text x="180" y="127" text-anchor="middle" font-size="16" font-weight="900" fill="${c}" font-family="Arial">À L’AFFICHE CE SOIR</text>`
+  +Array.from({length:16},(x,k)=>`<circle cx="${66+k*15.2}" cy="104" r="3.2" fill="#F6C945" class="${k%2?"an-blink":"an-blink2"}"/><circle cx="${66+k*15.2}" cy="138" r="3.2" fill="#F6C945" class="${k%2?"an-blink2":"an-blink"}"/>`).join("")
+  +`<rect x="60" y="150" width="42" height="46" rx="3" fill="#fff" stroke="#8a7f76" stroke-width="2"/><rect x="65" y="155" width="32" height="36" fill="#C9B6DD"/><rect x="258" y="150" width="42" height="46" rx="3" fill="#fff" stroke="#8a7f76" stroke-width="2"/><rect x="263" y="155" width="32" height="36" fill="#F5C6C2"/>`+_door(146,150,68,46)
+  +`<g transform="translate(326,166)"><path d="M0,0 h22 l-3,30 h-16 z" fill="#fff" stroke="#D9473C" stroke-width="2"/><path d="M5,0 v30 M11,0 v30 M17,0 v30" stroke="#D9473C" stroke-width="2"/><circle cx="4" cy="-3" r="5" fill="#FFF6D8"/><circle cx="11" cy="-6" r="5" fill="#FFF6D8"/><circle cx="18" cy="-3" r="5" fill="#FFF6D8"/></g>`,
+ restaurant:(n,c)=>_sky()+_sol()+`<rect x="248" y="38" width="26" height="50" fill="#A9583D"/>`+[0,1,2].map(k=>`<circle class="an-smoke" style="animation-delay:${k*.8}s" cx="${261+k*4}" cy="30" r="${7+k*2}" fill="#D9D2CB"/>`).join("")
+  +`<rect x="50" y="82" width="260" height="114" rx="6" fill="#E9D3C0"/>`+[100,120,140,160,180].map((y,k)=>`<path d="M50,${y} h260" stroke="#DCC1AA" stroke-width="2"/>`).join("")+_sign(80,88,200,36,c,n)
+  +`<g transform="translate(96,160)"><circle r="24" fill="#E8B25C"/><circle r="19" fill="#E46A3B"/><circle cx="-7" cy="-6" r="4" fill="#A9372B"/><circle cx="8" cy="-3" r="4" fill="#A9372B"/><circle cx="-2" cy="9" r="4" fill="#A9372B"/><path d="M0,0 L0,-24 M0,0 L21,12 M0,0 L-21,12" stroke="#E8B25C" stroke-width="2"/></g>`
+  +_win(132,136,90,46)+_door(240,132,46,64)+`<path d="M8,128 q22,-22 44,0 z" fill="${c}"/><line x1="30" y1="128" x2="30" y2="176" stroke="#6b6f75" stroke-width="3"/><rect x="14" y="174" width="32" height="5" rx="2" fill="#8a7f76"/>`,
+ arena:(n,c)=>_sky()+_sol()+`<path d="M24,196 V112 Q180,24 336,112 V196 Z" fill="#DCE6F2"/><path d="M24,112 Q180,24 336,112" fill="none" stroke="${c}" stroke-width="6"/>`+_flag(180,22,c).replace('y2="'+(22+46)+'"','y2="70"')
+  +_sign(80,98,200,34,c,n)+`<g stroke-linecap="round"><path d="M150,134 L196,164" stroke="#8a6d4f" stroke-width="6"/><path d="M196,164 h12" stroke="#4A4F55" stroke-width="7"/><path d="M210,134 L164,164" stroke="#8a6d4f" stroke-width="6"/><path d="M164,164 h-12" stroke="#4A4F55" stroke-width="7"/></g>`
+  +`<ellipse cx="180" cy="152" rx="9" ry="4" fill="#2b2f33"/>`+_door(150,166,60,30)+_win(48,150,52,34)+_win(260,150,52,34),
+ "grande-surface":(n,c)=>_sky()+_sol("#C9C2BA")+`<rect x="8" y="94" width="344" height="102" rx="4" fill="#ECE6DC"/><rect x="8" y="94" width="344" height="10" fill="${c}"/>`+_sign(90,108,180,34,c,n)
+  +`<rect x="136" y="146" width="88" height="10" rx="3" fill="${c}"/>`+_door(148,156,64,40)+_win(26,124,52,40)+_win(282,124,52,40)
+  +`<g class="an-roule">`+_cart(28,168)+_cart(48,168)+_cart(68,168)+`</g>`+[244,276,308].map(x=>`<line x1="${x}" y1="200" x2="${x+16}" y2="200" stroke="#fff" stroke-width="3"/>`).join(""),
+ pharmacie:(n,c)=>_sky()+_sol()+`<rect x="58" y="64" width="244" height="132" rx="6" fill="#F2ECE4"/>`+_sign(78,70,204,36,c,n)
+  +`<g class="an-glow" transform="translate(180,128)"><rect x="-16" y="-6" width="32" height="12" rx="3" fill="#2E9E5B"/><rect x="-6" y="-16" width="12" height="32" rx="3" fill="#2E9E5B"/></g>`
+  +_win(70,124,74,52)+_win(216,124,74,52)+[136,152,168].map(y=>`<line x1="74" y1="${y}" x2="140" y2="${y}" stroke="#B9A08A" stroke-width="2"/><line x1="220" y1="${y}" x2="286" y2="${y}" stroke="#B9A08A" stroke-width="2"/>`).join("")
+  +[80,92,104,228,240,252,264].map((x,k)=>`<rect x="${x}" y="${k%2?140:156}" width="7" height="12" rx="2" fill="${["#F5C6C2","#CFE9D7","#F6E3A6","#DDF5F2"][k%4]}"/>`).join("")+_door(156,148,48,48),
+ "centre-commercial":(n,c)=>_sky("#E3EEF6")+_sol()+`<rect x="10" y="88" width="340" height="108" rx="6" fill="#EDE5DA"/><path d="M126,90 L180,38 L234,90 Z" fill="#CFE7F1" stroke="#8a7f76" stroke-width="2"/><path d="M180,38 V90 M153,64 h54" stroke="#8a7f76" stroke-width="1.5"/>`+_sign(108,94,144,30,c,n)
+  +[22,64,262,304].map((x,k)=>`<rect x="${x}" y="130" width="36" height="40" rx="3" fill="#CFE7F1"/><rect x="${x-2}" y="124" width="40" height="8" rx="3" fill="${["#F5C6C2","#F6E3A6","#CFE9D7","#C9B6DD"][k]}"/>`).join("")+_door(146,140,68,56)
+  +_flag(110,40,c)+_flag(240,40,c)+[30,90,150,210,270,330].map((x,k)=>`<circle class="an-snow" style="animation-delay:${k*.6}s" cx="${x}" cy="0" r="3" fill="#fff" stroke="#B9CCD8"/>`).join(""),
+ "maison-halloween":(n,c)=>_sky("#2E3350")+`<circle cx="300" cy="42" r="22" fill="#F6E3A6"/>`+[0,1].map(k=>`<path class="an-bat" style="animation-delay:${k*2}s" d="M60,40 q6,-8 12,0 q6,-8 12,0 q-6,2 -12,8 q-6,-6 -12,-8 z" fill="#1d2033"/>`).join("")
+  +`<rect x="0" y="196" width="360" height="14" fill="#4a4a3a"/><path d="M68,106 L180,40 L292,106 Z" fill="#3F3448"/><rect x="82" y="104" width="196" height="92" fill="#6B5A73"/>`
+  +`<rect x="98" y="122" width="40" height="34" rx="4" fill="#F6C945" class="an-flicker"/><rect x="222" y="122" width="40" height="34" rx="4" fill="#F6C945" class="an-flicker" style="animation-delay:.6s"/>`+_door(160,140,40,56)+_sign(118,108,124,26,c,n)
+  +[110,250].map((x,k)=>`<g class="an-flicker" style="animation-delay:${k*.3}s"><ellipse cx="${x}" cy="186" rx="16" ry="12" fill="#E07A1F"/><rect x="${x-2}" y="170" width="4" height="6" fill="#5c7a3a"/><path d="M${x-8},184 l4,-5 l4,5 z M${x+1},184 l4,-5 l4,5 z M${x-7},190 q7,5 14,0" fill="#F6E3A6"/></g>`).join(""),
+ ecole:(n,c)=>_sky()+_sol()+`<rect x="34" y="84" width="292" height="112" rx="4" fill="#E5C9B5"/><rect x="150" y="40" width="60" height="50" fill="#DDBBA3"/><path d="M144,42 L180,16 L216,42 Z" fill="${c}"/><circle cx="180" cy="64" r="15" fill="#fff" stroke="#8a7f76" stroke-width="2"/><path d="M180,64 V54 M180,64 h7" stroke="#4A4F55" stroke-width="2.5" stroke-linecap="round"/>`
+  +_sign(92,92,176,30,c,n)+[48,92,232,276].map(x=>_win(x,130,36,28)).join("")+_door(156,134,48,62)+_flag(46,38,c)
+  +`<g class="an-bus"><rect x="250" y="166" width="96" height="30" rx="7" fill="#F6C945"/>`+[258,276,294,312].map(x=>`<rect x="${x}" y="171" width="14" height="10" rx="2" fill="#CFE7F1"/>`).join("")+`<circle cx="268" cy="196" r="6" fill="#4A4F55"/><circle cx="328" cy="196" r="6" fill="#4A4F55"/></g>`,
+ bibliotheque:(n,c)=>_sky()+_sol()+`<rect x="44" y="94" width="272" height="94" fill="#EFE8DD"/><path d="M34,96 L180,46 L326,96 Z" fill="#E3D7C7"/>`+_sign(104,100,152,28,c,n)
+  +[64,112,236,284].map(x=>`<rect x="${x}" y="132" width="14" height="56" fill="#F7F2EA" stroke="#D8C7BB"/>`).join("")+_door(154,136,52,52)
+  +`<rect x="30" y="188" width="300" height="8" fill="#D8C7BB"/>`+[0,1,2,3,4,5].map(k=>`<rect x="${84+k*5}" y="${150+(k%2)*3}" width="4" height="${24-(k%2)*3}" fill="${["#D9473C","#3B6EA5","#E8C547","#2E9E5B"][k%4]}"/>`).join("")
+  +`<g class="an-float"><path d="M288,56 q12,-8 24,0 v18 q-12,-8 -24,0 z M312,56 q12,-8 24,0 v18 q-12,-8 -24,0 z" fill="#fff" stroke="#8a7f76" stroke-width="2"/></g>`,
+ parc:(n,c)=>_sky()+`<rect x="0" y="150" width="360" height="60" fill="#BFE3C9"/><path d="M150,210 q30,-40 60,-60" stroke="#E9DCC9" stroke-width="22" fill="none"/>`+`<g class="an-spin" style="transform-origin:46px 40px"><circle cx="46" cy="40" r="16" fill="#F6C945"/>`+[0,45,90,135,180,225,270,315].map(a=>`<line x1="46" y1="16" x2="46" y2="8" stroke="#F6C945" stroke-width="3" transform="rotate(${a} 46 40)"/>`).join("")+`</g>`
+  +_tree(70,138,1.1)+_tree(300,132,1.2)+_tree(250,150,.8)+`<rect x="128" y="104" width="6" height="56" fill="#8a6d4f"/><rect x="226" y="104" width="6" height="56" fill="#8a6d4f"/>`+_sign(110,84,140,40,c,n)
+  +`<rect x="30" y="178" width="60" height="6" rx="2" fill="#8a6d4f"/><rect x="34" y="184" width="4" height="12" fill="#8a6d4f"/><rect x="82" y="184" width="4" height="12" fill="#8a6d4f"/>`,
+ banque:(n,c)=>_sky()+_sol()+`<rect x="50" y="80" width="260" height="116" fill="#EEE8DF"/><path d="M40,84 L180,44 L320,84 Z" fill="#DCD2C4"/>`+_sign(94,88,172,30,c,n)
+  +[70,110,238,278].map(x=>`<rect x="${x}" y="126" width="12" height="70" fill="#F7F2EA" stroke="#D8C7BB"/>`).join("")+_door(152,136,56,60)
+  +`<rect x="322" y="140" width="30" height="56" rx="4" fill="#8a7f76"/><rect x="327" y="146" width="20" height="14" fill="#CFE7F1"/><g class="an-float"><circle cx="24" cy="120" r="14" fill="#D9AE45" stroke="#8a6d1f" stroke-width="2"/><text x="24" y="126" text-anchor="middle" font-size="16" font-weight="900" fill="#5a4410" font-family="Arial">$</text></g>`,
+ clinique:(n,c)=>_sky()+_sol()+`<rect x="52" y="66" width="256" height="130" rx="6" fill="#F7F4F0"/>`+_sign(76,72,208,34,c,n)
+  +`<g transform="translate(180,128)"><rect x="-15" y="-5" width="30" height="10" rx="3" fill="${c}"/><rect x="-5" y="-15" width="10" height="30" rx="3" fill="${c}"/></g>`+_win(66,118,70,44)+_win(224,118,70,44)+_door(156,148,48,48)
+  +`<rect x="8" y="14" width="104" height="44" rx="8" fill="#fff" stroke="#D8C7BB" stroke-width="2"/><polyline class="an-pouls" points="14,38 40,38 48,24 56,52 64,38 106,38" fill="none" stroke="${c}" stroke-width="3" stroke-linejoin="round"/>`,
+ maison:(n,c)=>_sky()+`<rect x="0" y="176" width="360" height="34" fill="#BFE3C9"/><rect x="214" y="44" width="20" height="40" fill="#A9583D"/>`+_steam(216,40)
+  +`<path d="M80,104 L180,40 L280,104 Z" fill="${c}"/><rect x="96" y="102" width="168" height="84" fill="#F3E7DA"/>`+_win(112,118,44,36)+_win(204,118,44,36)+_door(160,130,40,56)
+  +_tree(316,152,.9)+[30,46,62].map((x,k)=>`<circle cx="${x}" cy="182" r="6" fill="${["#F5C6C2","#F6E3A6","#C9B6DD"][k]}"/><line x1="${x}" y1="188" x2="${x}" y2="198" stroke="#5c7a3a" stroke-width="2"/>`).join("")
+  +`<rect x="44" y="148" width="4" height="32" fill="#8a6d4f"/>`+_sign(4,126,88,24,c,n),
+ cuisine:(n,c)=>`<rect width="360" height="210" fill="#FBF3E6"/><rect x="0" y="96" width="360" height="44" fill="#F2E7D8"/>`+Array.from({length:12},(x,k)=>`<line x1="${k*30}" y1="96" x2="${k*30}" y2="140" stroke="#E6D7C3"/>`).join("")
+  +_sign(120,22,140,30,c,n)+`<rect x="0" y="140" width="360" height="70" fill="#D8C7BB"/><rect x="0" y="140" width="360" height="8" fill="#B9A08A"/>`
+  +`<rect x="18" y="52" width="66" height="144" rx="6" fill="#fff" stroke="#D8C7BB" stroke-width="3"/><line x1="18" y1="102" x2="84" y2="102" stroke="#D8C7BB" stroke-width="3"/><rect x="72" y="66" width="4" height="22" fill="#B9A08A"/><rect x="72" y="112" width="4" height="30" fill="#B9A08A"/>`
+  +`<rect x="200" y="148" width="100" height="48" rx="4" fill="#fff" stroke="#D8C7BB" stroke-width="2"/><rect x="214" y="124" width="44" height="22" rx="4" fill="${c}"/><rect x="208" y="122" width="56" height="5" rx="2" fill="#4A4F55"/>`+_steam(222,116)
+  +_win(282,40,60,48)+`<path d="M282,40 q14,26 0,48 M342,40 q-14,26 0,48" fill="#F5C6C2"/>`+[110,128,146].map((x,k)=>`<rect x="${x}" y="70" width="12" height="20" rx="3" fill="${["#F6E3A6","#CFE9D7","#F5C6C2"][k]}"/>`).join("")+`<rect x="104" y="90" width="60" height="4" fill="#B9A08A"/>`,
+ gare:(n,c)=>_sky()+`<rect x="0" y="176" width="360" height="34" fill="#8a8f95"/><path d="M0,192 h360" stroke="#fff" stroke-width="3" stroke-dasharray="16 14"/><rect x="0" y="160" width="360" height="16" fill="#D8C7BB"/>`
+  +`<rect x="24" y="84" width="96" height="76" rx="4" fill="#CFE7F1" opacity=".75" stroke="#8a7f76" stroke-width="3"/><rect x="18" y="78" width="108" height="10" rx="3" fill="#8a7f76"/><rect x="34" y="138" width="76" height="6" rx="2" fill="#8a6d4f"/>`
+  +`<rect x="146" y="70" width="5" height="90" fill="#6b6f75"/>`+_sign(120,46,140,30,c,n)
+  +`<g class="an-bus"><rect x="190" y="112" width="160" height="62" rx="10" fill="${c}"/>`+[200,228,256,284,312].map(x=>`<rect x="${x}" y="122" width="22" height="20" rx="3" fill="#CFE7F1"/>`).join("")+`<rect x="330" y="122" width="14" height="40" rx="3" fill="#CFE7F1"/><circle cx="222" cy="176" r="10" fill="#4A4F55"/><circle cx="318" cy="176" r="10" fill="#4A4F55"/></g>`
+};
+const DECORS_CSS=`.an-smoke{animation:anSmoke 2.4s ease-out infinite;transform-box:fill-box}@keyframes anSmoke{0%{opacity:0;transform:translateY(6px)}30%{opacity:.9}100%{opacity:0;transform:translateY(-16px)}}
+.an-blink{animation:anBlink 1.4s steps(2,jump-none) infinite}.an-blink2{animation:anBlink 1.4s steps(2,jump-none) infinite .7s}@keyframes anBlink{50%{opacity:.25}}
+.an-glow{animation:anGlow 2s ease-in-out infinite}@keyframes anGlow{50%{opacity:.55}}
+.an-flicker{animation:anFlick 2.2s infinite}@keyframes anFlick{0%,100%{opacity:1}45%{opacity:.75}50%{opacity:.4}55%{opacity:.9}}
+.an-float{animation:anFloat 3s ease-in-out infinite;transform-box:fill-box}@keyframes anFloat{50%{transform:translateY(-7px)}}
+.an-wave{animation:anWave 1.6s ease-in-out infinite;transform-box:fill-box;transform-origin:left center}@keyframes anWave{50%{transform:skewY(6deg) scaleX(.92)}}
+.an-bat{animation:anBat 6s linear infinite}@keyframes anBat{0%{transform:translate(-80px,30px)}50%{transform:translate(120px,-10px)}100%{transform:translate(320px,20px)}}
+.an-snow{animation:anSnow 5s linear infinite}@keyframes anSnow{from{transform:translateY(-10px)}to{transform:translateY(215px)}}
+.an-bus{animation:anBus 1.6s cubic-bezier(.2,.9,.3,1) both}@keyframes anBus{from{transform:translateX(260px)}}
+.an-roule{animation:anRoule 1.4s ease-out both}@keyframes anRoule{from{transform:translateX(-40px);opacity:0}}
+.an-spin{animation:anSpin 14s linear infinite}@keyframes anSpin{to{transform:rotate(360deg)}}
+.an-pouls{stroke-dasharray:140;animation:anPouls 2.2s linear infinite}@keyframes anPouls{from{stroke-dashoffset:140}to{stroke-dashoffset:-140}}`;
+function decor(cle,st){const f=DECORS[cle]||DECORS.magasin;return `<svg viewBox="0 0 360 210" class="decor pop" role="img" aria-label="${_E(st.n)}">${f(st.n,st.c||"#C9733A")}</svg>`}
