@@ -3755,3 +3755,5 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .nf-plus summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; cursor: pointer; } .nf-plus summary h2 { margin: 0; }
 @media (max-width: 1100px) { .nf-nef-bloc { grid-template-columns: 1fr; } .nf-fiche { position: static; max-height: none; } }
 @media (max-width: 760px) { .nf-commande { grid-template-columns: 1fr; justify-items: start; } .nf-ros { width: 110px; height: 110px; } .nf-jeu { grid-auto-flow: column; align-items: center; } .nf-r-l input { width: 150px; } }
+.nf-ajout { justify-self: start; margin-top: 6px; padding: 3px 10px; border-radius: 999px; border: 1px dashed #e8c27a; background: none; color: #e8c27a; font: 700 .76rem "Atkinson Hyperlegible", sans-serif; cursor: pointer; }
+.nf-ajout:hover { background: rgba(232, 194, 122, .12); }

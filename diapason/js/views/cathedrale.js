@@ -132,7 +132,7 @@ export default {
       const pupitres = Object.keys(GROUPES).map((g) => { const ks = voix.map((v, k) => (v?.g === g ? k : -1)).filter((k) => k >= 0 && k < nb); if (!ks.length) return ''; const y1 = yv(Math.min(...ks)) - H / 2 + 8; const y2 = yv(Math.max(...ks)) + H / 2 - 8;
         return `<path d="M8 ${y1} H4 V${y2} H8" stroke="${GROUPES[g]}" stroke-width="3" fill="none"/><text x="2" y="${(y1 + y2) / 2}" fill="${GROUPES[g]}" class="nf-pup-l" transform="rotate(-90 2 ${(y1 + y2) / 2})">${g}</text>`; }).join('');
       return `<div class="nf-grille" style="grid-template-columns:minmax(178px, 210px) ${cols};grid-template-rows:72px repeat(${nb}, ${H}px) 44px 44px">
-          <div class="nf-coin"><b>${esc(oeuvre.r.join(' : '))}</b><small>depuis ${FR[plier(etat.tonique)]} · un tour = ${String(oeuvre.tour.toFixed(1)).replace('.', ',')} s</small></div>
+          <div class="nf-coin"><b>${esc(oeuvre.r.join(' : '))}</b><small>depuis ${FR[plier(etat.tonique)]} · un tour = ${String(oeuvre.tour.toFixed(1)).replace('.', ',')} s</small>${etat.cle.length < 6 ? '<button class="nf-ajout" data-ajoute-voix title="Ajouter un disque : une voix de plus, une partie de plus, une note de plus dans l’accord">＋ Un disque</button>' : ''}</div>
           ${S.map(arche).join('')}<div class="nf-coda"><svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M10 40 V20 Q50 2 90 20 V40"/></svg><small>coda</small></div>
           ${etat.cle.map(rangee).join('')}
           <div class="nf-t">l’accord tenu</div>${S.map((s) => `<div class="nf-nappe" style="--o:${(0.15 + 0.85 * etat.axe).toFixed(2)}">${esc(nomAccordDe(s))}</div>`).join('')}<div></div>
