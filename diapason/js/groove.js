@@ -47,6 +47,7 @@ export function bindGroove(root) {
   const save = () => store.set('groove', st);
   const tick = () => {
     const c = audio();
+    if (next < c.currentTime - 0.25) next = c.currentTime + 0.05; // après une veille : reprendre au présent, sans rattrapage
     while (next < c.currentTime + 0.12) {
       const s = step % 16;
       Object.entries(ROWS).forEach(([r, fn]) => { if (g[r]?.[s]) drums[fn](next, s % 4 === 0 ? 1 : 0.75); });

@@ -186,7 +186,7 @@ export function bandeStart(section = 'accueil') {
   const go = () => {
     if (bande.t || c.state !== 'running') return;
     bande.next = c.currentTime + 0.12; bande.t0 = bande.next; bande.bar = 0;
-    const tick = () => { while (bande.next < c.currentTime + 0.6) { mesure(bande.next, bande.bar); bande.next += MES; bande.bar++; } };
+    const tick = () => { if (bande.next < c.currentTime - 0.25) bande.next = c.currentTime + 0.05; while (bande.next < c.currentTime + 0.6) { mesure(bande.next, bande.bar); bande.next += MES; bande.bar++; } };
     tick(); bande.t = setInterval(tick, 200);
   };
   if (c.state === 'running') go();

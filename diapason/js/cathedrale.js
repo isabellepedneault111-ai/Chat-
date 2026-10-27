@@ -214,7 +214,8 @@ export function jouer(oeuvre, { depuis = 0, onFin, sortie = null, vivant = null 
   const tic = () => {
     const horizon = c.currentTime + avance;
     while (i < oeuvre.notes.length && t0 + oeuvre.notes[i].t < horizon) {
-      let n = oeuvre.notes[i++]; if (vives.length && vivant && n.d != null) { n = { ...n }; moduler(n, vives, oeuvre.voix || [], vivant); }
+      let n = oeuvre.notes[i++]; if (t0 + n.t < c.currentTime - 0.25) continue; // après une veille : les notes passées sont sautées
+      if (vives.length && vivant && n.d != null) { n = { ...n }; moduler(n, vives, oeuvre.voix || [], vivant); }
       joue(n.banque, n.midi, { when: t0 + n.t, dur: n.dur, vel: Math.max(0, n.vel), dest: destDe(n) });
       // Et sur le matériel de Frog : la même note, arrondie au demi-ton (le MIDI ne connaît pas l'intonation juste).
       if (sortie) { const ch = canal(n.banque); const m = Math.max(0, Math.min(127, Math.round(n.midi))); const ts = performance.now() + (t0 + n.t - c.currentTime) * 1000; try { sortie.send([0x90 | ch, m, Math.max(1, Math.min(127, Math.round(n.vel * 140)))], ts); sortie.send([0x80 | ch, m, 0], ts + n.dur * 1000); } catch { /* appareil débranché */ } }

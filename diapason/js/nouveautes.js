@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.43', quand: '2026-10-28', titre: 'Transposer, et un séquenceur qui ne gèle plus', items: [
+    ['Transposer d’un demi-ton', ['Dans Jouer, à côté de la tonalité : − et +. Tous les accords suivent, les tiens compris. Guitare avec un capo à la 4e frette : +4. <a href="#/studio">Ouvrir Jouer →</a>']],
+    ['Le séquenceur ne gèle plus', ['Après une veille ou un onglet laissé en arrière-plan, la musique reprend au présent au lieu de tout rattraper d’un coup (ce qui figeait la page). Même correctif pour le labo, la cathédrale et les exercices.']],
+    ['Le clavier, d’emblée utile', ['L’accord qui joue et la tonique sont cochés dès l’ouverture.']],
+    ['Le calendrier, plus juste', ['Le calendrier d’abord ; des cartes à peu près proportionnelles à leur durée, en avant-midi, après-midi et soirée ; chaque sorte a son « 0 / 1 » ; et « Proposer une plage » disparaît dès que tu as proposé ta moitié de notre rythme.']],
+  ] },
   { v: '0.42', quand: '2026-10-27', titre: 'Le calendrier, plus simple', items: [
     ['Proposer une plage, en quelques touches', ['La sorte en cartes de couleur, le jour dans un petit calendrier du mois (avec les lunes et les plages déjà prévues), l’heure et la durée en pastilles, puis le résumé avant d’envoyer. <a href="#/calendrier">Ouvrir le calendrier →</a>']],
     ['Toucher une lune ouvre son rituel', ['Sur place : l’heure exacte, ce que ce temps du cycle nous demande, les outils pour le faire, et de quoi réserver une plage ce jour-là.']],

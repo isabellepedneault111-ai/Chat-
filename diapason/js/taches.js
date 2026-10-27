@@ -10,6 +10,8 @@ import { deLautre, fait, decrire } from './suivi.js';
 import { asksOf } from './views/relais.js';
 import { lundi, semaines, objectifSemaine } from './objectifs.js';
 
+// Notre rythme de la semaine. Chacun en propose sa moitié (même pas encore approuvée) : son pas « proposer » est alors fait.
+export const RYTHME = { presence: 2, distance: 1, pro: 1, jeu: 1 };
 const autreDe = (me) => (espace.meta?.members || MEMBERS).find((m) => m !== me);
 const inspirationsDites = (m) => { const l = (profileOf(m)?.artistes || []).filter((a) => a?.nom); return l.length > 0 && l.every((a) => a.aime?.length || a.pourquoi); };
 
@@ -36,8 +38,10 @@ export function mesTaches(me = espace.me) {
     deLautre().filter((e) => asksOf(e).length && !fait(me, e.id)).slice(0, 4).forEach((e) => t.push({ id: `ask-${e.id}`, titre: `${o} te demande : ${asksOf(e).map((a) => a[1].toLowerCase()).join(', ')}`, pourquoi: `Sur « ${e.title || 'sans titre'} ». Coche « J’ai fait ça » dans Nos nouvelles quand c’est fait : ${o} le verra.`, lien: decrire(e)[1] }));
     // Notre rythme de la semaine : deux séances en présence, une à distance. S'il n'est pas couvert, proposer une plage.
     const l0 = lundi(); const sem = espace.entries.filter((e) => e.type === 'plage' && e.data?.statut !== 'refuse' && e.data?.debut >= l0 && e.data.debut < l0 + 7 * 864e5);
-    const manque = Math.max(0, 2 - sem.filter((e) => e.data.sorte === 'presence').length) + Math.max(0, 1 - sem.filter((e) => e.data.sorte === 'distance').length);
-    if (manque && Date.now() < l0 + 6 * 864e5) t.push({ id: 'plage-semaine', titre: 'Proposer une plage cette semaine', pourquoi: `Notre rythme : deux séances en présence et une à distance. Il en manque ${manque} au calendrier.`, lien: '#/calendrier' });
+    const total = Object.values(RYTHME).reduce((a, b) => a + b, 0); const maPart = Math.ceil(total / 2);
+    const miennes = sem.filter((e) => e.data.par === me && e.data.sorte !== 'jalon').length;
+    const couvert = Object.entries(RYTHME).every(([k, v]) => sem.filter((e) => e.data.sorte === k).length >= v);
+    if (miennes < maPart && !couvert && Date.now() < l0 + 6 * 864e5) t.push({ id: 'plage-semaine', titre: 'Proposer une plage cette semaine', pourquoi: `Ta moitié de notre rythme : ${maPart} plages (tu en as proposé ${miennes}). Le reste, c’est ${o}.`, lien: '#/calendrier' });
     // L'objectif de la semaine, à fixer à deux ; la semaine passée, à évaluer chacun.
     if (!objectifSemaine()) t.push({ id: 'objectif', titre: 'Fixer l’objectif de la semaine', pourquoi: `Un objectif qu’on pourra vérifier dimanche, à deux${o ? ` avec ${o}` : ''}.`, lien: '#/' });
     const avant = semaines().find((x) => x.data.debut === l0 - 7 * 864e5);

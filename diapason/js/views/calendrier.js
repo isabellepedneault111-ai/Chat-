@@ -6,7 +6,7 @@ import { MEMBERS, memberColor, PLAN } from '../duo.js';
 import { esc, espaceGate } from './carnet.js';
 import { toast, store } from '../ui.js';
 import { lundi, objectifSemaine } from '../objectifs.js';
-import { mesTaches } from '../taches.js';
+import { mesTaches, RYTHME } from '../taches.js';
 import { currentMonth } from '../plan.js';
 import { lune, luneSVG, phasesEntre, CYCLE } from '../lune.js';
 
@@ -27,8 +27,7 @@ export function rituelDu(jour) {
   const p = phasesEntre(jour, jour + JOUR)[0]; if (!p) return null;
   const [nom, quoi, lien] = RITUELS[p.q]; return [p.t, `${nom}, ${heure(p.t)}`, quoi, lien, p.q];
 }
-// Notre rythme : au moins deux séances en présence et une à distance par semaine.
-const RYTHME = { presence: 2, distance: 1 };
+// Notre rythme de la semaine (deux séances en présence, une à distance, une plage pro, une de jeux) : voir taches.js.
 const JOURS = ['lun.', 'mar.', 'mer.', 'jeu.', 'ven.', 'sam.', 'dim.'];
 const heure = (t) => new Date(t).toLocaleTimeString('fr-CA', { hour: 'numeric', minute: '2-digit' }).replace(':', ' h ').replace(/ h 00$/, ' h');
 const jourLong = (t) => new Date(t).toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -51,7 +50,7 @@ export default {
     // Une plage dans le calendrier : son heure, sa sorte, son mot, et son état (proposée par l’un, ou à nous deux).
     function chip(e) {
       const d = e.data; const S = SORTES[d.sorte] || SORTES.jalon; const ok = d.statut === 'confirme';
-      return `<button class="cl-plage ${ok ? 'ok' : 'propose'}" data-plage="${esc(e.id)}" style="--s:${S[1]};--p:${memberColor(d.par)};min-height:${Math.round(56 + (d.duree / 60) * 22)}px" title="${esc(S[0])}${d.note ? ` : ${esc(d.note)}` : ''}">
+      return `<button class="cl-plage ${ok ? 'ok' : 'propose'}" data-plage="${esc(e.id)}" style="--s:${S[1]};--p:${memberColor(d.par)};height:${Math.round(30 + (d.duree / 60) * 14)}px" title="${esc(S[0])}${d.note ? ` : ${esc(d.note)}` : ''}">
         <b>${heure(d.debut)} – ${heure(d.debut + d.duree * 6e4)}</b><span>${esc(S[0])}</span>${d.note ? `<small>${esc(d.note)}</small>` : ''}<em>${ok ? 'nous deux ✓' : `proposée par ${esc(d.par)}`}</em></button>`;
     }
     // La vue Semaine : notre rythme, l’objectif de la semaine, et sept jours avec leurs plages et leurs rituels lunaires.
@@ -60,7 +59,7 @@ export default {
       const conf = (s) => l.filter((e) => e.data.sorte === s && e.data.statut === 'confirme').length;
       const prop = (s) => l.filter((e) => e.data.sorte === s && e.data.statut === 'propose').length;
       const rythme = Object.entries(RYTHME).map(([s, n]) => { const c = conf(s); return `<span class="cl-r ${c >= n ? 'atteint' : ''}" style="--s:${SORTES[s][1]}"><b>${c} / ${n}</b> ${SORTES[s][0].toLowerCase()}${prop(s) ? ` <small>(+${prop(s)} proposée${prop(s) > 1 ? 's' : ''})</small>` : ''}</span>`; }).join('')
-        + ['pro', 'jeu'].map((s) => `<span class="cl-r libre" style="--s:${SORTES[s][1]}"><b>${conf(s)}</b> ${SORTES[s][0].toLowerCase()}</span>`).join('');
+        ;
       const obj = semaine === lundi() ? objectifSemaine() : '';
       // Une invitation, pour moi seul : si je n'ai encore rien proposé cette semaine, l'app me tend la main (l'autre ne le voit pas).
       const rienDeMoi = semaine === lundi() && !l.some((e) => e.data.par === espace.me);
@@ -151,13 +150,13 @@ export default {
       const titreSem = `${new Date(semaine).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' })} au ${new Date(semaine + 6 * JOUR).toLocaleDateString('fr-CA', { day: 'numeric', month: 'long' })}`;
       el.innerHTML = `<div class="mod-head"><div><p class="eyebrow">Notre calendrier sacré</p><h1>Le temps qu’on se donne pour créer.</h1>
           <p class="muted">L’un propose une plage, l’autre l’approuve : elle prend alors nos deux couleurs. Notre rythme : au moins deux séances en présence et une à distance par semaine, et de la place pour le projet professionnel et pour jouer. Nos rituels lunaires y sont aussi, à l’heure exacte de chaque phase.</p></div></div>
-        ${attenteHTML()}
         <section class="panel cl-cal"><div class="cl-barre">
           <div class="seg-tabs" role="tablist"><button role="tab" data-vue="semaine" aria-selected="${vue === 'semaine'}">Semaine</button><button role="tab" data-vue="mois" aria-selected="${vue === 'mois'}">Mois</button></div>
           <div class="cl-nav"><button class="icon-btn" data-nav="-1" aria-label="${vue === 'semaine' ? 'Semaine précédente' : 'Mois précédent'}">←</button><b>${vue === 'semaine' ? titreSem : mois.toLocaleDateString('fr-CA', { month: 'long', year: 'numeric' })}</b><button class="icon-btn" data-nav="1" aria-label="${vue === 'semaine' ? 'Semaine suivante' : 'Mois suivant'}">→</button>${(vue === 'semaine' ? semaine !== lundi() : mois.getMonth() !== new Date().getMonth()) ? '<button class="btn small ghost" data-nav="0">Aujourd’hui</button>' : ''}</div>
           <button class="btn primary" data-proposer>＋ Proposer une plage</button></div>
           ${vue === 'semaine' ? semaineHTML() : moisHTML()}
           <p class="cl-leg">${Object.entries(SORTES).map(([, [l, c]]) => `<span style="--s:${c}"><i></i>${l}</span>`).join('')}<span class="cl-leg-lune">${luneSVG(lune(), 12)} nos rituels lunaires</span><span class="cl-leg-ok"><i></i>approuvée : nos deux couleurs</span><span class="cl-leg-p"><i></i>proposée, en attente</span></p></section>
+        ${attenteHTML()}
         ${proposerHTML()}
         <div class="cl-fiche" hidden></div>
         ${pasHTML()}`;

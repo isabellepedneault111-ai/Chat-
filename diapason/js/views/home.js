@@ -62,7 +62,7 @@ function commencerHTML() {
   pas.splice(1, 0, ['Dire pourquoi nos inspirations nous inspirent', `Pour chaque artiste ou morceau : sa rythmique, sa voix, son texte… et le moment précis. ${dit(autre) ? `${autre} l’a fait ✓` : `${autre} aussi a cette tâche.`}`, '#/depart?etape=3', dit(espace.me)]);
   if (pas.every((x) => x[3])) return '';
   const prochain = pas.findIndex((x) => !x[3]);
-  return `<section class="commencer" aria-label="Par où commencer"><h2>Par où commencer</h2><ol>${pas.map(([t, d, h, ok], i) => `<li class="${ok ? 'fait' : i === prochain ? 'prochain' : ''}"><a href="${h}"><span class="cm-n">${ok ? '✓' : i + 1}</span><b>${t}</b><small>${d}</small>${i === prochain ? '<em>Maintenant →</em>' : ''}</a></li>`).join('')}</ol></section>`;
+  return `<section class="commencer" aria-label="Par où commencer"><h2>Par où commencer</h2><ol>${pas.map(([t, d, h, ok], i) => `<li class="${ok ? 'fait' : i === prochain ? 'prochain' : ''}"><a href="${h}"><span class="cm-n">${ok ? '✓' : i + 1}</span><b>${t}</b><small>${d}</small>${i === prochain ? '<span class="cm-go">Maintenant →</span>' : ''}</a></li>`).join('')}</ol></section>`;
 }
 const OU_ALLER = [
   ['Jouer ensemble', 'Dans la même pièce ou à distance, une séance guidée qui finit par une prise.', [['session', 'Lancer une séance'], ['accord', 'Voix + piano']]],

@@ -22,6 +22,7 @@ const S = {
   grid: store.get('grid', parse(DRUM_PRESETS.Pop)),
   bpm: store.get('bpm', 92),
   key: store.get('key', 0),
+  transpo: store.get('transpo', 0),
   prog: store.get('prog', 'pop'),
   playing: false,
   step: 0,
@@ -46,7 +47,7 @@ const S = {
   onLoop: null,
 };
 // Ce qu'on choisit de voir sur le clavier : l'accord qui joue d'emblée ; le reste se coche au besoin.
-const voir = () => new Set(store.get('kbVoir2', ['safe']));
+const voir = () => new Set(store.get('kbVoir3', ['safe', 'maison']));
 // Une couleur franche par demande (palette Okabe-Ito, distincte aussi pour les daltoniens).
 const KCOUL = { safe: '#d55e00', scale: '#009e73', gamme: '#9a9a9a', jazz: '#0072b2', blue: '#a347c9' };
 const save = () => { store.set('grid', S.grid); store.set('bpm', S.bpm); store.set('key', S.key); store.set('prog', S.prog); };
@@ -97,6 +98,9 @@ function scheduleStep(step, t) {
 // Le planificateur de la boucle : programme les pas un peu à l’avance pour un tempo parfaitement régulier.
 function scheduler() {
   const c = audio();
+  // Après une veille ou un onglet en arrière-plan, l'horloge audio a filé : on reprend au présent au lieu de rattraper
+  // d'un coup des centaines de pas (ce qui saturait le son et figeait la page).
+  if (S.nextTime < c.currentTime - 0.25) { S.queue.length = 0; S.nextTime = c.currentTime + 0.05; }
   while (S.nextTime < c.currentTime + 0.12) {
     // Relais : sur le prochain temps, l'accord qui sonnait s'efface et le nouveau style repart du début.
     if (S.restart && S.step % 4 === 0) {
@@ -151,6 +155,7 @@ export default {
         <label class="field"><span>Tempo</span><input type="range" min="50" max="200" data-in="bpm" aria-label="Tempo"><b class="mono bpm-out"></b></label>
         <button class="btn small tap" data-act="tap" title="Tape ce bouton au rythme de ta musique : le labo en déduit le tempo">Taper le tempo</button>
         <label class="field"><span>Tonalité</span><select data-in="key" aria-label="Tonalité">${FR.map((n, i) => `<option value="${i}">${n} majeur / ${FR[(i + 9) % 12]} mineur</option>`).join('')}</select></label>
+        <div class="field transpo" title="Tous les accords montent ou descendent d’un demi-ton. Guitare avec un capo à la 4e frette : +4."><span>Transposer</span><div><button class="btn small" data-act="transpo" data-d="-1" aria-label="Un demi-ton plus bas">−</button><b class="mono transpo-v"></b><button class="btn small" data-act="transpo" data-d="1" aria-label="Un demi-ton plus haut">+</button></div></div>
         <label class="field"><span>Accords</span><select data-in="prog" aria-label="Progression d’accords"></select></label>
         ${lampeHTML()}
         <button class="rec-btn" data-act="rec" aria-label="Enregistrer une prise">● REC</button>
@@ -183,6 +188,7 @@ export default {
     refreshProgSelect();
     const syncTop = () => {
       q('.bpm-out').textContent = S.bpm;
+      { const t = S.transpo || 0; q('.transpo-v').textContent = t > 0 ? `+${t}` : `${t}`; q('.transpo').classList.toggle('actif', !!t); }
       q('[data-act=play]').textContent = S.playing ? '■' : '▶';
       q('[data-act=play]').classList.toggle('on', S.playing);
       q('[data-act=rec]').classList.toggle('on', !!S.recorder);
@@ -200,7 +206,7 @@ export default {
     el.addEventListener('change', (e) => {
       const k = e.target.dataset.in;
       if (k === 'key') {
-        S.key = +e.target.value; save(); relay(); syncTop(); renderTab();
+        S.key = +e.target.value; S.transpo = 0; store.set('transpo', 0); save(); relay(); syncTop(); renderTab();
         // La maison s'allume : la tonique et son accord, deux secondes, et on les entend.
         requestAnimationFrame(() => { if (!kb) return; const tri = [0, 4, 7].map((x) => mod12(S.key + x)); kb.keys.forEach((kk, m) => { kk.classList.toggle('k-flash', tri.includes(mod12(m))); kk.classList.toggle('k-flash-t', mod12(m) === mod12(S.key)); }); setTimeout(() => kb?.keys.forEach((kk) => kk.classList.remove('k-flash', 'k-flash-t')), 2200); prechargerSons(['piano']); accordPiano('piano', [0, 4, 7].map((x) => 60 + ((S.key + x) % 12) - (S.key > 6 ? 12 : 0)), { dur: 1.2, vel: 0.5 }); toast(`${FR[S.key]} majeur : la maison est ${FR[S.key]}, l’accord maison ${[0, 4, 7].map((x) => FR[mod12(S.key + x)]).join('-')}.`); });
       }
@@ -246,6 +252,8 @@ export default {
       if (act === 'rec') toggleRec();
       if (act === 'defis') { S.defis = !S.defis; store.set('defisImpro', S.defis); syncTop(); }
       if (act === 'tap') taper();
+      // Transposer : toute la grille d'un demi-ton (la tonalité suit) ; le compteur garde le décalage, comme un capo.
+      if (act === 'transpo') { const d = +e.target.closest('[data-act]').dataset.d; S.key = mod12(S.key + d); S.transpo = Math.max(-11, Math.min(11, (S.transpo || 0) + d)); store.set('transpo', S.transpo); q('[data-in=key]').value = S.key; save(); relay(); syncTop(); renderTab(); }
       const cb = e.target.closest('.chord-row .chord[data-i]'); if (cb) { ouvrirAccord(+cb.dataset.i, cb); return; }
       if (!e.target.closest('.ch-pop')) q('.ch-pop')?.remove();
       if (act === 'editer') { const box = q('.grille-editeur'); if (!box.hidden) { box.hidden = true; return; } ed = depuisGrille(); rendreEditeur(); box.hidden = false; box.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
@@ -374,7 +382,7 @@ export default {
         </div>`;
       kb = keyboard(body.querySelector('.kb-host'), { from: 48, to: 76 });
       paintSafe(0);
-      body.addEventListener('change', (e) => { const v = e.target.dataset.voir; if (!v) return; const set = voir(); if (e.target.checked) set.add(v); else set.delete(v); store.set('kbVoir2', [...set]); safeBar = -1; paintSafe(S.cur ? chordAtStep(S.cur.step).i : 0); });
+      body.addEventListener('change', (e) => { const v = e.target.dataset.voir; if (!v) return; const set = voir(); if (e.target.checked) set.add(v); else set.delete(v); store.set('kbVoir3', [...set]); safeBar = -1; paintSafe(S.cur ? chordAtStep(S.cur.step).i : 0); });
       const hote = body.querySelector('.sp-host'); brancherSonsPerso(hote, () => { hote.innerHTML = sonsPersoHTML(); });
       body.addEventListener('click', (e) => {
         const c = e.target.closest('[data-cell]');

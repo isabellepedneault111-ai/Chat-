@@ -3647,3 +3647,29 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .cl-plage { align-content: start; }
 @media (max-width: 760px) { .cl-sem.cl-moments { grid-template-columns: 1fr; grid-template-rows: none; } .cl-moments .cl-jour { display: flex; flex-direction: column; grid-row: auto; } .cl-moments .cl-moment:empty, .cl-moments .cl-j-lune:empty { display: none; } }
 .nv-bandeau .nv-ouvrir { flex: none; font-weight: 700; color: #e8c27a; padding: 4px 10px; border: 1px solid #e8c27a; border-radius: 999px; background: none; box-shadow: none; }
+.transpo > div { display: inline-flex; align-items: center; gap: 6px; }
+.transpo .transpo-v { min-width: 2.2ch; text-align: center; font-weight: 700; }
+.transpo.actif .transpo-v { color: var(--zaza); }
+/* La semaine, plus compacte : trois moments discrets, des cartes à hauteur fixe selon la durée */
+.cl-sem.cl-moments { grid-template-rows: auto auto minmax(34px, auto) minmax(34px, auto) minmax(44px, auto); }
+.cl-moments .cl-plage { overflow: hidden; padding: 4px 7px; gap: 0; line-height: 1.25; flex: none; }
+.cl-moments .cl-plage.ok { padding-left: 14px; }
+.cl-moments .cl-plage b { font-size: .8rem; } .cl-moments .cl-plage span { font-size: .76rem; }
+.cl-moments .cl-plage small, .cl-moments .cl-plage em { font-size: .68rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cl-moments .cl-moment { padding: 2px 0; gap: 4px; }
+.cl-moments .cl-j-lune { min-height: 22px; padding: 2px 0; }
+/* Nos prochains pas : de simples lignes, pas des boîtes */
+.cl-pas-c ul { gap: 0; }
+.cl-pas-c li { background: none; border: 0; border-bottom: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); border-radius: 0; padding: 7px 2px; }
+.cl-pas-c li:last-child { border-bottom: 0; }
+.cl-pas-c li b { font-weight: 600; }
+.cl-pas-c li small { font-size: .8rem; line-height: 1.35; }
+.cl-attente .cl-a { border-left-width: 3px; }
+/* Tes prochains pas (Nos nouvelles) : des lignes légères, pas des blocs foncés */
+.nv-t-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.nv-t-tete h2 { margin: 0 0 6px; }
+.nv-taches ul { gap: 0; border-top: 1px solid color-mix(in srgb, var(--ink) 12%, transparent); }
+.nv-taches a { background: none; color: var(--ink); border-left: 0; border-radius: 0; padding: 9px 4px; border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent); }
+.nv-taches a:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+.nv-taches b { font-size: .95rem; font-weight: 700; } .nv-taches small { color: var(--muted); } .nv-taches span { color: var(--zaza); }
+.commencer .cm-go { display: inline-block; margin-top: 4px; color: #be331f; font-weight: 800; }

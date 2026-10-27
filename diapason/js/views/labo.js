@@ -566,6 +566,7 @@ export default {
           const fr = freqOf(i);
           if (t.muted || (t.inst || 'clic') === 'clic' || fr >= 20) { nextHit[i] = now + 0.02; return; }
           const vel = 1 - smooth(fr);
+          if (nextHit[i] < now - 0.25) nextHit[i] = now + 0.02; // après une veille : reprendre au présent
           while (nextHit[i] < now + 0.08) { const v = vel * (i ? 0.8 : 1) * niveau(i); if (v > 0.02) drums[t.inst](nextHit[i], Math.min(1.2, v)); nextHit[i] += 1 / fr; }
         });
       }, 20);

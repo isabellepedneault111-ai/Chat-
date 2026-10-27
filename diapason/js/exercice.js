@@ -144,6 +144,7 @@ export async function faireExercice(id, { garderBoucle = false, solo = false } =
   const sched = setInterval(() => {
     if (guideOn && !paused && guide) {
       const beat = 60 / (bpm || 80);
+      if (gStart < c.currentTime - 0.25) gStart = c.currentTime + 0.05; // après une veille : reprendre au présent
       while (gStart < c.currentTime + 0.25) {
         const debut = gStart;
         sp.then((x) => guide.motif.forEach(([t, midi, d]) => { const w = debut + t * beat; x.notePiano(midi, { when: w, dur: d * beat, vel: midi < 55 ? 0.35 : 0.6 }); allumer(midi, w, d * beat * 0.9); }));
@@ -152,6 +153,7 @@ export async function faireExercice(id, { garderBoucle = false, solo = false } =
       }
     }
     if (paused || !bpm) return;
+    if (nextBeat < c.currentTime - 0.25) nextBeat = c.currentTime + 0.05;
     while (nextBeat < c.currentTime + 0.12) {
       if (metroOn && (!m.boucle || garderBoucle)) drums.hat(nextBeat, beatN % 4 === 0 ? 1 : 0.45);
       nextBeat += 60 / bpm; beatN++;
