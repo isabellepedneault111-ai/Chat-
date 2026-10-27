@@ -3527,3 +3527,6 @@ html.gv-on body { padding-right: 432px; }
 .ar-t-barre i { display: block; height: 100%; border-radius: 4px; } .ar-t-barre .ia { background: #aa4b00; } .ar-t-barre .sans { background: #3f6fa8; }
 .ar-t-note, .ar-traits .ar-t-note { margin: 4px 0 0; font: .8rem "Atkinson Hyperlegible", sans-serif !important; color: var(--muted); max-width: none; }
 @media (max-width: 560px) { .ar-t-r { grid-template-columns: 1fr 1fr; } .ar-t-r > span:first-child { grid-column: 1 / -1; } .ar-t-h { display: none; } .ar-t-big { font-size: 1.2rem; } }
+.gv-fil button:disabled, .gv-som button:disabled { opacity: .4; cursor: not-allowed; }
+.gv-reprise { color: #e8d29c; font-weight: 700; }
+.coach-skip.gv-sur { color: #ffd36b; font-weight: 700; }

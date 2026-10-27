@@ -110,6 +110,11 @@ export function lancerGrandeVisite({ obligatoire = false, onFin } = {}) {
   const autre = membres().find((m) => m !== espace.me) || 'l’autre';
   const de = membres()[0];
   const C = CHAPITRES(autre); const E = ETAPES(autre); let i = -1; let jeton = 0;
+  // Obligatoire, rien ne se saute par mégarde : on reprend là où on s’était arrêté, on ne saute pas en avant
+  // d’un chapitre pas encore vu, et un double-clic sur « Suivant » ne compte qu’une fois.
+  const reprise = obligatoire ? Math.min(E.length - 1, profileOf(espace.me)?.grandeVisitePas || 0) : 0;
+  let vu = reprise; let pret = 0; let confirmer = 0;
+  const garder = () => { if (obligatoire && i > 0) saveProfile(() => ({ grandeVisitePas: Math.max(i, vu) })).catch(() => {}); };
   const box = document.createElement('div'); box.className = 'coach gv';
   box.innerHTML = '<div class="coach-hole"></div><div class="coach-bubble" role="dialog" aria-live="polite"></div>';
   document.body.appendChild(box);
@@ -120,7 +125,7 @@ export function lancerGrandeVisite({ obligatoire = false, onFin } = {}) {
   const colonne = () => { const avant = document.documentElement.classList.contains('gv-on'); document.documentElement.classList.toggle('gv-on', large()); if (avant !== large()) dispatchEvent(new Event('resize')); };
   const fin = async (faite) => {
     jeton++; box.remove(); document.documentElement.classList.remove('gv-on'); dispatchEvent(new Event('resize')); removeEventListener('resize', placer); removeEventListener('resize', colonne); removeEventListener('keydown', touche);
-    if (faite) { try { await saveProfile(() => ({ grandeVisite: EDITION })); } catch { /* on réessaiera */ } onFin?.(); }
+    if (faite) { try { await saveProfile(() => ({ grandeVisite: EDITION, grandeVisitePas: 0 })); } catch { /* on réessaiera */ } onFin?.(); }
   };
   // Place le halo sur la section de l’étape, et la bulle là où elle cache le moins : à côté si la place le permet,
   // sinon dessous ou dessus, sinon en bas de l’écran. Une section plus haute que l’écran est montrée par son haut.
@@ -154,7 +159,8 @@ export function lancerGrandeVisite({ obligatoire = false, onFin } = {}) {
     }
   };
   // Les chapitres en pastilles : où on est dans le chemin, et un raccourci vers chacun.
-  const fil = () => `<ol class="gv-fil">${C.map((c, k) => `<li><button data-g="chap" data-k="${k}" class="${E[i]?.k === k ? 'on' : E[i]?.k > k ? 'fait' : ''}" title="${esc(c.ch)}">${esc(c.ch)}</button></li>`).join('')}</ol>`;
+  const bloque = (k) => obligatoire && E.findIndex((x) => x.carte && x.k === k) > vu;
+  const fil = () => `<ol class="gv-fil">${C.map((c, k) => `<li><button data-g="chap" data-k="${k}" class="${E[i]?.k === k ? 'on' : E[i]?.k > k ? 'fait' : ''}" title="${esc(c.ch)}" ${bloque(k) ? 'disabled' : ''}>${esc(c.ch)}</button></li>`).join('')}</ol>`;
   const nav = (suiv = 'Suivant →') => `<div class="coach-row">${i > 0 ? '<button class="btn ghost small" data-g="avant" aria-label="Étape précédente">←</button>' : ''}<button class="btn primary" data-g="suivant">${suiv}</button>
     <button class="coach-skip" data-g="plustard">${obligatoire ? 'Finir plus tard' : 'Fermer'}</button></div>`;
   // Affiche l’étape courante : l’accueil de la visite, une carte de chapitre, ou une section (avec son geste et son essai).
@@ -164,9 +170,10 @@ export function lancerGrandeVisite({ obligatoire = false, onFin } = {}) {
       hole.style.opacity = 0;
       bulle.innerHTML = `<p class="coach-n">La grande visite</p><h3>${obligatoire ? 'L’app a beaucoup changé depuis ta dernière visite.' : 'Tout Diapason Labo, en suivant le fil.'}</h3>
         <p>${obligatoire ? `${esc(de)} a transformé l’app. Alors on la parcourt ensemble, en suivant le chemin d’une idée : de l’étincelle à la scène, puis l’envers du décor. Elle remplace, exceptionnellement, la liste des nouveautés.` : 'Le chemin d’une idée : on l’attrape, on se retrouve, on la joue, on la chante, on l’écrit, on la pousse au labo, on mesure le chemin fait. Puis l’envers du décor.'}</p>
-        <p class="gv-som">${C.map((c, k) => `<button data-g="chap" data-k="${k}"><b>${k + 1}</b> ${esc(c.ch)}<small>${esc(c.t)}</small></button>`).join('')}</p>
-        <p class="muted small">Environ ${Math.round(E.length / 4)} minutes. Les flèches du clavier marchent aussi ; tu peux sauter à un chapitre.</p>
-        <div class="coach-row"><button class="btn primary" data-g="suivant">Commencer</button>${obligatoire ? '' : '<button class="coach-skip" data-g="fermer">Fermer</button>'}</div>`;
+        ${reprise > 0 ? `<p class="gv-reprise">Tu t’étais arrêté au chapitre « ${esc(E[reprise].ch)} ». On reprend là?</p>` : ''}
+        <p class="gv-som">${C.map((c, k) => `<button data-g="chap" data-k="${k}" ${bloque(k) ? 'disabled' : ''}><b>${k + 1}</b> ${esc(c.ch)}<small>${esc(c.t)}</small></button>`).join('')}</p>
+        <p class="muted small">Environ ${Math.round(E.length / 4)} minutes. ${obligatoire ? 'Tu peux t’arrêter et reprendre plus tard, exactement là où tu étais.' : 'Les flèches du clavier marchent aussi ; tu peux sauter à un chapitre.'}</p>
+        <div class="coach-row">${reprise > 0 ? '<button class="btn primary" data-g="reprendre">Reprendre</button><button class="btn ghost small" data-g="suivant">Depuis le début</button>' : '<button class="btn primary" data-g="suivant">Commencer</button>'}${obligatoire ? '' : '<button class="coach-skip" data-g="fermer">Fermer</button>'}</div>`;
     } else if (i >= E.length) {
       hole.style.opacity = 0; if (location.hash !== '#/') location.hash = '#/';
       bulle.innerHTML = `${fil()}<p class="coach-n">La grande visite</p><h3>Voilà le fil.</h3><p>Une idée s’attrape, on se retrouve pour la jouer, on la pousse aussi loin qu’on veut, on regarde où on est rendus. Et tout ce qui fait marcher l’app est lisible dans l’arbre.</p>
@@ -186,16 +193,22 @@ export function lancerGrandeVisite({ obligatoire = false, onFin } = {}) {
     }
     placer(); setTimeout(() => j === jeton && placer(), 450); setTimeout(() => j === jeton && placer(), 1000);
   }
-  const aller = (n) => { i = Math.max(-1, Math.min(E.length, n)); montrer(); };
+  const aller = (n) => { if (Date.now() < pret) return; pret = Date.now() + 600; confirmer = 0; i = Math.max(-1, Math.min(E.length, n)); vu = Math.max(vu, i); if (E[i]?.carte) garder(); montrer(); };
   // Les flèches pour naviguer dans la visite ; Échap la ferme seulement si elle n’est pas obligatoire.
-  function touche(e) { if (e.key === 'ArrowRight' && i < E.length) aller(i + 1); if (e.key === 'ArrowLeft' && i > 0) aller(i - 1); if (e.key === 'Escape' && !obligatoire) fin(false); }
+  function touche(e) { if (e.key === 'ArrowRight' && i < E.length && i + 1 <= vu + 1) aller(i + 1); if (e.key === 'ArrowLeft' && i > 0) aller(i - 1); if (e.key === 'Escape' && !obligatoire) fin(false); }
   bulle.addEventListener('click', (e) => {
     const b = e.target.closest('[data-g]'); const g = b?.dataset.g;
     if (g === 'suivant') aller(i + 1);
     if (g === 'avant') aller(i - 1);
-    if (g === 'chap') aller(E.findIndex((x) => x.carte && x.k === +b.dataset.k));
+    if (g === 'chap' && !bloque(+b.dataset.k)) aller(E.findIndex((x) => x.carte && x.k === +b.dataset.k));
+    if (g === 'reprendre') aller(reprise);
     if (g === 'essai') { const c = visible(E[i].essai[1]); if (c) c.click(); else b.textContent = 'Pas disponible ici'; }
-    if (g === 'fermer' || g === 'plustard') fin(false);
+    if (g === 'fermer' || (g === 'plustard' && !obligatoire)) fin(false);
+    // Obligatoire : « Finir plus tard » demande une confirmation, puis garde l’endroit où on est rendu.
+    if (g === 'plustard' && obligatoire) {
+      if (Date.now() < confirmer) { garder(); fin(false); return; }
+      confirmer = Date.now() + 5000; b.textContent = 'Oui, plus tard : elle reprendra ici'; b.classList.add('gv-sur');
+    }
     if (g === 'fini') fin(true);
   });
   addEventListener('resize', placer); addEventListener('keydown', touche);
