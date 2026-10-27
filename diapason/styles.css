@@ -3452,3 +3452,7 @@ a.md-lien { color: inherit; }
 .cl-rituel .lune-ico circle, .cl-m-j .lune-ico circle, .cl-leg-lune .lune-ico circle { stroke: #6d655a; }
 .cl-m-j.hors b { color: var(--muted); }
 .cl-m-grille { align-items: stretch; } .cl-m-j { margin: 0; align-self: stretch; vertical-align: top; }
+/* Toutes les cases du calendrier ont la même superficie : mêmes largeurs, mêmes hauteurs, rangée par rangée. */
+.cl-sem { grid-auto-rows: minmax(150px, 1fr); } .cl-m-grille { grid-auto-rows: minmax(70px, 1fr); }
+.cl-jour, .cl-m-j { min-width: 0; overflow: hidden; }
+@media (max-width: 760px) { .cl-sem { grid-auto-rows: auto; } }

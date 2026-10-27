@@ -59,6 +59,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.40', quand: '2026-10-27', titre: 'La grande visite', items: [
+    ['Tout Diapason Labo, en un tour', ['Trente arrêts : chaque onglet, chaque sous-onglet, chaque icône, un projecteur à la fois, environ cinq minutes. Elle est dans <b>le coffre</b> (menu ⋯) : « La grande visite ».', 'À sa prochaine ouverture, Frog la reçoit d’office : l’app a tellement changé depuis sa dernière visite qu’elle remplace, exceptionnellement, cette liste des nouveautés. Il peut la finir plus tard ; elle l’attendra.']],
+    ['Le calendrier, cases égales', ['Toutes les cases du calendrier ont la même superficie, en semaine comme en mois.']],
+  ] },
   { v: '0.39', quand: '2026-10-27', titre: 'Notre calendrier sacré', items: [
     ['Le temps qu’on se donne pour créer', ['Sous Accueil, un nouvel onglet : <b>Calendrier</b>. L’un propose une plage (séance en présence, séance à distance, projet professionnel, jeux et amusement, ou un repère comme une démo), l’autre l’approuve : elle prend alors <b>nos deux couleurs</b>. On peut aussi proposer autre chose, ou retirer.', 'En haut, notre rythme de la semaine : au moins <b>deux séances en présence</b> et <b>une à distance</b>. Une plage approuvée s’ajoute à ton agenda (Google, Apple, Outlook) d’un clic.']],
     ['Nos rituels lunaires', ['Nouvelle lune (le passage), premier quartier (faire grandir), pleine lune (faire entendre), dernier quartier (laisser aller) : chacun au bon jour, <b>à l’heure exacte</b>, calculés comme les éphémérides (Meeus) et affichés à l’heure du Québec.']],
@@ -244,6 +248,11 @@ export const VERSIONS = [
 const cle = (v) => `diapason:maj:version ${v}:${espace.id}`;
 export function majAvecAmour({ revoir = false } = {}) {
   if (!espace.connected || !espace.me) return;
+  // Quand l'app a beaucoup changé depuis la dernière visite de Frog : la grande visite remplace, cette fois, la liste.
+  if (!revoir) { import('./grandevisite.js').then((g) => { if (g.grandeVisiteDue()) g.lancerGrandeVisite({ obligatoire: true, onFin: () => VERSIONS.forEach((x) => { try { localStorage.setItem(cle(x.v), '1'); } catch { /* */ } }) }); else majListe(); }); return; }
+  majListe({ revoir });
+}
+function majListe({ revoir = false } = {}) {
   const mem = espace.meta.members || MEMBERS; const frog = espace.me === mem[1];
   if (frog && !revoir && !espace.meta.tour?.[espace.me]) return; // la première fois, c'est la visite qui accueille
   let neuves;

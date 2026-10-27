@@ -30,7 +30,8 @@ export default {
           <article class="cf-perle cf-video">
             <p class="cf-k">La première fois</p>
             <p class="cf-body">Les quatre façons d’être ensemble, puis le tour de l’app avec des exemples.</p>
-            <button class="btn small" data-c="tour">Revoir la visite guidée</button>
+            <button class="btn small primary" data-c="grande">La grande visite : tous les onglets</button>
+            <button class="btn small" data-c="tour">Revoir la première visite</button>
           </article>
           <article class="cf-perle cf-mot">
             <p class="cf-k">Le mot d’accueil</p>
@@ -56,6 +57,7 @@ export default {
     }
     el.addEventListener('click', async (e) => {
       const c = e.target.closest('[data-c]')?.dataset.c;
+      if (c === 'grande') { const { lancerGrandeVisite } = await import('../grandevisite.js'); lancerGrandeVisite(); }
       if (c === 'tour') { const { startTour } = await import('./tour.js'); startTour(espace.me === espace.meta.createdBy); }
       if (c === 'welcome') { new Audio(await audioURL(espace.meta.welcome.audio)).play(); }
       const pl = e.target.closest('[data-play]');
