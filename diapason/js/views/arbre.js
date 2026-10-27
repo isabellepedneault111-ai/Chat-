@@ -330,13 +330,11 @@ export default {
         const argent = (d) => (d >= 1e6 ? `${(d / 1e6).toFixed(2).replace('.', ',')} M$` : d >= 1e4 ? `${Math.round(d / 1000).toLocaleString('fr-CA')} k$` : `${Math.round(d).toLocaleString('fr-CA')} $`);
         const salaire = (j) => argent(j * 8 * TAUX); const cout = (j) => argent(j * 8 * (TAUX + USURE));
         const salaireIA = argent(cd.heuresActives * TAUX_CP); const coutIA = argent(cd.heuresActives * (TAUX_CP + USURE) + ABOS);
-        cad.outerHTML = `<li class="ar-cad" data-fait="1"><b>${cd.etapes}</b> étapes validées, en ≈ <b>${String(cd.heuresActives).replace('.', ',')} h</b> d’activité mesurée sur ${cd.jours} jours (${String(cd.heuresTotales).replace('.', ',')} h écoulées)</li>
-          <li>Une itération toutes les <b>${min} minutes</b> environ</li>
-          <li>Repère du génie logiciel : <b>10 à 50 lignes</b> de code fini par développeur et par jour, conception et tests compris (McConnell, 2004)</li>
-          <li>Sans IA, ce volume représenterait <b>${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours de travail</b>, si une seule personne le faisait. <b>Au mieux</b> (50 lignes par jour, l’<b>estimation basse</b>) : <b>${an(jp(50))} ans</b> pour une personne seule, <b>${mois(jp(50))} mois</b> pour une équipe de cinq. <b>Au pire</b> (10 lignes par jour, l’<b>estimation haute</b>) : <b>${an(jp(10))} ans</b>, ou <b>${mois(jp(10))} mois</b> à cinq</li>
-          <li><b>Coût sans IA</b> : <b>${salaire(jp(50))} à ${salaire(jp(10))} en salaire</b> (salaire médian d’un développeur au Québec, 45,67 $/h, Guichet-Emplois). Avec la gestion, soit <b>l’usure des appareils</b> : <b>${cout(jp(50))} à ${cout(jp(10))}</b>. Seul ou à cinq, <b>la même somme</b> : cinq salaires, cinq fois moins longtemps</li>
-          <li><b>Coût avec l’IA</b> : <b>${salaireIA} en salaire</b>, soit ${String(cd.heuresActives).replace('.', ',')} h au salaire réel de la conceptrice, conseillère pédagogique au <b>dernier échelon</b> (105 432 $ par an depuis le 1er avril 2026). Avec la gestion, soit <b>l’usure des appareils</b> et <b>un mois d’abonnements IA</b> (Claude, ChatGPT, Gemini, Copilot, ≈ 220 $, le calcul de l’IA compris) : <b>${coutIA}</b></li>
-          <li class="ar-cad-res">Lignes et salaires sont des mesures grossières : ils situent l’échelle, pas la qualité. Locaux et charges sociales ne sont pas comptés : c’est une <b>borne basse</b>.</li>`;
+        cad.outerHTML = `<li class="ar-cad" data-fait="1"><b>${cd.etapes} étapes</b> validées en <b>${String(cd.heuresActives).replace('.', ',')} h</b> d’activité, sur ${cd.jours} jours</li>
+          <li>Une itération toutes les <b>${min} minutes</b></li>
+          <li>Le repère sans IA : <b>10 à 50 lignes</b> de code fini par jour (McConnell, 2004)</li>
+          <li>Pour cette app, sans IA : <b>${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours de travail</b></li>
+          <li class="ar-cad-res">Durées et coûts, ligne par ligne : le tableau ci-dessous. Des mesures grossières, qui situent l’échelle, pas la qualité.</li>`;
         // Le graphique comparatif : la durée, en jours de travail, sur une échelle logarithmique (2 jours et 2 000 jours
         // tiennent sur la même ligne). Une barre par scénario, de l'estimation basse à la haute.
         // Le graphique comparatif, proportionnel : chaque barre part de zéro, sa longueur est la durée (en jours de travail).
@@ -361,12 +359,15 @@ export default {
               <span role="cell"><b class="ar-t-prix">${sal}</b></span><span role="cell"><b class="ar-t-prix">${tout}</b></span>
               <i class="ar-t-barre" aria-hidden="true"><i class="${c}" style="width:max(3px, ${P(v)}%)"></i></i></div>`).join('')}
           </div>
-          <p class="ar-t-note">La barre compare les durées dans le meilleur cas, à la même échelle. Gestion : l’usure des appareils (un ordinateur de 2 500 $ sur trois ans) et, avec l’IA, un mois d’abonnements (≈ 220 $).</p>
-          <div class="ar-valeur"><p class="ar-v-tit">Et sa valeur marchande, à peu près?</p>
-            <p class="ar-v-chiffre">Au moins <b>${cout(jp(50))} à ${cout(jp(10))}</b></p>
-            <p>C’est sa <b>valeur de reproduction</b> : ce qu’il en coûterait pour la refaire sans IA. Pour un logiciel qui n’a pas encore de revenus, c’est la méthode retenue en évaluation de la propriété intellectuelle (<b>méthode du coût</b>), et elle donne un <b>plancher</b>. Une firme facturerait davantage : charges, frais généraux, marge.</p>
-            <p>Les deux autres méthodes ne s’appliquent pas encore : par les revenus (il n’y en a pas) et par comparaison (aucune app semblable vendue à un prix connu).</p>
-            <p class="ar-v-limite">Sa limite : avec l’IA, la refaire prendrait quelques jours… à condition de savoir exactement quoi bâtir. Ce que la méthode du coût ne mesure pas, c’est la conception.</p></div>`;
+          <p class="ar-t-note"><b>Au mieux</b> (50 lignes par jour) à <b>au pire</b> (10 lignes par jour) ; la barre montre le meilleur cas, à la même échelle.<br><b>Salaire</b> : développeur au salaire médian du Québec (45,67 $/h, Guichet-Emplois) ; avec l’IA, la conceptrice, conseillère pédagogique au dernier échelon (105 432 $ par an).<br><b>Gestion</b> : l’usure des appareils (un ordinateur de 2 500 $ sur trois ans) et, avec l’IA, un mois d’abonnements (Claude, ChatGPT, Gemini, Copilot : ≈ 220 $). Locaux et charges sociales non comptés : une borne basse.</p>
+          <div class="ar-valeur"><p class="ar-v-tit">Et sa valeur marchande?</p>
+            <p>Une app se vend d’après <b>ce qu’elle rapporte</b>, pas d’après ce qu’elle a coûté. Sur les places de marché d’apps, les ventes se font à environ <b>2,5 à 4 fois les revenus annuels</b> (petits logiciels par abonnement). Sans revenus, Flippa plafonne même le prix demandé à <b>9 999 $ US</b>.</p>
+            <div class="ar-v-grille">
+              <p><span>Aujourd’hui, sans abonnés</span><b>moins de 10 000 $ US</b></p>
+              ${[100, 500, 1000].map((n) => { const an = n * 10 * 12; return `<p><span>${n.toLocaleString('fr-CA')} abonnés à 10 $ par mois</span><b>${argent(an * 2.5)} à ${argent(an * 4)}</b></p>`; }).join('')}
+            </div>
+            <p>À l’autre bout, sa <b>valeur de reproduction</b>, ce qu’il en coûterait pour la refaire sans IA : <b>${cout(jp(50))} à ${cout(jp(10))}</b>. C’est un plafond théorique : un acheteur ne paie pas ce prix pour du code sans utilisateurs, d’autant que l’IA rend la reproduction bien moins chère… pour qui sait exactement quoi bâtir.</p>
+            <p class="ar-v-limite">Autrement dit : le code a coûté peu, la conception vaut beaucoup, et la valeur marchande dépendra des gens qui l’utiliseront.</p></div>`;
       }
     }
 

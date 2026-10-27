@@ -3544,3 +3544,9 @@ html.gv-on body { padding-right: 432px; }
 .ar-traits .ar-valeur .ar-v-tit { font: 700 1rem var(--display) !important; }
 .ar-traits .ar-valeur .ar-v-chiffre { font: 800 1.35rem/1.2 var(--display) !important; color: #aa4b00; } .ar-valeur .ar-v-chiffre b { color: #aa4b00 !important; }
 .ar-traits .ar-valeur .ar-v-limite { font-style: italic !important; color: var(--muted); }
+.ar-v-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 6px; margin: 8px 0; }
+.ar-v-grille p, .ar-traits .ar-v-grille p { margin: 0 !important; padding: 8px 10px; border-radius: 8px; background: var(--card); border: 1px solid var(--rule); }
+.ar-v-grille span { display: block; font: .76rem "Atkinson Hyperlegible", sans-serif; color: var(--muted); }
+.ar-v-grille b { display: block !important; font: 800 1.05rem var(--display) !important; color: #aa4b00 !important; }
+.ar-t-note b, .ar-traits .ar-t-note b { display: inline !important; font: inherit !important; font-weight: 700 !important; color: var(--ink) !important; }
+.ar-traits .ar-t-note { line-height: 1.55; }
