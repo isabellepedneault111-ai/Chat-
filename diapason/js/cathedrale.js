@@ -50,7 +50,8 @@ export function ranger(cle, voix = [], liens = []) {
 }
 
 // Compose l’œuvre : les parties (la forme), les frappes de chaque disque (le rythme), les accords tenus (l’harmonie), la lumière, les liens et la coda, en une liste de notes datées.
-export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 0.5, voix = [], parties = [], liens = [] }) {
+export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 0.5, voix = [], parties = [], liens = [], tour = CYCLE }) {
+  const CY = Math.max(1.2, Math.min(6, tour)); // un tour (une mesure), en secondes : le tempo de toute l'œuvre
   const r = [...new Set(cle.map((x) => Math.round(x)).filter((x) => x > 0 && x <= 32))].sort((a, b) => a - b);
   if (!r.length) return { sections: [], notes: [], duree: 0, r };
   const somme = r.reduce((a, b) => a + b, 0); const ecart = (x) => 12 * Math.log2(x / r[0]);
@@ -63,12 +64,12 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
   const chaos = [0.37]; const graine = (b) => { const x = Math.sin(b * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); };
   const envCalc = (src, u) => {
     if (SOURCES_VIVES.has(src)) return null;
-    if (src === 'souffle') return 0.5 - 0.5 * Math.cos((u * Math.PI * 2) / (4 * CYCLE));
+    if (src === 'souffle') return 0.5 - 0.5 * Math.cos((u * Math.PI * 2) / (4 * CY));
     if (src === 'vibrato') return 0.5 - 0.5 * Math.cos(u * 6 * Math.PI * 2);
-    const b = Math.floor((u * r[0]) / CYCLE);
+    const b = Math.floor((u * r[0]) / CY);
     if (src === 'hasard') return graine(b);
     if (src === 'chaos') { while (chaos.length <= b) chaos.push(3.93 * chaos[chaos.length - 1] * (1 - chaos[chaos.length - 1])); return chaos[b]; }
-    const k = +src; if (!(k >= 0 && k < r.length) || voix[k]?.muet) return null; const pas = CYCLE / r[k]; const dep = (((u - (voix[k]?.dec || 0) * pas) % pas) + pas) % pas; return Math.exp(-dep * 9);
+    const k = +src; if (!(k >= 0 && k < r.length) || voix[k]?.muet) return null; const pas = CY / r[k]; const dep = (((u - (voix[k]?.dec || 0) * pas) % pas) + pas) % pas; return Math.exp(-dep * 9);
   };
   const calcules = liens.filter((l) => !SOURCES_VIVES.has(l.src));
   // Une partie peut se poser sur un accord joué par Frog : sa fondamentale et ses propres rapports.
@@ -76,11 +77,11 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
   sections.forEach((s) => {
     const f = s.forme?.cle; const accord = f ? f.map((x) => s.racine + plier(12 * Math.log2(x / f[0]))) : r.map((x) => s.racine + plier(ecart(x)));
     // L'harmonie : l'accord tenu, réarticulé tous les deux tours. Plus l'axe va vers « harmonie », plus il est présent.
-    if (axe > 0.12) for (let u = s.a; u < s.b - 0.3; u += CYCLE * 2) {
+    if (axe > 0.12) for (let u = s.a; u < s.b - 0.3; u += CY * 2) {
       const v = (0.12 + 0.3 * axe) * enveloppe(u);
-      accord.forEach((m, k) => !voix[k]?.muet && pousse({ t: u + k * 0.02, dur: Math.min(CYCLE * 2.1, s.b - u), banque: 'cordes', midi: pres(plier(m), 55 + k * 4), vel: v }));
-      pousse({ t: u, dur: Math.min(CYCLE * 2.1, s.b - u), banque: 'cordes', midi: pres(plier(s.racine), 40), vel: v * 0.9 });
-      if (s.lumiere === 'cuivres' || axe > 0.75) pousse({ t: u + 0.05, dur: CYCLE * 1.6, banque: 'cor', midi: pres(plier(accord[1] ?? accord[0]), 57), vel: v * 0.8 });
+      accord.forEach((m, k) => !voix[k]?.muet && pousse({ t: u + k * 0.02, dur: Math.min(CY * 2.1, s.b - u), banque: 'cordes', midi: pres(plier(m), 55 + k * 4), vel: v }));
+      pousse({ t: u, dur: Math.min(CY * 2.1, s.b - u), banque: 'cordes', midi: pres(plier(s.racine), 40), vel: v * 0.9 });
+      if (s.lumiere === 'cuivres' || axe > 0.75) pousse({ t: u + 0.05, dur: CY * 1.6, banque: 'cor', midi: pres(plier(accord[1] ?? accord[0]), 57), vel: v * 0.8 });
     }
     // Le rythme : chaque nombre de la clé de voûte frappe autant de fois par tour (4 contre 5 contre 6…).
     if (axe < 0.88) r.forEach((x, j) => {
@@ -89,12 +90,12 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
       const haut = ({ timbales: 41, celesta: 79, harpe: 64, flute: 76, choeur: 64, cor: 57, cuivres: 57, clarinette: 62, hautbois: 69 }[banque] || 60) + 12 * (voix[j]?.oct || 0);
       // Les réglages ajoutés au disque : décalage (contretemps), aération (des frappes retirées, toujours les mêmes),
       // durée des notes, accent du premier coup, place gauche-droite.
-      const V = voix[j] || {}; const pasR = CYCLE / x; const aer = V.aer || 0; let k = 0;
+      const V = voix[j] || {}; const pasR = CY / x; const aer = V.aer || 0; let k = 0;
       for (let u = s.a + (V.dec || 0) * pasR; u < s.b - 0.05; u += pasR, k++) {
         if (aer && ((k * 9301 + j * 49297 + 233) % 233280) / 233280 < aer) continue;
         const premier = k % x === 0;
         // Un disque qui respire : son volume monte et descend sur quatre tours, comme au labo.
-        const souffle = V.respire ? 0.15 + 0.85 * (0.5 - 0.5 * Math.cos((u * Math.PI * 2) / (4 * CYCLE))) : 1;
+        const souffle = V.respire ? 0.15 + 0.85 * (0.5 - 0.5 * Math.cos((u * Math.PI * 2) / (4 * CY))) : 1;
         const n = { t: u, dur: V.dur ?? 0.3, banque, midi: pres(plier(accord[j % accord.length] ?? s.racine), haut), pan: V.pan || 0, vel: v0 * souffle * enveloppe(u) * (premier ? 1 + (V.acc ?? 0.15) : 1), d: j };
         if (calcules.length) moduler(n, calcules, voix, envCalc);
         pousse(n);
@@ -103,10 +104,10 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
     // La lumière : une mélodie dans la famille choisie, faite des notes de l'accord, au rythme du nombre de la partie.
     const fam = FAMILLES.find((f) => f[0] === s.lumiere);
     if (fam?.[2]) {
-      const banque = fam[0] === 'bois' ? BOIS[s.i % 3] : fam[2]; const pas = (CYCLE * 2) / 16; const motif = euclide(Math.min(16, Math.max(3, s.ratio)), 16);
+      const banque = fam[0] === 'bois' ? BOIS[s.i % 3] : fam[2]; const pas = (CY * 2) / 16; const motif = euclide(Math.min(16, Math.max(3, s.ratio)), 16);
       const centre = { cordes: 72, flute: 79, hautbois: 74, clarinette: 67, cor: 62, choeur: 69, harpe: 72, celesta: 84 }[banque] || 72;
       let k = 0; let phrase = 0;
-      for (let u = s.a + CYCLE; u < s.b - CYCLE * 0.5; u += CYCLE * 2, phrase++) {
+      for (let u = s.a + CY; u < s.b - CY * 0.5; u += CY * 2, phrase++) {
         motif.forEach((on, p) => {
           if (!on || u + p * pas > s.b - 0.4) return;
           // Une phrase monte dans l'accord, la suivante redescend.
@@ -124,7 +125,7 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
   pousse({ t, dur: 2, banque: 'timbales', midi: pres(plier(tonique), 41), vel: 0.8 });
   pousse({ t, dur: coda - 1, banque: 'cordes', midi: pres(plier(tonique), 38), vel: 0.5 });
   notes.sort((a, b) => a.t - b.t);
-  return { sections, notes, duree: total, r, coda: [t, total], liens, voix };
+  return { sections, notes, duree: total, r, coda: [t, total], liens, voix, tour: CY };
 }
 
 // Précharge tous les instruments de l’orchestre.

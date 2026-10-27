@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.47', quand: '2026-10-28', titre: 'La cathédrale, en nef', items: [
+    ['Tout se lit d’un coup d’œil', ['Une rangée par voix (son instrument, ses frappes par tour, sa note dans chaque partie), une arche par partie (aussi large que sa durée), les liens en flèches et les pupitres en accolades, comme au labo. Pendant l’écoute, la lumière avance dans la nef et chaque voix pulse quand elle frappe. <a href="#/cathedrale">Ouvrir la cathédrale →</a>']],
+    ['Toucher pour régler', ['Une voix : son nombre, son instrument, son octave, son pupitre (des voix réglées d’un seul geste), ses liens. Une arche : qui chante la mélodie, et son accord. Et le tour : la mesure, donc le tempo de toute l’œuvre.']],
+    ['Pas besoin du studio', ['Une clé toute prête, ▶, et on écoute. Puis on façonne.']],
+  ] },
   { v: '0.46', quand: '2026-10-28', titre: 'La relance douce, sur ton téléphone', items: [
     ['Une notification, pas un rappel', ['Si tu l’actives, une invitation arrive sur ton téléphone quand ton fil est calme depuis cinq jours : ce que l’autre t’a lancé, ou juste une idée. Jamais plus d’une fois par cinq jours, vers 18 h. Aucun numéro de téléphone. Dans <a href="#/nouvelles">Nos nouvelles</a> : « Activer sur ce téléphone », ou « Pas pour moi ».']],
     ['Sur iPhone', ['Ajoute d’abord l’app à l’écran d’accueil (dans Safari : Partager, puis « Sur l’écran d’accueil »), ouvre-la depuis son icône, puis active la relance.']],
