@@ -46,12 +46,32 @@ export const onMateriel = (fn) => { ecoutes.add(fn); return () => ecoutes.delete
 export const onActivite = (fn) => { activite.add(fn); return () => activite.delete(fn); };
 const signaler = () => ecoutes.forEach((f) => { try { f(); } catch { /* une vue fermée */ } });
 
+// Les entrées audio que l'ordinateur invente (visio, logiciels, mélangeurs virtuels) : jamais du vrai matériel.
+export const VIRTUEL = /teams|zoom|webex|discord|skype|virtual|virtuel|steam|stereo mix|mixage st[ée]r[ée]o|vb-?audio|voicemeeter|\bcable\b|blackhole|loopback|soundflower|nvidia broadcast|krisp|obs\b|aggregate|agrégé|multi-?output/i;
+// Le micro intégré de l'ordinateur fait partie de l'ordi : il reste dans le studio, branché à lui.
+export const INTEGRE = /macbook|built-?in|intégr|internal|interne/i;
+// Dans le studio : tout ce qui est détecté arrive seul (et se retire d'un geste, sans revenir), sauf les entrées
+// virtuelles (Teams, Zoom…) : elles sont seulement proposées, on les garde ou on les ignore.
+const dansStudio = (k, r) => {
+  if (k === 'app') return true; if (r[k]) return !r[k].masque;
+  return detecte.midi.has(k) || !VIRTUEL.test(detecte.audio.get(k)?.label || '');
+};
+export function proposes() {
+  const r = reg();
+  return [...detecte.audio.entries()].filter(([k]) => !dansStudio(k, r) && !r[k]).map(([k, d]) => ({ k, nom: propre(d.label), virtuel: VIRTUEL.test(d.label) })).sort((a, b) => a.virtuel - b.virtuel || a.nom.localeCompare(b.nom));
+}
+export function garder(k) { const d = detecte.audio.get(k); const r = reg(); const nom = propre(d?.label || k); r[k] = { nom, sorte: deviner(nom), actif: false }; ecrire(r); signaler(); }
+export function ignorer(k) { const r = reg(); r[k] = { ...(r[k] || {}), nom: r[k]?.nom || propre(detecte.audio.get(k)?.label || detecte.midi.get(k)?.name || k), masque: true }; ecrire(r); signaler(); }
+export const ignores = () => Object.entries(reg()).filter(([, x]) => x.masque).map(([k, x]) => ({ k, nom: x.nom || k }));
+export function retablir(k) { const r = reg(); if (r[k]) { delete r[k].masque; r[k].actif = false; } ecrire(r); signaler(); }
+
 // La liste complète : ce que le navigateur voit + ce que Frog a ajouté à la main.
 export function appareils() {
-  const r = reg(); const cles = new Set([...Object.keys(r), ...detecte.audio.keys(), ...detecte.midi.keys()]);
+  const r = reg(); const cles = new Set([...Object.keys(r), ...detecte.audio.keys(), ...detecte.midi.keys()].filter((k) => dansStudio(k, r)));
   return [...cles].map((k) => {
     const x = r[k] || {}; const nom = x.nom || propre(detecte.audio.get(k)?.label || detecte.midi.get(k)?.name || k);
-    return { k, nom, sorte: x.sorte || deviner(nom), actif: x.actif ?? (k !== 'app' ? !!detecte.midi.get(k) : true), audio: detecte.audio.get(k)?.deviceId || null, midi: detecte.midi.has(k), perso: !!x.perso, son: !!x.son, lie: x.lie || '', x: x.x, y: x.y, couleur: x.couleur || '', taille: x.taille || 1, rot: x.rot || 0, branche: k === 'app' || detecte.audio.has(k) || detecte.midi.has(k) };
+    const integre = !x.perso && INTEGRE.test(detecte.audio.get(k)?.label || nom);
+    return { k, nom, integre, sorte: x.sorte || (integre ? 'micro' : deviner(nom)), actif: x.actif ?? (k !== 'app' ? !!detecte.midi.get(k) : true), audio: detecte.audio.get(k)?.deviceId || null, midi: detecte.midi.has(k), perso: !!x.perso, son: !!x.son, lie: x.lie || '', x: x.x, y: x.y, couleur: x.couleur || '', taille: x.taille || 1, rot: x.rot || 0, branche: k === 'app' || detecte.audio.has(k) || detecte.midi.has(k) };
   }).sort((a, b) => (a.k === 'app' ? -1 : b.k === 'app' ? 1 : (b.branche - a.branche) || a.nom.localeCompare(b.nom)));
 }
 export function regler(k, change) {
@@ -64,7 +84,8 @@ export function ajouter(nom, sorte, lie = '') {
   const k = `perso-${cle(nom).replace(/[^a-z0-9]+/g, '-')}`; const r = reg();
   r[k] = { nom: nom.trim(), sorte: sorte || deviner(nom), actif: true, perso: true, lie }; ecrire(r); signaler(); return k;
 }
-export function retirer(k) { const r = reg(); delete r[k]; ecrire(r); signaler(); }
+// Retirer : un appareil ajouté à la main s'efface ; un appareil détecté est ignoré (sinon il reviendrait à la prochaine détection).
+export function retirer(k) { const r = reg(); if (r[k]?.perso) { delete r[k]; ecrire(r); signaler(); } else ignorer(k); }
 
 // Détecter : un court accès au micro (sinon le navigateur cache le nom des entrées), puis le MIDI.
 let midiAcces = null;

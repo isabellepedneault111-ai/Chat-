@@ -3,8 +3,8 @@
 // pour l'activer. Ce qui est actif, le filet l'écoute ; les témoins s'allument quand le son ou les notes passent.
 // Une photo de la vraie pièce peut servir de calque. Et l'autre peut voir le studio, s'il est partagé.
 import { toast } from '../ui.js';
-import { appareils, regler, ajouter, retirer, detecter, onMateriel, onActivite, SORTES, filet, tendre, relacher, niveau, DUREES, duree, choisirDuree, dureeTexte } from '../materiel.js';
-import { pieceSVG, dessin, COULEURS, MEUBLES, SOLS, MURS, piece, reglerPiece, ajouterMeuble, reglerMeuble, retirerMeuble, studioActuel, pos, ficheDe, reglerFiche, couleurDePhoto, restaurerDepuisProfil, photosDuStudio } from '../piece.js';
+import { appareils, proposes, garder, ignorer, ignores, retablir, regler, ajouter, retirer, detecter, onMateriel, onActivite, SORTES, filet, tendre, relacher, niveau, DUREES, duree, choisirDuree, dureeTexte } from '../materiel.js';
+import { pieceSVG, dessin, COULEURS, TEINTES, teinteG, MEUBLES, SOLS, MURS, piece, reglerPiece, ajouterMeuble, reglerMeuble, retirerMeuble, studioActuel, pos, ficheDe, reglerFiche, couleurDePhoto, restaurerDepuisProfil, photosDuStudio } from '../piece.js';
 import { espace, profileOf, saveProfile, uploadImage, audioURL } from '../espace.js';
 import { MEMBERS } from '../duo.js';
 
@@ -40,7 +40,7 @@ export default {
       <div class="mod-head"><div>
         <p class="eyebrow">Mon studio</p>
         <h1>Ton studio, tel qu’il est vraiment.</h1>
-        <p class="muted">Ta pièce, tes meubles, tes appareils à leur place, à leur couleur, à leur taille. Ce que l’ordinateur voit (claviers, table de mixage, interface, micros) arrive tout seul ; le reste (enceintes, guitares, platines, ce qui passe par la table) s’ajoute à la main. Coche ce qui joue aujourd’hui : le filet l’écoute.</p>
+        <p class="muted">Ta pièce, tes meubles, tes appareils à leur place, à leur couleur, à leur taille. Ce que l’ordinateur voit (claviers, table de mixage, interface, micros) arrive tout seul, et se retire d’un geste ; les micros virtuels (Teams, Zoom…) sont seulement proposés. le reste (enceintes, guitares, platines, ce qui passe par la table) s’ajoute à la main. Coche ce qui joue aujourd’hui : le filet l’écoute.</p>
       </div></div>
       <section class="panel m-barre">
         <button class="btn primary" data-m="detecter">Détecter mon matériel</button>
@@ -48,6 +48,7 @@ export default {
         <label class="m-sel"><span>+ Un meuble</span><select data-m="meuble" aria-label="Ajouter un meuble ou un élément de décor"><option value="">choisir…</option>${Object.entries(MEUBLES).map(([k, [l]]) => `<option value="${k}">${l}</option>`).join('')}</select></label>
         <button class="btn" data-m="piece">Ma pièce</button>
         <span class="m-filet"></span>
+        <div class="m-proposes"></div>
         <form class="m-ajout" hidden>
           <input name="nom" placeholder="Ex. : Technics SL-1200, KRK Rokit 5, Fender Jazz Bass…" required aria-label="Nom de l’appareil">
           <select name="sorte" aria-label="Sorte">${Object.entries(SORTES).map(([k, l]) => `<option value="${k}">${l}</option>`).join('')}</select>
@@ -107,12 +108,16 @@ export default {
       q('[data-p=sol]').value = p.sol; q('[data-p=opacite]').value = Math.round(p.photoOpacite * 100);
       el.querySelectorAll('[data-mur]').forEach((b) => b.classList.toggle('on', b.dataset.mur === p.mur));
       meublesEl.innerHTML = p.meubles.map((m) => `<div class="m-meuble ${choix?.t === 'm' && choix.k === m.id ? 'choisi' : ''}" data-mid="${esc(m.id)}" style="left:${m.x}%;top:${m.y}%;width:${m.w}%;height:${m.h}%;--r:${m.r || 0}deg" title="${esc(MEUBLES[m.sorte]?.[0] || '')}">
-        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${MEUBLES[m.sorte]?.[3] || ''}</svg>${choix?.t === 'm' && choix.k === m.id ? '<i class="m-poignee-t" data-taille></i>' : ''}</div>`).join('');
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${teinteG(m)}</svg>${choix?.t === 'm' && choix.k === m.id ? '<i class="m-poignee-t" data-taille></i>' : ''}</div>`).join('');
     }
 
     // ---------- Les appareils ----------
     function rendre() {
       liste = appareils(); const autres = liste.filter((a) => a.k !== 'app');
+      // Ce que l'ordinateur voit mais qui n'est pas (encore) dans le studio : on le garde, ou on l'ignore.
+      const pr = proposes(); const ig = ignores();
+      q('.m-proposes').innerHTML = (pr.length ? `<p class="m-pr-t">Micros virtuels détectés (visio, logiciels), pas dans ton studio :${pr.filter((a) => a.virtuel).length > 1 ? ' <button class="linklike small" data-pr="virtuels">ignorer tous les virtuels</button>' : ''}</p>${pr.map((a) => `<span class="m-pr ${a.virtuel ? 'virtuel' : ''}"><b>${esc(a.nom)}</b>${a.virtuel ? '<small>virtuel (visio, logiciel)</small>' : ''}<button class="btn small" data-pr="garder" data-k="${esc(a.k)}">+ Dans mon studio</button><button class="btn small ghost" data-pr="ignorer" data-k="${esc(a.k)}">Ignorer</button></span>`).join('')}` : '')
+        + (ig.length ? `<details class="m-ig"><summary>Ignorés (${ig.length})</summary>${ig.map((a) => `<span>${esc(a.nom)} <button class="linklike small" data-pr="retablir" data-k="${esc(a.k)}">remettre</button></span>`).join('')}</details>` : '');
       cartes.innerHTML = liste.map((a) => {
         const [x, y] = pos(a, autres.indexOf(a), autres.length);
         return `<div class="m-app ${a.actif ? 'actif' : ''} ${a.branche ? '' : 'absent'} ${choix?.t === 'a' && choix.k === a.k ? 'choisi' : ''}" data-k="${esc(a.k)}" style="left:${x}%;top:${y}%;--t:${a.taille || 1};--r:${a.rot || 0}deg" tabindex="0" role="button" aria-label="${esc(a.nom)}${a.actif ? ', actif' : ''}">
@@ -133,6 +138,7 @@ export default {
         const m = piece().meubles.find((x) => x.id === choix.k); if (!m) { choix = null; fiche.hidden = true; return; }
         fiche.hidden = false;
         fiche.innerHTML = `<div class="m-fiche-t"><b>${esc(MEUBLES[m.sorte]?.[0])}</b><button class="icon-btn tiny" data-f="fermer" aria-label="Fermer">✕</button></div>
+          <div class="field"><span>Couleur</span><div class="m-coul">${Object.entries(TEINTES).map(([k, [l, v]]) => `<button type="button" class="m-c m-t ${k === (m.teinte || '') ? 'on' : ''}" data-teinte="${k}" style="--t:${v || 'transparent'}" title="${l}" aria-label="${l}"></button>`).join('')}<label class="m-c m-libre" title="Une autre couleur" aria-label="Une autre couleur"><input type="color" data-teinte-libre value="${/^#/.test(m.teinte || '') ? m.teinte : '#8a5a32'}"></label></div></div>
           <div class="m-fiche-row"><button class="btn small" data-f="tourner">↻ Tourner</button><button class="btn small" data-f="dupliquer">Doubler</button><button class="btn small" data-f="retirerm">Retirer</button></div>
           <p class="muted small">Glisse-le pour le placer ; tire le coin pour l’agrandir.</p>`;
         return;
@@ -152,7 +158,7 @@ export default {
         <div class="field"><span>Couleur</span><div class="m-coul">${Object.entries(COULEURS).map(([k, [l, v]]) => `<button type="button" class="m-c ${k === (a.couleur || 'noir') ? 'on' : ''}" data-coul="${k}" style="${v}" title="${l}" aria-label="${l}"></button>`).join('')}</div></div>
         <label class="field"><span>Taille</span><input type="range" min="50" max="200" step="5" data-mk="taille" value="${Math.round((a.taille || 1) * 100)}"></label>
         <div class="m-fiche-row"><button class="btn small" data-f="tourner">↻ Tourner</button>${a.k !== 'app' ? `<select data-mk="lie" aria-label="Branché à"><option value="">branché à l’ordinateur</option>${liste.filter((b) => b.k !== a.k && b.k !== 'app').map((b) => `<option value="${esc(b.k)}" ${b.k === a.lie ? 'selected' : ''}>branché à : ${esc(b.nom)}</option>`).join('')}</select>` : ''}</div>
-        ${a.perso ? '<button class="btn small" data-mk="retirer">Retirer l’appareil</button>' : ''}`;
+        ${a.k !== 'app' ? `<button class="btn small" data-mk="retirer">${a.perso ? 'Retirer l’appareil' : 'Retirer de mon studio'}</button>${a.perso ? '' : '<span class="muted small"> (il ne reviendra pas tout seul ; « Ignorés » le remet)</span>'}` : ''}`;
       if (!espace.connected) fiche.querySelector('.m-fphoto').innerHTML = '<p class="muted small">Connecte-toi à votre espace pour donner une photo à tes appareils.</p>';
       poser(fiche);
     }
@@ -240,12 +246,15 @@ export default {
       regler(choix.k, { [m]: v });
     });
     el.addEventListener('input', (e) => {
+      if (e.target.dataset.teinteLibre != null && choix?.t === 'm') { reglerMeuble(choix.k, { teinte: e.target.value }); rendrePiece(); clearTimeout(e.target._t); e.target._t = setTimeout(partager, 600); return; }
       if (e.target.dataset.p === 'opacite') { const o = +e.target.value / 100; q('.m-photo').style.opacity = o; clearTimeout(e.target._t); e.target._t = setTimeout(() => reglerPiece({ photoOpacite: o }), 200); }
       if (e.target.dataset.mk === 'taille' && choix?.t === 'a') cartes.querySelector(`[data-k="${CSS.escape(choix.k)}"]`)?.style.setProperty('--t', +e.target.value / 100);
     });
     el.addEventListener('click', async (e) => {
       const mur = e.target.closest('[data-mur]'); if (mur) { reglerPiece({ mur: mur.dataset.mur }); rendrePiece(); partager(); return; }
       const coul = e.target.closest('[data-coul]'); if (coul && choix?.t === 'a') { regler(choix.k, { couleur: coul.dataset.coul }); return; }
+      const tei = e.target.closest('[data-teinte]'); if (tei && choix?.t === 'm') { reglerMeuble(choix.k, { teinte: tei.dataset.teinte || undefined }); rendrePiece(); rendre(); partager(); return; }
+      const pr = e.target.closest('[data-pr]'); if (pr) { if (pr.dataset.pr === 'virtuels') proposes().filter((a) => a.virtuel).forEach((a) => ignorer(a.k)); else ({ garder, ignorer, retablir })[pr.dataset.pr](pr.dataset.k); return; }
       if (e.target.closest('[data-mk=retirer]') && choix) { retirer(choix.k); choix = null; return; }
       const f = e.target.closest('[data-f]')?.dataset.f;
       if (f === 'fermer') { choix = null; rendre(); return; }

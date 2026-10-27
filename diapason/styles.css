@@ -3390,3 +3390,16 @@ a.md-lien { color: inherit; }
 .exo-prise { flex-wrap: wrap; justify-content: center; max-width: 100%; } .exo-prise audio { max-width: 100%; }
 @media (max-width: 560px) { .exo { padding: 14px 16px 40px; } .exo-notes b { min-width: 0; padding: 6px 9px; font-size: 1rem; } }
 .exo-moi .rec-btn { margin-left: 0; animation: none; }
+/* Mon studio : ce qui est détecté se propose, on garde ou on ignore. */
+.m-proposes { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.m-proposes:empty { display: none; }
+.m-pr-t { margin: 0; flex: 1 1 100%; font-weight: 700; font-size: .9rem; }
+.m-pr { display: inline-flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px 6px 12px; border-radius: 10px; border: 1.5px dashed var(--ink); background: var(--card); }
+.m-pr small { color: var(--muted); } .m-pr.virtuel { opacity: .8; }
+.m-ig { flex: 1 1 100%; font-size: .88rem; } .m-ig summary { cursor: pointer; color: var(--muted); } .m-ig span { display: inline-block; margin: 4px 10px 0 0; }
+/* La couleur d'un meuble : le corps prend la teinte, les coussins et motifs une teinte plus claire. */
+.teinte .p-bois, .teinte .p-bois-c, .teinte .p-tissu, .teinte .p-tapis, .teinte .p-affiche, .teinte .p-mousse, .teinte .p-porte, .teinte .p-pot { fill: var(--t) !important; }
+.teinte .p-coussin { fill: color-mix(in srgb, var(--t) 72%, #fff) !important; } .teinte .p-tapis-motif { stroke: color-mix(in srgb, var(--t) 50%, #fff) !important; }
+.m-t { background: var(--t) !important; } .m-t[data-teinte=""] { background: repeating-linear-gradient(45deg, #ddd 0 4px, #fff 4px 8px) !important; }
+.m-libre { position: relative; overflow: hidden; background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red); }
+.m-libre input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }

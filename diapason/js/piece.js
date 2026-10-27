@@ -29,6 +29,12 @@ export const COULEURS = {
   vert: ['Vert', '--corps:#2f5a3a;--trait:#93b08e'], creme: ['Crème', '--corps:#d8c7a0;--trait:#8a6d3c'],
 };
 
+// Les couleurs des meubles : quelques teintes de bois et de tissu ; on peut aussi en choisir une libre.
+export const TEINTES = { '': ['Comme il vient', ''], chene: ['Chêne clair', '#c9a26b'], noyer: ['Noyer', '#6b4423'], noir: ['Noir', '#2a2620'], blanc: ['Blanc', '#e9e4d8'], gris: ['Gris', '#8d8a84'], vin: ['Rouge vin', '#6d1f2a'], nuit: ['Bleu nuit', '#24345a'], foret: ['Vert forêt', '#2f5a3a'], moutarde: ['Moutarde', '#c89b2b'], terre: ['Terracotta', '#b5603c'], rose: ['Vieux rose', '#c98f95'] };
+const valTeinte = (t) => (t ? TEINTES[t]?.[1] || (/^#[0-9a-f]{6}$/i.test(t) ? t : '') : '');
+// Un meuble, avec sa couleur s'il en a une : le corps prend la teinte, les coussins et les motifs une teinte plus claire.
+export const teinteG = (m) => { const v = valTeinte(m.teinte); const d = MEUBLES[m.sorte]?.[3] || ''; return v ? `<g class="teinte" style="--t:${v}">${d}</g>` : d; };
+
 // Les meubles et le décor, vus d'en haut (viewBox 100 × 100, étirés à la taille choisie).
 export const MEUBLES = {
   bureau: ['Bureau', 34, 16, '<rect x="1" y="1" width="98" height="98" rx="4" class="p-bois"/><rect x="1" y="1" width="98" height="12" class="p-bois-c"/>'],
@@ -72,7 +78,7 @@ export function pieceSVG(st, { titre = '' } = {}) {
     const [x2, y2] = centre(cible); const my = (y1 + y2) / 2 + 6;
     return `<path d="M${x1} ${y1}C${x1} ${my} ${x2} ${my} ${x2} ${y2}" class="ps-cable ${a.actif ? 'on' : ''}"/>`;
   }).join('');
-  const meubles = (st.meubles || []).map((m) => { const w = X(m.w); const h = Y(m.h); return `<svg x="${X(m.x) - w / 2}" y="${Y(m.y) - h / 2}" width="${w}" height="${h}" viewBox="0 0 100 100" preserveAspectRatio="none" overflow="visible"><g transform="rotate(${m.r || 0} 50 50)">${MEUBLES[m.sorte]?.[3] || ''}</g></svg>`; }).join('');
+  const meubles = (st.meubles || []).map((m) => { const w = X(m.w); const h = Y(m.h); return `<svg x="${X(m.x) - w / 2}" y="${Y(m.y) - h / 2}" width="${w}" height="${h}" viewBox="0 0 100 100" preserveAspectRatio="none" overflow="visible"><g transform="rotate(${m.r || 0} 50 50)">${teinteG(m)}</g></svg>`; }).join('');
   const apps = st.appareils.filter((a) => a.x != null).map((a) => { const w = 20 * (a.taille || 1); const h = w / 2; const [cx, cy] = centre(a);
     return `<g transform="rotate(${a.rot || 0} ${cx} ${cy})"><svg x="${cx - w / 2}" y="${cy - h / 2}" width="${w}" height="${h}" viewBox="0 0 120 60" class="m-svg ${a.actif ? 'actif' : ''}" style="${COULEURS[a.couleur]?.[1] || ''}">${DESSIN[a.sorte] || DESSIN.autre}</svg></g>`; }).join('');
   return `<svg class="piece-svg sol-${st.sol || 'bois'}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${titre || 'Le studio, vu d’en haut'}" style="--mur:${MURS[st.mur] || MURS.braise}">
