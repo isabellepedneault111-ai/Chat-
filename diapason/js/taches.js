@@ -6,6 +6,9 @@ import { MEMBERS } from './duo.js';
 import { lune, luneCourante } from './lune.js';
 import { attendMoi } from './elan.js';
 import { photosDuStudio } from './piece.js';
+import { deLautre, fait, decrire } from './suivi.js';
+import { asksOf } from './views/relais.js';
+import { lundi, semaines, objectifSemaine } from './objectifs.js';
 
 const autreDe = (me) => (espace.meta?.members || MEMBERS).find((m) => m !== me);
 const inspirationsDites = (m) => { const l = (profileOf(m)?.artistes || []).filter((a) => a?.nom); return l.length > 0 && l.every((a) => a.aime?.length || a.pourquoi); };
@@ -27,6 +30,18 @@ export function mesTaches(me = espace.me) {
     const ph = photosDuStudio(me);
     if (!ph || !ph.total) t.push({ id: 'studio', titre: 'Recréer ton studio dans l’app', pourquoi: 'Branche ton matériel (l’app le reconnaît), ajoute le reste à la main, place tout comme chez toi.', lien: '#/materiel' });
     else if (ph.faits < ph.total || !ph.piece) t.push({ id: 'photos', titre: 'Photographier ton studio', pourquoi: `Chaque instrument : une photo, sa marque, son modèle (${ph.faits} sur ${ph.total}${ph.reste.length ? ` ; il reste ${ph.reste.slice(0, 3).join(', ')}${ph.reste.length > 3 ? '…' : ''}` : ''}). Puis une photo de toute la pièce${ph.piece ? ' ✓' : ''}. Ton studio dans l’app te ressemblera, et ${o} le verra.`, lien: '#/materiel' });
+  }
+  if (moi) {
+    // Ce que l'autre m'a demandé (chante dessus, harmonise…) et que je n'ai pas encore fait.
+    deLautre().filter((e) => asksOf(e).length && !fait(me, e.id)).slice(0, 4).forEach((e) => t.push({ id: `ask-${e.id}`, titre: `${o} te demande : ${asksOf(e).map((a) => a[1].toLowerCase()).join(', ')}`, pourquoi: `Sur « ${e.title || 'sans titre'} ». Coche « J’ai fait ça » dans Nos nouvelles quand c’est fait : ${o} le verra.`, lien: decrire(e)[1] }));
+    // Notre rythme de la semaine : deux séances en présence, une à distance. S'il n'est pas couvert, proposer une plage.
+    const l0 = lundi(); const sem = espace.entries.filter((e) => e.type === 'plage' && e.data?.statut !== 'refuse' && e.data?.debut >= l0 && e.data.debut < l0 + 7 * 864e5);
+    const manque = Math.max(0, 2 - sem.filter((e) => e.data.sorte === 'presence').length) + Math.max(0, 1 - sem.filter((e) => e.data.sorte === 'distance').length);
+    if (manque && Date.now() < l0 + 6 * 864e5) t.push({ id: 'plage-semaine', titre: 'Proposer une plage cette semaine', pourquoi: `Notre rythme : deux séances en présence et une à distance. Il en manque ${manque} au calendrier.`, lien: '#/calendrier' });
+    // L'objectif de la semaine, à fixer à deux ; la semaine passée, à évaluer chacun.
+    if (!objectifSemaine()) t.push({ id: 'objectif', titre: 'Fixer l’objectif de la semaine', pourquoi: `Un objectif qu’on pourra vérifier dimanche, à deux${o ? ` avec ${o}` : ''}.`, lien: '#/' });
+    const avant = semaines().find((x) => x.data.debut === l0 - 7 * 864e5);
+    if (avant && !avant.data.eval?.[me]?.v) t.push({ id: 'eval-semaine', titre: 'Évaluer la semaine passée', pourquoi: `Vous visiez « ${avant.data.texte} » : atteint, en partie, pas encore? Deux mots pour toi, deux pour ${o}.`, lien: '#/' });
   }
   const l = lune(); const lm = luneCourante(espace.meta);
   if (!lm.intentions?.[me] && l.age < 18) t.push({ id: 'semer', titre: 'Semer ton intention du cycle', pourquoi: 'Une phrase pour cette lune. On la relira la dernière semaine du cycle.', lien: '#/' });

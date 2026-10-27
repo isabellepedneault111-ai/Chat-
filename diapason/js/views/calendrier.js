@@ -8,7 +8,7 @@ import { toast, store } from '../ui.js';
 import { lundi, objectifSemaine } from '../objectifs.js';
 import { mesTaches } from '../taches.js';
 import { currentMonth } from '../plan.js';
-import { lune, luneSVG, phasesEntre } from '../lune.js';
+import { lune, luneSVG, phasesEntre, CYCLE } from '../lune.js';
 
 const JOUR = 864e5;
 // Les sortes de plages : nom, couleur, et ce qu'elles veulent dire.
@@ -25,7 +25,7 @@ const RITUELS = [['Nouvelle lune', 'Le passage : fermer le cycle, semer nos inte
 // Le rituel lunaire d’un jour, s’il y en a un : le moment exact de la phase, son nom, ce qu’elle nous propose et où aller.
 export function rituelDu(jour) {
   const p = phasesEntre(jour, jour + JOUR)[0]; if (!p) return null;
-  const [nom, quoi, lien] = RITUELS[p.q]; return [p.t, `${nom}, ${heure(p.t)}`, quoi, lien];
+  const [nom, quoi, lien] = RITUELS[p.q]; return [p.t, `${nom}, ${heure(p.t)}`, quoi, lien, p.q];
 }
 // Notre rythme : au moins deux séances en présence et une à distance par semaine.
 const RYTHME = { presence: 2, distance: 1 };
@@ -70,7 +70,7 @@ export default {
         <div class="cl-sem">${[...Array(7)].map((_, i) => { const j = semaine + i * JOUR; const auj = j === new Date(new Date().setHours(0, 0, 0, 0)).getTime();
           const du = l.filter((e) => e.data.debut >= j && e.data.debut < j + JOUR).sort((a, b) => a.data.debut - b.data.debut);
           const ri = rituelDu(j);
-          return `<div class="cl-jour ${auj ? 'auj' : ''} ${ri ? 'lune' : ''}"><button class="cl-j-t" data-jour="${j}" title="Proposer une plage ce jour-là"><b>${JOURS[i]}</b> ${new Date(j).getDate()}<span>＋</span></button>${ri ? `<a class="cl-rituel" href="${ri[3]}">${luneSVG(lune(new Date(j + JOUR / 2)), 16)}<b>${ri[1]}</b><small>${ri[2]}</small></a>` : ''}${du.map(chip).join('')}</div>`; }).join('')}</div>`;
+          return `<div class="cl-jour ${auj ? 'auj' : ''} ${ri ? 'lune' : ''}"><button class="cl-j-t" data-jour="${j}" title="Proposer une plage ce jour-là"><b>${JOURS[i]}</b> ${new Date(j).getDate()}<span>＋</span></button>${ri ? `<button type="button" class="cl-rituel" data-rituel="${j}">${luneSVG(lune(new Date(j + JOUR / 2)), 16)}<b>${ri[1]}</b><small>${ri[2]}</small></button>` : ''}${du.map(chip).join('')}</div>`; }).join('')}</div>`;
     }
     // La vue Mois : chaque jour avec ses plages en pastilles et ses lunes ; toucher un jour ouvre sa semaine.
     function moisHTML() {
@@ -104,17 +104,39 @@ export default {
         <div class="cl-pas-g">${mem().map((qui) => `<div class="cl-pas-c" style="--c:${memberColor(qui)}"><h3>${esc(qui)}${qui === espace.me ? ' (toi)' : ''}</h3><ul>${[...manuels(qui), ...auto(qui), ...faits(qui)].map((x) => ligne(x, qui)).join('') || '<li class="vide">Rien qui attend.</li>'}</ul></div>`).join('')}</div>
         <form class="cl-pas-f"><input class="input" name="t" maxlength="120" placeholder="Un pas à faire (ex. : apprendre les paroles du refrain)" required><select name="pour" aria-label="Pour qui">${mem().map((m) => `<option value="${esc(m)}" ${m === espace.me ? 'selected' : ''}>pour ${esc(m)}</option>`).join('')}<option value="deux">pour nous deux</option></select><button class="btn small">Ajouter</button></form></section>`;
     }
-    // Le formulaire pour proposer une plage : le jour, l’heure, la durée, la sorte, un mot.
+    // Le formulaire pour proposer une plage : la sorte en cartes, le jour dans un petit calendrier du mois, l'heure
+    // et la durée en pastilles, un mot, et le résumé de ce qu'on s'apprête à proposer.
     function proposerHTML() {
-      const d = new Date(); d.setDate(d.getDate() + 1);
-      return `<form class="panel cl-prop" hidden><h2>Proposer une plage</h2><div class="cl-prop-g">
-        <label class="field"><span>Le jour</span><input type="date" name="jour" value="${d.toISOString().slice(0, 10)}" required></label>
-        <label class="field"><span>L’heure</span><input type="time" name="heure" value="19:00" step="900" required></label>
-        <label class="field"><span>Durée</span><select name="duree">${[[60, '1 h'], [90, '1 h 30'], [120, '2 h'], [180, '3 h'], [240, '4 h']].map(([v, l]) => `<option value="${v}" ${v === 90 ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
-        <label class="field"><span>Quoi</span><select name="sorte">${Object.entries(SORTES).map(([k, [l]]) => `<option value="${k}">${l}</option>`).join('')}</select></label>
-        <label class="field cl-note"><span>Un mot (facultatif)</span><input name="note" maxlength="80" placeholder="Ex. : on finit le refrain de Projet 1"></label></div>
-        <p class="muted small cl-sorte-aide"></p>
-        <div class="cl-prop-b"><button class="btn primary">Proposer à ${esc(autre())}</button><button class="btn ghost" type="button" data-fermer>Annuler</button></div></form>`;
+      const d = new Date(); d.setDate(d.getDate() + 1); const jour = d.toLocaleDateString('fr-CA');
+      return `<form class="panel cl-prop" hidden><div class="panel-head"><h2>Proposer une plage à ${esc(autre())}</h2><button type="button" class="icon-btn tiny" data-fermer aria-label="Fermer">✕</button></div>
+        <p class="cl-p-k">Quoi</p>
+        <div class="cl-p-sortes">${Object.entries(SORTES).map(([k, [l, c, quoi]], n) => `<label class="cl-p-sorte" style="--s:${c}"><input type="radio" name="sorte" value="${k}" ${n ? '' : 'checked'}><b>${esc(l)}</b><small>${esc(quoi)}</small></label>`).join('')}</div>
+        <div class="cl-p-quand">
+          <div><p class="cl-p-k">Quel jour</p><input type="hidden" name="jour" value="${jour}"><div class="cl-mini"></div></div>
+          <div><p class="cl-p-k">À quelle heure</p><input type="hidden" name="heure" value="19:00">
+            <div class="cl-p-chips" data-groupe="heure">${['09:00', '13:00', '17:00', '19:00', '20:00'].map((h) => `<button type="button" class="${h === '19:00' ? 'on' : ''}" data-h="${h}">${h.replace(':00', ' h').replace(/^0/, '')}</button>`).join('')}<label class="cl-p-autre">autre <input type="time" step="900" data-h-libre></label></div>
+            <p class="cl-p-k">Combien de temps</p>
+            <div class="cl-p-chips">${[[60, '1 h'], [90, '1 h 30'], [120, '2 h'], [180, '3 h'], [240, '4 h']].map(([v, l]) => `<label><input type="radio" name="duree" value="${v}" ${v === 90 ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>
+            <p class="cl-p-k">Un mot <small>(facultatif)</small></p><input class="input" name="note" maxlength="80" placeholder="Ex. : on finit le refrain de Projet 1">
+          </div>
+        </div>
+        <div class="cl-p-fin"><p class="cl-p-resume"></p><button class="btn primary">Proposer à ${esc(autre())}</button></div></form>`;
+    }
+    // Le petit calendrier du formulaire : le mois, les lunes et les plages déjà prévues ; on touche le jour voulu.
+    let miniMois = null;
+    function miniHTML() {
+      const f = q('.cl-prop'); const choisi = f.jour.value; const y = miniMois.getFullYear(); const m = miniMois.getMonth();
+      const debut = lundi(new Date(y, m, 1).getTime()); const auj = new Date(new Date().setHours(0, 0, 0, 0)).getTime(); const l = plages();
+      const cases = []; for (let t = debut; t < new Date(y, m + 1, 1).getTime() || new Date(t).getDay() !== 1; t += JOUR) cases.push(t);
+      return `<div class="cl-mini-t"><button type="button" data-mini="-1" aria-label="Mois précédent">‹</button><b>${miniMois.toLocaleDateString('fr-CA', { month: 'long', year: 'numeric' })}</b><button type="button" data-mini="1" aria-label="Mois suivant">›</button></div>
+        <div class="cl-mini-g">${JOURS.map((j) => `<span>${j[0].toUpperCase()}</span>`).join('')}${cases.map((t) => { const iso = new Date(t).toLocaleDateString('fr-CA'); const ri = rituelDu(t); const n = l.filter((e) => e.data.debut >= t && e.data.debut < t + JOUR).length;
+          return `<button type="button" data-pj="${iso}" class="${new Date(t).getMonth() !== m ? 'hors' : ''} ${iso === choisi ? 'on' : ''} ${t === auj ? 'auj' : ''}" ${t < auj ? 'disabled' : ''} title="${jourLong(t)}${ri ? ` · ${ri[1]}` : ''}${n ? ` · ${n} plage${n > 1 ? 's' : ''}` : ''}">${new Date(t).getDate()}${ri ? luneSVG(lune(new Date(t + JOUR / 2)), 9) : ''}${n ? '<i></i>' : ''}</button>`; }).join('')}</div>`;
+    }
+    // Le résumé de la plage en préparation, mis à jour à chaque choix.
+    function resume() {
+      const f = q('.cl-prop'); if (!f) return; const [y, mo, j] = f.jour.value.split('-').map(Number); const [h, mi] = f.heure.value.split(':').map(Number);
+      const t = new Date(y, mo - 1, j, h, mi).getTime(); const dur = +f.duree.value;
+      const jl = jourLong(t); q('.cl-p-resume').innerHTML = `<b>${jl[0].toUpperCase() + jl.slice(1)}</b>, ${heure(t)} · ${dur % 60 ? `${Math.floor(dur / 60)} h 30` : `${dur / 60} h`} · ${esc(SORTES[f.sorte.value][0])}`;
     }
     // Dessine toute la page du calendrier.
     function render() {
@@ -137,7 +159,18 @@ export default {
     // Ouvre le formulaire de proposition (au jour touché, s’il y en a un).
     function ouvrirProposer(jour) {
       const f = q('.cl-prop'); f.hidden = false; if (jour) f.jour.value = new Date(+jour).toLocaleDateString('fr-CA');
-      q('.cl-sorte-aide').textContent = SORTES[f.sorte.value][2]; f.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const [y, mo] = f.jour.value.split('-').map(Number); miniMois = new Date(y, mo - 1, 1); q('.cl-mini').innerHTML = miniHTML(); resume();
+      f.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    // La fiche d’un rituel lunaire, sur place : quand exactement, ce que ce temps du cycle nous demande, et les outils pour le faire.
+    function ficheRituel(jour) {
+      const ri = rituelDu(jour); if (!ri) return; const c = CYCLE[[0, 1, 2, 3][ri[4]]]; const fi = q('.cl-fiche');
+      fi.hidden = false; fi.innerHTML = `<section class="panel cl-rit"><div class="panel-head"><h2>${luneSVG(lune(new Date(ri[0])), 22)} ${esc(ri[1].split(',')[0])}</h2><button class="icon-btn tiny" data-fiche-x aria-label="Fermer">✕</button></div>
+        <p class="cl-rit-q"><b>${jourLong(ri[0])}, ${heure(ri[0])}</b> · notre rituel : <b>${esc(c.phase)}</b></p>
+        <p>${esc(c.geste)}</p>
+        <p class="cl-p-k">Pour le faire</p>
+        <div class="cl-a-b">${c.outils.map(([r, nom], n) => `<a class="btn small ${n ? '' : 'primary'}" href="#/${r}">${esc(nom)}</a>`).join('')}${jour >= new Date(new Date().setHours(0, 0, 0, 0)).getTime() ? `<button class="btn small" data-proposer-jour="${jour}">＋ Réserver une plage ce jour-là</button>` : ''}</div></section>`;
+      fi.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
     // La fiche d’une plage : quand, combien de temps, qui l’a proposée, et les gestes (approuver, l’ajouter à son agenda, retirer).
     function fiche(id) {
@@ -160,7 +193,10 @@ export default {
       if (f.classList.contains('cl-pas-f')) { const t = f.t.value.trim(); if (!t) return; try { await saveEntry({ id: `pas-${uid()}`, type: 'pas', title: t, data: { pour: f.pour.value, fait: false } }); } catch (err) { toast(err.message); } }
     });
     el.addEventListener('change', (ev) => {
-      if (ev.target.name === 'sorte' && ev.target.closest('.cl-prop')) q('.cl-sorte-aide').textContent = SORTES[ev.target.value][2];
+      if (ev.target.closest('.cl-prop')) {
+        if ('hLibre' in ev.target.dataset && ev.target.value) { q('.cl-prop').heure.value = ev.target.value; q('[data-groupe=heure]').querySelectorAll('[data-h]').forEach((x) => x.classList.remove('on')); }
+        resume();
+      }
       const p = ev.target.dataset.pas; if (p) maj(p, (d) => ({ ...d, fait: ev.target.checked, faitAt: ev.target.checked ? Date.now() : null }));
     });
     el.addEventListener('click', async (ev) => {
@@ -168,6 +204,12 @@ export default {
       if (ds.vue) { vue = ds.vue; store.set('calVue', vue); render(); }
       if (ds.nav != null) { const n = +ds.nav; if (vue === 'semaine') semaine = n ? lundi(semaine + n * 7 * JOUR + JOUR) : lundi(); else { mois = n ? new Date(mois.getFullYear(), mois.getMonth() + n, 1) : (() => { const x = new Date(); x.setDate(1); return x; })(); } render(); }
       if (ds.va) { semaine = +ds.va; vue = 'semaine'; store.set('calVue', vue); render(); }
+      // Le petit calendrier du formulaire : changer de mois, choisir le jour ; les pastilles d'heure.
+      if (ds.mini) { miniMois = new Date(miniMois.getFullYear(), miniMois.getMonth() + +ds.mini, 1); q('.cl-mini').innerHTML = miniHTML(); return; }
+      if (ds.pj) { q('.cl-prop').jour.value = ds.pj; q('.cl-mini').innerHTML = miniHTML(); resume(); return; }
+      if (ds.h) { q('.cl-prop').heure.value = ds.h; t.parentElement.querySelectorAll('[data-h]').forEach((x) => x.classList.toggle('on', x === t)); q('[data-h-libre]').value = ''; resume(); return; }
+      if (ds.rituel) { ficheRituel(+ds.rituel); return; }
+      if (ds.proposerJour) { q('.cl-fiche').hidden = true; ouvrirProposer(ds.proposerJour); return; }
       if ('proposer' in ds) ouvrirProposer();
       if (ds.jour) ouvrirProposer(ds.jour);
       if ('fermer' in ds) q('.cl-prop').hidden = true;

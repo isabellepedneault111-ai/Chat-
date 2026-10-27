@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.42', quand: '2026-10-27', titre: 'Le calendrier, plus simple', items: [
+    ['Proposer une plage, en quelques touches', ['La sorte en cartes de couleur, le jour dans un petit calendrier du mois (avec les lunes et les plages déjà prévues), l’heure et la durée en pastilles, puis le résumé avant d’envoyer. <a href="#/calendrier">Ouvrir le calendrier →</a>']],
+    ['Toucher une lune ouvre son rituel', ['Sur place : l’heure exacte, ce que ce temps du cycle nous demande, les outils pour le faire, et de quoi réserver une plage ce jour-là.']],
+    ['Nos prochains pas, au complet', ['S’y ajoutent ce que l’autre t’a demandé et que tu n’as pas encore fait, la plage à proposer quand notre rythme de la semaine n’est pas couvert, l’objectif de la semaine à fixer et la semaine passée à évaluer.']],
+  ] },
   { v: '0.41', quand: '2026-10-27', titre: 'La grande visite, en profondeur', items: [
     ['Le fil d’une idée', ['La grande visite suit maintenant le chemin d’une idée, en huit chapitres : l’attraper, se retrouver, la jouer, la chanter, l’écrire, la pousser au labo, mesurer le chemin, puis l’envers du décor. On peut sauter d’un chapitre à l’autre. <a href="#/coffre">Ouvrir le coffre →</a>']],
     ['Chaque section, pas seulement chaque onglet', ['Les disques du labo (en haut), l’accélération jusqu’à la note, les liens, l’onde ; la cathédrale de la rosace jusqu’au MIDI ; des boutons pour entendre pendant la visite. Les icônes aussi : la prise, le filet, le micro et chaque outil du menu ⋯.']],

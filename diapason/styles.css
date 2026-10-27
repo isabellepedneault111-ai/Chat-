@@ -3578,3 +3578,44 @@ html.gv-on body { padding-right: 432px; }
 .ar-v-l b { white-space: nowrap; }
 @media (max-width: 560px) { .ar-v-h { display: none !important; } .ar-v-l { grid-template-columns: 1fr auto; gap: 4px 10px; } .ar-v-l b { font-size: .92rem !important; } }
 .ar-v-l .n { white-space: nowrap; }
+/* Proposer une plage : des cartes, un petit calendrier, des pastilles */
+.cl-prop .panel-head h2 { margin: 0; }
+.cl-p-k { margin: 14px 0 6px; font: 700 .76rem "Atkinson Hyperlegible", sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.cl-p-k small { text-transform: none; letter-spacing: 0; font-weight: 400; }
+.cl-p-sortes { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.cl-p-sorte { position: relative; display: block; padding: 10px 12px 10px 16px; border-radius: 10px; border: 1px solid var(--rule); background: var(--card); cursor: pointer; }
+.cl-p-sorte::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 5px; border-radius: 0 4px 4px 0; background: var(--s); }
+.cl-p-sorte input { position: absolute; opacity: 0; }
+.cl-p-sorte b { display: block; font-size: .92rem; } .cl-p-sorte small { display: block; color: var(--muted); font-size: .76rem; line-height: 1.3; margin-top: 2px; }
+.cl-p-sorte:has(input:checked) { border-color: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+.cl-p-sorte:has(input:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
+.cl-p-quand { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 24px; align-items: start; }
+.cl-mini { border: 1px solid var(--rule); border-radius: 12px; background: var(--card); padding: 10px; }
+.cl-mini-t { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.cl-mini-t b { text-transform: capitalize; } .cl-mini-t button { border: 0; background: none; font-size: 1.3rem; cursor: pointer; padding: 0 10px; color: var(--ink); }
+.cl-mini-g { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; }
+.cl-mini-g > span { font-size: .7rem; color: var(--muted); padding: 2px 0; }
+.cl-mini-g button { position: relative; aspect-ratio: 1; border: 1px solid transparent; border-radius: 8px; background: none; font: 600 .86rem "Atkinson Hyperlegible", sans-serif; color: var(--ink); cursor: pointer; display: grid; place-items: center; }
+.cl-mini-g button:hover:not(:disabled) { background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.cl-mini-g button.hors { color: var(--muted); } .cl-mini-g button:disabled { opacity: .35; cursor: default; }
+.cl-mini-g button.auj { border-color: var(--ink); }
+.cl-mini-g button.on { background: var(--ink); color: var(--paper, #fff); }
+.cl-mini-g button svg { position: absolute; top: 2px; right: 2px; }
+.cl-mini-g button i { position: absolute; bottom: 3px; width: 5px; height: 5px; border-radius: 50%; background: #c9a45c; }
+.cl-p-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.cl-p-chips button, .cl-p-chips label > span { display: inline-block; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--rule); background: var(--card); font: 600 .88rem "Atkinson Hyperlegible", sans-serif; color: var(--ink); cursor: pointer; }
+.cl-p-chips label { position: relative; } .cl-p-chips label > input[type=radio] { position: absolute; opacity: 0; }
+.cl-p-chips button.on, .cl-p-chips label > input:checked + span { background: var(--ink); color: var(--paper, #fff); border-color: var(--ink); }
+.cl-p-chips label > input:focus-visible + span { outline: 2px solid var(--ink); outline-offset: 2px; }
+.cl-p-autre { font-size: .84rem; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+.cl-p-autre input { font: inherit; padding: 5px 8px; border: 1px solid var(--rule); border-radius: 8px; background: var(--card); color: var(--ink); }
+.cl-p-fin { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--rule); }
+.cl-p-resume { margin: 0; font-size: .95rem; }
+@media (max-width: 760px) { .cl-p-quand { grid-template-columns: 1fr; gap: 6px; } }
+.cl-prop .cl-mini-g { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.cl-prop .cl-mini-g > button { min-width: 0; width: 100%; height: 36px; aspect-ratio: auto; padding: 0; margin: 0; box-shadow: none; }
+.cl-prop .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.cl-prop input[name=note] { width: 100%; }
+button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; cursor: pointer; }
+.cl-rit h2 { display: flex; align-items: center; gap: 8px; margin: 0; }
+.cl-rit-q { margin-top: 0; }
