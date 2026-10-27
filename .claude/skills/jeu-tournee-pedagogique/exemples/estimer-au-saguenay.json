@@ -1,0 +1,1583 @@
+{
+ "id": "estimer-saguenay-v2",
+ "fichier": "estimer-au-saguenay",
+ "titre": "Estimer au Saguenay",
+ "sousTitre": "PPS-Z128 · Budget et consommation · avec Mélanie",
+ "cours": "PPS-Z128",
+ "matiere": "Budget et consommation",
+ "enseignant": "Mélanie",
+ "cleEnseignant": "melanie",
+ "accroche": "La grande révision, du niveau Érable au niveau Sapin.",
+ "duree": 30,
+ "unite": "$",
+ "intention": "Estimer le coût d’un achat pour savoir si on a assez d’argent : arrondir au dollar le plus proche, additionner, comparer avec son budget, puis tenir compte des taxes et des rabais (progression concret → imagé → abstrait).",
+ "mascotte": {
+  "fichier": "renard",
+  "nom": "le renard",
+  "du": "du renard"
+ },
+ "theme": {
+  "accent": "#C9733A",
+  "accentFonce": "#8f4f24",
+  "accentPale": "#FBE9DC",
+  "formes": [
+   "#D8C7BB",
+   "#E3BF6A",
+   "#DDF5F2",
+   "#F6D1D6"
+  ]
+ },
+ "carte": {
+  "trajet": "de Jonquière à Chicoutimi",
+  "depart": "Jonquière",
+  "arrivee": "Chicoutimi",
+  "riviere": "rivière Saguenay"
+ },
+ "remise": "Remets-le à Mélanie : dans le devoir Teams, dans ton OneDrive (partagé avec Mélanie) ou par courriel.",
+ "niveaux": [
+  {
+   "id": "E",
+   "nom": "Érable",
+   "clair": "#F5C6C2",
+   "fonce": "#A9372B",
+   "description": "je manipule et je visualise",
+   "intro": {
+    "texte": "Au niveau Érable, tu apprends à trouver le dollar le plus proche.",
+    "capsules": [
+     "arrondir"
+    ]
+   }
+  },
+  {
+   "id": "B",
+   "nom": "Bouleau",
+   "clair": "#F6E3A6",
+   "fonce": "#8A6100",
+   "description": "j’estime un total et je compare",
+   "intro": {
+    "texte": "Au niveau Bouleau, tu estimes un total et tu compares avec ton argent.",
+    "capsules": [
+     "total",
+     "assez"
+    ]
+   }
+  },
+  {
+   "id": "S",
+   "nom": "Sapin",
+   "clair": "#CFE9D7",
+   "fonce": "#2E6B45",
+   "description": "j’estime avec les taxes",
+   "intro": {
+    "texte": "Au niveau Sapin, tu ajoutes les taxes. Le truc des rabais viendra plus loin.",
+    "capsules": [
+     "taxes"
+    ]
+   }
+  }
+ ],
+ "elements": [
+  {
+   "id": "arr",
+   "nom": "Arrondir un prix au dollar",
+   "descripteurs": [
+    "Arrondit seul et explique « plus proche de ».",
+    "Arrondit avec un rappel (droite, truc du renard).",
+    "Arrondit seulement avec beaucoup d’aide.",
+    "N’arrondit pas encore."
+   ],
+   "descripteursEleve": [
+    "J’arrondis seul et j’explique « plus proche de ».",
+    "J’arrondis avec un rappel (la droite, le truc du renard).",
+    "J’arrondis avec beaucoup d’aide.",
+    "Je n’arrondis pas encore."
+   ],
+   "prochaines": [
+    "Aide un ami à arrondir, ou relève le défi supplémentaire.",
+    "Essaie d’arrondir sans le truc : regarde seulement les cents.",
+    "Revois la capsule « Arrondir » et utilise la droite, un prix à la fois.",
+    "Avec un adulte, place des prix sur la droite au sol."
+   ]
+  },
+  {
+   "id": "est",
+   "nom": "Estimer un total",
+   "descripteurs": [
+    "Additionne ses arrondis et obtient un total raisonnable, seul.",
+    "Y arrive avec un rappel de la démarche.",
+    "Y arrive étape par étape, avec de l’aide.",
+    "Calcule au sou près ou devine."
+   ],
+   "descripteursEleve": [
+    "J’additionne mes dollars ronds et mon total est proche, seul.",
+    "J’y arrive avec un rappel des étapes.",
+    "J’y arrive étape par étape, avec de l’aide.",
+    "Je calcule au sou près ou je devine."
+   ],
+   "prochaines": [
+    "Estime des paniers de 5 ou 6 articles, ou crée ton défi.",
+    "Écris tes dollars ronds sur un papier avant d’additionner.",
+    "Arrondis un prix à la fois, puis additionne avec des jetons ou ta bande numérique.",
+    "Commence avec 2 articles et des pièces de 1 $, avec un adulte."
+   ]
+  },
+  {
+   "id": "cmp",
+   "nom": "Comparer avec son argent",
+   "descripteurs": [
+    "Conclut « assez » ou « pas assez » seul; vérifie quand c’est serré.",
+    "Conclut après un rappel ou un 2e essai.",
+    "Conclut avec beaucoup d’aide.",
+    "Ne fait pas encore le lien avec l’argent disponible."
+   ],
+   "descripteursEleve": [
+    "Je sais seul si j’ai assez; je vérifie quand c’est serré.",
+    "Je trouve après un rappel ou un 2e essai.",
+    "Je trouve avec beaucoup d’aide.",
+    "Je ne fais pas encore le lien avec mon argent."
+   ],
+   "prochaines": [
+    "Calcule aussi combien d’argent il te restera.",
+    "Compare toujours ton estimation avec ton argent, et vérifie quand c’est serré.",
+    "Place ton argent à côté de ton estimation (billets ou jetons) pour comparer.",
+    "Avec un adulte, compte tes jetons et ceux du panier : lequel est le plus grand ?"
+   ]
+  },
+  {
+   "id": "tax",
+   "nom": "Tenir compte des taxes",
+   "descripteurs": [
+    "Ajoute environ 15 % et sait quels articles sont taxables.",
+    "Ajoute les taxes avec un rappel du repère.",
+    "Sait qu’il y a des taxes, sans les estimer.",
+    "Ne tient pas compte des taxes."
+   ],
+   "descripteursEleve": [
+    "J’ajoute environ 15 % et je sais ce qui est taxé.",
+    "J’ajoute les taxes avec un rappel du truc.",
+    "Je sais qu’il y a des taxes, sans les calculer.",
+    "J’oublie les taxes."
+   ],
+   "prochaines": [
+    "Essaie un défi avec un rabais et les taxes.",
+    "Pratique le truc sans le regarder : 10 %, puis la moitié.",
+    "Revois la capsule « Les taxes de tête » avec 10 $ ou 20 $.",
+    "Retiens une phrase : « À la caisse, je paie un peu plus à cause des taxes. »"
+   ]
+  },
+  {
+   "id": "exp",
+   "nom": "Expliquer sa stratégie",
+   "descripteurs": [
+    "Explique avec ses mots.",
+    "Explique quand on le questionne.",
+    "Montre sans pouvoir l’expliquer.",
+    "Ne peut pas encore montrer comment."
+   ],
+   "descripteursEleve": [
+    "J’explique avec mes mots.",
+    "J’explique quand on me pose des questions.",
+    "Je montre, mais j’ai du mal à expliquer.",
+    "Je ne peux pas encore montrer comment."
+   ],
+   "prochaines": [
+    "Explique ta méthode à un ami ou dans ton défi.",
+    "Utilise les mots : j’arrondis, j’additionne, je compare.",
+    "Remets les étapes dans l’ordre, puis dis-les à voix haute.",
+    "Avec un adulte, montre une étape à la fois avec le matériel."
+   ]
+  }
+ ],
+ "autoeval": [
+  {
+   "element": "arr",
+   "phrase": "Je suis capable d’arrondir un prix au dollar le plus proche."
+  },
+  {
+   "element": "est",
+   "phrase": "Je suis capable d’estimer le total d’un panier."
+  },
+  {
+   "element": "cmp",
+   "phrase": "Je sais si j’ai assez d’argent."
+  },
+  {
+   "element": "tax",
+   "phrase": "Je suis capable d’estimer les taxes."
+  }
+ ],
+ "stations": [
+  {
+   "nom": "Tim Hortons",
+   "lieu": "boulevard Harvey, Jonquière",
+   "niveau": "E",
+   "couleur": "#B5121B",
+   "decor": "cafe",
+   "texte": "Avant le cours, tu arrêtes déjeuner. Le renard te montre comment trouver le dollar le plus proche."
+  },
+  {
+   "nom": "Dépanneur du quartier",
+   "court": "Dépanneur",
+   "lieu": "rue Saint-Dominique, Jonquière",
+   "niveau": "E",
+   "couleur": "#3B6EA5",
+   "decor": "depanneur",
+   "texte": "Tu passes au dépanneur. Tu tries les prix : plus proches de 4 $ ou de 5 $ ?"
+  },
+  {
+   "nom": "Dollarama",
+   "lieu": "Jonquière",
+   "niveau": "E",
+   "couleur": "#2E7D32",
+   "decor": "magasin",
+   "texte": "Halloween approche ! Tu prépares tes pièces de 1 $ pour quelques achats."
+  },
+  {
+   "nom": "Maxi",
+   "lieu": "Jonquière",
+   "niveau": "B",
+   "couleur": "#D7261E",
+   "decor": "epicerie",
+   "texte": "C’est l’épicerie de la semaine. Tu estimes ton panier sans calculatrice."
+  },
+  {
+   "nom": "Cinéma Jonquière",
+   "court": "Cinéma",
+   "lieu": "Jonquière",
+   "niveau": "B",
+   "couleur": "#5B3F8C",
+   "decor": "cinema",
+   "texte": "Soirée cinéma avec des amis. Les prix affichés incluent les taxes. As-tu assez d’argent ?"
+  },
+  {
+   "nom": "Pizzéria du coin",
+   "court": "Pizzéria",
+   "lieu": "Jonquière",
+   "niveau": "B",
+   "couleur": "#C0551F",
+   "decor": "restaurant",
+   "texte": "Après le film, une pizza ! Les prix incluent les taxes. Tu expliques ta façon de faire à un ami."
+  },
+  {
+   "nom": "Centre Georges-Vézina",
+   "court": "Saguenéens",
+   "lieu": "Chicoutimi · match des Saguenéens",
+   "niveau": "B",
+   "couleur": "#1F3A93",
+   "decor": "arena",
+   "texte": "Direction Chicoutimi pour voir jouer les Saguenéens ! Les prix incluent les taxes."
+  },
+  {
+   "nom": "Walmart",
+   "lieu": "Jonquière",
+   "niveau": "S",
+   "couleur": "#0B6FC4",
+   "decor": "grande-surface",
+   "texte": "Niveau Sapin : les taxes. Qu’est-ce qui est taxé ? Et ce reçu est-il correct ?"
+  },
+  {
+   "nom": "Jean Coutu",
+   "lieu": "Jonquière",
+   "niveau": "S",
+   "couleur": "#00539B",
+   "decor": "pharmacie",
+   "texte": "À la pharmacie, les produits de soins sont taxés. Tu estimes avec le repère de 15 %."
+  },
+  {
+   "nom": "Place du Royaume",
+   "court": "Place du Royaume",
+   "lieu": "Chicoutimi",
+   "niveau": "S",
+   "couleur": "#7A4E2D",
+   "decor": "centre-commercial",
+   "texte": "L’hiver s’en vient : tuques et bottes en solde ! Regarde d’abord le truc des rabais.",
+   "capsules": [
+    "rabais"
+   ]
+  },
+  {
+   "nom": "Party d’Halloween",
+   "court": "Halloween",
+   "lieu": "chez toi",
+   "niveau": "S",
+   "couleur": "#D9661B",
+   "decor": "maison-halloween",
+   "texte": "Grande finale : tu organises un party d’Halloween avec 30 $."
+  }
+ ],
+ "trucs": {
+  "t1": {
+   "titre": "Le dollar le plus proche",
+   "lignes": [
+    "Je regarde les cents.",
+    "50 ¢ ou plus : je monte au dollar suivant.",
+    "Moins de 50 ¢ : je garde le même dollar."
+   ],
+   "visuel": {
+    "type": "droite",
+    "a": 2,
+    "p": 2.85,
+    "fleche": true
+   }
+  },
+  "t2": {
+   "titre": "J’additionne des dollars ronds",
+   "lignes": [
+    "J’arrondis chaque prix au dollar le plus proche.",
+    "J’additionne les dollars ronds de tête.",
+    "Mon estimation est proche du vrai total."
+   ],
+   "visuel": {
+    "type": "recuArrondi",
+    "articles": [
+     [
+      "Lait",
+      5.29
+     ],
+     [
+      "Pain",
+      3.79
+     ]
+    ]
+   }
+  },
+  "t3": {
+   "titre": "Assez ou pas assez ?",
+   "lignes": [
+    "J’estime le total.",
+    "Je compare avec mon argent.",
+    "Si c’est serré, je vérifie avec la calculatrice."
+   ],
+   "visuel": {
+    "type": "billets",
+    "montant": 20
+   }
+  },
+  "t4": {
+   "titre": "Les taxes de tête",
+   "lignes": [
+    "Au Québec, les taxes font environ 15 %.",
+    "10 % : je recule la virgule (20 $ → 2 $).",
+    "J’ajoute la moitié du 10 % (2 $ → 1 $).",
+    "Repère : environ 1,50 $ pour chaque 10 $.",
+    "Pas de taxes sur les aliments de base. Taxés : grignotines, sucreries, restaurant, produits ménagers et de soins."
+   ],
+   "visuel": {
+    "type": "taxes",
+    "base": 20,
+    "etape": 3
+   }
+  },
+  "t5": {
+   "titre": "Rabais d’abord, taxes ensuite",
+   "lignes": [
+    "J’enlève le rabais d’abord : 50 %, c’est la moitié.",
+    "Ensuite, j’ajoute environ 15 % de taxes sur le nouveau prix."
+   ],
+   "visuel": {
+    "type": "grand",
+    "html": "30 $ → 15 $ → ≈ 17 $"
+   }
+  },
+  "t6": {
+   "titre": "Plusieurs fois le même produit",
+   "lignes": [
+    "J’arrondis le prix d’un seul produit.",
+    "Je multiplie par le nombre de produits."
+   ],
+   "visuel": {
+    "type": "grand",
+    "html": "4,89 $ → 5 $ &nbsp; 3 × 5 $ = 15 $"
+   }
+  }
+ },
+ "capsules": {
+  "arrondir": {
+   "titre": "Arrondir au dollar le plus proche",
+   "scenes": [
+    {
+     "texte": "Un café coûte 2,39 $. Regarde où il se place sur la droite.",
+     "visuel": {
+      "type": "droite",
+      "a": 2,
+      "p": 2.39
+     }
+    },
+    {
+     "texte": "Le milieu entre 2 $ et 3 $, c’est 2,50 $.",
+     "visuel": {
+      "type": "droite",
+      "a": 2,
+      "p": null,
+      "milieu": true
+     }
+    },
+    {
+     "texte": "2,39 $ est avant le milieu. Il est plus proche de 2 $.",
+     "visuel": {
+      "type": "droite",
+      "a": 2,
+      "p": 2.39,
+      "fleche": true
+     }
+    },
+    {
+     "texte": "Un muffin coûte 2,85 $. Il est après le milieu : plus proche de 3 $.",
+     "visuel": {
+      "type": "droite",
+      "a": 2,
+      "p": 2.85,
+      "fleche": true
+     }
+    },
+    {
+     "texte": "Le truc du renard : je regarde les cents. 50 ¢ ou plus, je monte. Moins de 50 ¢, je garde le dollar.",
+     "visuel": {
+      "type": "mascotte",
+      "taille": 130,
+      "html": "2,39 $ → 2 $<br>2,85 $ → 3 $<br>2,50 $ → 3 $"
+     }
+    }
+   ]
+  },
+  "total": {
+   "titre": "Estimer un total",
+   "scenes": [
+    {
+     "texte": "Au Maxi, ton panier contient 4 articles.",
+     "visuel": {
+      "type": "recu",
+      "articles": [
+       [
+        "Lait 2 L",
+        5.29
+       ],
+       [
+        "Pain",
+        3.79
+       ],
+       [
+        "Bleuets du Lac",
+        4.99
+       ],
+       [
+        "Sac de pommes",
+        5.49
+       ]
+      ]
+     }
+    },
+    {
+     "texte": "J’arrondis chaque prix au dollar le plus proche.",
+     "visuel": {
+      "type": "recuArrondi",
+      "articles": [
+       [
+        "Lait 2 L",
+        5.29
+       ],
+       [
+        "Pain",
+        3.79
+       ],
+       [
+        "Bleuets du Lac",
+        4.99
+       ],
+       [
+        "Sac de pommes",
+        5.49
+       ]
+      ]
+     }
+    },
+    {
+     "texte": "J’additionne les dollars ronds : 5 + 4 + 5 + 5 = 19 $.",
+     "visuel": {
+      "type": "grand",
+      "html": "5 + 4 + 5 + 5 = 19 $"
+     }
+    },
+    {
+     "texte": "Le vrai total est 19,56 $. Mon estimation est très proche !",
+     "visuel": {
+      "type": "grand",
+      "html": "≈ 19 $ &nbsp;|&nbsp; vrai : 19,56 $"
+     }
+    }
+   ]
+  },
+  "assez": {
+   "titre": "Assez ou pas assez ?",
+   "scenes": [
+    {
+     "texte": "Tu as 20 $ pour le cinéma.",
+     "visuel": {
+      "type": "billets",
+      "montant": 20
+     }
+    },
+    {
+     "texte": "Billet 10,99 $, popcorn 6,49 $, boisson 3,79 $. J’arrondis et j’additionne : 11 + 6 + 4 = 21 $.",
+     "visuel": {
+      "type": "recuArrondi",
+      "articles": [
+       [
+        "Billet",
+        10.99
+       ],
+       [
+        "Popcorn",
+        6.49
+       ],
+       [
+        "Boisson",
+        3.79
+       ]
+      ]
+     }
+    },
+    {
+     "texte": "21 $, c’est plus que 20 $. Je n’ai pas assez !",
+     "visuel": {
+      "type": "grand",
+      "html": "21 $ &gt; 20 $"
+     }
+    },
+    {
+     "texte": "Si c’est serré, je vérifie avec la calculatrice avant de passer à la caisse.",
+     "visuel": {
+      "type": "mascotte",
+      "taille": 150
+     }
+    }
+   ]
+  },
+  "taxes": {
+   "titre": "Les taxes de tête",
+   "scenes": [
+    {
+     "texte": "Au Québec, on paie environ 15 % de taxes sur plusieurs produits. Exemple : un achat de 20 $.",
+     "visuel": {
+      "type": "taxes",
+      "base": 20,
+      "etape": 0
+     }
+    },
+    {
+     "texte": "10 % de 20 $ : je recule la virgule. Ça fait 2 $.",
+     "visuel": {
+      "type": "taxes",
+      "base": 20,
+      "etape": 1
+     }
+    },
+    {
+     "texte": "J’ajoute la moitié de 2 $, donc 1 $. Les taxes font environ 3 $.",
+     "visuel": {
+      "type": "taxes",
+      "base": 20,
+      "etape": 2
+     }
+    },
+    {
+     "texte": "Total : 20 $ + 3 $ = environ 23 $. Repère : environ 1,50 $ pour chaque 10 $.",
+     "visuel": {
+      "type": "taxes",
+      "base": 20,
+      "etape": 3
+     }
+    },
+    {
+     "texte": "Pas de taxes sur les aliments de base. Taxés : grignotines, sucreries, boissons gazeuses, restaurant, produits ménagers et de soins.",
+     "visuel": {
+      "type": "colonnes",
+      "colonnes": [
+       {
+        "titre": "Pas taxé",
+        "texte": "fruits, légumes, lait, pain, œufs, viande"
+       },
+       {
+        "titre": "Taxé",
+        "texte": "croustilles, bonbons, boisson gazeuse, restaurant, savon, shampoing"
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "rabais": {
+   "titre": "Rabais d’abord, taxes ensuite",
+   "scenes": [
+    {
+     "texte": "Une tuque coûte 30 $. Elle est en solde à 50 %.",
+     "visuel": {
+      "type": "grand",
+      "html": "30 $ &nbsp; − 50 %"
+     }
+    },
+    {
+     "texte": "50 %, c’est la moitié. La moitié de 30 $, c’est 15 $.",
+     "visuel": {
+      "type": "grand",
+      "html": "30 $ ÷ 2 = 15 $"
+     }
+    },
+    {
+     "texte": "Le prix en solde est 15 $. Ensuite seulement, j’ajoute les taxes.",
+     "visuel": {
+      "type": "taxes",
+      "base": 15,
+      "etape": 0
+     }
+    },
+    {
+     "texte": "10 % de 15 $ : 1,50 $. La moitié de 1,50 $ : 0,75 $.",
+     "visuel": {
+      "type": "taxes",
+      "base": 15,
+      "etape": 2
+     }
+    },
+    {
+     "texte": "Prix final : environ 17,25 $. Rabais d’abord, taxes ensuite !",
+     "visuel": {
+      "type": "taxes",
+      "base": 15,
+      "etape": 3
+     }
+    }
+   ]
+  }
+ },
+ "questions": [
+  {
+   "id": "E1",
+   "station": 0,
+   "element": "arr",
+   "type": "droite",
+   "truc": "t1",
+   "a": 2,
+   "p": 2.39,
+   "titre": "Un café moyen coûte <b>2,39 $</b>. Il est plus proche de quel dollar ?",
+   "resume": "Café 2,39 $ : dollar le plus proche",
+   "explication": [
+    "Le prix est entre 2 $ et 3 $.",
+    "Je regarde les cents : 39 ¢.",
+    "39 ¢, c’est moins que 50 ¢.",
+    "Je garde le même dollar : environ 2 $."
+   ]
+  },
+  {
+   "id": "E2",
+   "station": 0,
+   "element": "arr",
+   "type": "droite",
+   "truc": "t1",
+   "a": 1,
+   "p": 1.79,
+   "titre": "Un beigne glacé coûte <b>1,79 $</b>. Il est plus proche de quel dollar ?",
+   "resume": "Beigne 1,79 $ : dollar le plus proche",
+   "explication": [
+    "Le prix est entre 1 $ et 2 $.",
+    "Je regarde les cents : 79 ¢.",
+    "79 ¢, c’est plus que 50 ¢.",
+    "Je monte au dollar suivant : environ 2 $."
+   ]
+  },
+  {
+   "id": "E3",
+   "station": 0,
+   "element": "arr",
+   "type": "droite",
+   "truc": "t1",
+   "a": 3,
+   "p": 3.49,
+   "titre": "Un bagel au fromage à la crème coûte <b>3,49 $</b>. Il est plus proche de quel dollar ?",
+   "resume": "Bagel 3,49 $ : dollar le plus proche",
+   "explication": [
+    "Le prix est entre 3 $ et 4 $.",
+    "Je regarde les cents : 49 ¢.",
+    "49 ¢, c’est très proche du milieu, mais c’est moins que 50 ¢.",
+    "Je garde le même dollar : environ 3 $."
+   ]
+  },
+  {
+   "id": "E4",
+   "station": 0,
+   "element": "arr",
+   "type": "droite",
+   "truc": "t1",
+   "a": 2,
+   "p": 2.5,
+   "titre": "Un muffin aux bleuets coûte <b>2,50 $</b>. On l’arrondit à quel dollar ?",
+   "resume": "Muffin 2,50 $ : le milieu",
+   "explication": [
+    "2,50 $, c’est exactement le milieu entre 2 $ et 3 $.",
+    "Le truc du renard : à 50 ¢, on monte.",
+    "Donc environ 3 $."
+   ]
+  },
+  {
+   "id": "E5",
+   "station": 1,
+   "element": "arr",
+   "type": "tri",
+   "truc": "t1",
+   "titre": "Trie les prix : plus proches de 4 $ ou de 5 $ ?",
+   "resume": "Trier 6 prix entre 4 $ et 5 $",
+   "boites": [
+    "Plus proche de 4 $",
+    "Plus proche de 5 $"
+   ],
+   "etiquettes": [
+    [
+     "Croustilles 4,29 $",
+     0
+    ],
+    [
+     "Lait au chocolat 4,59 $",
+     1
+    ],
+    [
+     "Pain tranché 4,49 $",
+     0
+    ],
+    [
+     "Gomme 4,05 $",
+     0
+    ],
+    [
+     "Boisson gazeuse 4,79 $",
+     1
+    ],
+    [
+     "Sac de bonbons 4,50 $",
+     1
+    ]
+   ],
+   "explication": [
+    "Je regarde les cents de chaque prix.",
+    "Moins de 50 ¢ : plus proche de 4 $. C’est 4,05 $, 4,29 $ et 4,49 $.",
+    "50 ¢ ou plus : plus proche de 5 $. C’est 4,50 $, 4,59 $ et 4,79 $."
+   ]
+  },
+  {
+   "id": "E6",
+   "station": 2,
+   "element": "est",
+   "type": "jetons",
+   "truc": "t2",
+   "titre": "Pour chaque article, mets le bon nombre de pièces de 1 $.",
+   "resume": "Pièces de 1 $ : bonbons, maquillage, citrouille",
+   "articles": [
+    [
+     "Bonbons d’Halloween",
+     3.75
+    ],
+    [
+     "Maquillage",
+     2.25
+    ],
+    [
+     "Citrouille en plastique",
+     1.5
+    ]
+   ],
+   "explication": [
+    "3,75 $ : 75 ¢, je monte. Je mets 4 pièces.",
+    "2,25 $ : 25 ¢, je garde. Je mets 2 pièces.",
+    "1,50 $ : c’est le milieu, je monte. Je mets 2 pièces.",
+    "En tout : 4 + 2 + 2 = 8 pièces. Mon achat coûte environ 8 $."
+   ]
+  },
+  {
+   "id": "E7",
+   "station": 2,
+   "element": "est",
+   "type": "jetons",
+   "truc": "t2",
+   "titre": "Des fournitures pour l’école. Mets le bon nombre de pièces de 1 $.",
+   "resume": "Pièces de 1 $ : cahier, crayons, colle",
+   "articles": [
+    [
+     "Cahier",
+     1.25
+    ],
+    [
+     "Crayons de couleur",
+     4.85
+    ],
+    [
+     "Bâton de colle",
+     2.5
+    ]
+   ],
+   "explication": [
+    "1,25 $ : 25 ¢, je garde. Je mets 1 pièce.",
+    "4,85 $ : 85 ¢, je monte. Je mets 5 pièces.",
+    "2,50 $ : le milieu, je monte. Je mets 3 pièces.",
+    "En tout : 1 + 5 + 3 = 9 pièces. Environ 9 $."
+   ]
+  },
+  {
+   "id": "B1",
+   "station": 3,
+   "element": "est",
+   "type": "qcm",
+   "truc": "t2",
+   "titre": "Environ combien coûte ton panier ?",
+   "resume": "Panier Maxi (4 articles)",
+   "articles": [
+    [
+     "Lait 2 L",
+     5.29
+    ],
+    [
+     "Pain",
+     3.79
+    ],
+    [
+     "Bleuets du Lac",
+     4.99
+    ],
+    [
+     "Sac de pommes",
+     5.49
+    ]
+   ],
+   "note": "Aliments de base : pas de taxes.",
+   "choix": [
+    "Environ 17 $",
+    "Environ 19 $",
+    "Environ 23 $"
+   ],
+   "bonne": 1,
+   "explication": [
+    "J’arrondis chaque prix : 5 $, 4 $, 5 $ et 5 $.",
+    "J’additionne les dollars ronds : 5 + 4 + 5 + 5 = 19 $.",
+    "Le vrai total est 19,56 $. Mon estimation est très proche !"
+   ]
+  },
+  {
+   "id": "B2",
+   "station": 3,
+   "element": "est",
+   "type": "num",
+   "truc": "t2",
+   "titre": "Écris ton estimation du total, en dollars ronds.",
+   "resume": "Tourtière, fromage en grains, soupe aux gourganes",
+   "articles": [
+    [
+     "Tourtière du Lac",
+     12.99
+    ],
+    [
+     "Fromage en grains",
+     6.49
+    ],
+    [
+     "Soupe aux gourganes",
+     3.29
+    ]
+   ],
+   "note": "Aliments de base : pas de taxes.",
+   "accepteMin": 22,
+   "accepteMax": 23,
+   "explication": [
+    "J’arrondis : 12,99 $ devient 13 $.",
+    "6,49 $ devient 6 $ (49 ¢, je garde).",
+    "3,29 $ devient 3 $.",
+    "13 + 6 + 3 = 22 $. Le vrai total est 22,77 $."
+   ]
+  },
+  {
+   "id": "B3",
+   "station": 3,
+   "element": "est",
+   "type": "qcm",
+   "truc": "t6",
+   "titre": "Tu achètes 3 boîtes de céréales à <b>4,89 $</b> chacune. Environ combien ?",
+   "resume": "3 boîtes de céréales à 4,89 $",
+   "choix": [
+    "Environ 12 $",
+    "Environ 15 $",
+    "Environ 18 $"
+   ],
+   "bonne": 1,
+   "explication": [
+    "J’arrondis le prix d’une boîte : 4,89 $ devient 5 $.",
+    "3 boîtes × 5 $ = 15 $.",
+    "Le vrai total est 14,67 $."
+   ]
+  },
+  {
+   "id": "B4",
+   "station": 4,
+   "element": "cmp",
+   "type": "assez",
+   "truc": "t3",
+   "budget": 20,
+   "titre": "Tu as <b>20 $</b>. As-tu assez d’argent ?",
+   "resume": "Cinéma avec 20 $ (billet, popcorn, boisson)",
+   "articles": [
+    [
+     "Billet",
+     10.99
+    ],
+    [
+     "Popcorn moyen",
+     6.49
+    ],
+    [
+     "Boisson",
+     3.79
+    ]
+   ],
+   "note": "Taxes incluses.",
+   "reponse": false,
+   "explication": [
+    "J’arrondis : 11 $ + 6 $ + 4 $ = 21 $.",
+    "21 $, c’est plus que 20 $.",
+    "Je n’ai pas assez d’argent. Le vrai total est 21,27 $."
+   ]
+  },
+  {
+   "id": "B5",
+   "station": 4,
+   "element": "cmp",
+   "type": "assez",
+   "truc": "t3",
+   "budget": 15,
+   "titre": "Mardi, c’est moins cher ! Tu as <b>15 $</b>. As-tu assez ?",
+   "resume": "Cinéma du mardi avec 15 $",
+   "articles": [
+    [
+     "Billet du mardi",
+     7.5
+    ],
+    [
+     "Bonbons",
+     2.19
+    ],
+    [
+     "Bouteille d’eau",
+     1.99
+    ]
+   ],
+   "note": "Taxes incluses.",
+   "reponse": true,
+   "explication": [
+    "J’arrondis : 8 $ + 2 $ + 2 $ = 12 $.",
+    "12 $, c’est moins que 15 $, et ce n’est pas serré.",
+    "J’ai assez d’argent. Le vrai total est 11,68 $."
+   ]
+  },
+  {
+   "id": "B6",
+   "station": 4,
+   "element": "cmp",
+   "type": "assez",
+   "truc": "t3",
+   "budget": 10,
+   "titre": "Il te reste <b>10 $</b>. As-tu assez pour ce combo ?",
+   "resume": "Combo avec 10 $ (cas serré)",
+   "articles": [
+    [
+     "Popcorn moyen",
+     6.49
+    ],
+    [
+     "Boisson",
+     3.79
+    ]
+   ],
+   "note": "Taxes incluses.",
+   "reponse": false,
+   "explication": [
+    "J’arrondis : 6 $ + 4 $ = 10 $.",
+    "10 $, c’est exactement mon argent : c’est serré !",
+    "Quand c’est serré, je vérifie : 6,49 $ + 3,79 $ = 10,28 $.",
+    "Il manque 28 ¢. Je n’ai pas assez."
+   ]
+  },
+  {
+   "id": "B7",
+   "station": 5,
+   "element": "exp",
+   "type": "ordre",
+   "truc": "t3",
+   "titre": "Remets les étapes dans l’ordre pour savoir si tu as assez d’argent.",
+   "resume": "Ordonner les étapes de la stratégie",
+   "etapes": [
+    "J’arrondis chaque prix au dollar le plus proche.",
+    "J’additionne les dollars ronds.",
+    "Je compare mon estimation avec mon argent.",
+    "Si c’est serré, je vérifie avec la calculatrice."
+   ],
+   "explication": [
+    "J’arrondis chaque prix au dollar le plus proche.",
+    "J’additionne les dollars ronds.",
+    "Je compare mon estimation avec mon argent.",
+    "Si c’est serré, je vérifie avec la calculatrice."
+   ]
+  },
+  {
+   "id": "B8",
+   "station": 5,
+   "element": "cmp",
+   "type": "assez",
+   "truc": "t3",
+   "budget": 25,
+   "titre": "Tu as <b>25 $</b> pour la pizza et 2 boissons. As-tu assez ?",
+   "resume": "Pizza et 2 boissons avec 25 $",
+   "articles": [
+    [
+     "Pizza moyenne",
+     18.79
+    ],
+    [
+     "Boisson",
+     2.49
+    ],
+    [
+     "Boisson",
+     2.49
+    ]
+   ],
+   "note": "Taxes incluses.",
+   "reponse": true,
+   "explication": [
+    "J’arrondis : 19 $ + 2 $ + 2 $ = 23 $.",
+    "23 $, c’est moins que 25 $ : il reste environ 2 $.",
+    "J’ai assez. Le vrai total est 23,77 $."
+   ]
+  },
+  {
+   "id": "B9",
+   "station": 5,
+   "element": "exp",
+   "type": "texte",
+   "truc": "t3",
+   "titre": "Explique à un ami comment tu as su si 25 $ suffisait pour la pizza et les boissons.",
+   "resume": "Explication écrite : la pizza",
+   "explication": [
+    "J’ai arrondi chaque prix : 19 $, 2 $ et 2 $.",
+    "J’ai additionné : 23 $.",
+    "23 $, c’est moins que 25 $, donc j’ai assez."
+   ]
+  },
+  {
+   "id": "B10",
+   "station": 6,
+   "element": "est",
+   "type": "curseur",
+   "truc": "t2",
+   "titre": "Environ combien vas-tu dépenser au match ?",
+   "resume": "Billet, hot-dog, chocolat chaud",
+   "articles": [
+    [
+     "Billet étudiant",
+     14.5
+    ],
+    [
+     "Hot-dog",
+     4.75
+    ],
+    [
+     "Chocolat chaud",
+     2.95
+    ]
+   ],
+   "note": "Taxes incluses.",
+   "min": 10,
+   "max": 35,
+   "pas": 1,
+   "depart": 10,
+   "accepteMin": 22,
+   "accepteMax": 24,
+   "explication": [
+    "J’arrondis : 14,50 $ devient 15 $ (le milieu, je monte).",
+    "4,75 $ devient 5 $ et 2,95 $ devient 3 $.",
+    "15 + 5 + 3 = 23 $. Le vrai total est 22,20 $."
+   ]
+  },
+  {
+   "id": "B11",
+   "station": 6,
+   "element": "est",
+   "type": "vf",
+   "truc": "t6",
+   "titre": "Ton ami dit : « 4 billets à 14,50 $, ça fait environ 60 $. » Vrai ou faux ?",
+   "resume": "4 billets à 14,50 $ : environ 60 $ ?",
+   "reponse": true,
+   "explication": [
+    "J’arrondis le prix d’un billet : 14,50 $ devient 15 $.",
+    "4 × 15 $ = 60 $.",
+    "C’est vrai ! Le vrai total est 58 $."
+   ]
+  },
+  {
+   "id": "S1",
+   "station": 7,
+   "element": "tax",
+   "type": "tri",
+   "truc": "t4",
+   "titre": "Trie les produits : taxés ou pas taxés ?",
+   "resume": "Trier : taxé ou pas taxé",
+   "boites": [
+    "Pas taxé",
+    "Taxé"
+   ],
+   "etiquettes": [
+    [
+     "Pommes",
+     0
+    ],
+    [
+     "Lait",
+     0
+    ],
+    [
+     "Pain",
+     0
+    ],
+    [
+     "Œufs",
+     0
+    ],
+    [
+     "Croustilles",
+     1
+    ],
+    [
+     "Boisson gazeuse",
+     1
+    ],
+    [
+     "Bonbons",
+     1
+    ],
+    [
+     "Savon à vaisselle",
+     1
+    ]
+   ],
+   "explication": [
+    "Les aliments de base ne sont pas taxés : pommes, lait, pain, œufs.",
+    "Les grignotines et les sucreries sont taxées : croustilles, bonbons, boisson gazeuse.",
+    "Les produits ménagers sont taxés : savon à vaisselle."
+   ]
+  },
+  {
+   "id": "S2",
+   "station": 7,
+   "element": "est",
+   "type": "erreur",
+   "truc": "t2",
+   "titre": "Un montant du reçu est faux. Estime, puis touche la ligne qui est fausse.",
+   "resume": "Trouver l’erreur dans un reçu",
+   "lignes": [
+    [
+     "Céréales",
+     4.99
+    ],
+    [
+     "Lait 2 L",
+     5.29
+    ],
+    [
+     "Bananes",
+     1.89
+    ],
+    [
+     "Croustilles (T)",
+     4.49
+    ],
+    [
+     "Sous-total",
+     26.66
+    ],
+    [
+     "TPS + TVQ",
+     0.67
+    ],
+    [
+     "Total",
+     27.33
+    ]
+   ],
+   "fausses": [
+    4,
+    6
+   ],
+   "note": "(T) = article taxé",
+   "explication": [
+    "J’estime les articles : 5 + 5 + 2 + 4 = 16 $.",
+    "Le sous-total devrait être environ 16 $, pas 26,66 $.",
+    "Il y a une erreur de 10 $ ! Le vrai sous-total est 16,66 $ et le vrai total, 17,33 $."
+   ]
+  },
+  {
+   "id": "S3",
+   "station": 8,
+   "element": "tax",
+   "type": "qcm",
+   "truc": "t4",
+   "titre": "Avec les taxes, environ combien vas-tu payer ?",
+   "resume": "Jean Coutu : 3 produits de soins + taxes",
+   "articles": [
+    [
+     "Shampoing",
+     7.99
+    ],
+    [
+     "Déodorant",
+     5.49
+    ],
+    [
+     "Baume à lèvres",
+     3.29
+    ]
+   ],
+   "note": "Tous ces produits sont taxés.",
+   "choix": [
+    "Environ 16 $",
+    "Environ 18 $ à 19 $",
+    "Environ 24 $"
+   ],
+   "bonne": 1,
+   "explication": [
+    "J’arrondis : 8 + 5 + 3 = 16 $.",
+    "10 % de 16 $ : je recule la virgule, 1,60 $.",
+    "La moitié de 1,60 $ : 0,80 $.",
+    "Taxes : environ 1,60 $ + 0,80 $ = 2,40 $.",
+    "16 $ + 2,40 $ = environ 18,40 $. Le vrai total est 19,28 $."
+   ]
+  },
+  {
+   "id": "S4",
+   "station": 8,
+   "element": "tax",
+   "type": "curseur",
+   "truc": "t4",
+   "titre": "Avec les taxes, environ combien ?",
+   "resume": "Brosse à dents, dentifrice, savon + taxes",
+   "articles": [
+    [
+     "Brosse à dents",
+     4.49
+    ],
+    [
+     "Dentifrice",
+     3.79
+    ],
+    [
+     "Savon",
+     2.89
+    ]
+   ],
+   "note": "Tous ces produits sont taxés.",
+   "min": 8,
+   "max": 20,
+   "pas": 0.5,
+   "depart": 8,
+   "accepteMin": 12,
+   "accepteMax": 14,
+   "explication": [
+    "J’arrondis : 4 + 4 + 3 = 11 $.",
+    "10 % de 11 $ : 1,10 $. La moitié : 0,55 $.",
+    "Taxes : environ 1,65 $.",
+    "11 $ + 1,65 $ = environ 12,65 $. Le vrai total est 12,84 $."
+   ]
+  },
+  {
+   "id": "S5",
+   "station": 9,
+   "element": "est",
+   "type": "qcm",
+   "truc": "t5",
+   "titre": "Une tuque à <b>30 $</b> est en solde à <b>50 %</b>. Quel est le prix en solde ?",
+   "resume": "Tuque 30 $ à 50 % : prix en solde",
+   "choix": [
+    "10 $",
+    "15 $",
+    "25 $"
+   ],
+   "bonne": 1,
+   "explication": [
+    "50 %, c’est la moitié.",
+    "La moitié de 30 $, c’est 15 $.",
+    "Le prix en solde est 15 $."
+   ]
+  },
+  {
+   "id": "S6",
+   "station": 9,
+   "element": "tax",
+   "type": "qcm",
+   "truc": "t5",
+   "titre": "Avec les taxes, environ combien vas-tu payer pour la tuque en solde ?",
+   "resume": "Tuque en solde 15 $ + taxes",
+   "articles": [
+    [
+     "Tuque en solde",
+     15
+    ]
+   ],
+   "choix": [
+    "15 $",
+    "Environ 17 $",
+    "Environ 34 $",
+    "30 $"
+   ],
+   "bonne": 1,
+   "explication": [
+    "Le prix en solde est 15 $.",
+    "Taxes : 10 % de 15 $ = 1,50 $. La moitié = 0,75 $.",
+    "15 $ + 2,25 $ = environ 17 $. Le vrai total est 17,25 $."
+   ]
+  },
+  {
+   "id": "S7",
+   "station": 9,
+   "element": "cmp",
+   "type": "assez",
+   "truc": "t5",
+   "budget": 40,
+   "titre": "Des bottes à <b>60 $</b>, en solde à <b>50 %</b>. Tu as <b>40 $</b>. Avec les taxes, as-tu assez ?",
+   "resume": "Bottes 60 $ à 50 % + taxes, avec 40 $",
+   "articles": [
+    [
+     "Bottes d’hiver",
+     60
+    ],
+    [
+     "Rabais",
+     "− 50 %"
+    ],
+    [
+     "Taxes",
+     "+ environ 15 %"
+    ]
+   ],
+   "reponse": true,
+   "explication": [
+    "Rabais d’abord : la moitié de 60 $, c’est 30 $.",
+    "Taxes ensuite : 3 $ + 1,50 $ = 4,50 $.",
+    "30 $ + 4,50 $ = environ 34,50 $.",
+    "34,50 $, c’est moins que 40 $ : j’ai assez. Le vrai total est 34,49 $."
+   ]
+  },
+  {
+   "id": "F1",
+   "station": 10,
+   "element": "tax",
+   "type": "curseur",
+   "truc": "t4",
+   "titre": "Avec les taxes, environ combien coûte ton party ?",
+   "resume": "Party : 5 articles taxés",
+   "articles": [
+    [
+     "Gros sac de bonbons",
+     9.97
+    ],
+    [
+     "Croustilles",
+     4.49
+    ],
+    [
+     "Croustilles",
+     4.49
+    ],
+    [
+     "Boisson gazeuse 2 L",
+     2.99
+    ],
+    [
+     "Décorations",
+     6.25
+    ]
+   ],
+   "note": "Tous ces articles sont taxés.",
+   "min": 20,
+   "max": 45,
+   "pas": 0.5,
+   "depart": 20,
+   "accepteMin": 30.5,
+   "accepteMax": 34,
+   "explication": [
+    "J’arrondis : 10 + 4 + 4 + 3 + 6 = 27 $.",
+    "10 % de 27 $ : 2,70 $. La moitié : 1,35 $.",
+    "Taxes : environ 4,05 $.",
+    "27 $ + 4,05 $ = environ 31 $. Le vrai total est 32,41 $."
+   ]
+  },
+  {
+   "id": "F2",
+   "station": 10,
+   "element": "cmp",
+   "type": "assez",
+   "truc": "t3",
+   "budget": 30,
+   "titre": "Tu as <b>30 $</b>. As-tu assez pour tout acheter ?",
+   "resume": "Party avec 30 $",
+   "articles": [
+    [
+     "Mon estimation avec les taxes",
+     "environ 31 $"
+    ]
+   ],
+   "reponse": false,
+   "explication": [
+    "Mon estimation avec les taxes : environ 31 $.",
+    "31 $, c’est plus que 30 $.",
+    "Je n’ai pas assez : le vrai total est 32,41 $, il manque 2,41 $."
+   ]
+  },
+  {
+   "id": "F3",
+   "station": 10,
+   "element": "exp",
+   "type": "texte",
+   "truc": "t3",
+   "titre": "Il te manque un peu d’argent. Quel article enlèves-tu pour respecter ton budget de 30 $ ? Explique comment tu le sais.",
+   "resume": "Explication écrite : le party",
+   "explication": [
+    "Il me manque environ 2 $ ou 3 $.",
+    "J’enlève un sac de croustilles : environ 4,50 $ + 0,70 $ de taxes = environ 5 $ de moins.",
+    "Mon party coûtera environ 27 $. C’est moins que 30 $."
+   ]
+  }
+ ],
+ "reinvest": {
+  "capsules": false,
+  "_panier": {
+   "titre": "Mon panier au Maxi",
+   "budget": 30,
+   "taxe": 0.14975,
+   "consigne": "Choisis ce qu’il te faut pour la semaine.",
+   "description": "Fais ton épicerie avec 30 $. Estime avant de passer à la caisse.",
+   "catalogue": [
+    [
+     "Lait 2 L",
+     5.29,
+     0
+    ],
+    [
+     "Pain",
+     3.79,
+     0
+    ],
+    [
+     "Bananes",
+     1.89,
+     0
+    ],
+    [
+     "Œufs (12)",
+     4.49,
+     0
+    ],
+    [
+     "Bleuets du Lac",
+     4.99,
+     0
+    ],
+    [
+     "Fromage en grains",
+     6.49,
+     0
+    ],
+    [
+     "Pâtes",
+     2.29,
+     0
+    ],
+    [
+     "Sauce tomate",
+     2.99,
+     0
+    ],
+    [
+     "Croustilles",
+     4.49,
+     1
+    ],
+    [
+     "Boisson gazeuse",
+     2.99,
+     1
+    ],
+    [
+     "Biscuits",
+     3.99,
+     1
+    ],
+    [
+     "Savon à vaisselle",
+     3.49,
+     1
+    ]
+   ]
+  },
+  "defi": {
+   "lieux": [
+    "Tim Hortons (Jonquière)",
+    "Maxi (Jonquière)",
+    "Dollarama",
+    "Walmart",
+    "Jean Coutu",
+    "Metro",
+    "Canadian Tire",
+    "Place du Royaume",
+    "Cinéma Jonquière",
+    "Centre Georges-Vézina",
+    "Dépanneur du quartier",
+    "Autre lieu du Saguenay"
+   ],
+   "liens": [
+    {
+     "nom": "Toutes les circulaires (Flipp)",
+     "lien": "https://flipp.com/fr-ca"
+    },
+    {
+     "nom": "Maxi",
+     "lien": "https://www.maxi.ca/fr"
+    },
+    {
+     "nom": "Circulaire Walmart",
+     "lien": "https://www.walmart.ca/fr/flyer"
+    },
+    {
+     "nom": "Menu Tim Hortons",
+     "lien": "https://www.timhortons.ca/fr/menu"
+    },
+    {
+     "nom": "Dollarama",
+     "lien": "https://www.dollarama.com/fr-CA"
+    },
+    {
+     "nom": "Jean Coutu",
+     "lien": "https://www.jeancoutu.com"
+    },
+    {
+     "nom": "Metro",
+     "lien": "https://www.metro.ca"
+    },
+    {
+     "nom": "Canadian Tire",
+     "lien": "https://www.canadiantire.ca/fr.html"
+    },
+    {
+     "nom": "Place du Royaume",
+     "lien": "https://placeduroyaume.com"
+    }
+   ],
+   "teams": {
+    "equipe": "Budget et consommation PPS",
+    "canal": "le canal de ton cours (PPS-Z128)"
+   }
+  }
+ }
+}
