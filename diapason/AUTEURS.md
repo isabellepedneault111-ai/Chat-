@@ -5,7 +5,7 @@ Diapason Labo, le laboratoire de FLIP, est une œuvre conçue à deux.
 | Dans l’app | Nom | Rôle |
 |---|---|---|
 | Zaza | **Isabelle Pedneault** | Conceptrice et architecte d’environnements hybrides humain-IA : le modèle conceptuel, la vision, le sens pédagogique, la direction du développement. |
-| Frog | **Francis Laroche** | Sculpteur de son et performeur : il valide, il éprouve en jeu et il améliore. Production, improvisation, synthés, boîtes à rythme, piano, guitare, éléments sonores et visuels performatifs. |
+| Frog | **Francis Laroche** | Architecte sonore : il valide, il éprouve en jeu et il améliore. Production, improvisation, synthés, boîtes à rythme, piano, guitare, éléments sonores et visuels performatifs. |
 
 ## Genèse et outils
 
