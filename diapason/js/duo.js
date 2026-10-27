@@ -92,6 +92,29 @@ export const EXERCICES = {
   'f-reecoute': { nom: 'Réécoute de la prise', duree: 5, comment: ['Réécoutez la prise du jour.', 'Les attaques tombent-elles ensemble? L’équilibre voix / guitare / clavier / effets?', 'Notez une seule chose à corriger.'], src: 'Biasutti 2015 · Kambs 2026' },
 };
 
+// Seul, on ne peut pas faire l'écho ni « avec, puis sans se regarder » : la séance solo pioche dans ce qui se fait seul.
+export const SOLO_POOLS = { echauffement: ['e-penta', 'e-gamme', 'e-corps'], solo: ['i-preentendre', 'i-eco', 'a-fragment', 'e-gamme'] };
+// Les mêmes exercices, dits à la personne qui les fait seule : à la voix (Zaza) ou au clavier (Frog).
+// Le clavier de l'app joue la partie de l'autre : on l'entend en boucle, et on chante ou on joue avec lui.
+export const SOLO_CONSIGNES = {
+  'e-penta': { voix: ['Le clavier de l’app tient un bourdon sur Do et joue la pentatonique : Do, Ré, Mi, Sol, La.', 'Chante seulement ces cinq notes : monte, descends, saute. Aucune ne peut être fausse.', 'Invente une petite phrase de quatre notes et répète-la trois fois.'],
+    clavier: ['Seulement Do, Ré, Mi, Sol, La (ou les touches noires) sur le bourdon.', 'Monte, descends, saute : aucune note n’est fausse.', 'Trouve une phrase de quatre notes et répète-la trois fois.'] },
+  'e-gamme': { voix: ['Écoute une fois le clavier de l’app jouer la gamme de Do, sur le clic.', 'Chante-la avec lui, une note par clic, en montant puis en descendant. Puis deux notes par clic.', 'Enregistre-toi et réécoute : tes attaques tombent-elles sur le clic?'],
+    clavier: ['La gamme de Do, mains séparées puis ensemble.', 'Au métronome : une note par clic, puis deux.', 'Enregistre-toi et réécoute : tes attaques tombent-elles sur le clic?'] },
+  'e-corps': { voix: ['Balance-toi sur le tempo, ou marche-le sur place.', 'Épaules basses, mâchoire molle.', 'Respire avec le cercle : le corps prêt avant la voix.'],
+    clavier: ['Balance-toi sur le tempo, les mains sur les cuisses.', 'Épaules basses, poignets souples.', 'Respire avec le cercle : le corps prêt avant les doigts.'] },
+  'i-preentendre': { voix: ['Le clavier de l’app joue une courte phrase : écoute-la.', 'La mesure suivante, il se tait : chante-la dans ta tête, sans son.', 'Puis chante-la à voix haute, telle que tu l’as entendue. Il recommence avec une autre.'],
+    clavier: ['Le clavier de l’app joue une courte phrase : écoute-la.', 'La mesure suivante, entends-la dans ta tête, sans jouer.', 'Puis joue-la telle que tu l’as entendue.'] },
+  'i-eco': { voix: ['Une seule note tenue, OU une cellule de trois notes, sur le bourdon du clavier.', 'Tout le reste vient du rythme, des consonnes, du souffle.', 'Enregistre deux minutes et garde ce qui te surprend.'],
+    clavier: ['Une seule note tenue, OU une cellule de trois notes, OU un seul intervalle.', 'Tout le reste vient du rythme, du timbre, des effets.', 'Enregistre deux minutes et garde ce qui te surprend.'] },
+  'a-fragment': { voix: ['Choisis 10 à 30 secondes d’une prise qui t’a allumée.', 'Variation 1 : nuances. Variation 2 : accents. Variation 3 : densité (plus plein, plus vide).', 'Enregistre les trois, garde la meilleure pour Frog.'],
+    clavier: ['Choisis 10 à 30 secondes d’une prise qui t’a allumé.', 'Variation 1 : nuances. Variation 2 : accents. Variation 3 : densité (plus plein, plus vide).', 'Enregistre les trois, garde la meilleure pour Zaza.'] },
+};
+export function consignesDe(id, { solo = false, moi = '', membres = MEMBERS } = {}) {
+  const ex = EXERCICES[id]; if (!ex) return [];
+  const v = solo && SOLO_CONSIGNES[id]; return v ? v[moi === membres[1] ? 'clavier' : 'voix'] : ex.comment;
+}
+
 // Grilles harmoniques (degrés de la gamme majeure) : un socle stable pour voix et guitare,
 // du champ libre pour les textures du clavier.
 export const GRILLES = [

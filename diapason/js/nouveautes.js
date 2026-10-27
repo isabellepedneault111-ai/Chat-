@@ -59,6 +59,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.37', quand: '2026-10-27', titre: 'L’exercice seul, avec un clavier qui joue pour toi', items: [
+    ['La séance solo parle à celle ou celui qui la fait', ['Seul, plus d’écho à deux ni de « regardez-vous » : la séance solo pioche dans ce qui se fait seul (pentatonique, gamme, corps et souffle, pré-entendre, économie de matériau, un fragment en trois variations). Et les consignes sont dites <b>à toi</b> : à la voix pour Zaza, au clavier pour Frog.']],
+    ['L’exemple en boucle', ['Dans l’exercice, <b>▶ L’exemple en boucle</b> : le clavier de l’app joue la partie que Frog jouerait (la gamme, la pentatonique sur un bourdon, une phrase à pré-entendre…), au tempo de l’exercice, et ses touches s’allument. Touche une note du clavier pour l’entendre.']],
+    ['M’enregistrer', ['<b>● M’enregistrer</b>, pendant que l’exemple joue : tu réécoutes tout de suite, et « Garder au mur » si ça vaut la peine de la faire entendre.']],
+    ['Les crédits', ['En bas de chaque page : Diapason Labo est conçu par <b>Zaza</b> et par <b>Frog</b>, expert musical qui valide et améliore.']],
+  ] },
   { v: '0.36', quand: '2026-10-27', titre: 'Chaque page dit pourquoi', items: [
     ['Le pourquoi, partout', ['Treize pages de plus affichent, en bas, <b>pourquoi elles marchent</b> et d’où ça vient : Miroir (Welch, Howard et Rush, 1989), Empreinte (Titze, 1994), Gym vocal (Titze, 2006), le labo (Cowell, 1930 ; Toussaint, 2005), Jouer (Biasutti et Frezza, 2009), l’étape 1, nos courbes, les étincelles (Wallas, 1926), notre élan (Sawyer, 2003), la cathédrale (Stockhausen, 1957), le passage (Schön, 1983) et Notre projet (Locke et Latham, 2002).', 'Les outils pour ranger et se repérer (le studio, les nouvelles, le coffre, le lexique, la corbeille, l’arbre) n’en ont pas : ils ne prétendent rien.']],
     ['Plus lisible', ['Quelques textes dorés et l’orange de Zaza sont un brin plus foncés : tout le texte de l’app atteint maintenant le contraste recommandé pour être lu sans effort (4,5 : 1). Le lexique et la corbeille ont leur sommaire.']],

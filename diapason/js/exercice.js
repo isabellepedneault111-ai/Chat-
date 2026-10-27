@@ -1,7 +1,7 @@
 // Faire l'exercice : il se joue au lieu de se lire. Un minuteur, la consigne du moment en grand,
 // et ce dont l'exercice a besoin : un métronome, une boucle d'accords, le tour de parole, un souffle à suivre.
 import { audio, drums, pluck } from './audio.js';
-import { EXERCICES, MEMBERS } from './duo.js';
+import { EXERCICES, MEMBERS, consignesDe } from './duo.js';
 import { espace } from './espace.js';
 import { FR, mod12, mtof } from './music.js';
 import { logPractice } from './traces.js';
@@ -12,7 +12,7 @@ const VAMP = [[0, 'M'], [5, 'M'], [0, 'M'], [5, 'M']];
 const MODES = {
   'e-penta': { bpm: 80, boucle: [[0, '5'], [0, '5'], [0, '5'], [0, '5']], aide: 'Un bourdon sur la tonique : toutes les notes de la pentatonique sonnent juste.', notes: [0, 2, 4, 7, 9] },
   'e-echo': { bpm: 84, metro: true, tours: 1, aide: 'Une mesure chacun : on lance, l’autre répète.' },
-  'e-gamme': { bpm: 72, metro: true, aide: 'Écoutez les attaques : tombent-elles sur le clic?', notes: [0, 2, 4, 5, 7, 9, 11] },
+  'e-gamme': { bpm: 72, metro: true, aide: 'Les attaques tombent-elles sur le clic?', notes: [0, 2, 4, 5, 7, 9, 11] },
   'e-regard': { bpm: 88, boucle: [[0, 'M'], [5, 'M'], [0, 'M'], [7, 'M']], aide: 'Même boucle tout du long : seul le regard change.' },
   'e-corps': { bpm: 60, souffle: true, aide: 'Inspirez quand le cercle grandit, expirez quand il se vide.' },
   'i-appel': { bpm: 90, boucle: VAMP, tours: 2, aide: 'Deux mesures chacun. Le nom allumé, c’est son tour.' },
@@ -39,6 +39,26 @@ const MI = [['Do', [60, 64, 67], 'Mi = la tierce'], ['Lam', [57, 60, 64], 'Mi = 
 const nomNote = (m) => FR[mod12(m)];
 const joueAccord = (ns) => { const t = audio().currentTime + 0.02; import('./sampler.js').then((sp) => ns.forEach((n, i) => sp.notePiano(n, { when: t + i * 0.02, dur: 1.8, vel: 0.6 }))); };
 
+// L'exemple joué par le clavier de l'app, en boucle, au tempo de l'exercice : la partie que Frog jouerait.
+// Chaque motif : [temps de départ, note, durée] en temps (noires), et sa longueur ; texte : ce que le motif demande.
+const montee = (ns) => [...ns, ...ns.slice(0, -1).reverse()];
+const GUIDES = {
+  'e-gamme': () => { const g = montee([60, 62, 64, 65, 67, 69, 71, 72]); const noires = g.map((m, i) => [i, m, 0.9]); const croches = g.map((m, i) => [g.length + 1 + i / 2, m, 0.45]); return { motif: [...noires, ...croches], long: g.length + 1 + Math.ceil(g.length / 2) + 1 }; },
+  'e-penta': () => { const g = montee([60, 62, 64, 67, 69, 72]); return { motif: [[0, 48, g.length - 0.1], ...g.map((m, i) => [i, m, 0.9])], long: g.length }; },
+  'i-eco': () => ({ motif: [[0, 48, 7.8], [0, 60, 3.8], [4, 67, 3.8]], long: 8 }),
+  'i-preentendre': () => { const P = [[60, 62, 64, 67], [67, 64, 62, 60], [64, 65, 67, 72], [72, 69, 67, 64]]; return { motif: P.flatMap((ph, k) => ph.map((m, i) => [k * 12 + i, m, 0.9])), long: 48, phases: ['Écoute', 'Dans ta tête', 'À toi'] }; },
+};
+const guideDe = (id, m) => (GUIDES[id] ? GUIDES[id]() : m.notes && m.bpm ? (() => { const g = montee(m.notes.map((iv) => 60 + iv)); return { motif: g.map((x, i) => [i, x, 0.9]), long: g.length }; })() : null);
+// Un clavier d'une octave et demie, de Do 4 à Sol 5 : il s'allume sur ce que l'app joue, et se joue au doigt.
+const BL = [0, 2, 4, 5, 7, 9, 11]; const NO = { 1: 0, 3: 1, 6: 3, 8: 4, 10: 5 };
+function clavierHTML() {
+  let b = ''; let n = ''; let x = 0;
+  for (let m = 60; m <= 79; m++) { const pc = m % 12;
+    if (BL.includes(pc)) { b += `<rect x="${x * 20}" y="0" width="19" height="70" rx="2" class="cv-b" data-m="${m}"/><text x="${x * 20 + 9.5}" y="64" class="cv-n">${FR[pc]}</text>`; x++; }
+    else n += `<rect x="${x * 20 - 6}" y="0" width="12" height="44" rx="2" class="cv-k" data-m="${m}"/>`; }
+  return `<svg class="exo-clavier" viewBox="0 0 ${x * 20} 70" role="group" aria-label="Le clavier de l’app : il s’allume sur ce qu’il joue ; touche une note pour l’entendre">${b}${n}</svg>`;
+}
+
 export function exoMode(id) { return MODES[id] || {}; }
 export const PIANO = Object.keys(MODES).filter((k) => k.startsWith('p-'));
 
@@ -51,7 +71,7 @@ function yaourtHTML(mem) {
 }
 
 // garderBoucle : lancé depuis une séance, on garde la grille du jour qui joue déjà.
-export async function faireExercice(id, { garderBoucle = false } = {}) {
+export async function faireExercice(id, { garderBoucle = false, solo = false } = {}) {
   if (id.startsWith('p-')) import('./sampler.js').then((sp) => sp.prechargerSons(['piano']));
   const ex = EXERCICES[id];
   if (!ex || document.querySelector('.exo')) return;
@@ -60,7 +80,8 @@ export async function faireExercice(id, { garderBoucle = false } = {}) {
   const key = 0; // en Do : la tonalité la plus simple à partager au clavier
   let bpm = m.bpm || 0;
   const total = (ex.duree || 5) * 60;
-  const steps = ex.comment || [];
+  const steps = consignesDe(id, { solo, moi: espace.me, membres: espace.meta?.members || MEMBERS }) || ex.comment || [];
+  const guide = guideDe(id, m);
   const box = document.createElement('div');
   box.className = 'exo';
   box.setAttribute('role', 'dialog');
@@ -82,6 +103,8 @@ export async function faireExercice(id, { garderBoucle = false } = {}) {
         ${bpm ? `<div class="exo-beats">${[0, 1, 2, 3].map(() => '<i></i>').join('')}</div>` : ''}
       </div>
       ${visuel}
+      ${guide ? `<div class="exo-guide">${clavierHTML()}<p class="exo-phase" aria-live="polite"></p></div>` : ''}
+      <div class="exo-moi">${guide ? '<button class="btn" data-x="guide" aria-pressed="false">▶ L’exemple en boucle</button>' : ''}<button class="btn rec-btn" data-x="rec">● M’enregistrer</button><span class="exo-prise"></span></div>
       <ol class="exo-steps">${steps.map((s, i) => `<li data-i="${i}">${esc(s)}</li>`).join('')}</ol>
       <div class="exo-ctrl">
         <button class="btn" data-x="pause">Pause</button>
@@ -110,7 +133,20 @@ export async function faireExercice(id, { garderBoucle = false } = {}) {
   let trois = null; let troisFait = -1;
   let nextBeat = t0; let beatN = 0; let paused = false; let elapsed = 0; let last = performance.now(); let manual = -1;
   const metroOn = m.metro || m.tours || m.tete;
+  // L'exemple en boucle : on programme un motif à la fois, un peu à l'avance, et on allume les touches au bon moment.
+  let guideOn = false; let gStart = 0; const timers = new Set();
+  const allumer = (midi, quand, dur) => { const k = box.querySelector(`.exo-clavier [data-m="${midi}"]`); if (!k) return; const a = setTimeout(() => { k.classList.add('on'); const b = setTimeout(() => { k.classList.remove('on'); timers.delete(b); }, dur * 1000); timers.add(b); timers.delete(a); }, Math.max(0, (quand - c.currentTime) * 1000)); timers.add(a); };
+  const sp = import('./sampler.js').then((x) => { x.prechargerSons(['piano']); return x; });
   const sched = setInterval(() => {
+    if (guideOn && !paused && guide) {
+      const beat = 60 / (bpm || 80);
+      while (gStart < c.currentTime + 0.25) {
+        const debut = gStart;
+        sp.then((x) => guide.motif.forEach(([t, midi, d]) => { const w = debut + t * beat; x.notePiano(midi, { when: w, dur: d * beat, vel: midi < 55 ? 0.35 : 0.6 }); allumer(midi, w, d * beat * 0.9); }));
+        if (guide.phases) guide.phases.forEach((txt, k) => { const a = setTimeout(() => { const ph = q('.exo-phase'); if (ph) ph.textContent = txt; timers.delete(a); }, Math.max(0, (debut + k * 4 * beat - c.currentTime) * 1000)); timers.add(a); });
+        gStart += guide.long * beat;
+      }
+    }
     if (paused || !bpm) return;
     while (nextBeat < c.currentTime + 0.12) {
       if (metroOn && (!m.boucle || garderBoucle)) drums.hat(nextBeat, beatN % 4 === 0 ? 1 : 0.45);
@@ -156,7 +192,7 @@ export async function faireExercice(id, { garderBoucle = false } = {}) {
   };
   raf = requestAnimationFrame(frame);
   function end(done) {
-    cancelAnimationFrame(raf); clearInterval(sched); trois?.dispose();
+    cancelAnimationFrame(raf); clearInterval(sched); trois?.dispose(); timers.forEach(clearTimeout); if (rec?.state === 'recording') rec.stop();
     if (studio?.loopPlaying() && !boucleAvant) studio.toggleLoop();
     logPractice('exercice', elapsed / 60, { exercice: id, nom: ex.nom });
     box.classList.add('out');
@@ -166,8 +202,30 @@ export async function faireExercice(id, { garderBoucle = false } = {}) {
   }
   const onKey = (e) => { if (e.key === 'Escape') end(false); if (e.key === ' ') { e.preventDefault(); q('[data-x=pause]').click(); } };
   addEventListener('keydown', onKey);
+  // M'enregistrer : la voix (ou le clavier branché), pendant que l'exemple joue ; on réécoute, et on peut le garder au mur.
+  let rec = null; let prise = null;
+  async function enregistrer(btn) {
+    if (rec?.state === 'recording') { rec.stop(); return; }
+    try {
+      const flux = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+      const bouts = []; rec = new MediaRecorder(flux); const debut = Date.now();
+      rec.ondataavailable = (ev) => ev.data.size && bouts.push(ev.data);
+      rec.onstop = () => {
+        flux.getTracks().forEach((t) => t.stop()); btn.textContent = '● Une autre prise'; btn.classList.remove('on');
+        prise = { blob: new Blob(bouts, { type: rec.mimeType || 'audio/webm' }), duree: (Date.now() - debut) / 1000 };
+        const zone = q('.exo-prise'); if (!zone) return; const url = URL.createObjectURL(prise.blob);
+        zone.innerHTML = `<audio controls src="${url}"></audio>${espace.connected ? '<button class="btn small" data-x="garder">Garder au mur</button>' : ''}`;
+      };
+      rec.start(); btn.textContent = '■ Arrêter'; btn.classList.add('on');
+    } catch { import('./ui.js').then(({ toast }) => toast('Le micro n’est pas accessible : autorise-le dans le navigateur, puis réessaie.')); }
+  }
   box.addEventListener('click', (e) => {
     const x = e.target.closest('[data-x]')?.dataset.x;
+    if (x === 'guide') { guideOn = !guideOn; const b = e.target.closest('[data-x]'); b.setAttribute('aria-pressed', guideOn); b.textContent = guideOn ? '■ Arrêter l’exemple' : '▶ L’exemple en boucle'; if (guideOn) gStart = c.currentTime + 0.15; else { timers.forEach(clearTimeout); timers.clear(); box.querySelectorAll('.exo-clavier .on').forEach((k) => k.classList.remove('on')); const ph = q('.exo-phase'); if (ph) ph.textContent = ''; } }
+    if (x === 'rec') enregistrer(e.target.closest('[data-x]'));
+    if (x === 'garder' && prise) { const b = e.target.closest('[data-x]'); b.disabled = true; b.textContent = 'Envoi…';
+      import('./espace.js').then(async ({ uploadAudio, saveEntry }) => { try { const a = await uploadAudio(prise.blob); await saveEntry({ type: 'audio', title: `Exercice · ${ex.nom}`, audio: { ...a, duration: +prise.duree.toFixed(1) }, data: { stage: 0, exercice: id } }); b.textContent = 'Au mur ✓'; } catch (err) { b.disabled = false; b.textContent = 'Garder au mur'; import('./ui.js').then(({ toast }) => toast(err.message)); } }); }
+    const touche = e.target.closest('.exo-clavier [data-m]'); if (touche) { const mm = +touche.dataset.m; sp.then((sx) => sx.notePiano(mm, { when: c.currentTime + 0.01, dur: 0.9, vel: 0.6 })); touche.classList.add('on'); setTimeout(() => touche.classList.remove('on'), 300); }
     if (x === 'end') end(elapsed > 30);
     const acc = e.target.closest('[data-acc]');
     if (acc) joueAccord(acc.dataset.acc.split(',').map(Number));

@@ -3369,3 +3369,24 @@ a.md-lien { color: inherit; }
 .ar-verdict b { color: #f3c77a !important; }
 .b-tabs .b-courbes { margin-left: auto; align-self: center; font-weight: 700; text-decoration: none; padding: 0 6px; }
 .view-home + .subnav, .subnav[aria-label="Accueil"] { margin-top: -4px; }
+/* Les crédits : les deux concepteurs, sur chaque page. */
+.credits { max-width: var(--maxw, 1180px); margin: 8px auto 0; padding: 14px 16px 90px; border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); font-size: .82rem; color: var(--muted); }
+.credits p { margin: 0 0 4px; max-width: 90ch; } .credits b { color: var(--ink); } .credits-s { font-size: .76rem; }
+/* L'exercice : le clavier de l'app qui joue l'exemple, et ma prise. */
+.exo { overflow-y: auto; align-items: start; }
+.exo-guide { display: grid; gap: 6px; justify-items: center; width: min(520px, 100%); }
+.exo-clavier { width: 100%; height: auto; cursor: pointer; }
+.exo-clavier .cv-b { fill: #f4ecdc; stroke: #2a2520; stroke-width: 1; } .exo-clavier .cv-k { fill: #1b1814; stroke: #000; }
+.exo-clavier .on { fill: #f3c77a !important; } .exo-clavier .cv-k.on { fill: #e8a43a !important; }
+.exo-clavier .cv-n { font: 600 7px "Atkinson Hyperlegible", sans-serif; text-anchor: middle; fill: #6d655a; pointer-events: none; }
+.exo-phase { margin: 0; min-height: 1.3em; font: 700 1.1rem var(--display); color: #f3c77a; }
+.exo-moi { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; }
+.exo-moi .btn { background: transparent; color: #efe9dc; border-color: #efe9dc; } .exo-moi .rec-btn.on { background: #be331f; border-color: #be331f; color: #fff; }
+.exo-prise { display: inline-flex; gap: 8px; align-items: center; } .exo-prise audio { height: 36px; }
+.exo-in { min-width: 0; max-width: 100%; }
+.exo-in h2 { font-size: clamp(1.6rem, 7vw, 3.2rem); overflow-wrap: anywhere; }
+.exo-notes { flex-wrap: wrap; justify-content: center; }
+.exo-moi .btn { padding: 8px 14px; font-size: .95rem; letter-spacing: 0; }
+.exo-prise { flex-wrap: wrap; justify-content: center; max-width: 100%; } .exo-prise audio { max-width: 100%; }
+@media (max-width: 560px) { .exo { padding: 14px 16px 40px; } .exo-notes b { min-width: 0; padding: 6px 9px; font-size: 1rem; } }
+.exo-moi .rec-btn { margin-left: 0; animation: none; }

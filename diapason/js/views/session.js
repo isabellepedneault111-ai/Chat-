@@ -8,7 +8,7 @@ import { espace, onEspace, saveEntry, uploadAudio, uid, profileOf } from '../esp
 import { animate, toast, store } from '../ui.js';
 import { audio, click } from '../audio.js';
 import { FR, mod12, chordName } from '../music.js';
-import { FORMATS, PHASES, EXERCICES, GRILLES, CIBLES, PLAN, memberColor } from '../duo.js';
+import { FORMATS, PHASES, EXERCICES, GRILLES, CIBLES, PLAN, memberColor, SOLO_POOLS, consignesDe } from '../duo.js';
 import { currentMonth, weekRhythm } from '../plan.js';
 import { VERDICTS, objectifSemaine } from '../objectifs.js';
 import { setLoop, toggleLoop, loopPlaying, setTempo } from './studio.js';
@@ -354,8 +354,8 @@ export default {
           ${pid === 'checkin' || pid === 'cible' ? `<p class="big-cible">Cible : <b>${esc(d.cible)}</b></p><p class="muted">Tonalité ${FR[d.key]} majeur · ${g.nom}</p>${grid}${depuisHTML()}` : ''}
           ${ex ? `
             <div class="exercise">
-              <div class="ex-head"><b>${ex.nom}</b><span class="mono">${ex.duree} min</span><button class="btn small primary" data-exo="${esc(exId)}">▶ Le faire</button><button class="btn small ghost" data-a="reroll">Autre exercice</button></div>
-              <ol>${ex.comment.map((c) => `<li>${c}</li>`).join('')}</ol>
+              <div class="ex-head"><b>${ex.nom}</b><span class="mono">${ex.duree} min</span><button class="btn small primary" data-exo="${esc(exId)}" data-solo="${d.format === 'solo' ? 1 : ''}">▶ Le faire</button><button class="btn small ghost" data-a="reroll">Autre exercice</button></div>
+              <ol>${consignesDe(exId, { solo: d.format === 'solo', moi: espace.me, membres: espace.meta.members || undefined }).map((c) => `<li>${c}</li>`).join('')}</ol>
               ${concretHTML(exId)}
               <cite>${ex.src}</cite>
               ${exempleHTML(exId, ex.nom)}
@@ -370,7 +370,8 @@ export default {
       const custom = el.querySelector('[data-s=cible]')?.value.trim();
       const ex = {};
       const f = FORMATS.find((x) => x.id === setup.format);
-      f.phases.forEach(([p]) => { if (PHASES[p].pool.length) ex[p] = pick(PHASES[p].pool); });
+      const poolDe = (p) => (setup.format === 'solo' && SOLO_POOLS[p]) || PHASES[p].pool;
+      f.phases.forEach(([p]) => { if (PHASES[p].pool.length) ex[p] = pick(poolDe(p)); });
       // Frog seul au piano : son travail ciblé vient du coin piano.
       if (setup.format === 'solo' && espace.me === (espace.meta.members || ['Zaza', 'Frog'])[1]) ex.solo = pick(Object.keys(EXERCICES).filter((k) => k.startsWith('p-')));
       const g = grilles().find((x) => x.id === setup.grille);
@@ -445,7 +446,8 @@ export default {
         const s = activeSession();
         const f = FORMATS.find((x) => x.id === s.data.format);
         const [pid] = f.phases[phaseAt(s.data).i] || [];
-        if (pid && PHASES[pid].pool.length) await patch((d) => ({ ex: { ...d.ex, [pid]: pick(PHASES[pid].pool, d.ex?.[pid]) } }));
+        const pool = (s.data.format === 'solo' && SOLO_POOLS[pid]) || PHASES[pid].pool;
+        if (pid && pool.length) await patch((d) => ({ ex: { ...d.ex, [pid]: pick(pool, d.ex?.[pid]) } }));
       }
       if (a === 'loop') { toggleLoop(); }
       if (a === 'midi') {
@@ -455,7 +457,7 @@ export default {
       if (a === 'full') { const r = el.querySelector('.run'); if (document.fullscreenElement) document.exitFullscreen(); else r?.requestFullscreen?.(); }
       if (a === 'rec') recordTake(e.target.closest('[data-a]'));
       const xo = e.target.closest('[data-exo]');
-      if (xo) import('../exercice.js').then((m) => m.faireExercice(xo.dataset.exo, { garderBoucle: true }));
+      if (xo) import('../exercice.js').then((m) => m.faireExercice(xo.dataset.exo, { garderBoucle: true, solo: !!xo.dataset.solo }));
       const cv = e.target.closest('[data-cible-v]');
       if (cv) {
         cv.parentElement.querySelectorAll('button').forEach((b) => { b.classList.toggle('on', b === cv); b.setAttribute('aria-checked', b === cv); });
