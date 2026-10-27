@@ -321,10 +321,10 @@ export default {
         const jp = (n) => Math.round(lignes / n);
         const virg = (x) => (x < 10 ? x.toFixed(1) : String(Math.round(x))).replace('.', ',');
         const an = (j) => virg(j / 220); const mois = (j) => virg(j / 5 / 21);
-        // Le coût. Salaire : le développeur au salaire médian du Québec (Guichet-Emplois, CNP 21232, 45,67 $/h, journées
-        // de 8 h) ; avec l'IA, la conceptrice au dernier échelon de conseillère pédagogique (105 432 $ au 1er avril 2026, échelles 2023-2028,
-        // sur 1 826,3 h par an). Gestion : l'usure des appareils (un ordinateur de 2 500 $ amorti sur trois ans de travail)
-        // et, avec l'IA, un mois des abonnements utilisés (Claude, ChatGPT, Gemini, Copilot : ≈ 220 $ ; le calcul de l'IA
+        // Le coût. Salaire : le développeur au salaire médian du Québec (Guichet-Emplois, CNP 21232, 45,67\u00a0$/h, journées
+        // de 8 h) ; avec l'IA, la conceptrice au dernier échelon de conseillère pédagogique (105\u00a0432\u00a0$ au 1er avril 2026, échelles 2023-2028,
+        // sur 1 826,3 h par an). Gestion : l'usure des appareils (un ordinateur de 2\u00a0500\u00a0$ amorti sur trois ans de travail)
+        // et, avec l'IA, un mois des abonnements utilisés (Claude, ChatGPT, Gemini, Copilot : ≈\u00a0220\u00a0$ ; le calcul de l'IA
         // y est compris). Locaux et charges sociales ne sont pas comptés : une borne basse.
         const TAUX = 45.67; const TAUX_CP = 105432 / 1826.3; const USURE = 2500 / (3 * 1826.3); const ABOS = 220;
         const argent = (d) => (d >= 1e6 ? `${(d / 1e6).toFixed(2).replace('.', ',')} M$` : d >= 1e4 ? `${Math.round(d / 1000).toLocaleString('fr-CA')} k$` : `${Math.round(d).toLocaleString('fr-CA')} $`);
@@ -359,7 +359,7 @@ export default {
               <span role="cell"><b class="ar-t-prix">${sal}</b></span><span role="cell"><b class="ar-t-prix">${tout}</b></span>
               <i class="ar-t-barre" aria-hidden="true"><i class="${c}" style="width:max(3px, ${P(v)}%)"></i></i></div>`).join('')}
           </div>
-          <p class="ar-t-note"><b>Au mieux</b> (50 lignes par jour) à <b>au pire</b> (10 lignes par jour) ; la barre montre le meilleur cas, à la même échelle.<br><b>Salaire</b> : développeur au salaire médian du Québec (45,67 $/h, Guichet-Emplois) ; avec l’IA, la conceptrice, conseillère pédagogique au dernier échelon (105 432 $ par an).<br><b>Gestion</b> : l’usure des appareils (un ordinateur de 2 500 $ sur trois ans) et, avec l’IA, un mois d’abonnements (Claude, ChatGPT, Gemini, Copilot : ≈ 220 $). Locaux et charges sociales non comptés : une borne basse.</p>
+          <p class="ar-t-note"><b>Au mieux</b> (50 lignes par jour) à <b>au pire</b> (10 lignes par jour) ; la barre montre le meilleur cas, à la même échelle.<br><b>Salaire</b> : développeur au salaire médian du Québec (45,67\u00a0$/h, Guichet-Emplois) ; avec l’IA, la conceptrice, conseillère pédagogique au dernier échelon (105\u00a0432\u00a0$ par an).<br><b>Gestion</b> : l’usure des appareils (un ordinateur de 2\u00a0500\u00a0$ sur trois ans) et, avec l’IA, un mois d’abonnements (Claude, ChatGPT, Gemini, Copilot : ≈\u00a0220\u00a0$). Locaux et charges sociales non comptés : une borne basse.</p>
           <div class="ar-valeur"><p class="ar-v-tit">Combien vaut Diapason Labo?</p>
             <div class="ar-v-duel">
               <div><p class="ar-v-k">Les apps pour apprendre un instrument</p><ul><li>Des centaines de leçons</li><li>Des chansons connues, sous licence</li><li>Correction en direct, en jouant</li><li>Seul devant l’écran</li></ul></div>
@@ -368,16 +368,16 @@ export default {
             <p class="ar-v-phrase">Pas une app pour apprendre un instrument : un <b>atelier de création à deux</b>.</p>
             <p class="ar-v-tit2">Le prix d’un accès</p>
             <div class="ar-v-grille ar-v-prix">
-              <p><span>Solo</span><b>12 $/mois</b><small>ou 99 $ par an</small></p>
-              <p><span>Duo</span><b>18 $/mois</b><small>ou 149 $ par an</small></p>
-              <p><span>À vie</span><b>199 $</b><small>une seule fois</small></p>
+              <p><span>Solo</span><b>12\u00a0$/mois</b><small>ou 99\u00a0$ par an</small></p>
+              <p><span>Duo</span><b>18\u00a0$/mois</b><small>ou 149\u00a0$ par an</small></p>
+              <p><span>À vie</span><b>199\u00a0$</b><small>une seule fois</small></p>
             </div>
-            <p class="ar-v-note">Repères : Yousician, Flowkey ≈ 120 $ US par an · Simply Piano ≈ 170 $ US · BandLab ≈ 150 $ US · Soundtrap 10 à 15 $ US par mois</p>
+            <p class="ar-v-note">Repères : Yousician, Flowkey ≈ 120\u00a0$\u00a0US par an · Simply Piano ≈ 170\u00a0$\u00a0US · BandLab ≈ 150\u00a0$\u00a0US · Soundtrap 10\u00a0à\u00a015\u00a0$\u00a0US par mois</p>
             <p class="ar-v-tit2">Si des gens s’abonnent : la valeur de l’app entière</p>
-            <div class="ar-v-proj"><div class="ar-v-l ar-v-h"><span>Abonnés (99 $/an) · revenus</span><span></span><span>L’app entière vaudrait, à la vente</span></div>
+            <div class="ar-v-proj"><div class="ar-v-l ar-v-h"><span>Abonnés (99\u00a0$/an) · revenus</span><span></span><span>L’app entière vaudrait, à la vente</span></div>
               ${(() => { const L = [100, 500, 1000, 5000]; const haut = L[L.length - 1] * 99 * 4; return L.map((n) => { const an = n * 99; return `<div class="ar-v-l"><span class="n">${n.toLocaleString('fr-CA')} abonnés<small>${argent(an)} par an</small></span><span class="b"><i style="width:${Math.max(1.5, (an * 4 / haut) * 100)}%"></i></span><b>${argent(an * 2.5)} à ${argent(an * 4)}</b></div>`; }).join(''); })()}
             </div>
-            <p class="ar-v-note">Une app se vend <b>2,5 à 4 fois</b> ce qu’elle rapporte en un an : c’est un prix de vente, pas un revenu mensuel. Sans abonnés : <b>moins de 10 000 $ US</b>. La refaire sans IA coûterait ${cout(jp(50))} à ${cout(jp(10))}, mais personne ne paie ce prix pour du code sans utilisateurs.</p></div>`;
+            <p class="ar-v-note">Une app se vend <b>2,5 à 4 fois</b> ce qu’elle rapporte en un an : c’est un prix de vente, pas un revenu mensuel. Sans abonnés : <b>moins de 10\u00a0000\u00a0$\u00a0US</b>. La refaire sans IA coûterait ${cout(jp(50))} à ${cout(jp(10))}, mais personne ne paie ce prix pour du code sans utilisateurs.</p></div>`;
       }
     }
 

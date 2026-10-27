@@ -3575,3 +3575,6 @@ html.gv-on body { padding-right: 432px; }
 .ar-v-h span:last-child { text-align: right; }
 .ar-v-l { grid-template-columns: 150px 1fr minmax(150px, auto); }
 @media (max-width: 560px) { .ar-v-h span:nth-child(2) { display: none; } }
+.ar-v-l b { white-space: nowrap; }
+@media (max-width: 560px) { .ar-v-h { display: none !important; } .ar-v-l { grid-template-columns: 1fr auto; gap: 4px 10px; } .ar-v-l b { font-size: .92rem !important; } }
+.ar-v-l .n { white-space: nowrap; }
