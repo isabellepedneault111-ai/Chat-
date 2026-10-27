@@ -60,6 +60,18 @@ const APPUIS = {
   bilan: ['Voir ses progrès et nommer la prochaine cible soutient la motivation et la pratique délibérée.', 'Miksza 2023 · Biasutti 2017'],
   paroles: ['Les syllabes chantées et la place des rimes font qu’un texte se chante.', 'Pattison 2009'],
   ames: ['Une vision commune avant de composer : savoir ensemble d’où on part et où on va.', 'Merchán-Sánchez-Jara 2023'],
+  miroir: ['Voir sa hauteur pendant qu’on chante corrige la justesse plus vite que l’oreille seule.', 'Welch, Howard & Rush 1989'],
+  tessiture: ['Chanter dans sa tessiture confortable ménage la voix : moins d’effort, moins de fatigue.', 'Titze 1994'],
+  gym: ['Les exercices à conduit vocal semi-fermé (paille, lèvres, « vv ») échauffent la voix avec moins d’effort.', 'Titze 2006'],
+  labo: ['Un rythme et un accord sont le même rapport de nombres, à deux vitesses : l’entendre change la façon de composer.', 'Cowell 1930 · Toussaint 2005'],
+  studio: ['Improviser sur une boucle stable libère l’attention pour inventer ; c’est là que naît le vocabulaire.', 'Biasutti & Frezza 2009'],
+  depart: ['Savoir d’où chacun part avant de composer : les objectifs, les voix, les styles, les besoins.', 'Merchán-Sánchez-Jara 2023'],
+  evolution: ['Voir ses progrès dans le temps soutient la motivation et la pratique délibérée.', 'Miksza 2023'],
+  etincelles: ['Une idée qui arrive hors séance vient souvent de l’incubation : la noter tout de suite évite de la perdre.', 'Wallas 1926'],
+  elan: ['La création à plusieurs émerge des échanges : chacun reprend l’idée de l’autre et la transforme.', 'Sawyer 2003'],
+  cathedrale: ['Hauteur, rythme et forme sont un seul continuum de durées.', 'Cowell 1930 · Stockhausen 1957'],
+  passage: ['Revenir sur ce qu’on a fait avant de repartir : la pratique réflexive.', 'Schön 1983'],
+  projet: ['Des objectifs précis et proches, avec un retour, font avancer davantage que des intentions vagues ; un cap commun avant de composer.', 'Locke & Latham 2002 · Merchán-Sánchez-Jara 2023'],
   placer: ['La prosodie : quand les syllabes accentuées tombent sur les temps forts, le texte se chante tout seul ; à côté, il boite.', 'Pattison 2009'],
 };
 
@@ -151,7 +163,7 @@ async function route() {
   host.classList.add('entering');
   setTimeout(() => host.classList.remove('entering'), 900);
   cleanup = v.mount(host) || null;
-  const ap = APPUIS[v.id];
+  const ap = APPUIS[ici === 'projet' ? 'projet' : v.id];
   if (ap) { const f = document.createElement('p'); f.className = 'appui'; f.innerHTML = `<span>Pourquoi :</span> ${ap[0]} <cite>${ap[1]}</cite>`; view.appendChild(f); }
   const group = VOIX.includes(v.id) ? 'voix' : LABO.includes(v.id) ? 'labo' : JOUER.includes(v.id) ? 'studio' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' || v.id === 'passage' || v.id === 'ames' || v.id === 'arbre' ? 'home' : ['jeux', 'paroles', 'atelier', 'ecrire', 'placer'].includes(v.id) ? 'ecrire' : v.id;
   $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.id === group));

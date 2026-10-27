@@ -59,6 +59,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.36', quand: '2026-10-27', titre: 'Chaque page dit pourquoi', items: [
+    ['Le pourquoi, partout', ['Treize pages de plus affichent, en bas, <b>pourquoi elles marchent</b> et d’où ça vient : Miroir (Welch, Howard et Rush, 1989), Empreinte (Titze, 1994), Gym vocal (Titze, 2006), le labo (Cowell, 1930 ; Toussaint, 2005), Jouer (Biasutti et Frezza, 2009), l’étape 1, nos courbes, les étincelles (Wallas, 1926), notre élan (Sawyer, 2003), la cathédrale (Stockhausen, 1957), le passage (Schön, 1983) et Notre projet (Locke et Latham, 2002).', 'Les outils pour ranger et se repérer (le studio, les nouvelles, le coffre, le lexique, la corbeille, l’arbre) n’en ont pas : ils ne prétendent rien.']],
+    ['Plus lisible', ['Quelques textes dorés et l’orange de Zaza sont un brin plus foncés : tout le texte de l’app atteint maintenant le contraste recommandé pour être lu sans effort (4,5 : 1). Le lexique et la corbeille ont leur sommaire.']],
+  ] },
   { v: '0.35', quand: '2026-10-26', titre: 'Rien ne se cache derrière l’accueil', items: [
     ['L’accueil a ses sous-onglets', ['Comme Jouer, Voix et Labo : <b>Aujourd’hui · Notre projet · Notre bilan · Nos lunes</b>. Ce qu’on ouvrait seulement depuis l’accueil (le projet, le passage de lune) a maintenant une place fixe, toujours au même endroit.']],
     ['L’arbre dans « ⋯ »', ['L’arbre de l’app (son architecture, ses versions) est aussi dans le menu ⋯, en haut à droite.']],

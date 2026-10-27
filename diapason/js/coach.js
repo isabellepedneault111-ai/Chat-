@@ -73,7 +73,7 @@ export function coachTour({ onEnd, premiere = false, apercu = false } = {}) {
       <h3>${esc(s.t)}</h3>
       <p>${esc(s.d)}</p>
       <div class="coach-row">
-        ${s.final ? '<button class="btn primary big" data-c="go">Commencer l’étape 1</button>' : `${i ? '<button class="btn ghost small" data-c="prev">←</button>' : ''}<button class="btn primary" data-c="next">Suivant →</button>`}
+        ${s.final ? '<button class="btn primary big" data-c="go">Commencer l’étape 1</button>' : `${i ? '<button class="btn ghost small" data-c="prev" aria-label="Étape précédente">←</button>' : ''}<button class="btn primary" data-c="next">Suivant →</button>`}
         ${apercu ? '<button class="coach-skip" data-c="skip">Fermer l’aperçu</button>' : premiere ? '' : `<button class="coach-skip" data-c="skip">${s.final ? 'Plus tard' : 'Passer le tour'}</button>`}
       </div>`;
     setTimeout(place, 380);

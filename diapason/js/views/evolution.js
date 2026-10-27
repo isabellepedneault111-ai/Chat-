@@ -7,7 +7,7 @@ import { esc, espaceGate } from './carnet.js';
 
 const DAY = 86400000;
 const WEEK = 7 * DAY;
-const COL = { Zaza: '#b04e00', Frog: '#5b3a8c', ensemble: '#1b1915' }; // braise et mûre : distinctes aussi pour un daltonien
+const COL = { Zaza: '#aa4b00', Frog: '#5b3a8c', ensemble: '#1b1915' }; // braise et mûre : distinctes aussi pour un daltonien
 const colorOf = (n, mem) => (n === mem[1] ? COL.Frog : COL.Zaza);
 const fmtDate = (t) => new Date(t).toLocaleDateString('fr-CA', { day: 'numeric', month: 'short' });
 const monday = (t) => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime() - ((d.getDay() + 6) % 7) * DAY; };
