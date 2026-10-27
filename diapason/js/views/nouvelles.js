@@ -7,6 +7,7 @@ import { esc, ago, espaceGate } from './carnet.js';
 import { asksOf } from './relais.js';
 import { autre, vu, fait, marquer, deLautre, deMoi, decrire } from '../suivi.js';
 import { mesTaches } from '../taches.js';
+import { relanceHTML, brancherRelance } from '../relance.js';
 
 const jour = (t) => new Date(t).toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long' });
 
@@ -28,6 +29,7 @@ export default {
           <p class="muted"><a href="#/elan">Voir notre élan, la tresse →</a></p><p class="muted">${onglet === 'pour-moi' ? `Coche <b>Vu</b> quand tu l’as regardé, <b>J’ai fait ça</b> quand tu as répondu à ce que ${esc(o)} demandait. ${esc(o)} le verra.` : `Ce que ${esc(o)} a vu et fait de tes envois.`}</p>
         </div></div>
         ${(() => { const t = mesTaches(); return t.length ? `<section class="nv-taches"><div class="nv-t-tete"><h2>Tes prochains pas</h2><a class="small" href="#/calendrier">Tous nos pas, à cocher →</a></div><ul>${t.map((x) => `<li><a href="${x.lien}"><b>${esc(x.titre)}</b><small>${esc(x.pourquoi)}</small><span>→</span></a></li>`).join('')}</ul></section>` : ''; })()}
+        <div class="relance-host"></div>
         <p class="nv-maj"><button class="btn small" data-nv="revoir-maj" type="button">Revoir les dernières mises à jour de l’app</button></p>
         <div class="nv-barre">
           <div class="seg-tabs" role="tablist"><button role="tab" data-nv="pour-moi" aria-selected="${onglet === 'pour-moi'}">Pour moi${nonVues.length ? ` <b class="nv-n">${nonVues.length}</b>` : ''}</button><button role="tab" data-nv="de-moi" aria-selected="${onglet === 'de-moi'}">Ce que j’ai envoyé</button></div>
@@ -35,6 +37,7 @@ export default {
         </div>
         ${parJour.length ? parJour.map(([j, l]) => `<section class="nv-jour"><h2>${j}</h2><ul class="nv-liste">${l.map((e) => item(e, o)).join('')}</ul></section>`).join('')
           : `<p class="nv-vide">${onglet === 'pour-moi' ? (recues.length ? `Tout est vu. ${esc(o)} sera content·e.` : `${esc(o)} n’a encore rien ajouté.`) : 'Tu n’as encore rien envoyé.'}</p>`}`;
+      relanceHTML().then((h) => { const x = el.querySelector('.relance-host'); if (x) x.innerHTML = h; });
       // (Les tâches se recalculent avec les nouvelles : elles s'effacent d'elles-mêmes quand c'est fait.)
     }
     // Une nouvelle : ce qui s’est passé, le lien pour y aller, et les cases à cocher.
@@ -68,6 +71,7 @@ export default {
       } catch (err) { toast(err.message); }
       rendre();
     });
+    brancherRelance(el, rendre, toast);
     const off = onEspace((w) => { if (w === 'entries' && !el.querySelector('.nv-item input:focus')) rendre(); });
     rendre();
     return off;

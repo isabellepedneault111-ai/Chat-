@@ -3675,3 +3675,8 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .commencer .cm-go { display: inline-block; margin-top: 4px; color: #be331f; font-weight: 800; }
 .el-fil.vif { filter: drop-shadow(0 0 4px currentColor); }
 .el-cles .k-v { display: inline-block; width: 22px; height: 5px; border-radius: 3px; background: linear-gradient(90deg, color-mix(in srgb, var(--zaza) 20%, transparent), var(--zaza)); margin-right: 6px; vertical-align: middle; }
+/* La relance douce, sur le téléphone */
+.relance-bloc { margin: 6px 0 14px; padding: 12px 14px; border-radius: 12px; background: var(--card); border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); }
+.relance-bloc h2 { margin: 0 0 4px; font: 700 .82rem "Atkinson Hyperlegible", sans-serif; text-transform: uppercase; letter-spacing: .06em; color: #886017; }
+.relance-bloc p { margin: 0 0 8px; font-size: .9rem; } .relance-b { display: flex; gap: 8px; flex-wrap: wrap; }
+.relance-bloc[data-etat=actif] { border-left: 4px solid #3f8f88; }

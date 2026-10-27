@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.46', quand: '2026-10-28', titre: 'La relance douce, sur ton téléphone', items: [
+    ['Une notification, pas un rappel', ['Si tu l’actives, une invitation arrive sur ton téléphone quand ton fil est calme depuis cinq jours : ce que l’autre t’a lancé, ou juste une idée. Jamais plus d’une fois par cinq jours, vers 18 h. Aucun numéro de téléphone. Dans <a href="#/nouvelles">Nos nouvelles</a> : « Activer sur ce téléphone », ou « Pas pour moi ».']],
+    ['Sur iPhone', ['Ajoute d’abord l’app à l’écran d’accueil (dans Safari : Partager, puis « Sur l’écran d’accueil »), ouvre-la depuis son icône, puis active la relance.']],
+  ] },
   { v: '0.45', quand: '2026-10-28', titre: 'La relance douce', items: [
     ['Quand le fil de l’autre pâlit', ['Après cinq jours calmes de son côté, tes prochains pas te proposent de lui lancer quelque chose de simple : un son de 10 secondes, un mot, une photo. Une invitation, pas un rappel ; et elle se tait dès que tu viens de lui lancer quelque chose. <a href="#/relais">Ouvrir le relais →</a>']],
   ] },

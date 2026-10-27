@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { handle } from '../netlify/functions/espace.mjs';
+import { handle as handlePush } from '../netlify/functions/push.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const port = +process.env.PORT || 8888;
@@ -26,9 +27,30 @@ const store = {
   async list({ prefix }) { return { blobs: [...mem.keys()].filter((k) => k.startsWith(prefix)).map((key) => ({ key })) }; },
   async delete(k) { mem.delete(k); },
 };
+// Un second coffre, comme diapason-push en ligne (abonnements et clés d'envoi).
+const mem2 = new Map();
+const coffre = {
+  async set(k, v, o = {}) { mem2.set(k, { data: v, metadata: o.metadata || {} }); },
+  async setJSON(k, v) { mem2.set(k, { data: JSON.stringify(v), metadata: {} }); },
+  async get(k, o = {}) {
+    const e = mem2.get(k);
+    if (!e) return null;
+    if (o.type === 'json') return JSON.parse(e.data);
+    if (o.type === 'arrayBuffer') return e.data;
+    return typeof e.data === 'string' ? e.data : Buffer.from(e.data).toString();
+  },
+  async getWithMetadata(k, o) { const e = mem2.get(k); return e ? { data: await this.get(k, o), metadata: e.metadata } : null; },
+  async list({ prefix }) { return { blobs: [...mem2.keys()].filter((k) => k.startsWith(prefix)).map((key) => ({ key })) }; },
+  async delete(k) { mem2.delete(k); },
+};
 
 http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
+  if (url.pathname.startsWith('/api/push')) {
+    const chunks = []; for await (const c of req) chunks.push(c);
+    const r = await handlePush(new Request(url, { method: req.method, headers: req.headers, body: ['GET', 'HEAD'].includes(req.method) ? undefined : Buffer.concat(chunks) }), coffre, store);
+    res.writeHead(r.status, Object.fromEntries(r.headers)); res.end(Buffer.from(await r.arrayBuffer())); return;
+  }
   if (url.pathname.startsWith('/api/espace')) {
     const chunks = [];
     for await (const c of req) chunks.push(c);
