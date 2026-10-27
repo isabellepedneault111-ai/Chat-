@@ -54,6 +54,12 @@ node scripts/tester.js <dossier>/<fichier>.html <captures>   # joue toute la tou
 
 Pour aider l'enseignant à choisir les décors : `python3 scripts/galerie.py galerie.html --png galerie.png`.
 
+### Dans le clavardage claude.ai (sans Claude Code)
+Le skill fonctionne aussi dans le clavardage, à condition que l'exécution de code soit activée. Il y a deux différences :
+- **Construire en un seul fichier :** `python3 scripts/construire.py config.json /mnt/user-data/outputs --autonome` (ou le dossier de sortie prévu). Ce fichier HTML contient tout (polices, outils PDF) et s'ouvre tel quel. Remets-le à l'enseignant comme fichier à télécharger.
+- **Tester :** `tester.js` a besoin de Playwright et de Chromium, souvent absents dans le clavardage. Si `node` ou Playwright manquent, lance au moins `valider.py`, relis la configuration (réponses calculées par script) et dis-le à l'enseignant.
+- **Publier :** l'enseignant glisse le fichier HTML sur https://app.netlify.com/drop, ou sur son site Netlify existant (onglet « Deploys »). Pour garder le même lien qu'avant, il faut garder le **même nom de fichier** et publier sur le **même site**.
+
 ### 4. Publier
 - **Avec le connecteur Netlify :** l'opération `deploy-site` avec le `siteId` du site renvoie une commande `npx @netlify/mcp …`. Lance-la dans le dossier de sortie. Ne crée jamais un nouveau site sans l'accord de l'enseignant.
 - **Sans connecteur :** l'enseignant glisse le dossier sur https://app.netlify.com/drop.
