@@ -51,7 +51,7 @@ fs.mkdirSync(OUT, { recursive: true });
       fait(faux); if (faux && !cur.done) fait(false);
     }, { faux });
     await p.waitForTimeout(450);
-    if (nQ < 3 || nQ % 6 === 0) await p.screenshot({ path: OUT + `/q_${String(nQ).padStart(2, '0')}.png`, fullPage: true });
+    if (nQ < 3 || nQ % 6 === 0 || (await p.evaluate(() => !!Q[S.i].visuel))) await p.screenshot({ path: OUT + `/q_${String(nQ).padStart(2, '0')}.png`, fullPage: true });
     if (!(await p.evaluate(() => cur.done))) { errs.push('défi non terminé : ' + (await p.evaluate(() => Q[S.i].id))); break; }
     nQ++; await p.click('#nx'); await p.waitForTimeout(220);
   }

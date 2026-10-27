@@ -72,6 +72,7 @@ svg.map{width:100%;display:block}#tok{transition:transform 1.5s cubic-bezier(.5,
 .cap-v{min-height:220px;display:flex;align-items:center;justify-content:center;flex-direction:column}
 .cap-txt{font-size:24px;text-align:center;font-weight:700;min-height:70px}.eq{font-family:PH;font-size:46px;text-align:center}
 .taxb{width:100%;max-width:560px;margin:auto}.taxb .seg{height:54px;display:inline-flex;align-items:center;justify-content:center;font-weight:900;color:#fff;border-radius:10px;animation:grandit .7s ease-out both;transform-origin:left;vertical-align:top}@keyframes grandit{from{transform:scaleX(0)}}
+.cmpx{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}@media (max-width:560px){.cmpx{grid-template-columns:1fr}}
 .tvn{border:3px solid #111;border-radius:6px;background:#fff;padding:8px 12px;max-width:340px;width:100%;margin:8px auto;font-size:16px;text-align:left;color:#111}.tvn-t{font-weight:900;font-size:21px}.tvn-cal{display:flex;justify-content:space-between;align-items:flex-end;border-top:8px solid #111;border-bottom:3px solid #111;padding:3px 0;margin-top:4px}.tvn-l{display:flex;justify-content:space-between;border-bottom:1px solid #999;padding:3px 0}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}.cols>div{border-radius:16px;padding:10px 14px}
 .ge{padding:10px 0;border-bottom:2px dotted #eadfd4}.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px}.gc{position:relative;background:#F7F2EC;border-radius:12px;padding:8px 9px;font-size:14px;line-height:1.3;opacity:.55}.gc.ici{background:var(--or2);outline:3px solid var(--or);opacity:1;font-weight:700;padding-top:22px}.icit{position:absolute;top:3px;left:8px;font-size:12px;color:var(--or);font-weight:900}.pe{margin:6px 0 0;font-size:16px}
@@ -139,7 +140,7 @@ const rond=p=>Math.floor(p+0.5+1e-9);
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const haut=()=>window.scrollTo({top:0,behavior:"smooth"});
 const voix=()=>{try{const v=speechSynthesis.getVoices();return v.find(x=>x.lang==="fr-CA")||v.find(x=>x.lang&&x.lang.startsWith("fr"))}catch(e){return null}};
-function pourVoix(t){return String(t).replace(/<[^>]+>/g," ").replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,"").replace(/→/g,", ").replace(/×/g," fois ").replace(/−/g," moins ").replace(/≈/g," environ ").replace(/%/g," pour cent").replace(/¢/g," cents").replace(/(\d+),(\d\d) \$/g,"$1 dollars $2").replace(/(\d+) \$/g,"$1 dollars")}
+function pourVoix(t){return String(t).replace(/<[^>]+>/g," ").replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,"").replace(/→/g,", ").replace(/×/g," fois ").replace(/−/g," moins ").replace(/≈/g," environ ").replace(/%/g," pour cent").replace(/¢/g," cents").replace(/(\d+),(\d\d) \$/g,"$1 dollars $2").replace(/(\d+) \$/g,"$1 dollars").replace(/(\d)\s?mg\b/g,"$1 milligrammes").replace(/(\d)\s?mL\b/g,"$1 millilitres").replace(/(\d)\s?g\b/g,"$1 grammes").replace(/\bVQ\b/g,"valeur quotidienne")}
 function dire(t,fin){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(pourVoix(t));u.lang="fr-CA";const v=voix();if(v)u.voice=v;u.rate=.92;if(fin){u.onend=fin;u.onerror=fin}speechSynthesis.speak(u)}catch(e){if(fin)setTimeout(fin,2500+String(t).length*45)}}
 if("speechSynthesis" in window){speechSynthesis.onvoiceschanged=()=>{}}
 const SAY={};let sayN=0;
@@ -179,12 +180,14 @@ function vis(v){if(!v)return "";if(typeof v==="string")return v;switch(v.type){
  case"decor":return decor(v.decor,{n:v.nom||"",c:v.couleur});
  case"image":return `<img src="${E(v.src)}" alt="${E(v.alt||"")}" style="max-width:100%;max-height:260px;border-radius:14px">`;
  case"tableauNutritif":return tableauNutritif(v);
+ case"comparer":return `<div class="cmpx">${v.tableaux.map(t=>`<div>${t.nom?`<div class="hand" style="font-size:22px;text-align:center">${E(t.nom)}</div>`:""}${tableauNutritif(t)}</div>`).join("")}</div>`;
  case"html":return v.html;default:return ""}}
 function tableauNutritif(v){const r=v.lignes||[],c=p=>p==null?"":p>=15?"background:#FBE2CE;color:#8f4f24":p<=5?"background:#E3F3E8;color:#2E6B45":"";
  return `<div class="tvn pop"><div class="tvn-t">${E(v.titre||"Valeur nutritive")}</div><div class="small">${E(v.portion||"")}</div><div class="tvn-cal"><b>Calories ${E(v.calories==null?"":v.calories)}</b><span class="small">% valeur quotidienne*</span></div>
- ${r.map(l=>`<div class="tvn-l"><span><b>${E(l[0])}</b> ${E(l[1]||"")}</span><b style="border-radius:6px;padding:0 6px;${v.repere?c(l[2]):""}">${l[2]==null?"":E(l[2])+" %"}</b></div>`).join("")}
+ ${r.map(l=>`<div class="tvn-l"${l[3]==="sous"?' style="padding-left:16px"':""}><span><b${l[3]==="sous"?' style="font-weight:600"':""}>${E(l[0])}</b> ${E(l[1]||"")}</span><b style="border-radius:6px;padding:0 6px;${v.repere?c(l[2]):""}">${l[2]==null?"":E(l[2])+" %"}</b></div>`).join("")}
  <div class="small" style="margin-top:4px">${v.repere!==false?"*5 % ou moins, c’est <b>peu</b> · 15 % ou plus, c’est <b>beaucoup</b>":""}${v.note?" "+E(v.note):""}</div>${v.ingredients?`<div class="small" style="margin-top:6px;border-top:2px solid #111;padding-top:4px"><b>Ingrédients :</b> ${E(v.ingredients)}</div>`:""}</div>`}
 function visTexte(v){if(!v||typeof v==="string")return "";if(v.dit)return v.dit;switch(v.type){
+ case"comparer":return v.tableaux.map(t=>(t.nom?t.nom+". ":"")+visTexte(Object.assign({type:"tableauNutritif"},t))).join(" Deuxième produit. ");
  case"tableauNutritif":return `${v.titre||"Valeur nutritive"}, ${v.portion||""}. Calories ${v.calories==null?"":v.calories}. `+(v.lignes||[]).map(l=>l[0]+" "+(l[1]||"")+(l[2]==null?"":", "+l[2]+" %")).join(". ")+(v.ingredients?". Ingrédients : "+v.ingredients:"");
  case"colonnes":return v.colonnes.map(c=>c.titre+" : "+c.texte).join(". ");case"recu":case"recuArrondi":return v.articles.map(a=>a[0]+" "+valU(a[1],U)).join(". ");
  case"grand":return String(v.html).replace(/<[^>]+>/g," ").replace(/&[a-z]+;/g," ");default:return ""}}

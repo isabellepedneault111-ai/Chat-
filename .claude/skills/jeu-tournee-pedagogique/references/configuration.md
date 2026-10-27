@@ -56,8 +56,8 @@ Un jeu = un fichier JSON. L'exemple complet est `exemples/estimer-au-saguenay.js
 ```
 - `court` est l'étiquette sur la carte (16 caractères au maximum).
 - `capsules` (facultatif) joue une capsule sur l'écran de la station, juste avant ses défis. C'est l'endroit idéal pour un nouveau truc difficile.
-- **Décors disponibles** : `cafe`, `depanneur`, `magasin` (avec citrouilles et ballons), `epicerie`, `cinema`, `restaurant` (pizzéria), `casse-croute` (frites et table à pique-nique), `cafeteria` (intérieur, menu du jour), `arena`, `grande-surface`, `pharmacie`, `centre-commercial` (avec neige), `maison-halloween`, `ecole`, `bibliotheque`, `parc`, `banque`, `clinique`, `maison`, `cuisine` (intérieur), `gare` (arrêt d'autobus).
-- Quand une station a des `capsules`, la capsule s'affiche **avant** le bouton de départ (avec un lien « Passer le truc »). Ils sont tous animés : fumée, néon, chauves-souris, autobus, flocons… Pour voir la galerie : `python3 scripts/galerie.py`.
+- **Décors disponibles** : `cafe`, `depanneur`, `magasin` (avec citrouilles et ballons), `epicerie`, `cinema`, `restaurant` (pizzéria), `casse-croute` (frites et table à pique-nique), `cafeteria` (intérieur, menu du jour), `arena`, `grande-surface`, `pharmacie`, `centre-commercial` (avec neige), `maison-halloween`, `ecole`, `bibliotheque`, `parc`, `banque`, `clinique`, `maison`, `cuisine` (intérieur), `gare` (arrêt d'autobus). Ils sont tous animés : fumée, néon, chauves-souris, autobus, flocons… Pour voir la galerie : `python3 scripts/galerie.py`.
+- Quand une station a des `capsules`, la capsule s'affiche **avant** le bouton de départ (avec un lien « Passer le truc »).
 
 ## 4. Trucs et capsules
 ```json
@@ -77,7 +77,8 @@ Un jeu = un fichier JSON. L'exemple complet est `exemples/estimer-au-saguenay.js
 | `mascotte` | `taille`, `html` | Mascotte, avec un texte au besoin |
 | `decor` | `decor`, `nom`, `couleur` | Un décor |
 | `image` | `src`, `alt` | Image (URL ou fichier placé à côté du jeu) |
-| `tableauNutritif` | `titre`, `portion`, `calories`, `lignes: [[nom, quantité, %VQ]]`, `repere` (couleurs peu/beaucoup), `ingredients`, `note` | Tableau de la valeur nutritive, lu à voix haute |
+| `tableauNutritif` | `titre`, `portion` (mets-y le nom du produit), `calories`, `lignes: [[nom, "quantité avec unité", %VQ ou null, "sous"?]]`, `repere`, `ingredients`, `note` | Tableau de la valeur nutritive, lu à voix haute. `"sous"` décale une sous-ligne (saturés, fibres, sucres). `repere: true` colore les % selon le seuil 5 %/15 % ; absent : pas de couleur, mais la note « 5 % ou moins… » reste ; `false` : ni couleur ni note. N'utilise pas `repere: true` dans un défi `erreur` ou quand la couleur donnerait la réponse ; attention, pour les fibres, « beaucoup » est une bonne chose. |
+| `comparer` | `tableaux: [{nom, …champs de tableauNutritif}, …]` | Deux produits côte à côte (lus à voix haute) |
 | `html` | `html` | HTML libre (non lu à voix haute : ajoute `dit` pour la voix) |
 
 Tout visuel accepte `dit` : le texte lu par le bouton « Écouter » du défi.
@@ -113,7 +114,7 @@ Pour `erreur`, une valeur peut être un nombre (formaté selon l'unité) ou un t
   "dansBilan": false}
 ```
 - `defi` (argent) : un assistant en 6 étapes. L'élève choisit la forme de question (« As-tu assez d'argent ? », « Environ combien ça coûte ? », « Combien va-t-il rester ? », « Quel article enlever ? ») et peut ajouter les taxes. Il trouve de vrais prix grâce aux liens, écrit sa réponse et la compare au corrigé calculé. Il télécharge ensuite un PDF paysage pour le TNI (défi en page 1, corrigé en page 2), puis suit les étapes illustrées pour le publier dans Teams.
-- `creation` (toutes les matières) : `{"titre": "Crée ta question", "description": "(texte de la carte dans le bilan)", "consigne": "…", "teams": {"equipe": "Alimentation saine PPS", "canal": "le canal « PPS-Z107 »"}}`. Le moteur affiche « Choisis » suivi de `canal` : écris donc `canal` comme une suite de phrase (« le canal « PPS-Z107 » »). C'est un assistant en 5 étapes. un assistant en 5 étapes. La forme se choisit dans un menu (choix multiples, vrai ou faux, réponse courte). L'élève écrit la question et la réponse, puis explique pourquoi. Il télécharge un PDF paysage et le publie dans Teams.
+- `creation` (toutes les matières) : `{"titre": "Crée ta question", "description": "(texte de la carte dans le bilan)", "consigne": "…", "teams": {"equipe": "Alimentation saine PPS", "canal": "le canal « PPS-Z107 »"}}`. Le moteur affiche « Choisis » suivi de `canal` : écris donc `canal` comme une suite de phrase (« le canal « PPS-Z107 » »). C'est un assistant en 5 étapes. La forme se choisit dans un menu (choix multiples, vrai ou faux, réponse courte). L'élève écrit la question et la réponse, puis explique pourquoi. Il télécharge un PDF paysage et le publie dans Teams.
 - `panier` : une épicerie virtuelle avec budget (boutons + et −, « Retirer »).
 - `capsules` : permet de revoir les capsules.
 - `dansBilan` : `true` pour ajouter ces activités au bilan PDF. Par défaut, elles n'y sont pas, et l'enseignant vérifie le travail publié dans Teams.

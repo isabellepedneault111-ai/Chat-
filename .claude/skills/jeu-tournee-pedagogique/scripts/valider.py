@@ -8,7 +8,7 @@ DECORS = ["cafe", "depanneur", "magasin", "epicerie", "cinema", "restaurant", "a
 TYPES = {"droite": ["a", "p"], "tri": ["boites", "etiquettes"], "jetons": ["articles"], "qcm": ["choix", "bonne"],
          "num": ["accepteMin", "accepteMax"], "assez": ["budget", "reponse"], "ordre": ["etapes"],
          "curseur": ["min", "max", "accepteMin", "accepteMax"], "vf": ["reponse"], "erreur": ["lignes", "fausses"], "texte": []}
-VISUELS = {"tableauNutritif", "droite", "recu", "recuArrondi", "billets", "taxes", "grand", "colonnes", "mascotte", "decor", "image", "html"}
+VISUELS = {"comparer", "tableauNutritif", "droite", "recu", "recuArrondi", "billets", "taxes", "grand", "colonnes", "mascotte", "decor", "image", "html"}
 
 def valider(cfg):
     err, warn = [], []
@@ -24,6 +24,8 @@ def valider(cfg):
     def vis_ok(v, ou):
         if v is None or isinstance(v, str): return
         if v.get("type") not in VISUELS: err.append(f"{ou} : visuel de type inconnu « {v.get('type')} ».")
+        if v.get("type") == "html" and not v.get("dit"): warn.append(f"{ou} : visuel html sans « dit » (il ne sera pas lu à voix haute).")
+        if v.get("type") == "comparer" and len(v.get("tableaux", [])) < 2: err.append(f"{ou} : « comparer » demande au moins 2 tableaux.")
         if v.get("type") == "decor" and v.get("decor") not in DECORS: err.append(f"{ou} : décor inconnu « {v.get('decor')} ».")
     for k, c in caps.items():
         if not c.get("scenes"): err.append(f"Capsule {k} : aucune scène.")
@@ -73,6 +75,7 @@ def valider(cfg):
         if t in ("num", "curseur") and q.get("accepteMin", 0) > q.get("accepteMax", 0): err.append(f"{o} : accepteMin > accepteMax.")
         if t == "curseur" and not (q.get("min", 0) <= q.get("accepteMin", 0) and q.get("accepteMax", 0) <= q.get("max", 0)): err.append(f"{o} : la plage acceptée sort du curseur.")
         if t == "droite" and not (q["a"] <= q["p"] <= q["a"] + 1): err.append(f"{o} : p doit être entre a et a+1.")
+        vis_ok(q.get("visuel"), o)
         if not q.get("explication"): err.append(f"{o} : explication vide (une étape par ligne).")
         for k in ("articles",):
             for a in q.get(k) or []:
