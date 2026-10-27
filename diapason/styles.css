@@ -3515,3 +3515,15 @@ html.gv-on body { padding-right: 432px; }
 .gn-eres i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--c); margin-right: 6px; }
 .gn-eres b { color: #efe9dc; margin-right: 2px; }
 .ar-traits .ar-g-cout span, .ar-g-cout span { font: .86rem "Atkinson Hyperlegible", sans-serif !important; color: var(--muted); }
+/* Le tableau de la cadence : trois lignes, la durée en gros, le coût, une barre à la même échelle */
+.ar-t { display: grid; margin-top: 8px; }
+.ar-t-r { display: grid; grid-template-columns: minmax(130px, 1fr) minmax(120px, 1.2fr) minmax(120px, 1.2fr); gap: 4px 16px; align-items: baseline; padding: 10px 0 12px; border-top: 1px solid var(--rule); }
+.ar-t-h { padding: 0 0 4px; border-top: 0; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.ar-t-r small { display: block; color: var(--muted); font: .78rem "Atkinson Hyperlegible", sans-serif; }
+.ar-t-r b { display: block !important; font: 700 .95rem "Atkinson Hyperlegible", sans-serif !important; color: var(--ink) !important; }
+.ar-t-big { font: 800 1.45rem/1.1 var(--display); color: #335b8c; } .ar-t-big.ia { color: #aa4b00; }
+.ar-t-r .ar-t-prix { font-size: 1.05rem !important; }
+.ar-t-barre { grid-column: 1 / -1; display: block; height: 8px; border-radius: 4px; background: color-mix(in srgb, var(--ink) 8%, transparent); margin-top: 4px; }
+.ar-t-barre i { display: block; height: 100%; border-radius: 4px; } .ar-t-barre .ia { background: #aa4b00; } .ar-t-barre .sans { background: #3f6fa8; }
+.ar-t-note, .ar-traits .ar-t-note { margin: 4px 0 0; font: .8rem "Atkinson Hyperlegible", sans-serif !important; color: var(--muted); max-width: none; }
+@media (max-width: 560px) { .ar-t-r { grid-template-columns: 1fr 1fr; } .ar-t-r > span:first-child { grid-column: 1 / -1; } .ar-t-h { display: none; } .ar-t-big { font-size: 1.2rem; } }

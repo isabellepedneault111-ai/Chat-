@@ -320,7 +320,7 @@ export default {
         const an = (j) => virg(j / 220); const mois = (j) => virg(j / 5 / 21);
         // Le coût : le salaire horaire médian d'un développeur de logiciels au Québec (Guichet-Emplois, CNP 21232, 45,67 $),
         // sur des journées de 8 h. Salaire seulement : sans charges sociales, matériel ni gestion, donc une borne basse.
-        const TAUX = 45.67; const cout = (j) => `${Math.round((j * 8 * TAUX) / 1000).toLocaleString('fr-CA')} k$`;
+        const TAUX = 45.67; const cout = (j) => `${Math.round((j * 8 * TAUX) / 1000).toLocaleString('fr-CA')}\u00a0k$`;
         cad.outerHTML = `<li class="ar-cad" data-fait="1"><b>${cd.etapes}</b> étapes validées, en ≈ <b>${String(cd.heuresActives).replace('.', ',')} h</b> d’activité mesurée sur ${cd.jours} jours (${String(cd.heuresTotales).replace('.', ',')} h écoulées)</li>
           <li>Une itération toutes les <b>${min} minutes</b> environ</li>
           <li>Repère du génie logiciel : <b>10 à 50 lignes</b> de code fini par développeur et par jour, conception et tests compris (McConnell, 2004)</li>
@@ -332,25 +332,27 @@ export default {
         // Le graphique comparatif, proportionnel : chaque barre part de zéro, sa longueur est la durée (en jours de travail).
         // Plein : l'estimation basse ; plus pâle : jusqu'à l'estimation haute. À cette échelle, l'IA n'est qu'un trait.
         const jt = cd.heuresActives / 8; const fig = el.querySelector('.ar-cad-g'); const max = jp(10);
-        // L'axe est en années de travail (220 jours) : « 2 à 10 ans » se lit mieux que « 436–2 178 j ».
-        const P = (v) => (v / max) * 100; const ANNEE = 220;
-        const enMots = (j) => (j < 20 ? `${Math.round(j)} jours` : j < ANNEE ? `${Math.round(j / 21)} mois` : `${Math.round(j / ANNEE)} ans`);
-        const plage = (a, b) => { const [x, y] = [enMots(a), enMots(b)]; const u = (t) => t.split(' ')[1]; return u(x) === u(y) ? `${x.split(' ')[0]} à ${y}` : `${x} à ${y}`; };
-        const rangs = [['Avec l’IA', jt, jt, 'ia', `${Math.max(1, Math.round(jt))} jours`, `réalisé : ${String(cd.heuresActives).replace('.', ',')} h actives, soit ${virg(jt)} jours de travail`],
-          ['Équipe de cinq, sans IA', jp(50) / 5, jp(10) / 5, 'sans', plage(jp(50) / 5, jp(10) / 5), `estimé : ${Math.round(jp(50) / 5)} à ${Math.round(jp(10) / 5)} jours ouvrables (${mois(jp(50))} à ${mois(jp(10))} mois)`],
-          ['Une personne seule, sans IA', jp(50), jp(10), 'sans', plage(jp(50), jp(10)), `estimé : ${jp(50).toLocaleString('fr-CA')} à ${jp(10).toLocaleString('fr-CA')} jours ouvrables (${an(jp(50))} à ${an(jp(10))} ans)`]];
-        const reperes = []; for (let t = 0; t <= max / ANNEE; t += 2) reperes.push(t);
+        // Un tableau à trois lignes : la durée en gros, le coût à côté, et une barre par ligne à la même échelle.
+        // La barre montre le meilleur cas (50 lignes par jour) : la plage complète est écrite dans le chiffre.
+        const ANNEE = 220; const P = (v) => (v / jp(50)) * 100;
+        const enMots = (j) => (j < 20 ? `${Math.max(1, Math.round(j))} jours` : j < ANNEE ? `${Math.round(j / 21)} mois` : `${Math.round(j / ANNEE)} ans`);
+        const plage = (a, b) => { const [x, y] = [enMots(a), enMots(b)]; return x.split(' ')[1] === y.split(' ')[1] ? `${x.split(' ')[0]} à ${y}` : `${x} à ${y}`; };
+        const coutIA = `${Math.round(cd.heuresActives * TAUX).toLocaleString('fr-CA')}\u00a0$`;
+        const rangs = [['Avec l’IA', 'ce qui a été fait', enMots(jt), coutIA, 'si ces heures étaient payées au même salaire', jt, 'ia'],
+          ['Équipe de cinq', 'sans IA, estimé', plage(jp(50) / 5, jp(10) / 5), `${cout(jp(50))} à\u00a0${cout(jp(10))}`, 'cinq salaires', jp(50) / 5, 'sans'],
+          ['Une personne seule', 'sans IA, estimé', plage(jp(50), jp(10)), `${cout(jp(50))} à\u00a0${cout(jp(10))}`, 'un salaire, cinq fois plus longtemps', jp(50), 'sans']];
         const fois = Math.round(jp(50) / 5 / jt);
         fig.hidden = false;
-        fig.innerHTML = `<figcaption><b>Même à cinq, sans IA : au moins ${fois.toLocaleString('fr-CA')} fois plus long</b> <span>combien de temps pour bâtir cette app ; chaque barre est proportionnelle à sa durée</span></figcaption>
-          <div class="ar-g" role="img" aria-label="${rangs.map((r) => `${r[0]} : ${r[4]}`).join(' ; ')}">
-            ${rangs.map(([n, a, b, c, val, tip]) => { const dedans = P(b) > 70; const v = `<span class="ar-g-v${dedans ? ' dedans' : ''}" style="${dedans ? 'left:8px' : `left:calc(${Math.max(P(b), 0.4)}% + 8px)`}">${val}</span>`;
-              return `<div class="ar-g-r" title="${n} : ${tip}"><div class="ar-g-t"><b>${n}</b></div>
-              <div class="ar-g-p">${reperes.map((t) => `<i class="ar-g-l" style="left:${P(t * ANNEE)}%"></i>`).join('')}<span class="ar-g-b ${c}" style="left:0;width:max(4px, ${P(a)}%)">${dedans ? v : ''}</span>${b > a ? `<span class="ar-g-b ${c} pale" style="left:${P(a)}%;width:${P(b) - P(a)}%"></span>` : ''}${dedans ? '' : v}</div></div>`; }).join('')}
-            <div class="ar-g-r ar-g-axe"><div></div><div class="ar-g-p">${reperes.map((t) => `<span style="left:${P(t * ANNEE)}%">${t ? `${t} ans` : '0'}</span>`).join('')}</div></div>
+        fig.innerHTML = `<figcaption><b>Même au mieux, sans IA, c’est ${fois.toLocaleString('fr-CA')} fois plus long</b></figcaption>
+          <div class="ar-t" role="table" aria-label="Combien de temps et combien d’argent pour bâtir cette app">
+            <div class="ar-t-r ar-t-h" role="row"><span role="columnheader"></span><span role="columnheader">Durée</span><span role="columnheader">Coût en salaire</span></div>
+            ${rangs.map(([n, sous, duree, prix, note, v, c]) => `<div class="ar-t-r" role="row">
+              <span role="rowheader"><b>${n}</b><small>${sous}</small></span>
+              <span role="cell" class="ar-t-big ${c}">${duree}</span>
+              <span role="cell"><b class="ar-t-prix">${prix}</b><small>${note}</small></span>
+              <i class="ar-t-barre" aria-hidden="true"><i class="${c}" style="width:max(3px, ${P(v)}%)"></i></i></div>`).join('')}
           </div>
-          <p class="ar-g-leg"><span><i class="sans"></i>plein : l’estimation basse</span><span><i class="sans pale"></i>pâle : jusqu’à la haute</span></p>
-          <p class="ar-g-cout"><b>Coût sans IA : ${cout(jp(50))} à ${cout(jp(10))}</b> <span>Seul ou à cinq, c’est la même somme : cinq salaires, cinq fois moins longtemps (salaire médian d’un développeur au Québec, sans les charges).</span></p>`;
+          <p class="ar-t-note">La barre compare les durées dans le meilleur cas, à la même échelle. Salaire médian d’un développeur au Québec (45,67 $/h), sans les charges ; l’IA coûte aussi ses abonnements.</p>`;
       }
     }
 
