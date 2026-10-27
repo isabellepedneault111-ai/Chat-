@@ -116,7 +116,8 @@ svg.map{width:100%;display:block}
 .el{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 0;border-bottom:2px dotted #eadfd4}
 .meter{display:flex;gap:4px}.meter i{width:26px;height:16px;border-radius:5px;background:#EEE6DE}.meter i.on{background:var(--or)}
 .dots span{display:inline-block;width:18px;height:18px;border-radius:50%;margin:2px;border:3px solid var(--or)}
-.dots .d1{background:var(--or)}.dots .d2{background:linear-gradient(90deg,var(--or) 50%,#fff 50%)}
+.dots .d1{background:var(--or)}.dots .d0{border-color:#D8C7BB;border-style:dashed}
+#fin{position:fixed;left:14px;bottom:14px;z-index:40;background:#fff;border:2px solid var(--or);box-shadow:0 4px 0 #e2c3aa;font-size:16px;padding:10px 16px}.dots .d2{background:linear-gradient(90deg,var(--or) 50%,#fff 50%)}
 .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
 .choix{border-radius:22px;padding:18px;text-align:left;box-shadow:0 5px 0 rgba(0,0,0,.08);display:block;width:100%}
 .choix b{display:block;font-family:PH;font-size:27px;font-weight:400}
@@ -136,6 +137,7 @@ table.t{border-collapse:collapse;width:100%;font-size:15px}table.t td,table.t th
 <div class="blob" style="width:380px;height:340px;background:var(--men);right:-170px;bottom:-170px"></div>
 <div class="blob" style="width:300px;height:280px;background:var(--rose);left:-150px;bottom:-160px"></div>
 <main id="app" aria-live="polite"></main>
+<button id="fin" hidden>📄 Terminer et voir mon bilan</button>
 <script src="lib/jspdf.umd.min.js"></script>
 <script>
 "use strict";
@@ -370,7 +372,11 @@ function capsule(el,keys,fin,finTxt){
 /* ---------------- état ---------------- */
 const CLE="estimer-saguenay-v1";
 let S=nouvel();
-function nouvel(){return {prenom:"",i:0,rec:{},textes:{},vus:{},debut:null,fin:null,auto:{},reinv:{caps:[],panier:null,defi:null},etape:"accueil"}}
+function nouvel(){return {prenom:"",i:0,rec:{},textes:{},vus:{},debut:null,fin:null,auto:{},reinv:{caps:[],panier:null,defi:null},etape:"accueil",tps:0,partiel:false}}
+function majFin(on){const b=document.getElementById("fin");b.hidden=!(on&&Object.keys(S.rec).length>0)}
+const nbFaits=()=>Q.filter(q=>S.rec[q.id]).length;
+const dernierNiv=()=>{const f=Q.filter(q=>S.rec[q.id]);return LV[ST[(f.length?f[f.length-1]:Q[0]).st].lv].n};
+const dureeMin=()=>Math.max(1,Math.round((S.tps||0)/60000));
 function save(){try{localStorage.setItem(CLE,JSON.stringify(S))}catch(e){}}
 function charge(){try{const s=JSON.parse(localStorage.getItem(CLE)||"null");if(s&&s.rec)return s}catch(e){}return null}
 const haut=()=>window.scrollTo({top:0,behavior:"smooth"});
@@ -380,21 +386,31 @@ function fete(){const c=["#C9733A","#E3BF6A","#F5C6C2","#CFE9D7","#DDF5F2","#8A6
 
 /* ---------------- écrans ---------------- */
 function accueil(){
- const s=charge(),reprise=s&&s.debut&&!s.fin;
+ majFin(false);const s=charge(),reprise=s&&s.debut&&s.i<Q.length,vuBilan=s&&s.fin;
  app.innerHTML=`<div class="row" style="flex-wrap:nowrap;gap:16px;align-items:center;margin-top:10px"><div class="fox">${foxFace(150)}</div><div><p class="small" style="margin:0">PPS-Z128 · Budget et consommation · avec Mélanie</p><h1>Estimer au Saguenay</h1><p style="margin:0">La grande révision, du niveau Érable au niveau Sapin. Environ 30 minutes.</p></div></div>
  <div class="card monte"><h3>Comment ça marche</h3><ul style="margin:6px 0;padding-left:22px"><li>Tu fais une tournée de Jonquière à Chicoutimi : 11 arrêts, 27 défis.</li><li>À chaque niveau, le renard te montre ses trucs. Tu peux les revoir pendant les défis.</li><li>Tu as 2 essais par défi. Après chaque réponse, tu vois l’explication étape par étape.</li><li>À la fin, tu télécharges ton bilan en PDF pour Mélanie.</li></ul>${say("Tu fais une tournée de Jonquière à Chicoutimi : 11 arrêts, 27 défis. À chaque niveau, le renard te montre ses trucs. Tu as 2 essais par défi. À la fin, tu télécharges ton bilan pour Mélanie.")}</div>
  <div class="card monte" style="animation-delay:.1s"><label for="pn"><b>Ton prénom</b></label><div class="row" style="margin-top:6px"><input type="text" id="pn" autocomplete="given-name" maxlength="30" value="${E(s&&s.prenom||"")}" style="flex:1;min-width:200px"></div>
- <div class="row mt">${reprise?`<button class="go" id="rep">Reprendre où j’étais (défi ${s.i+1})</button><button id="nv">Recommencer au début</button>`:`<button class="go" id="nv">C’est parti !</button>`}</div></div>
+ <div class="row mt">${reprise?`<button class="go" id="rep">Reprendre où j’étais (défi ${s.i+1})</button>`:""}${vuBilan?`<button id="vbi">Revoir mon bilan</button>`:""}<button class="${reprise||vuBilan?"":"go"}" id="nv">${reprise||vuBilan?"Recommencer au début":"C’est parti !"}</button></div></div>
  <p class="small" style="text-align:center">Rien n’est envoyé sur Internet : tes réponses restent sur cet appareil jusqu’à ce que tu télécharges ton bilan.</p>`;
  const pn=document.getElementById("pn");
  document.getElementById("nv").onclick=()=>{S=nouvel();S.prenom=pn.value.trim();S.debut=Date.now();S.etape="carte";save();carte(-1,0)};
  if(reprise)document.getElementById("rep").onclick=()=>{S=s;if(pn.value.trim())S.prenom=pn.value.trim();save();reprendre()};
+ if(vuBilan)document.getElementById("vbi").onclick=()=>{S=s;if(pn.value.trim())S.prenom=pn.value.trim();save();bilan()};
 }
-function reprendre(){if(S.i>=Q.length){S.etape==="bilan"?bilan():autoeval();return}const st=Q[S.i].st;if(!S.vus["L"+ST[st].lv])return intro(ST[st].lv);if(!S.vus["S"+st])return station(st);question()}
+function reprendre(){if(S.i>=Q.length){S.etape==="bilan"?bilan():autoeval();return}S.fin=null;S.partiel=false;save();const st=Q[S.i].st;if(!S.vus["L"+ST[st].lv])return intro(ST[st].lv);if(!S.vus["S"+st])return station(st);question()}
+
+function arreter(direct){majFin(false);try{speechSynthesis.cancel()}catch(e){}
+ const go=()=>{S.fin=Date.now();S.partiel=S.i<Q.length;S.etape="autoeval";save();autoeval()};if(direct)return go();
+ const n=nbFaits(),lv=dernierNiv();
+ app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox">${foxFace(110)}</div><div><h2>Tu veux arrêter ici ?</h2><p style="margin:0">Tu as fait <b>${n} défi${n>1?"s":""} sur ${Q.length}</b> (niveau ${lv}).</p></div></div>
+ <div class="card"><p>C’est correct d’arrêter ! Ton bilan va montrer ce que tu as réussi. Les niveaux que tu n’as pas faits seront marqués « pas encore fait ».</p><p>Tu pourras continuer la tournée une autre fois, sur cet appareil.</p>${say("C’est correct d’arrêter ! Ton bilan va montrer ce que tu as réussi. Tu pourras continuer la tournée une autre fois.")}
+ <div class="row mt"><button class="go" id="oui">Oui, voir mon bilan</button><button id="non">Non, je continue</button></div></div>`;
+ document.getElementById("oui").onclick=go;document.getElementById("non").onclick=reprendre;haut()}
+document.getElementById("fin").onclick=()=>arreter();
 
 const POS=[[80,70],[240,62],[400,70],[560,62],[715,150],[560,228],[400,236],[240,228],[90,310],[300,350],[520,350]];
-function carte(de,a){
- const nom=S.prenom?", "+E(S.prenom):"";
+function carte(de,a){majFin(true);
+ const finNiv=de>=0&&ST[de].lv!==ST[a].lv;const nom=S.prenom?", "+E(S.prenom):"";
  let road=`<polyline points="${POS.map(p=>p.join(",")).join(" ")}" fill="none" stroke="#D8C7BB" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${POS.map(p=>p.join(",")).join(" ")}" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="10 12"/>`;
  let stops=POS.map((p,k)=>{const lv=ST[k].lv,fait=k<a,ici=k==a;return `<g class="stop"><circle cx="${p[0]}" cy="${p[1]}" r="${ici?26:21}" fill="${fait?LVHEX[lv][1]:LVHEX[lv][0]}" stroke="${LVHEX[lv][1]}" stroke-width="4"/><text x="${p[0]}" y="${p[1]+7}" text-anchor="middle" font-weight="900" font-size="19" fill="${fait?"#fff":"#4A4F55"}">${fait?"✓":k+1}</text><text x="${p[0]}" y="${p[1]+(k>=8?48:-32)}" text-anchor="middle" font-size="15" font-weight="800" fill="#4A4F55">${E(ST[k].s||ST[k].n)}</text></g>`}).join("");
  const from=POS[Math.max(de,0)],to=POS[a];
@@ -403,17 +419,19 @@ function carte(de,a){
  <path d="M0,282 C150,262 260,300 400,284 S650,262 800,286" fill="none" stroke="#CFE7F1" stroke-width="26" stroke-linecap="round" opacity=".8"/><text x="640" y="300" font-size="14" fill="#6b8fa0" font-style="italic">rivière Saguenay</text>
  <text x="40" y="128" font-size="15" fill="#8a7f76" font-weight="800">Jonquière</text><text x="700" y="392" font-size="15" fill="#8a7f76" font-weight="800">Chicoutimi</text>
  ${road}${stops}<g id="tok" style="transform:translate(${from[0]+12}px,${from[1]-10}px)"><g transform="scale(.26)">${FOX.replace(/<svg[^>]*>/,"").replace("</svg>","")}</g></g></svg></div>
- <div class="card monte"><p style="margin:0"><b>Prochain arrêt : ${E(ST[a].n)}</b> · ${E(ST[a].l)}</p><div class="row mt"><button class="go" id="go">Continuer ▶</button></div></div>`;
+ ${finNiv?`<div class="card monte" style="background:${LV[ST[de].lv].c}"><h3 style="margin:0">Bravo ! Tu as terminé le niveau ${LV[ST[de].lv].n}.</h3><p style="margin:4px 0 0">Tu peux continuer vers le niveau ${LV[ST[a].lv].n}, ou t’arrêter ici et voir ton bilan.</p></div>`:""}
+ <div class="card monte"><p style="margin:0"><b>Prochain arrêt : ${E(ST[a].n)}</b> · ${E(ST[a].l)}</p><div class="row mt"><button class="go" id="go">Continuer ▶</button>${finNiv?`<button id="stop">Terminer ici et voir mon bilan</button>`:""}</div></div>`;
+ if(finNiv)document.getElementById("stop").onclick=()=>arreter(true);
  requestAnimationFrame(()=>requestAnimationFrame(()=>{const t=document.getElementById("tok");if(t)t.style.transform=`translate(${to[0]+12}px,${to[1]-10}px)`}));
  document.getElementById("go").onclick=()=>{const lv=ST[a].lv;if(!S.vus["L"+lv])intro(lv);else station(a)};haut()}
 
 const INTRO={E:{k:["arrondir"],t:"Au niveau Érable, tu apprends à trouver le dollar le plus proche."},B:{k:["total","assez"],t:"Au niveau Bouleau, tu estimes un total et tu compares avec ton argent."},S:{k:["taxes","rabais"],t:"Au niveau Sapin, tu ajoutes les taxes et tu calcules les rabais."}};
-function intro(lv){
+function intro(lv){majFin(true);
  app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox">${foxFace(110)}</div><div><span class="pill" style="background:${LV[lv].c}">Niveau ${LV[lv].n}</span><h2>Les trucs du renard</h2><p style="margin:0">${INTRO[lv].t}</p></div></div><div id="cp" class="mt"></div><div class="row ctr mt"><button class="lien" id="sk">Passer et commencer les défis</button></div>`;
  const go=()=>{try{speechSynthesis.cancel()}catch(e){}S.vus["L"+lv]=1;save();station(Q[S.i].st)};
  capsule(document.getElementById("cp"),INTRO[lv].k,go,"Je suis prêt ! ▶");document.getElementById("sk").onclick=go;haut()}
 
-function station(k){const st=ST[k];
+function station(k){majFin(true);const st=ST[k];
  app.innerHTML=`<div class="row sp"><span class="pill" style="background:${LV[st.lv].c}">Niveau ${LV[st.lv].n}</span><span class="small">Arrêt ${k+1} sur 11</span></div>
  <div class="card">${facade(st)}<h2 style="text-align:center;margin-top:10px">${E(st.n)}</h2><p style="text-align:center;margin:0" class="small">${E(st.l)}</p><p class="monte" style="text-align:center">${E(st.txt)}</p><div class="row ctr">${say(st.n+". "+st.txt)}<button class="go" id="go">Commencer ▶</button></div></div>`;
  document.getElementById("go").onclick=()=>{S.vus["S"+k]=1;save();question()};haut()}
@@ -421,7 +439,7 @@ function station(k){const st=ST[k];
 /* ---------------- questions ---------------- */
 let cur=null;
 function question(){
- const q=Q[S.i],st=ST[q.st],lv=LV[st.lv];cur={q,tries:0,hint:false,done:false};
+ const q=Q[S.i],st=ST[q.st],lv=LV[st.lv];cur={q,tries:0,hint:false,done:false,t0:Date.now()};majFin(true);
  app.innerHTML=`<div class="row sp"><span class="pill" style="background:${lv.c}">${lv.n} · ${E(st.n)}</span><span class="small">Défi ${S.i+1} sur ${Q.length}</span></div>
  <div class="bar"><i style="width:${S.i/Q.length*100}%"></i></div>
  <div class="card monte" id="qc"><div class="row sp" style="align-items:flex-start;flex-wrap:nowrap"><h2 style="font-family:NU,Arial;font-size:23px;font-weight:700;margin:0">${q.titre}</h2><div class="qfox" style="flex:none">${foxFace(70)}</div></div>
@@ -434,7 +452,7 @@ function indice(){cur.hint=true;const t=TRUCS[cur.q.truc];
 function repondre(ok,val){
  if(cur.done)return;cur.tries++;const fb=document.getElementById("fb");
  if(ok||cur.tries>=2){cur.done=true;const pts=ok?(cur.tries==1?(cur.hint?.75:1):(cur.hint?.5:.6)):0;
-  S.rec[cur.q.id]={ok,t:cur.tries,h:cur.hint,pts,rep:val};save();if(ok)fete();explique(ok)}
+  S.rec[cur.q.id]={ok,t:cur.tries,h:cur.hint,pts,rep:val};S.tps=(S.tps||0)+Math.min(Date.now()-cur.t0,600000);save();majFin(true);if(ok)fete();explique(ok)}
  else{fb.innerHTML=`<p class="oups monte">Pas tout à fait. Regarde encore et essaie une 2<sup>e</sup> fois. Le truc du renard peut t’aider.</p>`;const c=document.getElementById("qc");c.classList.remove("shake");void c.offsetWidth;c.classList.add("shake")}}
 function explique(ok,titre){const q=cur.q;document.getElementById("zone").classList.add("fini");if(T[q.type].fin)T[q.type].fin(q);
  const tt=titre||(ok?"Bravo !":"Voici comment faire");
@@ -503,7 +521,7 @@ const T={
   z.innerHTML=`<p class="consigne">Écris ton explication. Mélanie va la lire.</p><textarea id="tx" aria-label="Mon explication">${E(S.textes[q.id]||"")}</textarea><div class="row">${SR?`<button id="mic">🎤 Dicter</button>`:""}<span class="small" id="tn"></span><button class="go" id="tv" style="margin-left:auto" disabled>J’ai fini d’écrire</button></div>`;
   const tx=z.querySelector("#tx"),tv=z.querySelector("#tv"),tn=z.querySelector("#tn"),m=()=>{const n=tx.value.trim().length;tv.disabled=n<15;tn.textContent=n<15?"Écris au moins une phrase.":""};tx.oninput=m;m();
   if(SR)z.querySelector("#mic").onclick=()=>{try{const r=new SR();r.lang="fr-CA";r.interimResults=false;r.onresult=e=>{tx.value+=(tx.value?" ":"")+e.results[0][0].transcript;m()};r.onend=()=>z.querySelector("#mic").textContent="🎤 Dicter";z.querySelector("#mic").textContent="🎤 J’écoute…";r.start()}catch(e){}};
-  tv.onclick=()=>{S.textes[q.id]=tx.value.trim();S.rec[q.id]={ok:true,t:1,h:cur.hint,pts:null,rep:"(explication écrite)"};cur.done=true;save();tx.readOnly=true;explique(true,"Merci ! Compare avec cet exemple")}}
+  tv.onclick=()=>{S.textes[q.id]=tx.value.trim();S.rec[q.id]={ok:true,t:1,h:cur.hint,pts:null,rep:"(explication écrite)"};S.tps=(S.tps||0)+Math.min(Date.now()-cur.t0,600000);cur.done=true;save();majFin(true);tx.readOnly=true;explique(true,"Merci ! Compare avec cet exemple")}}
 };
 
 T.droite.fin=q=>{document.getElementById("dw").innerHTML=droite(q.a,q.p,{fleche:1})};
@@ -511,22 +529,23 @@ T.droite.fin=q=>{document.getElementById("dw").innerHTML=droite(q.a,q.p,{fleche:
 /* ---------------- autoévaluation et bilan ---------------- */
 const AV=[["arr","Je suis capable d’arrondir un prix au dollar le plus proche."],["est","Je suis capable d’estimer le total d’un panier."],["cmp","Je sais si j’ai assez d’argent."],["tax","Je suis capable d’estimer les taxes."]];
 const AVO=["Oui, seul","Avec un peu d’aide","Pas encore"];
-function autoeval(){
- app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox">${foxFace(110)}</div><div><h2>Bravo, tu as terminé la tournée !</h2><p style="margin:0">Avant ton bilan, dis comment tu te sens.</p></div></div>
- <div class="card">${AV.map(([k,t])=>`<div style="padding:10px 0;border-bottom:2px dotted #eadfd4"><div class="row sp"><b>${E(t)}</b>${say(t)}</div><div class="av mt" data-k="${k}">${AVO.map((o,j)=>`<button data-j="${j}" class="${S.auto[k]===j?"on":""}">${E(o)}</button>`).join("")}</div></div>`).join("")}
+function autoeval(){majFin(false);const faits=new Set(Q.filter(q=>S.rec[q.id]).map(q=>q.el)),AVf=AV.filter(([k])=>faits.has(k));
+ app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox">${foxFace(110)}</div><div><h2>${S.partiel?"Bravo pour ton travail !":"Bravo, tu as terminé la tournée !"}</h2><p style="margin:0">Avant ton bilan, dis comment tu te sens.</p></div></div>
+ <div class="card">${AVf.map(([k,t])=>`<div style="padding:10px 0;border-bottom:2px dotted #eadfd4"><div class="row sp"><b>${E(t)}</b>${say(t)}</div><div class="av mt" data-k="${k}">${AVO.map((o,j)=>`<button data-j="${j}" class="${S.auto[k]===j?"on":""}">${E(o)}</button>`).join("")}</div></div>`).join("")}
  <div class="row mt"><button class="go" id="vb" disabled>Voir mon bilan ▶</button></div></div>`;
- const vb=document.getElementById("vb"),m=()=>vb.disabled=AV.some(([k])=>S.auto[k]==null);
+ const vb=document.getElementById("vb"),m=()=>vb.disabled=AVf.some(([k])=>S.auto[k]==null);
  app.querySelectorAll(".av").forEach(g=>g.querySelectorAll("button").forEach(b=>b.onclick=()=>{S.auto[g.dataset.k]=+b.dataset.j;save();g.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));m()}));m();
  vb.onclick=()=>{S.etape="bilan";save();fete();bilan()};haut()}
 function cotes(){const r={};for(const el in ELN){const qs=Q.filter(q=>q.el===el&&S.rec[q.id]&&S.rec[q.id].pts!=null);if(!qs.length){r[el]=null;continue}
  const m=qs.reduce((a,q)=>a+S.rec[q.id].pts,0)/qs.length;r[el]=m>=.85?1:m>=.6?2:m>=.35?3:4}return r}
 const etat=q=>{const r=S.rec[q.id];if(!r)return 0;if(r.pts==null)return 4;if(r.ok&&r.t==1&&!r.h)return 1;if(r.ok)return 2;return 3};
-function bilan(){
- const c=cotes(),dur=S.debut&&S.fin?Math.max(1,Math.round((S.fin-S.debut)/60000)):null;
- app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox saute">${foxFace(110)}</div><div><h1 style="font-size:40px">Mon bilan${S.prenom?", "+E(S.prenom):""}</h1><p style="margin:0">${dur?`Tournée faite en ${dur} min. `:""}Voici où tu en es.</p></div></div>
- <div class="card">${Object.keys(ELN).map(el=>`<div class="el"><div><b>${ELN[el]}</b><br><span class="small">${c[el]?ELEVE[c[el]-1]:""}${el==="exp"?" · Mélanie lira aussi tes explications.":""}</span></div><div class="meter" aria-label="${c[el]?ELEVE[c[el]-1]:""}">${[1,2,3,4].map(j=>`<i class="${c[el]&&j<=5-c[el]?"on":""}"></i>`).join("")}</div></div>`).join("")}
+function bilan(){majFin(false);
+ const c=cotes(),dur=S.tps?dureeMin():null;
+ app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div class="fox saute">${foxFace(110)}</div><div><h1 style="font-size:40px">Mon bilan${S.prenom?", "+E(S.prenom):""}</h1><p style="margin:0">${S.partiel?`${nbFaits()} défis faits sur ${Q.length}. `:""}${dur?`Temps passé sur les défis : ${dur} min. `:""}Voici où tu en es.</p></div></div>
+ ${S.i<Q.length?`<div class="row"><button id="cont">▶ Continuer la tournée (défi ${S.i+1})</button></div>`:""}
+ <div class="card">${Object.keys(ELN).map(el=>`<div class="el"><div><b>${ELN[el]}</b><br><span class="small">${c[el]?ELEVE[c[el]-1]:"Pas encore fait"}${el==="exp"?" · Mélanie lira aussi tes explications.":""}</span></div><div class="meter" aria-label="${c[el]?ELEVE[c[el]-1]:""}">${[1,2,3,4].map(j=>`<i class="${c[el]&&j<=5-c[el]?"on":""}"></i>`).join("")}</div></div>`).join("")}
  <div class="mt">${["E","B","S"].map(lv=>`<div class="row" style="margin:6px 0"><span class="pill" style="background:${LV[lv].c};min-width:96px">${LV[lv].n}</span><span class="dots">${Q.filter(q=>ST[q.st].lv===lv&&q.type!=="texte").map(q=>`<span class="d${etat(q)}" title="${E(q.court)}"></span>`).join("")}</span></div>`).join("")}
- <p class="small"><span class="dots"><span class="d1"></span></span> réussi du premier coup · <span class="dots"><span class="d2"></span></span> réussi avec de l’aide · <span class="dots"><span></span></span> à revoir</p></div></div>
+ <p class="small"><span class="dots"><span class="d1"></span></span> réussi du premier coup · <span class="dots"><span class="d2"></span></span> réussi avec de l’aide · <span class="dots"><span></span></span> à revoir · <span class="dots"><span class="d0"></span></span> pas encore fait</p></div></div>
  <div class="card" style="background:#FFF6EE"><h3>Mon bilan pour Mélanie (PDF)</h3><label for="pp"><b>Mon prénom (obligatoire)</b></label><div class="row" style="margin-top:6px"><input type="text" id="pp" maxlength="30" value="${E(S.prenom)}" style="flex:1;min-width:200px"><button class="go" id="dl">⬇ Télécharger mon bilan</button></div><p class="small" id="pm" style="color:var(--mal)"></p>
  <ol class="small" style="padding-left:22px;margin:6px 0"><li>Télécharge ton bilan (fichier PDF).</li><li>Remets-le à Mélanie : dans le devoir Teams, dans ton OneDrive (partagé avec Mélanie) ou par courriel.</li></ol></div>
  <h2 class="mt">Pour aller plus loin</h2><p style="margin-top:0">Choisis une activité. Ce que tu fais ici s’ajoute à ton bilan : télécharge-le de nouveau après.</p>
@@ -536,16 +555,16 @@ function bilan(){
  <div class="row ctr mt"><button class="lien" id="rz">Recommencer toute la tournée</button></div>`;
  const pp=document.getElementById("pp"),pm=document.getElementById("pm");
  document.getElementById("dl").onclick=()=>{const p=pp.value.trim();if(p.length<2){pm.textContent="Écris ton prénom avant de télécharger.";pp.focus();pp.classList.remove("shake");void pp.offsetWidth;pp.classList.add("shake");return}pm.textContent="";S.prenom=p;save();pdf()};
- document.getElementById("r1").onclick=capsulesMenu;document.getElementById("r2").onclick=panier;document.getElementById("r3").onclick=defi;
+ if(S.i<Q.length)document.getElementById("cont").onclick=reprendre;document.getElementById("r1").onclick=capsulesMenu;document.getElementById("r2").onclick=panier;document.getElementById("r3").onclick=defi;
  document.getElementById("rz").onclick=()=>{if(confirm("Effacer tes réponses et recommencer ?")){S=nouvel();save();accueil()}};haut()}
 
 /* ---------------- réinvestissement ---------------- */
-function capsulesMenu(){
+function capsulesMenu(){majFin(false);
  app.innerHTML=`<div class="row sp"><h2>Les capsules du renard</h2><button id="rt">◀ Mon bilan</button></div><div class="grid3">${Object.keys(CAPS).map(k=>`<button class="choix" data-k="${k}" style="background:#fff"><b>${E(CAPS[k].titre)}</b>${CAPS[k].sc.length} étapes${S.reinv.caps.includes(k)?" · ✓ vue":""}</button>`).join("")}</div><div id="cp" class="mt"></div>`;
  document.getElementById("rt").onclick=bilan;
  app.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(!S.reinv.caps.includes(k)){S.reinv.caps.push(k);save()}capsule(document.getElementById("cp"),[k],capsulesMenu,"Retour aux capsules");document.getElementById("cp").scrollIntoView({behavior:"smooth"})});haut()}
 const CAT=[["Lait 2 L",5.29,0],["Pain",3.79,0],["Bananes",1.89,0],["Œufs (12)",4.49,0],["Bleuets du Lac",4.99,0],["Fromage en grains",6.49,0],["Pâtes",2.29,0],["Sauce tomate",2.99,0],["Croustilles",4.49,1],["Boisson gazeuse",2.99,1],["Biscuits",3.99,1],["Savon à vaisselle",3.49,1]];
-function panier(){const qte=CAT.map(()=>0);
+function panier(){majFin(false);const qte=CAT.map(()=>0);
  const vue=()=>{app.innerHTML=`<div class="row sp"><h2>Mon panier au Maxi</h2><button id="rt">◀ Mon bilan</button></div><p style="margin-top:0">Tu as <b>30 $</b>. Choisis ce qu’il te faut pour la semaine. Les articles marqués (T) sont taxés.</p>${billets(30)}
  <div class="cat">${CAT.map((c,k)=>`<button data-k="${k}" class="${qte[k]?"pris":""}">${E(c[0])}${c[2]?" (T)":""}<br><b>${fr(c[1])}</b>${qte[k]?` · × ${qte[k]}`:""}</button>`).join("")}</div>
  <p class="small">Touche un article pour l’ajouter. Touche-le encore pour en prendre plus (jusqu’à 3), une 4<sup>e</sup> fois pour l’enlever.</p>
@@ -559,7 +578,7 @@ function panier(){const qte=CAT.map(()=>0);
    document.getElementById("res").innerHTML=recu(lignes)+`<p style="text-align:center;font-size:22px"><b>Ton estimation : ${fm(e)} · Vrai total : ${fr(tot)}</b><br>${ec<=2?"Excellente estimation ! Moins de 2 $ d’écart.":ec<=4?"Pas mal ! Environ "+Math.round(ec)+" $ d’écart.":"Écart de "+Math.round(ec)+" $. Revois le truc des dollars ronds."}<br>${tot<=30?"✓ Tu as assez avec 30 $. Il te reste "+fr(30-tot)+".":"✗ Ça dépasse 30 $. Il manque "+fr(tot-30)+". Que vas-tu enlever ?"}</p>`;
    if(ec<=2)fete()}};vue();haut()}
 const LIEUX=["Tim Hortons (Jonquière)","Maxi (Jonquière)","Dollarama","Cinéma Jonquière","Centre Georges-Vézina","Place du Royaume","Jean Coutu","Walmart","Dépanneur du quartier","Autre lieu du Saguenay"];
-function defi(){const d=S.reinv.defi||{lieu:LIEUX[0],art:[["",""],["",""],["",""]],budget:"",est:""};
+function defi(){majFin(false);const d=S.reinv.defi||{lieu:LIEUX[0],art:[["",""],["",""],["",""]],budget:"",est:""};
  app.innerHTML=`<div class="row sp"><h2>Crée ton défi</h2><button id="rt">◀ Mon bilan</button></div><p style="margin-top:0">Invente un défi pour un ami : un lieu, 3 articles avec leur prix, et un budget.</p>
  <div class="card"><label><b>Où ?</b><br><select id="dl">${LIEUX.map(l=>`<option ${l===d.lieu?"selected":""}>${E(l)}</option>`).join("")}</select></label>
  ${d.art.map((a,k)=>`<div class="row mt"><input type="text" id="an${k}" placeholder="Article ${k+1}" value="${E(a[0])}" style="flex:2;min-width:160px;font-size:19px"><input type="text" inputmode="decimal" id="ap${k}" placeholder="Prix" value="${E(a[1])}" style="width:110px;font-size:19px"><b>$</b></div>`).join("")}
@@ -582,7 +601,7 @@ function pdfTxt(s){return String(s).replace(/<[^>]+>/g,"").replace(/[’‘]/g,"
 function pdf(){
  if(!window.jspdf){alert("Le module PDF ne s’est pas chargé. Vérifie ta connexion et recharge la page.");return}
  const {jsPDF}=window.jspdf,d=new jsPDF({unit:"mm",format:"letter"}),W=215.9,H=279.4,M=14;let y=M;
- const c=cotes(),now=new Date(),dur=S.debut&&S.fin?Math.max(1,Math.round((S.fin-S.debut)/60000)):null;
+ const c=cotes(),now=new Date(),dur=S.tps?dureeMin():null;
  const date=now.toLocaleDateString("fr-CA",{day:"numeric",month:"long",year:"numeric"})+", "+now.getHours()+" h "+String(now.getMinutes()).padStart(2,"0");
  const T=(t,x,yy,o)=>d.text(pdfTxt(t),x,yy,o);
  const fond=(r,g,b)=>d.setFillColor(r,g,b);
@@ -591,19 +610,20 @@ function pdf(){
  const para=(t,size=10,st="normal",w=W-2*M,x=M)=>{d.setFont("helvetica",st);d.setFontSize(size);const l=d.splitTextToSize(pdfTxt(t),w);l.forEach(li=>{besoin(size*.45);T(li,x,y);y+=size*.45});};
  d.setTextColor(60);fond(201,115,58);d.rect(0,0,W,24,"F");d.setTextColor(255);d.setFont("helvetica","bold");d.setFontSize(18);T("Estimer au Saguenay · Mon bilan",M,11);
  d.setFontSize(10);d.setFont("helvetica","normal");T("PPS-Z128 · Budget et consommation · pour Mélanie",M,18);d.setTextColor(60);y=32;
- d.setFont("helvetica","bold");d.setFontSize(13);T("Prénom : "+S.prenom,M,y);d.setFont("helvetica","normal");d.setFontSize(10);T("Remis le "+date+(dur?" · durée : "+dur+" min":""),W-M,y,{align:"right"});y+=8;
+ d.setFont("helvetica","bold");d.setFontSize(13);T("Prénom : "+S.prenom,M,y);d.setFont("helvetica","normal");d.setFontSize(10);T("Remis le "+date+(dur?" · temps sur les défis : "+dur+" min":""),W-M,y,{align:"right"});y+=6;
+ if(S.i<Q.length){d.setFont("helvetica","bold");d.setFontSize(9.5);const l=d.splitTextToSize(pdfTxt("Tournée partielle : "+nbFaits()+" défis faits sur "+Q.length+" (dernier niveau travaillé : "+dernierNiv()+"). Les éléments pas encore travaillés sont « non évalué »."),W-2*M-4);fond(246,227,166);d.roundedRect(M,y-1,W-2*M,l.length*4.3+4,2,2,"F");l.forEach((li,j)=>T(li,M+2,y+4+j*4.3));y+=l.length*4.3+8}else y+=2;
  d.setFont("helvetica","bold");d.setFontSize(12);T("Grille d'observation (cote proposée par le jeu)",M,y);y+=3;
  const cw=[38,36.5,36.5,36.5,36.5],cx=[M];for(let k=1;k<5;k++)cx.push(cx[k-1]+cw[k-1]);
  const head=["Élément observé","1 · "+ECH[0],"2 · "+ECH[1],"3 · "+ECH[2],"4 · "+ECH[3]];
  fond(245,238,230);d.rect(M,y,W-2*M,7,"F");d.setFontSize(8.5);head.forEach((h,k)=>T(h,cx[k]+1.5,y+4.8));y+=7;
- Object.keys(ELN).forEach(el=>{d.setFontSize(8);const cells=[ELN[el]].concat(DESC[el]);const lines=cells.map((t,k)=>{d.setFont("helvetica",k==0||k==c[el]?"bold":"normal");return d.splitTextToSize(pdfTxt(t),cw[k]-3)});const h=Math.max(...lines.map(l=>l.length))*3.4+4;besoin(h);
+ Object.keys(ELN).forEach(el=>{d.setFontSize(8);const cells=[ELN[el]+(c[el]?"":" (non évalué)")].concat(DESC[el]);const lines=cells.map((t,k)=>{d.setFont("helvetica",k==0||k==c[el]?"bold":"normal");return d.splitTextToSize(pdfTxt(t),cw[k]-3)});const h=Math.max(...lines.map(l=>l.length))*3.4+4;besoin(h);
   if(c[el]){fond(251,226,206);d.rect(cx[c[el]],y,cw[c[el]],h,"F");d.setDrawColor(201,115,58);d.setLineWidth(.8);d.rect(cx[c[el]]+.4,y+.4,cw[c[el]]-.8,h-.8,"S")}
   d.setDrawColor(220);d.setLineWidth(.2);cells.forEach((t,k)=>{d.rect(cx[k],y,cw[k],h,"S");d.setFont("helvetica",k==0||k==c[el]?"bold":"normal");lines[k].forEach((li,j)=>T(li,cx[k]+1.5,y+4+j*3.4))});y+=h});
  y+=4;para("Cote calculée à partir des réponses : réussi au 1er essai sans aide, réussi avec le truc du renard ou au 2e essai, ou à revoir. Mélanie peut l'ajuster. « Expliquer sa stratégie » est à confirmer en lisant les explications écrites (page suivante).",8.5,"italic");y+=3;
  d.setFont("helvetica","bold");d.setFontSize(12);besoin(10);T("Résultats par niveau",M,y);y+=6;
- ["E","B","S"].forEach(lv=>{const qs=Q.filter(q=>ST[q.st].lv===lv&&q.type!=="texte"),n=[1,2,3].map(e=>qs.filter(q=>etat(q)===e).length);const hx=LVHEX[lv][0];fond(parseInt(hx.slice(1,3),16),parseInt(hx.slice(3,5),16),parseInt(hx.slice(5,7),16));d.roundedRect(M,y-4,32,6,2,2,"F");d.setFontSize(10);d.setFont("helvetica","bold");T(LV[lv].n,M+2,y);d.setFont("helvetica","normal");T(`${n[0]} réussi(s) du premier coup · ${n[1]} réussi(s) avec de l'aide · ${n[2]} à revoir (sur ${qs.length})`,M+36,y);y+=7});
+ ["E","B","S"].forEach(lv=>{const qs=Q.filter(q=>ST[q.st].lv===lv&&q.type!=="texte"),n=[1,2,3,0].map(e=>qs.filter(q=>etat(q)===e).length);const hx=LVHEX[lv][0];fond(parseInt(hx.slice(1,3),16),parseInt(hx.slice(3,5),16),parseInt(hx.slice(5,7),16));d.roundedRect(M,y-4,32,6,2,2,"F");d.setFontSize(10);d.setFont("helvetica","bold");T(LV[lv].n,M+2,y);d.setFont("helvetica","normal");T(`${n[0]} réussi(s) du premier coup · ${n[1]} réussi(s) avec de l'aide · ${n[2]} à revoir${n[3]?" · "+n[3]+" pas encore fait(s)":""} (sur ${qs.length})`,M+36,y);y+=7});
  y+=2;d.setFont("helvetica","bold");d.setFontSize(12);besoin(10);T("Autoévaluation de l'élève",M,y);y+=6;d.setFontSize(10);
- AV.forEach(([k,t])=>{besoin(6);d.setFont("helvetica","normal");T(t,M,y);d.setFont("helvetica","bold");T(S.auto[k]!=null?AVO[S.auto[k]]:"-",W-M,y,{align:"right"});y+=5.5});
+ AV.forEach(([k,t])=>{besoin(6);d.setFont("helvetica","normal");T(t,M,y);d.setFont("helvetica","bold");T(S.auto[k]!=null?AVO[S.auto[k]]:"non demandé",W-M,y,{align:"right"});y+=5.5});
  pied();d.addPage();y=M;
  d.setFont("helvetica","bold");d.setFontSize(12);T("Détail des défis",M,y);y+=4;
  const tw=[9,32,72,40,34.9],tx=[M];for(let k=1;k<5;k++)tx.push(tx[k-1]+tw[k-1]);const RES=["","1er essai","Avec aide","À revoir","Écrit"];
@@ -624,14 +644,15 @@ function pdf(){
 function repTxt(q){switch(q.type){case"droite":return rond(q.p)+" $";case"tri":return q.bins.map((b,j)=>b+" : "+q.items.filter(i=>i[1]===j).map(i=>i[0]).join(", ")).join(" | ");
  case"jetons":return q.items.map(i=>i[0]+" "+rond(i[1])).join(", ");case"qcm":return q.opts[q.rep];case"num":case"curseur":return "accepté de "+fm(q.okMin)+" à "+fm(q.okMax);
  case"assez":return q.rep?"Assez":"Pas assez";case"vf":return q.rep?"Vrai":"Faux";case"ordre":return q.steps.join(" > ");case"erreur":return q.lignes[q.bad[0]][0];default:return "réponse libre"}}
-function melanie(){
+function melanie(){majFin(false);
  app.innerHTML=`<div class="row" style="flex-wrap:nowrap"><div>${foxFace(100)}</div><div><p class="small" style="margin:0">Espace enseignante · ce lien n’est pas affiché aux élèves</p><h1 style="font-size:40px">Estimer au Saguenay · Mélanie</h1></div></div>
  <div class="card"><h3>En bref</h3><ul style="padding-left:22px;margin:6px 0"><li>27 défis dans 11 lieux, du niveau Érable (arrondir) au niveau Bouleau (total, assez ou pas) au niveau Sapin (taxes, rabais). Environ 30 minutes.</li>
  <li>Au début de chaque niveau, une capsule animée présente les trucs du renard. Dans chaque défi, le bouton « Le truc du renard » sert d’indice (il est noté dans le bilan).</li>
  <li>2 essais par défi, puis l’explication étape par étape. La voix se fait seulement au clic.</li>
  <li>Modalités : droite numérique, tri d’étiquettes, pièces de 1 $, choix multiples, réponse au clavier, assez ou pas assez, ordre des étapes, curseur, vrai ou faux, erreur dans un reçu, explication écrite (avec dictée vocale si le navigateur le permet).</li>
  <li>À la fin : autoévaluation, puis un bilan PDF qu’on ne peut télécharger qu’après avoir écrit son prénom. Rien n’est envoyé en ligne : l’élève vous remet le PDF (le plus simple : un devoir Teams « Remets ton bilan »).</li>
- <li>Le travail est sauvegardé sur l’appareil : l’élève peut reprendre où il était s’il ferme la page.</li></ul></div>
+ <li>Le bouton « Terminer et voir mon bilan » est toujours visible : un élève peut s’arrêter au niveau Érable, par exemple. À la fin de chaque niveau, le jeu propose aussi de continuer ou de s’arrêter. Le bilan indique alors « tournée partielle » et « non évalué » pour ce qui n’a pas été fait.</li>
+ <li>Le travail est sauvegardé sur l’appareil : l’élève peut reprendre la tournée plus tard, même après avoir vu son bilan.</li></ul></div>
  <div class="card"><h3>Comment la cote est proposée</h3><p>Chaque défi vaut : 1 (1<sup>er</sup> essai sans aide), 0,75 (1<sup>er</sup> essai avec le truc), 0,6 (2<sup>e</sup> essai), 0,5 (2<sup>e</sup> essai avec le truc), 0 (à revoir). Moyenne par élément : 0,85 et plus = 1 Avec facilité · 0,6 = 2 Un peu de soutien · 0,35 = 3 Beaucoup d’aide · moins = 4 N’y arrive pas. Même échelle que l’outil de suivi.</p></div>
  <div class="card"><h3>Projeter une capsule</h3><div class="row">${Object.keys(CAPS).map(k=>`<button data-k="${k}">${E(CAPS[k].titre)}</button>`).join("")}</div><div id="cp" class="mt"></div></div>
  <div class="card"><h3>Corrigé</h3><table class="t"><tr><th>N°</th><th>Lieu</th><th>Défi</th><th>Élément</th><th>Réponse</th></tr>${Q.map((q,k)=>`<tr><td>${k+1}</td><td>${E(ST[q.st].n)}</td><td>${E(q.court)}</td><td>${ELN[q.el]}</td><td>${E(repTxt(q))}</td></tr>`).join("")}</table></div>
