@@ -360,11 +360,20 @@ export default {
               <i class="ar-t-barre" aria-hidden="true"><i class="${c}" style="width:max(3px, ${P(v)}%)"></i></i></div>`).join('')}
           </div>
           <p class="ar-t-note"><b>Au mieux</b> (50 lignes par jour) à <b>au pire</b> (10 lignes par jour) ; la barre montre le meilleur cas, à la même échelle.<br><b>Salaire</b> : développeur au salaire médian du Québec (45,67 $/h, Guichet-Emplois) ; avec l’IA, la conceptrice, conseillère pédagogique au dernier échelon (105 432 $ par an).<br><b>Gestion</b> : l’usure des appareils (un ordinateur de 2 500 $ sur trois ans) et, avec l’IA, un mois d’abonnements (Claude, ChatGPT, Gemini, Copilot : ≈ 220 $). Locaux et charges sociales non comptés : une borne basse.</p>
-          <div class="ar-valeur"><p class="ar-v-tit">Et sa valeur marchande?</p>
-            <p>Une app se vend d’après <b>ce qu’elle rapporte</b>, pas d’après ce qu’elle a coûté. Sur les places de marché d’apps, les ventes se font à environ <b>2,5 à 4 fois les revenus annuels</b> (petits logiciels par abonnement). Sans revenus, Flippa plafonne même le prix demandé à <b>9 999 $ US</b>.</p>
+          <div class="ar-valeur"><p class="ar-v-tit">Combien vaut Diapason Labo?</p>
+            <p class="ar-v-tit2">Pour une personne : le prix d’un accès</p>
+            <p>Les apps d’apprentissage musical comparables se vendent par abonnement : Yousician, Flowkey et Melodics <b>≈ 120 $ US par an</b>, Simply Piano <b>≈ 170 $ US</b> ; leurs forfaits famille, <b>180 à 210 $ US</b>. On achète un accès, pas l’app.</p>
+            <div class="ar-v-grille ar-v-prix">
+              <p><span>Solo</span><b>12 $ par mois</b><small>ou 99 $ par an</small></p>
+              <p><span>Duo : deux comptes, un espace partagé</span><b>18 $ par mois</b><small>ou 149 $ par an</small></p>
+              <p><span>Achat unique : licence d’usage à vie</span><b>199 $</b><small>environ deux ans d’abonnement</small></p>
+            </div>
+            <p class="ar-v-note">Notre proposition : un peu sous les leaders (nouvelle venue), et le duo, ce qui distingue Diapason Labo, au prix d’un forfait famille.</p>
+            <p class="ar-v-tit2">Et l’app entière, à la vente</p>
+            <p>L’app entière se vend d’après <b>ce qu’elle rapporte</b>, pas d’après ce qu’elle a coûté. Sur les places de marché d’apps, les ventes se font à environ <b>2,5 à 4 fois les revenus annuels</b> (petits logiciels par abonnement). Sans revenus, Flippa (la plus grande place de marché en ligne où l’on achète et vend des sites web et des apps) plafonne même le prix demandé à <b>9 999 $ US</b>.</p>
             <div class="ar-v-grille">
               <p><span>Aujourd’hui, sans abonnés</span><b>moins de 10 000 $ US</b></p>
-              ${[100, 500, 1000].map((n) => { const an = n * 10 * 12; return `<p><span>${n.toLocaleString('fr-CA')} abonnés à 10 $ par mois</span><b>${argent(an * 2.5)} à ${argent(an * 4)}</b></p>`; }).join('')}
+              ${[100, 500, 1000].map((n) => { const an = n * 99; return `<p><span>${n.toLocaleString('fr-CA')} abonnés solo à 99 $ par an</span><b>${argent(an * 2.5)} à ${argent(an * 4)}</b></p>`; }).join('')}
             </div>
             <p>À l’autre bout, sa <b>valeur de reproduction</b>, ce qu’il en coûterait pour la refaire sans IA : <b>${cout(jp(50))} à ${cout(jp(10))}</b>. C’est un plafond théorique : un acheteur ne paie pas ce prix pour du code sans utilisateurs, d’autant que l’IA rend la reproduction bien moins chère… pour qui sait exactement quoi bâtir.</p>
             <p class="ar-v-limite">Autrement dit : le code a coûté peu, la conception vaut beaucoup, et la valeur marchande dépendra des gens qui l’utiliseront.</p></div>`;

@@ -3550,3 +3550,6 @@ html.gv-on body { padding-right: 432px; }
 .ar-v-grille b { display: block !important; font: 800 1.05rem var(--display) !important; color: #aa4b00 !important; }
 .ar-t-note b, .ar-traits .ar-t-note b { display: inline !important; font: inherit !important; font-weight: 700 !important; color: var(--ink) !important; }
 .ar-traits .ar-t-note { line-height: 1.55; }
+.ar-traits .ar-valeur .ar-v-tit2 { margin-top: 12px !important; font: 700 .92rem "Atkinson Hyperlegible", sans-serif !important; letter-spacing: .04em; text-transform: uppercase; color: #8a3c00; }
+.ar-v-prix small, .ar-traits .ar-v-prix small { display: block; font: .78rem "Atkinson Hyperlegible", sans-serif; color: var(--muted); }
+.ar-traits .ar-valeur .ar-v-note { font-size: .8rem !important; color: var(--muted); }
