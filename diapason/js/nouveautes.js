@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.50', quand: '2026-10-28', titre: 'Arrêter le son, et dire si on creuse', items: [
+    ['■ Arrêter le son', ['Dès que l’app joue quelque chose, un bouton apparaît en bas de l’écran, partout. Un geste, tout se tait.']],
+    ['Une prise reste là où tu es', ['Dans Jouer, quand tu arrêtes ● REC, la boucle s’arrête avec la prise, et la prise s’affiche tout de suite dans « Mes prises », juste en dessous (l’onglet s’appelait « Prises de voix » : rien à voir avec le menu Voix). Une ligne sous les onglets dit ce que fait chacun.']],
+    ['« On la creuse? »', ['Réécouter ne veut pas dire vouloir creuser. Sur une idée, chacun répond « Oui, je veux la creuser » ou « Pas pour moi » (elle quitte alors ton mur ; si vous dites tous les deux non, elle va à la corbeille). « À creuser » ne compte dans notre plan que si vous voulez tous les deux. Une rencontre ne fait plus monter ses parents toute seule : c’est à vous de le dire.']],
+  ] },
   { v: '0.49', quand: '2026-10-28', titre: 'Réécoutée, par qui', items: [
     ['« Je l’ai réécoutée »', ['Sur une idée brute ou à creuser, chacun coche quand il l’a vraiment réécoutée. Deux pastilles disent qui l’a fait. « À creuser » ne compte dans notre plan qu’une fois réécoutée par les deux.']],
     ['Une rencontre nourrit ses parents', ['Quand une rencontre donne quelque chose, ses deux idées de départ sont réécoutées (par toi) et montent d’une étape, jusqu’à « En chantier ». Fixer ou mettre dans le set reste une décision à deux.']],

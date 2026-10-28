@@ -44,7 +44,9 @@ export function chansonTab(body, ctx) {
     if (!espace.connected) return [];
     const ici = espace.entries.filter((e) => e.type !== 'chanson' && !e.data?.corbeille && e.data?.song === ch.nom);
     const parents = ici.flatMap((e) => e.data?.rencontre || []).map((id) => espace.entries.find((x) => x.id === id)).filter((x) => x && !x.data?.corbeille && !ici.includes(x));
-    return [...ici, ...new Set(parents)];
+    // Une rencontre jamais faite dont un parent est jeté ne s'affiche pas ; son parent vivant, oui.
+    const morte = (e) => e.data?.rencontre && e.type === 'note' && !e.audio && e.data.rencontre.some((id) => { const x = espace.entries.find((y) => y.id === id); return !x || x.data?.corbeille; });
+    return [...ici.filter((e) => !morte(e)), ...new Set(parents)];
   };
   const sansMorceau = () => (espace.connected ? espace.entries.filter((e) => e.audio && !e.audio.type?.startsWith('video') && !e.data?.song && !e.data?.corbeille).slice(-12).reverse() : []);
   function ideesHTML() {
@@ -77,11 +79,11 @@ export function chansonTab(body, ctx) {
       <ol class="ch-ordre">${ch.ordre.map((id, i) => `<li data-o="${i}"><b>${esc(et[i])}</b><span class="ch-mini">${(sec(id)?.chords || []).map(([r, q]) => chordName(r, q)).join(' ')}</span>
         <button class="icon-btn tiny" data-ch="gauche" aria-label="Plus tôt">◀</button><button class="icon-btn tiny" data-ch="droite" aria-label="Plus tard">▶</button><button class="icon-btn tiny" data-ch="retirer" aria-label="Retirer">✕</button></li>`).join('')}</ol>
       <div class="ch-ajout">${ch.sections.map((s) => `<button class="chip" data-ch="ajouter" data-s="${s.id}">+ ${esc(s.nom)}</button>`).join('')}</div>
-      <div class="ec-row"><button class="btn primary" data-ch="tout">▶ Jouer toute la chanson</button><span class="muted small">${ch.ordre.length} parties · ${ch.ordre.reduce((a, id) => a + (sec(id)?.chords || []).reduce((x, c) => x + c[2], 0), 0) / 4} mesures</span></div>
+      <div class="ec-row"><button class="btn primary" data-ch="tout">${ctx.enCours?.() ? '■ Arrêter' : '▶ Jouer toute la chanson'}</button><span class="muted small">${ch.ordre.length} parties · ${ch.ordre.reduce((a, id) => a + (sec(id)?.chords || []).reduce((x, c) => x + c[2], 0), 0) / 4} mesures</span></div>
       <h3>Les parties et leurs accords</h3>
       ${grilleDepart() ? '<p class="ch-depart"><b>Accords de départ, pas les vôtres.</b> Do, Lam, Fa, Sol : une grille posée pour commencer, tirée d’aucune de vos idées. Écoute vos sons ci-dessus (ou « Trouver ses accords ») et remplace-la.</p>' : ''}
       <div class="ch-sections">${ch.sections.map((s) => `<article class="ch-sec" data-s="${s.id}">
-        <header><input class="input ch-secnom" data-ch="secnom" value="${esc(s.nom)}" list="ch-noms" maxlength="30"><button class="btn small" data-ch="jouer">▶ Jouer</button><button class="btn small" data-ch="dupliquer">Dupliquer</button>${ch.sections.length > 1 ? '<button class="icon-btn tiny" data-ch="supprimer" aria-label="Supprimer la partie">✕</button>' : ''}</header>
+        <header><input class="input ch-secnom" data-ch="secnom" value="${esc(s.nom)}" list="ch-noms" maxlength="30"><button class="btn small" data-ch="jouer">${ctx.enCours?.() ? '■ Arrêter' : '▶ Jouer'}</button><button class="btn small" data-ch="dupliquer">Dupliquer</button>${ch.sections.length > 1 ? '<button class="icon-btn tiny" data-ch="supprimer" aria-label="Supprimer la partie">✕</button>' : ''}</header>
         <ol class="ch-acc">${s.chords.map((c, i) => `<li data-i="${i}">
           <select data-ch="r">${FR.map((n, k) => `<option value="${k}" ${k === c[0] ? 'selected' : ''}>${n}</option>`).join('')}</select>
           <select data-ch="q">${TYPES.map(([v, l]) => `<option value="${v}" ${v === c[1] ? 'selected' : ''}>${l}</option>`).join('')}</select>
@@ -113,9 +115,10 @@ export function chansonTab(body, ctx) {
     if (k === 'ajouter') { ch.ordre.push(b.dataset.s); }
     if (k === 'retirer' && oi) ch.ordre.splice(+oi.dataset.o, 1);
     if ((k === 'gauche' || k === 'droite') && oi) { const i = +oi.dataset.o; const j = i + (k === 'gauche' ? -1 : 1); if (j >= 0 && j < ch.ordre.length) [ch.ordre[i], ch.ordre[j]] = [ch.ordre[j], ch.ordre[i]]; }
-    if (k === 'tout') { const et = etiquettes(); const acc = []; const marques = []; ch.ordre.forEach((id, i) => { (sec(id)?.chords || []).forEach((c, j) => { acc.push(c); marques.push(j === 0 ? et[i] : ''); }); }); if (acc.length) ctx.jouer(acc, ch.nom, marques); return; }
+    if ((k === 'tout' || k === 'jouer') && ctx.enCours?.()) { ctx.arreter(); rendre(); return; }
+    if (k === 'tout') { const et = etiquettes(); const acc = []; const marques = []; ch.ordre.forEach((id, i) => { (sec(id)?.chords || []).forEach((c, j) => { acc.push(c); marques.push(j === 0 ? et[i] : ''); }); }); if (acc.length) ctx.jouer(acc, ch.nom, marques); rendre(); return; }
     if (k === 'mid' || k === 'txt' || k === 'copier') { exporter(k); return; }
-    if (k === 'jouer' && s) { ctx.jouer(s.chords, `${ch.nom} · ${s.nom}`, s.chords.map((_, j) => (j === 0 ? s.nom : ''))); return; }
+    if (k === 'jouer' && s) { ctx.jouer(s.chords, `${ch.nom} · ${s.nom}`, s.chords.map((_, j) => (j === 0 ? s.nom : ''))); rendre(); return; }
     if (k === 'ecoute' && s && li) { const [r, q] = s.chords[+li.dataset.i]; prechargerSons(['piano']); accord('piano', chordIntervals(q).map((iv) => 52 + ((r + 8) % 12) + iv), { dur: 1.3, vel: 0.6 }); return; }
     if (k === 'plus' && s) { const d = s.chords[s.chords.length - 1]; s.chords.push([(d[0] + 5) % 12, 'M', 4]); }
     if (k === 'moins' && s && li) s.chords.splice(+li.dataset.i, 1);

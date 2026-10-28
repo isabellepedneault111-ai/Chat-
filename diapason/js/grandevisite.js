@@ -35,7 +35,7 @@ const CHAPITRES = (autre) => [
   { ch: 'Jouer', t: 'L’idée devient du son', d: 'Trois pièces : Jouer (le beat, les accords, les chansons), Mon studio (ton vrai matériel) et L’oreille (qui écoute pour toi).', etapes: [
     { r: '#/studio', s: '.transport', t: 'Le transport', d: 'Lecture, tempo (ou le taper), tonalité, et une grille d’accords connue. La lampe réchauffe tout ce qui sort. « ● » enregistre.' },
     { r: '#/studio', s: '.chord-row', t: 'La grille d’accords', d: 'Les quatre accords qui tournent. Touche-en un pour le changer, ou écris ta propre grille. En dessous : des défis d’impro tirés au hasard.' },
-    { r: '#/studio', s: '.tabs', t: 'Les ateliers de Jouer', d: 'Beat (la batterie), Nos chansons (couplet, refrain, pont, avec leurs accords), Prises de voix, Pochette, Scène, Mon instrument (l’app écoute ton clavier et devine les accords).' },
+    { r: '#/studio', s: '.tabs', t: 'Les ateliers de Jouer', d: 'Beat (la batterie), Nos chansons (couplet, refrain, pont, avec leurs accords), Mes prises (ce que ● REC enregistre), Pochette, Scène, Mon instrument (l’app écoute ton clavier et devine les accords).' },
     { r: '#/materiel', s: '.m-scene', t: 'Mon studio', d: 'Ta pièce, vue de haut, avec tes meubles et tes appareils là où ils sont vraiment. Touche un objet : sa fiche (couleur, taille, ce à quoi il est branché).' },
     { r: '#/materiel', s: '.m-barre', t: 'Détecter, ajouter', d: 'L’app détecte micros et claviers MIDI branchés. Les vrais arrivent seuls ; les virtuels (Teams, Zoom…) se proposent, et on les ignore d’un geste. Ici aussi, on règle la durée du filet.' },
     { r: '#/materiel', s: '.m-qui', t: 'Le tien, celui de l’autre', d: `Une bascule pour visiter le studio de ${autre}, s’il le partage.` },

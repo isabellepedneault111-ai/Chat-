@@ -34,6 +34,7 @@ import { installerFilet } from './filet.js';
 import { installerMotOuvert } from './motoutil.js';
 import { installerGlossaire } from './glossaire.js';
 import { installerMetronome } from './metronome.js';
+import { installerSilence } from './silence.js';
 import { installerSommaire } from './sommaire.js';
 import { initEtincelle } from './etincelle.js';
 import { maybeTour } from './views/tour.js';
@@ -103,6 +104,7 @@ installerSommaire(view); // en haut de chaque page : tout ce qu'on peut y faire
 installerFilet(); // le filet : la dernière minute, toujours gardée
 installerMotOuvert(); // double-clic sur un mot : ses rimes et ses synonymes
 installerMetronome(); // le métronome des prises : un clic par temps, et un décompte
+installerSilence(() => route()); // « ■ Arrêter le son », partout, dès que quelque chose joue
 let cleanup = null;
 let currentId = 'home';
 

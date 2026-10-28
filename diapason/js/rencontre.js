@@ -18,17 +18,6 @@ export function refuser(a, b) { const s = nonMerci(); s.add(`${a.id}|${b.id}`); 
 const lignes = (t) => { const l = t.split(/\n+/).map((x) => x.trim()).filter(Boolean); return l.length > 1 ? l : t.split(/(?<=[.!?…])\s+/).map((x) => x.trim()).filter(Boolean); };
 function tresser(a, b) { const A = lignes(texteDe(a)); const B = lignes(texteDe(b)); const out = []; for (let i = 0; i < Math.max(A.length, B.length); i++) { if (A[i]) out.push(A[i]); if (B[i]) out.push(B[i]); } return out.join('\n'); }
 
-// Après une rencontre faite : ses deux parents ont vraiment été réécoutés (par moi), et ils montent d'une étape,
-// jusqu'à « En chantier » au plus. Fixer un morceau ou le mettre dans le set reste une décision à deux.
-const etape = (e) => (Number.isInteger(e.data?.stage) ? e.data.stage : e.type === 'paroles' ? 2 : 0);
-async function nourrir(parent) {
-  const change = (x) => { const d = x.data || {}; const de = etape(x); const vers = de < 2 ? de + 1 : de;
-    return { ...x, data: { ...d, ecoutes: { ...(d.ecoutes || {}), [espace.me]: Date.now() }, stage: vers, moves: vers === de ? d.moves : [...(d.moves || []), { from: de, to: vers, at: Date.now(), by: espace.me, par: 'rencontre' }].slice(-20) } }; };
-  const r = await saveEntry(change(parent), { baseUpdatedAt: parent.updatedAt });
-  if (r.conflict) await saveEntry(change(r.current), { baseUpdatedAt: r.current.updatedAt });
-  return etape(parent) < 2;
-}
-
 // Ouvre l'atelier. existant : une rencontre déjà notée au mur, encore vide, qu'on vient enfin remplir.
 export function ouvrirRencontre({ a, b, consigne, existant = null, onFait }) {
   const ka = matiere(a); const kb = matiere(b);
@@ -85,9 +74,7 @@ export function ouvrirRencontre({ a, b, consigne, existant = null, onFait }) {
         const entree = { ...base, body: texte || consigne || '', data };
         if (prise) { entree.audio = await uploadAudio(prise); entree.type = 'audio'; if (son) data.over = son.id; } else if (genre === 'tresser' || texte) entree.type = existant?.type === 'audio' ? 'audio' : 'texte';
         const r = await saveEntry(entree, existant ? { baseUpdatedAt: existant.updatedAt } : undefined);
-        const montes = [];
-        for (const x of [a, b]) { try { if (await nourrir(espace.entries.find((y) => y.id === x.id) || x)) montes.push(titre(x)); } catch { /* le parent reste où il est */ } }
-        fermer(); toast(`Une nouvelle idée est née. ${montes.length ? `${montes.join(' et ')} ${montes.length > 1 ? 'montent' : 'monte'} d’une étape : tu viens de ${montes.length > 1 ? 'les' : 'la'} réécouter. ` : ''}${(espace.meta?.members || []).find((m) => m !== espace.me) || 'L’autre'} la voit déjà.`); onFait?.(r.entry || r.current);
+        fermer(); toast(`Une nouvelle idée est née. ${(espace.meta?.members || []).find((m) => m !== espace.me) || 'L’autre'} la voit déjà.`); onFait?.(r.entry || r.current);
       } catch (err) { toast(err.message); bt.disabled = false; bt.textContent = 'Garder ce qui est né'; }
     }
   });

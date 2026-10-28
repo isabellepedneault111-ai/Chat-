@@ -5,6 +5,7 @@ let ctx = null;
 let master = null;
 let bus = null;
 let noiseBuf = null;
+let ecoute = null;
 
 // Le moteur audio de l’app (Web Audio), créé une seule fois : la chaîne de sortie passe par la lampe, un compresseur et un limiteur avant les haut-parleurs.
 export function audio() {
@@ -34,9 +35,24 @@ export function audio() {
     construireLampe(master, apresLampe);
     apresLampe.connect(comp).connect(makeup).connect(bus);
     bus.connect(ctx.destination);
+    // L'oreille de l'app sur sa propre sortie : sert à savoir si quelque chose joue (le bouton « Arrêter le son »).
+    ecoute = ctx.createAnalyser(); ecoute.fftSize = 512; bus.connect(ecoute);
   }
   if (ctx.state === 'suspended') ctx.resume();
   return ctx;
+}
+// Est-ce que l'app sonne en ce moment? (sans créer le moteur s'il n'existe pas encore)
+const tampon = new Float32Array(512);
+export function sonne() {
+  if (!ctx || !ecoute || ctx.state !== 'running') return false;
+  ecoute.getFloatTimeDomainData(tampon); let m = 0; for (const v of tampon) m = Math.max(m, Math.abs(v));
+  return m > 0.004;
+}
+// Coupe net tout ce qui sonne : la sortie descend à zéro le temps que les notes déjà lancées s'éteignent, puis revient.
+export function couper(ms = 1800) {
+  if (!ctx || !master) return;
+  const t = ctx.currentTime; master.gain.cancelScheduledValues(t); master.gain.setTargetAtTime(0, t, 0.015);
+  master.gain.setValueAtTime(0, t + ms / 1000); master.gain.linearRampToValueAtTime(1, t + ms / 1000 + 0.05);
 }
 // L’entrée de la chaîne de sortie : tout ce qui doit sonner s’y branche (et passe par la lampe si elle est allumée).
 export const out = () => (audio(), master);

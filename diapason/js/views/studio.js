@@ -118,6 +118,15 @@ function scheduler() {
     if (S.step % pasBoucle() === 0) { S.loop++; S.onLoop?.(); }
   }
 }
+// Ce que fait chaque onglet de Jouer, en une ligne (sous la barre d'onglets).
+const SENS_ONGLETS = {
+  beat: 'Beat : la batterie et les accords qui tournent. ▶ en haut lance, ■ arrête.',
+  chanson: 'Nos chansons : une chanson entière, ses parties et leurs accords, et les idées du mur qui lui appartiennent.',
+  voix: 'Mes prises : ce que ● REC a enregistré ici, par-dessus la boucle. À réécouter, à garder au mur.',
+  cover: 'Pochette : l’image de la chanson.',
+  duo: 'Scène : ta boucle devient une image animée, à enregistrer en petit clip.',
+  instrument: 'Mon instrument : ton clavier branché ; ce que tu joues devient des accords.',
+};
 // Lance la boucle.
 function play() {
   if (S.playing) return;
@@ -166,11 +175,12 @@ export default {
       <div class="tabs" role="tablist">
         <button role="tab" data-tab="beat">Beat</button>
         <button role="tab" data-tab="chanson">Nos chansons</button>
-        <button role="tab" data-tab="voix">Prises de voix</button>
+        <button role="tab" data-tab="voix">Mes prises</button>
         <button role="tab" data-tab="cover">Pochette</button>
         <button role="tab" data-tab="duo">Scène</button>
         <button role="tab" data-tab="instrument">Mon instrument</button>
       </div>
+      <p class="tab-sens"></p>
       <div class="tab-body"></div>`;
 
     const q = (s) => el.querySelector(s);
@@ -235,13 +245,18 @@ export default {
         try { finalOut().disconnect(dest); } catch { /* déjà déconnecté */ }
         mg.disconnect();
         S.recorder = null;
+        // Si c'est la prise qui a lancé la boucle, elle l'arrête avec elle : rien ne continue de jouer tout seul.
+        if (S.recLance) { stopPlay(); S.recLance = false; }
         syncTop();
-        toast('Prise enregistrée! Elle est dans l’onglet « Prises de voix ».');
-        if (tab === 'voix') renderTab();
+        // La prise s'affiche tout de suite, ici même : pas besoin d'aller la chercher ailleurs.
+        tab = 'voix'; store.set('studioTab', tab); renderTab();
+        q('.tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        toast('Prise enregistrée : elle est juste ici, dans « Mes prises ».');
       };
       S.recorder = r;
       // Le métronome (s'il est allumé) : un décompte d'une mesure au tempo de Jouer, puis la boucle et la prise partent ensemble.
       await avantPrise(S.bpm);
+      S.recLance = !S.playing;
       if (!S.playing) play();
       r.start();
       syncTop();
@@ -347,6 +362,7 @@ export default {
       kb?.dispose();
       kb = null;
       el.querySelectorAll('[data-tab]').forEach((b) => b.setAttribute('aria-selected', b.dataset.tab === tab));
+      q('.tab-sens').textContent = SENS_ONGLETS[tab] || '';
       const body = q('.tab-body');
       if (tab === 'beat') beatTab(body);
       if (tab === 'chanson') chansonTab(body, {
@@ -358,6 +374,8 @@ export default {
           q('.chord-row').scrollIntoView({ behavior: 'smooth', block: 'center' });
         },
         actuels: () => accords().map((c) => [mod12(S.key + c[0]), c[1], tempsDe(c)]),
+        enCours: () => S.playing,
+        arreter() { stopPlay(); syncTop(); },
         tempo: () => S.bpm,
       });
       if (tab === 'voix') voixTab(body);
@@ -431,7 +449,7 @@ export default {
     function voixTab(body) {
       body.innerHTML = `
         <div class="panel">
-          <div class="panel-head"><h2>Prises de voix</h2><span class="muted">Clique ● REC : le beat démarre, ta voix est mixée par-dessus.</span></div>
+          <div class="panel-head"><h2>Mes prises</h2><span class="muted">Clique ● REC : le beat démarre, ta voix est mixée par-dessus.</span></div>
           ${S.takes.length ? `<ul class="takes">${S.takes.map((t, i) => `
             <li><div><b>Prise ${S.takes.length - i}</b><span class="muted mono">${t.at.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' })} · ${t.bpm} BPM · ${t.chords}</span></div>
               <audio controls src="${t.url}"></audio>
@@ -1019,7 +1037,10 @@ export default {
     syncTop();
     renderTab();
     const offLampe = brancherLampe(el);
-    return () => { offLampe(); stop(); disposeTab(); kb?.dispose(); S.onLoop = null; };
+    // « ■ Arrêter le son » (en bas de l'écran) : la prise, la boucle, tout s'arrête ici.
+    const toutArreter = (ev) => { ev.preventDefault(); if (S.recorder?.state === 'recording') S.recorder.stop(); stopPlay(); syncTop(); };
+    addEventListener('diapason:stop', toutArreter);
+    return () => { removeEventListener('diapason:stop', toutArreter); offLampe(); stop(); disposeTab(); kb?.dispose(); S.onLoop = null; };
   },
 };
 

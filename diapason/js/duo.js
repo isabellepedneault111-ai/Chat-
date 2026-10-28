@@ -11,7 +11,7 @@ export const memberColor = (name) => (name === MEMBERS[1] ? 'var(--frog)' : 'var
 // Le pipeline d'une idée : générer → écouter et évaluer → construire → fixer → jouer (Biasutti 2018, Aslan 2016).
 export const STAGES = [
   { id: 0, label: 'Idée brute', hint: 'Sortie d’une impro, d’un mémo, d’un rêve. On garde tout.' },
-  { id: 1, label: 'À creuser', hint: 'À réécouter à deux. Elle compte quand vous l’avez réécoutée tous les deux.' },
+  { id: 1, label: 'À creuser', hint: 'À réécouter. Elle compte quand vous voulez tous les deux la creuser.' },
   { id: 2, label: 'En chantier', hint: 'Une ébauche : on développe, on varie.' },
   { id: 3, label: 'Fixé', hint: 'Quand forme, tempo, entrées et rôles sont décidés.' },
   { id: 4, label: 'Dans le set', hint: 'Quand c’est stable, répété, prêt devant du monde.' },

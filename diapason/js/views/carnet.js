@@ -11,7 +11,7 @@ import { togglePerle } from './coffre.js';
 import { projets, projetCourant, setProjet, projetNom, creerProjet } from '../projets.js';
 import { skyHTML, rencontres, matches, kindOf, sleepingDays } from '../constellation.js';
 import { ouvrirRencontre, nonMerci, refuser } from '../rencontre.js';
-import { ecoutesHTML } from '../ecoute.js';
+import { avisHTML, avisDe } from '../ecoute.js';
 import { creerChanson, nomsDeChansons, chansonNommee } from '../chanson.js';
 
 // Échappe un texte avant de l’afficher dans la page : <, &, " et ' deviennent inoffensifs, pour qu’un mot tapé ne casse jamais l’affichage.
@@ -103,7 +103,7 @@ export function espaceGate(host, { onReady } = {}) {
 }
 
 const BOARD_TYPES = new Set(['note', 'texte', 'audio', 'essai', 'paroles', 'lien', 'image']);
-const typeLabel = (e) => (e.type === 'paroles' ? 'Paroles' : e.type === 'image' ? 'Image' : CARNET_TYPES.find((x) => x.id === e.type)?.label || e.type);
+const typeLabel = (e) => (e.data?.rencontre?.length === 2 ? 'Rencontre' : e.type === 'paroles' ? 'Paroles' : e.type === 'image' ? 'Image' : CARNET_TYPES.find((x) => x.id === e.type)?.label || e.type);
 // Les images arrivent après le dessin : on les charge une fois, puis elles restent en cache.
 export function hydrateImages(root) {
   root.querySelectorAll('[data-img]:not(.loaded)').forEach(async (box) => {
@@ -115,7 +115,9 @@ export function hydrateImages(root) {
 }
 const imgBox = (e, cls) => (e.image ? `<div class="${cls}" data-img="${esc(e.id)}" style="aspect-ratio:${e.image.w && e.image.h ? `${e.image.w} / ${e.image.h}` : '4 / 3'}" role="img" aria-label="${esc(e.title || 'Image')}"></div>` : '');
 // Le journal et les séances d'atelier vivent dans « Écrire » ; on les envoie au mur d'un geste.
-const onBoard = (e) => BOARD_TYPES.has(e.type) && !e.data?.exemple && !((e.data?.journal || e.data?.atelier || e.data?.etincelle) && !e.data?.aumur);
+// Une rencontre notée mais jamais faite, dont un parent est jeté : elle ne peut plus se faire, elle ne s'affiche plus.
+const renMorte = (e) => e.data?.rencontre?.length === 2 && e.type === 'note' && !e.audio && e.data.rencontre.some((id) => { const x = espace.entries.find((y) => y.id === id); return !x || x.data?.corbeille; });
+const onBoard = (e) => BOARD_TYPES.has(e.type) && !e.data?.exemple && !((e.data?.journal || e.data?.atelier || e.data?.etincelle) && !e.data?.aumur) && !renMorte(e);
 const URL_RE = /https?:\/\/[^\s<>"]+/i;
 // Reconnaît d’où vient un lien (Spotify, YouTube, SoundCloud…) pour l’afficher avec le bon lecteur.
 export function linkKind(url) {
@@ -278,6 +280,9 @@ export default {
     }
 
     // withQuery = false : le ciel garde toutes les idées et met seulement en lumière celles qu'on cherche.
+    // « Pas pour moi » : l'idée quitte mon mur (l'autre la voit encore). On peut les revoir d'un clic.
+    let voirEcartees = false;
+    const ecartees = () => espace.entries.filter((e) => avisDe(e, espace.me) === 'non' && !e.data?.corbeille && onBoard(e));
     function filtered(withQuery = true) {
       const qv = withQuery ? (el.querySelector('.search')?.value || '') : '';
       const since = { semaine: 7, mois: 31 }[fWhen];
@@ -287,6 +292,7 @@ export default {
         && (!fSong || (fSong === '—' ? !songOf(e) : songOf(e) === fSong))
         && (!fKind || kindOf(e) === fKind)
         && (!since || Date.now() - e.createdAt < since * 864e5) && (fWhen !== 'dort' || sleepingDays(e) >= 21)
+        && (voirEcartees || avisDe(e, espace.me) !== 'non')
         && matches(e, qv));
     }
 
@@ -393,6 +399,7 @@ export default {
       const next = nextStep(board);
       box.innerHTML = `<div class="dir-line">
         ${goal ? `<span class="dir-goal">Mois ${m} · ${esc(goal.sortie)} <b>${Math.min(done, goal.cible)} / ${goal.cible}</b></span>` : '<a href="#/">Lancer notre plan de six mois →</a>'}
+        ${ecartees().length ? `<button class="linklike" data-c="ecartees">${voirEcartees ? 'Cacher' : 'Revoir'} ${ecartees().length > 1 ? `les ${ecartees().length} idées que tu as écartées` : 'l’idée que tu as écartée'}</button>` : ''}
         ${next ? `<span class="dir-next">Prochain pas : <b>« ${esc(next.e.title || 'Sans titre')} »</b> a de la vie (${esc(next.why)}). <button class="linklike strong" data-promote="${esc(next.e.id)}">La faire monter →</button></span>` : ''}
       </div>`;
     }
@@ -410,7 +417,7 @@ export default {
           ${e.data?.relais ? `<div class="cm-intents">${intentsHTML(e)}${layersOf(e) > 1 ? `<span class="cm-layers">${layersOf(e)} couches</span>` : ''}</div>` : ''}
           ${songOf(e) && view !== 'morceaux' ? `<span class="cm-song">${esc(songOf(e))}</span>` : ''}
           ${view === 'morceaux' ? `<span class="cm-song">${STAGES[st].label}</span>` : ''}
-          ${st === 1 ? ecoutesHTML(e, { court: true }) : ''}
+          ${st === 1 ? avisHTML(e, { court: true }) : ''}
           <div class="cm-bottom">
             ${e.audio ? `<button class="icon-btn tiny" data-play="${e.id}" aria-label="Écouter">▶</button>` : ''}
             ${e.type === 'lien' ? `<a class="cm-link" href="${esc(e.data?.url || e.body)}" target="_blank" rel="noopener">${esc(e.data?.kind || 'Lien')} ↗</a>` : ''}
@@ -476,7 +483,7 @@ export default {
         <div class="detail-fields">
           <label class="field col"><span>Étape</span><select data-d="stage">${STAGES.map((st) => `<option value="${st.id}" ${st.id === stageOf(e) ? 'selected' : ''}>${st.label}</option>`).join('')}</select></label>
           ${e.type !== 'paroles' ? `<label class="field col"><span>Morceau</span><select data-d="song"><option value="">— Aucun —</option>${songs.map((s) => `<option ${s === songOf(e) ? 'selected' : ''}>${esc(s)}</option>`).join('')}<option value="__new">+ Nouveau morceau…</option></select></label>` : ''}
-        </div>${stageOf(e) <= 1 ? ecoutesHTML(e) : ''}` : ''}
+        </div>${stageOf(e) <= 1 ? avisHTML(e) : ''}` : ''}
         <h4>Réponses</h4>
         <ol class="replies">${(e.data?.replies || []).map((r) => `<li style="--c:${memberColor(r.by)}"><b>${esc(r.by)}</b> <span class="muted small">${ago(r.at)}</span><p>${esc(r.text)}</p></li>`).join('') || '<li class="muted small">Pas encore de réponse.</li>'}</ol>
         <form class="reply-form"><input class="input" data-d="reply" placeholder="Répondre à ${esc(e.author === espace.me ? other() : e.author)}…" aria-label="Réponse"><button class="btn small" type="submit">Envoyer</button></form>
@@ -648,8 +655,20 @@ export default {
       if (v) { view = v.dataset.v; store.set('murVue', view); renderAll(true); return; }
       const oid = e.target.closest('[data-open-id]');
       if (oid) { openDetail(oid.dataset.openId); return; }
-      const re = e.target.closest('[data-reecoute]');
-      if (re) { const en = espace.entries.find((x) => x.id === re.dataset.reecoute); if (en) { re.disabled = true; await patch(en, (d) => ({ ecoutes: { ...(d.ecoutes || {}), [espace.me]: Date.now() } })).catch((err) => toast(err.message)); openDetail(en.id); } return; }
+      const av = e.target.closest('[data-avis]');
+      if (av) {
+        const [id, v] = av.dataset.avis.split(':'); const en = espace.entries.find((x) => x.id === id); if (!en) return;
+        av.disabled = true;
+        const r = await patch(en, (d) => ({ avis: { ...(d.avis || {}), [espace.me]: { v, at: Date.now() } } })).catch((err) => { toast(err.message); return null; });
+        if (v !== 'non') { openDetail(en.id); return; }
+        // Pas pour moi : elle décrisse de mon mur. Si l'autre a dit la même chose, elle va à la corbeille (récupérable).
+        closeDetail();
+        const maj = r?.entry || espace.entries.find((x) => x.id === id) || en;
+        if (avisDe(maj, other()) === 'non') await jeter(maj).catch((err) => toast(err.message));
+        else toast(`Partie de ton mur. ${other()} la voit encore ; « Revoir les idées écartées » la ramène.`);
+        renderAll(true); return;
+      }
+      if (e.target.closest('[data-c=ecartees]')) { voirEcartees = !voirEcartees; renderAll(true); return; }
       const rn = e.target.closest('[data-ren]');
       if (rn) { const p = pairs[+rn.dataset.ren]; if (p) meet(p); return; }
       const rx = e.target.closest('[data-ren-non]');
