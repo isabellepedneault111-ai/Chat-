@@ -35,25 +35,26 @@ export default {
         <div class="mod-head pa-tete"><div>
           <p class="eyebrow">Le passage</p>
           <h1>${ferme ? `De la lune ${nFerme || ''} à la lune ${nFerme ? nFerme + 1 : ''}`.replace(/  +/g, ' ') : 'Notre premier passage'}</h1>
-          <p class="muted">Un rituel à deux, à la nouvelle lune : fermer un cycle avant d’en ouvrir un autre. On relit ce qu’on avait semé, on regarde ce que le cycle a donné, chacun choisit ce qu’il emporte, et on sème la lune qui vient. ${p.enAvance ? `La nouvelle lune arrive le ${jour(p.ouvreDate)} : vous pouvez faire le passage dès maintenant.` : ''}</p>
-        </div><div class="pa-lunes" aria-hidden="true">${luneSVG(lune(new Date(Date.now() - (p.enAvance ? 0 : l.age * J + J))), 40)}<span>→</span>${luneSVG(lune(p.ouvreDate || new Date()), 40)}</div></div>
+          <p class="muted">${ferme ? 'Un rituel à deux, à la nouvelle lune : fermer un cycle avant d’en ouvrir un autre. ' : 'Un rituel à deux, à chaque nouvelle lune. '}${p.enAvance ? `La nouvelle lune arrive le ${jour(p.ouvreDate)} : vous pouvez faire le passage dès maintenant.` : ''}</p>
+        </div><div class="pa-lunes" aria-hidden="true"${ferme ? '' : ' hidden'}>${luneSVG(lune(new Date(Date.now() - (p.enAvance ? 0 : l.age * J + J))), 40)}<span>→</span>${luneSVG(lune(p.ouvreDate || new Date()), 40)}</div></div>
         ${fini ? '<p class="pa-fini">☾ Le cycle est fermé, le suivant est semé. Bon voyage à vous deux.</p>' : ''}
-        <ol class="pa-etapes">
-          <li class="panel"><h2><span>1</span> Ce qu’on avait semé</h2>
+        ${!ferme ? `<p class="pa-premier">Pour ce premier cycle, un seul geste : semer chacun son intention. Relire, regarder ce que le cycle a donné et choisir ce qu’on emporte viendront au prochain passage, à la nouvelle lune du ${jour(Date.now() + (SYN - l.age) * J)}.</p>` : ''}
+        <ol class="pa-etapes${ferme ? '' : ' pa-seul'}">
+          ${ferme ? `<li class="panel"><h2><span>1</span> Ce qu’on avait semé</h2>
             ${ferme && Object.keys(ferme.intentions || {}).length ? mem.map((m) => { const x = ferme.intentions?.[m]; const r = ferme.relue?.[m]; return `<div class="pa-int" style="--c:${memberColor(m)}"><b>${esc(m)}</b>${x ? `<q>${esc(x)}</q>${r ? `<em>${RELUE[r]}</em>` : m === me ? `<p class="pa-relire">Relue, elle a été… <button class="btn small" data-relue="tenue">tenue</button><button class="btn small" data-relue="transformee">transformée</button><button class="btn small" data-relue="lachee">lâchée</button></p>` : '<em class="muted">pas encore relue</em>'}` : '<span class="muted">rien de semé ce cycle-là</span>'}
               ${m === me ? `<textarea class="input pa-mot" data-mot rows="2" maxlength="300" placeholder="Un mot sur ce cycle, pour toi et pour l’autre (facultatif)">${esc(ferme.mots?.[me] || '')}</textarea>` : ferme.mots?.[m] ? `<p class="pa-m">${esc(ferme.mots[m])}</p>` : ''}</div>`; }).join('')
               : '<p class="muted">Pas d’intention semée au cycle précédent. Ce passage sera le premier : semez à l’étape 4.</p>'}
-          </li>
-          <li class="panel"><h2><span>2</span> Ce que le cycle a donné</h2>
+          </li>` : ''}
+          ${ferme ? `<li class="panel"><h2><span>2</span> Ce que le cycle a donné</h2>
             ${ferme ? `<p class="pa-chiffres"><span><b>${idees.length}</b> idée${idees.length > 1 ? 's' : ''} semée${idees.length > 1 ? 's' : ''}</span><span><b>${grandi}</b> ${grandi > 1 ? 'ont' : 'a'} grandi</span><span><b>${entendu}</b> entendue${entendu > 1 ? 's' : ''}</span><span><b>${ech.length}</b> échange${ech.length > 1 ? 's' : ''} d’un fil à l’autre</span></p>
               ${idees.length ? `<p class="pa-idees">${idees.slice(0, 12).map((e) => `<a href="#/carnet?voir=${esc(e.id)}" style="--c:${memberColor(e.author)}">${esc((e.title || 'sans titre').slice(0, 40))}<small>${esc(STAGES[e.data?.stage || 0]?.label || '')}</small></a>`).join('')}</p>` : ''}
               ${lec.length ? `<dl class="pa-lec">${lec.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : ''}
               <p><a href="#/elan">Voir la tresse de ce cycle →</a></p>` : '<p class="muted">Le premier cycle commence : il n’y a encore rien à regarder en arrière.</p>'}
-          </li>
-          <li class="panel"><h2><span>3</span> Ce qu’on emporte</h2>
+          </li>` : ''}
+          ${ferme ? `<li class="panel"><h2><span>3</span> Ce qu’on emporte</h2>
             <p class="muted small">Une seule idée chacun, celle qui doit traverser la nouvelle lune avec vous.</p>
             ${ferme ? mem.map((m) => { const g = ferme.garde?.[m]; const e = g && espace.entries.find((x) => x.id === g); return `<div class="pa-garde" style="--c:${memberColor(m)}"><b>${esc(m)}</b> ${m === me ? `<select data-garde><option value="">Choisir une idée…</option>${(idees.length ? idees : ents.filter((x) => IDEES.includes(x.type)).slice(-20)).map((x) => `<option value="${esc(x.id)}" ${x.id === g ? 'selected' : ''}>${esc((x.title || 'sans titre').slice(0, 60))}</option>`).join('')}</select>` : e ? `<a href="#/carnet?voir=${esc(e.id)}">${esc(e.title || 'sans titre')}</a>` : '<span class="muted">pas encore choisi</span>'}</div>`; }).join('') : '<p class="muted">Au prochain passage.</p>'}
-          </li>
+          </li>` : ''}
           <li class="panel"><h2><span>4</span> Semer la lune qui vient</h2>
             ${mem.map((m) => { const x = ouvre?.intentions?.[m]; return `<div class="pa-int" style="--c:${memberColor(m)}"><b>${esc(m)}</b>${x ? `<q>${esc(x)}</q>` : m === me ? `<form class="pa-semer"><input class="input" data-semer maxlength="140" placeholder="Mon intention pour la lune qui vient"><button class="btn primary small">Semer</button></form>` : '<span class="muted">pas encore semée</span>'}</div>`; }).join('')}
           </li>

@@ -3818,3 +3818,9 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .arret-son:hover, .arret-son:focus-visible { background: #2a2722; }
 .arret-son[hidden] { display: none; }
 .tab-sens { margin: 6px 2px 0; color: var(--muted); font-size: .9rem; }
+
+/* Nos lunes : le premier passage n'a qu'un geste */
+.pa-premier { margin: 4px 0 12px; max-width: 62ch; font-size: 1.02rem; }
+.pa-etapes.pa-seul { grid-template-columns: minmax(0, 640px); }
+.pa-etapes.pa-seul h2 span { display: none; }
+.pa-lunes[hidden] { display: none; }

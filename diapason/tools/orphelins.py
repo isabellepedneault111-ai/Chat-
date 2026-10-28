@@ -32,13 +32,10 @@ fratries = [re.findall(r"'([a-z]*)'", m) for m in re.findall(r"^const (?:VOIX|LA
 
 # Les liens de chaque page. L'accueil (home.js sert '' et 'projet') est mis de côté : c'est lui qu'on teste.
 graphe = {r: cibles((racine / 'js/views' / f'{f}.js').read_text(), listes=True) for r, f in fichier_de.items()}
-# Le sommaire en haut de chaque page : ses mots-clés qui mènent ailleurs (« nos deux âmes » → #/ames).
-som = (racine / 'js/sommaire.js').read_text()
-pages = dict(re.findall(r"'([^']+)': '#/([a-z]*)", re.search(r"const PAGES = \{(.*?)\};", som, re.S).group(1)))
-for r, mots in re.findall(r"^  '?([a-z]*)'?: (\[\[.*\]\]),?$", som, re.M):
-    for m in re.findall(r"'([^']+)'", mots):
-        c = pages.get(m.lower())
-        if c is not None and c in routes and r in graphe: graphe[r].add(c)
+# Notre projet (servi par home.js, dans les sous-onglets de l'accueil) : ses propres liens comptent.
+home = (racine / 'js/views/home.js').read_text()
+m_pj = re.search(r"function projetHTML\(.*?(?=\n    function |\Z)", home, re.S)
+graphe['projet'] = cibles(m_pj.group(0), listes=True) if m_pj else set()
 for fr in fratries:
     for r in fr:
         graphe.setdefault(r, set()).update(x for x in fr if x)
@@ -48,7 +45,7 @@ vus = set(barre); pile = list(barre)
 while pile:
     r = pile.pop()
     if r in accueil and r != 'projet' and r != '': continue
-    suivants = graphe.get(r, set()) if r not in accueil else {x for fr in fratries if r in fr for x in fr if x}
+    suivants = (graphe.get(r, set()) if r not in accueil else {x for fr in fratries if r in fr for x in fr if x}) | (graphe['projet'] if r == 'projet' else set())
     for n in suivants:
         if n not in vus: vus.add(n); pile.append(n)
 

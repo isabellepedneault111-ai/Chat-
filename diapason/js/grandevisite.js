@@ -85,7 +85,6 @@ const CHAPITRES = (autre) => [
     { r: '#/', s: '#defiBtn', t: 'La contrainte surprise', d: 'Une contrainte créative tirée au hasard (« trois notes seulement », « jouez dos à dos »…) quand on tourne en rond.', faire: ouvrirMenu },
     { r: '#/', s: '#projBtn', t: 'Le grand texte', d: 'Gros caractères et fort contraste, pour lire l’écran de loin, l’instrument dans les mains.', faire: ouvrirMenu },
     { r: '#/', s: '#fsBtn', t: 'Le plein écran', d: 'Cache la barre du navigateur : toute la place pour jouer.' },
-    { r: '#/', s: '.mandat', t: 'En haut de chaque page', d: 'À quoi elle sert, ce que tu peux y faire, ce qu’elle nourrit. Les mots du sommaire mènent directement à la bonne section.' },
   ] },
 ];
 // À plat, pour avancer d'une étape à l'autre : chaque chapitre ouvre sur sa carte.

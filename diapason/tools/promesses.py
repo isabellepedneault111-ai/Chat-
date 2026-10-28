@@ -2,14 +2,13 @@
 # Les promesses de Diapason Labo, vérifiées à chaque construction. Une promesse brisée arrête la publication.
 #   1. On trouve chaque page sans passer par l'accueil (tools/orphelins.py).
 #   2. Chaque page pédagogique dit pourquoi elle marche, avec sa source (APPUIS, js/app.js).
-#   3. Chaque page a son sommaire en haut : à quoi elle sert, ce qu'on peut y faire, ce qu'elle nourrit (js/sommaire.js).
 #   4. Chaque bouton a un nom qu'un lecteur d'écran peut dire (texte visible, aria-label ou title).
 #   5. Chaque couleur de texte se lit sur le papier : contraste d'au moins 4,5 : 1 (WCAG 2.2, niveau AA).
 import re, sys, pathlib, subprocess
 
 racine = pathlib.Path(__file__).resolve().parent.parent
 lire = lambda p: (racine / p).read_text()
-app = lire('js/app.js'); som = lire('js/sommaire.js'); css = lire('styles.css')
+app = lire('js/app.js'); css = lire('styles.css')
 echecs = []
 
 # 1. La navigation.
@@ -27,12 +26,6 @@ appuis = set(re.findall(r"^  '?(\w*)'?: \[", re.search(r"const APPUIS = \{(.*?)\
 appuis = {('' if k == 'home' else k) for k in appuis}
 sans = [x or 'accueil' for x in routes if x not in appuis and x not in OUTILS]
 if sans: echecs.append(f'Pages sans « Pourquoi » (APPUIS, js/app.js) : {", ".join(sans)}. Une source réelle, ou la page rejoint OUTILS si elle ne prétend rien.')
-
-# 3. Le sommaire.
-mandats = set(re.findall(r"^  '?(\w*)'?: \['", re.search(r"const MANDATS = \{(.*?)\n\};", som, re.S).group(1), re.M))
-mots = set(re.findall(r"^  '?(\w*)'?: \[\['", som, re.M))
-sans = [x or 'accueil' for x in routes if x not in mandats or x not in mots]
-if sans: echecs.append(f'Pages sans sommaire (MANDATS et MOTS, js/sommaire.js) : {", ".join(sans)}.')
 
 # 4. Les boutons nommés.
 muets = []
@@ -66,4 +59,4 @@ if faibles: echecs.append('Textes trop pâles sur le papier (sous 4,5 : 1) : ' +
 
 if echecs:
     print('Promesses brisées :'); [print(' ✗', e) for e in echecs]; sys.exit(1)
-print(f'Promesses tenues : {len(routes)} pages trouvables sans l’accueil, chacune avec son pourquoi (ou outil assumé) et son sommaire ; tous les boutons nommés ; tous les textes lisibles (≥ 4,5 : 1).')
+print(f'Promesses tenues : {len(routes)} pages trouvables sans l’accueil, chacune avec son pourquoi (ou outil assumé) ; tous les boutons nommés ; tous les textes lisibles (≥ 4,5 : 1).')

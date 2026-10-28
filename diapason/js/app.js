@@ -35,7 +35,6 @@ import { installerMotOuvert } from './motoutil.js';
 import { installerGlossaire } from './glossaire.js';
 import { installerMetronome } from './metronome.js';
 import { installerSilence } from './silence.js';
-import { installerSommaire } from './sommaire.js';
 import { initEtincelle } from './etincelle.js';
 import { maybeTour } from './views/tour.js';
 import home from './views/home.js';
@@ -96,11 +95,10 @@ const LABO = ['labo', 'cathedrale'];
 // Jouer : jouer, mon studio (le matériel, tel qu'il est), l'oreille (trouver les accords d'un enregistrement).
 const JOUER = ['studio', 'materiel', 'oreille'];
 // L'accueil : aujourd'hui, et ce qui se relit (le projet, le bilan, les lunes passées). Chaque page a sa place fixe.
-const ACCUEIL = ['', 'calendrier', 'projet', 'bilan', 'passage'];
-const NOMS_FRATRIE = { '': ['☼', 'Aujourd’hui'], calendrier: ['◷', 'Calendrier'], projet: ['✦', 'Notre projet'], bilan: ['↗', 'Notre bilan'], passage: ['☾', 'Nos lunes'], studio: ['♪', 'Jouer'], materiel: ['⌂', 'Mon studio'], oreille: ['◎', 'L’oreille'] };
+const ACCUEIL = ['', 'nouvelles', 'calendrier', 'projet', 'bilan', 'passage'];
+const NOMS_FRATRIE = { '': ['☼', 'Aujourd’hui'], nouvelles: ['✉', 'Nos nouvelles'], calendrier: ['◷', 'Calendrier'], projet: ['✦', 'Notre projet'], bilan: ['↗', 'Notre bilan'], passage: ['☾', 'Nos lunes'], studio: ['♪', 'Jouer'], materiel: ['⌂', 'Mon studio'], oreille: ['◎', 'L’oreille'] };
 const view = $('#view');
 installerGlossaire(view); // les mots de musique s'expliquent au survol
-installerSommaire(view); // en haut de chaque page : tout ce qu'on peut y faire
 installerFilet(); // le filet : la dernière minute, toujours gardée
 installerMotOuvert(); // double-clic sur un mot : ses rimes et ses synonymes
 installerMetronome(); // le métronome des prises : un clic par temps, et un décompte

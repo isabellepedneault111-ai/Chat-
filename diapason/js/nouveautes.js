@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.51', quand: '2026-10-28', titre: 'Moins de bruit', items: [
+    ['Les pages vont droit au but', ['Les quatre boîtes en haut de chaque page (« Ça sert à », « Tu peux »…) sont parties : elles répétaient la page avec des puces et des liens qui ne menaient nulle part de neuf.']],
+    ['Nos nouvelles a sa place', ['Dans l’Accueil, entre Aujourd’hui et le Calendrier.']],
+    ['Nos lunes, au premier passage', ['Un seul geste à faire : semer son intention. Le reste viendra au prochain passage, et la page dit quand.']],
+    ['Plus de doublon au mur', ['Une rencontre qui ne peut plus se faire (un de ses parents est à la corbeille) ne s’affiche plus ; les rencontres portent l’étiquette « Rencontre ».']],
+  ] },
   { v: '0.50', quand: '2026-10-28', titre: 'Arrêter le son, et dire si on creuse', items: [
     ['■ Arrêter le son', ['Dès que l’app joue quelque chose, un bouton apparaît en bas de l’écran, partout. Un geste, tout se tait.']],
     ['Une prise reste là où tu es', ['Dans Jouer, quand tu arrêtes ● REC, la boucle s’arrête avec la prise, et la prise s’affiche tout de suite dans « Mes prises », juste en dessous (l’onglet s’appelait « Prises de voix » : rien à voir avec le menu Voix). Une ligne sous les onglets dit ce que fait chacun.']],
