@@ -60,6 +60,13 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.69', quand: '2026-10-28', titre: 'Tout se voit en même temps', items: [
+    ['La grille sous l’onde', ['La grille est juste sous l’onde : pendant l’écoute, la mesure qui joue s’allume et la grille défile toute seule pour la garder en vue. La liste complète des accords, un par un, est repliée en bas.']],
+    ['La boucle en violet', ['L’or veut dire « bien » (les notes justes) : la boucle passe en violet ↻, sur l’onde comme dans la légende.']],
+    ['Les parties parlent', ['Chaque partie montre ce que l’oreille y entend : ↻ boucle, ● moment fort, à retravailler. Touche une partie : l’écouter, la boucler, l’exporter, la monter, et lire ce que l’oreille en dit.']],
+    ['« C’est voulu »', ['Un « à retravailler » fait exprès (un long passage au même niveau, un creux) se coche « c’est voulu » : il quitte le rouge, sur l’onde, dans les parties et dans la liste.']],
+    ['Le jaune, seulement si tu corriges', ['Toucher deux mesures de la grille ne colore plus rien : seul un accord vraiment changé met sa mesure en jaune.']],
+  ] },
   { v: '0.68', quand: '2026-10-28', titre: 'Une mesure à la fois', items: [
     ['Le jaune ne déborde plus', ['Corriger une mesure changeait aussi ses voisines quand l’accord durait plus d’une mesure, et la grille se recalait toute seule : plusieurs mesures devenaient jaunes. Maintenant seule la mesure touchée change. Dans une boucle, la correction vaut pour chacune de ses reprises, et l’éditeur le dit.']],
     ['Le bon accord de départ', ['L’éditeur part de l’accord qui occupe le plus la mesure (celui qu’on voit dans la tuile), pas d’un bout qui déborde de la mesure d’avant.']],
