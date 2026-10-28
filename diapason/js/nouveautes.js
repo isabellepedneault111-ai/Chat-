@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.63', quand: '2026-10-28', titre: 'La voix en or, la boucle sous le beat', items: [
+    ['Les notes de la voix', ['En or : justes et stables. En rouge : à travailler. Touche une note : tu l’entends telle que chantée (touche encore : la fois suivante). Une note glissée exprès? Coche « c’est voulu » : elle sort de « à travailler ».']],
+    ['La justesse', ['Un réglage ± cents accorde toute la prise, plus haut ou plus bas, pour l’écoute et les WAV. Si la voix est en moyenne un peu haute ou basse, l’oreille propose le réglage. L’original ne change pas.']],
+    ['Jouer sur la boucle', ['« → Jouer sur la boucle » : la boucle trouvée tourne dans Jouer, sous le beat, au même tempo, avec ses accords quand ils tombent juste. Volume et ✕ dans la bande dorée.']],
+    ['Corriger un accord', ['L’éditeur dit maintenant « l’oreille a cru entendre… / pour toi, c’est… ». Corriger un accord change la grille écrite, pas le son de l’enregistrement.']],
+  ] },
   { v: '0.62', quand: '2026-10-28', titre: 'L’oreille, qu’on touche', items: [
     ['La tête de lecture', ['Touche l’onde : l’écoute part de ce moment, et une tête rouge avance pendant qu’on écoute. ▶ / ■ en haut de l’onde. « ■ Arrêter le son » arrête l’écoute sans effacer l’analyse.']],
     ['Les secondes s’écoutent', ['La boucle (de x à y), le moment fort, chaque remarque : on touche, on entend. La boucle tourne en boucle ; chaque passage se télécharge en WAV. La boucle part aussi dans Écrire ou au relais.']],

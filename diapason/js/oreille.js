@@ -118,14 +118,15 @@ export async function ecouter(buf, onStep = () => {}) {
 }
 
 // Joue un passage en boucle, avec un court fondu enchaîné à chaque tour pour que la jonction disparaisse.
-export function boucler(ctx, buf, { a, b }, dest, xf = 0.12) {
+// rate : la justesse corrigée (2^(cents/1200)) ; la boucle dure un peu plus ou un peu moins, comme sur une platine.
+export function boucler(ctx, buf, { a, b }, dest, xf = 0.12, rate = 1) {
   let stop = false; let timer = 0; const srcs = [];
   const tour = (offset, when) => {
     if (stop) return;
-    const src = ctx.createBufferSource(); src.buffer = buf; const g = ctx.createGain();
+    const src = ctx.createBufferSource(); src.buffer = buf; src.playbackRate.value = rate; const g = ctx.createGain();
     src.connect(g).connect(dest); g.gain.setValueAtTime(0.0001, when); g.gain.linearRampToValueAtTime(1, when + xf);
     src.start(when, offset); srcs.push(src);
-    const fin = when + (b - offset);
+    const fin = when + (b - offset) / rate;
     g.gain.setValueAtTime(1, fin - xf); g.gain.linearRampToValueAtTime(0.0001, fin + 0.02); src.stop(fin + 0.05);
     timer = setTimeout(() => tour(a - xf, fin - xf), Math.max(0, (fin - ctx.currentTime - 1) * 1000));
   };
@@ -134,15 +135,15 @@ export function boucler(ctx, buf, { a, b }, dest, xf = 0.12) {
 }
 
 // Fabrique un fichier de la boucle répétée (pour écrire dessus ou l'envoyer au relais).
-export async function rendreBoucle(buf, { a, b }, tours = 4, xf = 0.12) {
-  const sr = buf.sampleRate; const lenTour = b - a;
+export async function rendreBoucle(buf, { a, b }, tours = 4, xf = 0.12, rate = 1) {
+  const sr = buf.sampleRate; const lenTour = (b - a) / rate; // en temps réel
   const off = new OfflineAudioContext(buf.numberOfChannels, Math.ceil((lenTour * tours + 1) * sr), sr);
   for (let k = 0; k < tours; k++) {
-    const src = off.createBufferSource(); src.buffer = buf; const g = off.createGain(); src.connect(g).connect(off.destination);
+    const src = off.createBufferSource(); src.buffer = buf; src.playbackRate.value = rate; const g = off.createGain(); src.connect(g).connect(off.destination);
     const when = k * (lenTour - xf);
     g.gain.setValueAtTime(k ? 0.0001 : 1, when); g.gain.linearRampToValueAtTime(1, when + xf);
     g.gain.setValueAtTime(1, when + lenTour - xf); g.gain.linearRampToValueAtTime(k === tours - 1 ? 1 : 0.0001, when + lenTour);
-    src.start(when, a, lenTour + 0.02);
+    src.start(when, a, b - a + 0.02);
   }
   const r = await off.startRendering();
   return wav(r);
@@ -239,7 +240,7 @@ export async function notesVoix(buf, onStep = () => {}) {
   fin();
   const parNote = {};
   notes.forEach((o) => { (parNote[o.m] ||= []).push(o); });
-  const bilan = Object.entries(parNote).map(([m, l]) => ({ m: +m, n: l.length, cents: l.reduce((s, o) => s + o.cents, 0) / l.length, sd: l.reduce((s, o) => s + o.sd, 0) / l.length })).sort((a, b) => a.m - b.m);
+  const bilan = Object.entries(parNote).map(([m, l]) => ({ m: +m, occ: l.map((o) => o.t), n: l.length, cents: l.reduce((s, o) => s + o.cents, 0) / l.length, sd: l.reduce((s, o) => s + o.sd, 0) / l.length })).sort((a, b) => a.m - b.m);
   const fortes = bilan.filter((b) => b.n >= 2 && Math.abs(b.cents) < 12 && b.sd < 22).sort((a, b) => b.n - a.n).slice(0, 4);
   const aTravailler = bilan.filter((b) => b.n >= 2 && Math.abs(b.cents) >= 20).sort((a, b) => Math.abs(b.cents) - Math.abs(a.cents)).slice(0, 4);
   return { voix: true, notes: bilan, fortes, aTravailler, nNotes: notes.length };

@@ -47,6 +47,7 @@ const S = {
   padG: null,
   defis: store.get('defisImpro', false),
   onLoop: null,
+  fond: null, // une boucle d'enregistrement venue de L'oreille, qui tourne sous le beat
 };
 // Ce qu'on choisit de voir sur le clavier : l'accord qui joue d'emblée ; le reste se coche au besoin.
 const voir = () => new Set(store.get('kbVoir3', ['safe', 'maison']));
@@ -136,13 +137,24 @@ function play() {
   S.step = 0;
   S.nextTime = c.currentTime + 0.08;
   clockStart(S.nextTime);
+  lancerFond(S.nextTime);
   S.timer = setInterval(scheduler, 25);
   scheduler();
 }
+// Le fond : la boucle de l'enregistrement tourne sous le beat, au tempo du studio (si on change le tempo,
+// elle accélère ou ralentit avec, comme une platine : sa hauteur bouge un peu aussi).
+const vitesseFond = () => (S.fond ? (S.bpm / S.fond.bpm) * S.fond.rate : 1);
+function lancerFond(when) {
+  const f = S.fond; if (!f) return; arreterFond(); const c = audio();
+  const src = c.createBufferSource(); src.buffer = f.buf; src.loop = true; src.loopStart = f.a; src.loopEnd = f.b; src.playbackRate.value = vitesseFond();
+  const g = c.createGain(); g.gain.value = f.vol; src.connect(g).connect(finalOut()); src.start(when, f.a); f.src = src; f.g = g;
+}
+function arreterFond() { const f = S.fond; if (!f?.src) return; try { f.src.stop(); } catch { /* déjà arrêtée */ } f.src.disconnect(); f.src = null; }
 // Arrête la boucle (et l’horloge MIDI vers le matériel).
 function stopPlay() {
   if (S.playing) clockStop(S.nextTime); // après la dernière impulsion déjà programmée
   S.playing = false;
+  arreterFond();
   clearInterval(S.timer);
   S.queue = [];
   S.cur = null;
@@ -171,6 +183,7 @@ export default {
         ${lampeHTML()}
         <button class="rec-btn" data-act="rec" aria-label="Enregistrer une prise">● REC</button>${metroHTML({ tempoFixe: S.bpm })}
       </div>
+      <div class="fond-bar" hidden></div>
       <div class="chord-row"></div>
       <div class="panel grille-editeur" hidden></div>
       <div class="tabs" role="tablist">
@@ -204,6 +217,10 @@ export default {
       q('[data-act=play]').textContent = S.playing ? '■' : '▶';
       q('[data-act=play]').classList.toggle('on', S.playing);
       q('[data-act=rec]').classList.toggle('on', !!S.recorder);
+      { const fb = q('.fond-bar'); fb.hidden = !S.fond; if (S.fond) { if (S.fond.src) S.fond.src.playbackRate.value = vitesseFond();
+        fb.innerHTML = `<span class="fond-t">Sous le beat : <b>${esc(S.fond.nom)}</b> <small>${S.fond.mes} mesure${S.fond.mes > 1 ? 's' : ''} · ${S.playing ? 'elle tourne' : '▶ pour l’entendre'}</small></span>
+          <label class="fond-vol">Volume <input type="range" min="0" max="1" step="0.05" value="${S.fond.vol}" data-fond-vol></label>
+          <button class="btn small" data-act="fond-off" aria-label="Retirer la boucle du fond">✕ Retirer</button>`; } }
       const marques = progression().marques || []; const popOuvert = q('.ch-pop');
       q('.chord-row').innerHTML = accords().map((c, i) => `<div class="chord ${marques[i] ? 'ch-debut' : ''}" data-i="${i}" style="flex-grow:${tempsDe(c)}"><small>${marques[i] ? `<b class="ch-marque">${esc(marques[i])}</b> · ` : ''}${tempsDe(c) === 4 ? '1 mesure' : tempsDe(c) === 8 ? '2 mesures' : `${tempsDe(c)} temps`}</small><b>${chordName(mod12(S.key + c[0]), c[1])}</b>${clavierDe(mod12(S.key + c[0]), c[1], { compact: true })}</div>`).join('')
         + `<button class="btn small chord-edit" data-act="editer">✎ Mes propres accords</button><p class="chord-note muted">Touche un accord pour le changer. ${progression().note || ''}</p>
@@ -213,7 +230,8 @@ export default {
 
     el.addEventListener('input', (e) => {
       const k = e.target.dataset.in;
-      if (k === 'bpm') { S.bpm = +e.target.value; save(); syncTop(); }
+      if (e.target.matches('[data-fond-vol]') && S.fond) { S.fond.vol = +e.target.value; if (S.fond.g) S.fond.g.gain.value = S.fond.vol; return; }
+      if (k === 'bpm') { S.bpm = +e.target.value; save(); syncTop(); if (S.fond?.src) S.fond.src.playbackRate.value = vitesseFond(); }
     });
     el.addEventListener('change', (e) => {
       const k = e.target.dataset.in;
@@ -268,6 +286,7 @@ export default {
       const t = e.target.closest('[data-tab]');
       if (t) { tab = t.dataset.tab; store.set('studioTab', tab); renderTab(); return; }
       const act = e.target.closest('[data-act]')?.dataset.act;
+      if (act === 'fond-off') { arreterFond(); S.fond = null; syncTop(); return; }
       if (act === 'play') { S.playing ? stopPlay() : play(); syncTop(); onScene?.(); }
       if (act === 'rec') toggleRec();
       if (act === 'defis') { S.defis = !S.defis; store.set('defisImpro', S.defis); syncTop(); }
@@ -1199,4 +1218,14 @@ export function chargerGrille(key, chords, nom = 'Mes accords') {
   S.key = key;
   S.custom = { id: 'perso', name: nom, roman: chords.map(([r, q]) => chordName(r, q)).join(' – '), chords: chords.map(([r, q, b]) => [mod12(r - key), q, b]), note: 'Les accords trouvés par L’oreille dans ton enregistrement : change-les à ta guise dans « Mes propres accords ».' };
   store.set('customProg', S.custom); S.prog = 'perso'; save();
+}
+// Venue de L'oreille : une boucle de l'enregistrement tourne sous le beat. Le tempo du studio devient celui de la
+// boucle (calé sur un nombre entier de mesures, pour que le beat et la boucle retombent ensemble à chaque tour).
+export function poserFond({ nom, buf, a, b, bpm, rate = 1 }) {
+  arreterFond();
+  const mes = Math.max(1, Math.round(((b - a) / rate) / (240 / bpm))); const exact = (240 * mes) / ((b - a) / rate);
+  S.bpm = clamp(Math.round(exact), 50, 200); save();
+  S.fond = { nom, buf, a, b, bpm: exact, rate, vol: 0.8, mes, src: null };
+  if (S.playing) { stopPlay(); play(); } // le beat repart au premier temps, avec la boucle
+  return S.fond;
 }
