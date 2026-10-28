@@ -91,18 +91,17 @@ initEtincelle();
 // Chaque lieu a sa barre de sous-onglets. La voix et les disques ne sont plus des lieux à eux : ce sont des
 // sous-onglets de Jouer, avec une petite rangée de pastilles pour leurs pages.
 const VOIX = ['accord', 'miroir', 'tessiture', 'gym'];
-const LABO = ['cathedrale', 'labo'];
 const PROJET = ['projet', 'depart', 'ames']; // notre projet, et ses deux sections : d'où chacun part, ce que ça donne à deux
 const LIEUX = {
   home: { nom: 'Accueil', pages: ['', 'calendrier', 'projet', 'bilan', 'passage'], aussi: ['nouvelles', 'ames', 'depart', 'evolution', 'arbre', 'elan'] },
   carnet: { nom: 'Nos idées', pages: ['carnet', 'relais', 'coffre'], aussi: ['mur', 'corbeille', 'etincelles'] },
   ecrire: { nom: 'Écrire', pages: ['ecrire', 'paroles', 'placer', 'jeux', 'lexique'], aussi: ['atelier'] },
-  studio: { nom: 'Jouer', pages: ['studio', 'accord', 'oreille', 'cathedrale', 'materiel'], aussi: [...VOIX, ...LABO] },
+  studio: { nom: 'Jouer', pages: ['studio', 'accord', 'oreille', 'labo', 'cathedrale', 'materiel'], aussi: [...VOIX] },
 };
 const NOMS = { '': ['☼', 'Aujourd’hui'], calendrier: ['◷', 'Calendrier'], projet: ['✦', 'Notre projet'], bilan: ['↗', 'Notre bilan'], passage: ['☾', 'Nos lunes'],
   carnet: ['▦', 'Le mur'], relais: ['⇄', 'Nos échanges'], coffre: ['✧', 'Le coffre'],
   ecrire: ['✎', 'Écrire'], paroles: ['¶', 'Paroles'], placer: ['↧', 'Placer mes paroles'], jeux: ['✺', 'Le grimoire'], lexique: ['Aa', 'Notre lexique'],
-  studio: ['♪', 'Jouer'], accord: ['♫', 'Ma voix'], oreille: ['◎', 'L’oreille'], cathedrale: ['✶', 'La cathédrale'], materiel: ['⌂', 'Mon studio'] };
+  studio: ['♪', 'Jouer'], accord: ['♫', 'Ma voix'], oreille: ['◎', 'L’oreille'], labo: ['∿', 'Le labo'], cathedrale: ['✶', 'La cathédrale'], materiel: ['⌂', 'Mon studio'] };
 const NOMS_FAM = { projet: 'Le cap et le plan', depart: 'Notre point de départ', ames: 'Nos deux âmes' };
 const lieuDe = (id) => Object.keys(LIEUX).find((k) => LIEUX[k].pages.includes(id) || LIEUX[k].aussi.includes(id)) || null;
 const view = $('#view');
@@ -164,12 +163,12 @@ async function route() {
     sub.className = 'subnav';
     sub.setAttribute('aria-label', LIEUX[lieu].nom);
     // Le sous-onglet actif : la page elle-même, ou sa famille (toute page de voix allume « Ma voix »).
-    const actif = (m) => m === ici || (m && m === v.id) || (m === 'accord' && VOIX.includes(v.id)) || (m === 'cathedrale' && LABO.includes(v.id)) || (m === 'projet' && PROJET.includes(ici));
+    const actif = (m) => m === ici || (m && m === v.id) || (m === 'accord' && VOIX.includes(v.id)) || (m === 'projet' && PROJET.includes(ici));
     sub.innerHTML = `<div class="sub-l">${LIEUX[lieu].pages.map((m) => { const mm = MODULES.find((x) => x.id === m); const [num, nom] = NOMS[m] || [mm?.num || '', mm?.name || m]; return `<a href="#/${m}" class="${actif(m) ? 'active' : ''}" style="--c:${mm?.color || 'var(--c-studio)'}"><span class="mono">${num}</span>${nom}</a>`; }).join('')}</div>`;
     view.prepend(sub);
     // Une famille de pages (la voix, les disques) : ses pastilles, juste sous la barre.
-    const fam = VOIX.includes(v.id) ? VOIX : LABO.includes(v.id) ? LABO : PROJET.includes(ici) ? PROJET : null;
-    if (fam) { const p = document.createElement('nav'); p.className = 'sub-fam'; p.setAttribute('aria-label', fam === VOIX ? 'Ma voix' : fam === LABO ? 'La cathédrale' : 'Notre projet'); p.innerHTML = fam.map((m) => { const mm = MODULES.find((x) => x.id === m); return `<a href="#/${m}" class="${m === ici ? 'active' : ''}">${NOMS_FAM[m] || mm?.name || m}</a>`; }).join(''); sub.after(p); }
+    const fam = VOIX.includes(v.id) ? VOIX : PROJET.includes(ici) ? PROJET : null;
+    if (fam) { const p = document.createElement('nav'); p.className = 'sub-fam'; p.setAttribute('aria-label', fam === VOIX ? 'Ma voix' : 'Notre projet'); p.innerHTML = fam.map((m) => { const mm = MODULES.find((x) => x.id === m); return `<a href="#/${m}" class="${m === ici ? 'active' : ''}">${NOMS_FAM[m] || mm?.name || m}</a>`; }).join(''); sub.after(p); }
     // Sur téléphone, le sous-onglet actif reste visible même s'il est le dernier.
     requestAnimationFrame(() => { const l = sub.querySelector('.sub-l'); const act = sub.querySelector('.active'); if (act && l.scrollWidth > l.clientWidth) l.scrollLeft = act.offsetLeft - 16; });
   }

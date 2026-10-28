@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.58', quand: '2026-10-28', titre: 'Le labo a son onglet', items: [
+    ['Jouer → Le labo', ['Les disques (accélérer un rythme jusqu’à ce qu’il chante) ont de nouveau leur propre onglet dans Jouer, juste avant la cathédrale.']],
+    ['La cathédrale, plus nette', ['Les arches de la nef disent leur numéro et leur moment, sans rien qui se chevauche ; la famille et l’accord sont dans les rangées du dessous.']],
+  ] },
   { v: '0.57', quand: '2026-10-28', titre: 'Une passe sur toute l’app', items: [
     ['Lisible partout', ['Chaque page a été mesurée : les petites étiquettes, les notes et les légendes montent à une taille lisible, les cases à cocher deviennent de vraies cases, les pastilles de couleur se voient, et les paragraphes ne s’étirent plus d’un bord à l’autre.']],
     ['Des titres qui laissent de la place', ['Les grands titres de page sont plus compacts : on arrive tout de suite à ce qu’on vient faire.']],
