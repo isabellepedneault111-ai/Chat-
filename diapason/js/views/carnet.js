@@ -11,6 +11,7 @@ import { togglePerle } from './coffre.js';
 import { projets, projetCourant, setProjet, projetNom, creerProjet } from '../projets.js';
 import { skyHTML, rencontres, matches, kindOf, sleepingDays } from '../constellation.js';
 import { ouvrirRencontre, nonMerci, refuser } from '../rencontre.js';
+import { ecoutesHTML } from '../ecoute.js';
 import { creerChanson, nomsDeChansons, chansonNommee } from '../chanson.js';
 
 // Échappe un texte avant de l’afficher dans la page : <, &, " et ' deviennent inoffensifs, pour qu’un mot tapé ne casse jamais l’affichage.
@@ -409,6 +410,7 @@ export default {
           ${e.data?.relais ? `<div class="cm-intents">${intentsHTML(e)}${layersOf(e) > 1 ? `<span class="cm-layers">${layersOf(e)} couches</span>` : ''}</div>` : ''}
           ${songOf(e) && view !== 'morceaux' ? `<span class="cm-song">${esc(songOf(e))}</span>` : ''}
           ${view === 'morceaux' ? `<span class="cm-song">${STAGES[st].label}</span>` : ''}
+          ${st === 1 ? ecoutesHTML(e, { court: true }) : ''}
           <div class="cm-bottom">
             ${e.audio ? `<button class="icon-btn tiny" data-play="${e.id}" aria-label="Écouter">▶</button>` : ''}
             ${e.type === 'lien' ? `<a class="cm-link" href="${esc(e.data?.url || e.body)}" target="_blank" rel="noopener">${esc(e.data?.kind || 'Lien')} ↗</a>` : ''}
@@ -474,7 +476,7 @@ export default {
         <div class="detail-fields">
           <label class="field col"><span>Étape</span><select data-d="stage">${STAGES.map((st) => `<option value="${st.id}" ${st.id === stageOf(e) ? 'selected' : ''}>${st.label}</option>`).join('')}</select></label>
           ${e.type !== 'paroles' ? `<label class="field col"><span>Morceau</span><select data-d="song"><option value="">— Aucun —</option>${songs.map((s) => `<option ${s === songOf(e) ? 'selected' : ''}>${esc(s)}</option>`).join('')}<option value="__new">+ Nouveau morceau…</option></select></label>` : ''}
-        </div>` : ''}
+        </div>${stageOf(e) <= 1 ? ecoutesHTML(e) : ''}` : ''}
         <h4>Réponses</h4>
         <ol class="replies">${(e.data?.replies || []).map((r) => `<li style="--c:${memberColor(r.by)}"><b>${esc(r.by)}</b> <span class="muted small">${ago(r.at)}</span><p>${esc(r.text)}</p></li>`).join('') || '<li class="muted small">Pas encore de réponse.</li>'}</ol>
         <form class="reply-form"><input class="input" data-d="reply" placeholder="Répondre à ${esc(e.author === espace.me ? other() : e.author)}…" aria-label="Réponse"><button class="btn small" type="submit">Envoyer</button></form>
@@ -646,6 +648,8 @@ export default {
       if (v) { view = v.dataset.v; store.set('murVue', view); renderAll(true); return; }
       const oid = e.target.closest('[data-open-id]');
       if (oid) { openDetail(oid.dataset.openId); return; }
+      const re = e.target.closest('[data-reecoute]');
+      if (re) { const en = espace.entries.find((x) => x.id === re.dataset.reecoute); if (en) { re.disabled = true; await patch(en, (d) => ({ ecoutes: { ...(d.ecoutes || {}), [espace.me]: Date.now() } })).catch((err) => toast(err.message)); openDetail(en.id); } return; }
       const rn = e.target.closest('[data-ren]');
       if (rn) { const p = pairs[+rn.dataset.ren]; if (p) meet(p); return; }
       const rx = e.target.closest('[data-ren-non]');

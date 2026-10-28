@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.49', quand: '2026-10-28', titre: 'Réécoutée, par qui', items: [
+    ['« Je l’ai réécoutée »', ['Sur une idée brute ou à creuser, chacun coche quand il l’a vraiment réécoutée. Deux pastilles disent qui l’a fait. « À creuser » ne compte dans notre plan qu’une fois réécoutée par les deux.']],
+    ['Une rencontre nourrit ses parents', ['Quand une rencontre donne quelque chose, ses deux idées de départ sont réécoutées (par toi) et montent d’une étape, jusqu’à « En chantier ». Fixer ou mettre dans le set reste une décision à deux.']],
+    ['Des sons bruts', ['Tant que le mur a moins de quatre sons, chacun voit un prochain pas : lancer deux bouts bruts dans la semaine (clavier pour Frog, voix pour Zaza). Dix secondes suffisent.']],
+  ] },
   { v: '0.48', quand: '2026-10-28', titre: 'Le métronome, et des rencontres qui mènent quelque part', items: [
     ['♩ Métronome pendant la prise', ['À côté de chaque bouton d’enregistrement (Jouer, Relais, séance, exercices) : un clic par temps dans tes écouteurs, une mesure de décompte avant de commencer. Le clic n’est pas enregistré.']],
     ['La rencontre se fait pour vrai', ['« Les faire se rencontrer » ouvre l’exercice sur place : le son tourne et ses mots s’affichent pour chanter dessus, ou on enchaîne deux sons, ou on tresse deux textes. Rien n’arrive au mur tant que rien n’en est né. « Pas pour nous » écarte une paire pour de bon.']],

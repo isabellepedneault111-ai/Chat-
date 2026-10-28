@@ -1,9 +1,12 @@
 // Calculs du plan de six mois à partir du mur : mois en cours, mesures automatiques, rythme de la semaine.
 import { espace } from './espace.js';
+import { parLesDeux } from './ecoute.js';
 
 const DAY = 86400000;
 const CREATIVE = new Set(['note', 'texte', 'audio', 'essai', 'paroles']);
-const stageOf = (e) => (e.data && Number.isInteger(e.data.stage) ? e.data.stage : e.type === 'paroles' ? 2 : 0);
+const etape = (e) => (e.data && Number.isInteger(e.data.stage) ? e.data.stage : e.type === 'paroles' ? 2 : 0);
+// « À creuser » ne compte qu'une fois réécoutée par les deux ; sinon, l'idée est encore brute pour le plan.
+const stageOf = (e) => { const s = etape(e); return s === 1 && !parLesDeux(e) ? 0 : s; };
 const songOf = (e) => (e.type === 'paroles' ? (e.title || 'Sans titre') : e.data?.song || '');
 
 // Le jour où notre plan de six mois a commencé.

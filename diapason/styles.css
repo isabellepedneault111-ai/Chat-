@@ -3801,3 +3801,11 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .rc-boite footer p { flex: 1 1 100%; margin: 0; }
 .ren-origin .btn { margin-left: 6px; vertical-align: middle; }
 @media (max-width: 560px) { .rc-deux, .rc-image { grid-template-columns: 1fr; } .rc-boite { padding: 14px; box-shadow: 4px 4px 0 var(--ink); } }
+
+/* Réécoutée, par qui */
+.ec-ps { display: inline-flex; gap: 4px; flex-wrap: wrap; }
+.ec-p { display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px; border-radius: 99px; border: 1.5px solid var(--c); font-size: .74rem; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.ec-p.on { background: var(--c); color: #fff; }
+.ec-bloc { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 8px 0 4px; padding: 8px 10px; border: 1.5px dashed var(--ink); border-radius: 10px; }
+.ec-k { font-weight: 700; font-size: .85rem; }
+.ec-bloc small { flex: 1 1 100%; }

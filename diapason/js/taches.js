@@ -42,6 +42,11 @@ export function mesTaches(me = espace.me) {
     const miennes = sem.filter((e) => e.data.par === me && e.data.sorte !== 'jalon').length;
     const couvert = Object.entries(RYTHME).every(([k, v]) => sem.filter((e) => e.data.sorte === k).length >= v);
     if (miennes < maPart && !couvert && Date.now() < l0 + 6 * 864e5) t.push({ id: 'plage-semaine', titre: 'Proposer une plage cette semaine', pourquoi: `Ta moitié de notre rythme : ${maPart} plages (tu en as proposé ${miennes}). Le reste, c’est ${o}.`, lien: '#/calendrier' });
+    // Le ciel a besoin de sons : tant qu'il y en a moins de quatre au mur, chacun en lance deux bruts par semaine
+    // (Frog au clavier, Zaza à la voix). Pas fini, pas mixé : dix secondes suffisent pour qu'une rencontre devienne possible.
+    const sonsMur = espace.entries.filter((e) => e.audio && !e.audio.type?.startsWith('video') && !e.data?.corbeille && !e.data?.rencontre);
+    const mesSons = sonsMur.filter((e) => e.author === me && e.createdAt >= Date.now() - 7 * 864e5).length;
+    if (sonsMur.length < 4 && mesSons < 2) t.push({ id: 'bouts-bruts', titre: me === 'Frog' ? 'Lancer deux ou trois bouts de clavier bruts' : 'Lancer deux ou trois bouts de voix bruts', pourquoi: `${sonsMur.length === 0 ? 'Le mur n’a aucun son' : sonsMur.length === 1 ? 'Le mur n’a qu’un seul son' : `Le mur n’a que ${sonsMur.length} sons`} : presque rien à faire rencontrer avec vos mots. Dix secondes, pas fini, pas mixé (${mesSons} sur 2 cette semaine).`, lien: '#/relais' });
     // L'objectif de la semaine, à fixer à deux ; la semaine passée, à évaluer chacun.
     if (!objectifSemaine()) t.push({ id: 'objectif', titre: 'Fixer l’objectif de la semaine', pourquoi: `Un objectif qu’on pourra vérifier dimanche, à deux${o ? ` avec ${o}` : ''}.`, lien: '#/' });
     const avant = semaines().find((x) => x.data.debut === l0 - 7 * 864e5);
