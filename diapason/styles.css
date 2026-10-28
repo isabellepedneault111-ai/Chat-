@@ -748,7 +748,7 @@ cite, .phase-src { display: block; font-style: normal; font-family: var(--mono);
 .meter-big { --p: 0; position: relative; height: 30px; border: 1.5px solid var(--rule); border-radius: 4px; background: var(--surface2); overflow: hidden; }
 .meter-big i { position: absolute; inset: 0 auto 0 0; width: calc(var(--p) * 1%); background: repeating-linear-gradient(-45deg, var(--rec) 0 10px, #e2543f 10px 20px); transition: width .6s; }
 .meter-big span { position: relative; display: block; text-align: right; padding: 4px 10px; font-weight: 600; }
-a.next-card { display: block; text-decoration: none; transition: transform .15s; }
+.next-card { display: block; text-decoration: none; transition: transform .15s; }
 a.next-card:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--rec); }
 .next-card .btn.primary { margin-top: 6px; }
 .last-target { margin: 10px 0; padding: 10px 12px; border-left: 3px solid var(--tape); font-style: italic; color: #e7dfd0; }
@@ -3961,3 +3961,8 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .mod-head { margin-bottom: 14px !important; padding-bottom: 0 !important; }
 .mod-head h1 { max-width: none !important; }
 .nf-nef { padding-top: 14px; }
+.coche li.manuel .coche-l { display: grid; grid-template-columns: 24px 1fr; gap: 12px; align-items: start; padding: 10px 2px; border-bottom: 1px solid rgba(29, 26, 21, .12); }
+.coche li.manuel .ce-t { color: inherit; text-decoration: none; }
+.coche li.manuel .ce-t:hover b { text-decoration: underline; }
+.next-card .last-target a { color: inherit; font-weight: 700; }
+div.next-card .btn { align-self: flex-start; }

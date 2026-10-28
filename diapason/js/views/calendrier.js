@@ -238,6 +238,8 @@ export default {
       if (ds.ics) { const e = espace.entries.find((x) => x.id === ds.ics); if (e) ics(e); }
     });
     render();
+    // Arrivée par « Proposer une plage » (l'accueil) : le formulaire est déjà ouvert.
+    if (/[?&]proposer/.test(location.hash)) setTimeout(() => ouvrirProposer(), 60);
     let sig = ''; const off = onEspace((w) => { if (w !== 'entries' && w !== 'meta') return; const s = JSON.stringify(espace.entries.filter((e) => e.type === 'plage' || e.type === 'pas').map((e) => [e.id, e.updatedAt])); if (s !== sig) { sig = s; if (!el.querySelector('.cl-prop:not([hidden]) input:focus, .cl-pas-f input:focus, [data-autre-txt]:focus')) render(); } });
     return () => off?.();
   },

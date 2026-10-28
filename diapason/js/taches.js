@@ -10,6 +10,10 @@ import { deLautre, fait, decrire } from './suivi.js';
 import { asksOf } from './views/relais.js';
 import { lundi, semaines, objectifSemaine } from './objectifs.js';
 
+// Un pas écrit à la main mène là où ses mots le disent (« recréer mon studio » → mon studio) ; sinon, au calendrier.
+const LIEUX_PAS = [[/studio|mat[ée]riel|branch/i, '#/materiel'], [/labo|disque/i, '#/labo'], [/cath[ée]drale/i, '#/cathedrale'], [/parole|texte|[ée]cri/i, '#/ecrire'], [/chanson|accord|beat/i, '#/studio?tab=chanson'], [/voix|chant/i, '#/accord'], [/plage|calendrier/i, '#/calendrier?proposer'], [/session|s[ée]ance/i, '#/session'], [/mur|id[ée]e/i, '#/carnet']];
+export const lienDuPas = (t = '') => (LIEUX_PAS.find(([re]) => re.test(t)) || [, '#/calendrier'])[1];
+
 // Notre rythme de la semaine. Chacun en propose sa moitié (même pas encore approuvée) : son pas « proposer » est alors fait.
 export const RYTHME = { presence: 2, distance: 1, pro: 1, jeu: 1 };
 const autreDe = (me) => (espace.meta?.members || MEMBERS).find((m) => m !== me);
@@ -25,7 +29,7 @@ export function mesTaches(me = espace.me) {
   // Une plage proposée par l'autre attend mon accord.
   espace.entries.filter((e) => e.type === 'plage' && e.data?.statut === 'propose' && e.data.par !== me && e.data.debut > Date.now() - 864e5).forEach((e) => t.push({ id: `plage-${e.id}`, titre: `Répondre à la plage proposée par ${e.data.par}`, pourquoi: `${new Date(e.data.debut).toLocaleString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}${e.data.note ? ` : ${e.data.note}` : ''}. Approuve-la, ou propose autre chose.`, lien: '#/calendrier' }));
   // Les pas qu'on s'est donnés à la main, pas encore cochés.
-  espace.entries.filter((e) => e.type === 'pas' && !e.data?.fait && (e.data?.pour === me || e.data?.pour === 'deux')).forEach((e) => t.push({ id: `pas-${e.id}`, titre: e.title, pourquoi: e.data.pour === 'deux' ? 'Un pas pour nous deux.' : `Ajouté par ${e.author === me ? 'toi' : e.author}.`, lien: '#/calendrier', manuel: e.id }));
+  espace.entries.filter((e) => e.type === 'pas' && !e.data?.fait && (e.data?.pour === me || e.data?.pour === 'deux')).forEach((e) => t.push({ id: `pas-${e.id}`, titre: e.title, pourquoi: e.data.pour === 'deux' ? 'Un pas pour nous deux.' : `Ajouté par ${e.author === me ? 'toi' : e.author}.`, lien: lienDuPas(e.title), manuel: e.id }));
   if (moi) attendMoi().slice(0, 3).forEach((e) => t.push({ id: `rep-${e.id}`, titre: `Répondre à « ${e.title || 'sans titre'} »`, pourquoi: `${e.author} te l’a lancé au relais. Quand vous vous répondez, vos fils se rapprochent.`, lien: `#/relais/${e.id}` }));
   // Le studio en photos (pour Frog, qui fait le son) : chaque appareil, sa marque et son modèle, puis toute la pièce.
   if (me === 'Frog') {
@@ -41,7 +45,7 @@ export function mesTaches(me = espace.me) {
     const total = Object.values(RYTHME).reduce((a, b) => a + b, 0); const maPart = Math.ceil(total / 2);
     const miennes = sem.filter((e) => e.data.par === me && e.data.sorte !== 'jalon').length;
     const couvert = Object.entries(RYTHME).every(([k, v]) => sem.filter((e) => e.data.sorte === k).length >= v);
-    if (miennes < maPart && !couvert && Date.now() < l0 + 6 * 864e5) t.push({ id: 'plage-semaine', titre: 'Proposer une plage cette semaine', pourquoi: `Ta moitié de notre rythme : ${maPart} plages (tu en as proposé ${miennes}). Le reste, c’est ${o}.`, lien: '#/calendrier' });
+    if (miennes < maPart && !couvert && Date.now() < l0 + 6 * 864e5) t.push({ id: 'plage-semaine', titre: 'Proposer une plage cette semaine', pourquoi: `Ta moitié de notre rythme : ${maPart} plages (tu en as proposé ${miennes}). Le reste, c’est ${o}.`, lien: '#/calendrier?proposer' });
     // Le ciel a besoin de sons : tant qu'il y en a moins de quatre au mur, chacun en lance deux bruts par semaine
     // (Frog au clavier, Zaza à la voix). Pas fini, pas mixé : dix secondes suffisent pour qu'une rencontre devienne possible.
     const sonsMur = espace.entries.filter((e) => e.audio && !e.audio.type?.startsWith('video') && !e.data?.corbeille && !e.data?.rencontre);

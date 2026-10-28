@@ -1,5 +1,5 @@
 // Accueil = le plan de match de Zaza & Frog : six mois, des idées brutes à 3 à 5 originaux.
-import { espace, onEspace, updateEspace, profileOf, audioURL } from '../espace.js';
+import { espace, onEspace, updateEspace, profileOf, audioURL, saveEntry } from '../espace.js';
 import { toast, store } from '../ui.js';
 import { MODULES } from '../data.js';
 import { PLAN, RYTHME, VISION_FIELDS, STAGES, MEMBERS, memberColor, ROLES, aspect, lienAuMoment } from '../duo.js';
@@ -65,8 +65,10 @@ function commencerHTML() {
 function listeHTML() {
   const t = mesTaches(); const dep = commencerHTML(); const reste = dep.filter((x) => !x[3]); const faits = dep.filter((x) => x[3]);
   const ligne = (titre, sous, lien, fait = false) => `<li class="${fait ? 'fait' : ''}"><a href="${lien}"><span class="case" aria-hidden="true">${fait ? '✓' : ''}</span><span class="ce-t"><b>${esc(titre)}</b>${sous && !fait ? `<small>${esc(sous)}</small>` : ''}</span></a></li>`;
+  // Un pas qu'on s'est donné : sa case se coche ici même ; son titre mène là où ses mots le disent.
+  const manuel = (x) => `<li class="manuel"><span class="coche-l"><input class="pa-case" type="checkbox" data-pas-fait="${esc(x.manuel)}" aria-label="Fait : ${esc(x.titre)}"><a href="${x.lien}" class="ce-t"><b>${esc(x.titre)}</b><small>${esc(x.pourquoi || '')}</small></a></span></li>`;
   return `<section class="papier pa-liste"><span class="collant" aria-hidden="true"></span><div class="pa-tete"><h2>À faire</h2><a class="small" href="#/calendrier">Tous nos pas →</a></div>
-    <ul class="coche">${t.map((x) => ligne(x.titre, x.pourquoi, x.lien)).join('')}${reste.map(([ti, d, h]) => ligne(ti, d, h)).join('')}${faits.map(([ti, , h]) => ligne(ti, '', h, true)).join('')}</ul>
+    <ul class="coche">${t.map((x) => (x.manuel ? manuel(x) : ligne(x.titre, x.pourquoi, x.lien))).join('')}${reste.map(([ti, d, h]) => ligne(ti, d, h)).join('')}${faits.map(([ti, , h]) => ligne(ti, '', h, true)).join('')}</ul>
     ${!t.length && !reste.length ? '<p class="pa-vide">Rien d’urgent. Une idée te vient? La flamme, en bas à gauche.</p>' : ''}</section>`;
 }
 const OU_ALLER = [
@@ -84,6 +86,11 @@ export default {
     // Nos nouvelles vivent ici, en haut d'Aujourd'hui : montées une fois, replacées après chaque dessin de l'accueil.
     const nvEl = document.createElement('div'); nvEl.className = 'nv-inclus';
     const offNv = nouvelles.mount(nvEl, { inclus: true });
+    // Cocher un pas qu'on s'est donné, ici même : il est fait (on le retrouve, coché, dans le calendrier).
+    el.addEventListener('change', async (e) => {
+      const id = e.target.dataset?.pasFait; if (!id) return; const en = espace.entries.find((x) => x.id === id); if (!en) return;
+      try { await saveEntry({ ...en, data: { ...en.data, fait: true, faitAt: Date.now() } }, { baseUpdatedAt: en.updatedAt }); toast('Fait. Bravo.'); } catch (err) { e.target.checked = false; toast(err.message); }
+    });
     const placerNv = () => { const s = el.querySelector('.nv-slot'); if (s) s.replaceWith(nvEl);
       // Les réponses en son de la carte de la semaine : leur adresse se charge après le dessin.
       el.querySelectorAll('audio[data-cs-son]').forEach(async (a) => { const e = espace.entries.find((x) => x.id === a.dataset.csSon); try { if (e?.audio) a.src = await audioURL(e.audio); } catch { /* introuvable */ } }); };
@@ -253,14 +260,14 @@ export default {
             <cite>${goal.src}</cite>
             ${semaineHTML()}
           </div>
-          <a class="next-card" href="#/session">
+          <div class="next-card">
             <p class="tape red">${live ? 'En direct' : 'Prochaine séance'}</p>
             <h3>${esc(next.label)}</h3>
             <p>${esc(next.why)}</p>
-            ${(() => { const pl = espace.entries.filter((e) => e.type === 'plage' && e.data?.statut === 'confirme' && e.data.debut > Date.now()).sort((x, y) => x.data.debut - y.data.debut)[0]; return pl ? `<p class="last-target"><span class="mono">Au calendrier, à nous deux :</span> ${new Date(pl.data.debut).toLocaleString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}${pl.data.note ? ` · ${esc(pl.data.note)}` : ''}</p>` : '<p class="last-target"><span class="mono">Au calendrier :</span> rien de fixé. Proposez une plage →</p>'; })()}
+            ${(() => { const pl = espace.entries.filter((e) => e.type === 'plage' && e.data?.statut === 'confirme' && e.data.debut > Date.now()).sort((x, y) => x.data.debut - y.data.debut)[0]; return pl ? `<p class="last-target"><span class="mono">Au calendrier, à nous deux :</span> ${new Date(pl.data.debut).toLocaleString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}${pl.data.note ? ` · ${esc(pl.data.note)}` : ''}</p>` : '<p class="last-target"><span class="mono">Au calendrier :</span> rien de fixé. <a href="#/calendrier?proposer">Proposer une plage →</a></p>'; })()}
             ${last ? `<p class="last-target"><span class="mono">La dernière fois, vous vous êtes dit :</span> « ${esc(last.data.debrief.prochaine)} »</p>` : ''}
-            <span class="btn primary">● ${live ? 'Rejoindre' : 'Lancer la session'}</span>
-          </a>
+            <a class="btn primary" href="#/session">● ${live ? 'Rejoindre' : 'Lancer la session'}</a>
+          </div>
           ${(() => { const at = attendMoi(); if (!at.length) return ''; const e = at[0]; const j = Math.floor((Date.now() - e.createdAt) / 864e5);
             return `<a class="next-card nc-tresse" href="#/relais/${esc(e.id)}"><p class="tape">La tresse attend ta réponse</p><h3>« ${esc(e.title || 'sans titre')} »</h3><p>${esc(e.author)} te l’a lancé ${j < 1 ? 'aujourd’hui' : j < 2 ? 'hier' : `il y a ${j} jours`}${at.length > 1 ? `, et ${at.length - 1} autre${at.length > 2 ? 's' : ''} attend${at.length > 2 ? 'ent' : ''} aussi` : ''}. Quand vous vous répondez, vos deux fils se rapprochent.</p><span class="btn">Répondre →</span></a>`; })()}
         </section>

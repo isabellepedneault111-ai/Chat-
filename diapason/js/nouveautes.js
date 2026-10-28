@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.59', quand: '2026-10-28', titre: 'Chaque lien mène où il le dit', items: [
+    ['Les pas qu’on se donne', ['Un pas écrit à la main mène là où ses mots le disent : « Recréer mon studio » ouvre ton studio, « le labo » ouvre le labo, une plage ouvre le calendrier. Et sa case se coche directement sur l’accueil.']],
+    ['Proposer une plage', ['Dans la carte « Prochaine séance », « Proposer une plage » ouvre le calendrier avec le formulaire déjà prêt (avant, toute la carte menait à Session).']],
+  ] },
   { v: '0.58', quand: '2026-10-28', titre: 'Le labo a son onglet', items: [
     ['Jouer → Le labo', ['Les disques (accélérer un rythme jusqu’à ce qu’il chante) ont de nouveau leur propre onglet dans Jouer, juste avant la cathédrale.']],
     ['La cathédrale, plus nette', ['Les arches de la nef disent leur numéro et leur moment, sans rien qui se chevauche ; la famille et l’accord sont dans les rangées du dessous.']],
