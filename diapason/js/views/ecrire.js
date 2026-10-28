@@ -7,6 +7,10 @@ import { memberColor, MEMBERS } from '../duo.js';
 import { togglePerle } from './coffre.js';
 import { grooveHTML, bindGroove } from '../groove.js';
 import { uploadAudio, audioURL } from '../espace.js';
+import { rituel } from '../rituel.js';
+import { SOURCES, tirer } from '../sources.js';
+import { CARTES } from './jeux.js';
+import { logPractice } from '../traces.js';
 
 // Une invitation par jour, la même pour les deux : on écrit sur la même porte d'entrée.
 const INVITES = [
@@ -53,7 +57,7 @@ export default {
     const coupeFond = () => { el.querySelector('.groove.on [data-g=play]')?.click(); el.querySelector('.flux-piece audio')?.pause(); };
     // Le flux : 5 minutes, un mot qui tombe toutes les 20 secondes, pas d'effacement si on le veut.
     function startFlux() {
-      fond();
+      if (el.querySelector('[data-e=musique]')?.checked) fond(); // la musique seulement si on la veut
       const ta = el.querySelector('.flux-text'); ta.focus();
       const t0 = Date.now(); const total = 300;
       const mot = () => { const m = el.querySelector('.flux-mot'); if (m) { m.textContent = MOTS_FLUX[Math.floor(Math.random() * MOTS_FLUX.length)]; m.classList.remove('in'); void m.offsetWidth; m.classList.add('in'); } };
@@ -86,6 +90,21 @@ export default {
         setTimeout(() => yaourt === r && r.stop(), 90000);
       } catch { toast('Micro refusé : autorise-le dans la barre d’adresse.'); }
     }
+    // L'intention d'écriture : l'invitation du jour, ou une carte pigée au grimoire (le rituel, sans son par défaut).
+    let carte = null;
+    const intentionHTML = () => (carte
+      ? `<p class="ec-invite ec-carte"><small>Ta carte · ${esc(carte.source)}</small><b>${esc(carte.mots.join(' · '))}</b> ${esc(carte.consigne)}</p><p class="ec-int-b"><button class="linklike" data-e="piger">Piger une autre carte</button> · <button class="linklike" data-e="invite">Revenir à l’invitation du jour</button></p>`
+      : `<p class="ec-invite"><small>L’invitation du jour</small>${esc(inviteDu())}</p><p class="ec-int-b"><button class="btn small" data-e="piger">🂠 Ou piger une carte du grimoire</button></p>`);
+    function piger() {
+      // Une source au hasard (les arcanes, ce qui nous touche, nos peurs, une contrainte, ou les consignes du grimoire).
+      const src = SOURCES[Math.floor(Math.random() * SOURCES.length)];
+      const tirages = tirer(src.id, [], CARTES);
+      rituel(tirages, { kind: src.id, words: tirages.flatMap((t) => t.mots), theme: src.id === 'mots' ? 'Le grimoire' : src.nom, note: src.note, onAccept: (t) => {
+        carte = { source: src.id === 'mots' ? 'Le grimoire' : src.nom, nom: t.card.nom, consigne: t.card.consigne, mots: t.mots };
+        logPractice('grimoire', 1, { carte: t.card.nom, mot: t.mots.join(', ') });
+        el.querySelector('.ec-intention').innerHTML = intentionHTML(); el.querySelector('.ec-text')?.focus();
+      } });
+    }
     // Monte la page Écrire : les chemins, la page du jour, écrire sur le beat, le journal.
     function shell() {
       if (!espace.connected || !espace.me) { espaceGate(el, { onReady: shell }); return; }
@@ -97,7 +116,7 @@ export default {
         </div></div>
         <nav class="ec-chemins" aria-label="Les chemins de l’écriture">${CHEMINS.map(([h, t, d]) => `<a href="#/${h}"><b>${t}</b><small>${d}</small></a>`).join('')}<button class="ec-chemin-flip" data-e="aller-idees"><b>Nos idées pour le labo</b><small>Ce qu’on aimerait changer ou ajouter dans l’app : on le note ici, Zaza le transmet.</small></button></nav>
         <section class="ec-new">
-          <p class="ec-invite"><small>L’invitation du jour</small>${esc(inviteDu())}</p>
+          <div class="ec-intention">${intentionHTML()}</div>
           <textarea class="input ec-text" rows="5" placeholder="Écris ce qui vient. Rien ne sera jugé."></textarea>
           <p class="mo-astuce">Double-clique un mot : ses rimes (de la plus riche à la plus simple) et ses synonymes.</p>
           <div class="ec-row"><button class="btn primary" data-e="save">Dans le journal</button><span class="muted small">${esc((espace.meta.members || MEMBERS).find((m) => m !== espace.me) || '')} le verra en ouvrant l’app.</span></div>
@@ -114,6 +133,7 @@ export default {
             <button class="btn primary" data-e="flux">▶ 5 minutes de flux</button>
             <button class="btn" data-e="yaourt">● Mumble : chanter sans mots</button>
             <label class="check"><input type="checkbox" data-e="noback" checked> Sans effacer</label>
+            <label class="check"><input type="checkbox" data-e="musique"> ♪ Avec la musique</label>
             <span class="flux-time mono"></span>
           </div>
           <p class="flux-mot" aria-live="polite"></p>
@@ -180,6 +200,8 @@ export default {
       const pa = e.target.closest('[data-pa]');
       if (pa) { const en = espace.entries.find((x) => x.id === pa.dataset.pa); if (en?.audio) { pa.outerHTML = `<audio controls autoplay src="${await audioURL(en.audio)}"></audio>`; } return; }
       const a = e.target.closest('[data-e]')?.dataset.e;
+      if (a === 'piger') { piger(); return; }
+      if (a === 'invite') { carte = null; el.querySelector('.ec-intention').innerHTML = intentionHTML(); return; }
       if (!a) return;
       if (a === 'aller-idees') { el.querySelector('#idees-flip').scrollIntoView({ behavior: 'smooth', block: 'start' }); el.querySelector('[data-e=idee-txt]').focus({ preventScroll: true }); return; }
       if (a === 'idee') {
@@ -208,7 +230,7 @@ export default {
         const text = ta.value.trim();
         if (!text) { ta.focus(); return; }
         try {
-          await saveEntry({ type: 'texte', title: text.split('\n')[0].slice(0, 80), body: text, data: { journal: true, date: today(), invite: inviteDu(), stage: 0 } });
+          await saveEntry({ type: 'texte', title: text.split('\n')[0].slice(0, 80), body: text, data: { journal: true, date: today(), ...(carte ? { carte } : { invite: inviteDu() }), stage: 0 } });
           ta.value = '';
           toast('Dans le journal.');
         } catch (err) { toast(err.message); }

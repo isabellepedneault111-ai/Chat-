@@ -50,7 +50,7 @@ export function metroHTML({ tempoFixe = null } = {}) {
     <button type="button" class="metro-seul ${marche?.seul ? 'on' : ''}" data-metro-seul aria-pressed="${!!marche?.seul}" title="Le métronome seul, sans enregistrer">${marche?.seul ? '■' : '▶'}</button>
     <button type="button" class="metro-on ${r.on ? 'on' : ''}" data-metro-on aria-pressed="${r.on}" title="Un clic sur chaque temps pendant la prise, dans tes écouteurs (il n’est pas enregistré)">♩ Métronome</button>
     ${tempoFixe ? `<small class="metro-t">${Math.round(tempoFixe)} BPM</small>` : `<label class="metro-t"><input type="number" min="40" max="220" value="${r.bpm}" data-metro-bpm aria-label="Tempo du métronome"> BPM</label>`}
-    <label class="metro-d"><input type="checkbox" data-metro-dec ${r.dec ? 'checked' : ''}> décompte</label></span>`;
+    <label class="metro-d" title="Quatre clics (1, 2, 3, 4) avant que la prise commence, pour entrer en mesure"><input type="checkbox" data-metro-dec ${r.dec ? 'checked' : ''}> 1-2-3-4 avant</label></span>`;
 }
 // Branche, une fois pour toute l'app, les réglages du métronome (où qu'ils soient dans la page).
 export function installerMetronome() {

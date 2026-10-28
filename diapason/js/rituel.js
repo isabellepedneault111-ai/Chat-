@@ -3,6 +3,10 @@
 // Cartes en 3D CSS, braises et fumée sur canvas, nappe et cloche en Web Audio.
 import { audio, out } from './audio.js';
 import { FLAME } from './marque.js';
+import { store } from './ui.js';
+
+// Le son du rituel (la nappe, la cloche) : coupé par défaut ; le petit bouton ♪ l'allume, et l'app s'en souvient.
+const avecSon = () => store.get('rituelSon', false);
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI', 'XXII'];
@@ -185,6 +189,7 @@ export function rituel(tirages, { onAccept, theme = '', kind = 'mots', words = [
   box.innerHTML = `
     <canvas class="rt-embers" aria-hidden="true"></canvas>
     <button class="rt-close" data-r="close" aria-label="Fermer">×</button>
+    <button class="rt-son ${avecSon() ? 'on' : ''}" data-r="son" aria-pressed="${avecSon()}">${avecSon() ? '♪ Son' : '♪ Sans son'}</button>
     <div class="rt-breath"><div class="rt-flame">${FLAME('rt-flame-svg')}</div><p class="rt-say">Inspire…</p></div>
     <div class="rt-stage" hidden>
       <p class="rt-ask">${theme ? `<span>${esc(theme)}</span>` : ''}Choisis une carte.${note ? `<small>${esc(note)}</small>` : ''}</p>
@@ -195,7 +200,7 @@ export function rituel(tirages, { onAccept, theme = '', kind = 'mots', words = [
   requestAnimationFrame(() => box.classList.add('in'));
   const cvs = box.querySelector('.rt-embers');
   const fx = kind === 'contrainte' ? embers(cvs) : kind === 'mots' ? flottants(cvs, words) : FONDS[kind](cvs);
-  const stopDrone = drone();
+  let stopDrone = avecSon() ? drone() : () => {};
   let chosen = null;
   const timers = [];
   const later = (ms, fn) => timers.push(setTimeout(fn, ms));
@@ -218,6 +223,7 @@ export function rituel(tirages, { onAccept, theme = '', kind = 'mots', words = [
   box.addEventListener('click', (e) => {
     const r = e.target.closest('[data-r]')?.dataset.r;
     if (r === 'close') { close(); return; }
+    if (r === 'son') { const on = !avecSon(); store.set('rituelSon', on); const b = e.target.closest('[data-r]'); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); b.textContent = on ? '♪ Son' : '♪ Sans son'; stopDrone(); stopDrone = on ? drone() : () => {}; return; }
     if (r === 'accept' && chosen != null) { onAccept?.(tirages[chosen]); close(); return; }
     if (r === 'again') {
       chosen = null;
@@ -232,7 +238,7 @@ export function rituel(tirages, { onAccept, theme = '', kind = 'mots', words = [
       chosen = +card.dataset.i;
       box.classList.add('chosen');
       box.querySelectorAll('.rcard').forEach((c) => c.classList.toggle(c === card ? 'picked' : 'gone', true));
-      later(calm() ? 0 : 750, () => { card.classList.add('flipped'); bell(); fx.burst(); });
+      later(calm() ? 0 : 750, () => { card.classList.add('flipped'); if (avecSon()) bell(); fx.burst(); });
       later(calm() ? 100 : 1700, () => { box.querySelector('.rt-choice').hidden = false; box.querySelector('.rt-accept').focus(); });
     }
   });
