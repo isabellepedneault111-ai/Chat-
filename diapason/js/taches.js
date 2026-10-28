@@ -56,7 +56,7 @@ export function mesTaches(me = espace.me) {
     // La relance douce : le fil de l'autre pâlit depuis cinq jours. Une invitation simple, pas un rappel à l'ordre ;
     // et pas deux fois de suite : si je viens de lui lancer quelque chose (moins de deux jours), on attend sa réponse.
     const go = gestes(o); const dernier = go[go.length - 1] || 0; const calme = Math.floor((Date.now() - dernier) / 864e5);
-    const jeViensDeLancer = espace.entries.some((e) => e.author === me && e.data?.relais && Date.now() - e.createdAt < 2 * 864e5);
+    const jeViensDeLancer = espace.entries.some((e) => e.author === me && ['audio', 'note', 'texte', 'image', 'lien', 'paroles'].includes(e.type) && !e.data?.corbeille && Date.now() - e.createdAt < 2 * 864e5);
     // La relance jusqu'au téléphone : à activer une fois, ou à décliner.
     if (!profileOf(me)?.relance && !profileOf(me)?.relanceNon) t.push({ id: 'relance-tel', titre: 'Recevoir la relance douce sur ton téléphone', pourquoi: 'Une notification quand ton fil est calme depuis cinq jours, jamais plus d’une fois par cinq jours. Aucun numéro de téléphone. Ou « Pas pour moi ».', lien: '#/nouvelles' });
     if (dernier && calme >= 5 && !jeViensDeLancer) t.push({ id: 'relance', titre: `Lancer quelque chose de simple à ${o}`, pourquoi: `Son fil est calme depuis ${calme} jours. Un son de 10 secondes, un mot, une photo : une invitation, sans attente.`, lien: '#/relais' });

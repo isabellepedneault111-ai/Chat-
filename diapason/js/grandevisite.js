@@ -16,9 +16,9 @@ const ouvrirMenu = () => { const m = document.querySelector('.plus-pop'); if (m?
 const CHAPITRES = (autre) => [
   { ch: 'Attraper', t: 'Une idée naît n’importe où', d: 'Le premier geste de FLIP : ne rien perdre. Une phrase, un riff, une minute de jam : l’app l’attrape et la pose au Mur.', etapes: [
     { r: '#/', s: '.etincelle', t: 'L’étincelle', d: 'La flamme, en bas, sur toutes les pages. Une idée te vient au milieu d’autre chose? Un mot, un son ou une image, et elle part au Mur sans quitter ce que tu fais.' },
-    { r: '#/', s: '#priseBtn', t: 'La prise : le branchement', d: 'La porte de Mon studio. Le chiffre dit combien d’appareils sont branchés et actifs (clavier MIDI, micro, carte de son) : ce sont eux que le filet écoute.' },
-    { r: '#/', s: '.filet-btn', t: 'Le filet', d: 'Tendu, il garde en continu la dernière minute de tout ce qui joue : ton clavier MIDI, ton micro, le son de l’app. Tu viens de jouer quelque chose de beau sans enregistrer? Touche le filet : la minute est là, tu choisis le bout et tu le gardes.' },
-    { r: '#/', s: '#micBtn', t: 'Le micro', d: 'Gris : fermé. Rouge qui bat : ouvert, l’app entend (pour suivre une voix, trouver une note). Ouvrir le micro n’enregistre rien ; c’est le filet ou « ● Enregistrer » qui gardent.' },
+    { r: '#/studio', s: '#priseBtn', t: 'La prise : le branchement', d: 'La porte de Mon studio. Le chiffre dit combien d’appareils sont branchés et actifs (clavier MIDI, micro, carte de son) : ce sont eux que le filet écoute.' },
+    { r: '#/studio', s: '.filet-btn', t: 'Le filet', d: 'Tendu, il garde en continu la dernière minute de tout ce qui joue : ton clavier MIDI, ton micro, le son de l’app. Tu viens de jouer quelque chose de beau sans enregistrer? Touche le filet : la minute est là, tu choisis le bout et tu le gardes.' },
+    { r: '#/studio', s: '#micBtn', t: 'Le micro', d: 'Gris : fermé. Rouge qui bat : ouvert, l’app entend (pour suivre une voix, trouver une note). Ouvrir le micro n’enregistre rien ; c’est le filet ou « ● Enregistrer » qui gardent.' },
     { r: '#/carnet', s: '.capture', t: 'Le Mur : déposer', d: 'Écrire une idée et « Ajouter » : elle prend place au Mur, à ta couleur, et l’autre la voit tout de suite.' },
     { r: '#/carnet', s: '.direction', t: 'Ce que le mois demande', d: 'Le plan des six mois fixe un objectif par mois. Ce mois-ci, un nombre d’idées à récolter : la jauge avance toute seule.' },
     { r: '#/carnet', s: '.mur', t: 'Le ciel des idées', d: 'Chaque idée est une étoile. Plus elle avance (brute, en chantier, presque prête, prête), plus elle s’approche du centre. Les outils au-dessus la montrent autrement : par étapes, par morceaux, en fil.', fil: 'Une idée au Mur, c’est de la matière. Reste à se retrouver pour la travailler.' },
@@ -82,8 +82,6 @@ const CHAPITRES = (autre) => [
     { r: '#/', s: '.plus-pop .tool-arbre', t: 'L’arbre', d: 'Ce qu’on vient de visiter : l’architecture de l’app, fichier par fichier, et ses versions.', faire: ouvrirMenu },
     { r: '#/', s: '.plus-pop .tool-coffre', t: 'Le coffre', d: 'Nos petites perles : les traces qu’on veut garder précieusement. Cette visite y attend aussi, si tu veux la refaire.', faire: ouvrirMenu },
     { r: '#/', s: '#pistesBtn', t: 'Pourquoi ça marche', d: 'Pour la page ouverte : sur quelles recherches elle s’appuie (apprentissage, créativité, musique), en quelques lignes, avec leurs sources.', faire: ouvrirMenu },
-    { r: '#/', s: '#defiBtn', t: 'La contrainte surprise', d: 'Une contrainte créative tirée au hasard (« trois notes seulement », « jouez dos à dos »…) quand on tourne en rond.', faire: ouvrirMenu },
-    { r: '#/', s: '#projBtn', t: 'Le grand texte', d: 'Gros caractères et fort contraste, pour lire l’écran de loin, l’instrument dans les mains.', faire: ouvrirMenu },
     { r: '#/', s: '#fsBtn', t: 'Le plein écran', d: 'Cache la barre du navigateur : toute la place pour jouer.' },
   ] },
 ];

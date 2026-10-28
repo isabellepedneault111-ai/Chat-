@@ -60,6 +60,13 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.52', quand: '2026-10-28', titre: 'Quatre lieux, rangés par ce qu’on fait', items: [
+    ['En haut : Accueil · Nos idées · Écrire · Jouer · Session', ['Chaque lieu a ses sous-onglets, toujours au même endroit. Voix et Labo ne sont plus des lieux à part : « Ma voix » et « La cathédrale » sont dans Jouer, avec une petite rangée de pastilles pour leurs pages.']],
+    ['Nos échanges (l’ancien Relais)', ['Dans Nos idées, à côté du mur. Ce que tu fais seule part à l’autre d’un geste : dans Jouer, chaque prise a son bouton « ⇄ Lancer ».']],
+    ['Aujourd’hui contient Nos nouvelles', ['Tes prochains pas à gauche, ce que l’autre a ajouté à droite, tout en haut. Notre point de départ et Nos deux âmes sont rangés sous Notre projet.']],
+    ['Les outils au bon endroit', ['Le micro, la prise (Mon studio) et le filet vivent dans la barre de Jouer. Ailleurs, ils n’apparaissent dans l’en-tête que s’ils sont allumés. Le métronome a son ▶ pour jouer seul. La relance douce se règle dans le Mur, ⚙ Réglages.']],
+    ['Retirés', ['Ambiances, la contrainte surprise et le grand texte. Et l’app prend toute la largeur de l’écran.']],
+  ] },
   { v: '0.51', quand: '2026-10-28', titre: 'Moins de bruit', items: [
     ['Les pages vont droit au but', ['Les quatre boîtes en haut de chaque page (« Ça sert à », « Tu peux »…) sont parties : elles répétaient la page avec des puces et des liens qui ne menaient nulle part de neuf.']],
     ['Nos nouvelles a sa place', ['Dans l’Accueil, entre Aujourd’hui et le Calendrier.']],

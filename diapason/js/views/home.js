@@ -11,15 +11,10 @@ import { pendantHTML } from '../traces.js';
 import { enAttenteDeMoi } from '../corbeille.js';
 import { lune, luneSVG, TEMPS, CYCLE, prochainTemps, numeroLune, luneCourante, patchLune } from '../lune.js';
 import { nouveautesHTML } from '../nouveautes.js';
-import { aVoir } from '../suivi.js';
-import { mesTaches } from '../taches.js';
+import nouvelles from './nouvelles.js';
 import { attendMoi } from '../elan.js';
 import { pieceSVG, studioActuel, piece } from '../piece.js';
 import { semaineHTML, echelleHTML, brancherObjectifs } from '../objectifs.js';
-// Tout en haut de l'accueil : ce que l'autre a ajouté et que je n'ai pas vu. C'est là que mène la pastille de Plan.
-const nouvellesBandeau = () => { const n = aVoir(); const t = mesTaches(); if (!n.length && !t.length) return ''; const tot = n.length + t.length;
-  const quoi = [n.length ? `${n.length} ${n.length > 1 ? 'nouvelles' : 'nouvelle'} de ${esc(n[0].author)} à voir` : '', t.length ? `${t.length} prochain${t.length > 1 ? 's' : ''} pas pour toi : ${t.slice(0, 2).map((x) => esc(x.titre)).join(', ')}${t.length > 2 ? '…' : ''}` : ''].filter(Boolean).join(' · ');
-  return `<a class="nv-bandeau" href="#/nouvelles"><b>${tot}</b><span>${quoi}</span><span class="nv-ouvrir">Ouvrir →</span></a>`; };
 
 // Où aller : chaque outil rangé par ce qu'on veut faire, pas par son nom.
 // Par où commencer : trois gestes, dans l'ordre, cochés quand ils sont faits. Disparaît quand tout est fait.
@@ -76,6 +71,10 @@ export default {
   id: 'home',
   mount(el) {
     let editingVision = false;
+    // Nos nouvelles vivent ici, en haut d'Aujourd'hui : montées une fois, replacées après chaque dessin de l'accueil.
+    const nvEl = document.createElement('div'); nvEl.className = 'nv-inclus';
+    const offNv = nouvelles.mount(nvEl, { inclus: true });
+    const placerNv = () => { const s = el.querySelector('.nv-slot'); if (s) s.replaceWith(nvEl); };
 
     // Le truc du jour : UNE action, sa durée, et pourquoi. Toujours tout en haut.
     function todayHTML() {
@@ -178,7 +177,8 @@ export default {
     }
 
     // Redessine l’accueil (ou Notre projet), et note ma visite pour que l’autre sache ce que j’ai vu.
-    function render() {
+    function render() { dessiner(); placerNv(); }
+    function dessiner() {
       // La dernière visite de chacun, partagée : elle dit à l'autre ce qu'il n'a pas encore vu.
       const vu = espace.meta?.seen?.[espace.me];
       if (espace.connected && espace.me && (!vu || Date.now() - vu > 10 * 60e3)) { nouveautesHTML(); updateEspace({ seen: { ...(espace.meta.seen || {}), [espace.me]: Date.now() } }).catch(() => {}); }
@@ -202,7 +202,7 @@ export default {
           <p>Objectifs, voix, styles, besoins : chacun le sien, puis notre portrait commun. C’est lui qui nourrit le plan.</p>
           <span class="e1-who">${portraits.map((x) => `<span style="--c:${memberColor(x.m)}" class="${x.ok ? 'ok' : ''}">${esc(x.m)} ${x.ok ? '✓' : '· à faire'}</span>`).join('')}</span>
         </a>` : '';
-      if (!start && !editingVision) { el.innerHTML = head + cycleHTML() + todayHTML() + nouveautesHTML() + filHTML() + pendantHTML() + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
+      if (!start && !editingVision) { el.innerHTML = head + '<div class="nv-slot"></div>' + cycleHTML() + todayHTML() + nouveautesHTML() + filHTML() + pendantHTML() + etape1 + `<p class="or-vision"><button class="btn ghost" data-h="edit">Ou poser notre vision tout de suite →</button></p>`; return; }
       if (editingVision) { el.innerHTML = head + setupHTML(!!start); return; }
 
       const m = currentMonth();
@@ -221,7 +221,7 @@ export default {
       if (location.hash.startsWith('#/projet')) { el.innerHTML = projetHTML(mem, v, m, goal, got); return; }
       el.innerHTML = `
         ${head}
-        ${nouvellesBandeau()}
+        <div class="nv-slot"></div>
         ${commencerHTML()}
         <section class="plan-hero">
           <div class="month-now">
@@ -419,6 +419,6 @@ export default {
       const step = (t) => { const k = Math.min(1, (t - t0) / 900); cnt.textContent = Math.round(n * (1 - (1 - k) ** 3)); if (k < 1) requestAnimationFrame(step); };
       if (n > 0) requestAnimationFrame(step);
     }
-    return () => { off(); cancelAnimationFrame(raf); };
+    return () => { off(); offNv?.(); cancelAnimationFrame(raf); };
   },
 };

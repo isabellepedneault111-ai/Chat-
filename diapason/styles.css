@@ -118,7 +118,7 @@ kbd { font-family: var(--mono); font-size: .75rem; border: 1.5px solid var(--rul
 .mic-pill.on .mic-dot { background: var(--rec); box-shadow: 0 0 0 calc(var(--lvl) * 8px) color-mix(in srgb, var(--rec) 40%, transparent), 0 0 10px var(--rec); }
 
 /* ---------- Mise en page ---------- */
-.view { max-width: 1240px; margin: 0 auto; padding: clamp(18px, 3vw, 36px) clamp(16px, 3vw, 32px) 120px; outline: none; }
+.view { max-width: 1800px; margin: 0 auto; padding: clamp(18px, 3vw, 36px) clamp(16px, 3vw, 32px) 120px; outline: none; }
 .view > div > * { animation: rise .5s cubic-bezier(.2, .8, .2, 1) both; }
 .view > div > *:nth-child(2) { animation-delay: .05s; }
 .view > div > *:nth-child(3) { animation-delay: .1s; }
@@ -3824,3 +3824,22 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .pa-etapes.pa-seul { grid-template-columns: minmax(0, 640px); }
 .pa-etapes.pa-seul h2 span { display: none; }
 .pa-lunes[hidden] { display: none; }
+
+/* Vague 7 : les lieux et leurs sous-onglets ; les outils de Jouer dans sa barre */
+.subnav { display: flex; align-items: center; gap: 8px; overflow: visible; }
+.subnav .sub-l { display: flex; gap: 2px; overflow-x: auto; flex: 1 1 auto; min-width: 0; scrollbar-width: none; }
+.subnav .sub-l::-webkit-scrollbar { display: none; }
+.sub-outils { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; padding-left: 8px; }
+.tools .hors-lieu:not(.on) { display: none; }
+.sub-fam { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 4px; }
+.sub-fam a { padding: 4px 12px; border-radius: 99px; border: 1.5px solid var(--ink); font-weight: 600; font-size: .9rem; color: var(--ink); text-decoration: none; }
+.sub-fam a.active { background: var(--ink); color: var(--paper); }
+
+/* Aujourd'hui : nos nouvelles tout en haut, les pas à gauche, le fil à droite */
+.nv-inclus .nv-cache { display: none; }
+.nv-inclus .nv-grille { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); gap: 18px; align-items: start; margin: 4px 0 22px; }
+.nv-inclus .nv-g-pas > :first-child, .nv-inclus .nv-g-fil > :first-child { margin-top: 0; }
+.nv-inclus .nv-g-fil { max-height: 70vh; overflow: auto; padding-right: 4px; }
+@media (max-width: 860px) { .nv-inclus .nv-grille { grid-template-columns: 1fr; } .nv-inclus .nv-g-fil { max-height: none; } }
+.metro-seul { width: 30px; height: 30px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent); background: none; color: inherit; font-size: .8rem; cursor: pointer; }
+.metro-seul.on { background: var(--rec, #d33); color: #fff; border-color: transparent; }

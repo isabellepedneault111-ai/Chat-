@@ -1,5 +1,5 @@
 // Écrire sans freiner l'élan : écriture-objet (10 minutes sans s'arrêter, par les sens),
-// syllabes chantées ligne par ligne, rimes du dernier mot. Sert dans le Relais et les Ambiances.
+// syllabes chantées ligne par ligne, rimes du dernier mot. Sert dans le Relais.
 import { loadLexique, lineSyll, rhymes, rimeOf } from './lexique.js';
 import { espace, saveEntry, uid } from './espace.js';
 import { toast } from './ui.js';

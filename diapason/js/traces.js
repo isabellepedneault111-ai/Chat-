@@ -28,7 +28,6 @@ function pistes(t) {
     if (d.magiques?.length) out.push([`Les notes magiques de ${who} : ${d.magiques.map(nameFR).join(', ')}. Écris une ligne de refrain qui s’y pose.`, '#/paroles']);
     if (d.mode === 'ailleurs') out.push([`${who} explore les 9e et les 13e : propose des accords add9 ou maj7.`, '#/accord']);
   }
-  if (d.outil === 'ambiance' && d.lieu) out.push([`${who} était dans « ${d.lieu} » : prolonge cette ambiance avec tes textures, et lance-la au relais.`, '#/ambiances']);
   if (d.outil === 'atelier') out.push([`${who} a fait une séance d’atelier sur « ${d.mot || ''} » : lis-la dans le journal, et réponds avec un son qui la porte.`, '#/ecrire']);
   if (d.outil === 'grimoire' && d.carte) out.push([`${who} a tiré « ${d.carte} »${d.mot ? ` sur le mot « ${d.mot} »` : ''} : réponds avec un son qui porte ce mot.`, '#/relais']);
   return out.map(([txt, href]) => ({ txt, href }));

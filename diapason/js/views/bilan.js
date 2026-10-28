@@ -36,7 +36,7 @@ const MONTH_EX = { 1: ['e-echo', 'i-appel', 'i-eco'], 2: ['a-fragment', 'i-nonre
 // Exercices propres à l'app, avec leur appui.
 const APP_EX = {
   'x-accord': { nom: 'Voix + piano, mode « Frog donne la note »', duree: 10, href: '#/accord', comment: ['Frog joue une note dans un accord, Zaza la reprend.', 'Visez 75 % du temps juste sur 30 secondes.', 'Puis passez en mode « Dans l’accord ».'], why: 'Un retour visuel en temps réel améliore la justesse du chant.', src: 'Welch, Howard & Rush 1989 · Hoppe et al. 2006' },
-  'x-objet': { nom: 'Écriture-objet dans une ambiance', duree: 10, href: '#/ambiances', comment: ['Choisissez un lieu, lancez l’ambiance.', '10 minutes sans s’arrêter, par les 7 sens.', 'Soulignez les 3 images les plus fortes : c’est la matière du couplet.'], why: 'Écrire par les sens donne des images concrètes, qui font les meilleurs textes chantés.', src: 'Pattison 2009 (Berklee)' },
+  'x-objet': { nom: 'Écriture-objet par les sens', duree: 10, href: '#/ecrire', comment: ['Choisissez un lieu précis (une heure, une lumière).', '10 minutes sans s’arrêter, par les 7 sens.', 'Soulignez les 3 images les plus fortes : c’est la matière du couplet.'], why: 'Écrire par les sens donne des images concrètes, qui font les meilleurs textes chantés.', src: 'Pattison 2009 (Berklee)' },
   'x-relais': { nom: 'Un son par-dessus, au relais', duree: 5, href: '#/relais', comment: ['Un son de 10 à 30 secondes, une touche.', 'L’autre répond par-dessus avant le lendemain.', 'Trois allers-retours dans la semaine.'], why: 'Des contacts courts et rapprochés font plus progresser que de rares longues séances.', src: 'Cepeda et al. 2006' },
 };
 

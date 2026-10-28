@@ -11,6 +11,7 @@ import { togglePerle } from './coffre.js';
 import { projets, projetCourant, setProjet, projetNom, creerProjet } from '../projets.js';
 import { skyHTML, rencontres, matches, kindOf, sleepingDays } from '../constellation.js';
 import { ouvrirRencontre, nonMerci, refuser } from '../rencontre.js';
+import { relanceHTML, brancherRelance } from '../relance.js';
 import { avisHTML, avisDe } from '../ecoute.js';
 import { creerChanson, nomsDeChansons, chansonNommee } from '../chanson.js';
 
@@ -249,9 +250,11 @@ export default {
     // Le panneau des réglages de l’espace : le nom, le mot d’accueil, le mot secret.
     function renderSettings() {
       const w = espace.meta.welcome || {};
+      setTimeout(() => relanceHTML().then((h) => { const x = el.querySelector('.settings .relance-host'); if (x) x.innerHTML = h; }), 0);
       el.querySelector('.settings').innerHTML = `
         <h2>Réglages</h2>
         <p class="row"><button class="btn small" data-c="share">Inviter ${esc(other())}</button><a class="btn small ghost" href="#/lexique">Notre lexique</a></p>
+        <div class="relance-host"></div>
         <div class="settings-grid">
           <div>
             <label class="field col"><span>Mot d’accueil pour ${esc(other())} (sa première visite)</span><textarea class="input" data-s="welcome" rows="3" placeholder="Forever more…">${esc(w.text || '')}</textarea></label>
@@ -650,6 +653,7 @@ export default {
       }
     });
 
+    brancherRelance(el, () => renderSettings(), toast); // la relance douce, dans les réglages
     el.addEventListener('click', async (e) => {
       const v = e.target.closest('[data-v]');
       if (v) { view = v.dataset.v; store.set('murVue', view); renderAll(true); return; }

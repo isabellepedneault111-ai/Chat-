@@ -34,7 +34,7 @@ function pistes(z, f, nz, nf) {
     voix: ['La voix devant', `Une chanson où la voix porte tout : ${nf} ne joue que ce qui la met en valeur (une pédale, deux accords). Enregistrez la voix d’abord, l’arrangement après.`],
     texte: ['Une ligne qui tient seule', `Écrivez une seule phrase qui vous touche tous les deux, lue à voix haute sans musique. Si elle tient nue, construisez la chanson autour.`],
     son: ['Le grain avant la note', `Choisissez un son (un piano abîmé, un souffle, un bruit de la pièce) et faites-en le personnage principal. La chanson naît de sa couleur.`],
-    ambiance: ['Le lieu avant la note', `Décrivez ensemble un lieu précis (une heure, une lumière, une température). Ambiances → écrire dedans, puis jouez ce lieu.`],
+    ambiance: ['Le lieu avant la note', `Décrivez ensemble un lieu précis (une heure, une lumière, une température). Écrivez-le par les sens, puis jouez ce lieu.`],
     melodie: ['La mélodie qui reste', `Une mélodie fredonnable en 4 mesures, chantée par ${nz}, harmonisée ensuite par ${nf} de trois façons différentes. Gardez celle qui surprend.`],
     accords: ['Les accords qui racontent', `Une suite de quatre accords qui raconte déjà quelque chose sans voix. Jouer → Mes propres accords, puis la voix cherche sa place.`],
     emotion: ['Une seule émotion, sans détour', `Nommez une émotion précise (pas « triste » : « soulagé mais honteux ») et refusez tout ce qui ne la sert pas.`],

@@ -28,7 +28,7 @@ def cibles(texte, listes=False):
 
 # Ce qui est toujours là : la barre, le menu ⋯, et les sous-onglets (une fratrie se voit depuis chacune de ses pages).
 barre = cibles((racine / 'index.html').read_text()) | cibles((racine / 'js/etincelle.js').read_text()) | {''}  # la petite flamme est sur chaque page
-fratries = [re.findall(r"'([a-z]*)'", m) for m in re.findall(r"^const (?:VOIX|LABO|JOUER|ACCUEIL) = \[(.*?)\];", app, re.M)]
+fratries = [re.findall(r"'([a-z]*)'", m) for m in re.findall(r"^const (?:VOIX|LABO) = \[(.*?)\];", app, re.M) + re.findall(r"pages: \[(.*?)\]", app)]
 
 # Les liens de chaque page. L'accueil (home.js sert '' et 'projet') est mis de côté : c'est lui qu'on teste.
 graphe = {r: cibles((racine / 'js/views' / f'{f}.js').read_text(), listes=True) for r, f in fichier_de.items()}
@@ -49,7 +49,7 @@ while pile:
     for n in suivants:
         if n not in vus: vus.add(n); pile.append(n)
 
-orphelins = sorted(set(fichier_de) - vus - {'mur'})
+orphelins = sorted(set(fichier_de) - vus - {'mur', 'nouvelles'})  # deux alias : le mur, et Nos nouvelles (dans Aujourd'hui)
 if orphelins:
     print('Pages qu’on ne trouve que par l’accueil (ou nulle part) :', ', '.join(orphelins))
     print('Donne-leur une place fixe : un onglet, un sous-onglet, le menu ⋯, ou un lien depuis une page voisine.')

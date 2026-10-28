@@ -12,7 +12,8 @@ import { clavierDe } from '../doigte.js';
 import { lampeHTML, brancherLampe } from '../lampe.js';
 import { chansonTab } from '../chanson.js';
 import { sonsPersoHTML, brancherSonsPerso } from '../sonsperso.js';
-import { EXERCICES } from '../duo.js';
+import { EXERCICES, MEMBERS } from '../duo.js';
+import { sendSound } from './relais.js';
 import { PIANO } from '../exercice.js';
 
 const ROWS = [['k', 'Grosse caisse'], ['s', 'Caisse claire'], ['h', 'Charleston'], ['c', 'Claps']];
@@ -453,10 +454,10 @@ export default {
           ${S.takes.length ? `<ul class="takes">${S.takes.map((t, i) => `
             <li><div><b>Prise ${S.takes.length - i}</b><span class="muted mono">${t.at.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' })} · ${t.bpm} BPM · ${t.chords}</span></div>
               <audio controls src="${t.url}"></audio>
-              ${espace.connected ? (t.gardee ? '<span class="muted small">Au mur ✓</span>' : `<button class="btn small primary" data-garder="${i}">Garder au mur</button>`) : ''}
+              ${espace.connected ? (t.gardee ? `<span class="muted small">${t.gardee === 'relais' ? `Lancée à ${esc(autre())} ✓` : 'Au mur ✓'}</span>` : `<button class="btn small primary" data-garder="${i}">Garder au mur</button><button class="btn small" data-lancer="${i}">⇄ Lancer à ${esc(autre())}</button>`) : ''}
               <a class="btn small" href="${t.url}" download="diapason-prise-${S.takes.length - i}.${t.ext}">↓ Télécharger</a></li>`).join('')}</ul>`
             : '<p class="muted empty">Aucune prise pour l’instant. Clique ● REC en haut : le beat démarre, ta voix ou ton instrument passe par-dessus.</p>'}
-          <p class="muted small">Une prise gardée part au mur comme idée brute : l’autre l’entend, elle peut monter jusqu’au set, et elle compte dans votre plan. Les autres disparaissent en fermant la page.</p>
+          <p class="muted small">« Lancer à ${esc(autre())} » : la prise va au mur ET dans Nos échanges, où ${esc(autre())} peut répondre par-dessus. Une prise gardée part au mur comme idée brute : l’autre l’entend, elle peut monter jusqu’au set, et elle compte dans votre plan. Les autres disparaissent en fermant la page.</p>
           <div class="tip-box"><b>Le réflexe de studio</b><p>Après chaque prise : réécoute, nomme <em>une seule</em> chose à améliorer, et refais-la. C’est exactement comme ça que travaillent les pros.</p></div>
         </div>`;
     }
@@ -464,6 +465,14 @@ export default {
     // Garder une prise : elle devient une idée du mur, partagée, avec ses accords et son tempo.
     document.addEventListener('click', async function garderPrise(e) {
       if (!el.isConnected) { document.removeEventListener('click', garderPrise); return; }
+      const l = e.target.closest('[data-lancer]');
+      if (l && el.contains(l)) {
+        // Ce que je fais seule peut partir à l'autre d'un geste : c'est ça, le relais (pas une autre page à apprendre).
+        const t = S.takes[+l.dataset.lancer]; if (!t || t.gardee) return;
+        l.disabled = true; l.textContent = 'J’envoie…';
+        try { await sendSound(t.blob, { title: `Prise · ${t.chords}` }); t.gardee = 'relais'; toast(`Lancée : ${autre()} la voit dans Nos échanges et peut répondre par-dessus.`); if (tab === 'voix') renderTab(); } catch (err) { l.disabled = false; l.textContent = `⇄ Lancer à ${autre()}`; toast(err.message); }
+        return;
+      }
       const b = e.target.closest('[data-garder]'); if (!b || !el.contains(b)) return;
       const t = S.takes[+b.dataset.garder]; if (!t || t.gardee) return;
       b.disabled = true; b.textContent = 'J’envoie…';
@@ -1044,6 +1053,7 @@ export default {
   },
 };
 
+const autre = () => (espace.meta?.members || MEMBERS).find((m) => m !== espace.me) || 'l’autre';
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 // ---------- Pochette générative ----------

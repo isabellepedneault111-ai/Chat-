@@ -42,8 +42,11 @@ export async function couperRelance() {
 
 // Le petit bloc « La relance douce » : il dit où on en est et offre le bon geste.
 export const relanceActive = (qui = espace.me) => !!profileOf(qui)?.relance;
-export async function relanceHTML() {
+// aDecider : seulement s'il reste une décision à prendre (ni déjà activée, ni déclinée, ni impossible) ; sinon, rien.
+// Le bloc complet reste dans les réglages du mur, pour changer d'idée.
+export async function relanceHTML({ aDecider = false } = {}) {
   const e = await etatRelance().catch(() => 'impossible');
+  if (aDecider && (e === 'actif' || e === 'impossible' || profileOf(espace.me)?.relance || profileOf(espace.me)?.relanceNon)) return '';
   const bouton = { actif: '<button class="btn small" data-relance="couper">Couper</button><button class="btn small ghost" data-relance="essai">Envoyer un essai</button>', possible: '<button class="btn small primary" data-relance="activer">Activer sur ce téléphone</button><button class="btn small ghost" data-relance="non">Pas pour moi</button>' }[e] || '';
   const texte = {
     actif: 'Activée sur cet appareil. Quand ton fil est calme depuis cinq jours, une invitation arrive ici (jamais plus d’une fois par cinq jours, vers 18 h).',
@@ -60,9 +63,9 @@ export function brancherRelance(root, rendre, toast) {
   root.addEventListener('click', async (ev) => {
     const b = ev.target.closest('[data-relance]'); if (!b) return; const g = b.dataset.relance; b.disabled = true;
     try {
-      if (g === 'activer') { await activerRelance(); toast('Relance activée : une notification d’essai arrive.'); }
+      if (g === 'activer') { await activerRelance(); toast('Relance activée : une notification d’essai arrive. Pour la couper : le Mur, ⚙ Réglages.'); }
       if (g === 'couper') { await couperRelance(); toast('Relance coupée sur ce téléphone.'); }
-      if (g === 'non') { await saveProfile(() => ({ relanceNon: Date.now() })); toast('Compris : pas de relance sur le téléphone. Ce bloc reste ici si tu changes d’idée.'); }
+      if (g === 'non') { await saveProfile(() => ({ relanceNon: Date.now() })); toast('Compris : pas de relance sur le téléphone. Pour changer d’idée : le Mur, ⚙ Réglages.'); }
       if (g === 'essai') { await api(`${espace.id}/${encodeURIComponent(espace.me)}/essai`, { method: 'POST' }); toast('Essai envoyé.'); }
     } catch (err) { toast(err.message); }
     b.disabled = false; rendre();

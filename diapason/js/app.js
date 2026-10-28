@@ -2,14 +2,13 @@
 import { $, $$, toast, store } from './ui.js';
 import { toggleMic, onMicStatus, onPitch } from './audio.js';
 import { MODULES } from './data.js';
-import { POURQUOI, CONTRAINTES, PLAN } from './duo.js';
+import { POURQUOI, PLAN } from './duo.js';
 import { currentMonth } from './plan.js';
 import session, { activeSession } from './views/session.js';
 import depart from './views/depart.js';
 import evolution from './views/evolution.js';
 import accord from './views/accord.js';
 import relais from './views/relais.js';
-import ambiances from './views/ambiances.js';
 import bilan from './views/bilan.js';
 import jeux from './views/jeux.js';
 import coffre from './views/coffre.js';
@@ -23,7 +22,6 @@ import placer from './views/placer.js';
 import ames from './views/ames.js';
 import arbre from './views/arbre.js';
 import materiel from './views/materiel.js';
-import nouvelles from './views/nouvelles.js';
 import elan from './views/elan.js';
 import cathedrale from './views/cathedrale.js';
 import passage from './views/passage.js';
@@ -54,7 +52,6 @@ const APPUIS = {
   session: ['Exploration, sélection, stabilisation, et toujours une prise ; le debrief nomme l’écart et la prochaine cible.', 'Biasutti 2017 · Montemayor 2014 · Marino 2023'],
   relais: ['Des contacts créatifs courts et rapprochés soutiennent l’élan mieux que de rares longues séances ; l’appel-réponse construit un vocabulaire commun.', 'Cepeda et al. 2006 · Bertolani 2019'],
   accord: ['Un retour visuel en temps réel améliore la justesse ; chanter dans de vrais accords entraîne l’oreille harmonique.', 'Welch, Howard & Rush 1989 · Hoppe et al. 2006'],
-  ambiances: ['Partir d’une image concrète guide le timbre et la couleur de la voix ; écrire par les sens donne des images chantables.', 'Biasutti 2017 · MacGlone 2024 · Pattison 2009'],
   oreille: ['Savoir où sont les parties, le tempo et la tonalité d’une pièce fait gagner des heures : on passe tout de suite à créer.', 'Krumhansl et Kessler 1982 · Müller 2015'],
   jeux: ['La contrainte libère : moins de choix, plus d’invention.', 'De Bruin 2019 · Merchán-Sánchez-Jara 2023 · Oulipo'],
   ecrire: ['Écrire régulièrement, sans juger, nourrit la matière ; trier vient après.', 'Pattison 2009'],
@@ -78,7 +75,7 @@ const APPUIS = {
   placer: ['La prosodie : quand les syllabes accentuées tombent sur les temps forts, le texte se chante tout seul ; à côté, il boite.', 'Pattison 2009'],
 };
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, ambiances, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles, elan, cathedrale, passage, calendrier, projet: home };
+const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles: home, elan, cathedrale, passage, calendrier, projet: home };
 // Onglet en arrière-plan : le titre compte ce que l'autre vient d'ajouter, « (2) FLIP ». Revenir remet à zéro.
 {
   const base = document.title; let n = 0;
@@ -90,13 +87,24 @@ const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { n = 0; document.title = base; } });
 }
 initEtincelle();
+// Quatre lieux, rangés par ce qu'on y fait : aujourd'hui, nos idées, écrire, jouer (la Session est à part).
+// Chaque lieu a sa barre de sous-onglets. La voix et les disques ne sont plus des lieux à eux : ce sont des
+// sous-onglets de Jouer, avec une petite rangée de pastilles pour leurs pages.
 const VOIX = ['accord', 'miroir', 'tessiture', 'gym'];
-const LABO = ['labo', 'cathedrale'];
-// Jouer : jouer, mon studio (le matériel, tel qu'il est), l'oreille (trouver les accords d'un enregistrement).
-const JOUER = ['studio', 'materiel', 'oreille'];
-// L'accueil : aujourd'hui, et ce qui se relit (le projet, le bilan, les lunes passées). Chaque page a sa place fixe.
-const ACCUEIL = ['', 'nouvelles', 'calendrier', 'projet', 'bilan', 'passage'];
-const NOMS_FRATRIE = { '': ['☼', 'Aujourd’hui'], nouvelles: ['✉', 'Nos nouvelles'], calendrier: ['◷', 'Calendrier'], projet: ['✦', 'Notre projet'], bilan: ['↗', 'Notre bilan'], passage: ['☾', 'Nos lunes'], studio: ['♪', 'Jouer'], materiel: ['⌂', 'Mon studio'], oreille: ['◎', 'L’oreille'] };
+const LABO = ['cathedrale', 'labo'];
+const PROJET = ['projet', 'depart', 'ames']; // notre projet, et ses deux sections : d'où chacun part, ce que ça donne à deux
+const LIEUX = {
+  home: { nom: 'Accueil', pages: ['', 'calendrier', 'projet', 'bilan', 'passage'], aussi: ['nouvelles', 'ames', 'depart', 'evolution', 'arbre', 'elan'] },
+  carnet: { nom: 'Nos idées', pages: ['carnet', 'relais', 'coffre'], aussi: ['mur', 'corbeille', 'etincelles'] },
+  ecrire: { nom: 'Écrire', pages: ['ecrire', 'paroles', 'placer', 'jeux', 'lexique'], aussi: ['atelier'] },
+  studio: { nom: 'Jouer', pages: ['studio', 'accord', 'oreille', 'cathedrale', 'materiel'], aussi: [...VOIX, ...LABO] },
+};
+const NOMS = { '': ['☼', 'Aujourd’hui'], calendrier: ['◷', 'Calendrier'], projet: ['✦', 'Notre projet'], bilan: ['↗', 'Notre bilan'], passage: ['☾', 'Nos lunes'],
+  carnet: ['▦', 'Le mur'], relais: ['⇄', 'Nos échanges'], coffre: ['✧', 'Le coffre'],
+  ecrire: ['✎', 'Écrire'], paroles: ['¶', 'Paroles'], placer: ['↧', 'Placer mes paroles'], jeux: ['✺', 'Le grimoire'], lexique: ['Aa', 'Notre lexique'],
+  studio: ['♪', 'Jouer'], accord: ['♫', 'Ma voix'], oreille: ['◎', 'L’oreille'], cathedrale: ['✶', 'La cathédrale'], materiel: ['⌂', 'Mon studio'] };
+const NOMS_FAM = { projet: 'Le cap et le plan', depart: 'Notre point de départ', ames: 'Nos deux âmes' };
+const lieuDe = (id) => Object.keys(LIEUX).find((k) => LIEUX[k].pages.includes(id) || LIEUX[k].aussi.includes(id)) || null;
 const view = $('#view');
 installerGlossaire(view); // les mots de musique s'expliquent au survol
 installerFilet(); // le filet : la dernière minute, toujours gardée
@@ -115,6 +123,13 @@ function majRetour() {
 }
 onEspace((w) => { if (w === 'meta') majRetour(); });
 
+// Les outils de Jouer (le micro, la prise de Mon studio, le filet) : dans la barre de Jouer. Ailleurs, ils ne se
+// montrent dans l'en-tête que s'ils sont allumés, pour qu'on puisse toujours les éteindre.
+function placerOutils(barre) {
+  const outils = ['#micBtn', '#priseBtn', '#filetBtn'].map((x) => $(x)).filter(Boolean);
+  if (barre) { let w = barre.querySelector('.sub-outils'); if (!w) { w = document.createElement('div'); w.className = 'sub-outils'; barre.append(w); } outils.forEach((o) => { o.classList.remove('hors-lieu'); w.append(o); }); return; }
+  const t = $('.tools'); outils.reverse().forEach((o) => { o.classList.add('hors-lieu'); t.prepend(o); });
+}
 // Le routeur : lit l’adresse après le #, choisit la vue, la monte dans la page et met à jour la navigation, le titre et l’aide.
 async function route() {
   const id = location.hash.replace(/^#\/?/, '').split(/[?/]/)[0];
@@ -140,26 +155,25 @@ async function route() {
   // Conteneur neuf à chaque module : ses écouteurs disparaissent avec lui.
   const host = document.createElement('div');
   host.className = `view-${v.id}`;
+  placerOutils(null); // les outils de Jouer reviennent dans l'en-tête avant que l'ancienne barre disparaisse
   view.replaceChildren(host);
-  // Voix regroupe les 3 outils vocaux : petite barre d'onglets en haut.
-  const ici = routes[id] ? id : ''; // la route elle-même : l'accueil et Notre projet partagent une vue
-  const fratrie = ACCUEIL.includes(ici) ? ACCUEIL : VOIX.includes(v.id) ? VOIX : LABO.includes(v.id) ? LABO : JOUER.includes(v.id) ? JOUER : null;
-  if (fratrie) {
+  const ici = routes[id] && id !== 'nouvelles' ? id : ''; // la route elle-même (Nos nouvelles vivent dans Aujourd'hui)
+  const lieu = lieuDe(ici === '' ? '' : ici === 'mur' ? 'carnet' : ici) || lieuDe(v.id);
+  if (lieu) {
     const sub = document.createElement('nav');
     sub.className = 'subnav';
-    sub.setAttribute('aria-label', fratrie === VOIX ? 'Voix' : fratrie === JOUER ? 'Jouer' : fratrie === ACCUEIL ? 'Accueil' : 'Labo');
-    sub.innerHTML = fratrie.map((m) => { const mm = MODULES.find((x) => x.id === m); const [num, nom] = NOMS_FRATRIE[m] || [mm.num, mm.name]; return `<a href="#/${m}" class="${m === ici || (m && m === v.id) ? 'active' : ''}" style="--c:${mm?.color || (fratrie === ACCUEIL ? 'var(--zaza)' : 'var(--c-studio)')}"><span class="mono">${num}</span>${nom}</a>`; }).join('');
+    sub.setAttribute('aria-label', LIEUX[lieu].nom);
+    // Le sous-onglet actif : la page elle-même, ou sa famille (toute page de voix allume « Ma voix »).
+    const actif = (m) => m === ici || (m && m === v.id) || (m === 'accord' && VOIX.includes(v.id)) || (m === 'cathedrale' && LABO.includes(v.id)) || (m === 'projet' && PROJET.includes(ici));
+    sub.innerHTML = `<div class="sub-l">${LIEUX[lieu].pages.map((m) => { const mm = MODULES.find((x) => x.id === m); const [num, nom] = NOMS[m] || [mm?.num || '', mm?.name || m]; return `<a href="#/${m}" class="${actif(m) ? 'active' : ''}" style="--c:${mm?.color || 'var(--c-studio)'}"><span class="mono">${num}</span>${nom}</a>`; }).join('')}</div>`;
     view.prepend(sub);
+    // Une famille de pages (la voix, les disques) : ses pastilles, juste sous la barre.
+    const fam = VOIX.includes(v.id) ? VOIX : LABO.includes(v.id) ? LABO : PROJET.includes(ici) ? PROJET : null;
+    if (fam) { const p = document.createElement('nav'); p.className = 'sub-fam'; p.setAttribute('aria-label', fam === VOIX ? 'Ma voix' : fam === LABO ? 'La cathédrale' : 'Notre projet'); p.innerHTML = fam.map((m) => { const mm = MODULES.find((x) => x.id === m); return `<a href="#/${m}" class="${m === ici ? 'active' : ''}">${NOMS_FAM[m] || mm?.name || m}</a>`; }).join(''); sub.after(p); }
     // Sur téléphone, le sous-onglet actif reste visible même s'il est le dernier.
-    requestAnimationFrame(() => { const act = sub.querySelector('.active'); if (act && sub.scrollWidth > sub.clientWidth) sub.scrollLeft = act.offsetLeft - 16; });
+    requestAnimationFrame(() => { const l = sub.querySelector('.sub-l'); const act = sub.querySelector('.active'); if (act && l.scrollWidth > l.clientWidth) l.scrollLeft = act.offsetLeft - 16; });
   }
-  // Un fil pour ne jamais se perdre : partout, un retour au plan de match, avec le cap du mois.
-  if (v.id !== 'home' && fratrie !== ACCUEIL) {
-    const back = document.createElement('a');
-    back.className = 'retour-plan'; back.href = '#/';
-    view.prepend(back);
-    majRetour();
-  }
+  placerOutils(lieu === 'studio' ? view.querySelector('.subnav') : null);
   const mod = MODULES.find((m) => m.id === v.id);
   view.style.setProperty('--accent', mod ? mod.color : 'var(--rec)');
   currentId = v.id;
@@ -171,7 +185,7 @@ async function route() {
   cleanup = v.mount(host) || null;
   const ap = APPUIS[ici === 'projet' ? 'projet' : v.id];
   if (ap) { const f = document.createElement('p'); f.className = 'appui'; f.innerHTML = `<span>Pourquoi :</span> ${ap[0]} <cite>${ap[1]}</cite>`; view.appendChild(f); }
-  const group = VOIX.includes(v.id) ? 'voix' : LABO.includes(v.id) ? 'labo' : JOUER.includes(v.id) ? 'studio' : v.id === 'ambiances' ? 'relais' : v.id === 'bilan' || v.id === 'evolution' || v.id === 'passage' || v.id === 'calendrier' || v.id === 'ames' || v.id === 'arbre' ? 'home' : ['jeux', 'paroles', 'atelier', 'ecrire', 'placer'].includes(v.id) ? 'ecrire' : v.id;
+  const group = lieu || v.id;
   $$('#nav a').forEach((a) => a.classList.toggle('active', a.dataset.id === group));
   if (v.id === 'carnet') { unseen = 0; showBadge(); }
   document.title = mod ? `${mod.name} · Diapason Labo` : 'Diapason Labo · FLIP';
@@ -235,38 +249,8 @@ addEventListener('hashchange', () => plusOuvert(false));
 $('#drawerClose').addEventListener('click', () => openDrawer(false));
 scrim.addEventListener('click', () => openDrawer(false));
 
-// --- Contrainte surprise : la contrainte libère ---
-const modal = $('#modal');
-let lastDefi = -1;
-// Tire une contrainte créative au hasard, jamais deux fois la même de suite.
-function rollDefi() {
-  const pool = CONTRAINTES;
-  let i;
-  do { i = Math.floor(Math.random() * pool.length); } while (pool.length > 1 && i === lastDefi);
-  lastDefi = i;
-  const t = $('#modalTitle');
-  t.classList.remove('pop');
-  void t.offsetWidth;
-  t.textContent = pool[i];
-  t.classList.add('pop');
-}
-$('#defiBtn').addEventListener('click', () => { rollDefi(); modal.hidden = false; $('#modalClose').focus(); });
-$('#modalAgain').addEventListener('click', rollDefi);
-$('#modalClose').addEventListener('click', () => { modal.hidden = true; });
-modal.addEventListener('click', (e) => { if (e.target === modal) modal.hidden = true; });
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') { modal.hidden = true; openDrawer(false); }
-});
-
-// --- Mode projecteur ---
-const projBtn = $('#projBtn');
-// Bascule le mode projecteur (gros caractères, fort contraste) et s’en souvient pour la prochaine visite.
-function setProj(on) {
-  document.documentElement.classList.toggle('projector', on);
-  projBtn.setAttribute('aria-pressed', on);
-  store.set('projector', on);
-}
-projBtn.addEventListener('click', () => setProj(!document.documentElement.classList.contains('projector')));
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape') openDrawer(false); });
+document.documentElement.classList.remove('projector'); store.set('projector', false); // l'ancien « grand texte » est retiré
 
 // Le vrai plein écran : la barre du navigateur disparaît. Sur iPhone, le navigateur ne le permet pas pour une page :
 // on explique comment ajouter l'app à l'écran d'accueil, d'où elle s'ouvre déjà sans barre.
@@ -282,7 +266,6 @@ fsBtn.addEventListener('click', async () => {
 });
 ['fullscreenchange', 'webkitfullscreenchange'].forEach((ev) => document.addEventListener(ev, majFs));
 majFs();
-setProj(store.get('projector', false));
 
 // Pastille « nouveau » sur Carnet quand le duo ajoute quelque chose ailleurs dans l'app.
 let unseen = 0;
@@ -298,8 +281,7 @@ function majNouvelles() {
   b.hidden = !n; b.textContent = n > 9 ? '9+' : n; b.title = [v ? `${v} nouvelle${v > 1 ? 's' : ''} à voir` : '', t ? `${t} chose${t > 1 ? 's' : ''} à faire pour toi` : ''].filter(Boolean).join(' · ');
 }
 onEspace((what) => { if (what === 'entries' || what === 'meta') majNouvelles(); });
-// Toucher la pastille mène droit à Nos nouvelles (toucher « Plan » mène à l'accueil, où elles sont tout en haut).
-$('#nav [data-id=home]').addEventListener('click', (e) => { if (e.target.closest('.nv-badge')) { e.preventDefault(); location.hash = '#/nouvelles'; } });
+// Nos nouvelles sont tout en haut d'Aujourd'hui : toucher la pastille mène à l'accueil, comme le reste du bouton.
 onEspace((what, extra) => {
   if (what === 'entries') $('#nav .nav-session').classList.toggle('live', !!activeSession());
   if (what === 'entries' && extra?.fresh?.length && currentId !== 'carnet') {

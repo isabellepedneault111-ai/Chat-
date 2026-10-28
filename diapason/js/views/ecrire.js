@@ -1,5 +1,5 @@
 // Écrire : notre journal commun au centre, et autour, les chemins de l'écriture
-// (séance d'atelier, grimoire, paroles, ambiances). Une entrée peut aller au mur ou au coffre d'un geste.
+// (séance d’atelier, grimoire, paroles). Une entrée peut aller au mur ou au coffre d'un geste.
 import { espace, onEspace, saveEntry } from '../espace.js';
 import { toast } from '../ui.js';
 import { esc, espaceGate, ago } from './carnet.js';
@@ -36,7 +36,6 @@ const CHEMINS = [
   ['jeux', 'Le grimoire', 'Notre champ de mots, une carte tirée, le cadavre exquis.'],
   ['placer', 'Placer mes paroles', 'Sur une pièce de Frog : où mettre les accents, combien de syllabes, quelle note chanter.'],
   ['paroles', 'Nos paroles', 'Sculpter les textes pour qu’ils se chantent : syllabes, rimes.'],
-  ['ambiances', 'Une ambiance', 'Partir ailleurs avant d’écrire.'],
 ];
 
 export default {

@@ -26,7 +26,7 @@ const askOf = (id) => ASKS.find((a) => a[0] === id);
 // Les demandes jointes à une entrée du relais.
 export const asksOf = (e) => (e.data?.asks?.length ? e.data.asks : e.data?.ask ? [e.data.ask] : []).map(askOf).filter(Boolean);
 
-// Ce qu'on demande à l'autre, réutilisé partout (relais, ambiances, grimoire). La lune en suggère quelques-unes :
+// Ce qu'on demande à l'autre, réutilisé partout (relais, grimoire). La lune en suggère quelques-unes :
 // au temps de semer, on demande de créer ; de faire grandir, de développer ; de faire entendre, d'écouter ; de laisser aller, de trier.
 const PAR_TEMPS = { semer: ['chante', 'melodie', 'ecris', 'evoque'], grandir: ['harmonise', 'accords', 'rythme', 'continue', 'habille'], entendre: ['ecoute', 'bien', 'refrain'], laisser: ['coupe', 'plus-tard', 'titre'] };
 const NOM_TEMPS = { semer: 'nouvelle lune, le temps de créer', grandir: 'lune qui grossit, le temps de façonner', entendre: 'pleine lune, le temps de faire entendre', laisser: 'lune qui décroît, le temps de trier' };
@@ -65,7 +65,7 @@ export function relaisPending() {
   return [...byThread.values()].filter((e) => e.author !== espace.me && Date.now() - e.createdAt < 21 * 864e5).sort((a, b) => b.createdAt - a.createdAt)[0] || null;
 }
 
-// Envoie un son dans le relais (utilisé aussi par les Ambiances).
+// Envoie un son dans le relais.
 export async function sendSound(blob, { title, asks = [], intent = '', thread, over, pour, align = 0, mood, onProgress } = {}) {
   const meta = await uploadAudio(blob, onProgress);
   const data = { relais: true, ask: asks[0] || '', asks, intent, stage: 0, song: '' };
@@ -140,11 +140,10 @@ export default {
       el.innerHTML = `
         <div class="mod-head">
           <div>
-            <p class="eyebrow">Le relais</p>
+            <p class="eyebrow">Nos échanges</p>
             <h1>Lance-lui un son</h1>
             <p class="muted">Pas besoin d’être ensemble. Un riff, une mélodie fredonnée, une nappe au clavier : ${esc(other())} répond <b>par-dessus</b>, écrit dessus, ou te le renvoie. La chanson grandit par couches, entre deux sessions.</p>
           </div>
-          <div class="actions"><a class="btn" href="#/ambiances">Partir d’une ambiance →</a></div>
         </div>
         <section class="panel screen rl-launch">
           <div class="rl-work" hidden></div>

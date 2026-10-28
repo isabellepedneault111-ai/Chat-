@@ -46,13 +46,23 @@ export const metronomeAllume = () => reglages().on;
 // Le petit réglage, à poser à côté d'un bouton d'enregistrement. tempoFixe : le tempo vient de la page (Jouer, un exercice).
 export function metroHTML({ tempoFixe = null } = {}) {
   const r = reglages();
-  return `<span class="metro" data-metro>
+  return `<span class="metro" data-metro ${tempoFixe ? `data-metro-tempo="${Math.round(tempoFixe)}"` : ''}>
+    <button type="button" class="metro-seul ${marche?.seul ? 'on' : ''}" data-metro-seul aria-pressed="${!!marche?.seul}" title="Le métronome seul, sans enregistrer">${marche?.seul ? '■' : '▶'}</button>
     <button type="button" class="metro-on ${r.on ? 'on' : ''}" data-metro-on aria-pressed="${r.on}" title="Un clic sur chaque temps pendant la prise, dans tes écouteurs (il n’est pas enregistré)">♩ Métronome</button>
     ${tempoFixe ? `<small class="metro-t">${Math.round(tempoFixe)} BPM</small>` : `<label class="metro-t"><input type="number" min="40" max="220" value="${r.bpm}" data-metro-bpm aria-label="Tempo du métronome"> BPM</label>`}
     <label class="metro-d"><input type="checkbox" data-metro-dec ${r.dec ? 'checked' : ''}> décompte</label></span>`;
 }
 // Branche, une fois pour toute l'app, les réglages du métronome (où qu'ils soient dans la page).
 export function installerMetronome() {
+  const majSeul = () => document.querySelectorAll('[data-metro-seul]').forEach((x) => { const on = !!marche?.seul; x.textContent = on ? '■' : '▶'; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); });
+  // ▶ : le métronome seul, pour s'exercer ou caler un tempo ; ■ l'arrête.
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-metro-seul]'); if (!b) return;
+    if (marche?.seul) arreterMetronome();
+    else { const t = +b.closest('[data-metro]')?.dataset.metroTempo || reglages().bpm; lancer(t, false); marche.seul = true; }
+    majSeul();
+  });
+  addEventListener('diapason:stop', () => setTimeout(majSeul, 0));
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-metro-on]'); if (!b) return;
     const on = !reglages().on; garder({ on });
@@ -60,7 +70,7 @@ export function installerMetronome() {
     if (!on) arreterMetronome();
   });
   document.addEventListener('change', (e) => {
-    if (e.target.matches('[data-metro-bpm]')) { const v = Math.max(40, Math.min(220, Math.round(+e.target.value) || 90)); e.target.value = v; garder({ bpm: v }); document.querySelectorAll('[data-metro-bpm]').forEach((x) => { x.value = v; }); }
+    if (e.target.matches('[data-metro-bpm]')) { const v = Math.max(40, Math.min(220, Math.round(+e.target.value) || 90)); e.target.value = v; garder({ bpm: v }); document.querySelectorAll('[data-metro-bpm]').forEach((x) => { x.value = v; }); if (marche?.seul) { lancer(v, false); marche.seul = true; } }
     if (e.target.matches('[data-metro-dec]')) { garder({ dec: e.target.checked }); document.querySelectorAll('[data-metro-dec]').forEach((x) => { x.checked = e.target.checked; }); }
   });
 }
