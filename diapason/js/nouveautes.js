@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.72', quand: '2026-10-28', titre: 'La grille suit la tête', items: [
+    ['On sait où on est', ['La tête posée sur l’onde encadre en rouge sa mesure dans la grille ; pendant l’écoute, la mesure qui joue est en noir. À l’arrêt, l’encadré reste là où tu t’es arrêtée.']],
+    ['Plus besoin de faire défiler', ['La grille défile toute seule jusqu’à la bonne mesure, que tu écoutes ou que tu poses la tête (le défilement automatique ne marchait pas toujours : c’est réparé).']],
+  ] },
   { v: '0.71', quand: '2026-10-28', titre: 'C’est toi qui lances', items: [
     ['La tête de lecture se pose', ['Toucher l’onde ne lance plus l’écoute : la tête de lecture (noire) se pose là, et ▶ part de là. Pendant l’écoute, toucher l’onde fait sauter l’écoute à cet endroit. ■ met en pause : ▶ reprend au même endroit.']],
   ] },

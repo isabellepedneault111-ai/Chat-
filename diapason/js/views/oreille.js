@@ -72,17 +72,24 @@ export default {
       if (tt.boucle) { const L = tt.b - tt.a; const eb = e * tt.segs[0].r; return tt.a + (((eb % L) + L) % L); }
       let reste = Math.max(0, e); for (const g of tt.segs) { const d = (g.b - g.a) / g.r; if (reste < d) return g.a + reste * g.r; reste -= d; } return tt.b; };
     const arrete = () => { stopBoucle?.(); stopBoucle = null; try { lecture?.stop?.(); } catch { /* déjà arrêtée */ } lecture = null; tete = null; q('[data-o=boucle]').textContent = '▶ Écouter la boucle'; const l = q('[data-o=lire]'); if (l) l.textContent = '▶ Écouter'; montrerCurseur(); };
+    // La mesure de la grille où en est la tête (qui joue : en noir ; posée : encadrée), et la grille qui défile toute
+    // seule pour la garder en vue, sans faire bouger la page. Dans une boucle, c'est sa case dans la boucle.
+    function marquerMesure(pos, cl, defiler = true) {
+      const g = q('.or-accords')?._grille; if (!g) return; const D = 240 / g.tempo;
+      el.querySelectorAll('.or-mes.joue, .or-mes.ici').forEach((b) => b.classList.remove('joue', 'ici'));
+      const k = Math.floor((pos - g.debutCale) / D); if (k < 0) return; const mj = q(`.or-mes[data-mes="${g.boucle ? k % g.periode : k}"]`); if (!mj) return;
+      mj.classList.add(cl); if (!defiler) return; const cont = mj.parentElement; const rc = cont.getBoundingClientRect(); const rm = mj.getBoundingClientRect();
+      if (rm.top < rc.top + 4 || rm.bottom > rc.bottom - 4) cont.scrollTo({ top: cont.scrollTop + (rm.top - rc.top) - 8, behavior: 'smooth' });
+    }
     // La tête de lecture au repos : là où on l'a posée sur l'onde (▶ part de là).
-    function montrerCurseur() { const t = q('.or-tete'); if (!t || !res) return; t.hidden = false; t.classList.add('pose'); t.style.left = `${(curseur / res.duree) * 100}%`; const p = q('.or-pos'); if (p) p.textContent = `${mmss(curseur)} / ${mmss(res.duree)}`; }
+    function montrerCurseur() { const t = q('.or-tete'); if (!t || !res) return; t.hidden = false; t.classList.add('pose'); t.style.left = `${(curseur / res.duree) * 100}%`; const p = q('.or-pos'); if (p) p.textContent = `${mmss(curseur)} / ${mmss(res.duree)}`; marquerMesure(curseur, 'ici'); }
     function animerTete() {
       if (!tete || !res) return;
       let pos = posDe(tete);
       if (!tete.boucle && pos >= tete.b) { arrete(); return; }
       pos = Math.max(tete.a, pos); const t = q('.or-tete'); if (t) { t.hidden = false; t.classList.remove('pose'); t.style.left = `${(pos / res.duree) * 100}%`; }
       const p = q('.or-pos'); if (p) p.textContent = `${mmss(pos)} / ${mmss(res.duree)}`;
-      { const g = q('.or-accords')?._grille; if (g) { const D = 240 / g.tempo; q('.or-mes.joue')?.classList.remove('joue'); const mj = [...el.querySelectorAll('.or-mes[data-t]')].find((b) => pos >= +b.dataset.t && pos < +b.dataset.t + D); if (mj) { mj.classList.add('joue');
-        // La grille défile toute seule pour garder la mesure qui joue en vue, sans faire bouger la page.
-        const cont = mj.parentElement; const haut = mj.offsetTop - cont.offsetTop; if (haut < cont.scrollTop || haut + mj.offsetHeight > cont.scrollTop + cont.clientHeight) cont.scrollTo({ top: haut - 8, behavior: 'smooth' }); } } }
+      marquerMesure(pos, 'joue');
       requestAnimationFrame(animerTete);
     }
     // « ■ Arrêter le son » (en bas de l'écran) : la lecture s'arrête, l'analyse reste là.
@@ -253,6 +260,7 @@ export default {
             <div class="or-edit" hidden></div>
             <p class="or-leg-g muted small">Touche une mesure pour l’entendre et la corriger. <span class="or-leg-c">✎ en jaune</span> : une mesure que tu as corrigée.</p>
             <div class="ec-row"><button class="btn small" data-o="grille-copier">Copier la grille</button><button class="btn small" data-o="grille-txt">⬇ La grille (texte)</button></div></div>`; })();
+      if (!tete) marquerMesure(curseur, 'ici', false);
       box.innerHTML = `<details class="or-acc-tous"><summary>Tous les accords, un par un <small class="muted">${accs.length} changements · touche un accord pour l’écouter</small></summary>
         <div class="or-acc-liste">${accs.map((a, i) => `<button class="or-acc" data-acc="${i}" title="${mmss(a.a)} · ${a.temps} temps"><b>${esc(a.nom)}</b>${clavierDe(a.r, a.q, { compact: true })}<small>${mmss(a.a)}</small></button>`).join('')}</div></details>
         <div class="ec-row"><button class="btn primary" data-o="studio">Jouer avec ces accords →</button><span class="muted small">Les 8 premiers changements, avec leur durée, deviennent « Mes accords ». La tonalité estimée (${esc(ton)}) colore le clavier.</span></div>`;
