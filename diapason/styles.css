@@ -3983,3 +3983,15 @@ div.next-card .btn { align-self: flex-start; }
 .bulle[hidden] { display: none; }
 .li-une { margin: 4px 0 10px; font-size: 1rem; } .li-une .muted { font-size: .95rem; }
 .coche li.manuel a.ce-t { display: block; padding: 0; border: 0; grid-template-columns: none; } .coche li.manuel .ce-t b { display: block; } .coche li.manuel .ce-t small { display: block; margin-top: 2px; color: #6d655a; }
+/* L'oreille : la lecture et sa tête, les secondes qu'on touche, la correction d'un accord */
+.or-transport { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin: 8px 0; }
+.or-pos { font-size: 1.05rem; min-width: 7ch; }
+.or-carte { position: relative; }
+.or-tete { position: absolute; top: 0; bottom: 0; width: 3px; margin-left: -1px; background: #d93a24; box-shadow: 0 0 8px rgba(217, 58, 36, .7); pointer-events: none; z-index: 2; }
+.or-tete::before { content: ''; position: absolute; top: -6px; left: -5px; border: 6px solid transparent; border-top-color: #d93a24; }
+.or-t { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border: 1.5px solid currentColor; border-radius: 99px; background: none; color: inherit; font: inherit; font-weight: 700; cursor: pointer; }
+.or-t:hover { background: rgba(201, 164, 92, .2); }
+.or-col li small .or-t { margin-left: 6px; font-size: .9em; }
+.or-edit { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 10px 0; padding: 10px 14px; border: 2px solid var(--ink); border-radius: 12px; background: #fffdf6; }
+.or-edit select { font: inherit; padding: 4px 8px; }
+.or-legende .lg-p { background: linear-gradient(90deg, #2a6fc4 50%, #b8336a 50%) !important; } .or-legende .lg-s { background: rgba(27,25,21,.25) !important; } .or-legende .lg-b { background: #c9a45c !important; } .or-legende .lg-m { background: #e07b2c !important; } .or-legende .lg-t { background: #d93a24 !important; }

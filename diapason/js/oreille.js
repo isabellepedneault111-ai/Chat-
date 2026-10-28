@@ -252,6 +252,9 @@ export const nomNote = (m) => `${NOTES[((m % 12) + 12) % 12]}${Math.floor(m / 12
 // voisins qui donnent le même accord. Fiable sur un clavier ou une guitare clairs ; moins sous une batterie chargée.
 const GABARITS = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], maj7: [0, 4, 7, 11], m7: [0, 3, 7, 10], sus2: [0, 2, 7], sus4: [0, 5, 7], dim: [0, 3, 6] };
 const SUF = { M: '', m: 'm', 7: '7', maj7: 'maj7', m7: 'm7', sus2: 'sus2', sus4: 'sus4', dim: 'dim' };
+// Le nom d'un accord (pour corriger la grille à la main) : la note, puis sa sorte.
+export const nomAccord = (r, q) => NOTES[((r % 12) + 12) % 12] + (SUF[q] ?? '');
+export const SORTES_ACCORD = Object.keys(SUF); export const NOTES_FR = NOTES;
 // Trouve les accords d’un enregistrement, temps par temps, puis dégage la boucle qui se répète.
 export async function trouverAccords(buf, bpm, onStep = () => {}) {
   onStep('Je cherche les accords…'); await pause();
