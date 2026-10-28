@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.66', quand: '2026-10-28', titre: 'Changer un accord dans le son', items: [
+    ['Corriger dans le son', ['Touche une mesure, choisis l’accord juste : la grille suit, et l’oreille dit quelles notes elle déplacerait dans le son (Do majeur → Do mineur : le Mi descend en Mi♭). ▶ Avant / ▶ Après pour comparer ; « J’approuve » en fait ton nouvel enregistrement (↶ et l’original restent là). Une note que l’enregistrement ne joue pas ne s’invente pas : l’oreille le dit. Meilleur sur un clavier ou une guitare clairs, sans batterie.']],
+    ['La grille, une vraie feuille', ['Comme une partition punaisée au babillard : la note en gros, la sorte en petit (Sol maj7), les temps marqués sous chaque mesure, plus de points ni de tirets. La mesure qui joue s’allume ; une mesure corrigée est surlignée ✎.']],
+  ] },
   { v: '0.65', quand: '2026-10-28', titre: 'Monter la prise', items: [
     ['Couper, copier, coller', ['Glisse sur l’onde pour choisir un passage : ▶ l’écouter, ✂ le couper, ⧉ le copier puis le coller ailleurs. Les coupes se calent sur les temps et chaque jonction est fondue (40 ms) : sur un groove régulier, ça ne s’entend presque pas.']],
     ['Remplir un silence', ['Touche une partie « silence » (ou choisis un passage) : « Remplir avec ce qui précède » ou « avec le bout copié ». La durée ne change pas.']],

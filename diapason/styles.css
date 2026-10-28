@@ -4081,3 +4081,36 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .or-m-bar .check { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; cursor: pointer; }
 .or-m-bar .check input { width: 20px; height: 20px; accent-color: var(--ink); }
 .or-m-hist { border: 2px dashed #3f8a5c; background: #e7f2ea; }
+
+/* 0.66 — La grille, comme une feuille de musique punaisée au babillard */
+.or-grille { position: relative; margin: 18px 0 12px; padding: 22px 20px 14px; border: 0; border-radius: 4px; background: #fffdf8; box-shadow: 0 1px 0 #e6dccb, 0 10px 24px -14px rgba(60, 40, 10, .35); }
+.or-grille::before { content: ''; position: absolute; top: -10px; left: 50%; width: 120px; height: 22px; transform: translateX(-50%) rotate(-1.5deg); background: rgba(244, 210, 92, .75); box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
+.or-grille-t { margin: 0 0 14px; font-size: 1rem; }
+.or-mesures { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px 0; border-left: 0; margin-bottom: 14px; }
+.or-mes { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); align-items: end; min-height: 74px; padding: 22px 10px 12px; border: 0; border-left: 1.5px solid #1d1a15; background: transparent; font: inherit; color: #1d1a15; cursor: pointer; text-align: left; }
+.or-mes:nth-child(4n), .or-mes:last-child { border-right: 1.5px solid #1d1a15; }
+.or-mes::after { content: ''; position: absolute; left: 10px; right: 10px; bottom: 6px; height: 4px; background: repeating-linear-gradient(90deg, #cfc3ad 0 2px, transparent 2px 25%); }
+.or-mes small { position: absolute; top: 4px; left: 8px; font: 600 .85rem var(--mono); color: #6d655a; }
+.or-mes:hover { background: #f8f0dc; }
+.or-b { min-width: 0; white-space: nowrap; overflow: visible; }
+.or-b b { font: 700 1.35rem/1 var(--display); letter-spacing: -.01em; }
+.or-b sup { font: 600 .82rem var(--sans, inherit); margin-left: 1px; vertical-align: .55em; color: #3d362c; }
+.or-pct { grid-column: 1 / -1; justify-self: center; align-self: center; font: 400 1.6rem var(--display); color: #a89c86; }
+.or-mes.rep-a { border-left: 5px double #1d1a15; } .or-mes.rep-b { border-right: 5px double #1d1a15; }
+.or-mes.corrigee { background: linear-gradient(transparent 70%, rgba(244, 210, 92, .55) 70%); }
+.or-mes.corrigee small::after { content: ' ✎'; color: #8a5a12; }
+.or-mes.choisie { outline: 2.5px solid #1d1a15; outline-offset: -2px; background: #fff6dc; }
+.or-mes.joue { background: #1d1a15; color: #fffdf8; } .or-mes.joue small, .or-mes.joue sup { color: #f3d27a; }
+@media (max-width: 700px) { .or-mesures { grid-template-columns: repeat(2, 1fr); } .or-mes:nth-child(2n) { border-right: 1.5px solid #1d1a15; } .or-b b { font-size: 1.1rem; } }
+/* L'éditeur de mesure */
+.or-edit { display: grid; gap: 10px; margin: 0 0 14px; padding: 14px 16px; border: 2px solid #1d1a15; border-radius: 10px; background: #fffdf6; }
+.or-ed-tete { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; } .or-ed-tete > b { font-size: 1.15rem; }
+.or-ed-choix { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.or-ed-choix select { font: inherit; font-weight: 700; padding: 5px 8px; }
+.or-ed-son { padding: 10px 12px; border-radius: 8px; background: #fbf3dc; border: 1.5px dashed #a8812f; } .or-ed-son p { margin: 0 0 8px; }
+.or-ab-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.or-edit .muted.small { margin: 0; }
+.or-edit[hidden] { display: none; }
+.or-mes { column-gap: 6px; }
+.or-mes.dense .or-b b { font-size: 1.02rem; } .or-mes.dense .or-b sup { font-size: .72rem; }
+.or-mes.dense .or-b { overflow: hidden; text-overflow: clip; }

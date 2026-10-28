@@ -407,3 +407,66 @@ export function remplir(buf, a, b, bout) {
   const rempli = joindre(tours, X, sr); const plein = Array.from({ length: rempli.numberOfChannels }, (_, c) => rempli.getChannelData(c).slice(0, voulu));
   return joindre([tranche(buf, 0, a + XF / 2), plein, tranche(buf, b - XF / 2, buf.duration)], X, sr);
 }
+
+// ---------- Changer un accord DANS le son ----------
+// Pour passer, par exemple, de Do majeur à Do mineur, on prend les notes de l'ancien accord qui ne sont pas dans le nouveau
+// (ici le Mi) et on les déplace vers la note la plus proche du nouveau (le Mi♭), dans le spectre, pendant la mesure
+// seulement : chaque pic de cette note (et ses harmoniques) glisse d'un demi-ton, phase recalée (vocodeur de phase,
+// Laroche et Dolson 1999). Le reste du son ne bouge pas. On ne peut pas inventer une note absente : si le nouvel accord
+// en ajoute une, on le dit. Marche le mieux sur un clavier ou une guitare clairs, sans batterie.
+function fftC(re, im, inv = false) {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) { let bit = n >> 1; for (; j & bit; bit >>= 1) j ^= bit; j ^= bit; if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; } }
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = ((inv ? 2 : -2) * Math.PI) / len; const wr = Math.cos(ang); const wi = Math.sin(ang);
+    for (let i = 0; i < n; i += len) {
+      let cr = 1; let ci = 0;
+      for (let j = 0; j < len / 2; j++) {
+        const p = i + j; const q = p + len / 2; const vr = re[q] * cr - im[q] * ci; const vi = re[q] * ci + im[q] * cr;
+        re[q] = re[p] - vr; im[q] = im[p] - vi; re[p] += vr; im[p] += vi;
+        const nr = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = nr;
+      }
+    }
+  }
+  if (inv) for (let i = 0; i < n; i++) { re[i] /= n; im[i] /= n; }
+}
+export function plan(de, vers) {
+  const anc = GABARITS[de.q].map((i) => (de.r + i) % 12); const neu = GABARITS[vers.q].map((i) => (vers.r + i) % 12);
+  const dep = {}; anc.forEach((pc) => { if (neu.includes(pc)) return; let bd = 99; neu.forEach((n2) => { const d = ((n2 - pc + 18) % 12) - 6; if (Math.abs(d) < Math.abs(bd)) bd = d; }); dep[pc] = bd; });
+  const couvertes = new Set([...anc.filter((pc) => neu.includes(pc)), ...Object.entries(dep).map(([pc, d]) => (+pc + d + 12) % 12)]);
+  return { dep, manque: neu.filter((pc) => !couvertes.has(pc)) };
+}
+export function changerAccordSon(buf, a, b, de, vers) {
+  const { dep, manque } = plan(de, vers); if (!Object.keys(dep).length) return { buffer: null, dep, manque };
+  const sr = buf.sampleRate; const N = 8192; const H = N / 4; const half = N / 2;
+  const win = new Float32Array(N).map((_, i) => 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / N));
+  const s0 = Math.max(0, Math.round((a - 0.12) * sr)); const s1 = Math.min(buf.length, Math.round((b + 0.12) * sr));
+  const out = new AudioBuffer({ length: buf.length, numberOfChannels: buf.numberOfChannels, sampleRate: sr });
+  // Les cibles : chaque note de la classe à déplacer, de Mi1 à Do7, et ses 6 premières harmoniques.
+  const cibles = []; Object.entries(dep).forEach(([pc, d]) => { for (let m = 24; m <= 96; m++) if (m % 12 === +pc) for (let h = 1; h <= 6; h++) { const k = (440 * 2 ** ((m - 69) / 12) * h * N) / sr; if (k < half - 4) cibles.push({ k, r: 2 ** (d / 12) }); } });
+  for (let c = 0; c < buf.numberOfChannels; c++) {
+    const x = buf.getChannelData(c); const y = out.getChannelData(c); y.set(x);
+    const debut = s0 - N; const L = s1 - debut + N; const acc = new Float32Array(L); const ws = new Float32Array(L);
+    for (let f = 0; f * H < L - N; f++) {
+      const re = new Float32Array(N); const im = new Float32Array(N); const o = debut + f * H;
+      for (let i = 0; i < N; i++) { const j = o + i; re[i] = j >= 0 && j < x.length ? x[j] * win[i] : 0; }
+      fftC(re, im); let max = 0; for (let k = 1; k < half; k++) max = Math.max(max, Math.hypot(re[k], im[k]));
+      const yr = Float32Array.from(re); const yi = Float32Array.from(im); const ajouts = [];
+      cibles.forEach(({ k, r }) => {
+        const lo = Math.max(2, Math.floor(k * 0.985)); const hi = Math.min(half - 3, Math.ceil(k * 1.015)); let kp = -1; let mp = 0;
+        for (let q = lo; q <= hi; q++) { const m2 = Math.hypot(re[q], im[q]); if (m2 > mp) { mp = m2; kp = q; } }
+        if (kp < 0 || mp < max * 0.01) return;
+        const dk = Math.round(kp * r - kp); if (!dk) return; const rot = (2 * Math.PI * dk * f * H) / N; const cr = Math.cos(rot); const ci = Math.sin(rot);
+        for (let q = kp - 2; q <= kp + 2; q++) { ajouts.push([q + dk, re[q] * cr - im[q] * ci, re[q] * ci + im[q] * cr]); yr[q] = 0; yi[q] = 0; }
+      });
+      ajouts.forEach(([q, vr, vi]) => { if (q > 0 && q < half) { yr[q] += vr; yi[q] += vi; } });
+      for (let k = 1; k < half; k++) { yr[N - k] = yr[k]; yi[N - k] = -yi[k]; } // spectre symétrique : le son reste réel
+      fftC(yr, yi, true);
+      for (let i = 0; i < N; i++) { acc[f * H + i] += yr[i] * win[i]; ws[f * H + i] += win[i] * win[i]; }
+    }
+    // Fondu de 80 ms à chaque bord : on entre et on sort de la mesure corrigée sans couture.
+    const F = Math.round(0.08 * sr);
+    for (let j = s0; j < s1; j++) { const i = j - debut; const v = ws[i] > 1e-3 ? acc[i] / ws[i] : x[j]; const g = Math.min(1, (j - s0) / F, (s1 - j) / F); y[j] = x[j] * (1 - g) + v * g; }
+  }
+  return { buffer: out, dep, manque };
+}
