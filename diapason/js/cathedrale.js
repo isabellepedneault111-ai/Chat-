@@ -29,7 +29,7 @@ const pres = (classe, vise) => { let m = vise - plier(vise) + classe; if (m - vi
 // clavier et la molette, eux, n'existent qu'en direct : ils agissent pendant l'écoute seulement.
 export const SOURCES_VIVES = new Set(['voix', 'clavier', 'molette']);
 // Vrai si un lien vise ce disque (directement, ou par son pupitre) ; un disque n’agit jamais sur lui-même.
-export const viseLien = (l, j, voix) => (String(l.cible).startsWith('g') ? !!voix[j]?.g && voix[j].g === l.cible.slice(1) : +l.cible === j) && String(j) !== String(l.src);
+export const viseLien = (l, j, voix) => (String(l.cible).startsWith('g') ? !!voix[j]?.g && voix[j].g === l.cible.slice(1) : +l.cible === j) && String(j) !== String(l.src) && !(String(l.src).startsWith('g') && voix[j]?.g === String(l.src).slice(1));
 // Applique les liens à une note : la source (un disque, la respiration, le chaos…) change son volume, sa hauteur, son timbre ou sa place.
 export function moduler(n, liens, voix, envDe) {
   liens.forEach((l) => {
@@ -69,6 +69,8 @@ export function composer({ cle, tonique = 50, duree = 120, lumieres = [], axe = 
     const b = Math.floor((u * r[0]) / CY);
     if (src === 'hasard') return graine(b);
     if (src === 'chaos') { while (chaos.length <= b) chaos.push(3.93 * chaos[chaos.length - 1] * (1 - chaos[chaos.length - 1])); return chaos[b]; }
+    // Un pupitre (groupe) : à chacune des frappes de ses voix.
+    if (String(src).startsWith('g')) { const m = voix.map((v, k) => (v?.g === src.slice(1) && !v?.muet ? k : -1)).filter((k) => k >= 0 && k < r.length); return m.length ? Math.max(...m.map((k) => envCalc(String(k), u) ?? 0)) : null; }
     const k = +src; if (!(k >= 0 && k < r.length) || voix[k]?.muet) return null; const pas = CY / r[k]; const dep = (((u - (voix[k]?.dec || 0) * pas) % pas) + pas) % pas; return Math.exp(-dep * 9);
   };
   const calcules = liens.filter((l) => !SOURCES_VIVES.has(l.src));

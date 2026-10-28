@@ -3977,3 +3977,8 @@ div.next-card .btn { align-self: flex-start; }
 .sub-outils svg, .sub-outils .mic-ico { stroke-width: 2.3 !important; width: 26px !important; height: 26px !important; }
 .sub-outils .prise-btn { color: var(--ink); }
 .prise-btn svg { min-width: 24px; justify-self: center; } .sub-outils .prise-btn svg { min-width: 26px; }
+/* La bulle d'explication (survol, toucher) */
+.bulle { position: fixed; z-index: 120; max-width: 300px; padding: 9px 12px; border-radius: 10px; background: #1d1a15; color: #f6efe0; font: 500 .95rem/1.4 var(--body, system-ui); box-shadow: 0 8px 24px rgba(0,0,0,.35); pointer-events: none; }
+.bulle b { color: #e8c27a; }
+.bulle[hidden] { display: none; }
+.li-une { margin: 4px 0 10px; font-size: 1rem; } .li-une .muted { font-size: .95rem; }

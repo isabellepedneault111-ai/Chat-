@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.61', quand: '2026-10-28', titre: 'Les groupes du labo, et les bulles', items: [
+    ['Un groupe peut lancer un lien', ['Au labo, tire depuis l’anneau d’un groupe : à chacune des frappes de ses disques, il fait bouger sa cible. Et vers l’anneau d’un groupe, c’est tout le groupe qui bouge (sur un disque du groupe, ce disque seul). La cathédrale suit.']],
+    ['Les explications au survol', ['Plus de légende en haut du schéma des liens ni de la nef : passe sur un rond, une flèche, une voix ou une arche (ou touche-la sur tablette), une bulle dit ce que c’est et quoi faire.']],
+  ] },
   { v: '0.60', quand: '2026-10-28', titre: 'Diriger la cathédrale', items: [
     ['La musique continue', ['Pendant l’écoute, change un instrument, une note, un accord, un pupitre : l’œuvre se recompose et reprend au même moment, sans s’arrêter. Comme un chef devant son orchestre.']],
     ['La rosace s’allume', ['Plus grande, et pendant l’écoute les vitraux au repos s’assombrissent : on voit la lumière tourner et l’anneau qui joue briller.']],
