@@ -329,18 +329,21 @@ export async function trouverAccords(buf, bpm, onStep = () => {}) {
 // ---------- La grille par mesures ----------
 // Comme une feuille d'accords de musicien : 4 temps par mesure, 4 mesures par ligne. Une mesure identique à la précédente
 // devient « % » ; si toute la suite tourne en boucle, on l'écrit une fois, avec ses reprises (‖: … :‖ × n).
-export function grilleMesures(accs, bpm, parMesure = 4) {
+// cadre : le tempo et le départ trouvés la première fois ; on les garde quand on corrige un accord à la main, sinon
+// toute la grille se recalerait et les mesures glisseraient.
+export function grilleMesures(accs, bpm, parMesure = 4, cadre = null) {
   if (!accs?.length) return null;
   const t0 = bpm < 80 ? bpm * 2 : bpm; const debut = accs[0].a;
   // Recaler le tempo : les changements d'accords tombent sur des temps. On cherche, à ±6 % du tempo entendu,
   // la durée de temps qui les aligne le mieux (sinon, une petite erreur s'accumule et tout glisse en fin de grille).
   const changes = accs.slice(1).map((x) => x.a - debut); let temps = 60 / t0; let mieux = -Infinity;
   for (let k = -120; k <= 120; k++) { const L = (60 / t0) * (1 + k * 0.0005); const sc = changes.reduce((s2, c) => s2 + Math.cos((2 * Math.PI * c) / L), 0) - Math.abs(k) * 0.002; if (sc > mieux) { mieux = sc; temps = L; } }
+  if (cadre) temps = cadre.temps;
   const tempo = Math.round(60 / temps);
   // Et la phase : on décale le départ pour que les changements tombent pile sur les temps, en moyenne.
   const ph = Math.atan2(changes.reduce((s2, c) => s2 + Math.sin((2 * Math.PI * c) / temps), 0), changes.reduce((s2, c) => s2 + Math.cos((2 * Math.PI * c) / temps), 0));
-  const debutCale = debut + (ph / (2 * Math.PI)) * temps;
-  const fin = accs[accs.length - 1].b; const nb = Math.max(1, Math.ceil((fin - debut) / (temps * parMesure) - 0.25));
+  const debutCale = cadre ? cadre.debutCale : debut + (ph / (2 * Math.PI)) * temps;
+  const fin = accs[accs.length - 1].b; const nb = cadre ? cadre.nb : Math.max(1, Math.ceil((fin - debut) / (temps * parMesure) - 0.25));
   // Un petit trou (moins d'un temps) entre deux accords : l'accord continue, le son s'est juste éteint un instant.
   const a = (t) => (accs.find((x) => t >= x.a - temps * 0.25 && t < x.b - temps * 0.25) || accs.find((x) => t >= x.b - temps * 0.25 && t < x.b + temps))?.nom || '';
   const mesures = [];
@@ -353,13 +356,13 @@ export function grilleMesures(accs, bpm, parMesure = 4) {
   // La boucle : la plus petite période (en mesures) qui se répète sur toute la suite, au moins deux fois.
   // (Tolérante : 80 % des mesures doivent revenir, car l'oreille peut se tromper sur un temps au début ou à la fin.)
   let periode = 0;
-  for (let p = 1; p <= Math.floor(mesures.length / 2); p++) {
+  if (cadre) periode = cadre.periode; else for (let p = 1; p <= Math.floor(mesures.length / 2); p++) {
     const ok = mesures.filter((x, i) => i >= p && x.cle === mesures[i - p].cle).length;
     if (ok >= 0.8 * (mesures.length - p) && !(p > 1 && mesures.slice(0, p).every((x) => x.cle === mesures[0].cle))) { periode = p; break; }
   }
   // La boucle écrite une fois : pour chaque mesure de la boucle, la version la plus fréquente.
   const boucle = periode ? [...Array(periode)].map((_, j) => { const v = mesures.filter((_, i) => i % periode === j); const n = {}; v.forEach((x) => { n[x.cle] = (n[x.cle] || 0) + 1; }); const top = Object.entries(n).sort((a2, b2) => b2[1] - a2[1])[0][0]; return v.find((x) => x.cle === top); }) : null;
-  return { mesures, periode, boucle, tours: periode ? Math.round(mesures.length / periode) : 0, tempo };
+  return { mesures, periode, boucle, tours: periode ? Math.round(mesures.length / periode) : 0, tempo, temps, debutCale, nb };
 }
 // La grille d’accords en texte, quatre mesures par ligne, prête à copier.
 export function grilleTexte(g, titre = '') {

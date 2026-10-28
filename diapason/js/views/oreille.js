@@ -62,7 +62,7 @@ export default {
     // Un bout pris dans le filet arrive ici tout seul.
     if (window.__flipOreille) { const f = window.__flipOreille; window.__flipOreille = null; setTimeout(async () => analyser(await f.blob.arrayBuffer(), f.nom), 0); }
     // La lecture et sa tête : où on en est, sur l'onde, pendant qu'on écoute (une boucle tourne entre a et b).
-    let tete = null; let cents = 0; let cp = []; let cible = -1; const voulus = new Set(); let occK = {}; let voixForcee = false; let orig = null; let plage = null; let presse = null; let bout = null; let pile = []; let entendus = {}; let apercu = null; let aligner = true; let choisie = null; let corr = {}; let corrige = true;
+    let tete = null; let cents = 0; let cp = []; let cible = -1; const voulus = new Set(); let occK = {}; let voixForcee = false; let orig = null; let plage = null; let presse = null; let bout = null; let pile = []; let entendus = {}; let cadreG = null; let apercu = null; let aligner = true; let choisie = null; let corr = {}; let corrige = true;
     // La justesse : toute la prise (cents) plus, au besoin, une partie à part (cp[i]). rate(t) : la vitesse à ce moment.
     const partDe = (t) => (res ? res.parties.findIndex((p) => t >= p.a - 0.01 && t < p.b) : -1);
     const rate = (t = 0) => 2 ** ((cents + (cp[partDe(t)] || 0)) / 1200);
@@ -90,7 +90,7 @@ export default {
       try { await analyserBuf(await audio().decodeAudioData(arrayBuffer), n); } catch { etat('Je n’arrive pas à lire ce fichier. Essaie un mp3, un m4a ou un wav.'); }
     }
     async function analyserBuf(b0, n) {
-      arrete(); nom = n; plage = null; entendus = {}; apercu = null; cp = []; cible = -1; cents = 0; voixForcee = false; voulus.clear(); occK = {}; { const r = q('[data-cents]'); if (r) r.value = 0; const lab = q('.or-cents'); if (lab) lab.textContent = '0 ¢'; }
+      arrete(); nom = n; plage = null; entendus = {}; cadreG = null; apercu = null; cp = []; cible = -1; cents = 0; voixForcee = false; voulus.clear(); occK = {}; { const r = q('[data-cents]'); if (r) r.value = 0; const lab = q('.or-cents'); if (lab) lab.textContent = '0 ¢'; }
       {
         buf = b0; orig = buf; corr = {}; choisie = null; corrige = true;
         res = await ecouter(buf, etat); diag = diagnostic(res); voix = null;
@@ -224,15 +224,19 @@ export default {
       const ton = res.ton.split(' ou ')[0]; const NOMS = ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
       box.innerHTML = `<h3>Les accords <small class="muted">${accs.length} changements trouvés · touche un accord pour l’écouter</small></h3>
         <div class="or-acc-liste">${accs.slice(0, 48).map((a, i) => `<button class="or-acc" data-acc="${i}" title="${mmss(a.a)} · ${a.temps} temps"><b>${esc(a.nom)}</b>${clavierDe(a.r, a.q, { compact: true })}<small>${mmss(a.a)}</small></button>`).join('')}</div>
-        ${(() => { const g = grilleMesures(accs, res.bpm); if (!g) return ''; box._grille = g; const l = g.boucle || g.mesures.slice(0, 32);
+        ${(() => { const g = grilleMesures(accs, res.bpm, 4, cadreG); if (!g) return ''; if (!cadreG) cadreG = { temps: g.temps, debutCale: g.debutCale, nb: g.nb, periode: g.periode }; box._grille = g; const l = g.boucle || g.mesures.slice(0, 32);
           return `<div class="or-grille"><div class="or-grille-t"><h4>La grille</h4><span>${g.tempo} BPM · 4 temps par mesure${g.periode ? ` · <span class="or-rep">‖: ${g.periode} mesure${g.periode > 1 ? 's' : ''} qui reviennent ${g.tours} fois :‖</span>` : ''}</span><button class="btn small or-etsi" data-o="etsi" data-bulle="Une mesure au hasard, une autre couleur d’accord, entendue tout de suite dans le son. Rien ne change tant que tu n’approuves pas.">🎲 Et si… ?</button></div>
             <div class="or-mesures">${l.map((x, i) => { const segs = []; x.cases.forEach((c) => { if (c) segs.push({ c, n: 1 }); else if (segs.length) segs[segs.length - 1].n++; else segs.push({ c: '—', n: 1 }); });
               return `<button class="or-mes n${segs.length} ${g.periode && i === 0 ? 'rep-a' : ''} ${g.periode && i === l.length - 1 ? 'rep-b' : ''} ${corrigee(i, x, g) ? 'corrigee' : ''}" data-mes="${i}" data-t="${x.t}" title="Mesure ${g.boucle ? i + 1 : x.m} · ${mmss(x.t)}"><small>${g.boucle ? i + 1 : x.m}</small>${i && x.cle === l[i - 1].cle ? '<b class="or-pct" aria-label="comme la mesure d’avant">%</b>' : segs.map((sg2) => `<span class="or-b" style="grid-column: span ${sg2.n}">${sg2.c !== '—' ? joli(sg2.c) : '<i>—</i>'}</span>`).join('')}</button>`; }).join('')}</div>
             <div class="or-edit" hidden></div>
+            <p class="or-leg-g muted small">Touche une mesure pour l’entendre et la corriger. <span class="or-leg-c">✎ en jaune</span> : une mesure que tu as corrigée.</p>
             <div class="ec-row"><button class="btn small" data-o="grille-copier">Copier la grille</button><button class="btn small" data-o="grille-txt">⬇ La grille (texte)</button></div></div>`; })()}
         <div class="ec-row"><button class="btn primary" data-o="studio">Jouer avec ces accords →</button><span class="muted small">Les 8 premiers changements, avec leur durée, deviennent « Mes accords ». La tonalité estimée (${esc(ton)}) colore le clavier.</span></div>`;
       box._noms = NOMS;
     }
+    // Les mesures réelles derrière la case i de la grille : la mesure elle-même, ou, quand la grille montre la boucle,
+    // chacune de ses reprises qui jouait la même chose.
+    const reprises = (i, g) => (g.boucle ? g.mesures.filter((m, k) => k % g.periode === i && m.cle === g.boucle[i].cle) : [g.mesures[i]]);
     // Une mesure dont on a changé l'accord (dans la grille écrite) : elle se voit.
     const corrigee = (i, x, g) => { const e2 = entendus[i]; if (!e2) return false; const c = accs.find((a) => a.b > x.t + 0.05 && a.a < x.t + 240 / g.tempo - 0.05); return !!c && (c.r !== e2.r || c.q !== e2.q); };
     // Un nom d'accord lisible : la note en gros, sa sorte en petit, comme sur une partition (Si + maj7).
@@ -253,14 +257,14 @@ export default {
     // la grille, l'onde et « Jouer avec ces accords » suivent tout de suite.
     function editer(i) {
       const g = q('.or-accords')._grille; const box = q('.or-edit'); if (!g || !box) return; const x = (g.boucle || g.mesures)[i]; const fin = x.t + 240 / g.tempo;
-      const dedans = accs.filter((a) => a.b > x.t + 0.05 && a.a < fin - 0.05); const cur = dedans[0] || { r: 0, q: 'M' };
+      const dedans = accs.filter((a) => a.b > x.t + 0.05 && a.a < fin - 0.05); const part = (a) => Math.min(a.b, fin) - Math.max(a.a, x.t); const cur = [...dedans].sort((u, v) => part(v) - part(u))[0] || { r: 0, q: 'M' };
       // L'accord entendu au départ (avant toute correction) : c'est lui qu'on déplace dans le son.
       if (!entendus[i]) entendus[i] = { r: cur.r, q: cur.q, nom: dedans.map((a) => a.nom).join(' → ') || 'rien de clair' };
       box.hidden = false; box.dataset.i = i; const anc = entendus[i];
       const pl = plan(anc, cur); const change = anc.r !== cur.r || anc.q !== cur.q;
       const N2 = (pc) => NOTES_FR[pc];
       const dit = Object.entries(pl.dep).map(([pc, d]) => `${N2(+pc)} → ${N2((+pc + d + 12) % 12)}`).join(', ');
-      box.innerHTML = `<div class="or-ed-tete"><b>Mesure ${g.boucle ? i + 1 : x.m}</b><span class="muted">${mmss(x.t)}</span><span>L’oreille a cru entendre <b>${esc(anc.nom)}</b></span></div>
+      box.innerHTML = `<div class="or-ed-tete"><b>Mesure ${g.boucle ? i + 1 : x.m}</b><span class="muted">${mmss(x.t)}</span><span>L’oreille a cru entendre <b>${esc(anc.nom)}</b></span>${g.boucle && reprises(i, g).length > 1 ? `<span class="muted">· cette mesure revient ${reprises(i, g).length} fois dans la boucle : la correction vaut pour chaque reprise</span>` : ''}</div>
         <div class="or-ed-choix"><label>Pour toi, c’est <select data-ed="r">${NOTES_FR.map((n, k) => `<option value="${k}" ${k === cur.r ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
         <select data-ed="q" aria-label="La sorte d’accord">${SORTES_ACCORD.map((k) => `<option value="${k}" ${k === cur.q ? 'selected' : ''}>${k === 'M' ? 'majeur' : k === 'm' ? 'mineur' : k}</option>`).join('')}</select>
         <button class="btn small" data-ed-ecoute>♪ L’accord seul, au piano</button></div>
@@ -290,7 +294,13 @@ export default {
       const rr = +box.querySelector('[data-ed=r]').value; const qq = box.querySelector('[data-ed=q]').value; const nm = nomAccord(rr, qq);
       // Les accords de cette mesure deviennent le bon ; s'il n'y en avait pas, on en pose un.
       const dedans = accs.filter((a) => a.b > x.t + 0.05 && a.a < fin - 0.05);
-      if (dedans.length) dedans.forEach((a) => { a.r = rr; a.q = qq; a.nom = nm; }); else { accs.push({ r: rr, q: qq, nom: nm, a: x.t, b: fin, temps: 4 }); accs.sort((u, v) => u.a - v.a); }
+      // Seulement cette mesure (et ses reprises, dans une boucle) : un accord qui déborde sur les voisines est coupé à
+      // ses bords, les voisines gardent le leur.
+      const tps = (u, v) => Math.max(1, Math.round((v - u) / (60 / g.tempo))); const D = 240 / g.tempo;
+      reprises(i, g).forEach((y) => { const f2 = y.t + D; const dans = accs.filter((a) => a.b > y.t + 0.05 && a.a < f2 - 0.05);
+        const garde = accs.filter((a) => !dans.includes(a)); const morceaux = [];
+        dans.forEach((a) => { if (a.a < y.t - 0.05) morceaux.push({ ...a, b: y.t, temps: tps(a.a, y.t) }); if (a.b > f2 + 0.05) morceaux.push({ ...a, a: f2, temps: tps(f2, a.b) }); });
+        accs.splice(0, accs.length, ...garde, ...morceaux, { r: rr, q: qq, nom: nm, a: y.t, b: f2, temps: 4 }); accs.sort((u, v) => u.a - v.a); });
       montrerAccords(); dessiner(); editer(i); q(`.or-mes[data-mes="${i}"]`)?.classList.add('choisie'); toast(`Mesure corrigée : ${nm}.`);
     });
     // Dessine l’énergie de la pièce et ses parties dans le temps.
@@ -441,7 +451,7 @@ export default {
       if (e.target.closest('[data-ed-apres]') || e.target.closest('[data-ed-ok]')) {
         const box = q('.or-edit'); const g = q('.or-accords')._grille; const i = +box.dataset.i; const x = (g.boucle || g.mesures)[i]; const fin = x.t + 240 / g.tempo;
         const vers = { r: +box.querySelector('[data-ed=r]').value, q: box.querySelector('[data-ed=q]').value }; const cle = `${i}:${vers.r}${vers.q}`;
-        if (apercu?.cle !== cle) { etat('Je déplace les notes dans le son…'); await new Promise((ok) => setTimeout(ok, 30)); apercu = { cle, ...changerAccordSon(buf, x.t, fin, entendus[i], vers) }; etat(''); }
+        if (apercu?.cle !== cle) { etat('Je déplace les notes dans le son…'); await new Promise((ok) => setTimeout(ok, 30)); apercu = { cle, ...reprises(i, g).reduce((acc, y) => { const r2 = changerAccordSon(acc.buffer || buf, y.t, y.t + 240 / g.tempo, entendus[i], vers); return r2.buffer ? r2 : acc; }, { buffer: null }) }; etat(''); }
         const nouv = apercu.buffer; if (!nouv) return;
         if (e.target.closest('[data-ed-apres]')) { const garde = buf; buf = nouv; joueDe(x.t, fin); buf = garde; return; }
         const quoi = `Mesure ${g.boucle ? i + 1 : x.m} : ${entendus[i].nom} → ${nomAccord(vers.r, vers.q)}, dans le son.`; apercu = null;

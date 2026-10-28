@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.68', quand: '2026-10-28', titre: 'Une mesure à la fois', items: [
+    ['Le jaune ne déborde plus', ['Corriger une mesure changeait aussi ses voisines quand l’accord durait plus d’une mesure, et la grille se recalait toute seule : plusieurs mesures devenaient jaunes. Maintenant seule la mesure touchée change. Dans une boucle, la correction vaut pour chacune de ses reprises, et l’éditeur le dit.']],
+    ['Le bon accord de départ', ['L’éditeur part de l’accord qui occupe le plus la mesure (celui qu’on voit dans la tuile), pas d’un bout qui déborde de la mesure d’avant.']],
+  ] },
   { v: '0.67', quand: '2026-10-28', titre: 'Et si… ?', items: [
     ['Des couleurs à essayer', ['Dans une mesure, « Et si… ? » propose d’autres accords pour le même moment : plus sombre, plus lumineux, suspendu, en apesanteur, son cousin… Touche-en un : tu l’entends tout de suite, dans le vrai son. Seulement ceux qu’on peut faire sans inventer de note. Rien ne change tant que tu n’approuves pas.']],
     ['🎲 Et si… ?', ['En haut de la grille : une mesure au hasard, une autre couleur, entendue tout de suite. ▶ Avant pour comparer.']],
