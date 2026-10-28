@@ -3982,3 +3982,4 @@ div.next-card .btn { align-self: flex-start; }
 .bulle b { color: #e8c27a; }
 .bulle[hidden] { display: none; }
 .li-une { margin: 4px 0 10px; font-size: 1rem; } .li-une .muted { font-size: .95rem; }
+.coche li.manuel a.ce-t { display: block; padding: 0; border: 0; grid-template-columns: none; } .coche li.manuel .ce-t b { display: block; } .coche li.manuel .ce-t small { display: block; margin-top: 2px; color: #6d655a; }
