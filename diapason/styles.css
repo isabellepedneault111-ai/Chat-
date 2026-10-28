@@ -4019,3 +4019,50 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .fond-bar small { color: #5c544a; font-weight: 500; }
 .fond-vol { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; }
 .fond-vol input { width: 140px; accent-color: #a8812f; }
+
+/* 0.64 — L'oreille : les parties par énergie, la voix rangée en deux colonnes égales */
+.or-parties { margin: 12px 0; }
+.or-parties h3 { margin: 0 0 8px; } .or-parties h3 small { font-weight: 500; font-size: .9rem; }
+.or-pt-liste { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 4px; }
+.or-pt { flex: 1 1 0; min-width: 92px; display: grid; gap: 2px; text-align: left; padding: 8px 10px; border: 2px solid transparent; border-radius: 8px; font: inherit; cursor: pointer; color: #1d1a15; }
+.or-pt small { font-variant-numeric: tabular-nums; font-size: .85rem; } .or-pt em { font-style: normal; font-size: .85rem; }
+.or-pt.f-douce { background: #dde9f7; border-left: 6px solid #9cc0e8; }
+.or-pt.f-moyenne { background: #c8dbf2; border-left: 6px solid #4a86cf; }
+.or-pt.f-forte { background: #1d4f8f; color: #fff; border-left: 6px solid #0f2f59; }
+.or-pt.f-silence { background: #efebe3; color: #5c544a; min-width: 70px; }
+.or-pt.vise { border-color: var(--ink); box-shadow: 0 3px 0 var(--ink); }
+.or-pt:hover { filter: brightness(1.04); transform: translateY(-1px); }
+.or-leg2 { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 8px 0 0; font-size: .92rem; }
+.or-leg2 span { display: inline-flex; align-items: center; gap: 7px; }
+.or-leg2 i { display: inline-block; width: 22px; height: 14px; border-radius: 3px; }
+.or-leg2 .lg-hach { background: repeating-linear-gradient(45deg, #d93a24 0 3px, #fbe1da 3px 7px); }
+.or-just select { font: inherit; font-weight: 600; padding: 3px 6px; }
+.or-v-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0; align-items: start; }
+@media (max-width: 760px) { .or-v-cols { grid-template-columns: 1fr; } }
+.or-v-col { padding: 12px 14px; border-radius: 10px; border: 2px solid; background: #fffdf6; }
+.or-v-col.bien { border-color: #a8812f; } .or-v-col.trav { border-color: #c2321c; }
+.or-v-col h4 { margin: 0 0 8px; font-size: 1.05rem; } .or-v-col.bien h4 { color: #75591a; } .or-v-col.trav h4 { color: #a82a17; }
+.or-v-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.or-v-col li { display: grid; grid-template-columns: 92px 1fr auto; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 6px; }
+.or-v-col li.bien { background: #f6ecd0; } .or-v-col li.trav { background: #fbe1da; } .or-v-col li.voulu { background: #f1ece2; }
+.or-v-col li.voulu .or-t { text-decoration: line-through; }
+.or-v-col .check { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; }
+.or-v-col .check input { width: 22px; height: 22px; accent-color: var(--ink); }
+.or-v-col p { margin: 8px 0 0; }
+.or-v-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.or-v-actions .or-garder { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
+.or-v-non { padding: 12px 14px; border: 2px dashed #8a8174; border-radius: 10px; background: #f6f2ea; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.or-v-non p { margin: 0; flex: 1 1 420px; }
+.or-pt em { background: none; }
+.or-pt { min-width: 112px; } .or-pt small { white-space: nowrap; }
+/* Retoucher une note de la voix */
+.or-v-col li { display: flex; flex-wrap: wrap; } .or-v-col li > .or-t:first-child { min-width: 86px; } .or-v-col li > span:not(.or-corr) { flex: 1 1 140px; }
+.or-corr { display: inline-flex; align-items: center; gap: 4px; }
+.or-corr > button[data-corr] { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--ink); background: #fffdf6; font: 700 1.05rem/1 inherit; cursor: pointer; color: var(--ink); }
+.or-corr > b { min-width: 3.6em; text-align: center; font-variant-numeric: tabular-nums; }
+.or-note.retouche { outline: 2px solid #3f8a5c; outline-offset: 2px; }
+.or-corr-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 0 0 12px; padding: 12px 14px; border: 2px solid #3f8a5c; border-radius: 10px; background: #e7f2ea; }
+.or-corr-bar p { margin: 0; flex: 1 1 100%; }
+.or-ab { display: inline-flex; border: 2px solid var(--ink); border-radius: 999px; overflow: hidden; }
+.or-ab button { font: inherit; font-weight: 700; padding: 5px 14px; border: 0; background: #fffdf6; color: var(--ink); cursor: pointer; }
+.or-ab button.on { background: var(--ink); color: #fffdf6; }

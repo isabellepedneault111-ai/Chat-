@@ -254,12 +254,16 @@ export default {
       mic.source.connect(mg).connect(dest);
       const chunks = [];
       const r = new MediaRecorder(dest.stream);
+      // En parallèle, le micro seul (sans le beat ni la boucle) : c'est lui que L'oreille mesure.
+      const dSeule = c.createMediaStreamDestination(); mic.source.connect(dSeule); const bSeule = []; const rSeule = new MediaRecorder(dSeule.stream);
+      rSeule.ondataavailable = (e) => e.data.size && bSeule.push(e.data); const seule = new Promise((ok) => { rSeule.onstop = () => { try { mic.source.disconnect(dSeule); } catch { /* déjà */ } ok(new Blob(bSeule, { type: rSeule.mimeType || 'audio/webm' })); }; });
+      r.addEventListener('stop', () => rSeule.state !== 'inactive' && rSeule.stop());
       r.ondataavailable = (e) => e.data.size && chunks.push(e.data);
       r.onstop = () => {
         const type = r.mimeType || 'audio/webm';
         const blob = new Blob(chunks, { type });
         const ext = type.includes('ogg') ? 'ogg' : type.includes('mp4') ? 'm4a' : 'webm';
-        S.takes.unshift({ blob, url: URL.createObjectURL(blob), ext, at: new Date(), bpm: S.bpm, chords: [0, 1, 2, 3].map((b) => { const ch = chordAt(b); return chordName(ch.root, ch.qual); }).join(' – ') });
+        S.takes.unshift({ blob, seule, fond: S.fond?.nom, url: URL.createObjectURL(blob), ext, at: new Date(), bpm: S.bpm, chords: [0, 1, 2, 3].map((b) => { const ch = chordAt(b); return chordName(ch.root, ch.qual); }).join(' – ') });
         arreterMetronome();
         try { finalOut().disconnect(dest); } catch { /* déjà déconnecté */ }
         mg.disconnect();
@@ -277,7 +281,7 @@ export default {
       await avantPrise(S.bpm);
       S.recLance = !S.playing;
       if (!S.playing) play();
-      r.start();
+      r.start(); rSeule.start();
       syncTop();
       toast('● Enregistrement… Mets des écouteurs pour éviter l’écho.');
     }
@@ -474,6 +478,7 @@ export default {
             <li><div><b>Prise ${S.takes.length - i}</b><span class="muted mono">${t.at.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' })} · ${t.bpm} BPM · ${t.chords}</span></div>
               <audio controls src="${t.url}"></audio>
               ${espace.connected ? (t.gardee ? `<span class="muted small">${t.gardee === 'relais' ? `Lancée à ${esc(autre())} ✓` : 'Au mur ✓'}</span>` : `<button class="btn small primary" data-garder="${i}">Garder au mur</button><button class="btn small" data-lancer="${i}">⇄ Lancer à ${esc(autre())}</button>`) : ''}
+              <button class="btn small" data-oreille="${i}" data-bulle="L’oreille mesure ta voix seule (sans le beat) : tes notes en or, celles à travailler en rouge.">→ L’oreille : mes notes</button>
               <a class="btn small" href="${t.url}" download="diapason-prise-${S.takes.length - i}.${t.ext}">↓ Télécharger</a></li>`).join('')}</ul>`
             : '<p class="muted empty">Aucune prise pour l’instant. Clique ● REC en haut : le beat démarre, ta voix ou ton instrument passe par-dessus.</p>'}
           <p class="muted small">« Lancer à ${esc(autre())} » : la prise va au mur ET dans Nos échanges, où ${esc(autre())} peut répondre par-dessus. Une prise gardée part au mur comme idée brute : l’autre l’entend, elle peut monter jusqu’au set, et elle compte dans votre plan. Les autres disparaissent en fermant la page.</p>
@@ -484,6 +489,9 @@ export default {
     // Garder une prise : elle devient une idée du mur, partagée, avec ses accords et son tempo.
     document.addEventListener('click', async function garderPrise(e) {
       if (!el.isConnected) { document.removeEventListener('click', garderPrise); return; }
+      const or = e.target.closest('[data-oreille]');
+      if (or) { const t = S.takes[+or.dataset.oreille]; if (!t) return; or.disabled = true;
+        t.seule.then((blob) => { window.__flipOreille = { blob, nom: `Ma voix · prise ${S.takes.length - +or.dataset.oreille}${t.fond ? ` sur ${t.fond}` : ''}` }; location.hash = '#/oreille'; }); return; }
       const l = e.target.closest('[data-lancer]');
       if (l && el.contains(l)) {
         // Ce que je fais seule peut partir à l'autre d'un geste : c'est ça, le relais (pas une autre page à apprendre).

@@ -5,7 +5,7 @@ import { clavierDe } from '../doigte.js';
 import { espace, audioURL, saveEntry, uploadAudio, saveProfile, members } from '../espace.js';
 import { toast, autoCanvas } from '../ui.js';
 import { esc } from './carnet.js';
-import { ecouter, boucler, rendreBoucle, diagnostic, notesVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
+import { ecouter, boucler, rendreBoucle, corrigerNotes, wav, diagnostic, notesVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
 import { chargerGrille, poserFond } from './studio.js';
 
 const PIECES = [['data/sons/frog-joywalk-complet.mp3', 'Joy Walk (Frog)'], ['data/sons/frog-visite.mp3', 'Projet 1, après la pause (Frog)']];
@@ -37,10 +37,10 @@ export default {
         <h2 class="or-titre"></h2>
         <div class="or-faits"></div>
         <div class="or-transport"><button class="btn primary" data-o="lire">▶ Écouter</button><span class="or-pos mono">0:00</span><span class="muted">Touche l’onde : l’écoute part de ce moment.</span>
-          <label class="or-just" data-bulle="Accorder toute la prise, plus haut ou plus bas, en cents (100 cents = un demi-ton). L’écoute et les fichiers WAV suivent ; l’original ne change pas.">Justesse <input type="range" min="-50" max="50" step="1" value="0" data-cents> <b class="or-cents">0 ¢</b></label></div>
+          <label class="or-just" data-bulle="Accorder plus haut ou plus bas, en cents (100 cents = un demi-ton) : toute la prise, ou une seule partie. L’écoute et les fichiers WAV suivent ; l’original ne change pas.">Justesse de <select data-cible aria-label="Ce qu’on accorde"><option value="-1">toute la prise</option></select> <input type="range" min="-50" max="50" step="1" value="0" data-cents> <b class="or-cents">0 ¢</b></label></div>
         <div class="or-carte"><i class="or-tete" hidden></i><canvas class="or-canvas" aria-label="La pièce, ses parties, ses silences et sa boucle"></canvas></div>
+        <div class="or-parties"></div>
         <div class="or-diag"></div>
-        <div class="or-legende"><span><i class="lg-p"></i>une partie</span><span><i class="lg-s"></i>silence</span><span><i class="lg-b"></i>la boucle</span><span><i class="lg-m"></i>le moment fort</span><span><i class="lg-t"></i>à retravailler</span></div>
         <div class="or-voix"></div>
         <div class="or-accords"></div>
         <div class="or-actions">
@@ -61,12 +61,18 @@ export default {
     // Un bout pris dans le filet arrive ici tout seul.
     if (window.__flipOreille) { const f = window.__flipOreille; window.__flipOreille = null; setTimeout(async () => analyser(await f.blob.arrayBuffer(), f.nom), 0); }
     // La lecture et sa tête : où on en est, sur l'onde, pendant qu'on écoute (une boucle tourne entre a et b).
-    let tete = null; let cents = 0; const rate = () => 2 ** (cents / 1200); const voulus = new Set(); let occK = {};
+    let tete = null; let cents = 0; let cp = []; let cible = -1; const voulus = new Set(); let occK = {}; let voixForcee = false; let orig = null; let corr = {}; let corrige = true;
+    // La justesse : toute la prise (cents) plus, au besoin, une partie à part (cp[i]). rate(t) : la vitesse à ce moment.
+    const partDe = (t) => (res ? res.parties.findIndex((p) => t >= p.a - 0.01 && t < p.b) : -1);
+    const rate = (t = 0) => 2 ** ((cents + (cp[partDe(t)] || 0)) / 1200);
+    // Où en est l'écoute dans la pièce (les segments suivent chacun leur justesse).
+    const posDe = (tt) => { const e = audio().currentTime - tt.t0;
+      if (tt.boucle) { const L = tt.b - tt.a; const eb = e * tt.segs[0].r; return tt.a + (((eb % L) + L) % L); }
+      let reste = Math.max(0, e); for (const g of tt.segs) { const d = (g.b - g.a) / g.r; if (reste < d) return g.a + reste * g.r; reste -= d; } return tt.b; };
     const arrete = () => { stopBoucle?.(); stopBoucle = null; try { lecture?.stop?.(); } catch { /* déjà arrêtée */ } lecture = null; tete = null; q('[data-o=boucle]').textContent = '▶ Écouter la boucle'; const l = q('[data-o=lire]'); if (l) l.textContent = '▶ Écouter'; const t = q('.or-tete'); if (t) t.hidden = true; };
     function animerTete() {
-      if (!tete || !res) return; const c = audio(); const e = c.currentTime - tete.t0;
-      const eb = e * tete.rate; // le temps de la pièce avance au rythme de la justesse choisie
-      let pos = tete.boucle ? tete.a + (((eb % (tete.b - tete.a)) + (tete.b - tete.a)) % (tete.b - tete.a)) : tete.a + eb;
+      if (!tete || !res) return;
+      let pos = posDe(tete);
       if (!tete.boucle && pos >= tete.b) { arrete(); return; }
       pos = Math.max(tete.a, pos); const t = q('.or-tete'); if (t) { t.hidden = false; t.style.left = `${(pos / res.duree) * 100}%`; }
       const p = q('.or-pos'); if (p) p.textContent = `${mmss(pos)} / ${mmss(res.duree)}`;
@@ -78,10 +84,10 @@ export default {
 
     // Décode la pièce déposée et la fait écouter par l’oreille, en affichant chaque étape.
     async function analyser(arrayBuffer, n) {
-      arrete(); nom = n;
+      arrete(); nom = n; cp = []; cible = -1; cents = 0; voixForcee = false; voulus.clear(); occK = {}; { const r = q('[data-cents]'); if (r) r.value = 0; const lab = q('.or-cents'); if (lab) lab.textContent = '0 ¢'; }
       try {
         etat('Je décode la pièce…');
-        buf = await audio().decodeAudioData(arrayBuffer);
+        buf = await audio().decodeAudioData(arrayBuffer); orig = buf; corr = {}; corrige = true;
         res = await ecouter(buf, etat); diag = diagnostic(res); voix = null;
         etat('');
         montrer();
@@ -109,31 +115,71 @@ export default {
         <div class="or-col or-bien"><h3>Ce qui brille déjà</h3><ul>${diag.brille.map((o) => item(o, 'ok')).join('')}</ul></div>
         <div class="or-col or-trav"><h3>À retravailler</h3><ul>${diag.travail.map((o) => item(o, 'tr')).join('') || '<li class="vide"><span>Rien de flagrant dans l’énergie ni la forme. Fiez-vous à vos oreilles pour le reste.</span></li>'}</ul></div>`;
       q('.or-voix').innerHTML = '';
-      dessiner();
+      montrerParties(); dessiner();
+    }
+    // L'énergie de chaque partie, en trois teintes d'un même bleu : plus c'est foncé, plus ça pousse.
+    const FORCE = { douce: '#9cc0e8', moyenne: '#4a86cf', forte: '#1d4f8f', silence: '#d9d2c4' };
+    function forceDe(p) {
+      if (p.silence) return 'silence';
+      const nv = res.parties.filter((x) => !x.silence).map((x) => x.niveau).sort((u, v) => u - v); if (nv.length < 3) return 'moyenne';
+      const t1 = nv[Math.floor(nv.length / 3)]; const t2 = nv[Math.floor((2 * nv.length) / 3)];
+      return p.niveau < t1 ? 'douce' : p.niveau < t2 ? 'moyenne' : 'forte';
+    }
+    function montrerParties() {
+      const box = q('.or-parties'); if (!res || !box) return; let k = 0;
+      const nums = res.parties.map((p) => (p.silence ? 0 : ++k));
+      box.innerHTML = `<h3>Les parties <small class="muted">la couleur dit l’énergie : plus c’est foncé, plus ça pousse · touche une partie pour l’écouter et l’accorder à part</small></h3>
+        <div class="or-pt-liste">${res.parties.map((p, i) => { const f = forceDe(p); return `<button class="or-pt f-${f} ${cible === i ? 'vise' : ''}" data-pt="${i}" style="flex-grow:${Math.round(p.b - p.a)}">
+          <b>${p.silence ? 'silence' : `Partie ${nums[i]}`}</b><small>${mmss(p.a)} – ${mmss(p.b)}</small><em>${p.silence ? '' : f}${cp[i] ? ` · ${cp[i] > 0 ? '+' : ''}${cp[i]} ¢` : ''}</em></button>`; }).join('')}</div>
+        <p class="or-leg2"><span><i style="background:${FORCE.douce}"></i>douce</span><span><i style="background:${FORCE.moyenne}"></i>moyenne</span><span><i style="background:${FORCE.forte}"></i>forte</span><span><i style="background:${FORCE.silence}"></i>silence</span><span><i style="background:#c9a45c"></i>la boucle</span><span><i style="background:#e07b2c"></i>le moment fort</span><span><i class="lg-hach"></i>à retravailler</span></p>`;
+      const sel = q('[data-cible]');
+      if (sel) { sel.innerHTML = `<option value="-1">toute la prise</option>${res.parties.map((p, i) => (p.silence ? '' : `<option value="${i}">la partie ${nums[i]} (${mmss(p.a)})</option>`)).join('')}`; sel.value = cible; }
+    }
+    // Les notes retouchées : on fabrique une copie corrigée et c'est elle qu'on entend (et qu'on exporte) ; l'original reste là.
+    function appliquer() {
+      const on = Object.values(corr).some(Boolean); const pos = tete ? posDe(tete) : null; const t = tete;
+      buf = on && corrige && voix?.notes ? corrigerNotes(orig, corr, voix.notes, voix.piste) : orig;
+      if (t) { if (t.boucle) joueDe(t.a, t.b, { boucle: true }); else if (pos < t.b) joueDe(pos, t.b); }
+      montrerVoix();
     }
     // Sur une voix seule : les meilleures notes, celles à travailler, et l'exercice qui va avec.
     function montrerVoix() {
       const box = q('.or-voix');
-      if (!voix?.voix) { box.innerHTML = '<p class="muted small">Notes de la voix : pour les mesurer, dépose un enregistrement de voix seule (un mumble, une prise a cappella). Dans un mélange d’instruments, la mesure ne serait pas fiable.</p>'; return; }
+      if (!voix?.notes?.length || (!voix.voix && !voixForcee)) {
+        box.innerHTML = voix?.instrument
+          ? `<div class="or-v-non"><p><b>Pas de voix ici.</b> J’entends ${esc(voix.pourquoi)} : c’est un instrument, pas quelqu’un qui chante. Les notes de la voix ne s’affichent donc pas.</p><button class="btn small" data-o="voix-quand-meme">C’est pourtant une voix : mesurer quand même</button></div>`
+          : '<p class="muted">Notes de la voix : pour les mesurer, dépose un enregistrement de voix seule (un mumble, une prise a cappella). Dans un mélange d’instruments, la mesure ne serait pas fiable.</p>';
+        return;
+      }
       // En or : juste et stable. En rouge : à travailler (sauf si c'est voulu : une note glissée, une couleur exprès).
       const forte = new Set(voix.fortes.map((b) => b.m)); const trav = voix.aTravailler.filter((b) => !voulus.has(b.m));
       const etatDe = (b) => (voulus.has(b.m) ? 'voulu' : forte.has(b.m) ? 'bien' : trav.some((x) => x.m === b.m) ? 'trav' : '');
-      const puce = (b) => { const c = Math.round(b.cents); const k = etatDe(b);
-        return `<button class="or-note ${k}" data-note="${b.m}" data-bulle="${esc(`${nomNote(b.m)} : chantée ${b.n} fois, ${c > 0 ? '+' : ''}${c} cents en moyenne. Touche pour l’entendre telle que chantée.`)}">${nomNote(b.m)}<small>${c > 0 ? '+' : ''}${c}¢</small></button>`; };
+      const sg = (c) => `${c > 0 ? '+' : ''}${Math.round(c)}`;
+      const puce = (b) => `<button class="or-note ${etatDe(b)} ${corr[b.m] ? 'retouche' : ''}" data-note="${b.m}" data-bulle="${esc(`${nomNote(b.m)} : chantée ${b.n} fois, ${sg(b.cents)} cents en moyenne${corr[b.m] ? `, retouchée de ${sg(corr[b.m])} cents` : ''}. Touche pour l’entendre.`)}">${nomNote(b.m)}<small>${sg(b.cents)} ¢${corr[b.m] ? ` → ${sg(b.cents + corr[b.m])}` : ''}</small></button>`;
+      // Retoucher une note : ± 5 cents, ou d'un coup « → juste ». Seule cette note bouge, partout où elle est chantée.
+      const retouche = (b) => `<span class="or-corr" data-bulle="Retoucher ${nomNote(b.m)} : seulement cette note, partout où elle est chantée. L’original ne change pas : tu entends une copie retouchée."><button data-corr="${b.m}" data-d="-5" aria-label="5 cents plus bas">−</button><b>${corr[b.m] ? sg(corr[b.m]) : '0'} ¢</b><button data-corr="${b.m}" data-d="5" aria-label="5 cents plus haut">+</button><button class="or-t" data-corr-juste="${b.m}" data-v="${-Math.round(b.cents)}">→ juste</button></span>`;
+      const ligne = (b, k) => `<li class="${k}"><button class="or-t" data-note="${b.m}">▶ ${nomNote(b.m)}</button><span>${k === 'bien' ? `juste (${sg(b.cents)} ¢), chantée ${b.n} fois` : `${b.cents > 0 ? 'un peu haut' : 'un peu bas'} : ${Math.round(Math.abs(b.cents))} cents`}</span>${k === 'bien' ? '' : `${k === 'voulu' ? '' : retouche(b)}<label class="check"><input type="checkbox" data-voulu="${b.m}" ${voulus.has(b.m) ? 'checked' : ''}> c’est voulu</label>`}</li>`;
       const moy = Math.round(voix.notes.reduce((s2, b) => s2 + b.cents * b.n, 0) / Math.max(1, voix.notes.reduce((s2, b) => s2 + b.n, 0)));
       const qui = espace.connected ? members() : [];
       box.innerHTML = `
-        <h3>Les notes de la voix <small class="muted">${voix.nNotes} notes tenues mesurées · touche une note pour l’entendre</small></h3>
+        <h3>Les notes de la voix <small class="muted">${voix.nNotes} notes tenues · de la plus grave à la plus aiguë · touche une note pour l’entendre</small></h3>
         <div class="or-notes">${voix.notes.map(puce).join('')}</div>
-        <p class="or-note-leg"><span class="or-note bien">en or</span> juste et stable <span class="or-note trav">en rouge</span> à travailler <span class="or-note voulu">en pointillé</span> c’est voulu</p>
-        <div class="or-col-2">
-          <div><h4>Les meilleures notes</h4><p>${voix.fortes.length ? voix.fortes.map((b) => `<b>${nomNote(b.m)}</b>`).join(', ') + ' : justes et stables. C’est là que la voix est chez elle ; une mélodie qui s’y pose sonnera.' : 'Pas encore assez de notes répétées pour le dire.'}</p></div>
-          <div><h4>À travailler</h4>${voix.aTravailler.length ? `<ul class="or-trav">${voix.aTravailler.map((b) => `<li class="${voulus.has(b.m) ? 'voulu' : ''}"><button class="or-t" data-note="${b.m}">▶ ${nomNote(b.m)}</button> ${b.cents > 0 ? 'un peu haut' : 'un peu bas'}, ${Math.round(Math.abs(b.cents))} cents <label class="check"><input type="checkbox" data-voulu="${b.m}" ${voulus.has(b.m) ? 'checked' : ''}> c’est voulu</label></li>`).join('')}</ul>` : '<p>Aucune note nettement à côté. Bravo.</p>'}
-          ${trav.length ? '<a class="btn small" href="#/accord">Voix + piano : les retravailler avec le clavier →</a>' : ''}</div>
+        <div class="or-v-cols">
+          <section class="or-v-col bien"><h4>En or : chez elle</h4>${voix.fortes.length ? `<ul class="or-v-l">${voix.fortes.map((b) => ligne(b, 'bien')).join('')}</ul><p class="muted">Justes et stables : une mélodie qui s’y pose sonnera.</p>` : '<p class="muted">Pas encore assez de notes répétées pour le dire.</p>'}</section>
+          <section class="or-v-col trav"><h4>En rouge : à travailler</h4>${voix.aTravailler.length ? `<ul class="or-v-l">${voix.aTravailler.map((b) => ligne(b, voulus.has(b.m) ? 'voulu' : 'trav')).join('')}</ul>` : '<p class="muted">Aucune note nettement à côté.</p>'}</section>
         </div>
-        ${Math.abs(moy) >= 6 ? `<p class="or-accorder">Toute la voix est en moyenne <b>${moy > 0 ? '+' : ''}${moy} cents</b> ${moy > 0 ? '(un peu haute)' : '(un peu basse)'}. <button class="btn small" data-cents-auto="${-moy}">Accorder la prise : ${-moy > 0 ? '+' : ''}${-moy} ¢</button> <span class="muted small">pour l’entendre recalée ; l’original ne change pas.</span></p>` : ''}
-        ${qui.length ? `<p class="or-garder">C’est la voix de : ${qui.map((m) => `<button class="btn small" data-o="garder" data-qui="${esc(m)}">${esc(m)}</button>`).join(' ')} <span class="muted small">le labo garde ces notes dans son profil et apprend, prise après prise.</span></p>` : ''}
-        <p class="or-src-note muted small">Comment : hauteur mesurée 45 fois par seconde par autocorrélation (comme un accordeur) ; une note compte si elle tient au moins 0,14 s. Juste : moins de 12 cents d’écart. Retour visuel et justesse : Welch, Howard et Rush 1989.</p>`;
+        ${Object.values(corr).some(Boolean) ? `<div class="or-corr-bar">
+          <p><b>Notes retouchées :</b> ${voix.notes.filter((b) => corr[b.m]).map((b) => `${nomNote(b.m)} ${sg(corr[b.m])} ¢`).join(' · ')}. <span class="muted">L’enregistrement d’origine reste intact : la version retouchée est une copie.</span></p>
+          <div class="or-ab" role="group" aria-label="Ce qu’on entend"><button class="${corrige ? '' : 'on'}" data-ab="0">L’original</button><button class="${corrige ? 'on' : ''}" data-ab="1">La retouchée</button></div>
+          <button class="btn small primary" data-o="retouche-wav">⬇ La prise retouchée (WAV)</button>
+          ${espace.connected ? '<button class="btn small" data-o="retouche-mur">Garder la retouchée au mur</button>' : ''}
+          <button class="btn small" data-o="retouche-annuler">Tout annuler</button></div>` : ''}
+        <div class="or-v-actions">
+          ${Math.abs(moy) >= 6 ? `<button class="btn small" data-cents-auto="${-moy}" data-bulle="Toute la voix est en moyenne ${sg(moy)} cents ${moy > 0 ? '(un peu haute)' : '(un peu basse)'} : ce réglage la recale pour l’écoute et les WAV. L’original ne change pas.">Accorder la prise : ${sg(-moy)} ¢</button>` : ''}
+          ${trav.length ? '<a class="btn small" href="#/accord">Voix + piano : les retravailler →</a>' : ''}
+          ${qui.length ? `<span class="or-garder">C’est la voix de ${qui.map((m) => `<button class="btn small" data-o="garder" data-qui="${esc(m)}">${esc(m)}</button>`).join(' ')}</span>` : ''}
+        </div>
+        <p class="or-src-note muted small">Comment : hauteur mesurée 45 fois par seconde (comme un accordeur) ; une note compte si elle tient 0,14 s. Juste : moins de 12 cents d’écart. Welch, Howard et Rush 1989.</p>`;
     }
     // Les accords trouvés, temps par temps : on les écoute, et on les envoie au studio pour jouer et improviser dessus.
     function montrerAccords() {
@@ -164,14 +210,17 @@ export default {
     }
     // La justesse : toute la prise un peu plus haut ou plus bas. Ce qui joue repart au même endroit, recalé.
     function regler(c) {
-      cents = Math.max(-50, Math.min(50, Math.round(c))); const r = q('[data-cents]'); if (r) r.value = cents;
-      const lab = q('.or-cents'); if (lab) lab.textContent = `${cents > 0 ? '+' : ''}${cents} ¢`;
-      if (tete && res) { const c2 = audio(); const eb = (c2.currentTime - tete.t0) * tete.rate; const L = tete.b - tete.a;
-        const pos = tete.boucle ? tete.a + ((eb % L) + L) % L : tete.a + eb; const { a, b, boucle } = tete;
-        if (boucle) joueDe(a, b, { boucle: true }); else if (pos < b) joueDe(pos, b); }
+      c = Math.max(-50, Math.min(50, Math.round(c))); if (cible < 0) cents = c; else cp[cible] = c;
+      const r = q('[data-cents]'); if (r) r.value = c;
+      const lab = q('.or-cents'); if (lab) lab.textContent = `${c > 0 ? '+' : ''}${c} ¢`;
+      montrerParties();
+      if (tete && res) { const pos = posDe(tete); const { a, b, boucle } = tete; if (boucle) joueDe(a, b, { boucle: true }); else if (pos < b) joueDe(pos, b); }
     }
     el.addEventListener('input', (e) => { if (e.target.matches('[data-cents]')) regler(+e.target.value); });
+    // Choisir ce qu'on accorde : toute la prise, ou une partie (une partie plus basse que les autres, par exemple).
+    function viser(i) { cible = i; const v = i < 0 ? cents : (cp[i] || 0); const r = q('[data-cents]'); if (r) r.value = v; const lab = q('.or-cents'); if (lab) lab.textContent = `${v > 0 ? '+' : ''}${v} ¢`; const sl = q('[data-cible]'); if (sl) sl.value = i; montrerParties(); }
     el.addEventListener('change', (e) => {
+      if (e.target.matches('[data-cible]')) { viser(+e.target.value); return; }
       const vl = e.target.dataset.voulu; if (vl != null) { if (e.target.checked) voulus.add(+vl); else voulus.delete(+vl); montrerVoix(); return; }
       const k = e.target.dataset.ed; if (!k) return; const box = q('.or-edit'); const i = +box.dataset.i; const g = q('.or-accords')._grille; const x = (g.boucle || g.mesures)[i]; const fin = x.t + 240 / g.tempo;
       const rr = +box.querySelector('[data-ed=r]').value; const qq = box.querySelector('[data-ed=q]').value; const nm = nomAccord(rr, qq);
@@ -186,7 +235,7 @@ export default {
       const { ctx, w, h } = cv;
       const X = (t) => (t / res.duree) * w;
       ctx.clearRect(0, 0, w, h);
-      res.parties.forEach((p, i) => { ctx.fillStyle = p.silence ? 'rgba(27,25,21,.06)' : i % 2 ? 'rgba(42,111,196,.10)' : 'rgba(184,51,106,.10)'; ctx.fillRect(X(p.a), 0, X(p.b) - X(p.a), h); });
+      res.parties.forEach((p) => { ctx.fillStyle = p.silence ? 'rgba(27,25,21,.05)' : `${FORCE[forceDe(p)]}22`; ctx.fillRect(X(p.a), 0, X(p.b) - X(p.a), h); ctx.fillStyle = 'rgba(27,25,21,.35)'; ctx.fillRect(X(p.a), 0, 1, h); });
       if (res.boucle) { ctx.fillStyle = 'rgba(201,164,92,.28)'; ctx.fillRect(X(res.boucle.a), 0, X(res.boucle.b) - X(res.boucle.a), h); }
       // À retravailler : hachuré, pour qu'on le voie sans le confondre avec les parties.
       (diag?.travail || []).filter((o) => o.a != null && o.b - o.a < res.duree * 0.6).forEach((o) => {
@@ -195,13 +244,13 @@ export default {
         for (let x = X(o.a) - h; x < X(o.b); x += 8) { ctx.beginPath(); ctx.moveTo(x, h); ctx.lineTo(x + h, 0); ctx.stroke(); }
         ctx.restore();
       });
-      // L'énergie, colorée par ce que l'oreille a trouvé : chaque partie sa teinte, la boucle en or, le moment fort en
+      // L'énergie, colorée par ce que l'oreille a trouvé : chaque partie selon son énergie (bleu pâle à foncé), la boucle en or, le moment fort en
       // orange, ce qui est à retravailler en rouge, les silences pâles.
       const lo = Math.max(...res.db) - 50; const onde = new Path2D(); onde.moveTo(0, h - 18);
       for (let i = 0; i < res.db.length; i += 2) onde.lineTo((i / res.db.length) * w, h - 18 - Math.max(0, (res.db[i] - lo) / 50) * (h - 34));
       onde.lineTo(w, h - 18); onde.closePath();
       const zone = (a, b, coul) => { ctx.save(); ctx.beginPath(); ctx.rect(X(a), 0, X(b) - X(a), h); ctx.clip(); ctx.fillStyle = coul; ctx.fill(onde); ctx.restore(); };
-      res.parties.forEach((p, i) => zone(p.a, p.b, p.silence ? 'rgba(27,25,21,.25)' : ['#2a6fc4', '#b8336a', '#3f8a5c', '#7a4fb3'][i % 4]));
+      res.parties.forEach((p) => zone(p.a, p.b, FORCE[forceDe(p)]));
       if (res.boucle) zone(res.boucle.a, res.boucle.b, '#c9a45c');
       zone(res.momentFort[0], res.momentFort[1], '#e07b2c');
       (diag?.travail || []).filter((o) => o.a != null && o.b - o.a < res.duree * 0.6).forEach((o) => zone(o.a, o.b, '#d93a24'));
@@ -214,9 +263,16 @@ export default {
     }
     const joueDe = (a, b, { boucle = false } = {}) => {
       arrete(); const c = audio(); a = Math.max(0, a); b = Math.min(buf.duration, Math.max(a + 0.05, b)); // jamais avant le début ni après la fin
-      if (boucle) stopBoucle = boucler(c, buf, { a, b }, out(), 0.12, rate());
-      else { const src = c.createBufferSource(); src.buffer = buf; src.playbackRate.value = rate(); src.connect(out()); src.start(c.currentTime + 0.05, a, b - a); lecture = src; }
-      tete = { t0: c.currentTime + 0.05, a, b, boucle, rate: rate() }; const l = q('[data-o=lire]'); if (l) l.textContent = '■ Arrêter'; requestAnimationFrame(animerTete);
+      const t0 = c.currentTime + 0.05; let segs;
+      if (boucle) { segs = [{ a, b, r: rate(a) }]; stopBoucle = boucler(c, buf, { a, b }, out(), 0.12, segs[0].r); }
+      else {
+        // Un segment par partie traversée : chacune garde sa justesse, la vitesse change pile à la frontière.
+        const bornes = [a, ...res.parties.map((p) => p.b).filter((x) => x > a + 0.01 && x < b - 0.01), b];
+        segs = bornes.slice(0, -1).map((x, k) => ({ a: x, b: bornes[k + 1], r: rate(x + 0.02) }));
+        const src = c.createBufferSource(); src.buffer = buf; let w = t0; segs.forEach((g) => { src.playbackRate.setValueAtTime(g.r, w); w += (g.b - g.a) / g.r; });
+        src.connect(out()); src.start(t0, a, b - a); lecture = src;
+      }
+      tete = { t0, a, b, boucle, segs }; const l = q('[data-o=lire]'); if (l) l.textContent = '■ Arrêter'; requestAnimationFrame(animerTete);
     };
     // Enregistrer son clavier au micro, jusqu'à une minute, puis l'analyser comme un fichier.
     async function micro(b) {
@@ -255,7 +311,7 @@ export default {
       const o = e.target.closest('[data-o]')?.dataset.o;
       if (o === 'micro') { micro(e.target.closest('[data-o]')); return; }
       const wv = e.target.closest('[data-wav-a]');
-      if (wv && res) { const blob = await rendreBoucle(buf, { a: +wv.dataset.wavA, b: +wv.dataset.wavB }, 1, 0.12, rate()); const a2 = document.createElement('a'); a2.href = URL.createObjectURL(blob); a2.download = `${nom} · ${mmss(+wv.dataset.wavA)}-${mmss(+wv.dataset.wavB)}.wav`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(a2); a2.click(); a2.remove(); return; }
+      if (wv && res) { const blob = await rendreBoucle(buf, { a: +wv.dataset.wavA, b: +wv.dataset.wavB }, 1, 0.12, rate(+wv.dataset.wavA)); const a2 = document.createElement('a'); a2.href = URL.createObjectURL(blob); a2.download = `${nom} · ${mmss(+wv.dataset.wavA)}-${mmss(+wv.dataset.wavB)}.wav`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(a2); a2.click(); a2.remove(); return; }
       const rep = e.target.closest('[data-a]');
       if (rep && res && !rep.closest('.or-carte')) { joueDe(+rep.dataset.a, +rep.dataset.b, { boucle: !!rep.dataset.boucle }); return; }
       if (o === 'lire' && res) { if (tete) arrete(); else joueDe(0, res.duree); return; }
@@ -263,8 +319,24 @@ export default {
       // Une note de la voix : on l'entend telle que chantée, une occurrence après l'autre à chaque toucher.
       const nt = e.target.closest('[data-note]');
       if (nt && voix?.notes) { const m = +nt.dataset.note; const b = voix.notes.find((x) => x.m === m); if (b?.occ?.length) { const k = (occK[m] || 0) % b.occ.length; occK[m] = k + 1; joueDe(b.occ[k] - 0.05, b.occ[k] + 0.9); } return; }
+      const cr = e.target.closest('[data-corr]');
+      if (cr) { const m = +cr.dataset.corr; corr[m] = Math.max(-100, Math.min(100, (corr[m] || 0) + +cr.dataset.d)); corrige = true; appliquer(); return; }
+      const cj = e.target.closest('[data-corr-juste]');
+      if (cj) { corr[+cj.dataset.corrJuste] = +cj.dataset.v; corrige = true; appliquer(); const b = voix.notes.find((x) => x.m === +cj.dataset.corrJuste); if (b?.occ?.length) joueDe(b.occ[0] - 0.05, b.occ[0] + 0.9); return; }
+      const ab = e.target.closest('[data-ab]');
+      if (ab) { corrige = ab.dataset.ab === '1'; appliquer(); return; }
+      if (o === 'retouche-annuler') { corr = {}; appliquer(); return; }
+      if (o === 'retouche-wav' || o === 'retouche-mur') {
+        const copie = corrigerNotes(orig, corr, voix.notes, voix.piste); const blob = wav(copie);
+        if (o === 'retouche-wav') { const a2 = document.createElement('a'); a2.href = URL.createObjectURL(blob); a2.download = `${nom} · retouchée.wav`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(a2); a2.click(); a2.remove(); return; }
+        const b2 = e.target.closest('[data-o]'); b2.disabled = true;
+        try { const a = await uploadAudio(blob); await saveEntry({ type: 'audio', title: `${nom} · retouchée`, audio: a, data: { retouche: Object.fromEntries(Object.entries(corr).filter(([, v]) => v)) } }); toast('La prise retouchée est au mur, à côté de l’originale.'); b2.textContent = 'Au mur ✓'; } catch (err) { toast(err.message); b2.disabled = false; }
+        return;
+      }
+      const pt = e.target.closest('[data-pt]');
+      if (pt) { const i = +pt.dataset.pt; const p = res.parties[i]; if (!p.silence) viser(i); joueDe(p.a, p.b); return; }
       const ca = e.target.closest('[data-cents-auto]');
-      if (ca) { regler(+ca.dataset.centsAuto); toast(`Prise accordée de ${cents > 0 ? '+' : ''}${cents} cents pour l’écoute et les WAV.`); return; }
+      if (ca) { viser(-1); regler(+ca.dataset.centsAuto); toast(`Prise accordée de ${cents > 0 ? '+' : ''}${cents} cents pour l’écoute et les WAV.`); return; }
       if (e.target.closest('[data-ed-ecoute]')) { const box = q('.or-edit'); const rr = +box.querySelector('[data-ed=r]').value; const qq = box.querySelector('[data-ed=q]').value; import('../sampler.js').then(({ accord, prechargerSons }) => { prechargerSons(['piano']); const IV = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], maj7: [0, 4, 7, 11], m7: [0, 3, 7, 10], sus2: [0, 2, 7], sus4: [0, 5, 7], dim: [0, 3, 6] }[qq] || [0, 4, 7]; accord('piano', IV.map((iv) => 52 + ((rr + 8) % 12) + iv), { dur: 1.4, vel: 0.6 }); }); return; }
       const ac = e.target.closest('[data-acc]');
       if (ac && accs) { const a = accs[+ac.dataset.acc]; joueDe(a.a, a.b); return; }
@@ -283,7 +355,8 @@ export default {
         chargerGrille(tonique, accs.slice(0, Math.min(8, tour)).map((a) => [a.r, a.q, proche(a.temps)]), `Accords de « ${nom.slice(0, 30)} »`);
         location.hash = '#/studio?tab=beat'; return;
       }
-      if (o === 'garder' && voix?.voix) {
+      if (o === 'voix-quand-meme') { voixForcee = true; montrerVoix(); return; }
+      if (o === 'garder' && (voix?.voix || voixForcee)) {
         const qui = e.target.dataset.qui;
         // On cumule, prise après prise : chaque note garde son nombre de fois et son écart moyen.
         try {
@@ -301,7 +374,7 @@ export default {
         joueDe(res.boucle.a, res.boucle.b, { boucle: true }); e.target.textContent = '■ Arrêter la boucle';
       }
       if (o === 'fond' && res.boucle) {
-        arrete(); const { a, b } = res.boucle; const f = poserFond({ nom: `la boucle de « ${nom.slice(0, 30)} »`, buf, a, b, bpm: res.bpm, rate: rate() });
+        arrete(); const { a, b } = res.boucle; const f = poserFond({ nom: `la boucle de « ${nom.slice(0, 30)} »`, buf, a, b, bpm: res.bpm, rate: rate(a) });
         // Les accords de la boucle deviennent ceux du studio, s'ils remplissent exactement ses mesures (sinon le pad jouerait à côté).
         const DUR = [1, 2, 3, 4, 6, 8]; const proche = (t) => DUR.reduce((x, y) => (Math.abs(y - t) < Math.abs(x - t) ? y : x));
         const dans = (accs || []).filter((x) => x.a >= a - 0.15 && x.a < b - 0.15).slice(0, 8).map((x) => [x.r, x.q, proche(x.temps)]);
@@ -312,11 +385,11 @@ export default {
         location.hash = '#/studio?tab=beat'; return;
       }
       if (o === 'fort') joueDe(res.momentFort[0], res.momentFort[1]);
-      if (o === 'boucle-wav' && res.boucle) { const blob = await rendreBoucle(buf, res.boucle, 4, 0.12, rate()); const a2 = document.createElement('a'); a2.href = URL.createObjectURL(blob); a2.download = `Boucle de ${nom}.wav`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(a2); a2.click(); a2.remove(); return; }
+      if (o === 'boucle-wav' && res.boucle) { const blob = await rendreBoucle(buf, res.boucle, 4, 0.12, rate(res.boucle.a)); const a2 = document.createElement('a'); a2.href = URL.createObjectURL(blob); a2.download = `Boucle de ${nom}.wav`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(a2); a2.click(); a2.remove(); return; }
       if (o === 'ecrire' || o === 'relais') {
         const b = e.target.closest('[data-o]'); b.disabled = true; const label = b.textContent; b.textContent = 'Je prépare la boucle…';
         try {
-          const blob = await rendreBoucle(buf, res.boucle, o === 'ecrire' ? 8 : 3, 0.12, rate());
+          const blob = await rendreBoucle(buf, res.boucle, o === 'ecrire' ? 8 : 3, 0.12, rate(res.boucle.a));
           if (o === 'ecrire') {
             // Écrire la reprend comme fond, au choix « Écrire sur ».
             window.__flipFond = { nom: `La boucle de « ${nom} »`, url: URL.createObjectURL(blob) };

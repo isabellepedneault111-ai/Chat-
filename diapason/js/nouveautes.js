@@ -60,6 +60,14 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.64', quand: '2026-10-28', titre: 'L’oreille sait qui chante', items: [
+    ['Voix ou instrument', ['Une voix bouge toujours un peu dans la note ; un clavier la tient immobile. L’oreille fait maintenant la différence : sur un morceau joué (comme celui de Frog de 15 h 57), elle ne prétend plus entendre une voix. Elle se trompe? « C’est pourtant une voix » mesure quand même.']],
+    ['Les notes rangées', ['Les notes de la plus grave à la plus aiguë, puis deux colonnes égales : en or, chez elle ; en rouge, à travailler (avec « c’est voulu »). Les boutons ensemble en dessous.']],
+    ['Les parties ont un sens', ['Leur couleur dit l’énergie : bleu pâle doux, bleu moyen, bleu foncé fort. Elles sont nommées sous l’onde (Partie 1, 2…, avec leurs minutes) : touche-en une pour l’écouter.']],
+    ['La justesse par partie', ['« Justesse de : toute la prise / la partie 2… » : une partie un peu basse s’accorde à part ; l’écoute change de justesse pile à la frontière, sans couper.']],
+    ['Retoucher une note', ['Une note à travailler se retouche : − / + par 5 cents, ou « → juste ». Seule cette note bouge, partout où elle est chantée. L’original / La retouchée pour comparer ; la retouchée se télécharge en WAV ou se garde au mur, à côté de l’originale, qui reste intacte.']],
+    ['Chanter, puis se voir', ['Dans Jouer, ● REC garde aussi ta voix seule, sans le beat. Dans « Mes prises », « → L’oreille : mes notes » te montre tes notes en or et en rouge. Chanter sur la boucle, se réécouter, recommencer.']],
+  ] },
   { v: '0.63', quand: '2026-10-28', titre: 'La voix en or, la boucle sous le beat', items: [
     ['Les notes de la voix', ['En or : justes et stables. En rouge : à travailler. Touche une note : tu l’entends telle que chantée (touche encore : la fois suivante). Une note glissée exprès? Coche « c’est voulu » : elle sort de « à travailler ».']],
     ['La justesse', ['Un réglage ± cents accorde toute la prise, plus haut ou plus bas, pour l’écoute et les WAV. Si la voix est en moyenne un peu haute ou basse, l’oreille propose le réglage. L’original ne change pas.']],

@@ -235,15 +235,47 @@ export async function notesVoix(buf, onStep = () => {}) {
   if (actives < 40 || claires / actives < 0.45) return { voix: false };
   // Des notes : au moins ~140 ms sur le même demi-ton.
   const notes = []; let cur = null;
-  const fin = () => { if (cur && cur.v.length >= 6) { const cents = cur.v.map((m) => (m - cur.m) * 100); const mu = cents.reduce((s, v) => s + v, 0) / cents.length; notes.push({ m: cur.m, t: cur.t, cents: mu, sd: Math.sqrt(cents.reduce((s, v) => s + (v - mu) ** 2, 0) / cents.length) }); } cur = null; };
+  const fin = () => { if (cur && cur.v.length >= 6) { const cents = cur.v.map((m) => (m - cur.m) * 100); const mu = cents.reduce((s, v) => s + v, 0) / cents.length; notes.push({ m: cur.m, t: cur.t, d: (cur.v.length * hop) / sr, cents: mu, sd: Math.sqrt(cents.reduce((s, v) => s + (v - mu) ** 2, 0) / cents.length) }); } cur = null; };
   fr.forEach((m, i) => { if (m == null) { fin(); return; } const r = Math.round(m); if (cur && cur.m === r) cur.v.push(m); else { fin(); cur = { m: r, t: (i * hop) / sr, v: [m] }; } });
   fin();
   const parNote = {};
   notes.forEach((o) => { (parNote[o.m] ||= []).push(o); });
-  const bilan = Object.entries(parNote).map(([m, l]) => ({ m: +m, occ: l.map((o) => o.t), n: l.length, cents: l.reduce((s, o) => s + o.cents, 0) / l.length, sd: l.reduce((s, o) => s + o.sd, 0) / l.length })).sort((a, b) => a.m - b.m);
+  const bilan = Object.entries(parNote).map(([m, l]) => ({ m: +m, occ: l.map((o) => o.t), occD: l.map((o) => o.d), n: l.length, cents: l.reduce((s, o) => s + o.cents, 0) / l.length, sd: l.reduce((s, o) => s + o.sd, 0) / l.length })).sort((a, b) => a.m - b.m);
   const fortes = bilan.filter((b) => b.n >= 2 && Math.abs(b.cents) < 12 && b.sd < 22).sort((a, b) => b.n - a.n).slice(0, 4);
   const aTravailler = bilan.filter((b) => b.n >= 2 && Math.abs(b.cents) >= 20).sort((a, b) => Math.abs(b.cents) - Math.abs(a.cents)).slice(0, 4);
-  return { voix: true, notes: bilan, fortes, aTravailler, nNotes: notes.length };
+  // Voix ou instrument? Une voix bouge toujours un peu dans la note (10 à 30 cents) et tient dans deux octaves environ ;
+  // un clavier ou une guitare tient la note immobile (moins de 8 cents) et descend souvent dans les basses.
+  const sds = notes.map((o) => o.sd).sort((u, v) => u - v); const sdMed = sds[Math.floor(sds.length / 2)] || 0;
+  const etendue = bilan.length ? bilan[bilan.length - 1].m - bilan[0].m : 0;
+  const instrument = notes.length >= 4 && (sdMed < 8 || etendue > 30);
+  return { piste: { fr, hop, sr }, voix: !instrument, instrument, pourquoi: sdMed < 8 ? 'des notes parfaitement immobiles, comme un clavier' : 'des notes sur plus de deux octaves et demie', notes: bilan, fortes, aTravailler, nNotes: notes.length };
+}
+// Retoucher des notes : chaque fois que la note m est chantée, on la remonte ou la descend de corr[m] cents, sur sa durée
+// seulement (le reste de la prise ne bouge pas). On relit le son un peu plus vite ou plus lentement et on fond 25 ms à
+// chaque bord pour que la jonction ne s'entende pas. Renvoie une COPIE : l'enregistrement d'origine n'est jamais touché.
+export function corrigerNotes(buf, corr, notes, piste = null) {
+  const sr = buf.sampleRate; const out = new AudioBuffer({ length: buf.length, numberOfChannels: buf.numberOfChannels, sampleRate: sr });
+  const fx = Math.floor(0.025 * sr);
+  for (let ch = 0; ch < buf.numberOfChannels; ch++) {
+    const x = buf.getChannelData(ch); const y = out.getChannelData(ch); y.set(x);
+    notes.forEach((b) => { const c = corr[b.m]; if (!c) return; const r = 2 ** (c / 1200);
+      // Une note tenue avec du vibrato peut arriver en plusieurs morceaux : on les recolle avant de la retoucher d'un seul tenant.
+      const iv = b.occ.map((t, k) => [Math.max(0, t - 0.03), t + (b.occD?.[k] || 0.3) + 0.03]).sort((u, v) => u[0] - v[0]);
+      const tenues = []; iv.forEach((z) => { const d = tenues[tenues.length - 1]; if (d && z[0] <= d[1] + 0.25) d[1] = Math.max(d[1], z[1]); else tenues.push([...z]); });
+      // Puis on prolonge chaque tenue tant que la voix reste sur cette note (vibrato compris) : tout le son de la note bouge.
+      if (piste) tenues.forEach((d) => { const { fr, hop, sr: s2 } = piste; const sur = (i) => fr[i] != null && Math.abs(fr[i] - b.m) < 0.8;
+        let i = Math.floor((d[0] * s2) / hop); while (i > 0 && sur(i - 1)) i--; d[0] = Math.min(d[0], (i * hop) / s2);
+        let k2 = Math.ceil((d[1] * s2) / hop); while (k2 < fr.length && sur(k2)) k2++; d[1] = Math.max(d[1], (k2 * hop) / s2 + 0.02); });
+      tenues.forEach(([a, z]) => {
+        const s0 = Math.floor(a * sr); const n = Math.min(buf.length - s0, Math.floor((z - a) * sr));
+        for (let i = 0; i < n; i++) {
+          const p = s0 + i * r; const j = Math.floor(p); const f = p - j; const v = j + 1 < x.length ? x[j] * (1 - f) + x[j + 1] * f : 0;
+          const g = Math.min(1, i / fx, (n - i) / fx); y[s0 + i] = x[s0 + i] * (1 - g) + v * g;
+        }
+      });
+    });
+  }
+  return out;
 }
 // Le nom d’une note MIDI avec son octave (60 donne Do4).
 export const nomNote = (m) => `${NOTES[((m % 12) + 12) % 12]}${Math.floor(m / 12) - 1}`;
