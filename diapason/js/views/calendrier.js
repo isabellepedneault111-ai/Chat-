@@ -106,7 +106,9 @@ export default {
       const ligne = (x, qui) => {
         const moi = qui === espace.me;
         const caseH = x.manuel != null ? `<input class="pa-case" type="checkbox" data-pas="${esc(x.manuel)}" ${x.fait ? 'checked' : ''} aria-label="Fait : ${esc(x.titre)}">` : `<span class="pa-case auto" title="L’app la coche d’elle-même quand c’est fait" aria-hidden="true"></span>`;
-        const titre = x.manuel == null && moi ? `<a href="${x.lien}"><b>${esc(x.titre)}</b></a>` : `<b>${esc(x.titre)}</b>`;
+        // Le pas de l'autre mène chez lui quand c'est possible (son studio, en lecture seule), jamais dans mes pages à moi.
+        const chezLui = !moi && ['studio', 'photos'].includes(x.id) ? `#/materiel?chez=${encodeURIComponent(qui)}` : '';
+        const titre = x.manuel == null && moi ? `<a href="${x.lien}"><b>${esc(x.titre)}</b></a>` : chezLui ? `<a href="${chezLui}"><b>${esc(x.titre)}</b></a>` : `<b>${esc(x.titre)}</b>`;
         const sous = x.manuel != null ? (x.pourquoi || '') : moi ? (x.pourquoi || '') : '';
         return `<li class="${x.fait ? 'fait' : ''}">${caseH}<span class="pa-txt">${titre}${sous ? `<small>${esc(sous)}</small>` : ''}</span>${x.manuel != null && x.auteur === espace.me ? `<button class="icon-btn tiny" data-pas-x="${esc(x.manuel)}" aria-label="Effacer ce pas">×</button>` : ''}</li>`;
       };
