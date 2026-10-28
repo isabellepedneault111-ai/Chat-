@@ -225,8 +225,9 @@ export default {
       box.innerHTML = `<h3>Les accords <small class="muted">${accs.length} changements trouvés · touche un accord pour l’écouter</small></h3>
         <div class="or-acc-liste">${accs.slice(0, 48).map((a, i) => `<button class="or-acc" data-acc="${i}" title="${mmss(a.a)} · ${a.temps} temps"><b>${esc(a.nom)}</b>${clavierDe(a.r, a.q, { compact: true })}<small>${mmss(a.a)}</small></button>`).join('')}</div>
         ${(() => { const g = grilleMesures(accs, res.bpm); if (!g) return ''; box._grille = g; const l = g.boucle || g.mesures.slice(0, 32);
-          return `<div class="or-grille"><p class="or-grille-t"><b>La grille</b> · ${g.tempo} BPM · 4 temps par mesure${g.periode ? ` · <span class="or-rep">‖: une boucle de ${g.periode} mesure${g.periode > 1 ? 's' : ''}, jouée ${g.tours} fois :‖</span>` : ''}</p>
-            <div class="or-mesures">${l.map((x, i) => `<button class="or-mes ${g.periode && i === 0 ? 'rep-a' : ''} ${g.periode && i === l.length - 1 ? 'rep-b' : ''} ${corrigee(i, x, g) ? 'corrigee' : ''} ${x.cases.filter((c) => c && c !== '—').length > 2 || x.cases.some((c, k) => k && c && c !== '—' && x.cases[k - 1] && x.cases[k - 1] !== '—') ? 'dense' : ''}" data-mes="${i}" data-t="${x.t}" title="Mesure ${g.boucle ? i + 1 : x.m} · ${mmss(x.t)}"><small>${g.boucle ? i + 1 : x.m}</small>${i && x.cle === l[i - 1].cle ? '<b class="or-pct" aria-label="comme la mesure d’avant">%</b>' : x.cases.map((c) => `<span class="or-b">${c && c !== '—' ? joli(c) : ''}</span>`).join('')}</button>`).join('')}</div>
+          return `<div class="or-grille"><div class="or-grille-t"><h4>La grille</h4><span>${g.tempo} BPM · 4 temps par mesure${g.periode ? ` · <span class="or-rep">‖: ${g.periode} mesure${g.periode > 1 ? 's' : ''} qui reviennent ${g.tours} fois :‖</span>` : ''}</span><button class="btn small or-etsi" data-o="etsi" data-bulle="Une mesure au hasard, une autre couleur d’accord, entendue tout de suite dans le son. Rien ne change tant que tu n’approuves pas.">🎲 Et si… ?</button></div>
+            <div class="or-mesures">${l.map((x, i) => { const segs = []; x.cases.forEach((c) => { if (c) segs.push({ c, n: 1 }); else if (segs.length) segs[segs.length - 1].n++; else segs.push({ c: '—', n: 1 }); });
+              return `<button class="or-mes n${segs.length} ${g.periode && i === 0 ? 'rep-a' : ''} ${g.periode && i === l.length - 1 ? 'rep-b' : ''} ${corrigee(i, x, g) ? 'corrigee' : ''}" data-mes="${i}" data-t="${x.t}" title="Mesure ${g.boucle ? i + 1 : x.m} · ${mmss(x.t)}"><small>${g.boucle ? i + 1 : x.m}</small>${i && x.cle === l[i - 1].cle ? '<b class="or-pct" aria-label="comme la mesure d’avant">%</b>' : segs.map((sg2) => `<span class="or-b" style="grid-column: span ${sg2.n}">${sg2.c !== '—' ? joli(sg2.c) : '<i>—</i>'}</span>`).join('')}</button>`; }).join('')}</div>
             <div class="or-edit" hidden></div>
             <div class="ec-row"><button class="btn small" data-o="grille-copier">Copier la grille</button><button class="btn small" data-o="grille-txt">⬇ La grille (texte)</button></div></div>`; })()}
         <div class="ec-row"><button class="btn primary" data-o="studio">Jouer avec ces accords →</button><span class="muted small">Les 8 premiers changements, avec leur durée, deviennent « Mes accords ». La tonalité estimée (${esc(ton)}) colore le clavier.</span></div>`;
@@ -235,7 +236,19 @@ export default {
     // Une mesure dont on a changé l'accord (dans la grille écrite) : elle se voit.
     const corrigee = (i, x, g) => { const e2 = entendus[i]; if (!e2) return false; const c = accs.find((a) => a.b > x.t + 0.05 && a.a < x.t + 240 / g.tempo - 0.05); return !!c && (c.r !== e2.r || c.q !== e2.q); };
     // Un nom d'accord lisible : la note en gros, sa sorte en petit, comme sur une partition (Si + maj7).
-    const joli = (nm) => { const r = [...NOTES_FR].sort((u, v) => v.length - u.length).find((n) => nm.startsWith(n)) || ''; return `<b>${esc(r)}</b>${nm.slice(r.length) ? `<sup>${esc(nm.slice(r.length))}</sup>` : ''}`; };
+    const joli = (nm) => { const r = [...NOTES_FR].sort((u, v) => v.length - u.length).find((n) => nm.startsWith(n)) || ''; return `<span class="nm"><b>${esc(r)}</b>${nm.slice(r.length) ? `<sup>${esc(nm.slice(r.length))}</sup>` : ''}</span>`; };
+    // Et si… ? D'autres couleurs pour le même moment, seulement celles qu'on peut vraiment faire dans le son
+    // (des notes à déplacer, aucune à inventer).
+    function variantes(a) {
+      const v = []; const add = (r, q, mot) => { r = ((r % 12) + 12) % 12; if (r === a.r && q === a.q) return; const pl = plan(a, { r, q }); if (!Object.keys(pl.dep).length || pl.manque.length || v.some((x) => x.r === r && x.q === q)) return; v.push({ r, q, mot }); };
+      const maj = ['M', 'maj7', '7', 'sus2', 'sus4'].includes(a.q);
+      if (a.q === 'M') add(a.r, 'm', 'plus sombre'); if (a.q === 'm') add(a.r, 'M', 'plus lumineux');
+      if (a.q === 'maj7') add(a.r, 'm7', 'plus sombre'); if (a.q === 'm7') add(a.r, 'maj7', 'plus lumineux'); if (a.q === '7') add(a.r, 'm7', 'plus doux');
+      add(a.r, 'sus4', 'suspendu'); add(a.r, 'sus2', 'en apesanteur');
+      if (maj) { add(a.r + 9, 'm', 'son cousin mélancolique'); add(a.r + 4, 'm', 'en clair-obscur'); } else { add(a.r + 3, 'M', 'son cousin lumineux'); add(a.r + 8, 'M', 'grand et chaud'); }
+      add(a.r + 5, a.q === 'm' || a.q === 'm7' ? 'm' : 'M', 'qui s’éloigne'); add(a.r + 7, 'M', 'qui pousse en avant');
+      return v.slice(0, 6);
+    }
     // Corriger un accord de la grille : on entend la mesure (le vrai son), on choisit la bonne note et la bonne sorte ;
     // la grille, l'onde et « Jouer avec ces accords » suivent tout de suite.
     function editer(i) {
@@ -251,6 +264,7 @@ export default {
         <div class="or-ed-choix"><label>Pour toi, c’est <select data-ed="r">${NOTES_FR.map((n, k) => `<option value="${k}" ${k === cur.r ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
         <select data-ed="q" aria-label="La sorte d’accord">${SORTES_ACCORD.map((k) => `<option value="${k}" ${k === cur.q ? 'selected' : ''}>${k === 'M' ? 'majeur' : k === 'm' ? 'mineur' : k}</option>`).join('')}</select>
         <button class="btn small" data-ed-ecoute>♪ L’accord seul, au piano</button></div>
+        ${(() => { const vs = variantes(anc); return vs.length ? `<div class="or-ed-etsi"><b>Et si… ?</b> <span class="muted">touche une couleur : tu l’entends tout de suite, dans le son</span><div class="or-etsi-l">${vs.map((v) => `<button class="or-var ${v.r === cur.r && v.q === cur.q ? 'on' : ''}" data-var="${v.r},${v.q}"><b>${joli(nomAccord(v.r, v.q))}</b><small>${esc(v.mot)}</small></button>`).join('')}</div></div>` : ''; })()}
         ${change ? `<div class="or-ed-son">
           <p>${dit ? `Dans le son, je déplacerais : <b>${esc(dit)}</b>, pendant cette mesure seulement.` : 'Ces deux accords ont les mêmes notes : rien à déplacer dans le son.'}${pl.manque.length ? ` <span class="muted">(${pl.manque.map(N2).join(', ')} n’est pas joué dans l’enregistrement : je ne peux pas l’inventer.)</span>` : ''}</p>
           <div class="or-ab-row"><button class="btn small" data-a="${x.t}" data-b="${fin}">▶ Avant : le son enregistré</button>${dit ? `<button class="btn small" data-ed-apres>▶ Après : corrigé dans le son</button><button class="btn small primary" data-ed-ok>✓ J’approuve : c’est mon nouvel enregistrement</button>` : ''}</div>
@@ -277,7 +291,7 @@ export default {
       // Les accords de cette mesure deviennent le bon ; s'il n'y en avait pas, on en pose un.
       const dedans = accs.filter((a) => a.b > x.t + 0.05 && a.a < fin - 0.05);
       if (dedans.length) dedans.forEach((a) => { a.r = rr; a.q = qq; a.nom = nm; }); else { accs.push({ r: rr, q: qq, nom: nm, a: x.t, b: fin, temps: 4 }); accs.sort((u, v) => u.a - v.a); }
-      montrerAccords(); dessiner(); editer(i); toast(`Mesure corrigée : ${nm}.`);
+      montrerAccords(); dessiner(); editer(i); q(`.or-mes[data-mes="${i}"]`)?.classList.add('choisie'); toast(`Mesure corrigée : ${nm}.`);
     });
     // Dessine l’énergie de la pièce et ses parties dans le temps.
     function dessiner() {
@@ -412,6 +426,18 @@ export default {
       if (pt) { const i = +pt.dataset.pt; const p = res.parties[i]; plage = { a: p.a, b: p.b }; montrerMonter(); if (!p.silence) viser(i); else dessiner(); joueDe(p.a, p.b); return; }
       const ca = e.target.closest('[data-cents-auto]');
       if (ca) { viser(-1); regler(+ca.dataset.centsAuto); toast(`Prise accordée de ${cents > 0 ? '+' : ''}${cents} cents pour l’écoute et les WAV.`); return; }
+      const va = e.target.closest('[data-var]');
+      if (va) { const [vr, vq] = va.dataset.var.split(','); const box = q('.or-edit'); box.querySelector('[data-ed=r]').value = vr; box.querySelector('[data-ed=q]').value = vq;
+        box.querySelector('[data-ed=q]').dispatchEvent(new Event('change', { bubbles: true })); q('.or-edit [data-ed-apres]')?.click(); return; }
+      if (o === 'etsi' && accs?.length) {
+        const g2 = q('.or-accords')._grille; const l2 = g2.boucle || g2.mesures.slice(0, 32); const choix = [];
+        l2.forEach((x, i) => { const c = accs.find((a) => a.b > x.t + 0.05 && a.a < x.t + 240 / g2.tempo - 0.05); if (c) variantes(entendus[i] || c).forEach((v) => choix.push([i, v])); });
+        if (!choix.length) { toast('Pas de variante faisable dans le son ici.'); return; }
+        const [i, v] = choix[Math.floor(Math.random() * choix.length)];
+        q('.or-mes.choisie')?.classList.remove('choisie'); editer(i); q(`.or-mes[data-mes="${i}"]`)?.classList.add('choisie');
+        q(`.or-edit [data-var="${v.r},${v.q}"]`)?.click(); q('.or-edit')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        toast(`Et si la mesure ${g2.boucle ? i + 1 : l2[i].m} était ${nomAccord(v.r, v.q)} (${v.mot})? ▶ Avant pour comparer.`); return;
+      }
       if (e.target.closest('[data-ed-apres]') || e.target.closest('[data-ed-ok]')) {
         const box = q('.or-edit'); const g = q('.or-accords')._grille; const i = +box.dataset.i; const x = (g.boucle || g.mesures)[i]; const fin = x.t + 240 / g.tempo;
         const vers = { r: +box.querySelector('[data-ed=r]').value, q: box.querySelector('[data-ed=q]').value }; const cle = `${i}:${vers.r}${vers.q}`;

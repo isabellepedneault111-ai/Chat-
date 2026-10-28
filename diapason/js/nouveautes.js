@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.67', quand: '2026-10-28', titre: 'Et si… ?', items: [
+    ['Des couleurs à essayer', ['Dans une mesure, « Et si… ? » propose d’autres accords pour le même moment : plus sombre, plus lumineux, suspendu, en apesanteur, son cousin… Touche-en un : tu l’entends tout de suite, dans le vrai son. Seulement ceux qu’on peut faire sans inventer de note. Rien ne change tant que tu n’approuves pas.']],
+    ['🎲 Et si… ?', ['En haut de la grille : une mesure au hasard, une autre couleur, entendue tout de suite. ▶ Avant pour comparer.']],
+    ['La grille, plus belle', ['Une tuile par mesure, l’accord au centre, la largeur dit combien de temps il dure. Quatre mesures par ligne, les noms entiers, la sorte en exposant.']],
+  ] },
   { v: '0.66', quand: '2026-10-28', titre: 'Changer un accord dans le son', items: [
     ['Corriger dans le son', ['Touche une mesure, choisis l’accord juste : la grille suit, et l’oreille dit quelles notes elle déplacerait dans le son (Do majeur → Do mineur : le Mi descend en Mi♭). ▶ Avant / ▶ Après pour comparer ; « J’approuve » en fait ton nouvel enregistrement (↶ et l’original restent là). Une note que l’enregistrement ne joue pas ne s’invente pas : l’oreille le dit. Meilleur sur un clavier ou une guitare clairs, sans batterie.']],
     ['La grille, une vraie feuille', ['Comme une partition punaisée au babillard : la note en gros, la sorte en petit (Sol maj7), les temps marqués sous chaque mesure, plus de points ni de tirets. La mesure qui joue s’allume ; une mesure corrigée est surlignée ✎.']],

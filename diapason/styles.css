@@ -4114,3 +4114,46 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .or-mes { column-gap: 6px; }
 .or-mes.dense .or-b b { font-size: 1.02rem; } .or-mes.dense .or-b sup { font-size: .72rem; }
 .or-mes.dense .or-b { overflow: hidden; text-overflow: clip; }
+
+/* 0.67 — La grille refaite : une tuile par mesure, l'accord au centre, la durée en largeur */
+.or-grille { padding: 26px 22px 16px; }
+.or-grille-t { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin: 0 0 16px; }
+.or-grille-t h4 { margin: 0; font: 700 1.3rem var(--display); }
+.or-grille-t .or-etsi { margin-left: auto; }
+.or-mesures { grid-template-columns: repeat(8, 1fr); gap: 8px; margin-bottom: 16px; }
+@media (max-width: 1180px) { .or-mesures { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 560px) { .or-mesures { grid-template-columns: repeat(2, 1fr); } }
+.or-mes, .or-mes:nth-child(4n), .or-mes:last-child, .or-mes:nth-child(2n) { border: 1.5px solid #e2d6bf; border-radius: 10px; }
+.or-mes { grid-template-columns: repeat(4, 1fr); align-items: center; column-gap: 0; min-height: 78px; padding: 20px 4px 8px; background: #fff; box-shadow: 0 2px 0 #eadfca; transition: transform .12s, box-shadow .12s; }
+.or-mes::after { display: none; }
+.or-mes:hover { background: #fffaf0; transform: translateY(-2px); box-shadow: 0 4px 0 #e2d3b4; }
+.or-mes small { top: 5px; left: 9px; font-size: .78rem; }
+.or-b { display: flex; justify-content: center; align-items: baseline; padding: 0 2px; white-space: nowrap; overflow: hidden; }
+.or-b + .or-b { border-left: 1.5px solid #ebe1cf; }
+.or-b b { font: 700 1.45rem/1.1 var(--display); }
+.or-b sup { font-size: .8rem; vertical-align: .6em; }
+.or-b i { font-style: normal; color: #b3a891; }
+.or-mes.n2 .or-b b { font-size: 1.15rem; } .or-mes.n2 .or-b sup { font-size: .7rem; }
+.or-mes.n3 .or-b b, .or-mes.n4 .or-b b { font-size: .98rem; } .or-mes.n3 .or-b sup, .or-mes.n4 .or-b sup { font-size: .62rem; }
+.or-mes.dense .or-b b { font-size: inherit; }
+.or-pct { font-size: 1.8rem; color: #b3a891; }
+.or-mes.rep-a { box-shadow: inset 5px 0 0 #1d1a15, 0 2px 0 #eadfca; } .or-mes.rep-b { box-shadow: inset -5px 0 0 #1d1a15, 0 2px 0 #eadfca; }
+.or-mes.rep-a, .or-mes.rep-b { border-left: 1.5px solid #e2d6bf; border-right: 1.5px solid #e2d6bf; }
+.or-mes.corrigee { background: #fff3c4; border-color: #e0b84a; }
+.or-mes.choisie { outline: 3px solid #1d1a15; outline-offset: 1px; background: #fff; }
+.or-mes.joue { background: #1d1a15; border-color: #1d1a15; box-shadow: none; }
+.or-mes.joue .or-b + .or-b { border-left-color: #4a443b; }
+/* Et si… : les variantes d'une mesure */
+.or-etsi-l { display: flex; flex-wrap: wrap; gap: 8px; }
+.or-var { display: grid; gap: 1px; padding: 7px 12px; border: 2px solid #1d1a15; border-radius: 10px; background: #fff; font: inherit; text-align: left; cursor: pointer; color: #1d1a15; }
+.or-var b { font: 700 1.05rem var(--display); } .or-var small { font-size: .85rem; color: #5c544a; }
+.or-var:hover { background: #fff3c4; } .or-var.on { background: #1d1a15; color: #fff; } .or-var.on small { color: #f3d27a; }
+.or-ed-etsi { display: grid; gap: 8px; } .or-ed-etsi > b { font-size: 1.05rem; }
+.or-mesures { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+@media (max-width: 700px) { .or-mesures { grid-template-columns: repeat(2, 1fr); } }
+.or-mes { min-height: 82px; padding: 22px 6px 10px; }
+.or-b { overflow: visible; }
+.or-b .nm { display: inline-block; white-space: nowrap; }
+.or-b .nm sup { vertical-align: super; line-height: 0; margin-left: 1px; }
+.or-mes.n3 .or-b b, .or-mes.n4 .or-b b { font-size: 1.05rem; }
+.or-b .nm sup { font-size: .78rem; } .or-mes.n3 .or-b .nm sup, .or-mes.n4 .or-b .nm sup { font-size: .68rem; }
