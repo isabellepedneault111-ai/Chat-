@@ -159,7 +159,7 @@ export default {
         <div class="nf-f-b"><button class="btn small ${v.muet ? 'on' : ''}" data-dm="muet">${v.muet ? 'Réentendre' : 'Sourdine'}</button><button class="btn small ${v.respire ? 'on' : ''}" data-dm="respire" title="Le volume monte et descend sur quatre tours">∿ Respirer</button>${etat.cle.length > 2 ? '<button class="btn small ghost" data-dm="retirer">Retirer cette voix</button>' : ''}${etat.cle.length < 6 ? '<button class="btn small ghost" data-ajoute-voix>＋ Une voix</button>' : ''}</div>
         <details class="nf-f-fin"><summary>Réglages fins</summary>${Object.entries(REGLAGES).map(([k, [l, mn, mx, pas, fmt, d, aide]]) => `<label class="nf-f-l" title="${esc(aide)}"><span>${l} <output>${fmt(v[k] ?? d)}</output></span><input type="range" min="${mn}" max="${mx}" step="${pas}" value="${v[k] ?? d}" data-dr="${k}"></label>`).join('')}</details>
         <p class="nf-f-k">Ses liens <small>cette voix, à chacune de ses frappes, en fait bouger une autre</small></p>
-        ${sortants.length ? `<ul class="nf-liens">${sortants.map(([l, k]) => `<li><span style="color:${SENS[l.sens]}">→</span> rend ${esc(nomC(l.cible))} ${PARAMS[l.param || 'volume'][l.sens === 'baisse' ? 1 : 2]} <button class="icon-btn tiny" data-li-x="${k}" aria-label="Retirer ce lien">×</button></li>`).join('')}</ul>` : ''}
+        ${sortants.length ? `<ul class="nf-liens">${sortants.map(([l, k]) => `<li><span style="color:${SENS[l.sens]}">→</span> rend ${esc(nomC(l.cible))} ${PARAMS[l.param || 'volume'][l.sens === 'baisse' ? 1 : 2]} <button class="btn small ghost" data-li-x="${k}">✕ Retirer ce lien</button></li>`).join('')}</ul>` : ''}
         <div class="nf-lien-f"><select data-lf="cible">${etat.cle.map((m, k) => (k === j ? '' : `<option value="${k}">la voix ${m}</option>`)).join('')}${[...new Set((etat.voix || []).map((x) => x?.g).filter(Boolean))].map((g) => `<option value="g${g}">tout le pupitre ${g}</option>`).join('')}</select>
           <select data-lf="effet">${Object.entries(PARAMS).flatMap(([p, [, bas, haut]]) => [`<option value="${p}|monte">${haut}</option>`, `<option value="${p}|baisse">${bas}</option>`]).join('')}</select><button class="btn small" data-lf="ajouter">＋ Lien</button></div>
         <p class="muted small nf-f-aide">Au labo, un lien peut aussi venir de la respiration, du hasard, de ta voix ou du clavier : bâtis la cathédrale depuis le labo pour les amener.</p>`;
@@ -206,18 +206,25 @@ export default {
     async function lancer() {
       if (lecteur) { arreter(); return; }
       const b = q('[data-ca=jouer]'); b.textContent = '…'; await charger();
-      lecteur = jouer(oeuvre, { onFin: arreter, vivant: envVivant, sortie: sorties.find((o) => o.id === store.get('caSortie', '')) || null }); b.textContent = '■'; b.classList.add('on');
+      demarrer(0);
+    }
+    // Démarre l'écoute au moment voulu (0 au début ; ou là où on était, quand on vient de changer quelque chose).
+    function demarrer(depuis) {
+      const b = q('[data-ca=jouer]');
+      lecteur = jouer(oeuvre, { depuis: Math.min(depuis, Math.max(0, oeuvre.duree - 1)), onFin: arreter, vivant: envVivant, sortie: sorties.find((o) => o.id === store.get('caSortie', '')) || null }); b.textContent = '■'; b.classList.add('on');
       anim = animate(() => { if (!lecteur) return; const p = Math.max(0, lecteur.position()); suivre(p); q('.nf-temps').textContent = `${mmss(p)} / ${mmss(oeuvre.duree)}`; });
     }
     const titre = () => q('[data-ca=titre]').value.trim() || `Cathédrale ${etat.cle.join(':')}`;
     const telecharger = (blob, ext) => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${titre().replace(/[^\p{L}\p{N} _:-]+/gu, ' ').replace(/[:\s]+/g, ' ').trim()}.${ext}`; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); };
-    // Change l'état ; l'écoute en cours s'arrête (l'œuvre change), puis tout se redessine.
+    // Change l'état comme un chef d'orchestre : la musique continue, l'œuvre se recompose et reprend au même moment.
     const changer = (patch) => {
+      const enCours = lecteur ? Math.max(0, lecteur.position()) : null;
       if (lecteur) arreter();
       if (patch.cle && patch.cle.length !== etat.cle.length && !('parties' in patch)) patch.parties = [];
       etat = { ...etat, ...patch };
       if (patch.cle || patch.voix) { const R = ranger(etat.cle, etat.voix || [], etat.liens || []); etat = { ...etat, ...R }; q('[data-ca=nombres]').value = etat.cle.join(' '); }
       garder(); majTout();
+      if (enCours != null) demarrer(enCours);
       if (/^Cathédrale [\d:]+$/.test(q('[data-ca=titre]').value)) q('[data-ca=titre]').value = `Cathédrale ${etat.cle.join(':')}`;
     };
     const majVoix = (j, change) => { const voix = etat.cle.map((_, k) => ({ ...(etat.voix?.[k] || {}) })); voix[j] = { ...voix[j], ...change }; Object.keys(voix[j]).forEach((k) => voix[j][k] === undefined && delete voix[j][k]); return voix; };

@@ -120,7 +120,8 @@ function majRetour() {
   const m = espace.meta?.plan ? currentMonth() : 0; const goal = m ? PLAN[m - 1] : null;
   back.innerHTML = `← Accueil${goal ? ` <span>· mois ${m} : ${goal.titre}</span>` : ''}`;
 }
-onEspace((w) => { if (w === 'meta') majRetour(); });
+let montéeHorsLigne = false;
+onEspace((w) => { if (w === 'meta') majRetour(); if (w === 'meta' && montéeHorsLigne && espace.connected) { montéeHorsLigne = false; route(); } });
 
 // Les outils de Jouer (le micro, la prise de Mon studio, le filet) : dans la barre de Jouer. Ailleurs, ils ne se
 // montrent dans l'en-tête que s'ils sont allumés, pour qu'on puisse toujours les éteindre.
@@ -181,6 +182,7 @@ async function route() {
   if (voir && v.id !== 'carnet') { let n = 0; const cherche = () => { const t = host.querySelector(`[data-id="${CSS.escape(voir)}"]`); if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'center' }); t.classList.add('vise'); setTimeout(() => t.classList.remove('vise'), 2600); } else if (n++ < 20) setTimeout(cherche, 150); }; setTimeout(cherche, 200); }
   host.classList.add('entering');
   setTimeout(() => host.classList.remove('entering'), 900);
+  montéeHorsLigne = !espace.connected; // une page montée avant que l'espace arrive sera redessinée à son arrivée
   cleanup = v.mount(host) || null;
   const ap = APPUIS[ici === 'projet' ? 'projet' : v.id];
   if (ap) { const f = document.createElement('p'); f.className = 'appui'; f.innerHTML = `<span>Pourquoi :</span> ${ap[0]} <cite>${ap[1]}</cite>`; view.appendChild(f); }

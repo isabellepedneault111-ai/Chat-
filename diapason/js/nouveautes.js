@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.60', quand: '2026-10-28', titre: 'Diriger la cathédrale', items: [
+    ['La musique continue', ['Pendant l’écoute, change un instrument, une note, un accord, un pupitre : l’œuvre se recompose et reprend au même moment, sans s’arrêter. Comme un chef devant son orchestre.']],
+    ['La rosace s’allume', ['Plus grande, et pendant l’écoute les vitraux au repos s’assombrissent : on voit la lumière tourner et l’anneau qui joue briller.']],
+    ['Retirer un lien', ['Dans la fiche d’une voix, chaque lien a son bouton « ✕ Retirer ce lien ». Pour sortir une voix d’un pupitre : « Seule ».']],
+    ['Mon studio', ['Ouvert directement, il ne dit plus « Connecte-toi » : la bascule « Le mien / Celui de Frog » et le partage apparaissent dès que l’espace est là.']],
+  ] },
   { v: '0.59', quand: '2026-10-28', titre: 'Chaque lien mène où il le dit', items: [
     ['Les pas qu’on se donne', ['Un pas écrit à la main mène là où ses mots le disent : « Recréer mon studio » ouvre ton studio, « le labo » ouvre le labo, une plage ouvre le calendrier. Et sa case se coche directement sur l’accueil.']],
     ['Proposer une plage', ['Dans la carte « Prochaine séance », « Proposer une plage » ouvre le calendrier avec le formulaire déjà prêt (avant, toute la carte menait à Session).']],

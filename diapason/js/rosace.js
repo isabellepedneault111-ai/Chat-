@@ -25,8 +25,9 @@ export function dessinerRosace(ctx, taille, { cle, couleurs, lumiere = -1, actif
       const a0 = (k / nb) * Math.PI * 2 - Math.PI / 2; const a1 = ((k + 1) / nb) * Math.PI * 2 - Math.PI / 2; const am = (a0 + a1) / 2;
       // La lumière qui passe : un faisceau qui tourne, les vitraux qu'il touche brillent.
       const d = lumiere < 0 ? 1 : Math.abs(((((am + Math.PI / 2) / (Math.PI * 2) - lumiere) % 1) + 1.5) % 1 - 0.5);
-      const eclat = lumiere < 0 ? 0 : Math.max(0, 1 - d * 6);
-      const k0 = 0.62 + alea() * 0.35 + (allume ? 0.35 : 0) + eclat * 0.7;
+      const eclat = lumiere < 0 ? 0 : Math.max(0, 1 - d * 5);
+      // Pendant l'écoute, les vitraux au repos s'assombrissent : le faisceau et l'anneau qui joue se voient vraiment.
+      const k0 = (lumiere < 0 ? 0.62 + alea() * 0.35 : 0.34 + alea() * 0.18) + (allume ? 0.45 : 0) + eclat * 1.15;
       const P = (x, y) => [cx + Math.cos(x) * y, cy + Math.sin(x) * y];
       const forme = () => {
         ctx.beginPath(); ctx.arc(cx, cy, r0 + 2, a0 + 0.01, a1 - 0.01);
