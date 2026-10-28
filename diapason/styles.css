@@ -4180,3 +4180,4 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .or-grille-box .or-grille { margin-top: 18px; }
 .or-grille-box .or-mesures { max-height: 292px; overflow-y: auto; padding: 4px 4px 6px; scroll-padding: 8px; position: relative; }
 .or-pt.f-silence { min-width: 96px; }
+.or-tete.pose { box-shadow: none; background: #1d1a15; } .or-tete.pose::before { border-top-color: #1d1a15; }

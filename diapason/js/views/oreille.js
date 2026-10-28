@@ -36,7 +36,7 @@ export default {
       <section class="or-res" hidden>
         <h2 class="or-titre"></h2>
         <div class="or-faits"></div>
-        <div class="or-transport"><button class="btn primary" data-o="lire">▶ Écouter</button><span class="or-pos mono">0:00</span><span class="muted">Touche l’onde : l’écoute part de ce moment.</span>
+        <div class="or-transport"><button class="btn primary" data-o="lire">▶ Écouter</button><span class="or-pos mono">0:00</span><span class="muted or-astuce-t">Touche l’onde pour placer la tête de lecture, puis ▶.</span>
           <label class="or-just" data-bulle="Accorder plus haut ou plus bas, en cents (100 cents = un demi-ton) : toute la prise, ou une seule partie. L’écoute et les fichiers WAV suivent ; l’original ne change pas.">Justesse de <select data-cible aria-label="Ce qu’on accorde"><option value="-1">toute la prise</option></select> <input type="range" min="-50" max="50" step="1" value="0" data-cents> <b class="or-cents">0 ¢</b></label></div>
         <div class="or-carte"><i class="or-tete" hidden></i><canvas class="or-canvas" aria-label="La pièce, ses parties, ses silences et sa boucle"></canvas></div>
         <div class="or-monter"></div>
@@ -63,7 +63,7 @@ export default {
     // Un bout pris dans le filet arrive ici tout seul.
     if (window.__flipOreille) { const f = window.__flipOreille; window.__flipOreille = null; setTimeout(async () => analyser(await f.blob.arrayBuffer(), f.nom), 0); }
     // La lecture et sa tête : où on en est, sur l'onde, pendant qu'on écoute (une boucle tourne entre a et b).
-    let tete = null; let cents = 0; let cp = []; let cible = -1; const voulus = new Set(); let occK = {}; let voixForcee = false; let orig = null; let plage = null; let presse = null; let bout = null; let pile = []; let entendus = {}; let cadreG = null; let corrigees = new Set(); let pvoulus = new Set(); let ptOuverte = -1; let apercu = null; let aligner = true; let choisie = null; let corr = {}; let corrige = true;
+    let tete = null; let cents = 0; let cp = []; let cible = -1; const voulus = new Set(); let occK = {}; let voixForcee = false; let orig = null; let plage = null; let presse = null; let bout = null; let pile = []; let curseur = 0; let entendus = {}; let cadreG = null; let corrigees = new Set(); let pvoulus = new Set(); let ptOuverte = -1; let apercu = null; let aligner = true; let choisie = null; let corr = {}; let corrige = true;
     // La justesse : toute la prise (cents) plus, au besoin, une partie à part (cp[i]). rate(t) : la vitesse à ce moment.
     const partDe = (t) => (res ? res.parties.findIndex((p) => t >= p.a - 0.01 && t < p.b) : -1);
     const rate = (t = 0) => 2 ** ((cents + (cp[partDe(t)] || 0)) / 1200);
@@ -71,12 +71,14 @@ export default {
     const posDe = (tt) => { const e = audio().currentTime - tt.t0;
       if (tt.boucle) { const L = tt.b - tt.a; const eb = e * tt.segs[0].r; return tt.a + (((eb % L) + L) % L); }
       let reste = Math.max(0, e); for (const g of tt.segs) { const d = (g.b - g.a) / g.r; if (reste < d) return g.a + reste * g.r; reste -= d; } return tt.b; };
-    const arrete = () => { stopBoucle?.(); stopBoucle = null; try { lecture?.stop?.(); } catch { /* déjà arrêtée */ } lecture = null; tete = null; q('[data-o=boucle]').textContent = '▶ Écouter la boucle'; const l = q('[data-o=lire]'); if (l) l.textContent = '▶ Écouter'; const t = q('.or-tete'); if (t) t.hidden = true; };
+    const arrete = () => { stopBoucle?.(); stopBoucle = null; try { lecture?.stop?.(); } catch { /* déjà arrêtée */ } lecture = null; tete = null; q('[data-o=boucle]').textContent = '▶ Écouter la boucle'; const l = q('[data-o=lire]'); if (l) l.textContent = '▶ Écouter'; montrerCurseur(); };
+    // La tête de lecture au repos : là où on l'a posée sur l'onde (▶ part de là).
+    function montrerCurseur() { const t = q('.or-tete'); if (!t || !res) return; t.hidden = false; t.classList.add('pose'); t.style.left = `${(curseur / res.duree) * 100}%`; const p = q('.or-pos'); if (p) p.textContent = `${mmss(curseur)} / ${mmss(res.duree)}`; }
     function animerTete() {
       if (!tete || !res) return;
       let pos = posDe(tete);
       if (!tete.boucle && pos >= tete.b) { arrete(); return; }
-      pos = Math.max(tete.a, pos); const t = q('.or-tete'); if (t) { t.hidden = false; t.style.left = `${(pos / res.duree) * 100}%`; }
+      pos = Math.max(tete.a, pos); const t = q('.or-tete'); if (t) { t.hidden = false; t.classList.remove('pose'); t.style.left = `${(pos / res.duree) * 100}%`; }
       const p = q('.or-pos'); if (p) p.textContent = `${mmss(pos)} / ${mmss(res.duree)}`;
       { const g = q('.or-accords')?._grille; if (g) { const D = 240 / g.tempo; q('.or-mes.joue')?.classList.remove('joue'); const mj = [...el.querySelectorAll('.or-mes[data-t]')].find((b) => pos >= +b.dataset.t && pos < +b.dataset.t + D); if (mj) { mj.classList.add('joue');
         // La grille défile toute seule pour garder la mesure qui joue en vue, sans faire bouger la page.
@@ -93,7 +95,7 @@ export default {
       try { await analyserBuf(await audio().decodeAudioData(arrayBuffer), n); } catch { etat('Je n’arrive pas à lire ce fichier. Essaie un mp3, un m4a ou un wav.'); }
     }
     async function analyserBuf(b0, n) {
-      arrete(); nom = n; plage = null; entendus = {}; cadreG = null; corrigees = new Set(); pvoulus = new Set(); ptOuverte = -1; apercu = null; cp = []; cible = -1; cents = 0; voixForcee = false; voulus.clear(); occK = {}; { const r = q('[data-cents]'); if (r) r.value = 0; const lab = q('.or-cents'); if (lab) lab.textContent = '0 ¢'; }
+      arrete(); curseur = 0; nom = n; plage = null; entendus = {}; cadreG = null; corrigees = new Set(); pvoulus = new Set(); ptOuverte = -1; apercu = null; cp = []; cible = -1; cents = 0; voixForcee = false; voulus.clear(); occK = {}; { const r = q('[data-cents]'); if (r) r.value = 0; const lab = q('.or-cents'); if (lab) lab.textContent = '0 ¢'; }
       {
         buf = b0; orig = buf; corr = {}; choisie = null; corrige = true;
         res = await ecouter(buf, etat); diag = diagnostic(res); voix = null;
@@ -119,7 +121,7 @@ export default {
       const rel = q('[data-o=relais]'); if (rel) rel.disabled = !res.boucle;
       montrerDiag();
       q('.or-voix').innerHTML = '';
-      montrerParties(); montrerMonter(); dessiner();
+      montrerParties(); montrerMonter(); dessiner(); montrerCurseur();
     }
     // Ce que FLIP entend : ce qui brille déjà, ce qui est à retravailler. Chaque repère se touche pour l'écouter ; un
     // « à retravailler » qu'on a fait exprès se coche « c'est voulu » et quitte le rouge (sur l'onde et dans les parties).
@@ -410,8 +412,9 @@ export default {
       if (fini) { glisse = true; caler(); montrerMonter(); dessiner(); } });
     q('.or-canvas').addEventListener('click', (e) => {
       if (!res) return; if (glisse) { glisse = false; return; }
-      const r = e.currentTarget.getBoundingClientRect(); const t = ((e.clientX - r.left) / r.width) * res.duree;
-      joueDe(Math.max(0, t), res.duree);
+      const r = e.currentTarget.getBoundingClientRect(); curseur = Math.max(0, Math.min(res.duree - 0.05, ((e.clientX - r.left) / r.width) * res.duree));
+      // Pendant l'écoute, l'écoute saute là ; à l'arrêt, la tête se pose seulement : c'est ▶ qui lance.
+      if (tete) joueDe(curseur, res.duree); else montrerCurseur();
     });
     el.addEventListener('click', async (e) => {
       const o = e.target.closest('[data-o]')?.dataset.o;
@@ -421,7 +424,7 @@ export default {
       if (e.target.closest('label.check')) return; // cocher « c’est voulu » ne lance pas l’écoute
       const rep = e.target.closest('[data-a]');
       if (rep && res && !rep.closest('.or-carte')) { joueDe(+rep.dataset.a, +rep.dataset.b, { boucle: !!rep.dataset.boucle }); return; }
-      if (o === 'lire' && res) { if (tete) arrete(); else joueDe(0, res.duree); return; }
+      if (o === 'lire' && res) { if (tete) { curseur = Math.min(res.duree - 0.05, posDe(tete)); arrete(); } else joueDe(curseur, res.duree); return; }
       if (!res) return; // (les accords et les mesures de la grille n'ont pas de data-o : ils doivent passer)
       // Une note de la voix : on l'entend telle que chantée, une occurrence après l'autre à chaque toucher.
       const nt = e.target.closest('[data-note]');
