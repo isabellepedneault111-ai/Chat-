@@ -244,8 +244,8 @@ export default {
       const box = q('.or-accords');
       if (!accs?.length) { q('.or-grille-box').innerHTML = ''; box.innerHTML = '<p class="muted small">Accords : rien de clair à reconnaître ici (trop de batterie ou d’effets, ou pas d’accords tenus).</p>'; return; }
       const ton = res.ton.split(' ou ')[0]; const NOMS = ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
-      q('.or-grille-box').innerHTML = (() => { const g = grilleMesures(accs, res.bpm, 4, cadreG); if (!g) return ''; if (!cadreG) cadreG = { temps: g.temps, debutCale: g.debutCale, nb: g.nb, periode: g.periode }; box._grille = g; const l = g.boucle || g.mesures.slice(0, 32);
-          return `<div class="or-grille"><div class="or-grille-t"><h4>La grille</h4><span>${g.tempo} BPM · 4 temps par mesure${g.periode ? ` · <span class="or-rep">‖: ${g.periode} mesure${g.periode > 1 ? 's' : ''} qui reviennent ${g.tours} fois :‖</span>` : ''}</span><button class="btn small or-etsi" data-o="etsi" data-bulle="Une mesure au hasard, une autre couleur d’accord, entendue tout de suite dans le son. Rien ne change tant que tu n’approuves pas.">🎲 Et si… ?</button></div>
+      q('.or-grille-box').innerHTML = (() => { const g = grilleMesures(accs, res.bpm, 4, cadreG); if (!g) return ''; if (!cadreG) cadreG = { temps: g.temps, debutCale: g.debutCale, nb: g.nb, periode: g.periode }; box._grille = g; const l = g.boucle || g.mesures;
+          return `<div class="or-grille"><div class="or-grille-t"><h4>La grille</h4><span>${res.bpm} BPM · 4 temps par mesure${g.periode ? ` · <span class="or-rep">‖: ${g.periode} mesure${g.periode > 1 ? 's' : ''} qui reviennent ${g.tours} fois :‖</span>` : ''}</span><button class="btn small or-etsi" data-o="etsi" data-bulle="Une mesure au hasard, une autre couleur d’accord, entendue tout de suite dans le son. Rien ne change tant que tu n’approuves pas.">🎲 Et si… ?</button></div>
             <div class="or-mesures">${l.map((x, i) => { const segs = []; x.cases.forEach((c) => { if (c) segs.push({ c, n: 1 }); else if (segs.length) segs[segs.length - 1].n++; else segs.push({ c: '—', n: 1 }); });
               return `<button class="or-mes n${segs.length} ${g.periode && i === 0 ? 'rep-a' : ''} ${g.periode && i === l.length - 1 ? 'rep-b' : ''} ${corrigee(i, x, g) ? 'corrigee' : ''}" data-mes="${i}" data-t="${x.t}" title="Mesure ${g.boucle ? i + 1 : x.m} · ${mmss(x.t)}"><small>${g.boucle ? i + 1 : x.m}</small>${i && x.cle === l[i - 1].cle ? '<b class="or-pct" aria-label="comme la mesure d’avant">%</b>' : segs.map((sg2) => `<span class="or-b" style="grid-column: span ${sg2.n}">${sg2.c !== '—' ? joli(sg2.c) : '<i>—</i>'}</span>`).join('')}</button>`; }).join('')}</div>
             <div class="or-edit" hidden></div>
@@ -465,7 +465,7 @@ export default {
       if (va) { const [vr, vq] = va.dataset.var.split(','); const box = q('.or-edit'); box.querySelector('[data-ed=r]').value = vr; box.querySelector('[data-ed=q]').value = vq;
         box.querySelector('[data-ed=q]').dispatchEvent(new Event('change', { bubbles: true })); q('.or-edit [data-ed-apres]')?.click(); return; }
       if (o === 'etsi' && accs?.length) {
-        const g2 = q('.or-accords')._grille; const l2 = g2.boucle || g2.mesures.slice(0, 32); const choix = [];
+        const g2 = q('.or-accords')._grille; const l2 = g2.boucle || g2.mesures; const choix = [];
         l2.forEach((x, i) => { const c = accs.find((a) => a.b > x.t + 0.05 && a.a < x.t + 240 / g2.tempo - 0.05); if (c) variantes(entendus[i] || c).forEach((v) => choix.push([i, v])); });
         if (!choix.length) { toast('Pas de variante faisable dans le son ici.'); return; }
         const [i, v] = choix[Math.floor(Math.random() * choix.length)];

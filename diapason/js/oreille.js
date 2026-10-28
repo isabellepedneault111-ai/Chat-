@@ -333,7 +333,8 @@ export async function trouverAccords(buf, bpm, onStep = () => {}) {
 // toute la grille se recalerait et les mesures glisseraient.
 export function grilleMesures(accs, bpm, parMesure = 4, cadre = null) {
   if (!accs?.length) return null;
-  const t0 = bpm < 80 ? bpm * 2 : bpm; const debut = accs[0].a;
+  // Le même tempo que celui affiché en haut (avant : doublé sous 80 BPM, et la grille annonçait le double).
+  const t0 = bpm; const debut = accs[0].a;
   // Recaler le tempo : les changements d'accords tombent sur des temps. On cherche, à ±6 % du tempo entendu,
   // la durée de temps qui les aligne le mieux (sinon, une petite erreur s'accumule et tout glisse en fin de grille).
   const changes = accs.slice(1).map((x) => x.a - debut); let temps = 60 / t0; let mieux = -Infinity;

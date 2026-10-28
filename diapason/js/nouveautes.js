@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.70', quand: '2026-10-28', titre: 'Un seul tempo', items: [
+    ['Le même tempo partout', ['La grille annonçait le double du tempo affiché en haut (158 au lieu de 77) : elle comptait en temps doublés sous 80 BPM. Maintenant, c’est le même tempo partout, et 4 temps par mesure à ce tempo-là.']],
+    ['Toute la pièce dans la grille', ['La grille s’arrêtait à 32 mesures (le début de la pièce seulement). Elle montre maintenant toutes les mesures et défile pendant l’écoute.']],
+  ] },
   { v: '0.69', quand: '2026-10-28', titre: 'Tout se voit en même temps', items: [
     ['La grille sous l’onde', ['La grille est juste sous l’onde : pendant l’écoute, la mesure qui joue s’allume et la grille défile toute seule pour la garder en vue. La liste complète des accords, un par un, est repliée en bas.']],
     ['La boucle en violet', ['L’or veut dire « bien » (les notes justes) : la boucle passe en violet ↻, sur l’onde comme dans la légende.']],
