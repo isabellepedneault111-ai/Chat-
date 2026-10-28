@@ -3960,3 +3960,4 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .mod-head h1 { font-size: clamp(1.9rem, 3.2vw, 2.7rem) !important; line-height: 1.08; margin: 4px 0 6px; }
 .mod-head { margin-bottom: 14px !important; padding-bottom: 0 !important; }
 .mod-head h1 { max-width: none !important; }
+.nf-nef { padding-top: 14px; }

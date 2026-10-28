@@ -120,7 +120,7 @@ export default {
     function nefHTML() {
       const S = oeuvre.sections; const voix = etat.voix || []; const cols = `${S.map((s) => `${s.ratio}fr`).join(' ')} 0.9fr`;
       const arche = (s) => { const c = COUL[s.lumiere]; const on = sel?.k === 'partie' && sel.i === s.i;
-        return `<button class="nf-arche ${on ? 'on' : ''}" data-partie="${s.i}" style="--c:${c}"><svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M2 40 V18 Q2 3 50 1 Q98 3 98 18 V40" /></svg><b>${ROMAINS[s.i]} · ${s.ratio}</b><small>${mmss(s.b - s.a)} · ${esc(FAMILLES.find((f) => f[0] === s.lumiere)?.[1] || '')}</small><span class="nf-acc">${esc(nomAccordDe(s))}</span></button>`; };
+        return `<button class="nf-arche ${on ? 'on' : ''}" data-partie="${s.i}" style="--c:${c}"><svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M2 40 V18 Q2 3 50 1 Q98 3 98 18 V40" /></svg><b>${ROMAINS[s.i]} · ${s.ratio}</b><small>${mmss(s.b - s.a)}</small></button>`; };
       const rangee = (n, j) => { const v = voix[j] || {}; const I = instr(v.banque || RYTHME_DEFAUT[j % RYTHME_DEFAUT.length]); const on = sel?.k === 'voix' && sel.j === j;
         return `<button class="nf-voix ${on ? 'on' : ''} ${v.muet ? 'muet' : ''}" data-voix="${j}" style="--c:${I[2]};--g:${GROUPES[v.g] || 'transparent'}">${disque(n, I[2])}<span><b>${esc(I[1])}${v.oct ? ` <small>${v.oct > 0 ? '+' : ''}${v.oct} oct.</small>` : ''}</b><small>${n} frappes par tour${v.g ? ` · pupitre ${v.g}` : ''}${v.muet ? ' · en sourdine' : ''}</small></span></button>
           ${S.map((s) => { const m = accordDe(s)[j % accordDe(s).length]; return `<div class="nf-case ${v.muet ? 'muet' : ''}" data-case="${j}-${s.i}">${points(n, I[2])}<span>${nomNote(m)}</span></div>`; }).join('')}<div class="nf-coda-c"></div>`; };
