@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.56', quand: '2026-10-28', titre: 'Le babillard', items: [
+    ['Nos prochains pas, en feuilles', ['Dans le Calendrier : une feuille par personne, un collant jaune. Chaque pas a sa case : en pointillé, l’app la coche d’elle-même ; pleine, on la coche à la main (seule la case coche, plus le texte).']],
+    ['Les pas de l’autre se lisent', ['Ils ne mènent plus nulle part chez toi : « Recréer ton studio », c’est le pas de Frog.']],
+    ['Moins étiré', ['Les pages s’arrêtent à une largeur confortable au lieu de s’étendre d’un bord à l’autre de l’écran.']],
+  ] },
   { v: '0.55', quand: '2026-10-28', titre: 'L’accueil en deux feuilles', items: [
     ['À faire, une seule liste à cocher', ['Sur une feuille blanche, un collant jaune en haut : nos prochains pas et nos premiers pas, ensemble. Ce qui est fait se coche tout seul. Les quatre grandes cartes « Par où commencer » sont parties.']],
     ['La carte de la semaine, plus loin', ['On peut y répondre par un son (« ● Répondre avec un son » dans Écrire). Quand vous avez répondu tous les deux (ou le dimanche), vos réponses s’exposent côte à côte dans Aujourd’hui. Et « En faire la cible de la Session » : toute la séance part de la carte.']],

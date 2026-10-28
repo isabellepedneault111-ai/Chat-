@@ -102,12 +102,20 @@ export default {
     }
     // Nos prochains pas : les deux listes côte à côte (ceux que l’app voit, ceux qu’on se donne à cocher) et le formulaire pour en ajouter.
     function pasHTML() {
-      const ligne = (x, qui) => `<li class="${x.fait ? 'fait' : ''}">${x.manuel != null ? `<label><input type="checkbox" data-pas="${esc(x.manuel)}" ${x.fait ? 'checked' : ''}> <b>${esc(x.titre)}</b></label>` : `<a href="${x.lien}"><b>${esc(x.titre)}</b></a>`}<small>${esc(x.pourquoi || '')}</small>${x.manuel != null && (x.auteur === espace.me) ? `<button class="icon-btn tiny" data-pas-x="${esc(x.manuel)}" aria-label="Effacer ce pas">×</button>` : ''}</li>`;
+      // Chaque pas a sa case. Ceux qu'on se donne se cochent à la main (seule la case coche, pas le texte) ; ceux que
+      // l'app voit se cochent d'eux-mêmes quand c'est fait. Les pas de l'autre ne mènent pas chez moi : on les lit.
+      const ligne = (x, qui) => {
+        const moi = qui === espace.me;
+        const caseH = x.manuel != null ? `<input class="pa-case" type="checkbox" data-pas="${esc(x.manuel)}" ${x.fait ? 'checked' : ''} aria-label="Fait : ${esc(x.titre)}">` : `<span class="pa-case auto" title="L’app la coche d’elle-même quand c’est fait" aria-hidden="true"></span>`;
+        const titre = x.manuel == null && moi ? `<a href="${x.lien}"><b>${esc(x.titre)}</b></a>` : `<b>${esc(x.titre)}</b>`;
+        const sous = x.manuel != null ? (x.pourquoi || '') : moi ? (x.pourquoi || '') : '';
+        return `<li class="${x.fait ? 'fait' : ''}">${caseH}<span class="pa-txt">${titre}${sous ? `<small>${esc(sous)}</small>` : ''}</span>${x.manuel != null && x.auteur === espace.me ? `<button class="icon-btn tiny" data-pas-x="${esc(x.manuel)}" aria-label="Effacer ce pas">×</button>` : ''}</li>`;
+      };
       const auto = (qui) => mesTaches(qui).filter((x) => !x.manuel);
       const faits = (qui) => pas().filter((e) => e.data?.fait && (e.data.pour === qui || e.data.pour === 'deux') && Date.now() - (e.data.faitAt || 0) < 7 * JOUR).map((e) => ({ titre: e.title, manuel: e.id, fait: true, auteur: e.author, pourquoi: `fait ${new Date(e.data.faitAt).toLocaleDateString('fr-CA', { weekday: 'long' })}` }));
       const manuels = (qui) => pas().filter((e) => !e.data?.fait && (e.data.pour === qui || e.data.pour === 'deux')).map((e) => ({ titre: e.title, manuel: e.id, auteur: e.author, pourquoi: e.data.pour === 'deux' ? 'pour nous deux' : `ajouté par ${e.author === espace.me ? 'toi' : e.author}` }));
-      return `<section class="panel cl-pas"><div class="panel-head"><h2>Nos prochains pas</h2><span class="muted small">ceux que l’app voit, et ceux qu’on se donne</span></div>
-        <div class="cl-pas-g">${mem().map((qui) => `<div class="cl-pas-c" style="--c:${memberColor(qui)}"><h3>${esc(qui)}${qui === espace.me ? ' (toi)' : ''}</h3><ul>${[...manuels(qui), ...auto(qui), ...faits(qui)].map((x) => ligne(x, qui)).join('') || '<li class="vide">Rien qui attend.</li>'}</ul></div>`).join('')}</div>
+      return `<section class="panel cl-pas"><div class="panel-head"><h2>Nos prochains pas</h2><p class="pa-legende"><span class="pa-case auto" aria-hidden="true"></span> l’app la coche d’elle-même quand c’est fait <span class="pa-case" aria-hidden="true"></span> on la coche à la main</p></div>
+        <div class="cl-pas-g">${mem().map((qui) => `<div class="cl-pas-c papier" style="--c:${memberColor(qui)}"><span class="collant" aria-hidden="true"></span><h3>${esc(qui)}${qui === espace.me ? ' (toi)' : ''}</h3><ul>${[...manuels(qui), ...auto(qui), ...faits(qui)].map((x) => ligne(x, qui)).join('') || '<li class="vide">Rien qui attend.</li>'}</ul></div>`).join('')}</div>
         <form class="cl-pas-f"><input class="input" name="t" maxlength="120" placeholder="Un pas à faire (ex. : apprendre les paroles du refrain)" required><select name="pour" aria-label="Pour qui">${mem().map((m) => `<option value="${esc(m)}" ${m === espace.me ? 'selected' : ''}>pour ${esc(m)}</option>`).join('')}<option value="deux">pour nous deux</option></select><button class="btn small">Ajouter</button></form></section>`;
     }
     // Le formulaire pour proposer une plage : la sorte en cartes, le jour dans un petit calendrier du mois, l'heure

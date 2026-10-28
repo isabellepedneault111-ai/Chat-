@@ -118,7 +118,7 @@ kbd { font-family: var(--mono); font-size: .82rem; border: 1.5px solid var(--rul
 .mic-pill.on .mic-dot { background: var(--rec); box-shadow: 0 0 0 calc(var(--lvl) * 8px) color-mix(in srgb, var(--rec) 40%, transparent), 0 0 10px var(--rec); }
 
 /* ---------- Mise en page ---------- */
-.view { max-width: 1800px; margin: 0 auto; padding: clamp(18px, 3vw, 36px) clamp(16px, 3vw, 32px) 72px; outline: none; }
+.view { max-width: 1440px; margin: 0 auto; padding: clamp(18px, 3vw, 36px) clamp(16px, 3vw, 32px) 72px; outline: none; }
 .view > div > * { animation: rise .5s cubic-bezier(.2, .8, .2, 1) both; }
 .view > div > *:nth-child(2) { animation-delay: .05s; }
 .view > div > *:nth-child(3) { animation-delay: .1s; }
@@ -3917,3 +3917,19 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .acc-haut .nv-inclus .nv-grille { display: block; margin: 0; }
 .acc-haut .nv-inclus .nv-g-fil { max-height: 60vh; }
 @media (max-width: 860px) { .acc-haut { grid-template-columns: 1fr; } }
+
+/* Nos prochains pas (Calendrier) : une feuille par personne, collant jaune ; de vraies cases, du texte lisible,
+   et des feuilles à leur largeur naturelle (pas étirées sur tout l'écran). */
+.cl-pas-g { grid-template-columns: repeat(auto-fit, minmax(300px, 520px)); gap: 30px 26px; justify-content: start; margin-top: 18px; }
+.cl-pas-c.papier { border-top: 0; padding: 26px 22px 14px; }
+.cl-pas-c.papier h3 { font: 700 1.25rem var(--display); margin: 0 0 8px; color: var(--c); }
+.cl-pas-c li { grid-template-columns: 26px 1fr auto; align-items: start; gap: 4px 12px; padding: 10px 2px; }
+.cl-pas-c li small { grid-column: auto; display: block; font-size: .95rem; margin-top: 2px; color: #6d655a; }
+.cl-pas-c li b { font-weight: 700; font-size: 1.02rem; }
+.cl-pas-c li a { color: inherit; } .cl-pas-c li a::after { content: ' →'; color: #aa4b00; }
+.pa-case { appearance: none; -webkit-appearance: none; width: 24px !important; height: 24px !important; margin: 0; border: 2px solid #1d1a15; border-radius: 5px; background: #fffdf6; display: grid; place-items: center; cursor: pointer; flex: none; }
+.pa-case:checked { background: #1d1a15; }
+.pa-case:checked::after { content: '✓'; color: #fffdf6; font-weight: 800; font-size: .95rem; line-height: 1; }
+.pa-case.auto { border-style: dashed; cursor: default; }
+.cl-pas-c li.fait b { text-decoration: line-through; opacity: 1; color: #6d655a; }
+.pa-legende { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0; font-size: 1rem; color: #4a443b; } .pa-legende .pa-case { width: 20px !important; height: 20px !important; cursor: default; } .pa-legende .pa-case:not(:first-child) { margin-left: 14px; }
