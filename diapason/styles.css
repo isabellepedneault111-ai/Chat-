@@ -3912,7 +3912,7 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .coche .ce-t b { display: block; font-weight: 700; }
 .coche .ce-t small { display: block; color: #6d655a; margin-top: 2px; line-height: 1.4; }
 .coche li.fait .case { background: #1d1a15; color: #fffdf6; }
-.coche li.fait b { text-decoration: line-through; color: #8a8174; font-weight: 600; }
+.coche li.fait b { text-decoration: line-through; color: #6d655a; font-weight: 600; }
 .pa-vide { color: #6d655a; margin: 6px 0 0; }
 .acc-haut .nv-inclus .nv-grille { display: block; margin: 0; }
 .acc-haut .nv-inclus .nv-g-fil { max-height: 60vh; }
