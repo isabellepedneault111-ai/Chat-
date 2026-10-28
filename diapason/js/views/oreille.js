@@ -5,7 +5,7 @@ import { clavierDe } from '../doigte.js';
 import { espace, audioURL, saveEntry, uploadAudio, saveProfile, members } from '../espace.js';
 import { toast, autoCanvas } from '../ui.js';
 import { esc } from './carnet.js';
-import { ecouter, boucler, rendreBoucle, corrigerNotes, wav, diagnostic, notesVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
+import { ecouter, boucler, rendreBoucle, corrigerNotes, wav, copier, couper, coller, remplir, diagnostic, notesVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
 import { chargerGrille, poserFond } from './studio.js';
 
 const PIECES = [['data/sons/frog-joywalk-complet.mp3', 'Joy Walk (Frog)'], ['data/sons/frog-visite.mp3', 'Projet 1, après la pause (Frog)']];
@@ -39,9 +39,10 @@ export default {
         <div class="or-transport"><button class="btn primary" data-o="lire">▶ Écouter</button><span class="or-pos mono">0:00</span><span class="muted">Touche l’onde : l’écoute part de ce moment.</span>
           <label class="or-just" data-bulle="Accorder plus haut ou plus bas, en cents (100 cents = un demi-ton) : toute la prise, ou une seule partie. L’écoute et les fichiers WAV suivent ; l’original ne change pas.">Justesse de <select data-cible aria-label="Ce qu’on accorde"><option value="-1">toute la prise</option></select> <input type="range" min="-50" max="50" step="1" value="0" data-cents> <b class="or-cents">0 ¢</b></label></div>
         <div class="or-carte"><i class="or-tete" hidden></i><canvas class="or-canvas" aria-label="La pièce, ses parties, ses silences et sa boucle"></canvas></div>
+        <div class="or-monter"></div>
         <div class="or-parties"></div>
-        <div class="or-diag"></div>
         <div class="or-voix"></div>
+        <div class="or-diag"></div>
         <div class="or-accords"></div>
         <div class="or-actions">
           <button class="btn primary" data-o="boucle">▶ Écouter la boucle</button>
@@ -61,7 +62,7 @@ export default {
     // Un bout pris dans le filet arrive ici tout seul.
     if (window.__flipOreille) { const f = window.__flipOreille; window.__flipOreille = null; setTimeout(async () => analyser(await f.blob.arrayBuffer(), f.nom), 0); }
     // La lecture et sa tête : où on en est, sur l'onde, pendant qu'on écoute (une boucle tourne entre a et b).
-    let tete = null; let cents = 0; let cp = []; let cible = -1; const voulus = new Set(); let occK = {}; let voixForcee = false; let orig = null; let corr = {}; let corrige = true;
+    let tete = null; let cents = 0; let cp = []; let cible = -1; const voulus = new Set(); let occK = {}; let voixForcee = false; let orig = null; let plage = null; let presse = null; let bout = null; let pile = []; let aligner = true; let choisie = null; let corr = {}; let corrige = true;
     // La justesse : toute la prise (cents) plus, au besoin, une partie à part (cp[i]). rate(t) : la vitesse à ce moment.
     const partDe = (t) => (res ? res.parties.findIndex((p) => t >= p.a - 0.01 && t < p.b) : -1);
     const rate = (t = 0) => 2 ** ((cents + (cp[partDe(t)] || 0)) / 1200);
@@ -84,10 +85,13 @@ export default {
 
     // Décode la pièce déposée et la fait écouter par l’oreille, en affichant chaque étape.
     async function analyser(arrayBuffer, n) {
-      arrete(); nom = n; cp = []; cible = -1; cents = 0; voixForcee = false; voulus.clear(); occK = {}; { const r = q('[data-cents]'); if (r) r.value = 0; const lab = q('.or-cents'); if (lab) lab.textContent = '0 ¢'; }
-      try {
-        etat('Je décode la pièce…');
-        buf = await audio().decodeAudioData(arrayBuffer); orig = buf; corr = {}; corrige = true;
+      etat('Je décode la pièce…'); pile = []; bout = null;
+      try { await analyserBuf(await audio().decodeAudioData(arrayBuffer), n); } catch { etat('Je n’arrive pas à lire ce fichier. Essaie un mp3, un m4a ou un wav.'); }
+    }
+    async function analyserBuf(b0, n) {
+      arrete(); nom = n; plage = null; cp = []; cible = -1; cents = 0; voixForcee = false; voulus.clear(); occK = {}; { const r = q('[data-cents]'); if (r) r.value = 0; const lab = q('.or-cents'); if (lab) lab.textContent = '0 ¢'; }
+      {
+        buf = b0; orig = buf; corr = {}; choisie = null; corrige = true;
         res = await ecouter(buf, etat); diag = diagnostic(res); voix = null;
         etat('');
         montrer();
@@ -95,7 +99,7 @@ export default {
         montrerAccords();
         voix = await notesVoix(buf, etat); etat('');
         montrerVoix();
-      } catch { etat('Je n’arrive pas à lire ce fichier. Essaie un mp3, un m4a ou un wav.'); }
+      }
     }
     // Affiche ce que l’oreille a trouvé : tempo, tonalité, parties, conseils.
     function montrer() {
@@ -115,7 +119,7 @@ export default {
         <div class="or-col or-bien"><h3>Ce qui brille déjà</h3><ul>${diag.brille.map((o) => item(o, 'ok')).join('')}</ul></div>
         <div class="or-col or-trav"><h3>À retravailler</h3><ul>${diag.travail.map((o) => item(o, 'tr')).join('') || '<li class="vide"><span>Rien de flagrant dans l’énergie ni la forme. Fiez-vous à vos oreilles pour le reste.</span></li>'}</ul></div>`;
       q('.or-voix').innerHTML = '';
-      montrerParties(); dessiner();
+      montrerParties(); montrerMonter(); dessiner();
     }
     // L'énergie de chaque partie, en trois teintes d'un même bleu : plus c'est foncé, plus ça pousse.
     const FORCE = { douce: '#9cc0e8', moyenne: '#4a86cf', forte: '#1d4f8f', silence: '#d9d2c4' };
@@ -142,30 +146,61 @@ export default {
       if (t) { if (t.boucle) joueDe(t.a, t.b, { boucle: true }); else if (pos < t.b) joueDe(pos, t.b); }
       montrerVoix();
     }
+    // Les temps de la pièce (la grille des mesures si l'oreille l'a trouvée) : on y cale les coupes pour que le groove tienne.
+    function temps() {
+      const g = q('.or-accords')?._grille; const T = 60 / (g?.tempo || res.bpm); const l = [];
+      if (g) g.mesures.forEach((m) => { for (let k = 0; k < 4; k++) l.push(m.t + k * T); }); else for (let t = 0; t < res.duree; t += T) l.push(t);
+      return l;
+    }
+    const proche = (t) => temps().reduce((x, y) => (Math.abs(y - t) < Math.abs(x - t) ? y : x), t);
+    function caler() { if (!plage || !aligner) return; const a = proche(plage.a); let b = proche(plage.b); if (b <= a) b = plage.b; plage = { a: Math.max(0, a), b: Math.min(res.duree, b) }; }
+    const nomBase = () => (pile.length ? pile[0].nom : nom);
+    function montrerMonter() {
+      const box = q('.or-monter'); if (!res || !box) return;
+      const hist = pile.length ? `<div class="or-m-hist"><b>Version montée</b> · ${pile.length} changement${pile.length > 1 ? 's' : ''} · l’original reste intact
+        <button class="btn small" data-m="annuler">↶ Annuler le dernier</button><button class="btn small" data-m="origine">Revenir à l’original</button>
+        <button class="btn small primary" data-m="wav">⬇ La version montée (WAV)</button>${espace.connected ? '<button class="btn small" data-m="mur">Garder au mur</button>' : ''}</div>` : '';
+      if (!plage) { box.innerHTML = `<p class="muted or-m-astuce">✂ Glisse sur l’onde pour choisir un passage : l’écouter, le couper, le copier, le coller ailleurs ou remplir un silence.</p>${hist}`; return; }
+      const L = plage.b - plage.a;
+      box.innerHTML = `<div class="or-m-bar"><b>Passage ${mmss(plage.a)} – ${mmss(plage.b)}</b><span class="muted">${L.toFixed(1).replace('.', ',')} s</span>
+        <button class="btn small" data-m="ecouter">▶ Écouter</button>
+        <button class="btn small" data-m="couper">✂ Couper</button>
+        <button class="btn small" data-m="copier">⧉ Copier</button>
+        ${bout ? `<button class="btn small" data-m="coller" data-bulle="Insère le bout copié (${bout.duree.toFixed(1).replace('.', ',')} s) au début du passage choisi.">Coller ici</button><button class="btn small" data-m="remplir" data-bulle="Remplace le passage par le bout copié, répété au besoin. La durée ne change pas.">Remplir avec le bout copié</button>` : ''}
+        <button class="btn small" data-m="avant" data-bulle="Remplace le passage (un silence, un raté) par ce qui joue juste avant, de la même longueur. La durée ne change pas.">Remplir avec ce qui précède</button>
+        <label class="check"><input type="checkbox" data-aligner ${aligner ? 'checked' : ''}> calé sur les temps</label>
+        <button class="btn small" data-m="fermer" aria-label="Oublier ce passage">✕</button></div>${hist}`;
+    }
+    async function monterAvec(nouveau, quoi) {
+      pile.push({ buf, nom }); const n = `${nomBase()} · montée`; await analyserBuf(nouveau, n); toast(`${quoi} Écoute la jonction ; ↶ annule.`); montrerMonter();
+    }
     // Sur une voix seule : les meilleures notes, celles à travailler, et l'exercice qui va avec.
     function montrerVoix() {
       const box = q('.or-voix');
-      if (!voix?.notes?.length || (!voix.voix && !voixForcee)) {
-        box.innerHTML = voix?.instrument
-          ? `<div class="or-v-non"><p><b>Pas de voix ici.</b> J’entends ${esc(voix.pourquoi)} : c’est un instrument, pas quelqu’un qui chante. Les notes de la voix ne s’affichent donc pas.</p><button class="btn small" data-o="voix-quand-meme">C’est pourtant une voix : mesurer quand même</button></div>`
-          : '<p class="muted">Notes de la voix : pour les mesurer, dépose un enregistrement de voix seule (un mumble, une prise a cappella). Dans un mélange d’instruments, la mesure ne serait pas fiable.</p>';
+      if (!voix?.notes?.length) {
+        box.innerHTML = '<p class="muted">Les notes : pour les mesurer une à une, dépose un enregistrement où une seule note sonne à la fois (une voix seule, une mélodie jouée). Dans un mélange d’instruments, la mesure ne serait pas fiable.</p>';
         return;
       }
+      // Voix ou instrument : on montre les notes pareil ; seuls les mots changent (chantée / jouée, la voix / l'instrument).
+      const inst = voix.instrument && !voixForcee; const fait = inst ? 'jouée' : 'chantée';
       // En or : juste et stable. En rouge : à travailler (sauf si c'est voulu : une note glissée, une couleur exprès).
       const forte = new Set(voix.fortes.map((b) => b.m)); const trav = voix.aTravailler.filter((b) => !voulus.has(b.m));
       const etatDe = (b) => (voulus.has(b.m) ? 'voulu' : forte.has(b.m) ? 'bien' : trav.some((x) => x.m === b.m) ? 'trav' : '');
       const sg = (c) => `${c > 0 ? '+' : ''}${Math.round(c)}`;
-      const puce = (b) => `<button class="or-note ${etatDe(b)} ${corr[b.m] ? 'retouche' : ''}" data-note="${b.m}" data-bulle="${esc(`${nomNote(b.m)} : chantée ${b.n} fois, ${sg(b.cents)} cents en moyenne${corr[b.m] ? `, retouchée de ${sg(corr[b.m])} cents` : ''}. Touche pour l’entendre.`)}">${nomNote(b.m)}<small>${sg(b.cents)} ¢${corr[b.m] ? ` → ${sg(b.cents + corr[b.m])}` : ''}</small></button>`;
+      const puce = (b) => `<button class="or-note ${etatDe(b)} ${corr[b.m] ? 'retouche' : ''} ${choisie === b.m ? 'choisie' : ''}" data-note="${b.m}" data-bulle="${esc(`${nomNote(b.m)} : ${fait} ${b.n} fois, ${sg(b.cents)} cents en moyenne${corr[b.m] ? `, retouchée de ${sg(corr[b.m])} cents` : ''}. Touche pour l’entendre.`)}">${nomNote(b.m)}<small>${sg(b.cents)} ¢${corr[b.m] ? ` → ${sg(b.cents + corr[b.m])}` : ''}</small></button>`;
       // Retoucher une note : ± 5 cents, ou d'un coup « → juste ». Seule cette note bouge, partout où elle est chantée.
-      const retouche = (b) => `<span class="or-corr" data-bulle="Retoucher ${nomNote(b.m)} : seulement cette note, partout où elle est chantée. L’original ne change pas : tu entends une copie retouchée."><button data-corr="${b.m}" data-d="-5" aria-label="5 cents plus bas">−</button><b>${corr[b.m] ? sg(corr[b.m]) : '0'} ¢</b><button data-corr="${b.m}" data-d="5" aria-label="5 cents plus haut">+</button><button class="or-t" data-corr-juste="${b.m}" data-v="${-Math.round(b.cents)}">→ juste</button></span>`;
-      const ligne = (b, k) => `<li class="${k}"><button class="or-t" data-note="${b.m}">▶ ${nomNote(b.m)}</button><span>${k === 'bien' ? `juste (${sg(b.cents)} ¢), chantée ${b.n} fois` : `${b.cents > 0 ? 'un peu haut' : 'un peu bas'} : ${Math.round(Math.abs(b.cents))} cents`}</span>${k === 'bien' ? '' : `${k === 'voulu' ? '' : retouche(b)}<label class="check"><input type="checkbox" data-voulu="${b.m}" ${voulus.has(b.m) ? 'checked' : ''}> c’est voulu</label>`}</li>`;
+      const retouche = (b) => `<span class="or-corr" data-bulle="Retoucher ${nomNote(b.m)} : seulement cette note, partout où elle est ${fait}. L’original ne change pas : tu entends une copie retouchée."><button data-corr="${b.m}" data-d="-5" aria-label="5 cents plus bas">−</button><b>${corr[b.m] ? sg(corr[b.m]) : '0'} ¢</b><button data-corr="${b.m}" data-d="5" aria-label="5 cents plus haut">+</button><button class="or-t" data-corr-juste="${b.m}" data-v="${-Math.round(b.cents)}">→ juste</button></span>`;
+      const ligne = (b, k) => `<li class="${k}"><button class="or-t" data-note="${b.m}">▶ ${nomNote(b.m)}</button><span>${k === 'bien' ? `juste (${sg(b.cents)} ¢), ${fait} ${b.n} fois` : `${b.cents > 0 ? 'haute' : 'basse'} de ${Math.round(Math.abs(b.cents))} ¢`}</span>${k === 'bien' ? '' : `${k === 'voulu' ? '' : retouche(b)}<label class="check"><input type="checkbox" data-voulu="${b.m}" ${voulus.has(b.m) ? 'checked' : ''}> c’est voulu</label>`}</li>`;
       const moy = Math.round(voix.notes.reduce((s2, b) => s2 + b.cents * b.n, 0) / Math.max(1, voix.notes.reduce((s2, b) => s2 + b.n, 0)));
       const qui = espace.connected ? members() : [];
       box.innerHTML = `
-        <h3>Les notes de la voix <small class="muted">${voix.nNotes} notes tenues · de la plus grave à la plus aiguë · touche une note pour l’entendre</small></h3>
+        <h3>${inst ? 'Les notes de l’instrument' : 'Les notes de la voix'} <small class="muted">${voix.nNotes} notes tenues · de la plus grave à la plus aiguë · touche une note pour l’entendre</small></h3>
+        ${inst ? `<p class="or-v-inst">On dirait un instrument (${esc(voix.pourquoi)}) : une note à côté, ici, c’est plutôt un accordage à vérifier. Quand plusieurs notes sonnent ensemble, la mesure est approximative. <button class="btn small" data-o="voix-quand-meme">C’est une voix</button></p>` : ''}
         <div class="or-notes">${voix.notes.map(puce).join('')}</div>
+        ${(() => { const b = voix.notes.find((x) => x.m === choisie); if (!b) return '<p class="muted or-v-astuce">Touche une note : tu l’entends, et tu peux l’ajuster, au cent près.</p>';
+          return `<div class="or-v-choix"><b>${nomNote(b.m)}</b><span>${fait} ${b.n} fois · ${sg(b.cents)} ¢ en moyenne${corr[b.m] ? ` → ${sg(b.cents + corr[b.m])} ¢` : ''}</span>${retouche(b)}<button class="or-t" data-note="${b.m}">▶ Réentendre</button></div>`; })()}
         <div class="or-v-cols">
-          <section class="or-v-col bien"><h4>En or : chez elle</h4>${voix.fortes.length ? `<ul class="or-v-l">${voix.fortes.map((b) => ligne(b, 'bien')).join('')}</ul><p class="muted">Justes et stables : une mélodie qui s’y pose sonnera.</p>` : '<p class="muted">Pas encore assez de notes répétées pour le dire.</p>'}</section>
+          <section class="or-v-col bien"><h4>${inst ? 'En or : justes' : 'En or : chez elle'}</h4>${voix.fortes.length ? `<ul class="or-v-l">${voix.fortes.map((b) => ligne(b, 'bien')).join('')}</ul><p class="muted">Justes et stables : une mélodie qui s’y pose sonnera.</p>` : '<p class="muted">Pas encore assez de notes répétées pour le dire.</p>'}</section>
           <section class="or-v-col trav"><h4>En rouge : à travailler</h4>${voix.aTravailler.length ? `<ul class="or-v-l">${voix.aTravailler.map((b) => ligne(b, voulus.has(b.m) ? 'voulu' : 'trav')).join('')}</ul>` : '<p class="muted">Aucune note nettement à côté.</p>'}</section>
         </div>
         ${Object.values(corr).some(Boolean) ? `<div class="or-corr-bar">
@@ -176,8 +211,8 @@ export default {
           <button class="btn small" data-o="retouche-annuler">Tout annuler</button></div>` : ''}
         <div class="or-v-actions">
           ${Math.abs(moy) >= 6 ? `<button class="btn small" data-cents-auto="${-moy}" data-bulle="Toute la voix est en moyenne ${sg(moy)} cents ${moy > 0 ? '(un peu haute)' : '(un peu basse)'} : ce réglage la recale pour l’écoute et les WAV. L’original ne change pas.">Accorder la prise : ${sg(-moy)} ¢</button>` : ''}
-          ${trav.length ? '<a class="btn small" href="#/accord">Voix + piano : les retravailler →</a>' : ''}
-          ${qui.length ? `<span class="or-garder">C’est la voix de ${qui.map((m) => `<button class="btn small" data-o="garder" data-qui="${esc(m)}">${esc(m)}</button>`).join(' ')}</span>` : ''}
+          ${trav.length && !inst ? '<a class="btn small" href="#/accord">Voix + piano : les retravailler →</a>' : ''}
+          ${qui.length && !inst ? `<span class="or-garder">C’est la voix de ${qui.map((m) => `<button class="btn small" data-o="garder" data-qui="${esc(m)}">${esc(m)}</button>`).join(' ')}</span>` : ''}
         </div>
         <p class="or-src-note muted small">Comment : hauteur mesurée 45 fois par seconde (comme un accordeur) ; une note compte si elle tient 0,14 s. Juste : moins de 12 cents d’écart. Welch, Howard et Rush 1989.</p>`;
     }
@@ -220,6 +255,7 @@ export default {
     // Choisir ce qu'on accorde : toute la prise, ou une partie (une partie plus basse que les autres, par exemple).
     function viser(i) { cible = i; const v = i < 0 ? cents : (cp[i] || 0); const r = q('[data-cents]'); if (r) r.value = v; const lab = q('.or-cents'); if (lab) lab.textContent = `${v > 0 ? '+' : ''}${v} ¢`; const sl = q('[data-cible]'); if (sl) sl.value = i; montrerParties(); }
     el.addEventListener('change', (e) => {
+      if (e.target.matches('[data-aligner]')) { aligner = e.target.checked; if (aligner) { caler(); montrerMonter(); dessiner(); } return; }
       if (e.target.matches('[data-cible]')) { viser(+e.target.value); return; }
       const vl = e.target.dataset.voulu; if (vl != null) { if (e.target.checked) voulus.add(+vl); else voulus.delete(+vl); montrerVoix(); return; }
       const k = e.target.dataset.ed; if (!k) return; const box = q('.or-edit'); const i = +box.dataset.i; const g = q('.or-accords')._grille; const x = (g.boucle || g.mesures)[i]; const fin = x.t + 240 / g.tempo;
@@ -257,6 +293,7 @@ export default {
       // Les accords de la grille, sous l'onde (ils changent tout de suite quand on les corrige).
       const g = q('.or-accords')?._grille;
       if (g) { ctx.font = '600 12px "Atkinson Hyperlegible", sans-serif'; ctx.fillStyle = '#1d1a15'; let dernier = -99; g.mesures.forEach((m) => { const nm = m.cases.find((x) => x && x !== '—'); const x = X(m.t); if (nm && x > dernier + 6) { ctx.fillText(nm, x + 2, h - 4); dernier = x + 2 + ctx.measureText(nm).width; } }); }
+      if (plage) { ctx.fillStyle = 'rgba(29,26,21,.22)'; ctx.fillRect(X(plage.a), 0, X(plage.b) - X(plage.a), h); ctx.fillStyle = '#1d1a15'; ctx.fillRect(X(plage.a) - 1, 0, 3, h); ctx.fillRect(X(plage.b) - 1, 0, 3, h); }
       ctx.fillStyle = '#d93a24'; const mx = X(res.momentFort[0] + 5); ctx.beginPath(); ctx.arc(mx, 10, 6, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#6d655a'; ctx.font = '12px "Atkinson Hyperlegible", sans-serif';
       for (let t = 0; t < res.duree; t += 30) ctx.fillText(mmss(t), X(t) + 3, 13);
@@ -302,8 +339,16 @@ export default {
     const voulu = (location.hash.match(/[?&]son=([\w-]+)/) || [])[1];
     const sel = q('[data-o=choix]');
     if (voulu && sel.querySelector(`option[value="id:${voulu}"]`)) { sel.value = `id:${voulu}`; sel.dispatchEvent(new Event('change', { bubbles: true })); }
+    // Choisir un passage en glissant sur l'onde (un simple toucher, lui, fait écouter à partir de là).
+    let glisse = false;
+    const tDe = (e) => { const r = q('.or-canvas').getBoundingClientRect(); return Math.max(0, Math.min(res.duree, ((e.clientX - r.left) / r.width) * res.duree)); };
+    q('.or-canvas').addEventListener('pointerdown', (e) => { if (!res) return; presse = { x: e.clientX, t: tDe(e) }; });
+    q('.or-canvas').addEventListener('pointermove', (e) => { if (!presse || Math.abs(e.clientX - presse.x) < 6) return; const t = tDe(e); plage = { a: Math.min(presse.t, t), b: Math.max(presse.t, t) }; dessiner(); });
+    addEventListener('pointerup', function lacher() { if (!el.isConnected) { removeEventListener('pointerup', lacher); return; }
+      if (!presse) return; const fini = plage && Math.abs(plage.b - plage.a) > 0.05 && presse; presse = null;
+      if (fini) { glisse = true; caler(); montrerMonter(); dessiner(); } });
     q('.or-canvas').addEventListener('click', (e) => {
-      if (!res) return;
+      if (!res) return; if (glisse) { glisse = false; return; }
       const r = e.currentTarget.getBoundingClientRect(); const t = ((e.clientX - r.left) / r.width) * res.duree;
       joueDe(Math.max(0, t), res.duree);
     });
@@ -318,7 +363,23 @@ export default {
       if (!res) return; // (les accords et les mesures de la grille n'ont pas de data-o : ils doivent passer)
       // Une note de la voix : on l'entend telle que chantée, une occurrence après l'autre à chaque toucher.
       const nt = e.target.closest('[data-note]');
-      if (nt && voix?.notes) { const m = +nt.dataset.note; const b = voix.notes.find((x) => x.m === m); if (b?.occ?.length) { const k = (occK[m] || 0) % b.occ.length; occK[m] = k + 1; joueDe(b.occ[k] - 0.05, b.occ[k] + 0.9); } return; }
+      if (nt && voix?.notes) { const m = +nt.dataset.note; if (nt.classList.contains('or-note') && choisie !== m) { choisie = m; montrerVoix(); } const b = voix.notes.find((x) => x.m === m); if (b?.occ?.length) { const k = (occK[m] || 0) % b.occ.length; occK[m] = k + 1; joueDe(b.occ[k] - 0.05, b.occ[k] + 0.9); } return; }
+      const mo = e.target.closest('[data-m]')?.dataset.m;
+      if (mo) {
+        const { a, b } = plage || {}; const L = (b || 0) - (a || 0);
+        if (mo === 'ecouter') joueDe(a, b);
+        if (mo === 'fermer') { plage = null; montrerMonter(); dessiner(); }
+        if (mo === 'copier') { bout = copier(buf, a, b); montrerMonter(); toast(`Copié : ${L.toFixed(1).replace('.', ',')} s. Choisis un autre passage : « Coller ici » ou « Remplir avec le bout copié ».`); }
+        if (mo === 'couper') await monterAvec(couper(buf, a, b), `Coupé : ${mmss(a)} à ${mmss(b)}.`);
+        if (mo === 'coller' && bout) await monterAvec(coller(buf, a, bout), `Collé à ${mmss(a)}.`);
+        if (mo === 'remplir' && bout) await monterAvec(remplir(buf, a, b, bout), `Passage rempli avec le bout copié.`);
+        if (mo === 'avant') { const src = a - L >= 0 ? copier(buf, a - L, a) : copier(buf, b, Math.min(res.duree, b + L)); await monterAvec(remplir(buf, a, b, src), 'Passage rempli avec ce qui précède.'); }
+        if (mo === 'annuler' && pile.length) { const p0 = pile.pop(); await analyserBuf(p0.buf, p0.nom); montrerMonter(); }
+        if (mo === 'origine' && pile.length) { const p0 = pile[0]; pile = []; await analyserBuf(p0.buf, p0.nom); montrerMonter(); }
+        if (mo === 'wav') { const a2 = document.createElement('a'); a2.href = URL.createObjectURL(wav(buf)); a2.download = `${nom}.wav`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(a2); a2.click(); a2.remove(); }
+        if (mo === 'mur') { const b2 = e.target.closest('[data-m]'); b2.disabled = true; try { const au = await uploadAudio(wav(buf)); await saveEntry({ type: 'audio', title: nom, audio: au, data: { monte: pile.length } }); toast('La version montée est au mur, à côté de l’originale.'); b2.textContent = 'Au mur ✓'; } catch (err) { toast(err.message); b2.disabled = false; } }
+        return;
+      }
       const cr = e.target.closest('[data-corr]');
       if (cr) { const m = +cr.dataset.corr; corr[m] = Math.max(-100, Math.min(100, (corr[m] || 0) + +cr.dataset.d)); corrige = true; appliquer(); return; }
       const cj = e.target.closest('[data-corr-juste]');
@@ -334,7 +395,7 @@ export default {
         return;
       }
       const pt = e.target.closest('[data-pt]');
-      if (pt) { const i = +pt.dataset.pt; const p = res.parties[i]; if (!p.silence) viser(i); joueDe(p.a, p.b); return; }
+      if (pt) { const i = +pt.dataset.pt; const p = res.parties[i]; plage = { a: p.a, b: p.b }; montrerMonter(); if (!p.silence) viser(i); else dessiner(); joueDe(p.a, p.b); return; }
       const ca = e.target.closest('[data-cents-auto]');
       if (ca) { viser(-1); regler(+ca.dataset.centsAuto); toast(`Prise accordée de ${cents > 0 ? '+' : ''}${cents} cents pour l’écoute et les WAV.`); return; }
       if (e.target.closest('[data-ed-ecoute]')) { const box = q('.or-edit'); const rr = +box.querySelector('[data-ed=r]').value; const qq = box.querySelector('[data-ed=q]').value; import('../sampler.js').then(({ accord, prechargerSons }) => { prechargerSons(['piano']); const IV = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], maj7: [0, 4, 7, 11], m7: [0, 3, 7, 10], sus2: [0, 2, 7], sus4: [0, 5, 7], dim: [0, 3, 6] }[qq] || [0, 4, 7]; accord('piano', IV.map((iv) => 52 + ((rr + 8) % 12) + iv), { dur: 1.4, vel: 0.6 }); }); return; }

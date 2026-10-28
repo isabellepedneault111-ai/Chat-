@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.65', quand: '2026-10-28', titre: 'Monter la prise', items: [
+    ['Couper, copier, coller', ['Glisse sur l’onde pour choisir un passage : ▶ l’écouter, ✂ le couper, ⧉ le copier puis le coller ailleurs. Les coupes se calent sur les temps et chaque jonction est fondue (40 ms) : sur un groove régulier, ça ne s’entend presque pas.']],
+    ['Remplir un silence', ['Touche une partie « silence » (ou choisis un passage) : « Remplir avec ce qui précède » ou « avec le bout copié ». La durée ne change pas.']],
+    ['Rien n’est perdu', ['Chaque montage fait une nouvelle version, réanalysée tout de suite. ↶ annule le dernier changement, « Revenir à l’original » remet tout. La version montée se télécharge en WAV ou se garde au mur, à côté de l’originale.']],
+    ['Toutes les notes s’ajustent', ['Les notes reviennent aussi pour un instrument (« Les notes de l’instrument »). Touche n’importe quelle note : − / + au cent près, ou « → juste ». Le bloc des notes est remonté juste sous les parties.']],
+  ] },
   { v: '0.64', quand: '2026-10-28', titre: 'L’oreille sait qui chante', items: [
     ['Voix ou instrument', ['Une voix bouge toujours un peu dans la note ; un clavier la tient immobile. L’oreille fait maintenant la différence : sur un morceau joué (comme celui de Frog de 15 h 57), elle ne prétend plus entendre une voix. Elle se trompe? « C’est pourtant une voix » mesure quand même.']],
     ['Les notes rangées', ['Les notes de la plus grave à la plus aiguë, puis deux colonnes égales : en or, chez elle ; en rouge, à travailler (avec « c’est voulu »). Les boutons ensemble en dessous.']],

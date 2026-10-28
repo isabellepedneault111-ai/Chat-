@@ -367,3 +367,43 @@ export function grilleTexte(g, titre = '') {
   for (let i = 0; i < l.length; i += 4) lignes.push(`| ${l.slice(i, i + 4).map((x, k) => (i + k && x.cle === l[i + k - 1].cle ? '%' : x.cases.map((c) => c || '·').join(' '))).join(' | ')} |`);
   return `${titre ? `${titre}\n` : ''}${g.tempo} BPM · 4 temps par mesure\n${g.periode ? `‖: répété ${g.tours} fois :‖\n` : ''}${lignes.join('\n')}\n`;
 }
+
+// ---------- Monter la prise : couper, coller, remplir un silence ----------
+// Chaque jonction est un fondu enchaîné à puissance égale (40 ms) centré sur le point de coupe : la durée tombe juste,
+// et calée sur les temps, la coupe ne s'entend presque pas. Tout renvoie une COPIE ; l'enregistrement d'origine reste là.
+const XF = 0.04;
+const tranche = (buf, a, b) => { const sr = buf.sampleRate; const i0 = Math.max(0, Math.round(a * sr)); const i1 = Math.min(buf.length, Math.round(b * sr));
+  return Array.from({ length: buf.numberOfChannels }, (_, c) => buf.getChannelData(c).slice(i0, Math.max(i0, i1))); };
+// Recolle des morceaux (par canal) qui se chevauchent chacun de X échantillons.
+function joindre(morceaux, X, sr) {
+  const nCh = morceaux[0].length; const len = morceaux.reduce((s, m) => s + m[0].length, 0) - X * (morceaux.length - 1);
+  const out = new AudioBuffer({ length: Math.max(1, len), numberOfChannels: nCh, sampleRate: sr });
+  for (let c = 0; c < nCh; c++) {
+    const y = out.getChannelData(c); let pos = 0;
+    morceaux.forEach((m, k) => { const x = m[c];
+      for (let i = 0; i < x.length && pos + i < y.length; i++) {
+        if (k > 0 && i < X) { const g = i / X; y[pos + i] = y[pos + i] * Math.cos(g * Math.PI / 2) + x[i] * Math.sin(g * Math.PI / 2); } else y[pos + i] = x[i];
+      }
+      pos += x.length - X; });
+  }
+  return out;
+}
+// Un bout copié (avec une marge d'un demi-fondu de chaque côté, pour les jonctions).
+export function copier(buf, a, b) { return { canaux: tranche(buf, a - XF / 2, b + XF / 2), duree: b - a, sr: buf.sampleRate }; }
+// Enlève [a, b] et recolle les deux bords.
+export function couper(buf, a, b) {
+  const X = Math.round(XF * buf.sampleRate);
+  return joindre([tranche(buf, 0, a + XF / 2), tranche(buf, b - XF / 2, buf.duration)], X, buf.sampleRate);
+}
+// Insère le bout copié au temps t.
+export function coller(buf, t, bout) {
+  const X = Math.round(XF * buf.sampleRate);
+  return joindre([tranche(buf, 0, t + XF / 2), bout.canaux, tranche(buf, t - XF / 2, buf.duration)], X, buf.sampleRate);
+}
+// Remplace [a, b] par le bout copié, répété autant qu'il faut : la durée de la prise ne change pas.
+export function remplir(buf, a, b, bout) {
+  const X = Math.round(XF * buf.sampleRate); const sr = buf.sampleRate; const voulu = Math.round((b - a + XF) * sr);
+  const tours = []; let n = 0; while (n < voulu + X) { tours.push(bout.canaux); n += bout.canaux[0].length - X; }
+  const rempli = joindre(tours, X, sr); const plein = Array.from({ length: rempli.numberOfChannels }, (_, c) => rempli.getChannelData(c).slice(0, voulu));
+  return joindre([tranche(buf, 0, a + XF / 2), plein, tranche(buf, b - XF / 2, buf.duration)], X, sr);
+}

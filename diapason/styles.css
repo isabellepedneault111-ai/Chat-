@@ -4066,3 +4066,18 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .or-ab { display: inline-flex; border: 2px solid var(--ink); border-radius: 999px; overflow: hidden; }
 .or-ab button { font: inherit; font-weight: 700; padding: 5px 14px; border: 0; background: #fffdf6; color: var(--ink); cursor: pointer; }
 .or-ab button.on { background: var(--ink); color: #fffdf6; }
+.or-v-inst { margin: 4px 0 10px; padding: 8px 12px; border-left: 4px solid #8a8174; background: #f6f2ea; border-radius: 6px; }
+.or-note.choisie { outline: 3px solid var(--ink); outline-offset: 2px; }
+.or-v-choix { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 10px 0 0; padding: 10px 14px; border: 2px solid var(--ink); border-radius: 10px; background: #fffdf6; }
+.or-v-choix > b { font-size: 1.2rem; }
+.or-v-astuce { margin: 8px 0 0; }
+/* Monter la prise : choisir un passage sur l'onde */
+.or-canvas { touch-action: pan-y; cursor: crosshair; }
+.or-monter { margin: 8px 0 4px; display: grid; gap: 8px; }
+.or-m-astuce { margin: 0; }
+.or-m-bar, .or-m-hist { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 10px 14px; border-radius: 10px; }
+.or-m-bar { border: 2px solid var(--ink); background: #fffdf6; }
+.or-m-bar > b { font-size: 1.05rem; }
+.or-m-bar .check { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; cursor: pointer; }
+.or-m-bar .check input { width: 20px; height: 20px; accent-color: var(--ink); }
+.or-m-hist { border: 2px dashed #3f8a5c; background: #e7f2ea; }
