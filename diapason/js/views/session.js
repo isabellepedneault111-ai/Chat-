@@ -1,5 +1,7 @@
 // La session guidée : une séance qui alterne exploration, sélection et stabilisation,
 // et qui finit toujours par une prise. Le minuteur est partagé entre les deux appareils.
+import { carteDeLaSemaine } from '../sources.js';
+import { CARTES } from './jeux.js';
 import { avantPrise, arreterMetronome, metroHTML } from '../metronome.js';
 import { FLAME } from '../marque.js';
 import { depuisHTML } from '../traces.js';
@@ -71,6 +73,8 @@ export default {
   id: 'session',
   mount(el) {
     let setup = { format: 'duo60', cible: CIBLES[0], song: '', key: 0, grille: 'vamp', lieu: 'piece' };
+    // La carte de la semaine comme cible de la séance : son nom devient la cible, sa consigne guide la séance.
+    const carteCible = () => `🂠 ${carteDeLaSemaine(CARTES).nom}`.slice(0, 80);
     // Venue du plan : la séance arrive déjà préparée (cible, grille, format).
     const hp = new URLSearchParams(location.hash.split('?')[1] || '');
     if (hp.get('cible')) { setup.cible = hp.get('cible'); if (CIBLE_INFO[setup.cible]) setup.grille = CIBLE_INFO[setup.cible][1]; }
@@ -194,8 +198,8 @@ export default {
           <li class="pas">
             <h2><span>3</span> Sur quoi on travaille?</h2>
             <p class="pas-aide">Une seule cible par séance : c’est ce qui fait avancer (Biasutti 2017).</p>
-            <div class="chips">${CIBLES.map((c) => `<button class="chip ${setup.cible === c ? 'active' : ''}" data-cible="${esc(c)}">${esc(c)}</button>`).join('')}</div>
-            ${CIBLE_INFO[setup.cible] ? `<p class="cible-info"><b>${esc(setup.cible)} :</b> ${CIBLE_INFO[setup.cible][0]}</p>` : ''}
+            <div class="chips">${CIBLES.map((c) => `<button class="chip ${setup.cible === c ? 'active' : ''}" data-cible="${esc(c)}">${esc(c)}</button>`).join('')}<button class="chip chip-carte ${setup.cible === carteCible() ? 'active' : ''}" data-cible="${esc(carteCible())}">🂠 La carte de la semaine</button></div>
+            ${CIBLE_INFO[setup.cible] ? `<p class="cible-info"><b>${esc(setup.cible)} :</b> ${CIBLE_INFO[setup.cible][0]}</p>` : setup.cible === carteCible() ? `<p class="cible-info"><b>La carte de la semaine (${esc(carteDeLaSemaine(CARTES).source)}) :</b> ${esc(carteDeLaSemaine(CARTES).consigne)} Toute la séance part de là.</p>` : ''}
             <div class="pas-row">
               <label class="field col"><span>Ou à vos mots</span><input class="input" data-s="cible" maxlength="80" value="${CIBLES.includes(setup.cible) ? '' : esc(setup.cible)}" placeholder="Ex. : trouver l’intro de Fleuve gelé"></label>
               <label class="field col"><span>Pour quel morceau? (facultatif)</span><select data-s="song"><option value="">Idées libres</option>${songs.map((x) => `<option ${x === setup.song ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></label>
@@ -231,7 +235,7 @@ export default {
           <header class="run-head">
             <div>
               <p class="eyebrow">${esc(f.label)} · lancée par <b style="color:${memberColor(s.author)}">${esc(s.author)}</b></p>
-              <h1 class="run-cible">${esc(d.cible)}</h1>
+              <h1 class="run-cible">${esc(d.cible)}</h1>${d.cible === carteCible() ? `<p class="run-carte">${esc(carteDeLaSemaine(CARTES).consigne)}</p>` : ''}
               ${d.song ? `<p class="muted">Morceau : <b>${esc(d.song)}</b></p>` : ''}
             </div>
             <div class="run-clock screen"><small class="run-now"></small><span class="mono run-left">0:00</span><small class="mono run-total"></small><small class="run-next"></small></div>

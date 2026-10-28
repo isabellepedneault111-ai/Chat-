@@ -3873,17 +3873,47 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .view-home .mast-wave { height: 34px !important; max-height: 34px; display: block; width: 100%; }
 
 /* La carte de la semaine, dans Aujourd'hui : une bande, la même pour les deux */
-.carte-sem { display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: "k k go" "b c qui"; gap: 4px 18px; align-items: center; margin: 0 0 22px; padding: 14px 20px; border-radius: 14px; background: #12110f; color: #efe9dc; text-decoration: none; border: 1px solid rgba(201, 164, 92, .45); }
-.carte-sem:hover { background: #1c1a16; }
+.carte-sem { display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: "k k go" "b c qui" "x x x"; gap: 4px 18px; align-items: center; margin: 0 0 22px; padding: 14px 20px; border-radius: 14px; background: #12110f; color: #efe9dc; text-decoration: none; border: 1px solid rgba(201, 164, 92, .45); }
 .carte-sem .cs-k { grid-area: k; font: 700 .82rem var(--body); letter-spacing: .06em; text-transform: uppercase; color: #c9a45c; }
 .carte-sem b { grid-area: b; font: 700 1.35rem/1.2 var(--display); }
 .carte-sem .cs-c { grid-area: c; font-size: 1rem; }
 .carte-sem .cs-qui { grid-area: qui; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 .carte-sem .cs-qui i { font-style: normal; font-size: .85rem; padding: 2px 9px; border-radius: 99px; border: 1.5px solid var(--c); }
 .carte-sem .cs-qui i.ok { background: var(--c); color: #fff; }
-.carte-sem .cs-go { grid-area: go; justify-self: end; font-weight: 700; color: #c9a45c; }
-@media (max-width: 760px) { .carte-sem { grid-template-columns: 1fr; grid-template-areas: "k" "b" "c" "qui" "go"; } .carte-sem .cs-qui { justify-content: flex-start; } }
+.carte-sem .cs-go { grid-area: go; justify-self: end; display: flex; gap: 18px; flex-wrap: wrap; }
+.carte-sem .cs-go a { font-weight: 700; color: #c9a45c; text-decoration: none; }
+.carte-sem .cs-go a:hover { text-decoration: underline; }
+.cs-expo { grid-area: x; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+.cs-expo article { padding: 12px 14px; border-left: 4px solid var(--c); background: rgba(255,255,255,.05); border-radius: 0 10px 10px 0; }
+.cs-expo h3 { margin: 0 0 6px; font: 700 1rem var(--body); color: #c9a45c; }
+.cs-expo p { margin: 0; line-height: 1.5; }
+.cs-expo audio { width: 100%; }
+@media (max-width: 760px) { .cs-expo { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .carte-sem { grid-template-columns: 1fr; grid-template-areas: "k" "b" "c" "qui" "go" "x"; } .carte-sem .cs-qui { justify-content: flex-start; } }
 .taille-ctl { display: flex; gap: 2px; padding: 2px; border: 1.5px solid var(--ink); border-radius: 10px; }
 .taille-ctl button { min-width: 40px; height: 34px; border: 0; border-radius: 8px; background: none; color: var(--ink); font: 800 1rem var(--body); cursor: pointer; }
 .taille-ctl button:nth-child(2) { font-size: 1.15rem; } .taille-ctl button:nth-child(3) { font-size: 1.3rem; }
 .taille-ctl button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.run-carte { font-size: 1.15rem; max-width: 60ch; margin: 4px 0 10px; }
+
+/* L'accueil, en haut : deux feuilles de papier, un collant jaune sur chacune */
+.acc-haut { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 26px; align-items: start; margin: 8px 0 26px; }
+.papier, .acc-haut .nv-inclus { position: relative; background: #fffdf6; color: #1d1a15; border-radius: 4px; padding: 26px 24px 18px; box-shadow: 0 1px 0 rgba(0,0,0,.06), 0 10px 24px -14px rgba(40, 28, 10, .45); }
+.collant, .acc-haut .nv-inclus::before { content: ''; position: absolute; top: -12px; left: 50%; width: 120px; height: 26px; transform: translateX(-50%) rotate(-2deg); background: rgba(246, 205, 70, .85); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.acc-haut .nv-inclus::before { transform: translateX(-50%) rotate(1.5deg); }
+.pa-tete { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.pa-tete h2, .acc-haut .nv-t-tete h2 { margin: 0; font: 700 1.35rem var(--display); }
+.pa-tete a { color: #6d655a; }
+.coche { list-style: none; margin: 0; padding: 0; }
+.coche li a { display: grid; grid-template-columns: 24px 1fr; gap: 12px; align-items: start; padding: 10px 2px; border-bottom: 1px solid rgba(29, 26, 21, .12); color: inherit; text-decoration: none; }
+.coche li:last-child a { border-bottom: 0; }
+.coche li a:hover b { text-decoration: underline; }
+.coche .case { width: 22px; height: 22px; margin-top: 1px; border: 2px solid #1d1a15; border-radius: 4px; display: grid; place-items: center; font-weight: 800; font-size: .9rem; }
+.coche .ce-t b { display: block; font-weight: 700; }
+.coche .ce-t small { display: block; color: #6d655a; margin-top: 2px; line-height: 1.4; }
+.coche li.fait .case { background: #1d1a15; color: #fffdf6; }
+.coche li.fait b { text-decoration: line-through; color: #8a8174; font-weight: 600; }
+.pa-vide { color: #6d655a; margin: 6px 0 0; }
+.acc-haut .nv-inclus .nv-grille { display: block; margin: 0; }
+.acc-haut .nv-inclus .nv-g-fil { max-height: 60vh; }
+@media (max-width: 860px) { .acc-haut { grid-template-columns: 1fr; } }

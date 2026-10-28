@@ -1,5 +1,5 @@
 // Accueil = le plan de match de Zaza & Frog : six mois, des idées brutes à 3 à 5 originaux.
-import { espace, onEspace, updateEspace, profileOf } from '../espace.js';
+import { espace, onEspace, updateEspace, profileOf, audioURL } from '../espace.js';
 import { toast, store } from '../ui.js';
 import { MODULES } from '../data.js';
 import { PLAN, RYTHME, VISION_FIELDS, STAGES, MEMBERS, memberColor, ROLES, aspect, lienAuMoment } from '../duo.js';
@@ -12,6 +12,7 @@ import { enAttenteDeMoi } from '../corbeille.js';
 import { lune, luneSVG, TEMPS, CYCLE, prochainTemps, numeroLune, luneCourante, patchLune } from '../lune.js';
 import { nouveautesHTML } from '../nouveautes.js';
 import nouvelles from './nouvelles.js';
+import { mesTaches } from '../taches.js';
 import { carteDeLaSemaine } from '../sources.js';
 import { CARTES } from './jeux.js';
 import { attendMoi } from '../elan.js';
@@ -57,9 +58,16 @@ function commencerHTML() {
   const dit = (m) => { const l = (profileOf(m)?.artistes || []).filter((a) => a?.nom); return l.length > 0 && l.every((a) => a.aime?.length || a.pourquoi); };
   const autre = mem.find((m) => m !== espace.me);
   pas.splice(1, 0, ['Dire pourquoi nos inspirations nous inspirent', `Pour chaque artiste ou morceau : sa rythmique, sa voix, son texte… et le moment précis. ${dit(autre) ? `${autre} l’a fait ✓` : `${autre} aussi a cette tâche.`}`, '#/depart?etape=3', dit(espace.me)]);
-  if (pas.every((x) => x[3])) return '';
-  const prochain = pas.findIndex((x) => !x[3]);
-  return `<section class="commencer" aria-label="Par où commencer"><h2>Par où commencer</h2><ol>${pas.map(([t, d, h, ok], i) => `<li class="${ok ? 'fait' : i === prochain ? 'prochain' : ''}"><a href="${h}"><span class="cm-n">${ok ? '✓' : i + 1}</span><b>${t}</b><small>${d}</small>${i === prochain ? '<span class="cm-go">Maintenant →</span>' : ''}</a></li>`).join('')}</ol></section>`;
+  return pas.filter((x) => !/inspirations/.test(x[0])); // « inspirations » vient déjà de nos prochains pas
+}
+// À faire : UNE liste à cocher, sur une feuille (le collant jaune en haut). Nos prochains pas d'abord (l'app les
+// coche d'elle-même quand c'est fait), puis les premiers pas du duo : cochés quand ils sont faits.
+function listeHTML() {
+  const t = mesTaches(); const dep = commencerHTML(); const reste = dep.filter((x) => !x[3]); const faits = dep.filter((x) => x[3]);
+  const ligne = (titre, sous, lien, fait = false) => `<li class="${fait ? 'fait' : ''}"><a href="${lien}"><span class="case" aria-hidden="true">${fait ? '✓' : ''}</span><span class="ce-t"><b>${esc(titre)}</b>${sous && !fait ? `<small>${esc(sous)}</small>` : ''}</span></a></li>`;
+  return `<section class="papier pa-liste"><span class="collant" aria-hidden="true"></span><div class="pa-tete"><h2>À faire</h2><a class="small" href="#/calendrier">Tous nos pas →</a></div>
+    <ul class="coche">${t.map((x) => ligne(x.titre, x.pourquoi, x.lien)).join('')}${reste.map(([ti, d, h]) => ligne(ti, d, h)).join('')}${faits.map(([ti, , h]) => ligne(ti, '', h, true)).join('')}</ul>
+    ${!t.length && !reste.length ? '<p class="pa-vide">Rien d’urgent. Une idée te vient? La flamme, en bas à gauche.</p>' : ''}</section>`;
 }
 const OU_ALLER = [
   ['Jouer ensemble', 'Dans la même pièce ou à distance, une séance guidée qui finit par une prise.', [['session', 'Lancer une séance'], ['accord', 'Voix + piano']]],
@@ -76,7 +84,9 @@ export default {
     // Nos nouvelles vivent ici, en haut d'Aujourd'hui : montées une fois, replacées après chaque dessin de l'accueil.
     const nvEl = document.createElement('div'); nvEl.className = 'nv-inclus';
     const offNv = nouvelles.mount(nvEl, { inclus: true });
-    const placerNv = () => { const s = el.querySelector('.nv-slot'); if (s) s.replaceWith(nvEl); };
+    const placerNv = () => { const s = el.querySelector('.nv-slot'); if (s) s.replaceWith(nvEl);
+      // Les réponses en son de la carte de la semaine : leur adresse se charge après le dessin.
+      el.querySelectorAll('audio[data-cs-son]').forEach(async (a) => { const e = espace.entries.find((x) => x.id === a.dataset.csSon); try { if (e?.audio) a.src = await audioURL(e.audio); } catch { /* introuvable */ } }); };
 
     // Le truc du jour : UNE action, sa durée, et pourquoi. Toujours tout en haut.
     function todayHTML() {
@@ -190,11 +200,15 @@ export default {
         return;
       }
       const start = planStart();
-      // La carte de la semaine : la même pour les deux ; on voit qui a déjà écrit dessus.
-      const cs = carteDeLaSemaine(CARTES);
-      const ecrit = (m) => espace.entries.some((e) => e.author === m && e.data?.carte?.semaine === cs.semaine && !e.data?.corbeille);
-      const carteSemaine = `<a class="carte-sem" href="#/ecrire?carte=semaine"><span class="cs-k">🂠 La carte de la semaine · ${esc(cs.source)}</span><b>${esc(cs.mots.join(' · '))}</b><span class="cs-c">${esc(cs.consigne)}</span>
-        <span class="cs-qui">${(espace.meta.members || MEMBERS).map((m) => `<i style="--c:${memberColor(m)}" class="${ecrit(m) ? 'ok' : ''}">${esc(m)} ${ecrit(m) ? '✓ a écrit' : '· pas encore'}</i>`).join('')}</span><span class="cs-go">Écrire dessus →</span></a>`;
+      // La carte de la semaine : la même pour les deux ; on voit qui y a répondu (des mots ou un son). Quand les deux
+      // ont répondu, ou le dimanche, leurs réponses s'exposent côte à côte.
+      const cs = carteDeLaSemaine(CARTES); const mem1 = espace.meta.members || MEMBERS;
+      const reponse = (m) => espace.entries.filter((e) => e.author === m && e.data?.carte?.semaine === cs.semaine && !e.data?.corbeille).sort((a, b) => b.createdAt - a.createdAt)[0];
+      const expo = mem1.every(reponse) || (new Date().getDay() === 0 && mem1.some(reponse));
+      const carteSemaine = `<section class="carte-sem"><span class="cs-k">🂠 La carte de la semaine · ${esc(cs.source)}</span><b>${esc(cs.mots.join(' · '))}</b><span class="cs-c">${esc(cs.consigne)}</span>
+        <span class="cs-qui">${mem1.map((m) => `<i style="--c:${memberColor(m)}" class="${reponse(m) ? 'ok' : ''}">${esc(m)} ${reponse(m) ? '✓ a répondu' : '· pas encore'}</i>`).join('')}</span>
+        <span class="cs-go"><a href="#/ecrire?carte=semaine">Écrire ou répondre en son →</a><a href="#/session?cible=${encodeURIComponent(`🂠 ${cs.nom}`.slice(0, 80))}">En faire la cible de la Session →</a></span>
+        ${expo ? `<div class="cs-expo">${mem1.map((m) => { const e = reponse(m); return `<article style="--c:${memberColor(m)}"><h3>${esc(m)}</h3>${!e ? '<p class="muted">pas encore</p>' : e.audio ? `<audio controls preload="none" data-cs-son="${esc(e.id)}"></audio>` : `<p>${esc(e.body || '').replace(/\n/g, '<br>')}</p>`}</article>`; }).join('')}</div>` : ''}</section>`;
       const head = `
         <header class="masthead">
           <h1 class="mast-app"><b>Diapason Labo</b> <span>le laboratoire de FLIP</span></h1>
@@ -228,9 +242,8 @@ export default {
       if (location.hash.startsWith('#/projet')) { el.innerHTML = projetHTML(mem, v, m, goal, got); return; }
       el.innerHTML = `
         ${head}
-        <div class="nv-slot"></div>
+        <div class="acc-haut">${listeHTML()}<div class="nv-slot"></div></div>
         ${carteSemaine}
-        ${commencerHTML()}
         <section class="plan-hero">
           <div class="month-now">
             <p class="tape">Mois ${m} sur 6</p>
@@ -266,7 +279,7 @@ export default {
         })()}
         ${etape1}
         ${projetCarte(mem)}
-        <p class="arbre-pied"><a href="#/arbre">${espace.me === mem[1] ? `L’arbre de l’app : d’où viennent les sons et les éléments que tu demandais à ${esc(mem[0])} →` : 'L’arbre de l’app : son architecture, ses versions →'}</a></p>
+        <p class="arbre-pied"><button class="linklike" data-h="revoir-maj">Revoir les dernières mises à jour de l’app</button> · <a href="#/arbre">${espace.me === mem[1] ? `L’arbre de l’app : d’où viennent les sons et les éléments que tu demandais à ${esc(mem[0])} →` : 'L’arbre de l’app : son architecture, ses versions →'}</a></p>
         `;
     }
 
@@ -370,6 +383,7 @@ export default {
         return;
       }
       const a = e.target.closest('[data-h]')?.dataset.h;
+      if (a === 'revoir-maj') { import('../nouveautes.js').then((n) => n.majAvecAmour({ revoir: true })); return; }
       if (a === 'edit') { editingVision = true; render(); }
       if (a === 'copy-invite') { const m = e.target.closest('[data-msg]').dataset.msg; try { await navigator.clipboard.writeText(m); toast('Message copié : colle-le à Frog.'); } catch { prompt('Copie ce message :', m); } }
       if (a === 'set-secret') {

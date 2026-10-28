@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.55', quand: '2026-10-28', titre: 'L’accueil en deux feuilles', items: [
+    ['À faire, une seule liste à cocher', ['Sur une feuille blanche, un collant jaune en haut : nos prochains pas et nos premiers pas, ensemble. Ce qui est fait se coche tout seul. Les quatre grandes cartes « Par où commencer » sont parties.']],
+    ['La carte de la semaine, plus loin', ['On peut y répondre par un son (« ● Répondre avec un son » dans Écrire). Quand vous avez répondu tous les deux (ou le dimanche), vos réponses s’exposent côte à côte dans Aujourd’hui. Et « En faire la cible de la Session » : toute la séance part de la carte.']],
+    ['Plus d’ordre', ['« Revoir les dernières mises à jour » est descendu tout en bas de l’accueil.']],
+  ] },
   { v: '0.54', quand: '2026-10-28', titre: 'La carte de la semaine', items: [
     ['🂠 La même carte pour vous deux', ['Chaque lundi, une nouvelle carte du grimoire apparaît dans Aujourd’hui. Elle est la même pour les deux, et on voit qui a déjà écrit dessus. « Écrire dessus » l’ouvre dans Écrire.']],
     ['Lancer sa carte', ['Une carte pigée dans Écrire peut partir à l’autre : « ⇄ Lancer cette carte ». Elle arrive dans Nos échanges : même intention, chacun son texte.']],

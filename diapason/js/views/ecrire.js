@@ -92,10 +92,12 @@ export default {
     }
     // L'intention d'écriture : l'invitation du jour, ou une carte pigée au grimoire (le rituel, sans son par défaut).
     // Arrivée par « Écrire dessus » (la carte de la semaine, dans Aujourd'hui) : elle est déjà posée.
+    let recCarte = null; let sonCarte = null;
     let carte = /[?&]carte=semaine/.test(location.hash) ? carteDeLaSemaine(CARTES) : null;
     const autreNom = () => (espace.meta?.members || MEMBERS).find((m) => m !== espace.me) || 'l’autre';
     const intentionHTML = () => (carte
       ? `<p class="ec-invite ec-carte"><small>${carte.semaine ? 'La carte de la semaine, la même pour vous deux' : 'Ta carte'} · ${esc(carte.source)}</small><b>${esc(carte.mots.join(' · '))}</b> ${esc(carte.consigne)}</p>
+        <div class="ec-son"><button class="btn small" data-e="son-carte">● Répondre avec un son</button><span class="ec-son-prise"></span></div>
         <p class="ec-int-b">${carte.semaine ? '' : `<button class="btn small" data-e="lancer-carte">⇄ Lancer cette carte à ${esc(autreNom())}</button> `}<button class="linklike" data-e="piger">Piger une autre carte</button> · ${carte.semaine ? '' : '<button class="linklike" data-e="semaine">La carte de la semaine</button> · '}<button class="linklike" data-e="invite">L’invitation du jour</button></p>`
       : `<p class="ec-invite"><small>L’invitation du jour</small>${esc(inviteDu())}</p><p class="ec-int-b"><button class="btn small" data-e="piger">🂠 Piger une carte du grimoire</button> <button class="btn small ghost" data-e="semaine">La carte de la semaine</button></p>`);
     function piger() {
@@ -205,6 +207,21 @@ export default {
       const a = e.target.closest('[data-e]')?.dataset.e;
       if (a === 'piger') { piger(); return; }
       if (a === 'invite') { carte = null; el.querySelector('.ec-intention').innerHTML = intentionHTML(); return; }
+      // Répondre à la carte avec un son (Frog au clavier, Zaza à la voix) : même intention, en musique.
+      if (a === 'son-carte') { const b = e.target.closest('button'); if (recCarte?.state === 'recording') { recCarte.stop(); return; }
+        try {
+          const flux = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+          const bouts = []; recCarte = new MediaRecorder(flux);
+          recCarte.ondataavailable = (ev) => ev.data.size && bouts.push(ev.data);
+          recCarte.onstop = () => { flux.getTracks().forEach((t) => t.stop()); sonCarte = new Blob(bouts, { type: recCarte.mimeType || 'audio/webm' }); b.textContent = '● Refaire'; b.classList.remove('on');
+            el.querySelector('.ec-son-prise').innerHTML = `<audio controls src="${URL.createObjectURL(sonCarte)}"></audio><button class="btn small primary" data-e="garder-son-carte">Garder ma réponse</button>`; };
+          recCarte.start(); b.textContent = '■ Arrêter'; b.classList.add('on');
+        } catch { toast('Le micro n’est pas accessible : autorise-le, puis réessaie.'); }
+        return; }
+      if (a === 'garder-son-carte' && sonCarte && carte) { const b = e.target.closest('button'); b.disabled = true; b.textContent = 'J’envoie…';
+        try { const au = await uploadAudio(sonCarte); await saveEntry({ type: 'audio', title: `Réponse à la carte : ${carte.mots.join(' · ')}`.slice(0, 80), audio: au, body: carte.consigne, data: { carte, stage: 0, song: '' } }); sonCarte = null; el.querySelector('.ec-son-prise').innerHTML = '<span class="muted small">Gardée au mur ✓</span>'; toast('Ta réponse en son est au mur, avec sa carte.'); }
+        catch (err) { b.disabled = false; b.textContent = 'Garder ma réponse'; toast(err.message); }
+        return; }
       if (a === 'semaine') { carte = carteDeLaSemaine(CARTES); el.querySelector('.ec-intention').innerHTML = intentionHTML(); el.querySelector('.ec-text')?.focus(); return; }
       // La carte part à l'autre dans Nos échanges : même intention, chacun son texte.
       if (a === 'lancer-carte' && carte) {
