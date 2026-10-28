@@ -8,7 +8,7 @@ import { togglePerle } from './coffre.js';
 import { grooveHTML, bindGroove } from '../groove.js';
 import { uploadAudio, audioURL } from '../espace.js';
 import { rituel } from '../rituel.js';
-import { SOURCES, tirer } from '../sources.js';
+import { SOURCES, tirer, carteDeLaSemaine } from '../sources.js';
 import { CARTES } from './jeux.js';
 import { logPractice } from '../traces.js';
 
@@ -91,10 +91,13 @@ export default {
       } catch { toast('Micro refusé : autorise-le dans la barre d’adresse.'); }
     }
     // L'intention d'écriture : l'invitation du jour, ou une carte pigée au grimoire (le rituel, sans son par défaut).
-    let carte = null;
+    // Arrivée par « Écrire dessus » (la carte de la semaine, dans Aujourd'hui) : elle est déjà posée.
+    let carte = /[?&]carte=semaine/.test(location.hash) ? carteDeLaSemaine(CARTES) : null;
+    const autreNom = () => (espace.meta?.members || MEMBERS).find((m) => m !== espace.me) || 'l’autre';
     const intentionHTML = () => (carte
-      ? `<p class="ec-invite ec-carte"><small>Ta carte · ${esc(carte.source)}</small><b>${esc(carte.mots.join(' · '))}</b> ${esc(carte.consigne)}</p><p class="ec-int-b"><button class="linklike" data-e="piger">Piger une autre carte</button> · <button class="linklike" data-e="invite">Revenir à l’invitation du jour</button></p>`
-      : `<p class="ec-invite"><small>L’invitation du jour</small>${esc(inviteDu())}</p><p class="ec-int-b"><button class="btn small" data-e="piger">🂠 Ou piger une carte du grimoire</button></p>`);
+      ? `<p class="ec-invite ec-carte"><small>${carte.semaine ? 'La carte de la semaine, la même pour vous deux' : 'Ta carte'} · ${esc(carte.source)}</small><b>${esc(carte.mots.join(' · '))}</b> ${esc(carte.consigne)}</p>
+        <p class="ec-int-b">${carte.semaine ? '' : `<button class="btn small" data-e="lancer-carte">⇄ Lancer cette carte à ${esc(autreNom())}</button> `}<button class="linklike" data-e="piger">Piger une autre carte</button> · ${carte.semaine ? '' : '<button class="linklike" data-e="semaine">La carte de la semaine</button> · '}<button class="linklike" data-e="invite">L’invitation du jour</button></p>`
+      : `<p class="ec-invite"><small>L’invitation du jour</small>${esc(inviteDu())}</p><p class="ec-int-b"><button class="btn small" data-e="piger">🂠 Piger une carte du grimoire</button> <button class="btn small ghost" data-e="semaine">La carte de la semaine</button></p>`);
     function piger() {
       // Une source au hasard (les arcanes, ce qui nous touche, nos peurs, une contrainte, ou les consignes du grimoire).
       const src = SOURCES[Math.floor(Math.random() * SOURCES.length)];
@@ -202,6 +205,16 @@ export default {
       const a = e.target.closest('[data-e]')?.dataset.e;
       if (a === 'piger') { piger(); return; }
       if (a === 'invite') { carte = null; el.querySelector('.ec-intention').innerHTML = intentionHTML(); return; }
+      if (a === 'semaine') { carte = carteDeLaSemaine(CARTES); el.querySelector('.ec-intention').innerHTML = intentionHTML(); el.querySelector('.ec-text')?.focus(); return; }
+      // La carte part à l'autre dans Nos échanges : même intention, chacun son texte.
+      if (a === 'lancer-carte' && carte) {
+        const b = e.target.closest('button'); b.disabled = true;
+        try {
+          await saveEntry({ type: 'note', title: `Une carte pour toi : ${carte.mots.join(' · ')}`.slice(0, 80), body: carte.consigne, data: { relais: true, ask: 'ecris', asks: ['ecris'], intent: 'Même carte, chacun son texte', carte, stage: 0, song: '' } });
+          b.textContent = `Lancée à ${autreNom()} ✓`; toast(`${autreNom()} la voit dans Nos échanges. Écris la tienne pendant ce temps.`);
+        } catch (err) { b.disabled = false; toast(err.message); }
+        return;
+      }
       if (!a) return;
       if (a === 'aller-idees') { el.querySelector('#idees-flip').scrollIntoView({ behavior: 'smooth', block: 'start' }); el.querySelector('[data-e=idee-txt]').focus({ preventScroll: true }); return; }
       if (a === 'idee') {

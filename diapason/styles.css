@@ -46,7 +46,7 @@
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
-html { font-size: 17px; -webkit-text-size-adjust: 100%; }
+html { font-size: 18px; -webkit-text-size-adjust: 100%; }
 html.projector { font-size: 21px; }
 body {
   margin: 0;
@@ -3871,3 +3871,19 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .view-home .mast-app b { font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1; }
 .view-home .mast-app span { font-size: 1.15rem; }
 .view-home .mast-wave { height: 34px !important; max-height: 34px; display: block; width: 100%; }
+
+/* La carte de la semaine, dans Aujourd'hui : une bande, la même pour les deux */
+.carte-sem { display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: "k k go" "b c qui"; gap: 4px 18px; align-items: center; margin: 0 0 22px; padding: 14px 20px; border-radius: 14px; background: #12110f; color: #efe9dc; text-decoration: none; border: 1px solid rgba(201, 164, 92, .45); }
+.carte-sem:hover { background: #1c1a16; }
+.carte-sem .cs-k { grid-area: k; font: 700 .82rem var(--body); letter-spacing: .06em; text-transform: uppercase; color: #c9a45c; }
+.carte-sem b { grid-area: b; font: 700 1.35rem/1.2 var(--display); }
+.carte-sem .cs-c { grid-area: c; font-size: 1rem; }
+.carte-sem .cs-qui { grid-area: qui; display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.carte-sem .cs-qui i { font-style: normal; font-size: .85rem; padding: 2px 9px; border-radius: 99px; border: 1.5px solid var(--c); }
+.carte-sem .cs-qui i.ok { background: var(--c); color: #fff; }
+.carte-sem .cs-go { grid-area: go; justify-self: end; font-weight: 700; color: #c9a45c; }
+@media (max-width: 760px) { .carte-sem { grid-template-columns: 1fr; grid-template-areas: "k" "b" "c" "qui" "go"; } .carte-sem .cs-qui { justify-content: flex-start; } }
+.taille-ctl { display: flex; gap: 2px; padding: 2px; border: 1.5px solid var(--ink); border-radius: 10px; }
+.taille-ctl button { min-width: 40px; height: 34px; border: 0; border-radius: 8px; background: none; color: var(--ink); font: 800 1rem var(--body); cursor: pointer; }
+.taille-ctl button:nth-child(2) { font-size: 1.15rem; } .taille-ctl button:nth-child(3) { font-size: 1.3rem; }
+.taille-ctl button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }

@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.54', quand: '2026-10-28', titre: 'La carte de la semaine', items: [
+    ['🂠 La même carte pour vous deux', ['Chaque lundi, une nouvelle carte du grimoire apparaît dans Aujourd’hui. Elle est la même pour les deux, et on voit qui a déjà écrit dessus. « Écrire dessus » l’ouvre dans Écrire.']],
+    ['Lancer sa carte', ['Une carte pigée dans Écrire peut partir à l’autre : « ⇄ Lancer cette carte ». Elle arrive dans Nos échanges : même intention, chacun son texte.']],
+    ['La taille du texte', ['Dans le menu ⋯ : A, A+, A++. Gardée sur cet appareil ; pratique pour lire de loin, l’instrument dans les mains. Le texte de base est aussi un peu plus grand.']],
+  ] },
   { v: '0.53', quand: '2026-10-28', titre: 'Plus gros, plus calme', items: [
     ['Lisible', ['Les onglets du haut sont gros, et aucun texte de l’app n’est plus petit que 14 px. Les pastilles restent dans leur onglet, l’en-tête de l’accueil est une bande mince, et le bas de page tient sur une ligne (les crédits se déplient).']],
     ['Écrire, avec une carte', ['En haut d’Écrire : l’invitation du jour, ou « Piger une carte du grimoire » (les arcanes, ce qui nous touche, nos peurs, une contrainte, nos consignes). La carte devient l’intention de ton texte, et elle est gardée avec lui.']],

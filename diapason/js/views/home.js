@@ -12,6 +12,8 @@ import { enAttenteDeMoi } from '../corbeille.js';
 import { lune, luneSVG, TEMPS, CYCLE, prochainTemps, numeroLune, luneCourante, patchLune } from '../lune.js';
 import { nouveautesHTML } from '../nouveautes.js';
 import nouvelles from './nouvelles.js';
+import { carteDeLaSemaine } from '../sources.js';
+import { CARTES } from './jeux.js';
 import { attendMoi } from '../elan.js';
 import { pieceSVG, studioActuel, piece } from '../piece.js';
 import { semaineHTML, echelleHTML, brancherObjectifs } from '../objectifs.js';
@@ -188,6 +190,11 @@ export default {
         return;
       }
       const start = planStart();
+      // La carte de la semaine : la même pour les deux ; on voit qui a déjà écrit dessus.
+      const cs = carteDeLaSemaine(CARTES);
+      const ecrit = (m) => espace.entries.some((e) => e.author === m && e.data?.carte?.semaine === cs.semaine && !e.data?.corbeille);
+      const carteSemaine = `<a class="carte-sem" href="#/ecrire?carte=semaine"><span class="cs-k">🂠 La carte de la semaine · ${esc(cs.source)}</span><b>${esc(cs.mots.join(' · '))}</b><span class="cs-c">${esc(cs.consigne)}</span>
+        <span class="cs-qui">${(espace.meta.members || MEMBERS).map((m) => `<i style="--c:${memberColor(m)}" class="${ecrit(m) ? 'ok' : ''}">${esc(m)} ${ecrit(m) ? '✓ a écrit' : '· pas encore'}</i>`).join('')}</span><span class="cs-go">Écrire dessus →</span></a>`;
       const head = `
         <header class="masthead">
           <h1 class="mast-app"><b>Diapason Labo</b> <span>le laboratoire de FLIP</span></h1>
@@ -222,6 +229,7 @@ export default {
       el.innerHTML = `
         ${head}
         <div class="nv-slot"></div>
+        ${carteSemaine}
         ${commencerHTML()}
         <section class="plan-hero">
           <div class="month-now">

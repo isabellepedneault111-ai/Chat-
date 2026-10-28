@@ -251,6 +251,11 @@ scrim.addEventListener('click', () => openDrawer(false));
 
 window.addEventListener('keydown', (e) => { if (e.key === 'Escape') openDrawer(false); });
 document.documentElement.classList.remove('projector'); store.set('projector', false); // l'ancien « grand texte » est retiré
+// La taille du texte (menu ⋯) : A, A+, A++ ; gardée sur cet appareil (Frog, qui joue loin de l'écran, peut grossir).
+const TAILLES = [18, 20, 22];
+const appliquerTaille = (px) => { const t = TAILLES.includes(px) ? px : 18; document.documentElement.style.fontSize = `${t}px`; document.querySelectorAll('[data-taille]').forEach((b) => b.setAttribute('aria-pressed', +b.dataset.taille === t)); };
+appliquerTaille(store.get('taille', 18));
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-taille]'); if (!b) return; store.set('taille', +b.dataset.taille); appliquerTaille(+b.dataset.taille); });
 
 // Le vrai plein écran : la barre du navigateur disparaît. Sur iPhone, le navigateur ne le permet pas pour une page :
 // on explique comment ajouter l'app à l'écran d'accueil, d'où elle s'ouvre déjà sans barre.

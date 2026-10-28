@@ -87,3 +87,21 @@ export function tirer(source, motsChamp = [], cartes = []) {
   const ws = motsChamp.length ? motsChamp : ['lune', 'marée', 'braise'];
   return shuffle(cartes).slice(0, 3).map((card) => { const sh = shuffle(ws); return { card, mots: card.trois ? sh.slice(0, 3) : [sh[0]], num: null }; });
 }
+
+// La carte de la semaine : la même pour les deux, tirée du numéro de la semaine (du lundi au dimanche), sans rien
+// enregistrer. Toutes les sources s'y mêlent : les arcanes, ce qui nous touche, nos peurs, les contraintes, et les
+// consignes du grimoire (cartes).
+export const semaineCle = (d = new Date()) => { const l = new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() + 6) % 7)); return `${l.getFullYear()}-${String(l.getMonth() + 1).padStart(2, '0')}-${String(l.getDate()).padStart(2, '0')}`; };
+export function carteDeLaSemaine(cartes = [], d = new Date()) {
+  const cle = semaineCle(d); let h = 2166136261; for (const c of `flip${cle}`) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  const r = () => { h = Math.imul(h ^ (h >>> 15), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); return ((h ^= h >>> 16) >>> 0) / 4294967296; };
+  const p = (l) => l[Math.floor(r() * l.length)];
+  const lots = [
+    () => { const a = p(ARC); return { source: 'Les arcanes', nom: a[1], consigne: a[3], mots: [a[1]] }; },
+    () => ({ source: 'Ce qui nous touche', nom: 'Ce qui nous touche', mots: [p(TOUCHE)], consigne: p(TOUCHE_C) }),
+    () => ({ source: 'Nos peurs', nom: 'Une peur', mots: [p(PEURS)], consigne: p(PEURS_C) }),
+    () => { const [m, c] = p(CONTRAINTES); return { source: 'Une contrainte', nom: m, mots: [m], consigne: c }; },
+    ...(cartes.length ? [() => { const c = p(cartes); return { source: 'Le grimoire', nom: c.nom, mots: [p(['lune', 'marée', 'braise', 'fenêtre', 'sel', 'minuit', 'givre', 'velours'])], consigne: c.consigne }; }] : []),
+  ];
+  return { ...p(lots)(), semaine: cle };
+}
