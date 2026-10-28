@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.57', quand: '2026-10-28', titre: 'Une passe sur toute l’app', items: [
+    ['Lisible partout', ['Chaque page a été mesurée : les petites étiquettes, les notes et les légendes montent à une taille lisible, les cases à cocher deviennent de vraies cases, les pastilles de couleur se voient, et les paragraphes ne s’étirent plus d’un bord à l’autre.']],
+    ['Des titres qui laissent de la place', ['Les grands titres de page sont plus compacts : on arrive tout de suite à ce qu’on vient faire.']],
+    ['Nos idées', ['La recherche est un petit champ à côté des vues. Dans le ciel, les étoiles sont plus grosses et chaque idée porte son nom.']],
+    ['Calendrier', ['Le bloc « En attente » ne montre plus que ce qui attend ta réponse ; tes propositions se voient dans le calendrier, en pointillé (un clic dessus pour la retirer).']],
+  ] },
   { v: '0.56', quand: '2026-10-28', titre: 'Le babillard', items: [
     ['Nos prochains pas, en feuilles', ['Dans le Calendrier : une feuille par personne, un collant jaune. Chaque pas a sa case : en pointillé, l’app la coche d’elle-même ; pleine, on la coche à la main (seule la case coche, plus le texte).']],
     ['Les pas de l’autre se lisent', ['Ils ne mènent plus nulle part chez toi : « Recréer ton studio », c’est le pas de Frog.']],

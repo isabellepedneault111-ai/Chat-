@@ -155,10 +155,11 @@ export function skyHTML(board, { query = '', pairs = [], focus = '', narrow = fa
   const pairSVG = pairs.map((p, i) => (pos.has(p.a.id) && pos.has(p.b.id) ? `<path d="${curve(pos.get(p.a.id), pos.get(p.b.id), -0.22)}" class="sky-pair${focus === String(i) ? ' on' : ''}" data-pair="${i}" style="--d:${0.9 + i * 0.25}s"/>` : '')).join('');
   const nodes = board.map((e, i) => {
     const p = pos.get(e.id); if (!p) return '';
-    const st = stageOf(e); const k = kindOf(e); const r = 4.2 + st * 1.5;
+    const st = stageOf(e); const k = kindOf(e); const r = 7 + st * 2;
     const dim = query && !hit.has(e.id);
     const asleep = st < 3 && sleepingDays(e, now) >= 21;
-    const label = (query && hit.has(e.id)) || st >= 2 || pairIds.has(e.id);
+    // Peu d'idées : chacune porte son nom. Beaucoup : seules celles qui avancent, cherchées ou en rencontre.
+    const label = board.length <= 40 || (query && hit.has(e.id)) || st >= 2 || pairIds.has(e.id);
     // l'étiquette part vers l'extérieur, sauf au bord de la carte où elle se replie vers l'intérieur
     const right = Math.cos(p.ang) >= 0 ? p.x < W - 170 : p.x < 170;
     const lx = right ? p.x + r + 6 : p.x - r - 6;

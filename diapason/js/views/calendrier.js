@@ -91,12 +91,11 @@ export default {
     function attenteHTML() {
       const l = plages().filter((e) => e.data.statut === 'propose' && e.data.debut > Date.now() - JOUR).sort((a, b) => a.data.debut - b.data.debut);
       const refus = espace.entries.filter((e) => e.type === 'plage' && e.data?.statut === 'refuse' && e.data.par === espace.me && !e.data.vuRefus);
-      const pourMoi = l.filter((e) => e.data.par !== espace.me); const deMoi = l.filter((e) => e.data.par === espace.me);
-      if (!pourMoi.length && !deMoi.length && !refus.length) return '';
-      return `<section class="panel cl-attente"><h2>En attente</h2>
+      const pourMoi = l.filter((e) => e.data.par !== espace.me);
+      if (!pourMoi.length && !refus.length) return ''; // mes propositions se voient déjà dans le calendrier (en pointillé)
+      return `<section class="panel cl-attente"><h2>À toi de répondre</h2>
         ${pourMoi.map((e) => `<div class="cl-a" style="--s:${SORTES[e.data.sorte]?.[1]}"><p><b>${esc(e.data.par)}</b> propose : ${esc(SORTES[e.data.sorte]?.[0] || '')}, <b>${jourLong(e.data.debut)}, ${heure(e.data.debut)}</b> (${e.data.duree} min)${e.data.note ? ` · « ${esc(e.data.note)} »` : ''}</p>
           <div class="cl-a-b"><button class="btn small primary" data-ok="${esc(e.id)}">Approuver</button><input class="input" data-autre-txt="${esc(e.id)}" placeholder="Ou propose autre chose (ex. : plutôt vendredi 19 h)"><button class="btn small" data-non="${esc(e.id)}">Proposer autre chose</button></div></div>`).join('')}
-        ${deMoi.map((e) => `<div class="cl-a moi" style="--s:${SORTES[e.data.sorte]?.[1]}"><p>Tu proposes : ${esc(SORTES[e.data.sorte]?.[0] || '')}, <b>${jourLong(e.data.debut)}, ${heure(e.data.debut)}</b>. ${esc(autre())} n’a pas encore répondu.</p><button class="btn small ghost" data-retirer="${esc(e.id)}">Retirer</button></div>`).join('')}
         ${refus.map((e) => `<div class="cl-a refus"><p>${esc(autre())} propose autre chose pour ta plage du ${jourLong(e.data.debut)}${e.data.reponse ? ` : <b>« ${esc(e.data.reponse)} »</b>` : '.'}</p><button class="btn small" data-vu="${esc(e.id)}">Compris</button></div>`).join('')}
       </section>`;
     }

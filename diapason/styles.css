@@ -3933,3 +3933,30 @@ button.cl-rituel { width: 100%; text-align: left; border: 0; font: inherit; curs
 .pa-case.auto { border-style: dashed; cursor: default; }
 .cl-pas-c li.fait b { text-decoration: line-through; opacity: 1; color: #6d655a; }
 .pa-legende { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0; font-size: 1rem; color: #4a443b; } .pa-legende .pa-case { width: 20px !important; height: 20px !important; cursor: default; } .pa-legende .pa-case:not(:first-child) { margin-left: 14px; }
+
+/* ===== Vague 8 : passe de lisibilité sur toute l'app (corrige ce que l'audit mesuré a trouvé) ===== */
+/* Étiquettes et petits textes : jamais sous ~15 px. */
+.eyebrow, .tape, .tape.red { font-size: .84rem !important; letter-spacing: .07em; }
+#view small, #view .small, #view .muted.small, .metro-t, .mot-aide { font-size: .86rem; }
+#view .muted { font-size: max(.95rem, 1em); }
+/* Les cases à cocher et les boutons radio : des vraies cases, faciles à toucher. */
+#view input[type=checkbox]:not(.pa-case):not([class*=switch] input), #view input[type=radio], header input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--ink); vertical-align: -4px; }
+#view .switch input { width: 1px; height: 1px; }
+/* Les pastilles des légendes : assez grandes pour voir la couleur. */
+#view i.lg, #view .cl-leg i, #view [class*=leg] > i, #view [class*=leg] span > i { min-width: 16px; min-height: 16px; }
+#view i[class^="lg-"] { min-width: 24px; min-height: 16px; }
+.cl-leg, .sky-legend, .ls-leg, .kb-legend { font-size: .95rem !important; gap: 8px 18px; }
+/* Les paragraphes ne s'étirent plus d'un bord à l'autre : une ligne confortable à lire. */
+#view p:not([class*=row]):not([class*=chips]):not([class*=tabs]):not([class*=barre]):not(.cl-leg):not(.sky-legend):not(.pa-legende) { max-width: 78ch; }
+#view .muted.small, #view small { max-width: 78ch; }
+/* Le ciel des idées : des étoiles qu'on voit, avec leur nom ; les anneaux lisibles. */
+.sky-label { font-size: 15px; }
+.sky-rl { font-size: 13px; fill-opacity: .55; }
+.sky-song { font-size: 17px; }
+/* Nos idées : la recherche est un petit champ à côté des vues, pas une barre de 12 pieds. */
+.mur-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.mur-tools .search { flex: 0 1 320px; max-width: 320px; }
+/* Les titres de page : présents, sans manger le tiers de l'écran. */
+.mod-head h1 { font-size: clamp(1.9rem, 3.2vw, 2.7rem) !important; line-height: 1.08; margin: 4px 0 6px; }
+.mod-head { margin-bottom: 14px !important; padding-bottom: 0 !important; }
+.mod-head h1 { max-width: none !important; }
