@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.75', quand: '2026-10-29', titre: 'Ralentir et improviser', items: [
+    ['Ralentir sans changer la hauteur', ['Dans l’oreille, « Vitesse » : 100 %, 90, 80, 75, 66 ou 50 %. La pièce ralentit sans descendre ; la grille, le clavier et les temps suivent. (La justesse en cents ne s’applique qu’à vitesse normale.)']],
+    ['Les notes pour improviser', ['Sous le grand clavier de l’oreille, les mêmes cases que dans Jouer : la pentatonique, le reste de la gamme, les couleurs jazz de l’accord qui joue, les notes blues, la tonique. Des pastilles de couleur sur les touches, qui suivent l’accord. Ce que tu coches ici est coché aussi dans Jouer.']],
+  ] },
   { v: '0.74', quand: '2026-10-29', titre: 'Jouer et regarder', items: [
     ['Une ligne à la fois, en gros', ['Juste sous l’onde : la ligne de la grille où tu es (4 mesures), en gros, la mesure qui joue encadrée, ses 4 temps qui se remplissent ; « joue Do », « ensuite Ré7 dans 2 temps ».']],
     ['Le clavier qui frappe', ['Un vrai clavier, grand : les touches de l’accord qui joue s’allument (la fondamentale plus foncée) et s’enfoncent à chaque temps ; celles de l’accord suivant sont cerclées. Tu peux jouer dessus. Les minuscules claviers de la grille sont partis.']],

@@ -3,7 +3,7 @@
 import { audio, out } from '../audio.js';
 import { clavierDe } from '../doigte.js';
 import { espace, audioURL, saveEntry, uploadAudio, saveProfile, members } from '../espace.js';
-import { toast, autoCanvas, keyboard } from '../ui.js';
+import { toast, autoCanvas, keyboard, store } from '../ui.js';
 import { esc } from './carnet.js';
 import { ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
 import { chargerGrille, poserFond } from './studio.js';
@@ -37,13 +37,20 @@ export default {
         <h2 class="or-titre"></h2>
         <div class="or-faits"></div>
         <div class="or-transport"><button class="btn primary" data-o="lire">▶ Écouter</button><span class="or-pos mono">0:00</span><span class="muted or-astuce-t">Touche l’onde pour placer la tête de lecture, puis ▶.</span>
+          <label class="or-vit" data-bulle="Ralentir pour apprendre : la hauteur ne change pas, seulement la vitesse. (Le réglage de justesse ne s’applique qu’à vitesse normale.)">Vitesse <select data-vitesse aria-label="Vitesse d’écoute"><option value="1">100 %</option><option value="0.9">90 %</option><option value="0.8">80 %</option><option value="0.75">75 %</option><option value="0.66">66 %</option><option value="0.5">50 %</option></select></label>
           <label class="or-just" data-bulle="Accorder plus haut ou plus bas, en cents (100 cents = un demi-ton) : toute la prise, ou une seule partie. L’écoute et les fichiers WAV suivent ; l’original ne change pas.">Justesse de <select data-cible aria-label="Ce qu’on accorde"><option value="-1">toute la prise</option></select> <input type="range" min="-50" max="50" step="1" value="0" data-cents> <b class="or-cents">0 ¢</b></label></div>
         <div class="or-carte"><i class="or-tete" hidden></i><canvas class="or-canvas" aria-label="La pièce, ses parties, ses silences et sa boucle"></canvas></div>
         <div class="or-jeu" hidden>
           <div class="or-jeu-tete"><b class="or-jeu-ou">Mesure 1</b><span class="or-jeu-temps" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="or-jeu-maint"></span><span class="or-jeu-ens muted"></span></div>
           <div class="or-jeu-ligne"></div>
           <div class="or-jeu-kb"></div>
-          <p class="muted small or-jeu-aide">Les touches de l’accord qui joue s’allument et frappent à chaque temps ; celles de l’accord suivant sont cerclées. Tu peux jouer sur ce clavier.</p>
+          <div class="or-jeu-voir"><b>Pour improviser</b>
+            <label class="check"><input type="checkbox" data-jvoir="scale"> <i style="background:#009e73"></i> la pentatonique <small>sûr, impossible de fausser</small></label>
+            <label class="check"><input type="checkbox" data-jvoir="gamme"> <i style="background:#9a9a9a"></i> le reste de la gamme <small>en passant</small></label>
+            <label class="check"><input type="checkbox" data-jvoir="jazz"> <i style="background:#0072b2"></i> couleurs jazz <small>9e, 6te, 7e de l’accord</small></label>
+            <label class="check"><input type="checkbox" data-jvoir="blue"> <i style="background:#a347c9"></i> notes blues <small>un frottement voulu</small></label>
+            <label class="check"><input type="checkbox" data-jvoir="maison"> <i class="lg-maison"></i> la tonique <small>la note « maison »</small></label></div>
+          <p class="muted small or-jeu-aide">En orange, l’accord qui joue (ses touches frappent à chaque temps) ; cerclées, celles de l’accord suivant ; les pastilles, les notes pour improviser par-dessus (les mêmes cases que dans Jouer). Tu peux jouer sur ce clavier.</p>
         </div>
         <div class="or-monter"></div>
         <div class="or-grille-box"></div>
@@ -74,11 +81,18 @@ export default {
     // La justesse : toute la prise (cents) plus, au besoin, une partie à part (cp[i]). rate(t) : la vitesse à ce moment.
     const partDe = (t) => (res ? res.parties.findIndex((p) => t >= p.a - 0.01 && t < p.b) : -1);
     const rate = (t = 0) => 2 ** ((cents + (cp[partDe(t)] || 0)) / 1200);
+    // Ralentir sans changer la hauteur : un lecteur audio du navigateur (il garde la hauteur quand on change la vitesse).
+    let vitesse = 1; let media = null; let mediaBuf = null;
+    function lecteurLent() {
+      if (!media) { media = new Audio(); media.preservesPitch = true; media.mozPreservesPitch = true; media.webkitPreservesPitch = true; audio().createMediaElementSource(media).connect(out()); }
+      if (mediaBuf !== buf) { if (media.src) URL.revokeObjectURL(media.src); media.src = URL.createObjectURL(wav(buf)); mediaBuf = buf; }
+      return media;
+    }
     // Où en est l'écoute dans la pièce (les segments suivent chacun leur justesse).
-    const posDe = (tt) => { const e = audio().currentTime - tt.t0;
+    const posDe = (tt) => { if (tt.media) return media.currentTime; const e = audio().currentTime - tt.t0;
       if (tt.boucle) { const L = tt.b - tt.a; const eb = e * tt.segs[0].r; return tt.a + (((eb % L) + L) % L); }
       let reste = Math.max(0, e); for (const g of tt.segs) { const d = (g.b - g.a) / g.r; if (reste < d) return g.a + reste * g.r; reste -= d; } return tt.b; };
-    const arrete = () => { stopBoucle?.(); stopBoucle = null; try { lecture?.stop?.(); } catch { /* déjà arrêtée */ } lecture = null; tete = null; q('[data-o=boucle]').textContent = '▶ Écouter la boucle'; const l = q('[data-o=lire]'); if (l) l.textContent = '▶ Écouter'; montrerCurseur(); };
+    const arrete = () => { media?.pause(); stopBoucle?.(); stopBoucle = null; try { lecture?.stop?.(); } catch { /* déjà arrêtée */ } lecture = null; tete = null; q('[data-o=boucle]').textContent = '▶ Écouter la boucle'; const l = q('[data-o=lire]'); if (l) l.textContent = '▶ Écouter'; montrerCurseur(); };
     // Le mode « jouer et regarder » : une ligne de la grille à la fois (4 mesures), en gros, et un vrai clavier où les
     // touches de l'accord qui joue s'allument et frappent à chaque temps ; l'accord suivant est cerclé.
     const IVS = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], maj7: [0, 4, 7, 11], m7: [0, 3, 7, 10], sus2: [0, 2, 7], sus4: [0, 5, 7], dim: [0, 3, 6] };
@@ -103,6 +117,7 @@ export default {
       const cle = `${cur?.nom}|${suiv?.nom}`;
       if (cle !== jeuCle) {
         jeuCle = cle; const vc = voicing(cur); const vs = voicing(suiv);
+        peindreImpro(cur);
         kbJeu.keys.forEach((kk, m) => { kk.classList.toggle('k-jeu', vc.includes(m)); kk.classList.toggle('k-jeu-r', vc[0] === m); kk.classList.toggle('k-suiv', vs.includes(m) && !vc.includes(m)); });
         q('.or-jeu-maint').innerHTML = cur ? `<span class="muted">joue</span> ${joli(cur.nom)}` : '';
         q('.or-jeu-ens').innerHTML = suiv ? `ensuite ${joli(suiv.nom)}${enJeu ? ` <span class="or-jeu-dans">dans ${Math.max(1, Math.round((suiv.a - pos) / T))} temps</span>` : ''}` : '';
@@ -111,6 +126,21 @@ export default {
       const tAbs = Math.floor((pos - g.debutCale) / T);
       if (enJeu && tAbs !== jeuTemps) { jeuTemps = tAbs; kbJeu.keys.forEach((kk) => { if (kk.classList.contains('k-jeu')) { kk.classList.remove('k-frappe'); void kk.offsetWidth; kk.classList.add('k-frappe'); } }); }
       if (!enJeu) jeuTemps = -1;
+    }
+    // Les notes pour improviser, comme dans Jouer : pentatonique et gamme de la tonalité, couleurs jazz de l'accord,
+    // notes blues, la tonique. Mêmes couleurs, mêmes cases cochées (elles sont partagées avec Jouer).
+    const KCOUL = { scale: '#009e73', gamme: '#9a9a9a', jazz: '#0072b2', blue: '#a347c9' };
+    const voirJ = () => new Set(store.get('kbVoir3', ['safe', 'maison']));
+    function peindreImpro(cur) {
+      if (!kbJeu || !res) return; const vu = voirJ();
+      el.querySelectorAll('[data-jvoir]').forEach((c) => { c.checked = vu.has(c.dataset.jvoir); });
+      const [n, mode] = res.ton.split(' ou ')[0].split(' '); const t = Math.max(0, ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'].indexOf(n));
+      const maj = mode === 'mineur' ? (t + 3) % 12 : t; const m12 = (x) => ((x % 12) + 12) % 12;
+      const sets = { scale: new Set([0, 2, 4, 7, 9].map((x) => m12(maj + x))), gamme: new Set([0, 2, 4, 5, 7, 9, 11].map((x) => m12(maj + x))), blue: new Set([3, 6, 10].map((x) => m12(maj + x))),
+        jazz: new Set(cur ? [2, 9, cur.q.startsWith('m') ? 10 : 11].map((x) => m12(cur.r + x)) : []) };
+      kbJeu.keys.forEach((kk, m) => { const pc = m12(m); const coul = ['scale', 'gamme', 'jazz', 'blue'].filter((v) => vu.has(v) && sets[v].has(pc)).map((v) => KCOUL[v]);
+        kk.style.setProperty('--marque', coul.length ? `linear-gradient(90deg, ${coul.map((c, j) => `${c} ${(j * 100) / coul.length}% ${((j + 1) * 100) / coul.length}%`).join(', ')})` : 'transparent');
+        kk.classList.toggle('k-teinte', coul.length > 0); kk.classList.toggle('k-maison', vu.has('maison') && pc === t); });
     }
     // La mesure de la grille où en est la tête (qui joue : en noir ; posée : encadrée), et la grille qui défile toute
     // seule pour la garder en vue, sans faire bouger la page. Dans une boucle, c'est sa case dans la boucle.
@@ -126,6 +156,7 @@ export default {
     function animerTete() {
       if (!tete || !res) return;
       let pos = posDe(tete);
+      if (tete.media && tete.boucle && pos >= tete.b - 0.02) { media.currentTime = tete.a; pos = tete.a; }
       if (!tete.boucle && pos >= tete.b) { arrete(); return; }
       pos = Math.max(tete.a, pos); const t = q('.or-tete'); if (t) { t.hidden = false; t.classList.remove('pose'); t.style.left = `${(pos / res.duree) * 100}%`; }
       const p = q('.or-pos'); if (p) p.textContent = `${mmss(pos)} / ${mmss(res.duree)}`;
@@ -366,6 +397,8 @@ export default {
     function viser(i) { cible = i; const v = i < 0 ? cents : (cp[i] || 0); const r = q('[data-cents]'); if (r) r.value = v; const lab = q('.or-cents'); if (lab) lab.textContent = `${v > 0 ? '+' : ''}${v} ¢`; const sl = q('[data-cible]'); if (sl) sl.value = i; montrerParties(); }
     el.addEventListener('change', (e) => {
       if (e.target.matches('[data-pvoulu]')) { const k2 = e.target.dataset.pvoulu; if (e.target.checked) pvoulus.add(k2); else pvoulus.delete(k2); montrerDiag(); montrerParties(); dessiner(); return; }
+      if (e.target.matches('[data-jvoir]')) { const set = voirJ(); if (e.target.checked) set.add(e.target.dataset.jvoir); else set.delete(e.target.dataset.jvoir); store.set('kbVoir3', [...set]); jeuCle = ''; majJeu(tete ? posDe(tete) : curseur, !!tete); return; }
+      if (e.target.matches('[data-vitesse]')) { vitesse = +e.target.value; if (tete && res) { const pos = posDe(tete); const { a, b, boucle } = tete; if (tete.media && vitesse !== 1) media.playbackRate = vitesse; else joueDe(boucle ? a : pos, b, { boucle }); } toast(vitesse === 1 ? 'Vitesse normale.' : `Ralenti à ${Math.round(vitesse * 100)} % : même hauteur, plus lent.`); return; }
       if (e.target.matches('[data-aligner]')) { aligner = e.target.checked; if (aligner) { caler(); montrerMonter(); dessiner(); } return; }
       if (e.target.matches('[data-cible]')) { viser(+e.target.value); return; }
       const vl = e.target.dataset.voulu; if (vl != null) { if (e.target.checked) voulus.add(+vl); else voulus.delete(+vl); montrerVoix(); return; }
@@ -417,6 +450,9 @@ export default {
     }
     const joueDe = (a, b, { boucle = false } = {}) => {
       arrete(); const c = audio(); a = Math.max(0, a); b = Math.min(buf.duration, Math.max(a + 0.05, b)); // jamais avant le début ni après la fin
+      if (vitesse !== 1) { const m = lecteurLent(); const go = () => { m.currentTime = a; m.playbackRate = vitesse; m.play().catch(() => {}); };
+        if (m.readyState >= 1) go(); else m.addEventListener('loadedmetadata', go, { once: true });
+        tete = { media: true, a, b, boucle }; const l = q('[data-o=lire]'); if (l) l.textContent = '■ Arrêter'; requestAnimationFrame(animerTete); return; }
       const t0 = c.currentTime + 0.05; let segs;
       if (boucle) { segs = [{ a, b, r: rate(a) }]; stopBoucle = boucler(c, buf, { a, b }, out(), 0.12, segs[0].r); }
       else {

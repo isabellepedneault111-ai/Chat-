@@ -4261,3 +4261,15 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .or-jeu-kb .key.black.k-suiv { box-shadow: inset 0 0 0 4px #f3d27a, 0 0 0 2px #f3d27a !important; }
 .key.black.k-teinte::before { left: 8%; right: 8%; bottom: 8px; height: 26px; border-radius: 6px; box-shadow: 0 0 0 2px #fffdf8, 0 0 10px rgba(255, 255, 255, .35); }
 .kb { background: #d6cbb4; }
+/* Vitesse, et les notes pour improviser sur le clavier de l'oreille */
+.or-vit { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
+.or-vit select { font: inherit; font-weight: 700; padding: 3px 6px; }
+.or-jeu-voir { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+.or-jeu-voir > b { font-size: 1rem; }
+.or-jeu-voir .check { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+.or-jeu-voir .check input { width: 20px; height: 20px; accent-color: #1d1a15; }
+.or-jeu-voir .check i { display: inline-block; width: 18px; height: 12px; border-radius: 999px; }
+.or-jeu-voir .check i.lg-maison { width: 12px; height: 12px; border-radius: 50%; background: #fffdf8; box-shadow: 0 0 0 3px #1d1a15; margin: 0 3px; }
+.or-jeu-voir small { color: #5c544a; }
+/* Sur une touche de l'accord (orange), la pastille d'impro reste lisible */
+.or-jeu-kb .key.white.k-teinte::before { bottom: 38px; }
