@@ -428,7 +428,7 @@ export default {
           <ul class="kb-legende">${[['safe', 'L’accord qui joue', 'ça sonne à 100 %, toujours. Idéal pour finir une phrase.'], ['scale', 'La pentatonique', 'sûr aussi, impossible de « fausser ». Parfait pour improviser.'], ['gamme', 'Le reste de la gamme', 'bien en passant, moins pour s’y arrêter.'], ['jazz', 'Couleurs jazz', 'la 9e, la 6te, la 7e de l’accord : une note rêveuse, à poser exprès.'], ['blue', 'Notes blues (hors sentier)', 'un frottement voulu, qui « pleure ». Glisse vers une note voisine juste après.'], ['maison', 'La tonique', 'la note « maison » de la tonalité (le point) : on y revient pour conclure.']].map(([k, t, d]) => `<li><label><input type="checkbox" data-voir="${k}" ${voir().has(k) ? 'checked' : ''}><i class="lg-${k}"></i><b>${t}</b> : ${d}</label></li>`).join('')}</ul>
         </div>`;
       kb = keyboard(body.querySelector('.kb-host'), { from: 48, to: 76 });
-      paintSafe(0);
+      safeBar = -1; paintSafe(0); // un clavier neuf (nouvelle tonalité, retour sur l’onglet) : on le repeint
       body.addEventListener('change', (e) => { const v = e.target.dataset.voir; if (!v) return; const set = voir(); if (e.target.checked) set.add(v); else set.delete(v); store.set('kbVoir3', [...set]); safeBar = -1; paintSafe(S.cur ? chordAtStep(S.cur.step).i : 0); });
       const hote = body.querySelector('.sp-host'); brancherSonsPerso(hote, () => { hote.innerHTML = sonsPersoHTML(); });
       body.addEventListener('click', (e) => {

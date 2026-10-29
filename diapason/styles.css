@@ -4255,3 +4255,9 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .or-mes .or-b .nm b, .or-mes.n2 .or-b .nm b, .or-mes.n3 .or-b .nm b, .or-mes.n4 .or-b .nm b { font-size: 1.12rem; }
 .or-mes .or-b .nm sup, .or-mes.n2 .or-b .nm sup, .or-mes.n3 .or-b .nm sup, .or-mes.n4 .or-b .nm sup { font-size: .7rem; }
 .or-mes { min-height: 70px; }
+/* Les noires touchées : bien visibles */
+.or-jeu-kb .key.black.k-jeu { background: linear-gradient(180deg, #ffd29a, #f6a24a 55%, #e07b2c) !important; box-shadow: 0 0 0 2px #fffdf8, 0 0 14px rgba(246, 162, 74, .85) !important; }
+.or-jeu-kb .key.black.k-jeu-r { background: linear-gradient(180deg, #f39a55, #d55e00 55%, #a84800) !important; box-shadow: 0 0 0 2px #fffdf8, 0 0 14px rgba(213, 94, 0, .85) !important; }
+.or-jeu-kb .key.black.k-suiv { box-shadow: inset 0 0 0 4px #f3d27a, 0 0 0 2px #f3d27a !important; }
+.key.black.k-teinte::before { left: 8%; right: 8%; bottom: 8px; height: 26px; border-radius: 6px; box-shadow: 0 0 0 2px #fffdf8, 0 0 10px rgba(255, 255, 255, .35); }
+.kb { background: #d6cbb4; }

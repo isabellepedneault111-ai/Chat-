@@ -64,6 +64,7 @@ export const VERSIONS = [
     ['Une ligne à la fois, en gros', ['Juste sous l’onde : la ligne de la grille où tu es (4 mesures), en gros, la mesure qui joue encadrée, ses 4 temps qui se remplissent ; « joue Do », « ensuite Ré7 dans 2 temps ».']],
     ['Le clavier qui frappe', ['Un vrai clavier, grand : les touches de l’accord qui joue s’allument (la fondamentale plus foncée) et s’enfoncent à chaque temps ; celles de l’accord suivant sont cerclées. Tu peux jouer dessus. Les minuscules claviers de la grille sont partis.']],
     ['Une seule taille', ['Dans la grille, tous les noms d’accords ont la même taille, peu importe combien il y en a dans la mesure.']],
+    ['Les noires bien visibles', ['Une touche noire de l’accord s’allume en orange vif (cerclée de blanc), dans l’oreille comme dans Jouer. Et dans Jouer, changer de tonalité effaçait les couleurs du clavier : réparé.']],
     ['Et si… au piano', ['Les couleurs « Et si… ? » s’entendent maintenant au piano, joué net par-dessus la vraie mesure. Changer l’accord dans l’enregistrement lui-même reste possible (« ▶ Après »), mais ce déplacement de notes est approximatif.']],
   ] },
   { v: '0.73', quand: '2026-10-29', titre: 'Jouer ce morceau', items: [
