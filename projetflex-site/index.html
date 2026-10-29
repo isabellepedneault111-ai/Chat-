@@ -53,12 +53,12 @@ nav ol a:hover::before{color:var(--balise)}
 #topo path{fill:none;stroke:rgba(255,255,255,.22);stroke-width:1}
 #topo path.maj{stroke:rgba(255,255,255,.42);stroke-width:1.4}
 .grid-c{position:absolute;inset:0;background-image:linear-gradient(var(--ligne-c) 1px,transparent 1px),linear-gradient(90deg,var(--ligne-c) 1px,transparent 1px);background-size:120px 120px;opacity:.35}
-.hero .wrap{position:relative;display:grid;grid-template-columns:1.25fr .75fr;gap:40px;min-height:calc(100svh - 68px);align-items:end;padding:90px 0 70px}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.3fr .7fr;gap:40px;min-height:calc(100svh - 76px);align-items:center;padding:clamp(64px,9vh,96px) 0 clamp(48px,8vh,90px)}
 .coords{position:absolute;top:22px;left:16px;right:16px;display:flex;justify-content:space-between;color:rgba(255,255,255,.7)}
-.hero h1{font-size:clamp(64px,11vw,168px)}
+.hero h1{font-size:clamp(48px,min(9.5vw,13.5vh),150px)}
 .hero h1 span{display:block}
 .hero h1 .o{color:var(--balise)}
-.hero .lead{font-size:clamp(18px,1.6vw,21px);max-width:44ch;margin:28px 0 30px;color:rgba(255,255,255,.88)}
+.hero .lead{font-size:clamp(17px,min(1.5vw,2.4vh),21px);max-width:46ch;margin:clamp(14px,2.6vh,28px) 0 clamp(16px,3vh,30px);color:rgba(255,255,255,.92);text-shadow:0 1px 12px rgba(15,59,46,.9)}
 .btns{display:flex;gap:12px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;gap:12px;padding:16px 22px;font-weight:800;text-decoration:none;font-size:16px;border:1.5px solid currentColor;transition:background .15s,color .15s}
 .btn.plein{background:var(--balise);border-color:var(--balise);color:var(--blanc)}
@@ -67,7 +67,7 @@ nav ol a:hover::before{color:var(--balise)}
 .btn .fl{font-family:var(--mono)}
 
 /* panneau de sentier */
-.panneau{align-self:center;justify-self:end;width:min(100%,380px);position:relative;padding-bottom:120px}
+.panneau{align-self:center;justify-self:end;width:min(100%,380px);position:relative;padding-bottom:clamp(40px,8vh,110px)}
 .panneau .poteau{position:absolute;left:50%;top:40px;bottom:0;width:22px;margin-left:-11px;background:#6B4A2B}
 .planche{position:relative;display:flex;align-items:center;gap:14px;background:var(--blanc);color:var(--encre);padding:14px 18px;margin-bottom:12px;border:2px solid var(--encre);font-weight:800;font-variation-settings:'wdth' 75;text-transform:uppercase;font-size:22px;box-shadow:6px 6px 0 rgba(0,0,0,.35);text-decoration:none;transition:transform .3s}
 .planche:nth-child(2){transform:rotate(-2deg) translateX(-24px);clip-path:polygon(14% 0,100% 0,100% 100%,14% 100%,0 50%)}
@@ -227,16 +227,18 @@ footer .logo{color:var(--blanc);font-size:44px}
 section[data-vue]{border-bottom:1.5px solid var(--encre)}
 .sentier{flex:1;display:flex;align-items:center;margin:0 20px;position:relative;min-width:0}
 .sentier::before{content:"";position:absolute;left:12px;right:12px;top:50%;border-top:2px dashed var(--gris);opacity:.6}
-.sentier a{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;font-size:12px;font-weight:700;color:var(--gris);padding-top:2px}
+.sentier a{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;font-size:14px;font-weight:700;color:var(--encre);padding-top:2px}
 .sentier a .pt{width:14px;height:14px;border:2px solid var(--encre);background:var(--blanc);transform:rotate(45deg);transition:transform .2s,background .2s}
 .sentier a .lb{position:absolute;top:24px;white-space:nowrap}
 .sentier a:hover .pt{background:var(--encre)}
 .sentier a.fait .pt{background:var(--encre)}
-.sentier a.ici{color:var(--encre)}
+.sentier a.ici{color:var(--balise)}
+.sentier a:hover{color:var(--balise)}
 .sentier a.ici .pt{background:var(--balise);border-color:var(--balise);transform:rotate(45deg) scale(1.45)}
-.sentier a.ici .vi{position:absolute;bottom:26px;background:var(--balise);color:var(--blanc);font-family:var(--mono);font-size:10px;padding:2px 6px;white-space:nowrap;letter-spacing:.05em;text-transform:uppercase}
+.sentier a.ici .vi{position:absolute;bottom:26px;background:var(--balise);color:var(--blanc);font-family:var(--mono);font-size:11px;padding:2px 6px;white-space:nowrap;letter-spacing:.05em;text-transform:uppercase}
 nav .wrap{height:76px}
-@media (max-width:1100px){.sentier a .lb{display:none}.sentier a.ici .lb{display:block}}
+@media (max-width:1180px){.sentier a{font-size:12.5px}}
+@media (max-width:980px){.sentier a .lb{display:none}.sentier a.ici .lb{display:block}}
 @media (max-width:640px){.sentier{margin:0 8px;overflow-x:auto;scrollbar-width:none}.sentier a{min-width:34px}.nav-cta{padding:0 12px;font-size:13px}.logo{font-size:22px}}
 .pas{display:none;width:min(1240px,100% - 32px);margin:0 auto;padding:22px 0;align-items:center;justify-content:space-between;gap:12px}
 .pas.on{display:flex}
@@ -274,7 +276,7 @@ nav .wrap{height:76px}
 
 
 /* forêt qui plie */
-.foret{position:absolute;left:0;right:0;bottom:0;width:100%;height:46%;pointer-events:none}
+.foret{position:absolute;left:0;right:0;bottom:0;width:100%;height:34%;pointer-events:none}
 .foret .arbre{transform-box:fill-box;transform-origin:50% 100%;will-change:transform}
 .lisiere{padding-bottom:clamp(140px,16vw,220px)}
 .lisiere .foret{height:clamp(120px,15vw,200px)}
@@ -351,6 +353,140 @@ nav .wrap{height:76px}
 .ampli div:hover b{transform:translateX(10px) scale(1.3)}
 .ampli div:hover span:last-child{font-variation-settings:'wdth' 125}
 
+
+/* ===== zéro défilement ===== */
+.pas{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:55;width:auto;margin:0;padding:10px max(16px,calc((100% - 1240px)/2));background:var(--blanc);border-top:1.5px solid var(--encre)}
+.pas-l{padding:11px 18px;font-size:15px;white-space:nowrap}
+.centre{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center}
+.centre .mono{color:var(--gris)}
+.onglet{font:inherit;font-size:14px;font-weight:700;padding:8px 14px;border:1.5px solid var(--encre);text-decoration:none;color:var(--encre);background:var(--blanc)}
+.onglet:hover{background:var(--givre)}
+.onglet.on{background:var(--encre);color:var(--blanc)}
+body{padding-bottom:66px}
+.pied{margin-top:18px;color:var(--gris);font-size:11px}
+.eng-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(24px,4vw,56px);align-items:center}
+.eng-g .engage{margin-top:22px;font-size:clamp(18px,1.7vw,24px)}
+.eng-d .profil{margin-top:0}
+.eng-d .etapes{grid-template-columns:1fr 1fr}
+.eng-d .etape:nth-child(3){padding-left:0;border-left:0}
+.eng-d .etape:nth-child(n+3){border-top:1.5px solid var(--ligne-c)}
+.eng-d .etape h3{font-size:26px;margin:6px 0}
+.eng-d .etape p{font-size:14.5px}
+.eng-d .etape .ici{margin-top:8px;padding-top:8px;font-size:13px}
+@media (max-width:900px){.eng-grid{grid-template-columns:1fr}}
+.tete2{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:end}
+.tete2 h2{margin-bottom:0}
+@media (max-width:900px){.tete2{grid-template-columns:1fr}}
+.jour{padding:12px 20px}
+.acts{font-size:14px;gap:3px}
+/* mode écran : chaque borne tient dans la fenêtre */
+body.fit{height:100svh;overflow:hidden;padding-bottom:0}
+body.fit [data-vue].actif{height:var(--avail);overflow:hidden;display:flex;align-items:center;padding-top:clamp(16px,3vh,32px);padding-bottom:clamp(16px,3vh,32px)}
+body.fit .hero[data-vue].actif{padding:0}
+body.fit .hero .wrap{min-height:0;height:100%;padding:clamp(40px,7vh,80px) 0 clamp(20px,4vh,40px)}
+body.fit [data-vue].actif > .wrap{transform-origin:50% 50%;flex:none}
+body.fit .lisiere.actif{padding-bottom:clamp(90px,14vh,160px)}
+body.fit .lisiere .foret{height:clamp(80px,13vh,150px)}
+body.fit section[data-vue]{border-bottom:0}
+
+
+/* ===== lisibilité : pages allégées, texte plus gros ===== */
+.mono{font-size:14px}
+.cote{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(28px,4vw,64px);align-items:center}
+.cote .adn{margin-top:0}
+@media (max-width:900px){.cote{grid-template-columns:1fr}}
+.adn-row{grid-template-columns:110px 1fr;gap:6px 24px;padding:12px 0}
+.adn-row .L{font-size:104px;grid-row:span 2}
+.adn-row h3{font-size:clamp(26px,2.6vw,36px)}
+.adn-row p{font-size:17px}
+.adn-row .q{font-size:13px}
+/* semaine : jours en colonnes */
+.horaire{grid-template-columns:1fr}
+.jours{grid-template-columns:repeat(4,1fr) .8fr}
+.jour{display:flex;flex-direction:column;align-items:stretch;gap:10px;padding:16px;border-bottom:0;border-right:1.5px solid var(--encre)}
+.jour:last-child{border-right:0}
+.jour strong{font-size:24px}
+.jour .etat{justify-self:auto;align-self:flex-start;order:-1;font-size:12.5px}
+.acts{font-size:15.5px;gap:8px}
+.acts li{flex-direction:column;gap:3px}
+.acts .tag{align-self:flex-start;font-size:11.5px;min-width:0}
+.jour.ven small{font-size:15px}
+.billet{border-left:0;border-top:1.5px solid var(--encre);display:grid;grid-template-columns:auto 1fr 1.4fr;gap:10px 30px;align-items:center;padding:18px 24px}
+.billet>.mono{grid-column:1/-1}
+.billet .prix{font-size:64px}
+.billet .msg{min-height:0;font-size:16px}
+.billet .traces{border-top:0;border-left:1px dashed var(--ligne);padding:0 0 0 24px}
+.billet .traces p{font-size:15.5px}
+.billet .note{grid-column:1/-1;font-size:13px}
+.billet .jauge{width:200px}
+.etatbloc{display:grid;gap:10px}
+@media (max-width:900px){.jours{grid-template-columns:1fr}.jour{border-right:0;border-bottom:1.5px solid var(--encre)}.billet{grid-template-columns:1fr}.billet .traces{border-left:0;padding:0}}
+/* pour qui : cartes sur deux colonnes */
+.offres{display:grid;grid-template-columns:1fr 1fr;gap:0 36px;border-top:0}
+.offre{grid-template-columns:40px 1fr auto;gap:6px 18px;padding:14px 0;border-bottom:1.5px solid var(--encre)}
+.offre .sym{grid-row:span 2}
+.offre p{grid-column:2/4;font-size:16px}
+.offre .prix{grid-column:3;grid-row:1;align-self:start}
+.offre .fl{display:none}
+.offre h3{font-size:clamp(24px,2.2vw,32px)}
+@media (max-width:900px){.offres{grid-template-columns:1fr}}
+/* éclaireur */
+.ampli{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+.ampli div{grid-template-columns:1fr;gap:2px;padding:10px 0}
+.ampli b{display:none}
+.ampli span:last-child{font-size:20px}
+.fiche .obs{font-size:20px}
+.fiche .ia li,.fiche .guide{font-size:16px}
+/* titres moins hauts en mode écran */
+body.fit h2{font-size:clamp(36px,min(4.8vw,8.6vh),80px);margin-bottom:16px}
+body.fit .borne{margin-bottom:16px}
+body.fit .intro{font-size:clamp(17px,min(1.5vw,2.6vh),21px)}
+body.fit .plan{height:clamp(240px,38vh,420px)}
+body.fit .lisiere.actif{padding-bottom:clamp(70px,11vh,140px)}
+
+
+/* semaine encore plus compacte */
+#hub .tete2{grid-template-columns:1.1fr 1fr;align-items:center;gap:28px;margin-bottom:16px}
+#hub .tete2 .intro{margin-top:8px}
+.profils-v{margin-top:0;grid-template-columns:1fr;border-bottom:1.5px solid var(--encre)}
+.profils-v .profil-b{padding:9px 16px;grid-template-columns:auto 1fr;align-items:baseline;gap:12px}
+.profils-v .profil-b+.profil-b{border-left:0;border-top:1.5px solid var(--encre)}
+.profils-v .profil-b .mono{order:2;text-align:right}
+.profils-v .profil-b strong{font-size:20px}
+.profils+.horaire,.tete2+.horaire{margin-top:0}
+.jour{gap:8px;padding:14px}
+.jour .etat{order:0;align-self:auto;position:absolute;top:14px;right:12px}
+.jour{position:relative}
+.acts li{display:block;line-height:1.35}
+.acts .tag{display:inline-block;margin-right:6px;vertical-align:1px}
+.billet{grid-template-columns:auto auto 1.6fr;padding:12px 22px;gap:4px 28px}
+.billet>.mono{grid-column:auto;grid-row:span 2;align-self:center}
+.billet .prix{font-size:52px}
+.billet .note{grid-column:2/4;font-size:12.5px;margin-top:-2px}
+@media (max-width:900px){#hub .tete2{grid-template-columns:1fr}.jour .etat{position:static}.billet{grid-template-columns:1fr}.billet>.mono{grid-row:auto}.billet .note{grid-column:auto}}
+
+
+.billet{grid-template-columns:auto minmax(180px,.8fr) 1.6fr;grid-template-rows:auto auto auto;align-items:start}
+.billet>.mono{grid-column:1;grid-row:1}
+.billet .prix{grid-column:1;grid-row:2}
+.billet .etatbloc{grid-column:2;grid-row:1/3;align-self:center}
+.billet .traces{grid-column:3;grid-row:1/3;align-self:center}
+.billet .note{grid-column:1/-1;grid-row:3;margin-top:4px}
+.billet .jauge{width:100%}
+.jour.ven .etat{display:none}
+body.fit #hub .borne{display:none}
+@media (max-width:900px){.billet>*{grid-column:1!important;grid-row:auto!important}}
+
+
+/* petits textes plus gros */
+.eng-d .etape p{font-size:16px}
+.eng-d .etape .ici{font-size:14.5px}
+.instr p,.obs p{font-size:17px}
+.adn-row .q{font-size:13.5px}
+.offre p{font-size:16.5px}
+.offre .qui{font-size:13px}
+.log dd{font-size:21px}
+
 @media (prefers-reduced-motion:reduce){.empreintes,.randonneuse{display:none}}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
@@ -392,22 +528,32 @@ nav .wrap{height:76px}
 
 <section id="adn" data-vue="adn">
   <div class="wrap">
+    <div class="cote">
+      <div>
     <div class="borne"><span class="num">01</span><span class="mono km-l">Borne 01 · Notre ADN</span></div>
     <h2 class="cond">Quatre lettres,<br><em>une direction.</em></h2>
+        <p class="intro">Quatre lettres qui guident chaque décision. Survolez-les : elles plient sans casser.</p>
+      </div>
     <div class="adn">
       <div class="adn-row"><span class="L flexy" aria-hidden="true">F</span><h3 class="cond">Flexibilité</h3><p>Des lieux, des horaires, des approches et des parcours qui s’adaptent à l’enfant, pas l’inverse.<span class="q mono">Au quotidien : 1 ou 2 jours au Hub, une forêt jamais pareille.</span></p></div>
       <div class="adn-row"><span class="L flexy" aria-hidden="true">L</span><h3 class="cond">Laboratoire</h3><p>Un lieu d’entraide où l’erreur est permise, et même utile. L’adulte est guide; chacun enseigne quelque chose aux autres.<span class="q mono">Au quotidien : le LAB des Possibles.</span></p></div>
       <div class="adn-row"><span class="L flexy" aria-hidden="true">E</span><h3 class="cond">Engagement</h3><p>Cognitif, social, communautaire et personnel. Le mérite des réussites revient à l’enfant et à ses efforts.<span class="q mono">Au quotidien : l’Éclaireur entre deux sorties.</span></p></div>
       <div class="adn-row"><span class="L flexy" aria-hidden="true">X</span><h3 class="cond">eXception</h3><p>Un parcours hors norme. Et X, c’est aussi l’enfant : on ne le résout pas, on le laisse se révéler.<span class="q mono">Au quotidien : un portfolio à son image.</span></p></div>
     </div>
+    </div>
   </div>
 </section>
 
 <section id="engagement" class="sombre lisiere" data-vue="engagement">
   <div class="wrap">
+    <div class="eng-grid">
+      <div class="eng-g">
     <div class="borne"><span class="num">02</span><span class="mono km-l">Borne 02 · Engagement et motivation</span></div>
     <h2 class="cond">Garder le oui<br><em>de 5 ans.</em></h2>
     <p class="intro">Demandez à un enfant de 5 ans s’il a hâte d’apprendre : la réponse est presque toujours oui. Trop souvent, ce oui s’éteint avec les années. Tout projetflex est construit pour qu’il continue de monter. Quatre leviers, comme quatre étapes d’une montée.</p>
+    <p class="engage">L’engagement, on le veut <b>cognitif</b>, <b>social</b>, <b>communautaire</b> et <b>personnel</b>. Et l’effort est valorisé, toujours.</p>
+      </div>
+      <div class="eng-d">
     <div class="profil">
       <svg viewBox="0 0 1200 220" preserveAspectRatio="none" aria-hidden="true">
         <path class="relief" d="M0 220 L0 190 C 120 185, 180 170, 150 160 L 300 140 C 380 128, 420 150, 450 120 L 600 95 C 680 80, 720 100, 750 70 L 900 50 C 980 38, 1020 55, 1050 25 L 1200 10 L1200 220 Z"/>
@@ -422,19 +568,21 @@ nav .wrap{height:76px}
         <div class="etape"><span class="mono alt">Étape 4 · Sommet</span><h3 class="cond">Donner du sens</h3><p>Des projets signifiants qui reconnaissent les intérêts de chacun, loin de la redondance.</p><span class="ici">Au Hub : le territoire, les mentors de métier.</span></div>
       </div>
     </div>
-    <p class="engage">L’engagement, on le veut <b>cognitif</b>, <b>social</b>, <b>communautaire</b> et <b>personnel</b>. Et l’effort est valorisé, toujours.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="hub" data-vue="hub">
   <div class="wrap">
     <div class="borne"><span class="num">03</span><span class="mono km-l">Borne 03 · Le Hub Forêt + LAB</span></div>
-    <h2 class="cond">Composez votre<br><em>semaine.</em></h2>
-    <p class="intro">Pour les familles qui font l’enseignement à la maison. Choisissez un profil, puis une ou deux journées au Hub : le reste de la semaine vous appartient, et le parent reste maître d’œuvre du projet d’apprentissage.</p>
-    <div class="profils" role="tablist" aria-label="Profil de l’enfant">
+    <div class="tete2"><div><h2 class="cond">Composez votre <em>semaine.</em></h2>
+    <p class="intro">Choisissez un profil, puis une ou deux journées. Le reste de la semaine vous appartient : le parent reste maître d’œuvre.</p></div>
+    <div class="profils profils-v" role="tablist" aria-label="Profil de l’enfant">
       <button role="tab" class="profil-b" aria-selected="false" data-p="petits"><span class="mono">4 à 7 ans</span><strong>Petits explorateurs</strong></button>
       <button role="tab" class="profil-b" aria-selected="true" data-p="explo"><span class="mono">8 à 12 ans</span><strong>Explorateurs</strong></button>
       <button role="tab" class="profil-b" aria-selected="false" data-p="ados"><span class="mono">12 à 17 ans</span><strong>Cartographes</strong></button>
+    </div>
     </div>
     <div class="horaire">
       <div class="jours" id="jours">
@@ -447,8 +595,8 @@ nav .wrap{height:76px}
       <div class="billet" aria-live="polite">
         <span class="mono">Votre billet · 2027-2028</span>
         <div class="prix" id="prix">0 $<small> / mois</small></div>
-        <div class="jauge" aria-hidden="true"><i id="j1"></i><i id="j2"></i></div>
-        <p class="msg" id="msg">Choisissez une journée pour commencer.</p>
+        <div class="etatbloc"><div class="jauge" aria-hidden="true"><i id="j1"></i><i id="j2"></i></div>
+        <p class="msg" id="msg">Choisissez une journée pour commencer.</p></div>
         <div class="traces"><span class="mono">Ce que votre enfant rapporte</span><p id="traces">Choisissez une journée pour voir les traces qui iront dans son portfolio.</p></div>
         <p class="note">Tarifs indicatifs, avant l’échelle mobile selon le revenu familial. Des places à tarif réduit sont réservées chaque année.</p>
       </div>
@@ -494,7 +642,7 @@ nav .wrap{height:76px}
     <div>
       <div class="borne"><span class="num">04</span><span class="mono km-l">Borne 04 · Compétences du 21e siècle</span></div>
       <h2 class="cond">L’Éclaireur,<br><em>un amplificateur.</em></h2>
-      <p class="intro">L’IA ne fait pas à la place de l’enfant : elle amplifie ce qu’il fait déjà. Elle l’aide aussi à s’autoréguler : se fixer un but, suivre ses progrès, savoir quand demander de l’aide. La guide observe, oriente et célèbre; l’IA ne décide jamais seule, et aucune donnée nominative d’enfant n’est confiée aux outils externes.</p>
+      <p class="intro">L’IA ne fait pas à la place de l’enfant : elle amplifie ce qu’il fait déjà, et l’aide à s’autoréguler. La guide reste au centre; aucune donnée nominative d’enfant n’est confiée aux outils externes.</p>
       <div class="ampli">
         <div><span class="mono">Une question</span><b>→</b><span>devient une enquête</span></div>
         <div><span class="mono">Un croquis</span><b>→</b><span>devient un prototype</span></div>
@@ -536,7 +684,7 @@ nav .wrap{height:76px}
 <section id="offres" class="givre" data-vue="offres">
   <div class="wrap">
     <div class="borne"><span class="num">06</span><span class="mono km-l">Borne 06 · Plusieurs sentiers</span></div>
-    <h2 class="cond">Pour qui?<br><em>Choisissez votre sentier.</em></h2>
+    <h2 class="cond">Pour qui? <em>Choisissez votre sentier.</em></h2>
     <div class="offres">
       <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" fill="var(--vert)"/></svg><div><span class="mono qui">Familles en enseignement à la maison</span><h3 class="cond">Le Hub Forêt + LAB</h3></div><p>Une ou deux journées par semaine, en petits groupes par profil (petits explorateurs, explorateurs, cartographes), avec des guides brevetées.</p><span class="prix">Dès 195 $ / mois</span><span class="fl">→</span></a>
       <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><rect x="3" y="3" width="28" height="28" fill="var(--bleu)"/></svg><div><span class="mono qui">Les enfants et les ados de la région</span><h3 class="cond">Camps FLEX</h3></div><p>Semaine de relâche et été : forêt, création, Club de course et grands projets.</p><span class="prix">Inscriptions à venir</span><span class="fl">→</span></a>
@@ -586,9 +734,13 @@ nav .wrap{height:76px}
 
 <section id="registre" class="givre" data-vue="registre">
   <div class="wrap">
+    <div class="cote">
+      <div>
     <div class="borne"><span class="num">09</span><span class="mono km-l">Borne 09 · Registre du sentier</span></div>
     <h2 class="cond">Signez le<br><em>registre.</em></h2>
     <p class="intro">Familles, écoles, chercheuses, partenaires : laissez votre trace. Nous vous avisons en premier de la rencontre d’information et du premier Pop-up School. Ouverture prévue en août 2027.</p>
+      </div>
+      <div>
     <form class="registre" id="form">
       <label><span>Nom</span><input name="nom" required autocomplete="name"></label>
       <label><span>Courriel</span><input name="courriel" type="email" required autocomplete="email"></label>
@@ -605,17 +757,14 @@ nav .wrap{height:76px}
       <label class="plein"><span>Message</span><textarea name="message" rows="3"></textarea></label>
       <button type="submit">Signer le registre →</button>
     </form>
+    <p class="mono pied">projetflex · 48°25′ N · 71°15′ O · Jonquière · Un service éducatif complémentaire pour les familles · © 2026</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<div class="pas" id="pas"><a id="prec" class="pas-l" href="#"></a><span class="mono" id="pos"></span><a id="suiv" class="pas-l suiv" href="#"></a></div>
+<div class="pas on" id="pas"><a id="prec" class="pas-l" href="#"></a><div class="centre" id="centre"></div><a id="suiv" class="pas-l suiv" href="#"></a></div>
 
-<footer>
-  <div class="wrap">
-    <div><div class="logo"><i></i>projet<b>flex</b></div><p class="mono" style="margin-top:10px">48°25′ N · 71°15′ O · Jonquière</p></div>
-    <p>Ce qui plie ne casse pas.<br>Un service éducatif complémentaire pour les familles. © 2026 projetflex</p>
-  </div>
-</footer>
 
 <script>
 // carte topographique générée : deux sommets, courbes de niveau
@@ -769,31 +918,50 @@ setInterval(()=>{
   f.setAttribute('x1',x);f.setAttribute('y1',y);f.setAttribute('x2',x-70);f.setAttribute('y2',y-35);
 },4200);
 
-// sentier : une borne à la fois
+// sentier : une borne à la fois, sous-onglets, ajustement à l'écran
 const VUES=[['depart','Départ'],['adn','ADN'],['engagement','Engagement'],['hub','Le Hub'],['eclaireur','Éclaireur'],['ciel','Observatoire'],['offres','Pour qui'],['recherche','Recherche'],['equipe','Équipe'],['registre','Registre']];
-const ANCRE={top:'depart',course:'hub',manifeste:'equipe'};
+const SOUS={hub:'Ma semaine',lab:'Le LAB',course:'Bouger',equipe:'Les guides',manifeste:'Le manifeste'};
 const sentier=document.getElementById('sentier');
 sentier.innerHTML=VUES.map(([id,l])=>`<a href="#${id==='depart'?'top':id}" data-v="${id}"><span class="pt"></span><span class="lb">${l}</span></a>`).join('');
-function vueDe(h){h=(h||'').replace('#','');if(!h)return 'depart';if(ANCRE[h])return ANCRE[h];const el=document.getElementById(h);return el&&el.dataset.vue?el.dataset.vue:'depart'}
+// liste plate des étapes : [vue, idSection]
+const ETAPES=[];
+VUES.forEach(([v])=>{const secs=v==='depart'?[document.getElementById('top')]:[...document.querySelectorAll(`section[data-vue="${v}"]`)];secs.forEach(sec=>ETAPES.push([v,sec.id]))});
+function libelle(k){const [v,id]=ETAPES[k];const secs=ETAPES.filter(e=>e[0]===v);return secs.length>1?SOUS[id]||id:VUES.find(x=>x[0]===v)[1]}
+function etapeDe(h){h=(h||'').replace('#','');const k=ETAPES.findIndex(e=>e[1]===h);return k<0?0:k}
+function lien(k){return '#'+ETAPES[k][1]}
+const navEl=document.querySelector('nav'), pasEl=document.getElementById('pas');
+function ajuster(){
+  const bureau=innerWidth>=900&&innerHeight>=500;
+  document.body.classList.toggle('fit',bureau);
+  document.documentElement.style.setProperty('--avail',(innerHeight-navEl.offsetHeight-pasEl.offsetHeight)+'px');
+  document.querySelectorAll('[data-vue] > .wrap').forEach(w=>w.style.transform='');
+  if(!bureau)return;
+  document.querySelectorAll('[data-vue].actif').forEach(sec=>{
+    const w=sec.querySelector(':scope > .wrap'); if(!w)return;
+    const cs=getComputedStyle(sec), dispo=sec.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+    const k=Math.min(1,dispo/w.offsetHeight); if(k<1)w.style.transform=`scale(${Math.max(.7,k).toFixed(3)})`;
+  });
+}
 function aller(){
-  const h=location.hash.replace('#',''); const v=vueDe(h); const i=VUES.findIndex(x=>x[0]===v);
-  document.querySelectorAll('[data-vue]').forEach(el=>el.classList.toggle('actif',el.dataset.vue===v));
+  const k=etapeDe(location.hash), [v,id]=ETAPES[k], i=VUES.findIndex(x=>x[0]===v);
+  document.querySelectorAll('[data-vue]').forEach(el=>el.classList.toggle('actif',el.id===id||(v==='depart'&&el.id==='top')));
   if(v==='depart')requestAnimationFrame(()=>window.drawTopo&&window.drawTopo());
   if(v==='adn')requestAnimationFrame(flexerADN);
   if(v==='ciel')requestAnimationFrame(ciel);
-  if(v==='hub'&&!plan.querySelector('.collant'))requestAnimationFrame(disposer);
-  sentier.querySelectorAll('a').forEach((a,k)=>{a.classList.toggle('ici',k===i);a.classList.toggle('fait',k<i);a.querySelector('.vi')?.remove();if(k===i)a.insertAdjacentHTML('afterbegin','<span class="vi">Vous êtes ici</span>')});
-  const pas=document.getElementById('pas'), prec=document.getElementById('prec'), suiv=document.getElementById('suiv');
-  pas.classList.toggle('on',true);
-  prec.textContent=i>0?`← ${VUES[i-1][1]}`:''; prec.href=i>0?`#${VUES[i-1][0]==='depart'?'top':VUES[i-1][0]}`:'#';
-  suiv.textContent=i<VUES.length-1?`${VUES[i+1][1]} →`:''; suiv.href=i<VUES.length-1?`#${VUES[i+1][0]}`:'#';
-  document.getElementById('pos').textContent=`Borne ${String(i).padStart(2,'0')} / ${String(VUES.length-1).padStart(2,'0')}`;
+  if(id==='lab'&&!plan.querySelector('.collant'))requestAnimationFrame(disposer);
+  sentier.querySelectorAll('a').forEach((a,n)=>{a.classList.toggle('ici',n===i);a.classList.toggle('fait',n<i);a.querySelector('.vi')?.remove();if(n===i)a.insertAdjacentHTML('afterbegin','<span class="vi">Vous êtes ici</span>')});
+  const prec=document.getElementById('prec'), suiv=document.getElementById('suiv'), centre=document.getElementById('centre');
+  prec.textContent=k>0?`← ${libelle(k-1)}`:''; prec.href=k>0?lien(k-1):'#';
+  suiv.textContent=k<ETAPES.length-1?`${libelle(k+1)} →`:''; suiv.href=k<ETAPES.length-1?lien(k+1):'#';
+  const freres=ETAPES.map((e,n)=>[e,n]).filter(([e])=>e[0]===v);
+  centre.innerHTML=freres.length>1?freres.map(([e,n])=>`<a class="onglet ${n===k?'on':''}" href="${lien(n)}">${SOUS[e[1]]}</a>`).join(''):`<span class="mono">Borne ${String(i).padStart(2,'0')} / ${String(VUES.length-1).padStart(2,'0')}</span>`;
   document.title=(i?VUES[i][1]+' · ':'')+'projetflex · Ce qui plie ne casse pas';
-  const cible=document.getElementById(h);
-  if(cible&&cible.dataset.vue&&cible!==document.querySelector(`[data-vue="${v}"]`))cible.scrollIntoView(); else scrollTo(0,0);
+  scrollTo(0,0); requestAnimationFrame(ajuster); setTimeout(ajuster,350);
 }
 addEventListener('hashchange',aller); aller();
-addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select'))return;const i=VUES.findIndex(x=>x[0]===vueDe(location.hash));if(e.key==='ArrowRight'&&i<VUES.length-1)location.hash=VUES[i+1][0];if(e.key==='ArrowLeft'&&i>0)location.hash=VUES[i-1][0]==='depart'?'top':VUES[i-1][0]});
+let rt; addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(ajuster,120)});
+document.fonts&&document.fonts.ready.then(ajuster);
+addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select'))return;const k=etapeDe(location.hash);if(e.key==='ArrowRight'&&k<ETAPES.length-1)location.hash=ETAPES[k+1][1];if(e.key==='ArrowLeft'&&k>0)location.hash=ETAPES[k-1][1]});
 
 
 // profils : exemples concrets de semaine
@@ -821,7 +989,7 @@ let profil='explo';
 function rendreProfil(){
   document.querySelectorAll('.acts').forEach(ul=>{ul.innerHTML=PROG[profil][ul.dataset.j].map(([c,t,a])=>`<li><span class="tag ${c}">${t}</span><span>${a}</span></li>`).join('')});
   document.querySelectorAll('.profil-b').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.p===profil)));
-  majTraces();
+  majTraces(); requestAnimationFrame(()=>window.ajuster&&ajuster());
 }
 function majTraces(){
   const on=[...document.querySelectorAll('#jours button[aria-pressed="true"]')];
