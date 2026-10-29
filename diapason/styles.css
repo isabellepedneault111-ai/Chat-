@@ -4390,7 +4390,7 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .board .board-col header .mono { min-width: 26px; height: 26px; display: inline-grid; place-items: center; border-radius: 50%; background: #1d1a15; color: #fffdf8; font-size: .85rem; }
 .board .board-col .col-hint { margin: 0 0 10px; font-size: .85rem; color: #6d655a; }
 .board .board-col .cards { display: grid; gap: 10px; min-height: 0; }
-.board .board-col .cards:empty::after { content: 'Rien ici pour l’instant.'; display: block; padding: 10px; border: 1.5px dashed #e2d6bf; border-radius: 6px; color: #8a7f6c; font-size: .85rem; text-align: center; }
+.board .board-col .cards:empty::after { content: 'Rien ici pour l’instant.'; display: block; padding: 10px; border: 1.5px dashed #e2d6bf; border-radius: 6px; color: #6d655a; font-size: .85rem; text-align: center; }
 .board .board-col.ch-new { background: transparent; box-shadow: none; border: 2px dashed #cfc3ad; }
 .board .board-col.ch-new::before { display: none; }
 .board.songs .board-col > div[class*="barre"], .board.songs .board-col .ch-parts { margin: 6px 0; }
