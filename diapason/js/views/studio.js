@@ -222,9 +222,10 @@ export default {
           <label class="fond-vol">Volume <input type="range" min="0" max="1" step="0.05" value="${S.fond.vol}" data-fond-vol></label>
           <button class="btn small" data-act="fond-off" aria-label="Retirer la boucle du fond">✕ Retirer</button>`; } }
       const marques = progression().marques || []; const popOuvert = q('.ch-pop');
-      q('.chord-row').innerHTML = accords().map((c, i) => `<div class="chord ${marques[i] ? 'ch-debut' : ''}" data-i="${i}" style="flex-grow:${tempsDe(c)}"><small>${marques[i] ? `<b class="ch-marque">${esc(marques[i])}</b> · ` : ''}${tempsDe(c) === 4 ? '1 mesure' : tempsDe(c) === 8 ? '2 mesures' : `${tempsDe(c)} temps`}</small><b>${chordName(mod12(S.key + c[0]), c[1])}</b>${clavierDe(mod12(S.key + c[0]), c[1], { compact: true })}</div>`).join('')
+      q('.chord-row').innerHTML = accords().map((c, i) => `<div class="chord ${marques[i] ? 'ch-debut' : ''}" data-i="${i}"><small>${marques[i] ? `<b class="ch-marque">${esc(marques[i])}</b> · ` : ''}${tempsDe(c) === 4 ? '1 mesure' : tempsDe(c) === 8 ? '2 mesures' : `${tempsDe(c)} temps`}</small><b>${chordName(mod12(S.key + c[0]), c[1])}</b>${clavierDe(mod12(S.key + c[0]), c[1], { compact: true })}</div>`).join('')
         + `<button class="btn small chord-edit" data-act="editer">✎ Mes propres accords</button><p class="chord-note muted">Touche un accord pour le changer. ${progression().note || ''}</p>
         <div class="defi-row"><button class="chip ${S.defis ? 'active' : ''}" data-act="defis">${S.defis ? 'Défis d’impro ✓' : 'Défis d’impro'}</button>${S.defis ? `<p class="defi">${DEFIS_IMPRO[Math.floor(S.loop / 2) % DEFIS_IMPRO.length]}<small>un nouveau défi tous les deux tours</small></p>` : ''}</div>`;
+      q('.chord-row').classList.toggle('long', accords().length > 12);
       if (popOuvert) q('.chord-row').appendChild(popOuvert);
     };
 
@@ -462,8 +463,8 @@ export default {
         // Une touche peut répondre à plusieurs demandes : elle porte alors toutes leurs couleurs, en bandes côte à côte.
         const coul = [[tones, 'safe'], [pent, 'scale'], [gamme, 'gamme'], [jazz, 'jazz'], [blues, 'blue']].filter(([e, v]) => e.has(n) && vu.has(v)).map(([, v]) => KCOUL[v]);
         const bandes = coul.length ? `linear-gradient(90deg, ${coul.map((c, j) => `${c} ${(j * 100) / coul.length}% ${((j + 1) * 100) / coul.length}%`).join(', ')})` : '';
-        const noire = k.classList.contains('black');
-        k.style.background = bandes ? `linear-gradient(${noire ? '#1b1915 0 22%' : '#fff 0 30%'}, transparent ${noire ? 22 : 30}%), ${bandes}` : '';
+        // La touche garde sa couleur de piano ; une pastille au bas dit ce qu'elle offre (en bandes si plusieurs demandes).
+        k.style.background = ''; k.style.setProperty('--marque', bandes || 'transparent');
         k.classList.toggle('k-teinte', !!bandes);
         k.classList.toggle('k-maison', n === mod12(S.key) && vu.has('maison'));
       });
@@ -1067,6 +1068,8 @@ export default {
       el.querySelectorAll('.cell.now').forEach((c) => c.classList.remove('now'));
       el.querySelectorAll(`[data-cell$=":${st}"]`).forEach((c) => c.classList.add('now'));
       el.querySelectorAll('.chord').forEach((c) => c.classList.toggle('now', +c.dataset.i === bar));
+      // Un morceau entier (beaucoup d'accords) : la rangée défile toute seule pour garder l'accord qui joue en vue.
+      { const rg = q('.chord-row.long'); const c = rg?.querySelector('.chord.now'); if (c) { const r1 = rg.getBoundingClientRect(); const r2 = c.getBoundingClientRect(); if (r2.top < r1.top || r2.bottom > r1.bottom) rg.scrollTo({ top: rg.scrollTop + r2.top - r1.top - 6, behavior: 'smooth' }); } }
       paintSafe(bar);
     });
 

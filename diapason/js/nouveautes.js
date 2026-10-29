@@ -60,6 +60,13 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.73', quand: '2026-10-29', titre: 'Jouer ce morceau', items: [
+    ['Jouer ce morceau', ['Dans l’oreille, « → Jouer ce morceau » envoie la pièce entière dans Jouer : elle tourne au même tempo, calée sur ses mesures, avec tous ses accords sur le clavier. Un passage choisi sur l’onde (« → Jouer ce passage ») ou une partie (« → Jouer cette partie ») part tout seul de la même façon.']],
+    ['Les touches dans la grille', ['Sous chaque accord de la grille, ses touches, en petit (la note de base plus foncée) : on voit ce qui se joue dans chaque mesure.']],
+    ['Un nouveau piano', ['Le clavier de Jouer a de vraies touches, ivoire et noires ; au lieu de peindre la moitié des touches, une pastille de couleur dit ce que chacune offre (l’accord qui joue, la pentatonique, etc.).']],
+    ['Les accords, tous pareils', ['Dans Jouer, les cartes d’accords ont toutes la même taille ; leur durée est écrite dessus. Un morceau entier (beaucoup d’accords) défile tout seul pour garder l’accord qui joue en vue.']],
+    ['Un seul tempo, le plus juste', ['Le tempo recalé sur les changements d’accords devient celui de la pièce partout (en haut, dans la grille, dans Jouer).']],
+  ] },
   { v: '0.72', quand: '2026-10-28', titre: 'La grille suit la tête', items: [
     ['On sait où on est', ['La tête posée sur l’onde encadre en rouge sa mesure dans la grille ; pendant l’écoute, la mesure qui joue est en noir. À l’arrêt, l’encadré reste là où tu t’es arrêtée.']],
     ['Plus besoin de faire défiler', ['La grille défile toute seule jusqu’à la bonne mesure, que tu écoutes ou que tu poses la tête (le défilement automatique ne marchait pas toujours : c’est réparé).']],

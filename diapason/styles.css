@@ -4183,3 +4183,37 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .or-tete.pose { box-shadow: none; background: #1d1a15; } .or-tete.pose::before { border-top-color: #1d1a15; }
 .or-mes.ici { outline: 3px solid #d93a24; outline-offset: 1px; background: #fff; }
 .or-mes.ici small { color: #a82a17; }
+
+/* 0.73 — Le piano refait : de vraies touches, et une pastille de couleur au lieu de touches peintes */
+.kb { height: 176px; background: #1d1a15; border: 0; border-top: 12px solid #1d1a15; border-radius: 10px; box-shadow: inset 0 3px 0 #7a1f17, 0 10px 22px -12px rgba(0, 0, 0, .55); padding: 0; }
+.key.white { background: linear-gradient(180deg, #f3eee2 0%, #fffdf8 18%, #fbf7ee 82%, #ece4d2 100%); border-right: 1px solid #cfc5b1; border-radius: 0 0 7px 7px; box-shadow: inset 0 -7px 0 #e2d8c4, inset 0 -8px 0 #d6cbb4; padding-bottom: 12px; }
+.key.white:last-child { border-right: 0; }
+.key.white span { font: 700 .74rem var(--sans, inherit); color: #6d655a; position: relative; z-index: 1; }
+.key.black { height: 62%; background: linear-gradient(180deg, #4a443b 0%, #24201b 8%, #14110e 88%, #2c2721 100%); border-radius: 0 0 5px 5px; box-shadow: inset 0 -5px 0 #050403, inset 1px 0 0 #3a342c, 0 4px 6px rgba(0, 0, 0, .55); }
+.key.white:hover { background: linear-gradient(180deg, #efe7d4, #fff8e6 30%, #f6eedb); }
+.key.black:hover { background: linear-gradient(180deg, #5a5348, #2c2721 20%, #1a1612); }
+.key.white.down, .key.white.k-live { background: linear-gradient(180deg, #e9dcc0, #f6ebcf 40%, #efe0bd) !important; box-shadow: inset 0 -3px 0 #d6c39b, inset 0 0 0 2px #c9a45c !important; }
+.key.black.down, .key.black.k-live { background: linear-gradient(180deg, #2a241d, #000) !important; box-shadow: inset 0 0 0 2px #c9a45c, 0 2px 3px rgba(0, 0, 0, .5) !important; }
+/* La pastille : ce que la touche offre (l'accord qui joue, la pentatonique, la gamme, jazz, blues) */
+.key.k-teinte::before { content: ''; position: absolute; left: 16%; right: 16%; bottom: 34px; height: 16px; border-radius: 999px; background: var(--marque); box-shadow: 0 0 0 2px rgba(255, 253, 248, .9), 0 2px 4px rgba(0, 0, 0, .25); pointer-events: none; }
+.key.black.k-teinte::before { left: 14%; right: 14%; bottom: 10px; height: 12px; box-shadow: 0 0 0 1.5px #14110e, 0 0 6px rgba(255, 255, 255, .15); }
+.key.k-maison::after { bottom: 58px; width: 12px; height: 12px; margin-left: -6px; background: #fffdf8; box-shadow: 0 0 0 3px #1d1a15; }
+.key.black.k-maison::after { bottom: 28px; background: #fffdf8; box-shadow: 0 0 0 2px #c9a45c; }
+@media (max-width: 700px) { .kb { height: 140px; } .key.k-teinte::before { bottom: 28px; height: 12px; } .key.k-maison::after { bottom: 46px; } }
+/* Les accords de Jouer : tous de la même taille */
+.chord-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; align-items: stretch; }
+.chord-row .chord { min-width: 0; }
+.chord-row .chord-note, .chord-row .defi-row, .chord-row .ch-pop { grid-column: 1 / -1; }
+.chord-row .chord-edit { align-self: center; justify-self: start; }
+/* Les touches de chaque accord, dans la grille de l'oreille */
+.or-b { flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.or-kb { display: block; line-height: 0; }
+.or-kb svg { width: 64px; height: auto; display: block; }
+.or-mes.n3 .or-kb svg, .or-mes.n4 .or-kb svg { width: 46px; }
+.or-mes { min-height: 104px; }
+.chord-row.long { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); max-height: 330px; overflow-y: auto; padding: 4px; }
+.chord-row.long .chord { padding: 8px 10px; } .chord-row.long .chord b { font-size: 1.15rem; }
+.chord-row.long .chord-note, .chord-row.long .defi-row { position: sticky; bottom: 0; background: var(--bg, #efe7d8); }
+.chord.now { outline: 3px solid #1d1a15; outline-offset: 1px; }
+.or-kb svg, .or-mes.n3 .or-kb svg, .or-mes.n4 .or-kb svg { width: 50px; }
+.chord-row.long .chord-note, .chord-row.long .defi-row { position: static; background: none; }
