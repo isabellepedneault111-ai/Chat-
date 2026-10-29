@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.74', quand: '2026-10-29', titre: 'Jouer et regarder', items: [
+    ['Une ligne à la fois, en gros', ['Juste sous l’onde : la ligne de la grille où tu es (4 mesures), en gros, la mesure qui joue encadrée, ses 4 temps qui se remplissent ; « joue Do », « ensuite Ré7 dans 2 temps ».']],
+    ['Le clavier qui frappe', ['Un vrai clavier, grand : les touches de l’accord qui joue s’allument (la fondamentale plus foncée) et s’enfoncent à chaque temps ; celles de l’accord suivant sont cerclées. Tu peux jouer dessus. Les minuscules claviers de la grille sont partis.']],
+    ['Une seule taille', ['Dans la grille, tous les noms d’accords ont la même taille, peu importe combien il y en a dans la mesure.']],
+    ['Et si… au piano', ['Les couleurs « Et si… ? » s’entendent maintenant au piano, joué net par-dessus la vraie mesure. Changer l’accord dans l’enregistrement lui-même reste possible (« ▶ Après »), mais ce déplacement de notes est approximatif.']],
+  ] },
   { v: '0.73', quand: '2026-10-29', titre: 'Jouer ce morceau', items: [
     ['Jouer ce morceau', ['Dans l’oreille, « → Jouer ce morceau » envoie la pièce entière dans Jouer : elle tourne au même tempo, calée sur ses mesures, avec tous ses accords sur le clavier. Un passage choisi sur l’onde (« → Jouer ce passage ») ou une partie (« → Jouer cette partie ») part tout seul de la même façon.']],
     ['Les touches dans la grille', ['Sous chaque accord de la grille, ses touches, en petit (la note de base plus foncée) : on voit ce qui se joue dans chaque mesure.']],

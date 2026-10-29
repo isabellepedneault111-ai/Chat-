@@ -4217,3 +4217,41 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .chord.now { outline: 3px solid #1d1a15; outline-offset: 1px; }
 .or-kb svg, .or-mes.n3 .or-kb svg, .or-mes.n4 .or-kb svg { width: 50px; }
 .chord-row.long .chord-note, .chord-row.long .defi-row { position: static; background: none; }
+
+/* 0.74 — Jouer et regarder : une ligne de grille à la fois et un vrai clavier qui frappe au rythme */
+.or-jeu { margin: 14px 0; padding: 16px 18px 12px; border-radius: 12px; background: #fffdf8; border: 2px solid #1d1a15; box-shadow: 0 10px 24px -16px rgba(60, 40, 10, .45); display: grid; gap: 12px; }
+.or-jeu[hidden] { display: none; }
+.or-jeu-tete { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+.or-jeu-ou { font: 700 1.15rem var(--display); min-width: 11ch; }
+.or-jeu-temps { display: inline-flex; gap: 6px; }
+.or-jeu-temps i, .or-jm-t i { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #1d1a15; background: #fffdf8; }
+.or-jeu-temps i.on { background: #d93a24; border-color: #d93a24; transform: scale(1.15); }
+.or-jeu-maint { font-size: 1.05rem; } .or-jeu-maint .nm b { font-size: 2rem; } .or-jeu-maint .nm sup { font-size: 1rem; }
+.or-jeu-ens { margin-left: auto; font-size: 1rem; } .or-jeu-ens .nm b { font-size: 1.35rem; color: #3d362c; } .or-jeu-dans { font-weight: 700; color: #a82a17; }
+.or-jeu-ligne { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.or-jm { position: relative; display: grid; gap: 8px; padding: 22px 8px 10px; min-height: 96px; border: 2px solid #e2d6bf; border-radius: 10px; background: #fff; font: inherit; color: #1d1a15; cursor: pointer; text-align: center; }
+.or-jm small { position: absolute; top: 5px; left: 9px; font: 600 .85rem var(--mono); color: #6d655a; }
+.or-jm-b { display: grid; grid-template-columns: repeat(4, 1fr); align-items: center; }
+.or-jm-b > span { display: flex; justify-content: center; white-space: nowrap; }
+.or-jm-b > span + span { border-left: 1.5px solid #ebe1cf; }
+.or-jm-b .nm b { font: 700 1.45rem/1.1 var(--display); } .or-jm-b .nm sup { font-size: .8rem; }
+.or-jm-t { display: flex; justify-content: center; gap: 8px; } .or-jm-t i { width: 10px; height: 10px; border-width: 1.5px; border-color: #cfc3ad; }
+.or-jm.ici { border-color: #1d1a15; background: #fff8e8; box-shadow: 0 0 0 2px #1d1a15; }
+.or-jm.ici .or-jm-t i { border-color: #1d1a15; } .or-jm.ici .or-jm-t i.on { background: #1d1a15; }
+@media (max-width: 760px) { .or-jeu-ligne { grid-template-columns: repeat(2, 1fr); } .or-jm-b .nm b { font-size: 1.15rem; } }
+.or-jeu-kb .kb { height: 210px; }
+.or-jeu-kb .key { transition: transform .08s, background .12s, box-shadow .12s; }
+.or-jeu-kb .key.white.k-jeu { background: linear-gradient(180deg, #f2c48d, #f6b26b 40%, #ec9b45) !important; box-shadow: inset 0 -3px 0 #c7772a, inset 0 0 0 1px #c7772a !important; transform: translateY(2px); }
+.or-jeu-kb .key.black.k-jeu { background: linear-gradient(180deg, #c7772a, #8a4a12) !important; box-shadow: inset 0 0 0 2px #f6b26b !important; transform: translateY(2px); }
+.or-jeu-kb .key.white.k-jeu-r { background: linear-gradient(180deg, #e8894a, #d55e00 40%, #b84f00) !important; }
+.or-jeu-kb .key.white.k-jeu-r span, .or-jeu-kb .key.white.k-jeu span { color: #1d1a15; }
+.or-jeu-kb .key.black.k-jeu-r { background: linear-gradient(180deg, #d55e00, #7a3200) !important; }
+.or-jeu-kb .key.k-suiv { box-shadow: inset 0 0 0 4px #1d1a15 !important; }
+.or-jeu-kb .key.black.k-suiv { box-shadow: inset 0 0 0 3px #f3d27a !important; }
+.or-jeu-kb .key.k-frappe { animation: frappe .22s ease-out; }
+@keyframes frappe { 0% { transform: translateY(7px); filter: brightness(1.15); } 100% { transform: translateY(2px); filter: none; } }
+@media (prefers-reduced-motion: reduce) { .or-jeu-kb .key.k-frappe { animation: none; } }
+/* La grille complète : une seule taille de nom d'accord, quelle que soit la mesure */
+.or-mes .or-b .nm b, .or-mes.n2 .or-b .nm b, .or-mes.n3 .or-b .nm b, .or-mes.n4 .or-b .nm b { font-size: 1.12rem; }
+.or-mes .or-b .nm sup, .or-mes.n2 .or-b .nm sup, .or-mes.n3 .or-b .nm sup, .or-mes.n4 .or-b .nm sup { font-size: .7rem; }
+.or-mes { min-height: 70px; }
