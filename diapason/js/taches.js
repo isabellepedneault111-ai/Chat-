@@ -27,7 +27,10 @@ export function mesTaches(me = espace.me) {
     t.push({ id: 'inspi', titre: 'Dire pourquoi tes inspirations t’inspirent', pourquoi: `Pour chaque artiste ou morceau : sa rythmique, sa voix, son texte… et le moment précis. ${inspirationsDites(o) ? `${o} l’a fait ✓` : `${o} a le même pas à faire.`}`, lien: '#/depart?etape=3' });
   }
   // Une plage proposée par l'autre attend mon accord.
-  espace.entries.filter((e) => e.type === 'plage' && e.data?.statut === 'propose' && e.data.par !== me && e.data.debut > Date.now() - 864e5).forEach((e) => t.push({ id: `plage-${e.id}`, titre: `Répondre à la plage proposée par ${e.data.par}`, pourquoi: `${new Date(e.data.debut).toLocaleString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}${e.data.note ? ` : ${e.data.note}` : ''}. Approuve-la, ou propose autre chose.`, lien: '#/calendrier' }));
+  // Les plages qu'on me propose : un seul pas, qui les compte (pas une ligne par plage).
+  { const l = espace.entries.filter((e) => e.type === 'plage' && e.data?.statut === 'propose' && e.data.par !== me && e.data.debut > Date.now() - 864e5).sort((a, b) => a.data.debut - b.data.debut);
+    const quand = (e) => new Date(e.data.debut).toLocaleString('fr-CA', { weekday: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    if (l.length) t.push({ id: `plages-${l.map((e) => e.id).join('-')}`, titre: l.length === 1 ? `Répondre à la plage proposée par ${l[0].data.par}` : `Répondre aux ${l.length} plages proposées par ${l[0].data.par}`, pourquoi: `${l.slice(0, 4).map(quand).join(' · ')}${l.length > 4 ? '…' : ''}. Approuve, ou propose autre chose.`, lien: '#/calendrier' }); }
   // Les pas qu'on s'est donnés à la main, pas encore cochés.
   espace.entries.filter((e) => e.type === 'pas' && !e.data?.fait && (e.data?.pour === me || e.data?.pour === 'deux')).forEach((e) => t.push({ id: `pas-${e.id}`, titre: e.title, pourquoi: e.data.pour === 'deux' ? 'Un pas pour nous deux.' : `Ajouté par ${e.author === me ? 'toi' : e.author}.`, lien: lienDuPas(e.title), manuel: e.id }));
   if (moi) attendMoi().slice(0, 3).forEach((e) => t.push({ id: `rep-${e.id}`, titre: `Répondre à « ${e.title || 'sans titre'} »`, pourquoi: `${e.author} te l’a lancé au relais. Quand vous vous répondez, vos fils se rapprochent.`, lien: `#/relais/${e.id}` }));

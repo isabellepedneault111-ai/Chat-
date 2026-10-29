@@ -23,7 +23,7 @@ export function matiere(e) {
   if (!e || e.data?.rencontre || e.data?.corbeille || e.data?.pour === 'app') return null; // une idée pour l'app n'est pas de la musique
   if (e.image || e.type === 'image') return 'image';
   if ((e.audio && !e.audio.type?.startsWith('video')) || e.type === 'audio') return 'son';
-  return MOTS_OK.has(e.type) && (e.body || e.title || '').trim().length >= 12 ? 'mots' : null;
+  return MOTS_OK.has(e.type) && (e.body || e.title || '').trim().length >= 2 ? 'mots' : null; // même une idée courte (« L'écho ») a sa place au ciel
 }
 
 // Ce qu’on peut lire d’une trace : sa tonalité, ses mots importants et sa nature ; c’est ce qui permet de la relier à une autre.

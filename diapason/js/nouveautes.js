@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.78', quand: '2026-10-29', titre: 'Le calendrier et le mur, en feuilles', items: [
+    ['Le calendrier, un jour par feuille', ['Chaque jour est une feuille : la date en gros, sa lune bien rangée, puis ses plages dans l’ordre, en entier (plus de texte coupé). « ＋ proposer » au bas de chaque jour. Et au lieu de quatre fois « Répondre à la plage », un seul pas qui les compte.']],
+    ['Ajouter une idée, ça se voit', ['« Ajouter » confirme maintenant : « Pluie » est au mur, en Idée brute. Et une idée courte (moins de 12 lettres) apparaît enfin au ciel ; avant, elle restait invisible.']],
+    ['Étapes et Morceaux, plus nets', ['Des colonnes égales, comme des fiches punaisées ; une colonne vide le dit en une ligne au lieu d’une grande boîte blanche.']],
+  ] },
   { v: '0.77', quand: '2026-10-29', titre: 'Moi, je joue… avec', items: [
     ['Choisis ton instrument', ['Dans l’oreille, « Moi, je joue » : 🎹 Clavier (le grand clavier et les notes pour improviser), 🎸 Guitare (les accords simplifiés et leurs positions), 🥁 Percussions, 🎤 Voix. Seul ce que tu choisis s’affiche.']],
     ['Le jam', ['« avec » : la chanson, la basse, la batterie, le piano. Ils suivent la grille, temps par temps, même ralentis. Décoche « la chanson » pour jouer seulement avec le groupe.']],

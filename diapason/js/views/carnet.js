@@ -640,7 +640,7 @@ export default {
         const entry = url
           ? { type: 'lien', title: label || `${linkKind(url)} · ${new URL(url).hostname.replace('www.', '')}`, body: url, data: { url, kind: linkKind(url), stage: 0, song: fSong && fSong !== '—' ? fSong : '' } }
           : { type: 'note', title: v, data: { stage: 0, song: fSong && fSong !== '—' ? fSong : '' } };
-        try { await saveEntry(entry); if (url) toast(`Lien partagé. ${other()} peut l’écouter.`); } catch (err) { toast(err.message); inp.value = v; }
+        try { await saveEntry(entry); toast(url ? `Lien ajouté au mur, en « Idée brute ». ${other()} peut l’écouter.` : `« ${v.slice(0, 40)} » est au mur, en « Idée brute ». ${other()} la voit déjà.`); } catch (err) { toast(err.message); inp.value = v; }
       }
       if (e.target.classList.contains('reply-form')) {
         const inp = e.target.querySelector('[data-d=reply]');

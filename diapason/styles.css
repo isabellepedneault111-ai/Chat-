@@ -4350,3 +4350,47 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .or-pt.ouverte { border-color: #1d1a15; box-shadow: 0 3px 0 #1d1a15; z-index: 1; }
 .or-pt .pt-ms { margin-top: 3px; } .or-pt .pt-m { font-size: .68rem; padding: 0 5px; }
 .or-pt-liste { height: 104px; margin: 0 8px; }
+
+/* 0.78 — Le calendrier : un jour = une feuille, les plages en entier, dans l'ordre */
+.cl-sem.cl-moments { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; align-items: stretch; }
+@media (max-width: 1100px) { .cl-sem.cl-moments { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .cl-sem.cl-moments { grid-template-columns: 1fr 1fr; } }
+.cl-jour { display: flex; flex-direction: column; gap: 8px; min-height: 230px; padding: 12px 10px 10px; border-radius: 6px; background: #fffdf8; border: 0; box-shadow: 0 1px 0 #e6dccb, 0 8px 18px -14px rgba(60, 40, 10, .5); }
+.cl-jour.auj { box-shadow: 0 0 0 3px #1d1a15, 0 8px 18px -14px rgba(60, 40, 10, .5); }
+.cl-jour.libre { background: #fbf8f1; }
+.cl-j-date { display: flex; flex-direction: column; line-height: 1; }
+.cl-j-date small { font-size: .82rem; font-weight: 700; color: #6d655a; text-transform: lowercase; }
+.cl-j-date b { font: 700 2rem var(--display); color: #1d1a15; }
+.cl-jour.auj .cl-j-date small { color: #a82a17; }
+.cl-jour .cl-rituel { display: flex; align-items: center; gap: 6px; width: 100%; padding: 4px 8px; border: 0; border-radius: 999px; background: #1d1a15; color: #fffdf8; font: 600 .78rem var(--sans, inherit); cursor: pointer; text-align: left; }
+.cl-jour .cl-rituel span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cl-j-plages { display: grid; gap: 8px; align-content: start; flex: 1; }
+.cl-jour .cl-plage { position: relative; display: grid; gap: 2px; height: auto !important; min-height: 0; width: 100%; padding: 8px 9px 8px 13px; border-radius: 6px; text-align: left; background: #fff; border: 1.5px solid #e2d6bf; font: inherit; color: #1d1a15; cursor: pointer; overflow: visible; }
+.cl-jour .cl-plage::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; border-radius: 6px 0 0 6px; background: var(--s); }
+.cl-jour .cl-plage.propose { border-style: dashed; border-color: #b3a891; background: #fffdf8; }
+.cl-jour .cl-plage.ok { border-color: var(--s); box-shadow: inset 0 -3px 0 var(--p); }
+.cl-jour .cl-plage b { font-size: .92rem; } .cl-jour .cl-plage span { font-size: .85rem; font-weight: 700; color: #3d362c; }
+.cl-jour .cl-plage small { font-size: .82rem; color: #3d362c; white-space: normal; overflow: visible; display: block; }
+.cl-jour .cl-plage em { font-size: .74rem; font-style: normal; color: #6d655a; }
+.cl-j-plus { margin-top: auto; align-self: stretch; padding: 6px; border: 1.5px dashed #cfc3ad; border-radius: 6px; background: transparent; color: #6d655a; font: 600 .85rem var(--sans, inherit); cursor: pointer; }
+.cl-j-plus:hover { border-color: #1d1a15; color: #1d1a15; background: #fff; }
+.cl-jour .cl-moment, .cl-jour .cl-j-t, .cl-jour .cl-j-lune { display: none; }
+.cl-leg { font-size: .9rem; gap: 6px 16px; }
+.cl-jour .cl-rituel { flex: 0 0 auto; height: auto !important; min-height: 0 !important; aspect-ratio: auto; border-radius: 999px; }
+.cl-jour > .cl-j-plages { flex: 1 1 auto; }
+.cl-sem.cl-moments { grid-template-rows: none; grid-auto-rows: auto; }
+.cl-sem.cl-moments .cl-jour { display: flex; flex-direction: column; grid-row: auto; grid-template-rows: none; gap: 8px; min-height: 230px; }
+
+/* 0.78 — Nos idées : le tableau comme un babillard (des colonnes égales, des fiches de papier, rien d'étiré pour rien) */
+.board { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; align-items: start; overflow: visible; }
+.board .board-col { min-height: 0; padding: 14px 12px 12px; border: 0; border-radius: 4px; background: #fffdf8; box-shadow: 0 1px 0 #e6dccb, 0 8px 18px -14px rgba(60, 40, 10, .5); position: relative; }
+.board .board-col::before { content: ''; position: absolute; top: -8px; left: 50%; width: 70px; height: 16px; transform: translateX(-50%) rotate(-2deg); background: rgba(244, 210, 92, .75); }
+.board .board-col header { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 0 4px; }
+.board .board-col header b { font: 700 1.2rem var(--display); }
+.board .board-col header .mono { min-width: 26px; height: 26px; display: inline-grid; place-items: center; border-radius: 50%; background: #1d1a15; color: #fffdf8; font-size: .85rem; }
+.board .board-col .col-hint { margin: 0 0 10px; font-size: .85rem; color: #6d655a; }
+.board .board-col .cards { display: grid; gap: 10px; min-height: 0; }
+.board .board-col .cards:empty::after { content: 'Rien ici pour l’instant.'; display: block; padding: 10px; border: 1.5px dashed #e2d6bf; border-radius: 6px; color: #8a7f6c; font-size: .85rem; text-align: center; }
+.board .board-col.ch-new { background: transparent; box-shadow: none; border: 2px dashed #cfc3ad; }
+.board .board-col.ch-new::before { display: none; }
+.board.songs .board-col > div[class*="barre"], .board.songs .board-col .ch-parts { margin: 6px 0; }

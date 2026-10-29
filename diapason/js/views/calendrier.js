@@ -50,7 +50,7 @@ export default {
     // Une plage dans le calendrier : son heure, sa sorte, son mot, et son état (proposée par l’un, ou à nous deux).
     function chip(e) {
       const d = e.data; const S = SORTES[d.sorte] || SORTES.jalon; const ok = d.statut === 'confirme';
-      return `<button class="cl-plage ${ok ? 'ok' : 'propose'}" data-plage="${esc(e.id)}" style="--s:${S[1]};--p:${memberColor(d.par)};height:${Math.round(30 + (d.duree / 60) * 14)}px" title="${esc(S[0])}${d.note ? ` : ${esc(d.note)}` : ''}">
+      return `<button class="cl-plage ${ok ? 'ok' : 'propose'}" data-plage="${esc(e.id)}" style="--s:${S[1]};--p:${memberColor(d.par)}" title="${esc(S[0])}${d.note ? ` : ${esc(d.note)}` : ''}">
         <b>${heure(d.debut)} – ${heure(d.debut + d.duree * 6e4)}</b><span>${esc(S[0])}</span>${d.note ? `<small>${esc(d.note)}</small>` : ''}<em>${ok ? 'nous deux ✓' : `proposée par ${esc(d.par)}`}</em></button>`;
     }
     // La vue Semaine : notre rythme, l’objectif de la semaine, et sept jours avec leurs plages et leurs rituels lunaires.
@@ -73,9 +73,11 @@ export default {
           const dans = l.filter((e) => e.data.debut >= semaine && e.data.debut < semaine + 7 * JOUR);
           const moment = (t) => { const h = new Date(t).getHours(); return h < 12 ? 0 : h < 17 ? 1 : 2; };
           return `<div class="cl-sem cl-moments">${jours.map((j, i) => { const du = dans.filter((e) => e.data.debut >= j && e.data.debut < j + JOUR).sort((a, b) => a.data.debut - b.data.debut); const ri = rituelDu(j);
-            return `<div class="cl-jour ${j === auj ? 'auj' : ''}"><button class="cl-j-t" data-jour="${j}" title="Proposer une plage ce jour-là"><b>${JOURS[i]}</b> ${new Date(j).getDate()}<span>＋</span></button>
-              <div class="cl-j-lune">${ri ? `<button type="button" class="cl-rituel" data-rituel="${j}" title="${esc(ri[1])} : ${esc(ri[2])}">${luneSVG(lune(new Date(j + JOUR / 2)), 14)}<b>${esc(ri[1])}</b></button>` : ''}</div>
-              ${[0, 1, 2].map((m) => `<div class="cl-moment">${du.filter((e) => moment(e.data.debut) === m).map(chip).join('')}</div>`).join('')}</div>`; }).join('')}</div>`;
+            // Un jour = une feuille : la date en gros, sa lune s'il y en a une, puis ses plages dans l'ordre, en entier.
+            return `<div class="cl-jour ${j === auj ? 'auj' : ''} ${du.length ? '' : 'libre'}"><div class="cl-j-date"><small>${JOURS[i]}${j === auj ? ' · aujourd’hui' : ''}</small><b>${new Date(j).getDate()}</b></div>
+              ${ri ? `<button type="button" class="cl-rituel" data-rituel="${j}" title="${esc(ri[1])} : ${esc(ri[2])}">${luneSVG(lune(new Date(j + JOUR / 2)), 16)}<span>${esc(ri[1])}</span></button>` : ''}
+              <div class="cl-j-plages">${du.map(chip).join('')}</div>
+              <button class="cl-j-plus" data-jour="${j}" title="Proposer une plage ce jour-là">＋ ${du.length ? 'une autre' : 'proposer'}</button></div>`; }).join('')}</div>`;
         })()}`;
     }
     // La vue Mois : chaque jour avec ses plages en pastilles et ses lunes ; toucher un jour ouvre sa semaine.
