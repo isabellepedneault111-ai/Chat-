@@ -75,7 +75,7 @@ nav ol a:hover::before{color:var(--balise)}
 .planche:nth-child(4){transform:rotate(-1deg);background:var(--balise);color:var(--blanc);border-color:var(--balise);clip-path:polygon(0 0,86% 0,100% 50%,86% 100%,0 100%)}
 .planche:nth-child(2){padding-left:46px}
 .planche small{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:0}
-.planche:hover{transform:rotate(0) translateX(0)}
+.planche:hover{filter:brightness(1.06)}
 @media (max-width:900px){.hero .wrap{grid-template-columns:1fr;padding-top:80px}.panneau{justify-self:start}}
 
 /* sections = bornes */
@@ -169,7 +169,7 @@ h2 em{font-style:normal;color:var(--balise)}
 /* offres : poteau directionnel */
 .offres{margin-top:28px;border-top:1.5px solid var(--encre)}
 .offre{display:grid;grid-template-columns:42px 1.1fr 1.6fr 220px 40px;gap:24px;align-items:center;padding:16px 0;border-bottom:1.5px solid var(--encre);text-decoration:none;transition:background .15s,padding .2s}
-.offre:hover{background:var(--encre);color:var(--blanc);padding-left:16px;padding-right:16px}
+.offre:hover{background:var(--encre);color:var(--blanc)}
 .offre .sym{width:34px;height:34px}
 .offre h3{font-size:clamp(26px,2.6vw,36px)}
 .offre .qui{display:block;margin-bottom:4px;color:var(--gris)}
@@ -286,7 +286,7 @@ nav .wrap{height:76px}
 /* lettres qui flexent */
 .flexy{transition:font-variation-settings .5s cubic-bezier(.3,1.7,.4,1)}
 .adn-row .L{font-variation-settings:'wdth' 62}
-.adn-row:hover .L{font-variation-settings:'wdth' 125}
+.adn-row:hover .L{color:var(--balise)}
 .adn-row .L.vu{animation:flexe 1.4s cubic-bezier(.3,1.6,.4,1) both}
 @keyframes flexe{0%{font-variation-settings:'wdth' 125}55%{font-variation-settings:'wdth' 62}75%{font-variation-settings:'wdth' 90}100%{font-variation-settings:'wdth' 62}}
 .adn-row{transition:background .2s}
@@ -351,7 +351,7 @@ nav .wrap{height:76px}
 .ampli b{color:var(--balise);font-size:22px;transition:transform .3s cubic-bezier(.3,1.8,.4,1)}
 .ampli span:last-child{font-variation-settings:'wdth' 75;font-weight:850;text-transform:uppercase;font-size:22px;transition:font-variation-settings .4s cubic-bezier(.3,1.7,.4,1)}
 .ampli div:hover b{transform:translateX(10px) scale(1.3)}
-.ampli div:hover span:last-child{font-variation-settings:'wdth' 125}
+.ampli div:hover span:last-child{color:var(--balise)}
 
 
 /* ===== zéro défilement ===== */
@@ -487,6 +487,67 @@ body.fit #hub .borne{display:none}
 .offre .qui{font-size:13px}
 .log dd{font-size:21px}
 
+
+/* onglets plus gros */
+nav .wrap{height:88px}
+.sentier a{font-size:16px;gap:6px}
+.sentier a .pt{width:17px;height:17px}
+.sentier a .lb{top:30px}
+.sentier a.ici .vi{font-size:12.5px;padding:3px 7px;bottom:30px}
+.logo{font-size:30px}
+.nav-cta{font-size:16px}
+.onglet{font-size:17px;padding:10px 18px}
+.pas-l{font-size:17px;padding:12px 20px}
+.centre .mono{font-size:15px}
+.profil-b strong{font-size:22px}
+.profil-b .mono{font-size:14px}
+
+@media (max-width:980px){nav .wrap{height:76px}}
+
+
+/* carte du Royaume */
+#royaume{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+#royaume .eau{fill:none;stroke:#3E7E9A;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
+#royaume .lac{fill:#3E7E9A;opacity:.6}
+#royaume .trace{fill:none;stroke:var(--balise);stroke-width:2.5;stroke-dasharray:3 8;stroke-linecap:round}
+#royaume .ville{fill:#fff}
+#royaume .ici{fill:var(--balise);stroke:#fff;stroke-width:3}
+#royaume text{fill:rgba(255,255,255,.88);font-family:var(--mono);font-size:14px;letter-spacing:.06em;text-transform:uppercase}
+#royaume text.grand{font-size:15px;fill:#BFE3F0}
+#royaume text.moi{fill:var(--balise);font-weight:600}
+/* police plus grosse */
+body{font-size:19px}
+.mono{font-size:15px}
+body.fit .intro{font-size:clamp(19px,min(1.6vw,2.9vh),23px)}
+.adn-row p{font-size:19px}
+.adn-row h3{font-size:clamp(28px,2.8vw,40px)}
+.eng-d .etape p{font-size:17.5px}
+.eng-d .etape h3{font-size:30px}
+.acts{font-size:16.5px}
+.acts .tag{font-size:12.5px}
+.offre p{font-size:17.5px}
+.instr p,.obs p{font-size:18px}
+.fiche .ia li,.fiche .guide{font-size:17.5px}
+.fiche .obs{font-size:22px}
+.g p{font-size:18px}
+.billet .traces p,.billet .msg{font-size:17px}
+
+
+#hub .tete2 h2{font-size:clamp(34px,min(4vw,7.4vh),64px)}
+.jour.ven small{font-size:16px}
+
+
+.sentier a{font-size:clamp(13px,.98vw,16px)}
+.sentier a .lb{white-space:nowrap}
+.logo{font-size:clamp(22px,1.9vw,30px)}
+.nav-cta{font-size:clamp(14px,1.05vw,16px);padding:0 16px}
+
+
+/* accueil : panneau plus bas pour laisser voir la carte */
+.panneau{align-self:end;margin-top:22vh}
+.lisiere > .wrap{position:relative;z-index:2}
+
+body.fit .borne{display:none}
 @media (prefers-reduced-motion:reduce){.empreintes,.randonneuse{display:none}}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
@@ -505,8 +566,9 @@ body.fit #hub .borne{display:none}
 <header class="hero vue-el" id="top" data-vue="depart">
   <div class="grid-c" aria-hidden="true"></div>
   <svg id="topo" aria-hidden="true"></svg>
+  <svg id="royaume" aria-label="Carte stylisée du Saguenay–Lac-Saint-Jean" role="img"></svg>
   <svg class="foret" id="foret-hero" aria-hidden="true" preserveAspectRatio="xMidYMax slice"></svg>
-  <div class="coords mono" aria-hidden="true"><span>48°25′ N · 71°15′ O</span><span>Jonquière · Saguenay–Lac-Saint-Jean</span><span>Ouverture août 2027</span></div>
+  <div class="coords mono" aria-hidden="true"><span>48°25′ N · 71°15′ O</span><span>Jonquière · Royaume du Saguenay–Lac-Saint-Jean</span><span>Ouverture août 2027</span></div>
   <div class="wrap">
     <div>
       <h1 class="cond titre-flex"><span class="mot">Ce</span> <span class="mot">qui</span> <span class="mot">plie</span><br><span class="o"><span class="mot">ne</span> <span class="mot">casse</span> <span class="mot">pas.</span></span></h1>
@@ -535,10 +597,10 @@ body.fit #hub .borne{display:none}
         <p class="intro">Quatre lettres qui guident chaque décision. Survolez-les : elles plient sans casser.</p>
       </div>
     <div class="adn">
-      <div class="adn-row"><span class="L flexy" aria-hidden="true">F</span><h3 class="cond">Flexibilité</h3><p>Des lieux, des horaires, des approches et des parcours qui s’adaptent à l’enfant, pas l’inverse.<span class="q mono">Au quotidien : 1 ou 2 jours au Hub, une forêt jamais pareille.</span></p></div>
-      <div class="adn-row"><span class="L flexy" aria-hidden="true">L</span><h3 class="cond">Laboratoire</h3><p>Un lieu d’entraide où l’erreur est permise, et même utile. L’adulte est guide; chacun enseigne quelque chose aux autres.<span class="q mono">Au quotidien : le LAB des Possibles.</span></p></div>
-      <div class="adn-row"><span class="L flexy" aria-hidden="true">E</span><h3 class="cond">Engagement</h3><p>Cognitif, social, communautaire et personnel. Le mérite des réussites revient à l’enfant et à ses efforts.<span class="q mono">Au quotidien : l’Éclaireur entre deux sorties.</span></p></div>
-      <div class="adn-row"><span class="L flexy" aria-hidden="true">X</span><h3 class="cond">eXception</h3><p>Un parcours hors norme. Et X, c’est aussi l’enfant : on ne le résout pas, on le laisse se révéler.<span class="q mono">Au quotidien : un portfolio à son image.</span></p></div>
+      <div class="adn-row"><span class="L flexy" aria-hidden="true">F</span><h3 class="cond">Flexibilité</h3><p>Des lieux, des horaires, des approches et des parcours qui s’adaptent à l’enfant, pas l’inverse.</p></div>
+      <div class="adn-row"><span class="L flexy" aria-hidden="true">L</span><h3 class="cond">Laboratoire</h3><p>Un lieu d’entraide où l’erreur est permise, et même utile. L’adulte est guide; chacun enseigne quelque chose aux autres.</p></div>
+      <div class="adn-row"><span class="L flexy" aria-hidden="true">E</span><h3 class="cond">Engagement</h3><p>Cognitif, social, communautaire et personnel. Le mérite des réussites revient à l’enfant et à ses efforts.</p></div>
+      <div class="adn-row"><span class="L flexy" aria-hidden="true">X</span><h3 class="cond">eXception</h3><p>Un parcours hors norme. Et X, c’est aussi l’enfant : on ne le résout pas, on le laisse se révéler.</p></div>
     </div>
     </div>
   </div>
@@ -562,10 +624,10 @@ body.fit #hub .borne{display:none}
         <circle class="pt" cx="150" cy="160" r="9"/><circle class="pt" cx="450" cy="120" r="9"/><circle class="pt" cx="750" cy="70" r="9"/><circle class="pt" cx="1050" cy="25" r="9"/>
       </svg>
       <div class="etapes">
-        <div class="etape"><span class="mono alt">Étape 1 · Alt. 120 m</span><h3 class="cond">Choisir</h3><p>Le lieu, la position, le projet. Un enfant qui choisit n’obéit plus seulement : il s’engage.</p><span class="ici">Au Hub : son projet au LAB, son rythme au Club de course.</span></div>
-        <div class="etape"><span class="mono alt">Étape 2 · Alt. 240 m</span><h3 class="cond">Se sentir capable</h3><p>Croire qu’on peut réussir, et savoir que ses réussites viennent de ses efforts.</p><span class="ici">Au Hub : des défis à sa mesure, des progrès visibles.</span></div>
-        <div class="etape"><span class="mono alt">Étape 3 · Alt. 360 m</span><h3 class="cond">Appartenir</h3><p>Une communauté où la voix des jeunes compte vraiment, et où chacun apporte sa force.</p><span class="ici">Au Hub : groupes multiâges, conseil des jeunes.</span></div>
-        <div class="etape"><span class="mono alt">Étape 4 · Sommet</span><h3 class="cond">Donner du sens</h3><p>Des projets signifiants qui reconnaissent les intérêts de chacun, loin de la redondance.</p><span class="ici">Au Hub : le territoire, les mentors de métier.</span></div>
+        <div class="etape"><span class="mono alt">Étape 1 · Rivière aux Sables</span><h3 class="cond">Choisir</h3><p>Le lieu, la position, le projet. Un enfant qui choisit n’obéit plus seulement : il s’engage.</p></div>
+        <div class="etape"><span class="mono alt">Étape 2 · Mont Jacob</span><h3 class="cond">Se sentir capable</h3><p>Croire qu’on peut réussir, et savoir que ses réussites viennent de ses efforts.</p></div>
+        <div class="etape"><span class="mono alt">Étape 3 · Monts-Valin</span><h3 class="cond">Appartenir</h3><p>Une communauté où la voix des jeunes compte vraiment, et où chacun apporte sa force.</p></div>
+        <div class="etape"><span class="mono alt">Étape 4 · Le sommet</span><h3 class="cond">Donner du sens</h3><p>Des projets signifiants qui reconnaissent les intérêts de chacun, loin de la redondance.</p></div>
       </div>
     </div>
       </div>
@@ -632,7 +694,7 @@ body.fit #hub .borne{display:none}
       <div><dt>Glisser</dt><dd>Raquette, ski de fond, fatbike</dd></div>
       <div><dt>Pagayer</dt><dd>Canot et kayak sur la rivière</dd></div>
       <div><dt>Respirer</dt><dd>Yoga et respiration en forêt</dd></div>
-      <div><dt>Chrono</dt><dd>Aucun. Météo : toutes, même en février</dd></div>
+      <div><dt>Chrono</dt><dd>Aucun. Météo : toutes, même à −30 en février</dd></div>
     </dl>
   </div>
 </section>
@@ -757,7 +819,7 @@ body.fit #hub .borne{display:none}
       <label class="plein"><span>Message</span><textarea name="message" rows="3"></textarea></label>
       <button type="submit">Signer le registre →</button>
     </form>
-    <p class="mono pied">projetflex · 48°25′ N · 71°15′ O · Jonquière · Un service éducatif complémentaire pour les familles · © 2026</p>
+    <p class="mono pied">projetflex · Fait au Royaume du Saguenay · 48°25′ N · 71°15′ O · Un service éducatif complémentaire pour les familles · © 2026</p>
       </div>
     </div>
   </div>
@@ -821,27 +883,24 @@ function planter(svg,opts){
 const fh=document.getElementById('foret-hero');
 if(fh)planter(fh,{h:420,couches:[{col:'#174F3D',min:170,max:260,pas:70,sol:10},{col:'#0E3528',min:120,max:200,pas:60,sol:6},{col:'#08241B',min:80,max:150,pas:52,sol:0}]});
 document.querySelectorAll('.lisiere').forEach(sec=>{const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('class','foret');s.setAttribute('aria-hidden','true');s.setAttribute('preserveAspectRatio','xMidYMax slice');sec.appendChild(s);planter(s,{h:220,couches:[{col:'#174F3D',min:110,max:170,pas:58,sol:0},{col:'#0B2C21',min:70,max:120,pas:46,sol:0}]})});
-let px=.5, vent=0;
+let px=.5, pxl=.5, vent=0;
 addEventListener('pointermove',e=>{px=e.clientX/innerWidth},{passive:true});
 const lent=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function souffle(t){
-  vent=t/1000;
+  vent=t/1000; pxl+=(px-pxl)*.04;
   FORETS.forEach(f=>{
     if(!f.svg.getBoundingClientRect().height)return;
     f.arbres.forEach(a=>{
       const x=+a.dataset.x/f.w, c=+a.dataset.c;
-      const brise=Math.sin(vent*1.3+x*6+c)*2.2+Math.sin(vent*.7+x*3)*1.5;
-      const attire=(px-x)*-14*(1-Math.min(1,Math.abs(px-x)*2.2));
-      a.style.transform=`skewX(${(brise+attire)*(1+c*.25)}deg)`;
+      const brise=Math.sin(vent*.9+x*6+c)*1.6+Math.sin(vent*.5+x*3)*1.1;
+      const attire=(pxl-x)*-5*(1-Math.min(1,Math.abs(pxl-x)*2.5));
+      a.style.transform=`skewX(${((brise+attire)*(1+c*.2)).toFixed(2)}deg)`;
     });
   });
   if(!lent)requestAnimationFrame(souffle);
 }
 requestAnimationFrame(souffle);
 
-// titre : le mot le plus proche du curseur s'étire
-const mots=[...document.querySelectorAll('.titre-flex .mot')];
-addEventListener('pointermove',e=>{mots.forEach(m=>{const b=m.getBoundingClientRect();if(!b.width)return;const d=Math.hypot(e.clientX-(b.left+b.width/2),e.clientY-(b.top+b.height/2));const k=Math.max(0,1-d/260);m.style.fontVariationSettings=`'wdth' ${68+k*57}`})},{passive:true});
 
 // ADN : les lettres flexent quand la borne s'ouvre
 function flexerADN(){document.querySelectorAll('.adn-row .L').forEach((l,i)=>{l.classList.remove('vu');void l.offsetWidth;l.style.animationDelay=(i*.12)+'s';l.classList.add('vu')})}
@@ -855,6 +914,7 @@ const PIECES=[
  ['Crayon','<svg viewBox="0 0 100 100"><g transform="rotate(-35 50 50)"><rect x="18" y="40" width="56" height="20" fill="#1F9D55"/><rect x="74" y="40" width="10" height="20" fill="#F5A3B5"/><path d="M18 40 L4 50 L18 60Z" fill="#F2D3A2"/><path d="M4 50 L9 46.5 L9 53.5Z" fill="#0B1712"/></g></svg>'],
  ['Feuille','<svg viewBox="0 0 100 100"><path d="M50 8 L58 30 L76 22 L70 42 L90 44 L74 58 L80 70 L58 66 L54 86 L50 92 L46 86 L42 66 L20 70 L26 58 L10 44 L30 42 L24 22 L42 30Z" fill="#D7263D"/><rect x="48" y="80" width="4" height="16" fill="#7A1420"/></svg>'],
  ['Boussole','<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#fff" stroke="#0B1712" stroke-width="5"/><path d="M50 18 L58 50 L50 50Z" fill="#FF5B14"/><path d="M50 18 L42 50 L50 50Z" fill="#B23A00"/><path d="M50 82 L58 50 L42 50Z" fill="#0B1712"/><circle cx="50" cy="50" r="4" fill="#0B1712"/></svg>'],
+ ['Bleuet','<svg viewBox="0 0 100 100"><circle cx="38" cy="58" r="22" fill="#3B4FA8"/><circle cx="64" cy="46" r="20" fill="#4C63C4"/><circle cx="58" cy="72" r="16" fill="#2E3E8A"/><path d="M32 42 l6 -6 l6 6 M58 30 l6 -6 l6 6" stroke="#1A2350" stroke-width="3" fill="none"/><path d="M64 26 q10 -18 24 -14 q-6 14 -24 14Z" fill="#1F9D55"/></svg>'],
  ['Planche','<svg viewBox="0 0 100 100"><rect x="8" y="38" width="84" height="24" fill="#C8955C" transform="rotate(-8 50 50)"/><circle cx="20" cy="50" r="3" fill="#5B3A1A"/><circle cx="80" cy="42" r="3" fill="#5B3A1A"/></svg>']
 ];
 const plan=document.getElementById('plan');
@@ -918,6 +978,28 @@ setInterval(()=>{
   f.setAttribute('x1',x);f.setAttribute('y1',y);f.setAttribute('x2',x-70);f.setAttribute('y2',y-35);
 },4200);
 
+
+// carte du Royaume : rivière Saguenay, fjord, Lac-Saint-Jean, villes
+function royaume(){
+  const svg=document.getElementById('royaume'); if(!svg)return;
+  const W=svg.clientWidth,H=svg.clientHeight; if(!W)return;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const P=(x,y)=>[x*W,y*H];
+  const lac=P(.42,.17), riv=[P(.465,.19),P(.5,.2),P(.535,.205),P(.57,.215),P(.61,.235),P(.65,.245),P(.69,.27),P(.74,.29),P(.8,.31),P(.87,.33),P(.94,.35),P(1.02,.37)];
+  const d='M'+riv.map(p=>p.map(v=>v.toFixed(1)).join(' ')).join(' L');
+  const villes=[['Alma',P(.47,.155),0],['Jonquière',P(.57,.215),1],['Chicoutimi',P(.65,.245),0],['La Baie',P(.74,.29),0],['Tadoussac',P(.975,.36),0]];
+  let h=`<ellipse class="lac" cx="${lac[0]}" cy="${lac[1]}" rx="${W*.05}" ry="${H*.045}"/>`;
+  h+=`<path class="eau" d="${d}" stroke-width="5"/><path class="eau" d="M${P(.69,.27).join(' ')} L${P(.74,.29).join(' ')} L${P(.8,.31).join(' ')} L${P(.87,.33).join(' ')} L${P(.94,.35).join(' ')} L${P(1.02,.37).join(' ')}" stroke-width="12"/>`;
+  const valin=P(.68,.11);
+  h+=`<path class="trace" d="M${P(.57,.215).join(' ')} Q ${P(.6,.12).join(' ')} ${valin.join(' ')}"/>`;
+  h+=`<path d="M${valin[0]-12} ${valin[1]+8} L${valin[0]} ${valin[1]-12} L${valin[0]+12} ${valin[1]+8} Z" fill="#fff" opacity=".85"/><text x="${valin[0]+18}" y="${valin[1]+4}">Monts-Valin</text>`;
+  h+=`<text class="grand" x="${lac[0]-W*.04}" y="${lac[1]-H*.055}">Lac Saint-Jean</text><text class="grand" x="${P(.83,.29)[0]}" y="${P(.83,.29)[1]}">Fjord du Saguenay</text>`;
+  villes.forEach(([n,[x,y],moi])=>{
+    h+=moi?`<circle class="ici" cx="${x}" cy="${y}" r="9"/><text class="moi" text-anchor="end" x="${x+10}" y="${y+32}">Jonquière · vous êtes ici</text>`:`<circle class="ville" cx="${x}" cy="${y}" r="4.5"/><text ${n==='Tadoussac'?'text-anchor="end" ':''}x="${n==='Tadoussac'?x-8:x+9}" y="${y-11}">${n}</text>`;
+  });
+  svg.innerHTML=h;
+}
+
 // sentier : une borne à la fois, sous-onglets, ajustement à l'écran
 const VUES=[['depart','Départ'],['adn','ADN'],['engagement','Engagement'],['hub','Le Hub'],['eclaireur','Éclaireur'],['ciel','Observatoire'],['offres','Pour qui'],['recherche','Recherche'],['equipe','Équipe'],['registre','Registre']];
 const SOUS={hub:'Ma semaine',lab:'Le LAB',course:'Bouger',equipe:'Les guides',manifeste:'Le manifeste'};
@@ -945,7 +1027,7 @@ function ajuster(){
 function aller(){
   const k=etapeDe(location.hash), [v,id]=ETAPES[k], i=VUES.findIndex(x=>x[0]===v);
   document.querySelectorAll('[data-vue]').forEach(el=>el.classList.toggle('actif',el.id===id||(v==='depart'&&el.id==='top')));
-  if(v==='depart')requestAnimationFrame(()=>window.drawTopo&&window.drawTopo());
+  if(v==='depart')requestAnimationFrame(()=>{window.drawTopo&&window.drawTopo();royaume()});
   if(v==='adn')requestAnimationFrame(flexerADN);
   if(v==='ciel')requestAnimationFrame(ciel);
   if(id==='lab'&&!plan.querySelector('.collant'))requestAnimationFrame(disposer);
@@ -959,7 +1041,7 @@ function aller(){
   scrollTo(0,0); requestAnimationFrame(ajuster); setTimeout(ajuster,350);
 }
 addEventListener('hashchange',aller); aller();
-let rt; addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(ajuster,120)});
+let rt; addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{ajuster();royaume()},120)});
 document.fonts&&document.fonts.ready.then(ajuster);
 addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select'))return;const k=etapeDe(location.hash);if(e.key==='ArrowRight'&&k<ETAPES.length-1)location.hash=ETAPES[k+1][1];if(e.key==='ArrowLeft'&&k>0)location.hash=ETAPES[k-1][1]});
 
@@ -967,21 +1049,21 @@ addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select'))retu
 // profils : exemples concrets de semaine
 const PROG={
  petits:{
-  lundi:[['corps','Bouger','Club de course version jeux de piste'],['math','Math','Compter, classer et comparer les cocottes; suites et motifs'],['fr','Lecture','Conte sous les épinettes et rappel du récit']],
+  lundi:[['corps','Bouger','Club de course version jeux de piste'],['math','Math','Compter les bleuets de la bleuetière : estimer, classer, comparer'],['fr','Lecture','Conte sous les épinettes et rappel du récit']],
   mardi:[['corps','Bouger','Yoga des animaux sous les arbres'],['fr','Écriture','Carnet de traces : dessins, lettres et premiers mots'],['sci','Sciences','Qui habite sous la souche? Observer et nommer']],
   mercredi:[['corps','Bouger','Hébertisme : grimper, ramper, garder l’équilibre'],['math','Math','LAB : construire une cabane à écureuil, mesurer et comparer'],['fr','Oral','Comptines et causerie : raconter sa découverte']],
-  jeudi:[['corps','Bouger','Raquette l’hiver, chasse aux flaques au printemps'],['us','Territoire','Sentier des sens et carte du boisé'],['port','Portfolio','Bilan avec la famille : on choisit ses plus belles traces'],['sci','Ciel','Ce soir : chercher la Lune avec ses parents']],
+  jeudi:[['corps','Bouger','Raquette l’hiver, chasse aux flaques au printemps'],['us','Territoire','Sentier des sens au mont Jacob et carte du boisé'],['port','Portfolio','Bilan avec la famille : on choisit ses plus belles traces']],
   traces:{lundi:'une fiche de classement des trouvailles',mardi:'une page du carnet de traces',mercredi:'des photos de la cabane avec ses mesures',jeudi:'une carte du boisé dessinée et commentée'}},
  explo:{
-  lundi:[['corps','Bouger','Club de course'],['math','Math','Mathématiques en forêt : périmètre et aire d’une parcelle, fractions avec les arbres'],['fr','Lecture','Cercle de lecture : un roman jeunesse, débat d’idées']],
-  mardi:[['corps','Bouger','Hébertisme et escalade d’arbres encordée'],['fr','Écriture','Chronique de terrain publiée dans l’Éclaireur (planifier, réviser, corriger)'],['sci','Sciences','Qualité de l’eau de la rivière : mesurer, noter, conclure']],
-  mercredi:[['corps','Bouger','Raquette ou vélo de montagne selon la saison'],['ent','Entrepreneuriat','LAB entrepreneurial : créer un produit (nichoirs, savon), fixer un prix, tenir un budget'],['fr','Oral','Présenter son produit au marché du Café des familles']],
-  jeudi:[['corps','Bouger','Yoga et respiration en forêt'],['us','Univers social','Histoire du Saguenay sur le terrain : le Bassin, la pulperie'],['sci','Astronomie','Journal des phases de la Lune (un mois d’observation)'],['port','Portfolio','Bilan du portfolio : traces pour l’évaluation annuelle']],
+  lundi:[['corps','Bouger','Club de course'],['math','Math','Au mont Jacob : périmètre et aire d’une parcelle, fractions avec les arbres'],['fr','Lecture','Cercle de lecture : un roman jeunesse, débat d’idées']],
+  mardi:[['corps','Bouger','Hébertisme et escalade d’arbres encordée'],['fr','Écriture','Chronique de terrain publiée dans l’Éclaireur (planifier, réviser, corriger)'],['sci','Sciences','Qualité de l’eau de la rivière aux Sables : mesurer, noter, conclure']],
+  mercredi:[['corps','Bouger','Raquette ou vélo de montagne au mont Jacob'],['ent','Entrepreneuriat','LAB entrepreneurial : créer un produit (nichoirs, savon), fixer un prix, tenir un budget'],['fr','Oral','Présenter son produit au marché du Café des familles']],
+  jeudi:[['corps','Bouger','Yoga et respiration en forêt'],['us','Univers social','Histoire sur le terrain : la pulperie de Chicoutimi, le pont d’aluminium d’Arvida'],['port','Portfolio','Bilan du portfolio : traces pour l’évaluation annuelle']],
   traces:{lundi:'un plan de la parcelle avec calculs d’aire et de périmètre',mardi:'une chronique révisée, publiée dans l’Éclaireur',mercredi:'le plan d’affaires de son produit et le bilan des ventes',jeudi:'une ligne du temps du Saguenay annotée'}},
  ados:{
   lundi:[['corps','Bouger','Club de course'],['fr','Écriture','Cap sur l’épreuve de français de 5e secondaire : texte argumentatif, planifier et réviser'],['fr','Lecture','Œuvre complète et analyse en petit groupe']],
-  mardi:[['corps','Bouger','Vélo de montagne ou fatbike'],['math','Math','Modéliser des données de terrain : fonctions et statistiques'],['sci','Astronomie','Astrophoto : calculer la taille d’un cratère lunaire'],['sci','Sciences','Écosystème du fjord : protocole d’expérimentation']],
-  mercredi:[['corps','Bouger','Canot sur la rivière ou ski de fond selon la saison'],['ent','Entrepreneuriat','Projet entrepreneurial : de l’idée au prototype, étude de marché et budget'],['ent','Mentor','Rencontre avec une entrepreneure ou un artisan du SLSJ']],
+  mardi:[['corps','Bouger','Vélo de montagne ou fatbike'],['math','Math','Modéliser des données de terrain : fonctions et statistiques'],['sci','Sciences','Le fjord du Saguenay : les bélugas et l’eau salée sous l’eau douce']],
+  mercredi:[['corps','Bouger','Canot sur la rivière aux Sables ou ski de fond selon la saison'],['ent','Entrepreneuriat','Projet entrepreneurial : de l’idée au prototype, étude de marché et budget'],['ent','Mentor','Rencontre avec une entrepreneure ou un artisan du SLSJ']],
   jeudi:[['corps','Bouger','Escalade de bloc et slackline'],['fr','Écriture','Simulation chronométrée de l’épreuve et rétroaction personnalisée'],['port','Portfolio','Bilan du portfolio et pitch du projet entrepreneurial']],
   traces:{lundi:'un texte argumentatif annoté avec la grille de l’épreuve',mardi:'un rapport de modélisation avec graphiques',mercredi:'un prototype et un plan d’affaires d’une page',jeudi:'une simulation d’épreuve corrigée et un pitch filmé'}}
 };
