@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>projetflex · Ce qui plie ne casse pas</title>
-<meta name="description" content="projetflex : apprendre dehors, ensemble, à son rythme. Forêt, LAB des Possibles et Éclaireur, à Jonquière (Saguenay–Lac-Saint-Jean).">
+<meta name="description" content="projetflex : pour les enfants et les ados, apprendre dehors, ensemble, à son rythme. Forêt, LAB des Possibles et Éclaireur, à Jonquière (Saguenay–Lac-Saint-Jean).">
 <meta property="og:title" content="projetflex · Ce qui plie ne casse pas">
 <meta property="og:description" content="Un sentier d’apprentissage en forêt, en LAB et en ligne, à Jonquière.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -248,6 +248,30 @@ nav .wrap{height:76px}
 .mob{display:none}
 @media (max-width:640px){.pas-l{padding:12px 14px;font-size:14px}}
 
+
+/* profils et activités */
+.profils{display:grid;grid-template-columns:repeat(3,1fr);margin-top:30px;border:1.5px solid var(--encre);border-bottom:0}
+.profil-b{font:inherit;text-align:left;padding:16px 20px;background:var(--blanc);color:var(--encre);border:0;cursor:pointer;display:grid;gap:2px}
+.profil-b+.profil-b{border-left:1.5px solid var(--encre)}
+.profil-b strong{font-variation-settings:'wdth' 75;font-weight:850;text-transform:uppercase;font-size:22px}
+.profil-b .mono{color:var(--gris)}
+.profil-b:hover{background:var(--givre)}
+.profil-b[aria-selected="true"]{background:var(--balise);color:var(--blanc)}
+.profil-b[aria-selected="true"] .mono{color:rgba(255,255,255,.85)}
+.profils+.horaire{margin-top:0}
+.acts{list-style:none;display:grid;gap:5px;font-size:15px;color:#24332D}
+.acts li{display:flex;gap:10px;align-items:baseline}
+.acts .tag{flex:none;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.04em;padding:2px 6px;border:1.2px solid currentColor;min-width:52px;text-align:center}
+.tag.math{color:var(--bleu)}.tag.fr{color:#B23A00}.tag.sci{color:var(--vert)}.tag.ent{color:#7A3FC1}.tag.us{color:#8A6411}.tag.corps{color:var(--gris)}.tag.port{color:var(--encre)}
+.jour[aria-pressed="true"] .acts{color:rgba(255,255,255,.9)}
+.jour[aria-pressed="true"] .tag{color:var(--blanc)}
+.jour{align-items:start}
+.jour strong{padding-top:2px}
+.traces{border-top:1px dashed var(--ligne);padding-top:12px}
+.traces p{font-size:15px;margin-top:6px}
+.ado-note{font-size:13px;color:var(--gris)}
+@media (max-width:640px){.profils{grid-template-columns:1fr}.profil-b+.profil-b{border-left:0;border-top:1.5px solid var(--encre)}}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
 </style>
 </head>
@@ -268,7 +292,7 @@ nav .wrap{height:76px}
   <div class="wrap">
     <div>
       <h1 class="cond"><span>Ce qui plie</span><span class="o">ne casse pas.</span></h1>
-      <p class="lead">projetflex, c’est un sentier d’apprentissage pour les enfants de 4 à 12 ans et leurs familles : la forêt comme terrain, un LAB pour créer, et un copilote numérique qui garde la curiosité allumée entre deux sorties.</p>
+      <p class="lead">projetflex, c’est un sentier d’apprentissage pour les enfants et les ados de 4 à 17 ans, et leurs familles : la forêt comme terrain, un LAB pour créer, et un copilote numérique qui garde la curiosité allumée entre deux sorties.</p>
       <div class="btns">
         <a class="btn plein" href="#hub">Composer ma semaine <span class="fl">→</span></a>
         <a class="btn vide" href="#engagement">Notre philosophie</a>
@@ -323,13 +347,18 @@ nav .wrap{height:76px}
   <div class="wrap">
     <div class="borne"><span class="num">03</span><span class="mono km-l">Borne 03 · Le Hub Forêt + LAB</span></div>
     <h2 class="cond">Composez votre<br><em>semaine.</em></h2>
-    <p class="intro">Pour les familles qui font l’enseignement à la maison. Choisissez une ou deux journées au Hub : le reste de la semaine vous appartient, et le parent reste maître d’œuvre du projet d’apprentissage.</p>
+    <p class="intro">Pour les familles qui font l’enseignement à la maison. Choisissez un profil, puis une ou deux journées au Hub : le reste de la semaine vous appartient, et le parent reste maître d’œuvre du projet d’apprentissage.</p>
+    <div class="profils" role="tablist" aria-label="Profil de l’enfant">
+      <button role="tab" class="profil-b" aria-selected="false" data-p="petits"><span class="mono">4 à 7 ans</span><strong>Petits explorateurs</strong></button>
+      <button role="tab" class="profil-b" aria-selected="true" data-p="explo"><span class="mono">8 à 12 ans</span><strong>Explorateurs</strong></button>
+      <button role="tab" class="profil-b" aria-selected="false" data-p="ados"><span class="mono">12 à 17 ans</span><strong>Ados</strong></button>
+    </div>
     <div class="horaire">
       <div class="jours" id="jours">
-        <button class="jour" aria-pressed="false" data-d="lundi"><strong>Lundi</strong><small>Club de course · Forêt : exploration · LAB : projet</small><span class="etat">Choisir</span></button>
-        <button class="jour" aria-pressed="false" data-d="mardi"><strong>Mardi</strong><small>Club de course · Forêt : sciences · Mentor de métier</small><span class="etat">Choisir</span></button>
-        <button class="jour" aria-pressed="false" data-d="mercredi"><strong>Mercredi</strong><small>Club de course · LAB : création · Café des familles</small><span class="etat">Choisir</span></button>
-        <button class="jour" aria-pressed="false" data-d="jeudi"><strong>Jeudi</strong><small>Club de course · Forêt : territoire · Bilan du portfolio</small><span class="etat">Choisir</span></button>
+        <button class="jour" aria-pressed="false" data-d="lundi"><strong>Lundi</strong><ul class="acts" data-j="lundi"></ul><span class="etat">Choisir</span></button>
+        <button class="jour" aria-pressed="false" data-d="mardi"><strong>Mardi</strong><ul class="acts" data-j="mardi"></ul><span class="etat">Choisir</span></button>
+        <button class="jour" aria-pressed="false" data-d="mercredi"><strong>Mercredi</strong><ul class="acts" data-j="mercredi"></ul><span class="etat">Choisir</span></button>
+        <button class="jour" aria-pressed="false" data-d="jeudi"><strong>Jeudi</strong><ul class="acts" data-j="jeudi"></ul><span class="etat">Choisir</span></button>
         <div class="jour ven"><strong>Vendredi</strong><small>Le jour qui voyage : pop-up dans les écoles et les villages, évaluations, Éclaireur en ligne.</small><span class="etat">Hors Hub</span></div>
       </div>
       <div class="billet" aria-live="polite">
@@ -337,6 +366,7 @@ nav .wrap{height:76px}
         <div class="prix" id="prix">0 $<small> / mois</small></div>
         <div class="jauge" aria-hidden="true"><i id="j1"></i><i id="j2"></i></div>
         <p class="msg" id="msg">Choisissez une journée pour commencer.</p>
+        <div class="traces"><span class="mono">Ce que votre enfant rapporte</span><p id="traces">Choisissez une journée pour voir les traces qui iront dans son portfolio.</p></div>
         <p class="note">Tarifs indicatifs, avant l’échelle mobile selon le revenu familial. Des places à tarif réduit sont réservées chaque année.</p>
       </div>
     </div>
@@ -386,8 +416,8 @@ nav .wrap{height:76px}
     <div class="borne"><span class="num">05</span><span class="mono km-l">Borne 05 · Plusieurs sentiers</span></div>
     <h2 class="cond">Pour qui?<br><em>Choisissez votre sentier.</em></h2>
     <div class="offres">
-      <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" fill="var(--vert)"/></svg><div><span class="mono qui">Familles en enseignement à la maison</span><h3 class="cond">Le Hub Forêt + LAB</h3></div><p>Une ou deux journées par semaine, en petits groupes multiâges, avec des guides brevetées.</p><span class="prix">Dès 195 $ / mois</span><span class="fl">→</span></a>
-      <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><rect x="3" y="3" width="28" height="28" fill="var(--bleu)"/></svg><div><span class="mono qui">Tous les enfants de la région</span><h3 class="cond">Camps FLEX</h3></div><p>Semaine de relâche et été : forêt, création, Club de course et grands projets.</p><span class="prix">Inscriptions à venir</span><span class="fl">→</span></a>
+      <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" fill="var(--vert)"/></svg><div><span class="mono qui">Familles en enseignement à la maison</span><h3 class="cond">Le Hub Forêt + LAB</h3></div><p>Une ou deux journées par semaine, en petits groupes par profil (4-7, 8-12, ados), avec des guides brevetées.</p><span class="prix">Dès 195 $ / mois</span><span class="fl">→</span></a>
+      <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><rect x="3" y="3" width="28" height="28" fill="var(--bleu)"/></svg><div><span class="mono qui">Les enfants et les ados de la région</span><h3 class="cond">Camps FLEX</h3></div><p>Semaine de relâche et été : forêt, création, Club de course et grands projets.</p><span class="prix">Inscriptions à venir</span><span class="fl">→</span></a>
       <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 2 L32 17 L17 32 L2 17 Z" fill="var(--encre)"/></svg><div><span class="mono qui">Écoles et municipalités</span><h3 class="cond">Pop-up FLEX</h3></div><p>Nous venons chez vous le vendredi : ateliers nature et LAB clés en main.</p><span class="prix">Sur réservation</span><span class="fl">→</span></a>
       <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 3 L32 31 L2 31 Z" fill="var(--balise)"/></svg><div><span class="mono qui">Parents-éducateurs du Québec</span><h3 class="cond">Évaluation annuelle</h3></div><p>Le bilan de progression exigé, réalisé par une enseignante titulaire d’une autorisation d’enseigner.</p><span class="prix">Dès le printemps 2028</span><span class="fl">→</span></a>
       <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="none" stroke="var(--bleu)" stroke-width="5"/></svg><div><span class="mono qui">Familles de la francophonie</span><h3 class="cond">Plateforme Éclaireur</h3></div><p>Trousses de projets nature, parcours téléchargeables, communauté et copilote.</p><span class="prix">Janvier 2028</span><span class="fl">→</span></a>
@@ -513,6 +543,41 @@ function aller(){
 addEventListener('hashchange',aller); aller();
 addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select'))return;const i=VUES.findIndex(x=>x[0]===vueDe(location.hash));if(e.key==='ArrowRight'&&i<VUES.length-1)location.hash=VUES[i+1][0];if(e.key==='ArrowLeft'&&i>0)location.hash=VUES[i-1][0]==='depart'?'top':VUES[i-1][0]});
 
+
+// profils : exemples concrets de semaine
+const PROG={
+ petits:{
+  lundi:[['corps','Corps','Club de course (version jeux de piste)'],['math','Math','Compter, classer et comparer les cocottes; suites et motifs'],['fr','Lecture','Conte sous les épinettes et rappel du récit']],
+  mardi:[['corps','Corps','Club de course'],['fr','Écriture','Carnet de traces : dessins, lettres et premiers mots'],['sci','Sciences','Qui habite sous la souche? Observer et nommer']],
+  mercredi:[['corps','Corps','Club de course'],['math','Math','LAB : construire une cabane à écureuil, mesurer et comparer'],['fr','Oral','Comptines et causerie : raconter sa découverte']],
+  jeudi:[['corps','Corps','Club de course'],['us','Territoire','Sentier des sens et carte du boisé'],['port','Portfolio','Bilan avec la famille : on choisit ses plus belles traces']],
+  traces:{lundi:'une fiche de classement des trouvailles',mardi:'une page du carnet de traces',mercredi:'des photos de la cabane avec ses mesures',jeudi:'une carte du boisé dessinée et commentée'}},
+ explo:{
+  lundi:[['corps','Corps','Club de course'],['math','Math','Mathématiques en forêt : périmètre et aire d’une parcelle, fractions avec les arbres'],['fr','Lecture','Cercle de lecture : un roman jeunesse, débat d’idées']],
+  mardi:[['corps','Corps','Club de course'],['fr','Écriture','Chronique de terrain publiée dans l’Éclaireur (planifier, réviser, corriger)'],['sci','Sciences','Qualité de l’eau de la rivière : mesurer, noter, conclure']],
+  mercredi:[['corps','Corps','Club de course'],['ent','Entrepreneuriat','LAB entrepreneurial : créer un produit (nichoirs, savon), fixer un prix, tenir un budget'],['fr','Oral','Présenter son produit au marché du Café des familles']],
+  jeudi:[['corps','Corps','Club de course'],['us','Univers social','Histoire du Saguenay sur le terrain : le Bassin, la pulperie'],['port','Portfolio','Bilan du portfolio : traces pour l’évaluation annuelle']],
+  traces:{lundi:'un plan de la parcelle avec calculs d’aire et de périmètre',mardi:'une chronique révisée, publiée dans l’Éclaireur',mercredi:'le plan d’affaires de son produit et le bilan des ventes',jeudi:'une ligne du temps du Saguenay annotée'}},
+ ados:{
+  lundi:[['corps','Corps','Club de course'],['fr','Écriture','Cap sur l’épreuve de français de 5e secondaire : texte argumentatif, planifier et réviser'],['fr','Lecture','Œuvre complète et analyse en petit groupe']],
+  mardi:[['corps','Corps','Club de course'],['math','Math','Modéliser des données de terrain : fonctions et statistiques'],['sci','Sciences','Écosystème du fjord : protocole d’expérimentation']],
+  mercredi:[['corps','Corps','Club de course'],['ent','Entrepreneuriat','Projet entrepreneurial : de l’idée au prototype, étude de marché et budget'],['ent','Mentor','Rencontre avec une entrepreneure ou un artisan du SLSJ']],
+  jeudi:[['corps','Corps','Club de course'],['fr','Écriture','Simulation chronométrée de l’épreuve et rétroaction personnalisée'],['port','Portfolio','Bilan du portfolio et pitch du projet entrepreneurial']],
+  traces:{lundi:'un texte argumentatif annoté avec la grille de l’épreuve',mardi:'un rapport de modélisation avec graphiques',mercredi:'un prototype et un plan d’affaires d’une page',jeudi:'une simulation d’épreuve corrigée et un pitch filmé'}}
+};
+let profil='explo';
+function rendreProfil(){
+  document.querySelectorAll('.acts').forEach(ul=>{ul.innerHTML=PROG[profil][ul.dataset.j].map(([c,t,a])=>`<li><span class="tag ${c}">${t}</span><span>${a}</span></li>`).join('')});
+  document.querySelectorAll('.profil-b').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.p===profil)));
+  majTraces();
+}
+function majTraces(){
+  const on=[...document.querySelectorAll('#jours button[aria-pressed="true"]')];
+  const t=document.getElementById('traces');
+  t.textContent=on.length?on.map(j=>`${j.dataset.d[0].toUpperCase()+j.dataset.d.slice(1)} : ${PROG[profil].traces[j.dataset.d]}.`).join(' '):'Choisissez une journée pour voir les traces qui iront dans son portfolio et serviront à l’évaluation annuelle.';
+}
+document.querySelectorAll('.profil-b').forEach(b=>b.addEventListener('click',()=>{profil=b.dataset.p;rendreProfil()}));
+
 // composeur
 const jours=[...document.querySelectorAll('#jours button')], prix=document.getElementById('prix'), msg=document.getElementById('msg'), j1=document.getElementById('j1'), j2=document.getElementById('j2');
 const tarif=[0,195,375];
@@ -521,7 +586,7 @@ function maj(alerte){
   prix.innerHTML=`${tarif[n]} $<small> / mois</small>`;
   j1.classList.toggle('on',n>=1); j2.classList.toggle('on',n>=2);
   jours.forEach(j=>j.querySelector('.etat').textContent=j.getAttribute('aria-pressed')==='true'?'Choisi ✓':'Choisir');
-  msg.classList.toggle('alerte',!!alerte);
+  msg.classList.toggle('alerte',!!alerte); majTraces();
   if(alerte){msg.textContent='Deux jours, c’est le maximum au Hub. Le reste de la semaine appartient à votre famille. Retirez une journée pour en choisir une autre.';return}
   msg.textContent=n===0?'Choisissez une journée pour commencer.':n===1?`Le ${on[0].dataset.d} au Hub. Vous pouvez ajouter une deuxième journée.`:`Le ${on[0].dataset.d} et le ${on[1].dataset.d} au Hub.`;
 }
@@ -530,6 +595,8 @@ jours.forEach(j=>j.addEventListener('click',()=>{
   if(!on&&n>=2){maj(true);return}
   j.setAttribute('aria-pressed',String(!on)); maj(false);
 }));
+
+rendreProfil();
 
 // registre : ouvre le courriel
 document.getElementById('form').addEventListener('submit',e=>{
