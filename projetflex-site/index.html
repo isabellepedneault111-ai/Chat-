@@ -237,7 +237,7 @@ section[data-vue]{border-bottom:1.5px solid var(--encre)}
 .sentier a.ici .vi{position:absolute;bottom:26px;background:var(--balise);color:var(--blanc);font-family:var(--mono);font-size:10px;padding:2px 6px;white-space:nowrap;letter-spacing:.05em;text-transform:uppercase}
 nav .wrap{height:76px}
 @media (max-width:1100px){.sentier a .lb{display:none}.sentier a.ici .lb{display:block}}
-@media (max-width:640px){.sentier{display:none}}
+@media (max-width:640px){.sentier{margin:0 8px;overflow-x:auto;scrollbar-width:none}.sentier a{min-width:34px}.nav-cta{padding:0 12px;font-size:13px}.logo{font-size:22px}}
 .pas{display:none;width:min(1240px,100% - 32px);margin:0 auto;padding:22px 0;align-items:center;justify-content:space-between;gap:12px}
 .pas.on{display:flex}
 .pas-l{display:inline-flex;align-items:center;gap:10px;padding:14px 20px;border:1.5px solid var(--encre);text-decoration:none;font-weight:800;font-size:16px;background:var(--blanc)}
@@ -272,6 +272,78 @@ nav .wrap{height:76px}
 .ado-note{font-size:13px;color:var(--gris)}
 @media (max-width:640px){.profils{grid-template-columns:1fr}.profil-b+.profil-b{border-left:0;border-top:1.5px solid var(--encre)}}
 
+
+/* forêt qui plie */
+.foret{position:absolute;left:0;right:0;bottom:0;width:100%;height:46%;pointer-events:none}
+.foret .arbre{transform-box:fill-box;transform-origin:50% 100%;will-change:transform}
+.lisiere{padding-bottom:clamp(140px,16vw,220px)}
+.lisiere .foret{height:clamp(120px,15vw,200px)}
+.hero h1,.hero .lead,.hero .btns,.panneau{position:relative;z-index:2}
+.hero h1 span{display:inline}
+.titre-flex .mot{display:inline-block;transition:font-variation-settings .35s cubic-bezier(.3,1.6,.5,1);font-variation-settings:'wdth' 68}
+/* lettres qui flexent */
+.flexy{transition:font-variation-settings .5s cubic-bezier(.3,1.7,.4,1)}
+.adn-row .L{font-variation-settings:'wdth' 62}
+.adn-row:hover .L{font-variation-settings:'wdth' 125}
+.adn-row .L.vu{animation:flexe 1.4s cubic-bezier(.3,1.6,.4,1) both}
+@keyframes flexe{0%{font-variation-settings:'wdth' 125}55%{font-variation-settings:'wdth' 62}75%{font-variation-settings:'wdth' 90}100%{font-variation-settings:'wdth' 62}}
+.adn-row{transition:background .2s}
+.adn-row:hover{background:var(--givre)}
+/* LAB : plan bleu */
+.lab{background:var(--bleu);color:var(--blanc)}
+.lab .intro{color:rgba(255,255,255,.88)}
+.lab .borne .num{background:var(--blanc);color:var(--bleu)}
+.lab .borne .km-l{color:rgba(255,255,255,.75)}
+.lab h2 em{color:var(--blanc);-webkit-text-stroke:2px var(--blanc);color:transparent}
+.lab-tete{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end}
+@media (max-width:900px){.lab-tete{grid-template-columns:1fr}}
+.plan{position:relative;margin-top:30px;height:420px;border:2px solid rgba(255,255,255,.85);background-color:#1A55BF;background-image:linear-gradient(rgba(255,255,255,.22) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.22) 1px,transparent 1px),linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:80px 80px,80px 80px,16px 16px,16px 16px;overflow:hidden;touch-action:none}
+.plan-cote{position:absolute;left:14px;bottom:12px;color:rgba(255,255,255,.75)}
+.melanger{position:absolute;right:12px;bottom:10px;background:var(--blanc);color:var(--bleu);border:0;padding:8px 12px;cursor:pointer;font-weight:600}
+.melanger:hover{background:var(--balise);color:var(--blanc)}
+.collant{position:absolute;width:110px;height:110px;cursor:grab;user-select:none;-webkit-user-select:none;filter:drop-shadow(4px 6px 0 rgba(0,0,0,.28));transition:filter .15s}
+.collant:active{cursor:grabbing;filter:drop-shadow(10px 16px 0 rgba(0,0,0,.25))}
+.collant svg{width:100%;height:100%;display:block;pointer-events:none}
+.collant .etiq{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);font-family:var(--mono);font-size:10px;background:var(--blanc);color:var(--encre);padding:1px 5px;white-space:nowrap;pointer-events:none}
+@media (max-width:640px){.plan{height:360px}.collant{width:84px;height:84px}}
+/* traces de pas */
+.pas-pas{overflow:hidden}
+.empreintes{position:absolute;inset:0;pointer-events:none;opacity:.5}
+.empreinte{position:absolute;width:16px;height:26px;opacity:0;animation:pas 7s linear infinite}
+@keyframes pas{0%,2%{opacity:0}4%{opacity:.9}40%{opacity:.9}55%,100%{opacity:0}}
+.randonneuse circle:first-child{stroke:#fff;stroke-width:3}
+
+/* observatoire */
+.ciel{background:#060D1A;color:var(--blanc);overflow:hidden;cursor:crosshair}
+.ciel-svg{position:absolute;inset:0;width:100%;height:100%}
+.ciel-in{position:relative;z-index:1;pointer-events:none}
+.ciel-in .obs-grille{pointer-events:auto}
+.ciel .intro{color:rgba(255,255,255,.86)}
+.ciel .borne .num{background:#FFD166;color:#060D1A}
+.ciel .borne .km-l{color:rgba(255,255,255,.65)}
+.ciel h2 em{color:#FFD166}
+.astuce{color:#FFD166;margin-top:14px}
+.obs-grille{display:grid;grid-template-columns:repeat(4,1fr);margin-top:34px;border:1.5px solid rgba(255,255,255,.25);background:rgba(6,13,26,.72);backdrop-filter:blur(2px)}
+.obs{padding:24px}
+.obs+.obs{border-left:1.5px solid rgba(255,255,255,.25)}
+.obs .mono{color:#FFD166}
+.obs h3{font-size:28px;margin:10px 0}
+.obs p{font-size:15px;color:rgba(255,255,255,.82)}
+@media (max-width:900px){.obs-grille{grid-template-columns:1fr 1fr}.obs:nth-child(3){border-left:0}.obs:nth-child(n+3){border-top:1.5px solid rgba(255,255,255,.25)}}
+@media (max-width:560px){.obs-grille{grid-template-columns:1fr}.obs+.obs{border-left:0;border-top:1.5px solid rgba(255,255,255,.25)}}
+.etoile{fill:#fff}
+.etoile.sc{animation:scint 3s ease-in-out infinite}
+@keyframes scint{0%,100%{opacity:1}50%{opacity:.35}}
+.const line{stroke:#FFD166;stroke-width:1.4;stroke-dasharray:400;stroke-dashoffset:400;transition:stroke-dashoffset 1.2s ease;opacity:.85}
+.const text{fill:#FFD166;font-family:var(--mono);font-size:13px;opacity:0;transition:opacity .6s .5s;text-transform:uppercase;letter-spacing:.08em}
+.const.vue line{stroke-dashoffset:0}
+.const.vue text{opacity:1}
+.const circle{fill:#fff}
+.sirius{fill:#BFE3FF;filter:drop-shadow(0 0 6px #9FD3FF)}
+.filante{stroke:#fff;stroke-width:2;stroke-linecap:round;opacity:0}
+
+@media (prefers-reduced-motion:reduce){.empreintes,.randonneuse{display:none}}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
 </style>
 </head>
@@ -288,21 +360,22 @@ nav .wrap{height:76px}
 <header class="hero vue-el" id="top" data-vue="depart">
   <div class="grid-c" aria-hidden="true"></div>
   <svg id="topo" aria-hidden="true"></svg>
+  <svg class="foret" id="foret-hero" aria-hidden="true" preserveAspectRatio="xMidYMax slice"></svg>
   <div class="coords mono" aria-hidden="true"><span>48°25′ N · 71°15′ O</span><span>Jonquière · Saguenay–Lac-Saint-Jean</span><span>Ouverture août 2027</span></div>
   <div class="wrap">
     <div>
-      <h1 class="cond"><span>Ce qui plie</span><span class="o">ne casse pas.</span></h1>
+      <h1 class="cond titre-flex"><span class="mot">Ce</span> <span class="mot">qui</span> <span class="mot">plie</span><br><span class="o"><span class="mot">ne</span> <span class="mot">casse</span> <span class="mot">pas.</span></span></h1>
       <p class="lead">projetflex, c’est un sentier d’apprentissage pour les enfants et les ados de 4 à 17 ans, et leurs familles : la forêt comme terrain, un LAB pour créer, et un copilote numérique qui garde la curiosité allumée entre deux sorties.</p>
       <div class="btns">
-        <a class="btn plein" href="#hub">Composer ma semaine <span class="fl">→</span></a>
-        <a class="btn vide" href="#engagement">Notre philosophie</a>
+        <a class="btn plein" href="#adn">Commencer le sentier <span class="fl">→</span></a>
+        <a class="btn vide" href="#hub">Composer ma semaine</a>
       </div>
     </div>
     <div class="panneau" aria-label="Panneau de sentier">
       <div class="poteau"></div>
-      <a class="planche" href="#hub">Forêt <small>0,2 km</small></a>
-      <a class="planche" href="#hub">LAB des Possibles <small>0,4 km</small></a>
-      <a class="planche" href="#eclaireur">L’Éclaireur <small>en ligne</small></a>
+      <a class="planche" href="#adn">Notre ADN <small>Borne 01</small></a>
+      <a class="planche" href="#engagement">Engagement <small>Borne 02</small></a>
+      <a class="planche" href="#hub">Forêt + LAB <small>Borne 03</small></a>
       <a class="planche" href="#registre">Inscription <small>→</small></a>
     </div>
   </div>
@@ -313,15 +386,15 @@ nav .wrap{height:76px}
     <div class="borne"><span class="num">01</span><span class="mono km-l">Borne 01 · Notre ADN</span></div>
     <h2 class="cond">Quatre lettres,<br><em>une direction.</em></h2>
     <div class="adn">
-      <div class="adn-row"><span class="L" aria-hidden="true">F</span><h3 class="cond">Flexibilité</h3><p>Des lieux, des horaires, des approches et des parcours qui s’adaptent à l’enfant, pas l’inverse.<span class="q mono">Au quotidien : 1 ou 2 jours au Hub, une forêt jamais pareille.</span></p></div>
-      <div class="adn-row"><span class="L" aria-hidden="true">L</span><h3 class="cond">Laboratoire</h3><p>Un lieu d’entraide où l’erreur est permise, et même utile. L’adulte est guide; chacun enseigne quelque chose aux autres.<span class="q mono">Au quotidien : le LAB des Possibles.</span></p></div>
-      <div class="adn-row"><span class="L" aria-hidden="true">E</span><h3 class="cond">Engagement</h3><p>Cognitif, social, communautaire et personnel. Le mérite des réussites revient à l’enfant et à ses efforts.<span class="q mono">Au quotidien : l’Éclaireur entre deux sorties.</span></p></div>
-      <div class="adn-row"><span class="L" aria-hidden="true">X</span><h3 class="cond">eXception</h3><p>Un parcours hors norme. Et X, c’est aussi l’enfant : on ne le résout pas, on le laisse se révéler.<span class="q mono">Au quotidien : un portfolio à son image.</span></p></div>
+      <div class="adn-row"><span class="L flexy" aria-hidden="true">F</span><h3 class="cond">Flexibilité</h3><p>Des lieux, des horaires, des approches et des parcours qui s’adaptent à l’enfant, pas l’inverse.<span class="q mono">Au quotidien : 1 ou 2 jours au Hub, une forêt jamais pareille.</span></p></div>
+      <div class="adn-row"><span class="L flexy" aria-hidden="true">L</span><h3 class="cond">Laboratoire</h3><p>Un lieu d’entraide où l’erreur est permise, et même utile. L’adulte est guide; chacun enseigne quelque chose aux autres.<span class="q mono">Au quotidien : le LAB des Possibles.</span></p></div>
+      <div class="adn-row"><span class="L flexy" aria-hidden="true">E</span><h3 class="cond">Engagement</h3><p>Cognitif, social, communautaire et personnel. Le mérite des réussites revient à l’enfant et à ses efforts.<span class="q mono">Au quotidien : l’Éclaireur entre deux sorties.</span></p></div>
+      <div class="adn-row"><span class="L flexy" aria-hidden="true">X</span><h3 class="cond">eXception</h3><p>Un parcours hors norme. Et X, c’est aussi l’enfant : on ne le résout pas, on le laisse se révéler.<span class="q mono">Au quotidien : un portfolio à son image.</span></p></div>
     </div>
   </div>
 </section>
 
-<section id="engagement" class="sombre" data-vue="engagement">
+<section id="engagement" class="sombre lisiere" data-vue="engagement">
   <div class="wrap">
     <div class="borne"><span class="num">02</span><span class="mono km-l">Borne 02 · Engagement et motivation</span></div>
     <h2 class="cond">Garder le oui<br><em>de 5 ans.</em></h2>
@@ -330,6 +403,7 @@ nav .wrap{height:76px}
       <svg viewBox="0 0 1200 220" preserveAspectRatio="none" aria-hidden="true">
         <path class="relief" d="M0 220 L0 190 C 120 185, 180 170, 150 160 L 300 140 C 380 128, 420 150, 450 120 L 600 95 C 680 80, 720 100, 750 70 L 900 50 C 980 38, 1020 55, 1050 25 L 1200 10 L1200 220 Z"/>
         <path class="trace" d="M0 190 C 120 185, 180 170, 150 160 L 300 140 C 380 128, 420 150, 450 120 L 600 95 C 680 80, 720 100, 750 70 L 900 50 C 980 38, 1020 55, 1050 25 L 1200 10"/>
+        <g class="randonneuse"><circle r="13" fill="var(--balise)"/><circle r="5" fill="#fff"/><animateMotion dur="6s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;0.85;1" calcMode="linear" path="M0 190 C 120 185, 180 170, 150 160 L 300 140 C 380 128, 420 150, 450 120 L 600 95 C 680 80, 720 100, 750 70 L 900 50 C 980 38, 1020 55, 1050 25 L 1200 10"/></g>
         <circle class="pt" cx="150" cy="160" r="9"/><circle class="pt" cx="450" cy="120" r="9"/><circle class="pt" cx="750" cy="70" r="9"/><circle class="pt" cx="1050" cy="25" r="9"/>
       </svg>
       <div class="etapes">
@@ -351,7 +425,7 @@ nav .wrap{height:76px}
     <div class="profils" role="tablist" aria-label="Profil de l’enfant">
       <button role="tab" class="profil-b" aria-selected="false" data-p="petits"><span class="mono">4 à 7 ans</span><strong>Petits explorateurs</strong></button>
       <button role="tab" class="profil-b" aria-selected="true" data-p="explo"><span class="mono">8 à 12 ans</span><strong>Explorateurs</strong></button>
-      <button role="tab" class="profil-b" aria-selected="false" data-p="ados"><span class="mono">12 à 17 ans</span><strong>Ados</strong></button>
+      <button role="tab" class="profil-b" aria-selected="false" data-p="ados"><span class="mono">12 à 17 ans</span><strong>Cartographes</strong></button>
     </div>
     <div class="horaire">
       <div class="jours" id="jours">
@@ -373,19 +447,35 @@ nav .wrap{height:76px}
   </div>
 </section>
 
-<section id="course" class="givre" data-vue="hub">
+
+<section id="lab" class="lab" data-vue="hub">
+  <div class="wrap">
+    <div class="borne"><span class="num">03</span><span class="mono km-l">Borne 03 · Le LAB des Possibles</span></div>
+    <div class="lab-tete">
+      <h2 class="cond flexy">Ici, l’erreur<br><em>est permise.</em></h2>
+      <p class="intro">Le LAB, c’est l’atelier : on prototype, on bricole, on recommence. Essayez-le : glissez les pièces sur le plan, empilez-les, inventez quelque chose.</p>
+    </div>
+    <div class="plan" id="plan" aria-label="Plan de travail interactif : glissez les pièces">
+      <span class="plan-cote mono">Plan nº 27 · échelle 1:1 · auteur : vous</span>
+      <button class="melanger mono" id="melanger" type="button">Tout mélanger ↻</button>
+    </div>
+  </div>
+</section>
+
+<section id="course" class="givre pas-pas" data-vue="hub">
   <div class="wrap split">
     <div>
       <div class="borne"><span class="num">03</span><span class="mono km-l">Borne 03 · Chaque matin</span></div>
-      <h2 class="cond">Le Club<br><em>de course.</em></h2>
-      <p class="intro">On commence dehors, beau temps mauvais temps. Un corps régulé, c’est un esprit disponible pour apprendre. Chacun choisit son intensité, sans comparaison.</p>
+      <h2 class="cond">Bouger<br><em>chaque matin.</em></h2>
+      <p class="intro">On commence dehors, beau temps mauvais temps, et jamais deux fois pareil. Un corps régulé, c’est un esprit disponible pour apprendre. Chacun choisit son intensité, sans comparaison.</p>
     </div>
-    <dl class="log" aria-label="Carnet du Club de course">
-      <div><dt>Distance</dt><dd>Au choix de chacun</dd></div>
-      <div><dt>Chrono</dt><dd>Aucun</dd></div>
-      <div><dt>Météo</dt><dd>Toutes, même en février</dd></div>
-      <div><dt>Allure</dt><dd>Marche, jogging ou course</dd></div>
-      <div><dt>Objectif</dt><dd>Arriver disponible pour apprendre</dd></div>
+    <dl class="log" aria-label="Carnet des activités du matin">
+      <div><dt>Courir</dt><dd>Club de course, au rythme de chacun</dd></div>
+      <div><dt>Grimper</dt><dd>Hébertisme, escalade d’arbres et de bloc</dd></div>
+      <div><dt>Glisser</dt><dd>Raquette, ski de fond, fatbike</dd></div>
+      <div><dt>Pagayer</dt><dd>Canot et kayak sur la rivière</dd></div>
+      <div><dt>Respirer</dt><dd>Yoga et respiration en forêt</dd></div>
+      <div><dt>Chrono</dt><dd>Aucun. Météo : toutes, même en février</dd></div>
     </dl>
   </div>
 </section>
@@ -411,24 +501,42 @@ nav .wrap{height:76px}
   </div>
 </section>
 
+
+<section id="ciel" class="ciel" data-vue="ciel">
+  <svg class="ciel-svg" id="ciel-svg" aria-hidden="true"></svg>
+  <div class="wrap ciel-in">
+    <div class="borne"><span class="num">05</span><span class="mono km-l">Borne 05 · L’Observatoire</span></div>
+    <h2 class="cond">Le ciel aussi<br><em>est un terrain.</em></h2>
+    <p class="intro">Quand la forêt s’endort, l’apprentissage continue. Soirées d’observation, cartes du ciel, télescopes et grandes questions : le ciel noir du Saguenay–Lac-Saint-Jean devient un laboratoire. Isabelle rejoint le Club d’astronomie Sirius du Saguenay.</p>
+    <p class="mono astuce">Survolez le ciel : les constellations apparaissent. Cherchez Sirius, l’étoile la plus brillante.</p>
+    <div class="obs-grille">
+      <div class="obs"><span class="mono">Petits explorateurs · 4-7</span><h3 class="cond">Contes d’étoiles</h3><p>Les légendes des constellations, la Lune qui change de forme, fabriquer sa lampe frontale rouge.</p></div>
+      <div class="obs"><span class="mono">Explorateurs · 8-12</span><h3 class="cond">Carte du ciel</h3><p>Mesurer le ciel avec sa main, suivre les phases de la Lune pendant un mois, repérer l’étoile Polaire.</p></div>
+      <div class="obs"><span class="mono">Cartographes · ados</span><h3 class="cond">Astrophoto</h3><p>Photographier la Lune et les planètes, calculer des distances, relier l’astronomie aux sciences du secondaire.</p></div>
+      <div class="obs"><span class="mono">Familles</span><h3 class="cond">Nuits d’observation</h3><p>Soirées au télescope pour toute la famille, et sorties dans les ciels noirs de la région, comme aux Monts-Valin.</p></div>
+    </div>
+  </div>
+</section>
+
 <section id="offres" class="givre" data-vue="offres">
   <div class="wrap">
-    <div class="borne"><span class="num">05</span><span class="mono km-l">Borne 05 · Plusieurs sentiers</span></div>
+    <div class="borne"><span class="num">06</span><span class="mono km-l">Borne 06 · Plusieurs sentiers</span></div>
     <h2 class="cond">Pour qui?<br><em>Choisissez votre sentier.</em></h2>
     <div class="offres">
-      <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" fill="var(--vert)"/></svg><div><span class="mono qui">Familles en enseignement à la maison</span><h3 class="cond">Le Hub Forêt + LAB</h3></div><p>Une ou deux journées par semaine, en petits groupes par profil (4-7, 8-12, ados), avec des guides brevetées.</p><span class="prix">Dès 195 $ / mois</span><span class="fl">→</span></a>
+      <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" fill="var(--vert)"/></svg><div><span class="mono qui">Familles en enseignement à la maison</span><h3 class="cond">Le Hub Forêt + LAB</h3></div><p>Une ou deux journées par semaine, en petits groupes par profil (petits explorateurs, explorateurs, cartographes), avec des guides brevetées.</p><span class="prix">Dès 195 $ / mois</span><span class="fl">→</span></a>
       <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><rect x="3" y="3" width="28" height="28" fill="var(--bleu)"/></svg><div><span class="mono qui">Les enfants et les ados de la région</span><h3 class="cond">Camps FLEX</h3></div><p>Semaine de relâche et été : forêt, création, Club de course et grands projets.</p><span class="prix">Inscriptions à venir</span><span class="fl">→</span></a>
       <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 2 L32 17 L17 32 L2 17 Z" fill="var(--encre)"/></svg><div><span class="mono qui">Écoles et municipalités</span><h3 class="cond">Pop-up FLEX</h3></div><p>Nous venons chez vous le vendredi : ateliers nature et LAB clés en main.</p><span class="prix">Sur réservation</span><span class="fl">→</span></a>
       <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 3 L32 31 L2 31 Z" fill="var(--balise)"/></svg><div><span class="mono qui">Parents-éducateurs du Québec</span><h3 class="cond">Évaluation annuelle</h3></div><p>Le bilan de progression exigé, réalisé par une enseignante titulaire d’une autorisation d’enseigner.</p><span class="prix">Dès le printemps 2028</span><span class="fl">→</span></a>
+      <a class="offre" href="#ciel"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 2 L21 13 L32 13 L23 20 L26 31 L17 24 L8 31 L11 20 L2 13 L13 13Z" fill="#0B1712"/></svg><div><span class="mono qui">Familles, enfants et ados</span><h3 class="cond">Nuits d’observation</h3></div><p>Astronomie en famille : télescopes, cartes du ciel, sorties en ciel noir.</p><span class="prix">Saison 2027-2028</span><span class="fl">→</span></a>
       <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="none" stroke="var(--bleu)" stroke-width="5"/></svg><div><span class="mono qui">Familles de la francophonie</span><h3 class="cond">Plateforme Éclaireur</h3></div><p>Trousses de projets nature, parcours téléchargeables, communauté et copilote.</p><span class="prix">Janvier 2028</span><span class="fl">→</span></a>
       <a class="offre" href="#registre"><svg class="sym" viewBox="0 0 34 34" aria-hidden="true"><rect x="3" y="3" width="28" height="28" fill="none" stroke="var(--vert)" stroke-width="5"/></svg><div><span class="mono qui">Enseignants et équipes</span><h3 class="cond">Formation</h3></div><p>Engagement et motivation, pédagogie par la nature, IA en éducation.</p><span class="prix">Sur demande</span><span class="fl">→</span></a>
     </div>
   </div>
 </section>
 
-<section id="recherche" class="sombre" data-vue="recherche">
+<section id="recherche" class="sombre lisiere" data-vue="recherche">
   <div class="wrap">
-    <div class="borne"><span class="num">06</span><span class="mono km-l">Borne 06 · Station de recherche</span></div>
+    <div class="borne"><span class="num">07</span><span class="mono km-l">Borne 07 · Station de recherche</span></div>
     <h2 class="cond">Apprendre, et comprendre<br><em>comment on apprend.</em></h2>
     <p class="intro">projetflex se construit comme un terrain partenaire de la recherche universitaire en éducation, avec des données recueillies dans le respect des familles, des consentements et de la Loi 25.</p>
     <div class="station">
@@ -441,20 +549,20 @@ nav .wrap{height:76px}
 
 <section id="equipe" data-vue="equipe">
   <div class="wrap">
-    <div class="borne"><span class="num">07</span><span class="mono km-l">Borne 07 · Vos guides</span></div>
+    <div class="borne"><span class="num">08</span><span class="mono km-l">Borne 08 · Vos guides</span></div>
     <h2 class="cond">Quatre expertises,<br><em>un seul enfant au centre.</em></h2>
     <div class="guides">
       <div class="g"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="var(--vert)"/><text x="32" y="40" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="22" fill="#fff">IP</text></svg><h3 class="cond">Isabelle Pedneault</h3><p>Conseillère pédagogique. L’Éclaireur et la plateforme.</p><span class="mono">Brevetée</span></div>
       <div class="g"><svg viewBox="0 0 64 64" aria-hidden="true"><rect x="3" y="3" width="58" height="58" fill="var(--bleu)"/><text x="32" y="40" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="22" fill="#fff">EB</text></svg><h3 class="cond">Élaine Bérubée</h3><p>Enseignante au préscolaire. Les 4 à 7 ans, le jeu, la nature.</p><span class="mono">Brevetée</span></div>
       <div class="g"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 2 L62 32 L32 62 L2 32 Z" fill="var(--encre)"/><text x="32" y="40" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="20" fill="#fff">VT</text></svg><h3 class="cond">Valérie Thibault</h3><p>Enseignante au primaire. Projets, LAB et évaluations.</p><span class="mono">Brevetée</span></div>
-      <div class="g"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L62 60 L2 60 Z" fill="var(--balise)"/><text x="32" y="50" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="18" fill="#fff">SG</text></svg><h3 class="cond">Sofie Grenon</h3><p>Technicienne en éducation spécialisée. Inclusion, régulation, Club de course.</p><span class="mono">TES</span></div>
+      <div class="g"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 3 L62 60 L2 60 Z" fill="var(--balise)"/><text x="32" y="50" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="18" fill="#fff">SG</text></svg><h3 class="cond">Sofie Grenon</h3><p>Technicienne en éducation spécialisée. Inclusion, régulation, activités du matin.</p><span class="mono">TES</span></div>
     </div>
   </div>
 </section>
 
 <section id="manifeste" class="sombre manif" data-vue="equipe">
   <div class="wrap">
-    <div class="borne"><span class="num">07</span><span class="mono km-l">Borne 07 · Le manifeste</span></div>
+    <div class="borne"><span class="num">08</span><span class="mono km-l">Borne 08 · Le manifeste</span></div>
     <p>Nous croyons que la forêt est <mark>une salle de classe.</mark></p>
     <p>Que grimper dans un arbre enseigne la physique, la confiance et la prise de risque, <mark>en même temps.</mark></p>
     <p>Tout seul on va plus vite. <mark>Ensemble, on va plus loin.</mark></p>
@@ -463,7 +571,7 @@ nav .wrap{height:76px}
 
 <section id="registre" class="givre" data-vue="registre">
   <div class="wrap">
-    <div class="borne"><span class="num">08</span><span class="mono km-l">Borne 08 · Registre du sentier</span></div>
+    <div class="borne"><span class="num">09</span><span class="mono km-l">Borne 09 · Registre du sentier</span></div>
     <h2 class="cond">Signez le<br><em>registre.</em></h2>
     <p class="intro">Familles, écoles, chercheuses, partenaires : laissez votre trace. Nous vous avisons en premier de la rencontre d’information et du premier Pop-up School. Ouverture prévue en août 2027.</p>
     <form class="registre" id="form">
@@ -520,8 +628,134 @@ nav .wrap{height:76px}
 
 
 
+
+// forêt qui plie : épinettes qui ploient au vent et vers le curseur
+const FORETS=[];
+function planter(svg,opts){
+  const w=1600,h=opts.h; svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  const couches=opts.couches; let html='';
+  couches.forEach((c,ci)=>{
+    let x=-40; let k=0;
+    while(x<w+40){
+      const th=c.min+((Math.sin(x*12.9898+ci*7)*43758.5)%1+1)%1*(c.max-c.min);
+      const tw=th*.42, base=h-c.sol, etages=5;
+      let d='';
+      for(let e=0;e<etages;e++){
+        const top=base-th+e*th*.17, bas=base-th*.14+e*0+ (e+1)*th*.15 - th*.15;
+        const yb=base-th*(1-(e+1)/etages)*.95; const half=tw*(.32+e*.17)/1;
+        d+=`M${(x).toFixed(1)} ${(base-th+e*th*.16).toFixed(1)} L${(x-half).toFixed(1)} ${yb.toFixed(1)} L${(x+half).toFixed(1)} ${yb.toFixed(1)}Z`;
+      }
+      d+=`M${(x-th*.03).toFixed(1)} ${base} h${(th*.06).toFixed(1)} v${(-th*.12).toFixed(1)} h${(-th*.06).toFixed(1)}Z`;
+      html+=`<g class="arbre" data-c="${ci}" data-x="${x}"><path d="${d}" fill="${c.col}"/></g>`;
+      x+=c.pas*(.7+(((Math.sin(x*78.233+ci)*12345.6)%1+1)%1)*.6); k++;
+    }
+    html+=`<rect x="0" y="${h-c.sol}" width="${w}" height="${c.sol}" fill="${c.col}"/>`;
+  });
+  svg.innerHTML=html;
+  FORETS.push({svg,arbres:[...svg.querySelectorAll('.arbre')],w});
+}
+const fh=document.getElementById('foret-hero');
+if(fh)planter(fh,{h:420,couches:[{col:'#174F3D',min:170,max:260,pas:70,sol:10},{col:'#0E3528',min:120,max:200,pas:60,sol:6},{col:'#08241B',min:80,max:150,pas:52,sol:0}]});
+document.querySelectorAll('.lisiere').forEach(sec=>{const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('class','foret');s.setAttribute('aria-hidden','true');s.setAttribute('preserveAspectRatio','xMidYMax slice');sec.appendChild(s);planter(s,{h:220,couches:[{col:'#174F3D',min:110,max:170,pas:58,sol:0},{col:'#0B2C21',min:70,max:120,pas:46,sol:0}]})});
+let px=.5, vent=0;
+addEventListener('pointermove',e=>{px=e.clientX/innerWidth},{passive:true});
+const lent=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function souffle(t){
+  vent=t/1000;
+  FORETS.forEach(f=>{
+    if(!f.svg.getBoundingClientRect().height)return;
+    f.arbres.forEach(a=>{
+      const x=+a.dataset.x/f.w, c=+a.dataset.c;
+      const brise=Math.sin(vent*1.3+x*6+c)*2.2+Math.sin(vent*.7+x*3)*1.5;
+      const attire=(px-x)*-14*(1-Math.min(1,Math.abs(px-x)*2.2));
+      a.style.transform=`skewX(${(brise+attire)*(1+c*.25)}deg)`;
+    });
+  });
+  if(!lent)requestAnimationFrame(souffle);
+}
+requestAnimationFrame(souffle);
+
+// titre : le mot le plus proche du curseur s'étire
+const mots=[...document.querySelectorAll('.titre-flex .mot')];
+addEventListener('pointermove',e=>{mots.forEach(m=>{const b=m.getBoundingClientRect();if(!b.width)return;const d=Math.hypot(e.clientX-(b.left+b.width/2),e.clientY-(b.top+b.height/2));const k=Math.max(0,1-d/260);m.style.fontVariationSettings=`'wdth' ${68+k*57}`})},{passive:true});
+
+// ADN : les lettres flexent quand la borne s'ouvre
+function flexerADN(){document.querySelectorAll('.adn-row .L').forEach((l,i)=>{l.classList.remove('vu');void l.offsetWidth;l.style.animationDelay=(i*.12)+'s';l.classList.add('vu')})}
+
+// LAB : autocollants à glisser
+const PIECES=[
+ ['Cocotte','<svg viewBox="0 0 100 100"><ellipse cx="50" cy="55" rx="26" ry="38" fill="#8B5A2B"/><g fill="#B07A3E">'+[...Array(6)].map((_,i)=>`<path d="M${30+((i%2)*14)} ${30+i*9} q12 -8 24 0 q-12 8 -24 0Z"/>`).join('')+'</g><rect x="47" y="8" width="6" height="12" fill="#5B3A1A"/></svg>'],
+ ['Engrenage','<svg viewBox="0 0 100 100"><g fill="#FF5B14">'+[...Array(8)].map((_,i)=>`<rect x="44" y="6" width="12" height="18" transform="rotate(${i*45} 50 50)"/>`).join('')+'<circle cx="50" cy="50" r="30"/></g><circle cx="50" cy="50" r="11" fill="#fff"/></svg>'],
+ ['Idée','<svg viewBox="0 0 100 100"><circle cx="50" cy="42" r="28" fill="#FFD166"/><rect x="38" y="66" width="24" height="16" fill="#0B1712"/><rect x="41" y="84" width="18" height="6" fill="#0B1712"/><path d="M42 50 l8 -12 l8 12" stroke="#0B1712" stroke-width="3" fill="none"/></svg>'],
+ ['Castor','<svg viewBox="0 0 100 100"><ellipse cx="62" cy="80" rx="24" ry="10" fill="#4A3020"/><ellipse cx="48" cy="56" rx="26" ry="24" fill="#8B5A2B"/><circle cx="42" cy="32" r="16" fill="#8B5A2B"/><circle cx="37" cy="29" r="3" fill="#0B1712"/><rect x="28" y="40" width="7" height="8" fill="#fff"/><circle cx="30" cy="22" r="5" fill="#6B4226"/></svg>'],
+ ['Crayon','<svg viewBox="0 0 100 100"><g transform="rotate(-35 50 50)"><rect x="18" y="40" width="56" height="20" fill="#1F9D55"/><rect x="74" y="40" width="10" height="20" fill="#F5A3B5"/><path d="M18 40 L4 50 L18 60Z" fill="#F2D3A2"/><path d="M4 50 L9 46.5 L9 53.5Z" fill="#0B1712"/></g></svg>'],
+ ['Feuille','<svg viewBox="0 0 100 100"><path d="M50 8 L58 30 L76 22 L70 42 L90 44 L74 58 L80 70 L58 66 L54 86 L50 92 L46 86 L42 66 L20 70 L26 58 L10 44 L30 42 L24 22 L42 30Z" fill="#D7263D"/><rect x="48" y="80" width="4" height="16" fill="#7A1420"/></svg>'],
+ ['Boussole','<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#fff" stroke="#0B1712" stroke-width="5"/><path d="M50 18 L58 50 L50 50Z" fill="#FF5B14"/><path d="M50 18 L42 50 L50 50Z" fill="#B23A00"/><path d="M50 82 L58 50 L42 50Z" fill="#0B1712"/><circle cx="50" cy="50" r="4" fill="#0B1712"/></svg>'],
+ ['Planche','<svg viewBox="0 0 100 100"><rect x="8" y="38" width="84" height="24" fill="#C8955C" transform="rotate(-8 50 50)"/><circle cx="20" cy="50" r="3" fill="#5B3A1A"/><circle cx="80" cy="42" r="3" fill="#5B3A1A"/></svg>']
+];
+const plan=document.getElementById('plan');
+function disposer(){
+  plan.querySelectorAll('.collant').forEach(c=>c.remove());
+  const W=plan.clientWidth||900,Hh=plan.clientHeight||420, t=W<640?84:110;
+  PIECES.forEach(([nom,svg],i)=>{
+    const el=document.createElement('div');el.className='collant';el.innerHTML=svg+`<span class="etiq">${nom}</span>`;
+    el.style.left=(20+Math.random()*(W-t-40))+'px';el.style.top=(20+Math.random()*(Hh-t-60))+'px';
+    el.style.transform=`rotate(${(Math.random()*40-20).toFixed(0)}deg)`;el.setAttribute('role','img');el.setAttribute('aria-label',nom);
+    plan.appendChild(el); glisser(el);
+  });
+}
+let zMax=10;
+function glisser(el){
+  let ox,oy,dx,dy,actif=false;
+  el.addEventListener('pointerdown',e=>{actif=true;el.setPointerCapture(e.pointerId);el.style.zIndex=++zMax;ox=e.clientX;oy=e.clientY;dx=el.offsetLeft;dy=el.offsetTop;el.style.transition='none'});
+  el.addEventListener('pointermove',e=>{if(!actif)return;const W=plan.clientWidth-el.offsetWidth,H=plan.clientHeight-el.offsetHeight;el.style.left=Math.max(0,Math.min(W,dx+e.clientX-ox))+'px';el.style.top=Math.max(0,Math.min(H,dy+e.clientY-oy))+'px'});
+  el.addEventListener('pointerup',()=>{actif=false;el.style.transform=`rotate(${(Math.random()*30-15).toFixed(0)}deg) scale(1.08)`;setTimeout(()=>el.style.transform=el.style.transform.replace(' scale(1.08)',''),180)});
+}
+document.getElementById('melanger').addEventListener('click',disposer);
+
+// Club de course : traces de pas
+(function(){const sec=document.getElementById('course');const box=document.createElement('div');box.className='empreintes';box.setAttribute('aria-hidden','true');
+ for(let i=0;i<14;i++){const p=document.createElement('div');p.className='empreinte';const x=4+i*7,y=78-i*3.6+(i%2?6:0);p.style.left=x+'%';p.style.top=y+'%';p.style.animationDelay=(i*.32)+'s';p.style.transform=`rotate(${70+(i%2?8:-8)}deg)`;
+  p.innerHTML='<svg viewBox="0 0 16 26" width="16" height="26"><ellipse cx="8" cy="9" rx="6" ry="8" fill="#0F3B2E"/><ellipse cx="8" cy="21" rx="4.5" ry="4.5" fill="#0F3B2E"/></svg>';box.appendChild(p)}
+ sec.prepend(box)})();
+
+
+// observatoire : ciel étoilé, constellations au survol, Sirius, étoiles filantes
+const CONST=[
+ {nom:'Grande Ourse',x:.62,y:.16,pts:[[0,0],[60,10],[110,30],[150,60],[160,110],[230,115],[240,60]],liens:[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,3]]},
+ {nom:'Cassiopée',x:.82,y:.55,pts:[[0,20],[35,60],[70,25],[105,70],[140,30]],liens:[[0,1],[1,2],[2,3],[3,4]]},
+ {nom:'Orion',x:.38,y:.52,pts:[[0,0],[90,10],[30,70],[45,75],[60,80],[-5,150],[100,145]],liens:[[0,2],[1,4],[2,3],[3,4],[2,5],[4,6]]},
+ {nom:'Sirius · Grand Chien',x:.27,y:.80,pts:[[0,0],[40,30],[-20,60],[50,80]],liens:[[0,1],[0,2],[1,3]],sirius:0}
+];
+function ciel(){
+  const svg=document.getElementById('ciel-svg'); if(!svg)return;
+  const W=svg.clientWidth,H=svg.clientHeight; if(!W)return;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  let h='';
+  for(let i=0;i<Math.round(W*H/2600);i++){const x=(Math.sin(i*91.7)*43758.5%1+1)%1*W,y=(Math.sin(i*17.3)*24634.6%1+1)%1*H,rr=((Math.sin(i*5.1)*999)%1+1)%1;h+=`<circle class="etoile ${rr>.85?'sc':''}" style="animation-delay:${(rr*3).toFixed(2)}s" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(.4+rr*1.3).toFixed(2)}" opacity="${(.35+rr*.65).toFixed(2)}"/>`}
+  const s=Math.min(1.3,Math.max(.7,W/1300));
+  CONST.forEach((c,ci)=>{
+    const ox=c.x*W,oy=c.y*H, P=c.pts.map(([x,y])=>[ox+x*s,oy+y*s]);
+    h+=`<g class="const" data-c="${ci}">`+c.liens.map(([a,b])=>`<line x1="${P[a][0]}" y1="${P[a][1]}" x2="${P[b][0]}" y2="${P[b][1]}"/>`).join('')+P.map((p,k)=>`<circle class="${c.sirius===k?'sirius etoile sc':''}" cx="${p[0]}" cy="${p[1]}" r="${c.sirius===k?5:2.6}"/>`).join('')+`<text x="${P[0][0]+10}" y="${P[0][1]-14}">${c.nom}</text></g>`;
+  });
+  h+='<line class="filante" id="filante" x1="0" y1="0" x2="0" y2="0"/>';
+  svg.innerHTML=h;
+  window._P=CONST.map((c,ci)=>({ci,x:c.x*W+60*s,y:c.y*H+40*s}));
+}
+const cielSec=document.getElementById('ciel');
+cielSec.addEventListener('pointermove',e=>{
+  const b=cielSec.getBoundingClientRect(),x=e.clientX-b.left,y=e.clientY-b.top;
+  (window._P||[]).forEach(p=>{if(Math.hypot(x-p.x,y-p.y)<190)cielSec.querySelector(`.const[data-c="${p.ci}"]`)?.classList.add('vue')});
+});
+setInterval(()=>{
+  const f=document.getElementById('filante'); if(!f||!cielSec.classList.contains('actif')||lent)return;
+  const W=cielSec.clientWidth,H=cielSec.clientHeight,x=Math.random()*W*.8+W*.1,y=Math.random()*H*.4;
+  f.animate([{opacity:0,transform:'translate(0,0)'},{opacity:1},{opacity:0,transform:'translate(180px,90px)'}],{duration:900,easing:'ease-out'});
+  f.setAttribute('x1',x);f.setAttribute('y1',y);f.setAttribute('x2',x-70);f.setAttribute('y2',y-35);
+},4200);
+
 // sentier : une borne à la fois
-const VUES=[['depart','Départ'],['adn','ADN'],['engagement','Engagement'],['hub','Le Hub'],['eclaireur','Éclaireur'],['offres','Pour qui'],['recherche','Recherche'],['equipe','Équipe'],['registre','Registre']];
+const VUES=[['depart','Départ'],['adn','ADN'],['engagement','Engagement'],['hub','Le Hub'],['eclaireur','Éclaireur'],['ciel','Observatoire'],['offres','Pour qui'],['recherche','Recherche'],['equipe','Équipe'],['registre','Registre']];
 const ANCRE={top:'depart',course:'hub',manifeste:'equipe'};
 const sentier=document.getElementById('sentier');
 sentier.innerHTML=VUES.map(([id,l])=>`<a href="#${id==='depart'?'top':id}" data-v="${id}"><span class="pt"></span><span class="lb">${l}</span></a>`).join('');
@@ -530,9 +764,12 @@ function aller(){
   const h=location.hash.replace('#',''); const v=vueDe(h); const i=VUES.findIndex(x=>x[0]===v);
   document.querySelectorAll('[data-vue]').forEach(el=>el.classList.toggle('actif',el.dataset.vue===v));
   if(v==='depart')requestAnimationFrame(()=>window.drawTopo&&window.drawTopo());
+  if(v==='adn')requestAnimationFrame(flexerADN);
+  if(v==='ciel')requestAnimationFrame(ciel);
+  if(v==='hub'&&!plan.querySelector('.collant'))requestAnimationFrame(disposer);
   sentier.querySelectorAll('a').forEach((a,k)=>{a.classList.toggle('ici',k===i);a.classList.toggle('fait',k<i);a.querySelector('.vi')?.remove();if(k===i)a.insertAdjacentHTML('afterbegin','<span class="vi">Vous êtes ici</span>')});
   const pas=document.getElementById('pas'), prec=document.getElementById('prec'), suiv=document.getElementById('suiv');
-  pas.classList.toggle('on',i>0);
+  pas.classList.toggle('on',true);
   prec.textContent=i>0?`← ${VUES[i-1][1]}`:''; prec.href=i>0?`#${VUES[i-1][0]==='depart'?'top':VUES[i-1][0]}`:'#';
   suiv.textContent=i<VUES.length-1?`${VUES[i+1][1]} →`:''; suiv.href=i<VUES.length-1?`#${VUES[i+1][0]}`:'#';
   document.getElementById('pos').textContent=`Borne ${String(i).padStart(2,'0')} / ${String(VUES.length-1).padStart(2,'0')}`;
@@ -547,22 +784,22 @@ addEventListener('keydown',e=>{if(e.target.closest('input,textarea,select'))retu
 // profils : exemples concrets de semaine
 const PROG={
  petits:{
-  lundi:[['corps','Corps','Club de course (version jeux de piste)'],['math','Math','Compter, classer et comparer les cocottes; suites et motifs'],['fr','Lecture','Conte sous les épinettes et rappel du récit']],
-  mardi:[['corps','Corps','Club de course'],['fr','Écriture','Carnet de traces : dessins, lettres et premiers mots'],['sci','Sciences','Qui habite sous la souche? Observer et nommer']],
-  mercredi:[['corps','Corps','Club de course'],['math','Math','LAB : construire une cabane à écureuil, mesurer et comparer'],['fr','Oral','Comptines et causerie : raconter sa découverte']],
-  jeudi:[['corps','Corps','Club de course'],['us','Territoire','Sentier des sens et carte du boisé'],['port','Portfolio','Bilan avec la famille : on choisit ses plus belles traces']],
+  lundi:[['corps','Bouger','Club de course version jeux de piste'],['math','Math','Compter, classer et comparer les cocottes; suites et motifs'],['fr','Lecture','Conte sous les épinettes et rappel du récit']],
+  mardi:[['corps','Bouger','Yoga des animaux sous les arbres'],['fr','Écriture','Carnet de traces : dessins, lettres et premiers mots'],['sci','Sciences','Qui habite sous la souche? Observer et nommer']],
+  mercredi:[['corps','Bouger','Hébertisme : grimper, ramper, garder l’équilibre'],['math','Math','LAB : construire une cabane à écureuil, mesurer et comparer'],['fr','Oral','Comptines et causerie : raconter sa découverte']],
+  jeudi:[['corps','Bouger','Raquette l’hiver, chasse aux flaques au printemps'],['us','Territoire','Sentier des sens et carte du boisé'],['port','Portfolio','Bilan avec la famille : on choisit ses plus belles traces'],['sci','Ciel','Ce soir : chercher la Lune avec ses parents']],
   traces:{lundi:'une fiche de classement des trouvailles',mardi:'une page du carnet de traces',mercredi:'des photos de la cabane avec ses mesures',jeudi:'une carte du boisé dessinée et commentée'}},
  explo:{
-  lundi:[['corps','Corps','Club de course'],['math','Math','Mathématiques en forêt : périmètre et aire d’une parcelle, fractions avec les arbres'],['fr','Lecture','Cercle de lecture : un roman jeunesse, débat d’idées']],
-  mardi:[['corps','Corps','Club de course'],['fr','Écriture','Chronique de terrain publiée dans l’Éclaireur (planifier, réviser, corriger)'],['sci','Sciences','Qualité de l’eau de la rivière : mesurer, noter, conclure']],
-  mercredi:[['corps','Corps','Club de course'],['ent','Entrepreneuriat','LAB entrepreneurial : créer un produit (nichoirs, savon), fixer un prix, tenir un budget'],['fr','Oral','Présenter son produit au marché du Café des familles']],
-  jeudi:[['corps','Corps','Club de course'],['us','Univers social','Histoire du Saguenay sur le terrain : le Bassin, la pulperie'],['port','Portfolio','Bilan du portfolio : traces pour l’évaluation annuelle']],
+  lundi:[['corps','Bouger','Club de course'],['math','Math','Mathématiques en forêt : périmètre et aire d’une parcelle, fractions avec les arbres'],['fr','Lecture','Cercle de lecture : un roman jeunesse, débat d’idées']],
+  mardi:[['corps','Bouger','Hébertisme et escalade d’arbres encordée'],['fr','Écriture','Chronique de terrain publiée dans l’Éclaireur (planifier, réviser, corriger)'],['sci','Sciences','Qualité de l’eau de la rivière : mesurer, noter, conclure']],
+  mercredi:[['corps','Bouger','Raquette ou vélo de montagne selon la saison'],['ent','Entrepreneuriat','LAB entrepreneurial : créer un produit (nichoirs, savon), fixer un prix, tenir un budget'],['fr','Oral','Présenter son produit au marché du Café des familles']],
+  jeudi:[['corps','Bouger','Yoga et respiration en forêt'],['us','Univers social','Histoire du Saguenay sur le terrain : le Bassin, la pulperie'],['sci','Astronomie','Journal des phases de la Lune (un mois d’observation)'],['port','Portfolio','Bilan du portfolio : traces pour l’évaluation annuelle']],
   traces:{lundi:'un plan de la parcelle avec calculs d’aire et de périmètre',mardi:'une chronique révisée, publiée dans l’Éclaireur',mercredi:'le plan d’affaires de son produit et le bilan des ventes',jeudi:'une ligne du temps du Saguenay annotée'}},
  ados:{
-  lundi:[['corps','Corps','Club de course'],['fr','Écriture','Cap sur l’épreuve de français de 5e secondaire : texte argumentatif, planifier et réviser'],['fr','Lecture','Œuvre complète et analyse en petit groupe']],
-  mardi:[['corps','Corps','Club de course'],['math','Math','Modéliser des données de terrain : fonctions et statistiques'],['sci','Sciences','Écosystème du fjord : protocole d’expérimentation']],
-  mercredi:[['corps','Corps','Club de course'],['ent','Entrepreneuriat','Projet entrepreneurial : de l’idée au prototype, étude de marché et budget'],['ent','Mentor','Rencontre avec une entrepreneure ou un artisan du SLSJ']],
-  jeudi:[['corps','Corps','Club de course'],['fr','Écriture','Simulation chronométrée de l’épreuve et rétroaction personnalisée'],['port','Portfolio','Bilan du portfolio et pitch du projet entrepreneurial']],
+  lundi:[['corps','Bouger','Club de course'],['fr','Écriture','Cap sur l’épreuve de français de 5e secondaire : texte argumentatif, planifier et réviser'],['fr','Lecture','Œuvre complète et analyse en petit groupe']],
+  mardi:[['corps','Bouger','Vélo de montagne ou fatbike'],['math','Math','Modéliser des données de terrain : fonctions et statistiques'],['sci','Astronomie','Astrophoto : calculer la taille d’un cratère lunaire'],['sci','Sciences','Écosystème du fjord : protocole d’expérimentation']],
+  mercredi:[['corps','Bouger','Canot sur la rivière ou ski de fond selon la saison'],['ent','Entrepreneuriat','Projet entrepreneurial : de l’idée au prototype, étude de marché et budget'],['ent','Mentor','Rencontre avec une entrepreneure ou un artisan du SLSJ']],
+  jeudi:[['corps','Bouger','Escalade de bloc et slackline'],['fr','Écriture','Simulation chronométrée de l’épreuve et rétroaction personnalisée'],['port','Portfolio','Bilan du portfolio et pitch du projet entrepreneurial']],
   traces:{lundi:'un texte argumentatif annoté avec la grille de l’épreuve',mardi:'un rapport de modélisation avec graphiques',mercredi:'un prototype et un plan d’affaires d’une page',jeudi:'une simulation d’épreuve corrigée et un pitch filmé'}}
 };
 let profil='explo';
