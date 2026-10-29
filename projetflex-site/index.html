@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>projetflex · Ce qui plie ne casse pas</title>
+<meta name="description" content="projetflex : apprendre dehors, ensemble, à son rythme. Un écosystème d’apprentissage en forêt, en LAB et en ligne, à Jonquière (Saguenay–Lac-Saint-Jean).">
+<meta property="og:title" content="projetflex · Ce qui plie ne casse pas">
+<meta property="og:description" content="Forêt, LAB des Possibles et Éclaireur : un écosystème d’apprentissage au Saguenay–Lac-Saint-Jean.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230B1F2A'/%3E%3Ctext x='32' y='45' font-family='Arial' font-weight='900' font-size='38' text-anchor='middle' fill='%233DF5A0'%3Ef%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --nuit:#0B1F2A; --nuit-2:#102C3A; --nuit-3:#17394A;
+  --menthe:#3DF5A0; --lime:#C8F169; --violet:#8B5CF6; --corail:#FF6B4A; --ciel:#2EC4E8; --soleil:#FFD166;
+  --neige:#F4FBF8; --brume:#A9C7C0;
+  --display:'Bricolage Grotesque', ui-sans-serif, sans-serif;
+  --serif:'Instrument Serif', Georgia, serif;
+  --r:28px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+html,body{overflow-x:clip}
+body{background:var(--nuit);color:var(--neige);font-family:var(--display);font-size:18px;line-height:1.55;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{max-width:100%}
+::selection{background:var(--menthe);color:var(--nuit)}
+.wrap{width:min(1200px,100% - 32px);margin-inline:auto}
+.eyebrow{font-size:13px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--menthe)}
+.serif{font-family:var(--serif);font-weight:400;font-style:italic}
+h2{font-size:clamp(38px,6vw,76px);line-height:1;letter-spacing:-.03em;font-weight:700;margin:14px 0 24px}
+h2 .serif{color:var(--menthe);letter-spacing:-.01em}
+.lead{font-size:clamp(18px,2vw,22px);color:var(--brume);max-width:62ch}
+section{position:relative;padding:clamp(80px,12vw,150px) 0}
+
+/* grain */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.07;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:background .4s,backdrop-filter .4s}
+nav.solid{background:rgba(11,31,42,.78);backdrop-filter:blur(14px)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{font-weight:800;font-size:24px;letter-spacing:-.04em;text-decoration:none}
+.logo b{color:var(--menthe)}
+nav ul{display:flex;gap:26px;list-style:none;font-size:15px;font-weight:500}
+nav ul a{text-decoration:none;opacity:.8;transition:opacity .2s}
+nav ul a:hover{opacity:1;color:var(--menthe)}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;border-radius:999px;font-weight:700;text-decoration:none;font-size:16px;transition:transform .25s cubic-bezier(.3,1.6,.5,1),box-shadow .25s;border:0;cursor:pointer;font-family:inherit}
+.btn:hover{transform:translateY(-3px) rotate(-1.5deg)}
+.btn-m{background:var(--menthe);color:var(--nuit);box-shadow:0 10px 40px -10px rgba(61,245,160,.6)}
+.btn-o{border:1.5px solid rgba(244,251,248,.35);color:var(--neige);background:transparent}
+.nav-cta{padding:10px 18px;font-size:14px}
+@media (max-width:900px){nav ul{display:none}}
+
+/* hero */
+.hero{min-height:100svh;display:flex;align-items:center;padding:120px 0 80px;overflow:hidden}
+.aurora{position:absolute;inset:-20%;z-index:0;filter:blur(80px);opacity:.85}
+.aurora i{position:absolute;border-radius:50%;mix-blend-mode:screen;animation:drift 18s ease-in-out infinite alternate}
+.aurora i:nth-child(1){width:70vw;height:22vw;left:5%;top:18%;background:var(--menthe);transform:rotate(-14deg);opacity:.55}
+.aurora i:nth-child(2){width:55vw;height:20vw;right:0;top:8%;background:var(--violet);animation-duration:22s;opacity:.7}
+.aurora i:nth-child(3){width:40vw;height:14vw;left:35%;top:34%;background:var(--ciel);animation-duration:26s;opacity:.35}
+@keyframes drift{0%{translate:0 0;rotate:-6deg}50%{translate:6vw 3vh;rotate:4deg}100%{translate:-4vw -2vh;rotate:-2deg}}
+.contours{position:absolute;left:0;right:0;bottom:0;height:55%;z-index:1;opacity:.9}
+.contours path{fill:none;stroke:var(--lime);stroke-width:1.5;stroke-dasharray:2400;stroke-dashoffset:2400;animation:trace 4s ease-out forwards}
+@keyframes trace{to{stroke-dashoffset:0}}
+.hero .wrap{position:relative;z-index:2}
+.tag{display:inline-block;padding:8px 16px;border:1px solid rgba(200,241,105,.45);border-radius:999px;color:var(--lime);font-size:13px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;opacity:0;animation:up .8s .1s forwards}
+.word{font-size:clamp(84px,19vw,260px);line-height:.85;font-weight:800;letter-spacing:-.06em;margin:28px 0 10px;display:flex;flex-wrap:wrap;user-select:none}
+.word span{display:inline-block;transform-origin:50% 100%;transition:transform .5s cubic-bezier(.3,1.8,.4,1),color .3s;opacity:0;animation:up .9s forwards}
+.word .f{color:var(--menthe)}
+.word span:hover{color:var(--lime)}
+.slogan{font-family:var(--serif);font-style:italic;font-size:clamp(30px,4.5vw,58px);line-height:1.05;opacity:0;animation:up .9s 1s forwards}
+.hero p.lead{margin:22px 0 34px;opacity:0;animation:up .9s 1.15s forwards}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap;opacity:0;animation:up .9s 1.3s forwards}
+@keyframes up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+.scroll{position:absolute;right:16px;bottom:34px;z-index:2;writing-mode:vertical-rl;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--brume)}
+
+/* ticker */
+.ticker{background:var(--lime);color:var(--nuit);overflow:hidden;padding:18px 0;transform:rotate(-1.6deg);margin:-10px -2vw;position:relative;z-index:5}
+.ticker div{display:flex;gap:48px;white-space:nowrap;width:max-content;animation:tick 40s linear infinite;font-size:26px;font-weight:800;letter-spacing:-.02em}
+.ticker div span:nth-child(even){font-family:var(--serif);font-style:italic;font-weight:400}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+/* histoire */
+.story{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(30px,6vw,90px);align-items:start}
+.years{position:relative;display:grid;gap:22px}
+.year{border-radius:var(--r);padding:34px;position:relative;overflow:hidden}
+.year b{display:block;font-size:clamp(64px,9vw,120px);line-height:.9;letter-spacing:-.05em;font-weight:800}
+.year h3{font-size:22px;margin:12px 0 8px}
+.y17{background:var(--violet);transform:rotate(-2deg)}
+.y27{background:var(--menthe);color:var(--nuit);transform:rotate(1.5deg) translateX(30px)}
+.quote{margin-top:36px;font-family:var(--serif);font-style:italic;font-size:clamp(24px,2.6vw,32px);line-height:1.2;color:var(--lime)}
+.quote small{display:block;font-family:var(--display);font-style:normal;font-size:14px;color:var(--brume);margin-top:10px}
+@media (max-width:900px){.story{grid-template-columns:1fr}.y27{transform:rotate(1.5deg)}}
+
+/* FLEX letters */
+.letters{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:40px}
+.card{perspective:1200px;height:420px;cursor:pointer}
+.card-in{position:relative;height:100%;transition:transform .8s cubic-bezier(.3,1.3,.4,1);transform-style:preserve-3d}
+.card:hover .card-in,.card:focus-within .card-in,.card.on .card-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:var(--r);padding:28px;backface-visibility:hidden;display:flex;flex-direction:column;color:var(--nuit)}
+.face.back{transform:rotateY(180deg);background:var(--nuit-2);color:var(--neige);border:1.5px solid currentColor}
+.face .L{font-size:190px;line-height:.8;font-weight:800;letter-spacing:-.06em;flex:1}
+.face h3{font-size:28px;letter-spacing:-.02em}
+.face p{font-size:16px;line-height:1.45}
+.face .hint{font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.7;margin-top:10px}
+.back .y{font-size:13px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;margin-bottom:10px}
+.back h3{margin-bottom:12px}
+.back p+p{margin-top:16px;padding-top:16px;border-top:1px dashed rgba(244,251,248,.3)}
+@media (max-width:1000px){.letters{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.letters{grid-template-columns:1fr}.card{height:360px}}
+
+/* engagement */
+.levers{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:44px;border-top:1.5px solid rgba(169,199,192,.3)}
+.lever{padding:30px 26px 30px 0;display:flex;flex-direction:column;gap:12px;position:relative}
+.lever+.lever{padding-left:26px;border-left:1.5px solid rgba(169,199,192,.3)}
+.lever .n{font-family:var(--serif);font-style:italic;font-size:64px;line-height:1;color:var(--menthe);transition:transform .5s cubic-bezier(.3,1.8,.4,1)}
+.lever:nth-child(2) .n{color:var(--lime)}.lever:nth-child(3) .n{color:#B9A2FF}.lever:nth-child(4) .n{color:var(--corail)}
+.lever:hover .n{transform:translateY(-8px) rotate(-8deg)}
+.lever h3{font-size:30px;letter-spacing:-.02em}
+.lever p{color:var(--brume);font-size:16px;flex:1}
+.lever .ici{font-size:14px;font-weight:600;color:var(--neige)}
+.engage{margin-top:40px;font-size:clamp(22px,2.6vw,32px);line-height:1.3;max-width:56ch}
+.engage b{color:var(--menthe)}
+.engage .serif{color:var(--lime);display:block}
+@media (max-width:1000px){.levers{grid-template-columns:1fr 1fr}.lever:nth-child(3){padding-left:0;border-left:0}.lever{border-top:1.5px solid rgba(169,199,192,.3)}}
+@media (max-width:560px){.levers{grid-template-columns:1fr}.lever,.lever+.lever{padding-left:0;border-left:0}}
+
+/* hub / composer */
+.hub{background:var(--nuit-2);border-radius:48px 48px 0 0}
+.composer{margin-top:44px;display:grid;grid-template-columns:1fr;gap:24px}
+.days{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.day{border-radius:22px;padding:20px 16px;background:var(--nuit-3);border:2px solid transparent;cursor:pointer;text-align:left;color:var(--neige);font-family:inherit;transition:transform .3s cubic-bezier(.3,1.8,.4,1),background .3s,border-color .3s;min-height:210px;display:flex;flex-direction:column;gap:8px}
+.day:hover{transform:translateY(-6px) rotate(-1deg)}
+.day strong{font-size:20px}
+.day small{font-size:14px;color:var(--brume);line-height:1.35}
+.day[aria-pressed="true"]{background:var(--menthe);color:var(--nuit)}
+.day[aria-pressed="true"] small{color:var(--nuit)}
+.day.fri{background:transparent;border:2px dashed var(--corail);cursor:default}
+.day.fri:hover{transform:none}
+.result{border-radius:var(--r);padding:30px;background:var(--nuit);border:1.5px solid rgba(169,199,192,.25);display:flex;flex-direction:column;gap:14px}
+.result .big{font-size:56px;font-weight:800;letter-spacing:-.04em;line-height:1}
+.result .big small{font-size:18px;font-weight:500;color:var(--brume);letter-spacing:0}
+.meter{height:12px;border-radius:999px;background:var(--nuit-3);overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--menthe);border-radius:inherit;transition:width .6s cubic-bezier(.3,1.4,.4,1),background .3s}
+.note{font-size:14px;color:var(--brume)}
+.msg{font-size:15px;min-height:44px}
+@media (max-width:1000px){.composer{grid-template-columns:1fr}.days{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media (max-width:640px){.days{grid-template-columns:1fr 1fr}.day{min-height:auto}}
+
+/* blocks */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,6vw,80px);align-items:center}
+@media (max-width:900px){.split{grid-template-columns:1fr}}
+.run{position:relative;aspect-ratio:1;border-radius:50%;background:conic-gradient(from 200deg,var(--corail),var(--soleil),var(--lime),var(--menthe),var(--corail));display:grid;place-items:center;animation:spin 30s linear infinite;max-width:440px;margin-inline:auto;width:100%}
+.run::after{content:"";position:absolute;inset:18px;border-radius:50%;background:var(--nuit)}
+.run span{position:relative;z-index:1;font-family:var(--serif);font-style:italic;font-size:clamp(28px,4vw,46px);text-align:center;line-height:1.05;animation:spin 30s linear infinite reverse}
+@keyframes spin{to{rotate:360deg}}
+.pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.pill{padding:10px 16px;border-radius:999px;background:var(--nuit-3);font-size:15px}
+
+/* éclaireur mock */
+.chat{border-radius:var(--r);background:linear-gradient(160deg,var(--nuit-3),var(--nuit-2));padding:26px;border:1.5px solid rgba(139,92,246,.5);box-shadow:0 30px 80px -30px rgba(139,92,246,.6);display:grid;gap:14px}
+.bubble{padding:16px 18px;border-radius:20px;font-size:16px;line-height:1.45;max-width:90%}
+.bubble.kid{background:var(--nuit);justify-self:start;border-bottom-left-radius:6px}
+.bubble.ai{background:var(--violet);justify-self:end;border-bottom-right-radius:6px}
+.bubble.guide{background:var(--lime);color:var(--nuit);justify-self:start;border-bottom-left-radius:6px;font-weight:600}
+.bubble em{display:block;font-style:normal;font-size:12px;letter-spacing:.15em;text-transform:uppercase;opacity:.75;margin-bottom:6px;font-weight:700}
+
+/* offers */
+.offers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+.offer{border-radius:var(--r);padding:30px;color:var(--nuit);display:flex;flex-direction:column;gap:12px;min-height:300px;transition:transform .4s cubic-bezier(.3,1.6,.4,1)}
+.offer:hover{transform:translateY(-8px) rotate(-1deg)}
+.offer h3{font-size:28px;letter-spacing:-.02em;line-height:1.05}
+.offer .who{font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
+.offer p{font-size:16px;flex:1}
+.offer .price{font-weight:800;font-size:18px}
+@media (max-width:1000px){.offers{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.offers{grid-template-columns:1fr}}
+
+/* recherche */
+.research{background:var(--violet);color:var(--neige);border-radius:48px;margin:0 16px;overflow:hidden}
+.research h2 .serif{color:var(--lime)}
+.axes{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+.axe{background:rgba(11,31,42,.35);border-radius:var(--r);padding:28px;backdrop-filter:blur(6px)}
+.axe b{font-size:46px;font-family:var(--serif);font-style:italic;font-weight:400;color:var(--lime)}
+.axe h3{font-size:22px;margin:8px 0}
+.axe p{font-size:16px}
+@media (max-width:900px){.axes{grid-template-columns:1fr}}
+
+/* team */
+.team{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:44px}
+.member .av{width:100%;aspect-ratio:1;border-radius:46% 54% 40% 60% / 55% 45% 55% 45%;display:grid;place-items:center;font-size:clamp(40px,5vw,64px);font-weight:800;color:var(--nuit);margin-bottom:18px;transition:border-radius .8s,transform .5s}
+.member:hover .av{border-radius:58% 42% 60% 40% / 40% 60% 40% 60%;transform:rotate(-4deg)}
+.member h3{font-size:22px}
+.member p{font-size:15px;color:var(--brume)}
+.member .b{display:inline-block;margin-top:8px;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--lime);font-weight:700}
+@media (max-width:900px){.team{grid-template-columns:1fr 1fr}}
+
+/* manifeste */
+.manifesto{text-align:left}
+.manifesto p{font-family:var(--serif);font-size:clamp(34px,5.5vw,72px);line-height:1.05;letter-spacing:-.01em;color:rgba(244,251,248,.18);transition:color .6s}
+.manifesto p.lit{color:var(--neige)}
+.manifesto p.lit em{color:var(--menthe)}
+.manifesto p+p{margin-top:18px}
+
+/* contact */
+.contact{background:var(--menthe);color:var(--nuit);border-radius:48px 48px 0 0}
+.contact h2 .serif{color:var(--violet)}
+form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:30px}
+form .full{grid-column:1/-1}
+label{min-width:0;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;display:grid;gap:8px}
+input,select,textarea{width:100%;min-width:0;font:inherit;font-size:17px;padding:16px 18px;border-radius:18px;border:2px solid var(--nuit);background:rgba(255,255,255,.55);color:var(--nuit);text-transform:none;letter-spacing:0;font-weight:500}
+input:focus,select:focus,textarea:focus{outline:3px solid var(--violet);outline-offset:2px}
+.btn-n{background:var(--nuit);color:var(--neige)}
+@media (max-width:640px){form{grid-template-columns:1fr}}
+footer{background:var(--nuit);padding:60px 0 40px;color:var(--brume);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:end}
+footer .logo{font-size:56px;color:var(--neige)}
+
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 1s,transform 1s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.reveal,.word span,.tag,.slogan,.hero p.lead,.cta-row{opacity:1!important;transform:none!important}.contours path{stroke-dashoffset:0}}
+:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="logo" href="#top">projet<b>flex</b></a>
+    <ul>
+      <li><a href="#flex">FLEX</a></li>
+      <li><a href="#engagement">Engagement</a></li>
+      <li><a href="#hub">Le Hub</a></li>
+      <li><a href="#eclaireur">L’Éclaireur</a></li>
+      <li><a href="#offres">Pour qui</a></li>
+      <li><a href="#recherche">Recherche</a></li>
+      <li><a href="#equipe">Équipe</a></li>
+    </ul>
+    <a class="btn btn-m nav-cta" href="#contact">Liste d’attente 2027</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+  <svg class="contours" viewBox="0 0 1440 500" preserveAspectRatio="none" aria-hidden="true">
+    <path style="opacity:.10" d="M-20 200 C 240 110, 480 330, 720 220 S 1200 90, 1460 230"/>
+    <path style="opacity:.14;animation-delay:.15s" d="M-20 240 C 240 152, 480 372, 720 262 S 1200 134, 1460 272"/>
+    <path style="opacity:.18;animation-delay:.3s" d="M-20 282 C 240 196, 480 414, 720 306 S 1200 180, 1460 316"/>
+    <path style="opacity:.22;animation-delay:.45s" d="M-20 326 C 240 242, 480 456, 720 352 S 1200 228, 1460 362"/>
+    <path style="opacity:.27;animation-delay:.6s" d="M-20 372 C 240 290, 480 498, 720 400 S 1200 278, 1460 410"/>
+    <path style="opacity:.32;animation-delay:.75s" d="M-20 420 C 240 340, 480 540, 720 450 S 1200 330, 1460 460"/>
+  </svg>
+  <div class="wrap">
+    <span class="tag">Jonquière · Saguenay–Lac-Saint-Jean · 2027</span>
+    <h1 class="word" id="word" aria-label="projetflex">
+      <span style="animation-delay:.20s">p</span><span style="animation-delay:.25s">r</span><span style="animation-delay:.30s">o</span><span style="animation-delay:.35s">j</span><span style="animation-delay:.40s">e</span><span style="animation-delay:.45s">t</span><span class="f" style="animation-delay:.55s">f</span><span class="f" style="animation-delay:.62s">l</span><span class="f" style="animation-delay:.69s">e</span><span class="f" style="animation-delay:.76s">x</span>
+    </h1>
+    <p class="slogan">Ce qui plie ne casse pas.</p>
+    <p class="lead">Apprendre dehors, ensemble, à son rythme. Un écosystème d’apprentissage en forêt, en LAB et en ligne pour les enfants de 4 à 12 ans et leurs familles.</p>
+    <div class="cta-row">
+      <a class="btn btn-m" href="#hub">Composer ma semaine →</a>
+      <a class="btn btn-o" href="#engagement">Notre philosophie</a>
+    </div>
+  </div>
+  <span class="scroll" aria-hidden="true">Défiler</span>
+</header>
+
+<div class="ticker" aria-hidden="true"><div>
+  <span>Forêt</span><span>Laboratoire</span><span>Club de course</span><span>Éclaireur</span><span>Flexibilité</span><span>Engagement</span><span>Pop-up</span><span>eXception</span><span>Café des familles</span><span>Mentors de métier</span>
+  <span>Forêt</span><span>Laboratoire</span><span>Club de course</span><span>Éclaireur</span><span>Flexibilité</span><span>Engagement</span><span>Pop-up</span><span>eXception</span><span>Café des familles</span><span>Mentors de métier</span>
+</div></div>
+
+<section id="flex">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">Quatre lettres, une promesse</span>
+      <h2>F·L·E·X, <span class="serif">notre ADN.</span></h2>
+      <p class="lead">Survolez ou touchez une carte : à l’endos, ce que la lettre veut dire, et comment elle se vit au quotidien.</p>
+    </div>
+    <div class="letters">
+      <div class="card reveal" tabindex="0"><div class="card-in">
+        <div class="face" style="background:var(--menthe)"><span class="L">F</span><h3>Flexibilité</h3><span class="hint">Retourner ↻</span></div>
+        <div class="face back" style="color:var(--menthe)"><span class="y">Ce que ça veut dire</span><p style="color:var(--neige)">Des places assises variées, des approches et des modes de regroupement qui s’adaptent.</p><p style="color:var(--neige)"><b style="color:var(--menthe)">Au quotidien :</b> 1 ou 2 jours au Hub, des formules à la carte, et une forêt qui ne ressemble jamais à la veille.</p></div>
+      </div></div>
+      <div class="card reveal" tabindex="0"><div class="card-in">
+        <div class="face" style="background:var(--lime)"><span class="L">L</span><h3>Laboratoire</h3><span class="hint">Retourner ↻</span></div>
+        <div class="face back" style="color:var(--lime)"><span class="y">Ce que ça veut dire</span><p style="color:var(--neige)">Un lieu de chercheurs, d’entraide, où l’erreur est permise et même bénéfique.</p><p style="color:var(--neige)"><b style="color:var(--lime)">Au quotidien :</b> le LAB des Possibles. On y prototype, on y crée, on y choisit son projet.</p></div>
+      </div></div>
+      <div class="card reveal" tabindex="0"><div class="card-in">
+        <div class="face" style="background:var(--violet);color:var(--neige)"><span class="L">E</span><h3>Engagement</h3><span class="hint">Retourner ↻</span></div>
+        <div class="face back" style="color:var(--violet)"><span class="y" style="color:#B9A2FF">Ce que ça veut dire</span><p style="color:var(--neige)">Cognitif, social, communautaire et personnel. L’effort est valorisé, le mérite revient au jeune.</p><p style="color:var(--neige)"><b style="color:#B9A2FF">Au quotidien :</b> l’Éclaireur garde l’engagement allumé entre deux sorties en forêt.</p></div>
+      </div></div>
+      <div class="card reveal" tabindex="0"><div class="card-in">
+        <div class="face" style="background:var(--corail)"><span class="L" style="font-family:var(--serif);font-style:italic;font-weight:400">X</span><h3>eXception</h3><span class="hint">Retourner ↻</span></div>
+        <div class="face back" style="color:var(--corail)"><span class="y">Ce que ça veut dire</span><p style="color:var(--neige)">Un parcours différent, hors norme, pensé pour le jeune.</p><p style="color:var(--neige)"><b style="color:var(--corail)">Au quotidien :</b> en maths, on résout X. Ici, X c’est l’enfant : on ne le résout pas, on le laisse se révéler.</p></div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section id="engagement" style="padding-top:0">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">Notre fil conducteur</span>
+      <h2>Ce qui allume <span class="serif">un enfant.</span></h2>
+      <p class="lead">Demandez à un enfant de 5 ans s’il a hâte d’apprendre : la réponse est presque toujours oui. Tout projetflex est construit pour que ce oui dure. Quatre leviers, tirés de nos années d’observation en classe et de la recherche sur la motivation.</p>
+    </div>
+    <div class="levers">
+      <div class="lever reveal"><span class="n">01</span><h3>Choisir</h3><p>Le lieu, la position, le projet, l’option. Un enfant qui choisit n’obéit plus seulement : il s’engage.</p><span class="ici">Au Hub : choix du projet au LAB, du rythme au Club de course.</span></div>
+      <div class="lever reveal"><span class="n">02</span><h3>Se sentir capable</h3><p>Le sentiment d’efficacité personnelle : croire qu’on peut réussir, et savoir que ses réussites viennent de ses efforts.</p><span class="ici">Au Hub : défis à sa mesure, progrès visibles dans le portfolio.</span></div>
+      <div class="lever reveal"><span class="n">03</span><h3>Appartenir</h3><p>Une communauté d’apprenants où chacun enseigne quelque chose aux autres, et où la voix des jeunes compte vraiment.</p><span class="ici">Au Hub : groupes multiâges, conseil des jeunes, Café des familles.</span></div>
+      <div class="lever reveal"><span class="n">04</span><h3>Donner du sens</h3><p>Des projets signifiants qui reconnaissent les forces et les intérêts de chacun, plutôt que la redondance.</p><span class="ici">Au Hub : la forêt, le territoire, les mentors de métier.</span></div>
+    </div>
+    <p class="engage reveal">L’engagement, on le veut <b>cognitif</b>, <b>social</b>, <b>communautaire</b> et <b>personnel</b>. <span class="serif">Et on valorise l’effort, toujours.</span></p>
+  </div>
+</section>
+
+<section class="hub" id="hub">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">Le Hub Forêt + LAB</span>
+      <h2>Composez votre <span class="serif">semaine FLEX.</span></h2>
+      <p class="lead">Pour les familles qui font l’enseignement à la maison. Choisissez une ou deux journées au Hub : le reste de la semaine vous appartient, et le parent reste maître d’œuvre du projet d’apprentissage.</p>
+    </div>
+    <div class="composer reveal">
+      <div class="days" id="days">
+        <button class="day" aria-pressed="false" data-d="Lundi"><strong>Lundi</strong><small>Club de course<br>Forêt : exploration<br>LAB : projet</small></button>
+        <button class="day" aria-pressed="false" data-d="Mardi"><strong>Mardi</strong><small>Club de course<br>Forêt : sciences<br>Mentor de métier</small></button>
+        <button class="day" aria-pressed="false" data-d="Mercredi"><strong>Mercredi</strong><small>Club de course<br>LAB : création<br>Café des familles</small></button>
+        <button class="day" aria-pressed="false" data-d="Jeudi"><strong>Jeudi</strong><small>Club de course<br>Forêt : territoire<br>Bilan du portfolio</small></button>
+        <div class="day fri" role="note"><strong style="color:var(--corail)">Vendredi</strong><small>Le jour qui voyage : pop-up dans les écoles et les villages, évaluations, Éclaireur en ligne.</small></div>
+      </div>
+      <div class="result" aria-live="polite">
+        <span class="eyebrow">Votre formule</span>
+        <div class="big" id="price">0 $<small> / mois</small></div>
+        <div class="meter" aria-hidden="true"><i id="meter"></i></div>
+        <p class="msg" id="msg">Touchez une journée pour commencer.</p>
+        <p class="note">Tarifs indicatifs 2027-2028, avant l’échelle mobile selon le revenu familial. Des places à tarif réduit sont réservées chaque année.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="course" style="background:var(--nuit-2)">
+  <div class="wrap split">
+    <div class="reveal">
+      <span class="eyebrow">Chaque matin</span>
+      <h2>Le Club <span class="serif">de course.</span></h2>
+      <p class="lead">On commence dehors, beau temps mauvais temps. Marche, jogging ou course : chacun choisit son intensité, sans chrono imposé. Un corps régulé, c’est un esprit disponible pour apprendre.</p>
+      <div class="pills"><span class="pill">Sans comparaison</span><span class="pill">Au rythme de chacun</span><span class="pill">Adapté aux saisons du Saguenay</span><span class="pill">Régulation des émotions</span></div>
+    </div>
+    <div class="run reveal" aria-hidden="true"><span>un pas<br>à la fois</span></div>
+  </div>
+</section>
+
+<section id="eclaireur">
+  <div class="wrap split">
+    <div class="chat reveal" role="img" aria-label="Exemple d’échange avec l’Éclaireur">
+      <div class="bubble kid"><em>Léo, 9 ans · photo du barrage</em>J’ai trouvé un barrage de castor! Comment il fait pour que l’eau ne passe pas?</div>
+      <div class="bubble ai"><em>L’Éclaireur</em>Super observation! Trois pistes pour ta prochaine sortie : compter les branches (maths), comparer le niveau de l’eau des deux côtés (physique), chercher des traces de dents (biologie). Laquelle t’intrigue le plus?</div>
+      <div class="bubble guide"><em>Sofie, guide</em>Je valide. Jeudi, on apporte le ruban à mesurer!</div>
+    </div>
+    <div class="reveal">
+      <span class="eyebrow">Compétences du 21e siècle</span>
+      <h2>L’Éclaireur, <span class="serif">un copilote, pas un pilote.</span></h2>
+      <p class="lead">Un portfolio dynamique qui garde la curiosité allumée entre deux rencontres. L’IA propose des pistes; la guide observe, oriente et célèbre. L’IA ne décide jamais seule, et aucune donnée nominative d’enfant n’est confiée aux outils externes.</p>
+    </div>
+  </div>
+</section>
+
+<section id="offres" style="padding-top:0">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">Plusieurs portes d’entrée</span>
+      <h2>Pour qui? <span class="serif">Pour vous.</span></h2>
+    </div>
+    <div class="offers">
+      <div class="offer reveal" style="background:var(--menthe)"><span class="who">Familles en enseignement à la maison</span><h3>Le Hub Forêt + LAB</h3><p>Une ou deux journées par semaine, en petits groupes multiâges, avec des guides brevetées.</p><span class="price">dès 195 $ / mois</span></div>
+      <div class="offer reveal" style="background:var(--lime)"><span class="who">Tous les enfants de la région</span><h3>Camps FLEX</h3><p>Semaine de relâche et été : forêt, création, Club de course et grands projets.</p><span class="price">Inscriptions à venir</span></div>
+      <div class="offer reveal" style="background:var(--corail)"><span class="who">Écoles et municipalités</span><h3>Pop-up FLEX</h3><p>Nous venons chez vous le vendredi : ateliers nature et LAB clés en main, pour un groupe ou toute une école.</p><span class="price">Sur réservation</span></div>
+      <div class="offer reveal" style="background:var(--violet);color:var(--neige)"><span class="who">Parents-éducateurs du Québec</span><h3>Évaluation annuelle</h3><p>Le bilan de progression exigé, réalisé par une enseignante titulaire d’une autorisation d’enseigner, en présence ou à distance.</p><span class="price">Dès le printemps 2028</span></div>
+      <div class="offer reveal" style="background:var(--ciel)"><span class="who">Familles de la francophonie</span><h3>Plateforme Éclaireur</h3><p>Trousses de projets nature, parcours téléchargeables, communauté et copilote, où que vous soyez.</p><span class="price">Lancement en janvier 2028</span></div>
+      <div class="offer reveal" style="background:var(--soleil)"><span class="who">Enseignants et équipes</span><h3>Formation</h3><p>Pédagogie par la nature, flexibilité et IA en éducation : ateliers et conférences sur mesure.</p><span class="price">Sur demande</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="research reveal" id="recherche">
+  <div class="wrap">
+    <span class="eyebrow" style="color:var(--lime)">Un terrain de recherche vivant</span>
+    <h2>Apprendre, et comprendre <span class="serif">comment on apprend.</span></h2>
+    <p class="lead" style="color:var(--neige);opacity:.9">projetflex se construit comme un terrain partenaire de la recherche universitaire en éducation, avec des données recueillies dans le respect des familles, des consentements et de la Loi 25.</p>
+    <div class="axes">
+      <div class="axe"><b>01</b><h3>Nature et engagement</h3><p>Ce que changent un ou deux jours par semaine en nature dans l’engagement des enfants.</p></div>
+      <div class="axe"><b>02</b><h3>IA et autorégulation</h3><p>Un copilote qui soutient l’autorégulation, sous le regard de l’adulte.</p></div>
+      <div class="axe"><b>03</b><h3>Familles et tiers-lieux</h3><p>Le sentiment de compétence des parents-éducateurs.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="equipe">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">Les porteuses</span>
+      <h2>Quatre expertises, <span class="serif">un seul enfant au centre.</span></h2>
+    </div>
+    <div class="team">
+      <div class="member reveal"><div class="av" style="background:var(--menthe)">IP</div><h3>Isabelle Pedneault</h3><p>Conseillère pédagogique pédagonumérique. L’Éclaireur et la plateforme.</p><span class="b">Brevetée</span></div>
+      <div class="member reveal"><div class="av" style="background:var(--violet)">EB</div><h3>Élaine Bérubée</h3><p>Enseignante au préscolaire. Les 4 à 7 ans, le jeu, la nature.</p><span class="b">Brevetée</span></div>
+      <div class="member reveal"><div class="av" style="background:var(--corail)">VT</div><h3>Valérie Thibault</h3><p>Enseignante au primaire. Projets, LAB et évaluations.</p><span class="b">Brevetée</span></div>
+      <div class="member reveal"><div class="av" style="background:var(--lime)">SG</div><h3>Sofie Grenon</h3><p>Technicienne en éducation spécialisée. Inclusion, régulation, Club de course.</p><span class="b">TES</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="manifesto" id="manifeste" style="padding-top:0">
+  <div class="wrap">
+    <span class="eyebrow">Le manifeste</span>
+    <div style="margin-top:24px" id="mani">
+      <p>Nous croyons que la forêt est <em>une salle de classe.</em></p>
+      <p>Que grimper dans un arbre enseigne la physique, la confiance et la prise de risque, <em>en même temps.</em></p>
+      <p>Que l’apprentissage le plus durable laisse des traces <em>dans le corps</em> autant que dans la mémoire.</p>
+      <p>Tout seul on va plus vite. <em>Ensemble, on va plus loin.</em></p>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="wrap">
+    <span class="eyebrow" style="color:var(--nuit)">Ouverture prévue en août 2027</span>
+    <h2>Rejoignez la <span class="serif">liste d’attente.</span></h2>
+    <p class="lead" style="color:var(--nuit)">Familles, écoles, chercheuses, partenaires : écrivez-nous. Nous vous avisons en premier de la rencontre d’information et du premier Pop-up School.</p>
+    <form id="form">
+      <label>Nom<input name="nom" required autocomplete="name"></label>
+      <label>Courriel<input name="courriel" type="email" required autocomplete="email"></label>
+      <label class="full">Je suis
+        <select name="profil">
+          <option>Une famille en enseignement à la maison</option>
+          <option>Une famille intéressée par les camps</option>
+          <option>Une école ou une municipalité (pop-up)</option>
+          <option>Une chercheuse, un chercheur ou une université</option>
+          <option>Un partenaire ou un commanditaire</option>
+          <option>Autre</option>
+        </select>
+      </label>
+      <label class="full">Message<textarea name="message" rows="4"></textarea></label>
+      <div class="full"><button class="btn btn-n" type="submit">Envoyer par courriel →</button></div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><div class="logo">projet<b>flex</b></div><p>Ce qui plie ne casse pas. · Jonquière, Saguenay–Lac-Saint-Jean</p></div>
+    <p>Un service éducatif complémentaire pour les familles.<br>© 2026 projetflex</p>
+  </div>
+</footer>
+
+<script>
+// nav
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('solid',scrollY>40),{passive:true});
+
+// le mot qui plie
+const word=document.getElementById('word'), letters=[...word.querySelectorAll('span')];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(!reduce){
+  addEventListener('pointermove',e=>{
+    const r=word.getBoundingClientRect();
+    letters.forEach((l,i)=>{
+      const b=l.getBoundingClientRect(), cx=b.left+b.width/2, cy=b.top+b.height/2;
+      const dx=(e.clientX-cx)/innerWidth, dy=(e.clientY-cy)/innerHeight;
+      const d=Math.hypot(dx,dy), k=Math.max(0,1-d*2.2);
+      l.style.transform=`skewX(${-dx*38*k}deg) rotate(${dx*10*k}deg) scaleY(${1+k*.12})`;
+    });
+  },{passive:true});
+  word.addEventListener('pointerleave',()=>letters.forEach(l=>l.style.transform=''));
+}
+
+// reveal
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// cartes au toucher
+document.querySelectorAll('.card').forEach(c=>{c.addEventListener('click',()=>c.classList.toggle('on'));c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();c.classList.toggle('on')}})});
+
+// composer
+const days=[...document.querySelectorAll('#days button')], price=document.getElementById('price'), msg=document.getElementById('msg'), meter=document.getElementById('meter');
+const tarif={0:0,1:195,2:375};
+function upd(flash){
+  const on=days.filter(d=>d.getAttribute('aria-pressed')==='true');
+  const n=on.length;
+  price.innerHTML=`${tarif[n]} $<small> / mois</small>`;
+  meter.style.width=(n/2*100)+'%';
+  meter.style.background=flash?'var(--corail)':'var(--menthe)';
+  if(flash){msg.innerHTML='<b>Deux jours, c’est le maximum au Hub.</b> Le reste de la semaine appartient à votre famille : c’est ce qui garde le parent maître d’œuvre. Retirez une journée pour en choisir une autre.';return}
+  msg.textContent=n===0?'Touchez une journée pour commencer.':n===1?`${on[0].dataset.d} au Hub. Ajoutez une deuxième journée si vous le souhaitez.`:`${on[0].dataset.d} et ${on[1].dataset.d} au Hub. Parfait équilibre!`;
+}
+days.forEach(d=>d.addEventListener('click',()=>{
+  const on=d.getAttribute('aria-pressed')==='true';
+  const count=days.filter(x=>x.getAttribute('aria-pressed')==='true').length;
+  if(!on&&count>=2){d.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:350});upd(true);return}
+  d.setAttribute('aria-pressed',String(!on));upd(false);
+}));
+
+// manifeste qui s'allume
+const lines=[...document.querySelectorAll('#mani p')];
+const io2=new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle('lit',e.isIntersecting)),{rootMargin:'-35% 0px -35% 0px'});
+lines.forEach(l=>io2.observe(l));
+
+// formulaire : ouvre le courriel
+document.getElementById('form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const f=new FormData(e.target);
+  const sujet=`projetflex · ${f.get('profil')}`;
+  const corps=`Nom : ${f.get('nom')}\nCourriel : ${f.get('courriel')}\nProfil : ${f.get('profil')}\n\n${f.get('message')||''}`;
+  location.href=`mailto:isabellepedneault111@gmail.com?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`;
+});
+</script>
+</body>
+</html>
