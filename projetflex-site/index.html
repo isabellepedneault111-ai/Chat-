@@ -548,6 +548,28 @@ body.fit .intro{font-size:clamp(19px,min(1.6vw,2.9vh),23px)}
 .lisiere > .wrap{position:relative;z-index:2}
 
 body.fit .borne{display:none}
+
+/* étiquettes du sentier confinées à leur case */
+.sentier a{min-width:0}
+.sentier a .lb{left:0;right:0;width:100%;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px}
+
+
+.sentier a{flex:1 1 auto;padding:0 5px}
+.sentier a .lb{position:static;width:auto;overflow:visible;text-overflow:clip;padding:0}
+.sentier::before{top:13px}
+.sentier{align-items:flex-start;padding-top:20px}
+.sentier a.ici .vi{bottom:auto;top:-20px}
+
+
+/* sentier : ligne alignée sur les losanges, « vous êtes ici » au-dessus */
+.sentier{padding-top:24px}
+.sentier::before{top:35px}
+.sentier a .pt{margin-top:2px}
+.sentier a.ici .vi{top:-24px}
+/* laisser la place au badge Netlify en bas à droite */
+.pas{padding-right:max(16px,calc((100% - 1240px)/2),230px)}
+@media (max-width:900px){.pas{padding-right:16px;padding-bottom:58px}}
+
 @media (prefers-reduced-motion:reduce){.empreintes,.randonneuse{display:none}}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
@@ -1001,7 +1023,7 @@ function royaume(){
 }
 
 // sentier : une borne à la fois, sous-onglets, ajustement à l'écran
-const VUES=[['depart','Départ'],['adn','ADN'],['engagement','Engagement'],['hub','Le Hub'],['eclaireur','Éclaireur'],['ciel','Observatoire'],['offres','Pour qui'],['recherche','Recherche'],['equipe','Équipe'],['registre','Registre']];
+const VUES=[['depart','Départ'],['adn','ADN'],['engagement','Engagement'],['hub','Le Hub'],['eclaireur','Éclaireur'],['ciel','Ciel'],['offres','Pour qui'],['recherche','Recherche'],['equipe','Équipe'],['registre','Registre']];
 const SOUS={hub:'Ma semaine',lab:'Le LAB',course:'Bouger',equipe:'Les guides',manifeste:'Le manifeste'};
 const sentier=document.getElementById('sentier');
 sentier.innerHTML=VUES.map(([id,l])=>`<a href="#${id==='depart'?'top':id}" data-v="${id}"><span class="pt"></span><span class="lb">${l}</span></a>`).join('');
