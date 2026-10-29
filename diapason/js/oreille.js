@@ -175,7 +175,19 @@ export function diagnostic(res) {
   const on = new Float32Array(nE); for (let i = 1; i < nE; i++) on[i] = Math.max(0, db[i] - db[i - 1]);
   const lag = Math.round((20 * 60) / res.bpm); let sl = 0; let sm = 0; let c = 0;
   for (let i = 0; i + lag < nE; i++) { sl += on[i] * on[i + lag]; sm += on[i] * on[Math.min(nE - 1, i + Math.round(lag * 0.62))]; c++; }
-  if (c && sl > sm * 1.35) brille.push({ titre: 'Un groove régulier', quoi: `Les attaques reviennent à leur place, autour de ${res.bpm < 80 ? res.bpm * 2 : res.bpm} BPM : la pulsion tient la route.` });
+  if (c && sl > sm * 1.35) brille.push({ titre: 'Un groove régulier', quoi: `Les attaques reviennent à leur place, autour de ${res.bpm} BPM : la pulsion tient la route.` });
+  else if (c && sl < sm * 1.1) travail.push({ titre: 'La pulsion flotte', quoi: `Les attaques ne reviennent pas régulièrement autour de ${res.bpm} BPM. Voulu (rubato, ambiance)? Sinon : un métronome ou une batterie simple à la prise.` });
+  // Les nuances de toute la pièce : l'écart entre ses moments doux et ses moments forts.
+  const joue = Array.from(db).filter((v) => v > -60).sort((x, y) => x - y);
+  if (joue.length > 200) { const plage = joue[Math.floor(joue.length * 0.9)] - joue[Math.floor(joue.length * 0.1)];
+    if (plage < 6) travail.push({ titre: 'Tout au même volume', quoi: `À peine ${Math.round(plage)} dB entre les moments doux et forts de toute la pièce : très tassé. Des passages plus dépouillés feraient respirer.` });
+    else if (plage > 18) brille.push({ titre: 'Des nuances', quoi: `${Math.round(plage)} dB entre les moments doux et forts : la pièce respire, du murmure à l’éclat.` }); }
+  // L'intro : combien de temps avant que ça démarre vraiment.
+  const sommet = Math.max(...db); const dep = db.findIndex((v) => v > sommet - 12) / 20;
+  if (dep > 15) travail.push({ a: 0, b: dep, titre: `${Math.round(dep)} s avant que ça démarre`, quoi: `L’intro est longue avant d’arriver au plein son (${mmss(dep)}). Voulu? Sinon : entrer plus vite dans le vif.` });
+  // La fin : coupée net ou en fondu.
+  const fin = (t) => moy((duree - t) * 20, (duree - t + 0.5) * 20);
+  if (duree > 20 && fin(0.6) > sommet - 14 && fin(0.6) - moy(nE - 4, nE) > 20) brille.push({ a: duree - 3, b: duree, titre: 'Une fin qui coupe net', quoi: 'La pièce s’arrête d’un coup, en plein son : un effet fort, à garder si c’est voulu.' });
   // Le contraste se mesure entre de vraies parties : pas l'intro qui s'allume ni la fin qui s'éteint.
   const vraies = jouees.filter((p) => p.b - p.a >= 12 && !(p.b > duree - 1 && p.b - p.a < 20) && !(p.a < 1 && p.b - p.a < 12));
   if (vraies.length >= 2) {
@@ -201,7 +213,9 @@ export function diagnostic(res) {
       if (sd < 1.6) travail.push({ a: p.a, b: p.b, titre: `${Math.round(p.b - p.a)} s au même niveau`, quoi: `De ${mmss(p.a)} à ${mmss(p.b)}, l’énergie ne bouge presque pas. Un break, un pont ou une entrée de voix relancerait l’écoute.` });
     }
   });
-  return { brille, travail };
+  // Tout au même volume : il n'y a pas vraiment de « moment fort » à vanter.
+  const plat = travail.some((o) => o.titre === 'Tout au même volume');
+  return { brille: plat ? brille.filter((o) => !o.titre.startsWith('Le moment fort')) : brille, travail };
 }
 
 // ---------- Les notes d'une voix seule ----------
@@ -295,7 +309,7 @@ export async function trouverAccords(buf, bpm, onStep = () => {}) {
   const tempo = bpm < 80 ? bpm * 2 : bpm; const temps = 60 / tempo;
   // Une mesure tous les quarts de temps : les changements d'accords sont datés finement, quel que soit le tempo estimé.
   const N = 4096; const pasT = Math.max(N / 2, Math.floor((temps / 4) * sr));
-  const brut = [];
+  const brut = []; const clair = []; // clair : pour chaque moment joué, la part du son qui tient dans le meilleur accord
   for (let p = 0; p + N < x.length; p += pasT) {
     const ch = new Float64Array(12); let e = 0;
     for (let o = 0; (o === 0 || o + N <= pasT) && p + o + N < x.length; o += N / 2) {
@@ -311,6 +325,8 @@ export async function trouverAccords(buf, bpm, onStep = () => {}) {
         if (!best || sc > best.sc) best = { r, q, sc };
       }
     }
+    // Et la part du son qui tient dans une même gamme (la meilleure des 12) : une vraie pièce y tient presque toute.
+    if (best) { let g = 0; for (let r = 0; r < 12; r++) { let v = 0; [0, 2, 4, 5, 7, 9, 11].forEach((d) => { v += ch[(r + d) % 12]; }); g = Math.max(g, v / tot); } clair.push([p / sr, best.sc, g, Array.from(ch, (v) => v / tot)]); }
     brut.push(best && best.sc > 0.38 ? best : null);
     if (brut.length % 40 === 0) await pause();
   }
@@ -323,7 +339,41 @@ export async function trouverAccords(buf, bpm, onStep = () => {}) {
     if (b && last && last.r === b.r && last.q === b.q && Math.abs(last.b - t) < 0.01) last.b = t + pasT / sr;
     else if (b) segs.push({ r: b.r, q: b.q, a: t, b: t + pasT / sr });
   });
-  return segs.filter((s) => s.b - s.a >= temps * 0.9).map((s) => ({ ...s, nom: NOTES[s.r] + SUF[s.q], temps: Math.round((s.b - s.a) / temps) }));
+  const out = segs.filter((s) => s.b - s.a >= temps * 0.9).map((s) => ({ ...s, nom: NOTES[s.r] + SUF[s.q], temps: Math.round((s.b - s.a) / temps) }));
+  out.clair = clair; return out;
+}
+
+// L'harmonie : est-ce que les notes s'entendent? Pour chaque moment joué, la part du son qui tient dans un seul accord
+// (1 : tout est dans l'accord ; sous 0,5 : beaucoup de notes se frottent). On en tire des remarques, avec leurs minutes.
+export function diagnosticHarmonie(accs, res) {
+  const c = accs?.clair || []; const brille = []; const travail = [];
+  if (c.length < 20) return { brille, travail, clarte: null };
+  // Par fenêtres de 4 s : la part du son qui tient dans une même gamme. Une vraie pièce y tient (72 à 90 %) ; des notes
+  // qui se frottent au hasard s'étalent sur les 12 notes (autour de 65 %). Mesuré sur nos pièces et sur du chaos exprès.
+  const fen = []; const W = 4;
+  for (let t = 0; t < res.duree - W; t += 1) {
+    const f = c.filter((z) => z[0] >= t && z[0] < t + W); if (f.length < 4) continue;
+    const ch = new Array(12).fill(0); f.forEach((z) => z[3].forEach((x, k) => { ch[k] += x; })); const tot = ch.reduce((s2, x) => s2 + x, 0) || 1;
+    let g = 0; for (let r = 0; r < 12; r++) { let v = 0; [0, 2, 4, 5, 7, 9, 11].forEach((d) => { v += ch[(r + d) % 12]; }); g = Math.max(g, v / tot); }
+    fen.push([t, g]);
+  }
+  if (!fen.length) return { brille, travail, clarte: null };
+  const moy = fen.reduce((s2, [, g]) => s2 + g, 0) / fen.length; const flous = fen.filter(([, g]) => g < 0.67).length / fen.length;
+  const zones = []; fen.forEach(([t, g]) => { if (g >= 0.67) return; const z = zones[zones.length - 1]; if (z && t <= z.b) z.b = t + W; else zones.push({ a: t, b: t + W }); });
+  const longues = zones.filter((z) => z.b - z.a >= 7);
+  // Les accords qui changent sans arrêt : plus d'un changement par temps, en moyenne.
+  const parTemps = accs.length / Math.max(1, (res.duree * res.bpm) / 60);
+  if (flous > 0.5) travail.push({ titre: 'Ça frotte presque partout', quoi: `Dans ${Math.round(flous * 100)} % de la pièce, les notes ne tiennent dans aucune gamme : elles se frottent de partout (${Math.round(moy * 100)} % dans la meilleure gamme, quand une pièce claire est au-dessus de 72 %). Voulu (bruit, texture)? Sinon : moins de couches à la fois, des instruments accordés ensemble, une même tonalité.` });
+  else longues.slice(0, 3).forEach((z) => travail.push({ a: z.a, b: Math.min(res.duree, z.b), titre: `Ça frotte à ${mmss(z.a)}`, quoi: `De ${mmss(z.a)} à ${mmss(Math.min(res.duree, z.b))}, les notes sortent de la gamme et se frottent : un instrument désaccordé, une fausse note tenue, ou deux tonalités en même temps.` }));
+  if (parTemps > 0.6) travail.push({ titre: 'Les accords changent sans arrêt', quoi: `En moyenne, un nouvel accord tous les ${Math.max(1, Math.round(1 / parTemps))} temps : l’oreille n’a pas le temps de s’y poser. Tenir chaque accord une mesure ou deux donnerait une assise.` });
+  if (moy >= 0.75 && flous < 0.1) brille.push({ titre: 'Une harmonie claire', quoi: `${Math.round(moy * 100)} % du son tient dans une même gamme, presque tout le temps : les notes s’entendent bien ensemble.` });
+  // Le vocabulaire : combien d'accords différents, et lesquels reviennent.
+  const n = {}; accs.forEach((a) => { n[a.nom] = (n[a.nom] || 0) + (a.b - a.a); }); const tri = Object.entries(n).sort((u, v) => v[1] - u[1]); const tot = tri.reduce((s, [, v]) => s + v, 0) || 1;
+  const top4 = tri.slice(0, 4).reduce((s, [, v]) => s + v, 0) / tot;
+  if (tri.length && top4 >= 0.7 && flous < 0.3) brille.push({ titre: `${Math.min(4, tri.length)} accords portent la pièce`, quoi: `${tri.slice(0, 4).map(([k]) => k).join(', ')} : ${Math.round(top4 * 100)} % du temps. Une base simple à apprendre et à jouer ensemble.` });
+  else if (tri.length > 14 && flous < 0.3) travail.push({ titre: `${tri.length} accords différents`, quoi: `Beaucoup de couleurs : riche, mais l’oreille peut s’y perdre. Les ${Math.min(4, tri.length)} plus présents (${tri.slice(0, 4).map(([k]) => k).join(', ')}) ne font que ${Math.round(top4 * 100)} % du temps.` });
+  if (/ ou /.test(res.ton)) travail.push({ titre: 'Entre deux tonalités', quoi: `L’oreille hésite : ${res.ton}. Une note « maison » plus affirmée (la basse, la fin des phrases) donnerait un centre.` });
+  return { brille, travail, clarte: moy };
 }
 
 // ---------- La grille par mesures ----------

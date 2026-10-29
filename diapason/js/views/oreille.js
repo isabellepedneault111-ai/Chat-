@@ -1,11 +1,11 @@
 // L'oreille : on dépose une pièce, FLIP l'écoute et la découpe pour nous. On gagne des heures :
 // on sait où sont les silences, les parties, le moment fort, et on a une boucle prête à recevoir des mots.
-import { audio, out } from '../audio.js';
+import { audio, out, drums, bass } from '../audio.js';
 import { clavierDe } from '../doigte.js';
 import { espace, audioURL, saveEntry, uploadAudio, saveProfile, members } from '../espace.js';
 import { toast, autoCanvas, keyboard, store } from '../ui.js';
 import { esc } from './carnet.js';
-import { ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
+import { diagnosticHarmonie, ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
 import { chargerGrille, poserFond } from './studio.js';
 import { diagramme, nomSimple } from '../guitare.js';
 
@@ -41,10 +41,15 @@ export default {
           <label class="or-vit" data-bulle="Ralentir pour apprendre : la hauteur ne change pas, seulement la vitesse. (Le réglage de justesse ne s’applique qu’à vitesse normale.)">Vitesse <select data-vitesse aria-label="Vitesse d’écoute"><option value="1">100 %</option><option value="0.9">90 %</option><option value="0.8">80 %</option><option value="0.75">75 %</option><option value="0.66">66 %</option><option value="0.5">50 %</option></select></label>
           <label class="or-just" data-bulle="Accorder plus haut ou plus bas, en cents (100 cents = un demi-ton) : toute la prise, ou une seule partie. L’écoute et les fichiers WAV suivent ; l’original ne change pas.">Justesse de <select data-cible aria-label="Ce qu’on accorde"><option value="-1">toute la prise</option></select> <input type="range" min="-50" max="50" step="1" value="0" data-cents> <b class="or-cents">0 ¢</b></label></div>
         <div class="or-carte"><i class="or-tete" hidden></i><canvas class="or-canvas" aria-label="La pièce, ses parties, ses silences et sa boucle"></canvas></div>
+        <div class="or-parties"></div>
         <div class="or-jeu" hidden>
-          <div class="or-jeu-tete"><b class="or-jeu-ou">Mesure 1</b><span class="or-jeu-temps" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="or-jeu-maint"></span><span class="or-jeu-ens muted"></span><label class="check or-jeu-simple"><input type="checkbox" data-simple> 🎸 accords simplifiés (guitare)</label></div>
+          <div class="or-jeu-tete"><b class="or-jeu-ou">Mesure 1</b><span class="or-jeu-temps" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="or-jeu-maint"></span><span class="or-jeu-ens muted"></span></div>
+          <div class="or-jeu-moi"><span class="or-jeu-l">Moi, je joue</span><div class="or-seg" role="group" aria-label="Mon instrument"><button data-inst="clavier">🎹 Clavier</button><button data-inst="guitare">🎸 Guitare</button><button data-inst="percu">🥁 Percussions</button><button data-inst="voix">🎤 Voix</button></div>
+            <span class="or-jeu-l">avec</span><label class="check"><input type="checkbox" data-jam="chanson"> la chanson</label><label class="check"><input type="checkbox" data-jam="basse"> la basse</label><label class="check"><input type="checkbox" data-jam="batterie"> la batterie</label><label class="check"><input type="checkbox" data-jam="piano"> le piano</label></div>
           <div class="or-jeu-ligne"></div>
           <div class="or-jeu-gt" hidden></div>
+          <div class="or-jeu-percu" hidden></div>
+          <div class="or-jeu-chant" hidden></div>
           <div class="or-jeu-kb"></div>
           <div class="or-jeu-voir"><b>Pour improviser</b>
             <label class="check"><input type="checkbox" data-jvoir="scale"> <i style="background:#009e73"></i> la pentatonique <small>sûr, impossible de fausser</small></label>
@@ -56,7 +61,6 @@ export default {
         </div>
         <div class="or-monter"></div>
         <div class="or-grille-box"></div>
-        <div class="or-parties"></div>
         <div class="or-voix"></div>
         <div class="or-diag"></div>
         <div class="or-accords"></div>
@@ -87,7 +91,7 @@ export default {
     // Ralentir sans changer la hauteur : un lecteur audio du navigateur (il garde la hauteur quand on change la vitesse).
     let vitesse = 1; let media = null; let mediaBuf = null; let mediaJeton = 0;
     function lecteurLent() {
-      if (!media) { media = new Audio(); media.preservesPitch = true; media.mozPreservesPitch = true; media.webkitPreservesPitch = true; audio().createMediaElementSource(media).connect(out()); }
+      if (!media) { media = new Audio(); media.preservesPitch = true; media.mozPreservesPitch = true; media.webkitPreservesPitch = true; audio().createMediaElementSource(media).connect(sortieChanson()); }
       if (mediaBuf !== buf) { if (media.src) URL.revokeObjectURL(media.src); media.src = URL.createObjectURL(wav(buf)); mediaBuf = buf; }
       return media;
     }
@@ -95,16 +99,20 @@ export default {
     const posDe = (tt) => { if (tt.media) return media.currentTime; const e = audio().currentTime - tt.t0;
       if (tt.boucle) { const L = tt.b - tt.a; const eb = e * tt.segs[0].r; return tt.a + (((eb % L) + L) % L); }
       let reste = Math.max(0, e); for (const g of tt.segs) { const d = (g.b - g.a) / g.r; if (reste < d) return g.a + reste * g.r; reste -= d; } return tt.b; };
-    const arrete = () => { mediaJeton++; media?.pause(); stopBoucle?.(); stopBoucle = null; try { lecture?.stop?.(); } catch { /* déjà arrêtée */ } lecture = null; tete = null; q('[data-o=boucle]').textContent = '▶ Écouter la boucle'; const l = q('[data-o=lire]'); if (l) l.textContent = '▶ Écouter'; montrerCurseur(); };
+    const arrete = () => { jamK = null; jamAcc = ''; mediaJeton++; media?.pause(); stopBoucle?.(); stopBoucle = null; try { lecture?.stop?.(); } catch { /* déjà arrêtée */ } lecture = null; tete = null; q('[data-o=boucle]').textContent = '▶ Écouter la boucle'; const l = q('[data-o=lire]'); if (l) l.textContent = '▶ Écouter'; montrerCurseur(); };
     // Le mode « jouer et regarder » : une ligne de la grille à la fois (4 mesures), en gros, et un vrai clavier où les
     // touches de l'accord qui joue s'allument et frappent à chaque temps ; l'accord suivant est cerclé.
     const IVS = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], maj7: [0, 4, 7, 11], m7: [0, 3, 7, 10], sus2: [0, 2, 7], sus4: [0, 5, 7], dim: [0, 3, 6] };
     const voicing = (a) => (a ? (IVS[a.q] || IVS.M).map((iv) => 48 + a.r + iv) : []); // fondamentale dans l'octave du Do3, le reste au-dessus
-    let simplifie = store.get('oreilleSimple', true);
+    // Mon instrument (ce que le panneau me montre) et ceux qui jouent avec moi (le jam suit la grille, mesure par mesure).
+    let inst = store.get('oreilleInst', 'clavier'); let simplifie = inst === 'guitare';
+    const jamV = { chanson: true, basse: false, batterie: false, piano: false, ...store.get('oreilleJam', {}) };
+    let niveauPercu = store.get('oreillePercu', 'simple'); let jamK = null; let jamAcc = '';
+    let gainChanson = null; const sortieChanson = () => { if (!gainChanson) { gainChanson = audio().createGain(); gainChanson.gain.value = jamV.chanson ? 1 : 0; gainChanson.connect(out()); } return gainChanson; };
     let kbJeu = null; let jeuLigne = -1; let jeuCle = ''; let jeuTemps = -1;
     function majJeu(pos, enJeu) {
       const g = q('.or-accords')?._grille; const box = q('.or-jeu'); if (!box) return; if (!g || !accs?.length) { box.hidden = true; return; }
-      box.hidden = false; if (!kbJeu) kbJeu = keyboard(q('.or-jeu-kb'), { from: 48, to: 76 });
+      box.hidden = false; if (!kbJeu) { kbJeu = keyboard(q('.or-jeu-kb'), { from: 48, to: 76 }); montrerInst(); }
       const D = 240 / g.tempo; const T = D / 4; const nbM = g.mesures.length;
       const k = Math.max(0, Math.min(nbM - 1, Math.floor((pos - g.debutCale) / D))); const ligne = Math.floor(k / 4);
       const tps = Math.max(0, Math.min(3, Math.floor((pos - g.debutCale - k * D) / T)));
@@ -121,9 +129,9 @@ export default {
       const cle = `${cur?.nom}|${suiv?.nom}`;
       if (cle !== jeuCle) {
         jeuCle = cle; const vc = voicing(cur); const vs = voicing(suiv);
-        peindreImpro(cur);
+        peindreImpro(cur); montrerChant(cur, suiv);
         kbJeu.keys.forEach((kk, m) => { kk.classList.toggle('k-jeu', vc.includes(m)); kk.classList.toggle('k-jeu-r', vc[0] === m); kk.classList.toggle('k-suiv', vs.includes(m) && !vc.includes(m)); });
-        const gt = q('.or-jeu-gt'); gt.hidden = !simplifie || !cur; q('[data-simple]').checked = simplifie;
+        const gt = q('.or-jeu-gt'); gt.hidden = !simplifie || !cur;
         if (simplifie && cur) gt.innerHTML = `<div class="gt-ici"><small>à la guitare, maintenant</small><b>${esc(nomSimple(cur.r, cur.q))}</b>${diagramme(cur.r, cur.q, { taille: 132 })}</div>${suiv ? `<div class="gt-suiv"><small>ensuite</small><b>${esc(nomSimple(suiv.r, suiv.q))}</b>${diagramme(suiv.r, suiv.q, { taille: 92 })}</div>` : ''}`;
         q('.or-jeu-maint').innerHTML = cur ? `<span class="muted">joue</span> ${joli(cur.nom)}` : '';
         q('.or-jeu-ens').innerHTML = suiv ? `ensuite ${joli(suiv.nom)}${enJeu ? ` <span class="or-jeu-dans">dans ${Math.max(1, Math.round((suiv.a - pos) / T))} temps</span>` : ''}` : '';
@@ -148,6 +156,69 @@ export default {
         kk.style.setProperty('--marque', coul.length ? `linear-gradient(90deg, ${coul.map((c, j) => `${c} ${(j * 100) / coul.length}% ${((j + 1) * 100) / coul.length}%`).join(', ')})` : 'transparent');
         kk.classList.toggle('k-teinte', coul.length > 0); kk.classList.toggle('k-maison', vu.has('maison') && pc === t); });
     }
+    // Les rythmes de percussion, en 16 doubles-croches par mesure : x = frappe, o = frappe douce (une note fantôme).
+    // grave = pied, cuisse, centre du cajón ; aigu = main, claquement, bord du cajón ; tic = doigts, shaker, charleston.
+    const RYTHMES = {
+      simple: { nom: 'Simple', aide: 'La pulsation : grave sur 1 et 3, aigu sur 2 et 4. La base de tout, et déjà ça groove.', grave: 'x.......x.......', aigu: '....x.......x...', tic: '................' },
+      moyen: { nom: 'Moyen', aide: 'On ajoute le tic sur chaque croche, et un grave en plus juste avant le 4 : ça avance.', grave: 'x.......x.x.....', aigu: '....x.......x...', tic: 'x.x.x.x.x.x.x.x.' },
+      avance: { nom: 'Plus complexe', aide: 'Un grave en syncope (entre les temps), des aigus fantômes très doux, le tic en doubles-croches : le groove danse.', grave: 'x..x....x.x.....', aigu: '....x..o....x..o', tic: 'xoxoxoxoxoxoxoxo' },
+    };
+    const conseilPercu = () => (res.bpm >= 130 ? 'Ici, le tempo est vif : « Simple » ou « Moyen » suffisent, et ça sonne déjà plein.' : res.bpm <= 80 ? 'Ici, le tempo est lent : il y a de la place entre les temps, « Plus complexe » respire bien.' : 'Ici, le tempo est moyen : commence « Simple », passe à « Moyen » quand ça tient tout seul.');
+    function montrerPercu(st = -1) {
+      const box = q('.or-jeu-percu'); if (!box) return; const R = RYTHMES[niveauPercu];
+      if (st < 0 || !box.firstChild) box.innerHTML = `<div class="pc-niv" role="group" aria-label="Le niveau du rythme">${Object.entries(RYTHMES).map(([k, r]) => `<button data-percu="${k}" class="${k === niveauPercu ? 'on' : ''}">${r.nom}</button>`).join('')}</div>
+        <p class="pc-aide"><b>${R.nom}</b> : ${R.aide} <span class="muted">${conseilPercu()}</span></p>
+        <div class="pc-grille">${[['grave', 'Grave', 'pied, cuisse, centre du cajón'], ['aigu', 'Aigu', 'main, claquement, bord'], ['tic', 'Tic', 'doigts, shaker, charleston']].map(([k, n, d]) => `<div class="pc-l"><b>${n}</b><small>${d}</small></div>${[...R[k]].map((c, i) => `<span class="pc-c ${i % 4 === 0 ? 'temps' : ''} ${c === 'x' ? 'x' : c === 'o' ? 'o' : ''}" data-pc="${i}"></span>`).join('')}`).join('')}
+          <div class="pc-l"></div>${[...Array(16)].map((_, i) => `<span class="pc-n">${i % 4 === 0 ? i / 4 + 1 : i % 2 === 0 ? 'et' : ''}</span>`).join('')}</div>
+        <p class="muted small">Coche « la batterie » en haut pour l’entendre jouer ce rythme avec la chanson ; ralentis la vitesse pour l’apprendre.</p>`;
+      box.querySelectorAll('.pc-c.ici').forEach((c) => c.classList.remove('ici')); if (st >= 0) box.querySelectorAll(`[data-pc="${st}"]`).forEach((c) => c.classList.add('ici'));
+    }
+    // La voix : les notes de l'accord qui joue, à chanter en harmonie, dans une tessiture confortable (Sol2 à Ré5),
+    // chacune qu'on entend chantée ; puis, pour chaque voix, la note la plus proche dans l'accord suivant (on bouge le moins
+    // possible : c'est ce qui rend une harmonie facile à tenir).
+    const ROLES = ['la fondamentale', 'la tierce', 'la quinte', 'la septième'];
+    const voixDe = (a) => (a ? (IVS[a.q] || IVS.M).map((iv, k) => { let m = 55 + ((a.r + iv - 55) % 12 + 12) % 12; if (m < 57) m += 12; return { m, role: a.q.startsWith('sus') && k === 1 ? (a.q === 'sus2' ? 'la seconde' : 'la quarte') : ROLES[k] }; }).sort((u, v) => u.m - v.m) : []);
+    function montrerChant(cur, suiv) {
+      const box = q('.or-jeu-chant'); if (!box || inst !== 'voix') return; if (!cur) { box.innerHTML = '<p class="muted">Pas d’accord à ce moment-là.</p>'; return; }
+      const ici = voixDe(cur); const apres = voixDe(suiv);
+      const proche = (m) => apres.reduce((x, y) => (Math.abs(y.m - m) < Math.abs(x.m - m) ? y : x), apres[0]);
+      const nn = (m) => nomNote(m);
+      box.innerHTML = `<div class="ch-tete"><b>${joli(cur.nom)}</b> <span class="muted">les notes à chanter, de la plus grave à la plus aiguë : touche-en une pour l’entendre</span>
+          <button class="btn small" data-chant="${ici.map((x) => x.m).join(',')}">▶ L’accord en chœur</button></div>
+        <div class="ch-voix">${ici.map((x, k) => { const p2 = suiv ? proche(x.m) : null; return `<div class="ch-l">
+          <small>voix ${k + 1}</small><button class="ch-n" data-chant="${x.m}"><b>${nn(x.m)}</b><span>${x.role}</span></button>
+          ${p2 ? `<span class="ch-fl">${p2.m === x.m ? '= reste' : p2.m > x.m ? '↗ monte' : '↘ descend'}</span><button class="ch-n suiv" data-chant="${p2.m}"><b>${nn(p2.m)}</b><span>${joli(suiv.nom)}</span></button>` : ''}</div>`; }).join('')}</div>
+        <p class="muted small">Pour une harmonie à deux : l’une chante la mélodie, l’autre prend la note juste au-dessus ou en dessous dans la liste. La note qui « reste » d’un accord à l’autre est la plus facile à tenir.</p>`;
+    }
+    // Ce que le panneau montre selon mon instrument.
+    function montrerInst() {
+      el.querySelectorAll('[data-inst]').forEach((b) => b.classList.toggle('on', b.dataset.inst === inst));
+      el.querySelectorAll('[data-jam]').forEach((c) => { c.checked = !!jamV[c.dataset.jam]; });
+      const kbH = q('.or-jeu-kb'); if (kbH) kbH.hidden = inst !== 'clavier'; const vo = q('.or-jeu-voir'); if (vo) vo.hidden = inst !== 'clavier';
+      const pc = q('.or-jeu-percu'); if (pc) { pc.hidden = inst !== 'percu'; if (inst === 'percu') montrerPercu(); }
+      const ch = q('.or-jeu-chant'); if (ch) ch.hidden = inst !== 'voix'; if (inst === 'voix') import('../sampler.js').then((sp) => sp.prechargerSons(['voix']));
+      const gt = q('.or-jeu-gt'); if (gt && inst !== 'guitare') gt.hidden = true;
+      const aide = q('.or-jeu-aide'); if (aide) aide.hidden = inst !== 'clavier';
+    }
+    // Le jam : la basse, la batterie et le piano jouent la grille avec la chanson (calés sur ses temps, même ralentie).
+    function jam(pos) {
+      const g = q('.or-accords')?._grille; const p16 = q('.or-jeu-percu');
+      if (!g || !tete) return; const T16 = 60 / g.tempo / 4; const k16 = Math.floor((pos - g.debutCale) / T16);
+      if (inst === 'percu' && p16 && !p16.hidden) montrerPercu(((k16 % 16) + 16) % 16);
+      if (!jamV.basse && !jamV.batterie && !jamV.piano) { jamK = null; return; }
+      const vit = tete.media ? vitesse : rate(pos); const now = audio().currentTime;
+      if (jamK == null || jamK < k16 - 2 || jamK > k16 + 8) jamK = k16 + 1;
+      for (; g.debutCale + jamK * T16 <= pos + 0.25 * vit; jamK++) {
+        const tb = g.debutCale + jamK * T16; if (tb < pos - 0.02) continue; const when = now + (tb - pos) / vit; const st = ((jamK % 16) + 16) % 16;
+        const acc = accs.find((x) => tb >= x.a - 0.02 && tb < x.b); const change = acc && acc.nom !== jamAcc && st % 4 === 0;
+        if (jamV.batterie) { const R = RYTHMES[niveauPercu]; const v = (c) => (c === 'x' ? 0.9 : c === 'o' ? 0.3 : 0);
+          if (v(R.grave[st])) drums.kick(when, v(R.grave[st])); if (v(R.aigu[st])) drums.snare(when, v(R.aigu[st]) * 0.8); if (v(R.tic[st])) drums.hat(when, v(R.tic[st]) * 0.5);
+          if (niveauPercu === 'simple' && st % 2 === 0) drums.hat(when, 0.25); }
+        if (acc && jamV.basse && (st === 0 || st === 8 || change)) bass(440 * 2 ** ((36 + acc.r - 69) / 12), when, (T16 * 7) / vit);
+        if (acc && jamV.piano && (st === 0 || change)) import('../sampler.js').then(({ accord }) => accord('piano', voicing(acc).map((m) => m + 12), { when, dur: (T16 * 15) / vit, vel: 0.45 }));
+        if (acc && st % 4 === 0) jamAcc = acc.nom;
+      }
+    }
     // La mesure de la grille où en est la tête (qui joue : en noir ; posée : encadrée), et la grille qui défile toute
     // seule pour la garder en vue, sans faire bouger la page. Dans une boucle, c'est sa case dans la boucle.
     function marquerMesure(pos, cl, defiler = true) {
@@ -166,7 +237,7 @@ export default {
       if (!tete.boucle && pos >= tete.b) { arrete(); return; }
       pos = Math.max(tete.a, pos); const t = q('.or-tete'); if (t) { t.hidden = false; t.classList.remove('pose'); t.style.left = `${(pos / res.duree) * 100}%`; }
       const p = q('.or-pos'); if (p) p.textContent = `${mmss(pos)} / ${mmss(res.duree)}`;
-      marquerMesure(pos, 'joue'); majJeu(pos, true);
+      marquerMesure(pos, 'joue'); majJeu(pos, true); jam(pos);
       requestAnimationFrame(animerTete);
     }
     // « ■ Arrêter le son » (en bas de l'écran) : la lecture s'arrête, l'analyse reste là.
@@ -186,6 +257,8 @@ export default {
         etat('');
         montrer();
         accs = await trouverAccords(buf, res.bpm, etat); etat('');
+        // L'harmonie s'ajoute au diagnostic : est-ce que les notes s'entendent ensemble, combien d'accords, quelle tonalité.
+        { const h = diagnosticHarmonie(accs, res); diag.brille.push(...h.brille); diag.travail.push(...h.travail); montrerDiag(); montrerParties(); dessiner(); }
         montrerAccords();
         voix = await notesVoix(buf, etat); etat('');
         montrerVoix();
@@ -235,7 +308,7 @@ export default {
       const marques = (p) => [res.boucle && dans(res.boucle, p) ? '<i class="pt-m boucle">↻ boucle</i>' : '', dans({ a: res.momentFort[0], b: res.momentFort[1] }, p) ? '<i class="pt-m fort">● fort</i>' : '',
         aTravailler().some((o) => dans(o, p)) ? '<i class="pt-m trav">à retravailler</i>' : ''].join('');
       box.innerHTML = `<h3>Les parties <small class="muted">la couleur dit l’énergie : plus c’est foncé, plus ça pousse · touche une partie pour l’écouter et l’accorder à part</small></h3>
-        <div class="or-pt-liste">${res.parties.map((p, i) => { const f = forceDe(p); return `<button class="or-pt f-${f} ${cible === i ? 'vise' : ''}" data-pt="${i}" style="flex-grow:${Math.round(p.b - p.a)}">
+        <div class="or-pt-liste">${res.parties.map((p, i) => { const f = forceDe(p); return `<button class="or-pt f-${f} ${cible === i ? 'vise' : ''} ${ptOuverte === i ? 'ouverte' : ''} ${(p.b - p.a) / res.duree < 0.075 ? 'etroit' : ''}" data-pt="${i}" style="left:${((p.a / res.duree) * 100).toFixed(2)}%;width:${(((p.b - p.a) / res.duree) * 100).toFixed(2)}%" title="${p.silence ? 'Silence' : `Partie ${nums[i]}`} · ${mmss(p.a)} – ${mmss(p.b)}">
           <b>${p.silence ? 'silence' : `Partie ${nums[i]}`}</b><small>${mmss(p.a)} – ${mmss(p.b)}</small><em>${p.silence ? '' : f}${cp[i] ? ` · ${cp[i] > 0 ? '+' : ''}${cp[i]} ¢` : ''}</em><span class="pt-ms">${marques(p)}</span></button>`; }).join('')}</div>
         <p class="or-leg2"><span><i style="background:${FORCE.douce}"></i>douce</span><span><i style="background:${FORCE.moyenne}"></i>moyenne</span><span><i style="background:${FORCE.forte}"></i>forte</span><span><i style="background:${FORCE.silence}"></i>silence</span><span><i style="background:#7a4fb3"></i>la boucle ↻</span><span><i style="background:#e07b2c"></i>le moment fort</span><span><i class="lg-hach"></i>à retravailler</span></p>`;
       // La partie ouverte : l'écouter, la boucler, ce que l'oreille en dit (et « c'est voulu »), la monter, l'accorder.
@@ -407,6 +480,7 @@ export default {
     function viser(i) { cible = i; const v = i < 0 ? cents : (cp[i] || 0); const r = q('[data-cents]'); if (r) r.value = v; const lab = q('.or-cents'); if (lab) lab.textContent = `${v > 0 ? '+' : ''}${v} ¢`; const sl = q('[data-cible]'); if (sl) sl.value = i; montrerParties(); }
     el.addEventListener('change', (e) => {
       if (e.target.matches('[data-pvoulu]')) { const k2 = e.target.dataset.pvoulu; if (e.target.checked) pvoulus.add(k2); else pvoulus.delete(k2); montrerDiag(); montrerParties(); dessiner(); return; }
+      if (e.target.matches('[data-jam]')) { jamV[e.target.dataset.jam] = e.target.checked; store.set('oreilleJam', jamV); if (gainChanson) gainChanson.gain.value = jamV.chanson ? 1 : 0; jamK = null; return; }
       if (e.target.matches('[data-simple]')) { simplifie = e.target.checked; store.set('oreilleSimple', simplifie); jeuLigne = -1; jeuCle = ''; montrerAccords(); majJeu(tete ? posDe(tete) : curseur, !!tete); return; }
       if (e.target.matches('[data-jvoir]')) { const set = voirJ(); if (e.target.checked) set.add(e.target.dataset.jvoir); else set.delete(e.target.dataset.jvoir); store.set('kbVoir3', [...set]); jeuCle = ''; majJeu(tete ? posDe(tete) : curseur, !!tete); return; }
       if (e.target.matches('[data-vitesse]')) { vitesse = +e.target.value; if (tete && res) { const pos = posDe(tete); const { a, b, boucle } = tete; if (tete.media && vitesse !== 1) media.playbackRate = vitesse; else joueDe(boucle ? a : pos, b, { boucle }); } toast(vitesse === 1 ? 'Vitesse normale.' : `Ralenti à ${Math.round(vitesse * 100)} % : même hauteur, plus lent.`); return; }
@@ -466,13 +540,13 @@ export default {
         if (m.readyState >= 1) go(); else m.addEventListener('loadedmetadata', go, { once: true });
         tete = { media: true, a, b, boucle }; const l = q('[data-o=lire]'); if (l) l.textContent = '■ Arrêter'; requestAnimationFrame(animerTete); return; }
       const t0 = c.currentTime + 0.05; let segs;
-      if (boucle) { segs = [{ a, b, r: rate(a) }]; stopBoucle = boucler(c, buf, { a, b }, out(), 0.12, segs[0].r); }
+      if (boucle) { segs = [{ a, b, r: rate(a) }]; stopBoucle = boucler(c, buf, { a, b }, sortieChanson(), 0.12, segs[0].r); }
       else {
         // Un segment par partie traversée : chacune garde sa justesse, la vitesse change pile à la frontière.
         const bornes = [a, ...res.parties.map((p) => p.b).filter((x) => x > a + 0.01 && x < b - 0.01), b];
         segs = bornes.slice(0, -1).map((x, k) => ({ a: x, b: bornes[k + 1], r: rate(x + 0.02) }));
         const src = c.createBufferSource(); src.buffer = buf; let w = t0; segs.forEach((g) => { src.playbackRate.setValueAtTime(g.r, w); w += (g.b - g.a) / g.r; });
-        src.connect(out()); src.start(t0, a, b - a); lecture = src;
+        src.connect(sortieChanson()); src.start(t0, a, b - a); lecture = src;
       }
       tete = { t0, a, b, boucle, segs }; const l = q('[data-o=lire]'); if (l) l.textContent = '■ Arrêter'; requestAnimationFrame(animerTete);
     };
@@ -563,6 +637,12 @@ export default {
       }
       const pt = e.target.closest('[data-pt]');
       if (pt) { const i = +pt.dataset.pt; const p = res.parties[i]; ptOuverte = i; plage = { a: p.a, b: p.b }; montrerMonter(); if (!p.silence) viser(i); else { montrerParties(); dessiner(); } dessiner(); joueDe(p.a, p.b); return; }
+      const cb = e.target.closest('[data-chant]');
+      if (cb) { const ms = cb.dataset.chant.split(',').map(Number); import('../sampler.js').then(({ joue, prechargerSons, pret }) => { prechargerSons(['voix']); const go = () => ms.forEach((m) => joue('voix', m, { dur: 1.6, vel: 0.75 })); if (pret('voix')) go(); else setTimeout(go, 600); }); return; }
+      const ib = e.target.closest('[data-inst]');
+      if (ib) { inst = ib.dataset.inst; simplifie = inst === 'guitare'; store.set('oreilleInst', inst); jeuLigne = -1; jeuCle = ''; montrerAccords(); montrerInst(); majJeu(tete ? posDe(tete) : curseur, !!tete); return; }
+      const pb = e.target.closest('[data-percu]');
+      if (pb) { niveauPercu = pb.dataset.percu; store.set('oreillePercu', niveauPercu); montrerPercu(); return; }
       if (e.target.closest('[data-ptx]')) { ptOuverte = -1; montrerParties(); return; }
       const ca = e.target.closest('[data-cents-auto]');
       if (ca) { viser(-1); regler(+ca.dataset.centsAuto); toast(`Prise accordée de ${cents > 0 ? '+' : ''}${cents} cents pour l’écoute et les WAV.`); return; }

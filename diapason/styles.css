@@ -4306,3 +4306,47 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .key.k-maison::after { width: 16px; height: 16px; margin-left: -8px; background: #1d1a15; box-shadow: 0 0 0 3px #fffdf8, 0 0 0 4.5px #1d1a15; }
 .key.black.k-maison::after { background: #1d1a15; box-shadow: 0 0 0 3px #fffdf8; }
 .or-jeu-voir .check i.lg-maison, .kb-legende i.lg-maison { background: #1d1a15 !important; box-shadow: 0 0 0 2px #fffdf8, 0 0 0 3.5px #1d1a15; }
+
+/* 0.77 — Mon instrument, le jam, les percussions, la voix ; les parties alignées sous l'onde */
+.or-jeu-moi { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 8px 0 2px; border-top: 1.5px dashed #e2d6bf; }
+.or-jeu-l { font-weight: 700; color: #5c544a; }
+.or-seg { display: inline-flex; border: 2px solid #1d1a15; border-radius: 999px; overflow: hidden; }
+.or-seg button { font: inherit; font-weight: 700; padding: 6px 14px; border: 0; background: #fffdf6; color: #1d1a15; cursor: pointer; }
+.or-seg button + button { border-left: 1.5px solid #1d1a15; }
+.or-seg button.on { background: #1d1a15; color: #fffdf6; }
+.or-jeu-moi .check { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; cursor: pointer; }
+.or-jeu-moi .check input { width: 20px; height: 20px; accent-color: #1d1a15; }
+.or-jeu-kb[hidden], .or-jeu-voir[hidden], .or-jeu-percu[hidden], .or-jeu-chant[hidden], .or-jeu-aide[hidden] { display: none; }
+/* Percussions */
+.or-jeu-percu { display: grid; gap: 10px; }
+.pc-niv { display: inline-flex; gap: 6px; } .pc-niv button { font: inherit; font-weight: 700; padding: 6px 14px; border: 2px solid #1d1a15; border-radius: 999px; background: #fffdf6; cursor: pointer; } .pc-niv button.on { background: #1d1a15; color: #fffdf6; }
+.pc-aide { margin: 0; }
+.pc-grille { display: grid; grid-template-columns: 170px repeat(16, minmax(0, 1fr)); gap: 4px; align-items: center; }
+.pc-l { display: grid; line-height: 1.15; } .pc-l b { font-size: 1.05rem; } .pc-l small { color: #5c544a; font-size: .8rem; }
+.pc-c { height: 40px; border-radius: 7px; background: #f1ebde; border: 1.5px solid #e2d6bf; }
+.pc-c.temps { border-left: 3px solid #b3a891; }
+.pc-c.x { background: #d55e00; border-color: #a84800; } .pc-c.o { background: #f6c9a2; border-color: #e0a274; }
+.pc-c.ici { outline: 3px solid #1d1a15; outline-offset: 1px; transform: scale(1.06); }
+.pc-c.ici.x { background: #1d1a15; }
+.pc-n { text-align: center; font: 700 .85rem var(--mono, monospace); color: #5c544a; }
+@media (max-width: 760px) { .pc-grille { grid-template-columns: 70px repeat(16, minmax(0, 1fr)); gap: 2px; } .pc-l small { display: none; } .pc-c { height: 30px; } }
+/* La voix */
+.or-jeu-chant { display: grid; gap: 10px; }
+.ch-tete { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; } .ch-tete .nm b { font-size: 1.6rem; }
+.ch-voix { display: grid; gap: 8px; }
+.ch-l { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.ch-l > small { width: 52px; color: #5c544a; font-weight: 700; }
+.ch-n { display: grid; justify-items: start; min-width: 150px; padding: 8px 14px; border: 2px solid #1d1a15; border-radius: 10px; background: #fff; font: inherit; color: #1d1a15; cursor: pointer; text-align: left; }
+.ch-n b { font: 700 1.35rem var(--display); } .ch-n span { font-size: .85rem; color: #5c544a; }
+.ch-n:hover { background: #fff3c4; } .ch-n.suiv { border-style: dashed; opacity: .85; }
+.ch-fl { font-weight: 700; color: #1f6b52; min-width: 90px; }
+/* Les parties, posées sous l'onde à leur place */
+.or-parties { margin: 6px 0 14px; }
+.or-parties h3 { margin: 0 0 6px; font-size: 1rem; }
+.or-pt-liste { position: relative; height: 84px; overflow: visible; padding: 0; display: block; }
+.or-pt { position: absolute; top: 0; bottom: 0; min-width: 0; padding: 6px 7px; overflow: hidden; border-radius: 6px; border-width: 2px; }
+.or-pt b { font-size: .9rem; white-space: nowrap; } .or-pt small, .or-pt em { font-size: .74rem; white-space: nowrap; }
+.or-pt.etroit small, .or-pt.etroit em { display: none; } .or-pt.etroit { padding: 6px 3px; } .or-pt.etroit b { font-size: .78rem; }
+.or-pt.ouverte { border-color: #1d1a15; box-shadow: 0 3px 0 #1d1a15; z-index: 1; }
+.or-pt .pt-ms { margin-top: 3px; } .or-pt .pt-m { font-size: .68rem; padding: 0 5px; }
+.or-pt-liste { height: 104px; margin: 0 8px; }

@@ -60,6 +60,14 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.77', quand: '2026-10-29', titre: 'Moi, je joue… avec', items: [
+    ['Choisis ton instrument', ['Dans l’oreille, « Moi, je joue » : 🎹 Clavier (le grand clavier et les notes pour improviser), 🎸 Guitare (les accords simplifiés et leurs positions), 🥁 Percussions, 🎤 Voix. Seul ce que tu choisis s’affiche.']],
+    ['Le jam', ['« avec » : la chanson, la basse, la batterie, le piano. Ils suivent la grille, temps par temps, même ralentis. Décoche « la chanson » pour jouer seulement avec le groupe.']],
+    ['Les percussions', ['Trois rythmes, Simple, Moyen, Plus complexe, en 16 cases par mesure : grave (pied, cuisse, centre du cajón), aigu (main, claquement, bord), tic (doigts, shaker). La case qui joue s’allume ; « la batterie » les joue avec toi. Un conseil selon le tempo de la pièce.']],
+    ['Les harmonies à la voix', ['Pour l’accord qui joue : les notes à chanter (fondamentale, tierce, quinte…), chacune qu’on entend chantée, et l’accord en chœur. Pour chaque voix, la note la plus proche dans l’accord suivant : reste, monte ou descend.']],
+    ['Une oreille plus honnête', ['Une pièce où les notes se frottent de partout est maintenant repérée (« Ça frotte presque partout », « Les accords changent sans arrêt »). Les remarques viennent des chiffres de chaque pièce : nuances, intro, fin, pulsion, nombre d’accords, tonalité hésitante.']],
+    ['Les parties sous l’onde', ['Les parties sont posées juste sous l’onde, à leur place et à leur largeur : on voit tout de suite laquelle est laquelle.']],
+  ] },
   { v: '0.76', quand: '2026-10-29', titre: 'La guitare en même temps', items: [
     ['Accords simplifiés pour la guitare', ['Dans l’oreille, « 🎸 accords simplifiés » : sous chaque accord, sa version de base, majeur ou mineur (Sol7 → Sol, Sim7 → Sim), dans la grille et dans la ligne qui joue. Et au-dessus du clavier, la position à faire maintenant, en grand, et la suivante.']],
     ['4 temps égaux, toujours', ['Chaque mesure est coupée en 4 temps de même largeur : l’accord s’écrit sur le temps où il commence, un trait quand il continue, un point quand rien ne joue. Le temps qui joue s’allume.']],
