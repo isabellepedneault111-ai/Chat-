@@ -7,6 +7,7 @@ import { toast, autoCanvas, keyboard, store } from '../ui.js';
 import { esc } from './carnet.js';
 import { ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
 import { chargerGrille, poserFond } from './studio.js';
+import { diagramme, nomSimple } from '../guitare.js';
 
 const PIECES = [['data/sons/frog-joywalk-complet.mp3', 'Joy Walk (Frog)'], ['data/sons/frog-visite.mp3', 'Projet 1, après la pause (Frog)']];
 const mmss = (t) => { t = Math.max(0, t); return `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`; };
@@ -41,8 +42,9 @@ export default {
           <label class="or-just" data-bulle="Accorder plus haut ou plus bas, en cents (100 cents = un demi-ton) : toute la prise, ou une seule partie. L’écoute et les fichiers WAV suivent ; l’original ne change pas.">Justesse de <select data-cible aria-label="Ce qu’on accorde"><option value="-1">toute la prise</option></select> <input type="range" min="-50" max="50" step="1" value="0" data-cents> <b class="or-cents">0 ¢</b></label></div>
         <div class="or-carte"><i class="or-tete" hidden></i><canvas class="or-canvas" aria-label="La pièce, ses parties, ses silences et sa boucle"></canvas></div>
         <div class="or-jeu" hidden>
-          <div class="or-jeu-tete"><b class="or-jeu-ou">Mesure 1</b><span class="or-jeu-temps" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="or-jeu-maint"></span><span class="or-jeu-ens muted"></span></div>
+          <div class="or-jeu-tete"><b class="or-jeu-ou">Mesure 1</b><span class="or-jeu-temps" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="or-jeu-maint"></span><span class="or-jeu-ens muted"></span><label class="check or-jeu-simple"><input type="checkbox" data-simple> 🎸 accords simplifiés (guitare)</label></div>
           <div class="or-jeu-ligne"></div>
+          <div class="or-jeu-gt" hidden></div>
           <div class="or-jeu-kb"></div>
           <div class="or-jeu-voir"><b>Pour improviser</b>
             <label class="check"><input type="checkbox" data-jvoir="scale"> <i style="background:#009e73"></i> la pentatonique <small>sûr, impossible de fausser</small></label>
@@ -62,6 +64,7 @@ export default {
           <button class="btn primary" data-o="boucle">▶ Écouter la boucle</button>
           <button class="btn" data-o="fort">▶ Le moment fort</button>
           <button class="btn primary" data-o="morceau" data-bulle="Le morceau entier (ou le passage choisi sur l’onde) part dans Jouer : il tourne au même tempo, avec tous ses accords sur le clavier, et tu joues ou chantes par-dessus.">→ Jouer ce morceau</button>
+          <button class="btn" data-o="cathedrale" data-bulle="Les accords du morceau (ou du passage choisi) deviennent une cathédrale : chaque accord qui revient, une partie de l’œuvre, chantée par l’orchestre.">→ La cathédrale de ce morceau</button>
           <button class="btn primary" data-o="fond" data-bulle="La boucle tourne dans Jouer, sous le beat, au même tempo : tu joues, tu chantes, tu improvises par-dessus.">→ Jouer sur la boucle</button>
           <button class="btn" data-o="boucle-wav">⬇ La boucle (WAV)</button>
           <button class="btn" data-o="ecrire">Écrire des paroles sur la boucle</button>
@@ -82,7 +85,7 @@ export default {
     const partDe = (t) => (res ? res.parties.findIndex((p) => t >= p.a - 0.01 && t < p.b) : -1);
     const rate = (t = 0) => 2 ** ((cents + (cp[partDe(t)] || 0)) / 1200);
     // Ralentir sans changer la hauteur : un lecteur audio du navigateur (il garde la hauteur quand on change la vitesse).
-    let vitesse = 1; let media = null; let mediaBuf = null;
+    let vitesse = 1; let media = null; let mediaBuf = null; let mediaJeton = 0;
     function lecteurLent() {
       if (!media) { media = new Audio(); media.preservesPitch = true; media.mozPreservesPitch = true; media.webkitPreservesPitch = true; audio().createMediaElementSource(media).connect(out()); }
       if (mediaBuf !== buf) { if (media.src) URL.revokeObjectURL(media.src); media.src = URL.createObjectURL(wav(buf)); mediaBuf = buf; }
@@ -92,11 +95,12 @@ export default {
     const posDe = (tt) => { if (tt.media) return media.currentTime; const e = audio().currentTime - tt.t0;
       if (tt.boucle) { const L = tt.b - tt.a; const eb = e * tt.segs[0].r; return tt.a + (((eb % L) + L) % L); }
       let reste = Math.max(0, e); for (const g of tt.segs) { const d = (g.b - g.a) / g.r; if (reste < d) return g.a + reste * g.r; reste -= d; } return tt.b; };
-    const arrete = () => { media?.pause(); stopBoucle?.(); stopBoucle = null; try { lecture?.stop?.(); } catch { /* déjà arrêtée */ } lecture = null; tete = null; q('[data-o=boucle]').textContent = '▶ Écouter la boucle'; const l = q('[data-o=lire]'); if (l) l.textContent = '▶ Écouter'; montrerCurseur(); };
+    const arrete = () => { mediaJeton++; media?.pause(); stopBoucle?.(); stopBoucle = null; try { lecture?.stop?.(); } catch { /* déjà arrêtée */ } lecture = null; tete = null; q('[data-o=boucle]').textContent = '▶ Écouter la boucle'; const l = q('[data-o=lire]'); if (l) l.textContent = '▶ Écouter'; montrerCurseur(); };
     // Le mode « jouer et regarder » : une ligne de la grille à la fois (4 mesures), en gros, et un vrai clavier où les
     // touches de l'accord qui joue s'allument et frappent à chaque temps ; l'accord suivant est cerclé.
     const IVS = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], maj7: [0, 4, 7, 11], m7: [0, 3, 7, 10], sus2: [0, 2, 7], sus4: [0, 5, 7], dim: [0, 3, 6] };
     const voicing = (a) => (a ? (IVS[a.q] || IVS.M).map((iv) => 48 + a.r + iv) : []); // fondamentale dans l'octave du Do3, le reste au-dessus
+    let simplifie = store.get('oreilleSimple', true);
     let kbJeu = null; let jeuLigne = -1; let jeuCle = ''; let jeuTemps = -1;
     function majJeu(pos, enJeu) {
       const g = q('.or-accords')?._grille; const box = q('.or-jeu'); if (!box) return; if (!g || !accs?.length) { box.hidden = true; return; }
@@ -107,9 +111,9 @@ export default {
       if (ligne !== jeuLigne) {
         jeuLigne = ligne;
         q('.or-jeu-ligne').innerHTML = g.mesures.slice(ligne * 4, ligne * 4 + 4).map((x, j) => { const segs = []; x.cases.forEach((c) => { if (c) segs.push({ c, n: 1 }); else if (segs.length) segs[segs.length - 1].n++; else segs.push({ c: '—', n: 1 }); });
-          return `<button class="or-jm" data-jm="${ligne * 4 + j}" data-t="${x.t}"><small>${x.m}</small><span class="or-jm-b">${segs.map((sg2) => `<span style="grid-column: span ${sg2.n}">${sg2.c !== '—' ? joli(sg2.c) : '<i>—</i>'}</span>`).join('')}</span><span class="or-jm-t"><i></i><i></i><i></i><i></i></span></button>`; }).join('');
+          return `<button class="or-jm" data-jm="${ligne * 4 + j}" data-t="${x.t}"><small>${x.m}</small><span class="or-bts">${temps4(x)}</span></button>`; }).join('');
       }
-      el.querySelectorAll('.or-jm').forEach((b) => { const on = +b.dataset.jm === k; b.classList.toggle('ici', on); b.querySelectorAll('.or-jm-t i').forEach((t, n) => t.classList.toggle('on', on && n <= tps)); });
+      el.querySelectorAll('.or-jm').forEach((b) => { const on = +b.dataset.jm === k; b.classList.toggle('ici', on); b.querySelectorAll('.bt').forEach((t, n) => t.classList.toggle('joue', on && n === tps)); });
       el.querySelectorAll('.or-jeu-temps i').forEach((t, n) => t.classList.toggle('on', n === tps));
       q('.or-jeu-ou').textContent = `Mesure ${k + 1} · temps ${tps + 1}`;
       const cur = accs.find((a) => pos >= a.a - 0.02 && pos < a.b) || [...accs].reverse().find((a) => a.a <= pos);
@@ -119,6 +123,8 @@ export default {
         jeuCle = cle; const vc = voicing(cur); const vs = voicing(suiv);
         peindreImpro(cur);
         kbJeu.keys.forEach((kk, m) => { kk.classList.toggle('k-jeu', vc.includes(m)); kk.classList.toggle('k-jeu-r', vc[0] === m); kk.classList.toggle('k-suiv', vs.includes(m) && !vc.includes(m)); });
+        const gt = q('.or-jeu-gt'); gt.hidden = !simplifie || !cur; q('[data-simple]').checked = simplifie;
+        if (simplifie && cur) gt.innerHTML = `<div class="gt-ici"><small>à la guitare, maintenant</small><b>${esc(nomSimple(cur.r, cur.q))}</b>${diagramme(cur.r, cur.q, { taille: 132 })}</div>${suiv ? `<div class="gt-suiv"><small>ensuite</small><b>${esc(nomSimple(suiv.r, suiv.q))}</b>${diagramme(suiv.r, suiv.q, { taille: 92 })}</div>` : ''}`;
         q('.or-jeu-maint').innerHTML = cur ? `<span class="muted">joue</span> ${joli(cur.nom)}` : '';
         q('.or-jeu-ens').innerHTML = suiv ? `ensuite ${joli(suiv.nom)}${enJeu ? ` <span class="or-jeu-dans">dans ${Math.max(1, Math.round((suiv.a - pos) / T))} temps</span>` : ''}` : '';
       } else if (enJeu && suiv) { const d = q('.or-jeu-dans'); if (d) d.textContent = `dans ${Math.max(1, Math.round((suiv.a - pos) / T))} temps`; }
@@ -330,7 +336,7 @@ export default {
             if (Math.abs(g.tempo - res.bpm) <= res.bpm * 0.07) { res.bpm = g.tempo; const f = [...el.querySelectorAll('.or-faits > div')].find((d) => d.querySelector('small')?.textContent === 'Tempo'); if (f) f.querySelector('b').textContent = `${g.tempo} BPM`; } } box._grille = g; const l = g.boucle || g.mesures;
           return `<div class="or-grille"><div class="or-grille-t"><h4>La grille</h4><span>${res.bpm} BPM · 4 temps par mesure${g.periode ? ` · <span class="or-rep">‖: ${g.periode} mesure${g.periode > 1 ? 's' : ''} qui reviennent ${g.tours} fois :‖</span>` : ''}</span><button class="btn small or-etsi" data-o="etsi" data-bulle="Une mesure au hasard, une autre couleur d’accord, entendue tout de suite dans le son. Rien ne change tant que tu n’approuves pas.">🎲 Et si… ?</button></div>
             <div class="or-mesures">${l.map((x, i) => { const segs = []; x.cases.forEach((c) => { if (c) segs.push({ c, n: 1 }); else if (segs.length) segs[segs.length - 1].n++; else segs.push({ c: '—', n: 1 }); });
-              return `<button class="or-mes n${segs.length} ${g.periode && i === 0 ? 'rep-a' : ''} ${g.periode && i === l.length - 1 ? 'rep-b' : ''} ${corrigee(i, x, g) ? 'corrigee' : ''}" data-mes="${i}" data-t="${x.t}" title="Mesure ${g.boucle ? i + 1 : x.m} · ${mmss(x.t)}"><small>${g.boucle ? i + 1 : x.m}</small>${i && x.cle === l[i - 1].cle ? '<b class="or-pct" aria-label="comme la mesure d’avant">%</b>' : segs.map((sg2) => `<span class="or-b" style="grid-column: span ${sg2.n}">${sg2.c !== '—' ? joli(sg2.c) : '<i>—</i>'}</span>`).join('')}</button>`; }).join('')}</div>
+              return `<button class="or-mes n${segs.length} ${g.periode && i === 0 ? 'rep-a' : ''} ${g.periode && i === l.length - 1 ? 'rep-b' : ''} ${corrigee(i, x, g) ? 'corrigee' : ''}" data-mes="${i}" data-t="${x.t}" title="Mesure ${g.boucle ? i + 1 : x.m} · ${mmss(x.t)}"><small>${g.boucle ? i + 1 : x.m}</small><span class="or-bts">${temps4(x)}</span></button>`; }).join('')}</div>
             <div class="or-edit" hidden></div>
             <p class="or-leg-g muted small">Touche une mesure pour l’entendre et la corriger. <span class="or-leg-c">✎ en jaune</span> : une mesure que tu as corrigée.</p>
             <div class="ec-row"><button class="btn small" data-o="grille-copier">Copier la grille</button><button class="btn small" data-o="grille-txt">⬇ La grille (texte)</button></div></div>`; })();
@@ -348,6 +354,10 @@ export default {
     // Les touches de l'accord, en petit, sous son nom dans la grille : on voit ce qui se joue dans chaque mesure.
     const RQ = new Map(); NOTES_FR.forEach((_, r) => SORTES_ACCORD.forEach((q2) => RQ.set(nomAccord(r, q2), [r, q2])));
     const touches = (nm) => { const x = RQ.get(nm); return x ? `<span class="or-kb">${clavierDe(x[0], x[1], { compact: true })}</span>` : ''; };
+    // Une mesure = 4 temps égaux, toujours : l'accord qui commence sur un temps y est écrit ; un temps où il continue
+    // porte un trait ; un temps sans accord, un point. Avec la guitare, la version simple s'écrit dessous.
+    const simpleDe = (nm) => { const x = RQ.get(nm); return x ? nomSimple(x[0], x[1]) : ''; };
+    const temps4 = (x) => x.cases.map((c) => (c && c !== '—' ? `<span class="bt dep">${joli(c)}${simplifie ? `<em class="gt-nom">${esc(simpleDe(c))}</em>` : ''}</span>` : c === '' ? '<span class="bt tenu"><i></i></span>' : '<span class="bt vide">·</span>')).join('');
     // Un nom d'accord lisible : la note en gros, sa sorte en petit, comme sur une partition (Si + maj7).
     const joli = (nm) => { const r = [...NOTES_FR].sort((u, v) => v.length - u.length).find((n) => nm.startsWith(n)) || ''; return `<span class="nm"><b>${esc(r)}</b>${nm.slice(r.length) ? `<sup>${esc(nm.slice(r.length))}</sup>` : ''}</span>`; };
     // Et si… ? D'autres couleurs pour le même moment, seulement celles qu'on peut vraiment faire dans le son
@@ -397,6 +407,7 @@ export default {
     function viser(i) { cible = i; const v = i < 0 ? cents : (cp[i] || 0); const r = q('[data-cents]'); if (r) r.value = v; const lab = q('.or-cents'); if (lab) lab.textContent = `${v > 0 ? '+' : ''}${v} ¢`; const sl = q('[data-cible]'); if (sl) sl.value = i; montrerParties(); }
     el.addEventListener('change', (e) => {
       if (e.target.matches('[data-pvoulu]')) { const k2 = e.target.dataset.pvoulu; if (e.target.checked) pvoulus.add(k2); else pvoulus.delete(k2); montrerDiag(); montrerParties(); dessiner(); return; }
+      if (e.target.matches('[data-simple]')) { simplifie = e.target.checked; store.set('oreilleSimple', simplifie); jeuLigne = -1; jeuCle = ''; montrerAccords(); majJeu(tete ? posDe(tete) : curseur, !!tete); return; }
       if (e.target.matches('[data-jvoir]')) { const set = voirJ(); if (e.target.checked) set.add(e.target.dataset.jvoir); else set.delete(e.target.dataset.jvoir); store.set('kbVoir3', [...set]); jeuCle = ''; majJeu(tete ? posDe(tete) : curseur, !!tete); return; }
       if (e.target.matches('[data-vitesse]')) { vitesse = +e.target.value; if (tete && res) { const pos = posDe(tete); const { a, b, boucle } = tete; if (tete.media && vitesse !== 1) media.playbackRate = vitesse; else joueDe(boucle ? a : pos, b, { boucle }); } toast(vitesse === 1 ? 'Vitesse normale.' : `Ralenti à ${Math.round(vitesse * 100)} % : même hauteur, plus lent.`); return; }
       if (e.target.matches('[data-aligner]')) { aligner = e.target.checked; if (aligner) { caler(); montrerMonter(); dessiner(); } return; }
@@ -450,7 +461,8 @@ export default {
     }
     const joueDe = (a, b, { boucle = false } = {}) => {
       arrete(); const c = audio(); a = Math.max(0, a); b = Math.min(buf.duration, Math.max(a + 0.05, b)); // jamais avant le début ni après la fin
-      if (vitesse !== 1) { const m = lecteurLent(); const go = () => { m.currentTime = a; m.playbackRate = vitesse; m.play().catch(() => {}); };
+      // Un départ prévu (le fichier se prépare encore) ne part jamais en retard, après un arrêt ou une autre écoute.
+      if (vitesse !== 1) { const m = lecteurLent(); const jeton = ++mediaJeton; const go = () => { if (jeton !== mediaJeton || !tete?.media) return; m.currentTime = a; m.playbackRate = vitesse; m.play().catch(() => {}); };
         if (m.readyState >= 1) go(); else m.addEventListener('loadedmetadata', go, { once: true });
         tete = { media: true, a, b, boucle }; const l = q('[data-o=lire]'); if (l) l.textContent = '■ Arrêter'; requestAnimationFrame(animerTete); return; }
       const t0 = c.currentTime + 0.05; let segs;
@@ -635,6 +647,11 @@ export default {
         poserFond({ nom: plage ? `« ${titre} »` : `« ${nom.slice(0, 40)} », en entier`, buf, a, b, bpm: g.tempo, rate: rate(a) });
         toast(`${plage ? 'Le passage' : 'Le morceau'} est dans Jouer : ${k1 - k0} mesures, ${chords.length} accords. ▶ pour lancer.`);
         location.hash = '#/studio?tab=beat'; return;
+      }
+      if (o === 'cathedrale' && accs?.length) {
+        const a = plage ? plage.a : 0; const b = plage ? plage.b : res.duree; const IV = IVS;
+        const segs = accs.filter((x) => x.b > a && x.a < b).map((x) => ({ notes: (IV[x.q] || IV.M).map((iv) => 48 + x.r + iv), a: Math.max(a, x.a), b: Math.min(b, x.b) }));
+        window.__flipCathedrale = { segs, nom: plage ? `« ${nom.slice(0, 30)} », ${mmss(a)}–${mmss(b)}` : `« ${nom.slice(0, 40)} »` }; arrete(); location.hash = '#/cathedrale'; return;
       }
       if (o === 'fond' && res.boucle) {
         arrete(); const { a, b } = res.boucle; const f = poserFond({ nom: `la boucle de « ${nom.slice(0, 30)} »`, buf, a, b, bpm: res.bpm, rate: rate(a) });

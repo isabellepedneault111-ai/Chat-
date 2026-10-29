@@ -144,8 +144,10 @@ function play() {
 // Le fond : la boucle de l'enregistrement tourne sous le beat, au tempo du studio (si on change le tempo,
 // elle accélère ou ralentit avec, comme une platine : sa hauteur bouge un peu aussi).
 const vitesseFond = () => (S.fond ? (S.bpm / S.fond.bpm) * S.fond.rate : 1);
+// Le fond ne tourne que sur la page Jouer : un beat lancé d'ailleurs (une séance, un exercice) ne fait pas surgir la chanson.
+let surJouer = false;
 function lancerFond(when) {
-  const f = S.fond; if (!f) return; arreterFond(); const c = audio();
+  const f = S.fond; if (!f || !surJouer) return; arreterFond(); const c = audio();
   const src = c.createBufferSource(); src.buffer = f.buf; src.loop = true; src.loopStart = f.a; src.loopEnd = f.b; src.playbackRate.value = vitesseFond();
   const g = c.createGain(); g.gain.value = f.vol; src.connect(g).connect(finalOut()); src.start(when, f.a); f.src = src; f.g = g;
 }
@@ -163,6 +165,7 @@ function stopPlay() {
 export default {
   id: 'studio',
   mount(el) {
+    surJouer = true;
     let tab = (location.hash.match(/[?&]tab=(\w+)/) || [])[1] || store.get('studioTab', 'beat');
     el.innerHTML = `
       <div class="mod-head">
@@ -1079,7 +1082,7 @@ export default {
     // « ■ Arrêter le son » (en bas de l'écran) : la prise, la boucle, tout s'arrête ici.
     const toutArreter = (ev) => { ev.preventDefault(); if (S.recorder?.state === 'recording') S.recorder.stop(); stopPlay(); syncTop(); };
     addEventListener('diapason:stop', toutArreter);
-    return () => { removeEventListener('diapason:stop', toutArreter); offLampe(); stop(); disposeTab(); kb?.dispose(); S.onLoop = null; };
+    return () => { surJouer = false; arreterFond(); removeEventListener('diapason:stop', toutArreter); offLampe(); stop(); disposeTab(); kb?.dispose(); S.onLoop = null; };
   },
 };
 

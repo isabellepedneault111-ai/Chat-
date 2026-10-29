@@ -213,7 +213,7 @@ export default {
       else store.set('laboReglages', fn(store.get('laboReglages', [])));
       renderReglages();
     }
-    const garder = () => store.set('laboEtat', { tracks: tracks.map(({ n, muted, inst, vol, g, respire, cache }) => ({ n, muted, inst, vol, g, respire, cache })), liens, focus, presetId, f });
+    const garder = () => store.set('laboEtat', { tracks: tracks.map(({ n, muted, inst, vol, g, respire, cache, pos }) => ({ n, muted, inst, vol, g, respire, cache, pos })), liens, focus, presetId, f, posG });
     // Après un changement de disques : retire les liens devenus orphelins, retient la clé pour La cathédrale, et redessine tout.
     function tracksChanged() {
       liens = liens.filter((l) => (SOURCES[l.src] || (l.src.startsWith('g') ? tracks.some((t) => t.g === l.src.slice(1)) : +l.src < tracks.length)) && (l.cible.startsWith('g') ? tracks.some((t) => t.g === l.cible.slice(1)) : +l.cible < tracks.length));
@@ -279,6 +279,8 @@ export default {
     // fait baisser ; vert : fait monter ; plus épaisse = plus forte). On tire d'un nœud à un autre pour créer un lien ;
     // on touche une flèche pour la choisir (changer son sens, sa force, la retirer).
     let lienChoisi = -1; let trace = null;
+    // Le schéma a deux gestes : « Relier » (tirer un lien) et « Déplacer » (placer les ronds, faire les groupes à la main).
+    let modeSchema = store.get('laboMode', 'lier'); let posG = {};
     const SENS = { baisse: '#d55e00', monte: '#009e73' };
     // La disposition : en cercle, les disques seuls et les groupes ; les disques d'un groupe se blottissent dans son
     // anneau. À gauche, seulement les déclencheurs qu'on utilise (les autres attendent dans la barre, au-dessus).
@@ -291,10 +293,11 @@ export default {
       const l = [];
       haut.forEach((x, k) => {
         const a = n === 1 ? 0 : (k / n) * Math.PI * 2 - Math.PI / 2; const X = n === 1 ? cx : cx + Math.cos(a) * rx; const Y = n === 1 ? cy : cy + Math.sin(a) * ry;
-        if (x.type === 'd') { const i = +x.id; l.push({ ...x, x: X, y: Y, label: `D${i + 1}`, sous: tracks[i].n, titre: `Disque ${i + 1} (${tracks[i].n} par tour)`, c: colors[i] }); return; }
+        const ici = x.type === 'd' ? tracks[+x.id].pos : posG[x.g]; const Xp = ici ? ici.x * W : X; const Yp = ici ? ici.y * H : Y;
+        if (x.type === 'd') { const i = +x.id; l.push({ ...x, x: Xp, y: Yp, label: `D${i + 1}`, sous: tracks[i].n, titre: `Disque ${i + 1} (${tracks[i].n} par tour)`, c: colors[i] }); return; }
         const m = tracks.map((t, i) => [t, i]).filter(([t]) => t.g === x.g); const rm = m.length <= 2 ? 15 : 20; const R = rm + 26;
-        l.push({ id: x.id, type: 'g', x: X, y: Y, r: R, label: x.g, titre: `Groupe ${x.g} : tout le groupe`, c: GROUPES[x.g] });
-        m.forEach(([t, i], j) => { const b = (j / m.length) * Math.PI * 2 - Math.PI / 2; l.push({ id: String(i), type: 'm', r: 14, x: X + Math.cos(b) * rm, y: Y + Math.sin(b) * rm, label: `D${i + 1}`, titre: `Disque ${i + 1}, dans le groupe ${x.g}`, c: colors[i] }); });
+        l.push({ id: x.id, type: 'g', x: Xp, y: Yp, r: R, label: x.g, titre: `Groupe ${x.g} : tout le groupe`, c: GROUPES[x.g] });
+        m.forEach(([t, i], j) => { const b = (j / m.length) * Math.PI * 2 - Math.PI / 2; l.push({ id: String(i), type: 'm', r: 14, x: Xp + Math.cos(b) * rm, y: Yp + Math.sin(b) * rm, label: `D${i + 1}`, titre: `Disque ${i + 1}, dans le groupe ${x.g}`, c: colors[i] }); });
       });
       utilises.forEach((k, j) => { const [titre, label] = SOURCES[k]; l.push({ id: k, type: 's', r: 15, x: 20, y: 24 + j * ((H - 48) / (utilises.length - 1)), label, nom: titre.replace(/^(La |Le |Une |Ta |L’)/, ''), titre: SOURCES[k].join(' : '), c: liens.some((x) => x.src === k) ? '#efe6d2' : '#8a7f6c' }); });
       return { l, W, H };
@@ -340,7 +343,8 @@ export default {
       const lettres = [...new Set(tracks.map((t) => t.g).filter(Boolean))].sort();
       const cibles = [...tracks.map((_, i) => [String(i), `du disque ${i + 1}`]), ...lettres.map((l) => [`g${l}`, `du groupe ${l}`])];
       q('.liens').innerHTML = `<h3>Les liens : qui influence qui</h3>
-        <p class="li-une">Tire d’un rond à un autre pour créer un lien. <span class="muted">Passe sur un élément pour savoir ce qu’il fait.</span></p>
+        <div class="li-modes" role="group" aria-label="Ce que fait le glisser"><button class="${modeSchema === 'lier' ? 'on' : ''}" data-lsmode="lier">↗ Relier</button><button class="${modeSchema === 'deplacer' ? 'on' : ''}" data-lsmode="deplacer">✋ Déplacer et grouper</button></div>
+        <p class="li-une">${modeSchema === 'lier' ? 'Tire d’un rond à un autre pour créer un lien.' : 'Glisse un rond pour le placer. Dépose un disque <b>sur un autre</b> : ils forment un groupe. <b>Dans un anneau</b> : il rejoint ce groupe. <b>Hors de son anneau</b> : il en sort.'} <span class="muted">Passe sur un élément pour savoir ce qu’il fait.</span></p>
         ${schemaSVG()}
         ${liens.length ? `<ul class="li-liste">${liens.map((l, k) => `<li class="${k === lienChoisi ? 'sel' : ''}" data-lien-li="${k}"><span><b>${nomSource(l.src)}</b>${SOURCES[l.src] ? '' : ', à chacune de ses frappes,'} agit sur <select class="li-param" data-lien-param="${k}" aria-label="Ce que le lien fait bouger">${Object.entries(PARAMS).map(([v, [lb]]) => `<option value="${v}" ${(l.param || 'volume') === v ? 'selected' : ''}>${lb}</option>`).join('')}</select> <b>${nomCible(l.cible)}</b> : <button class="li-sens" data-lien-sens="${k}" style="--c:${SENS[l.sens]}" title="Inverser le sens">${verbe(l)}</button></span><input type="range" min="10" max="100" value="${Math.round(l.force * 100)}" data-lien-force="${k}" aria-label="Force du lien"><button class="icon-btn tiny" data-lien-x="${k}" aria-label="Retirer ce lien">×</button></li>`).join('')}</ul>` : ''}
         <details class="li-faire-d"><summary>Ou l’écrire en phrase</summary><div class="li-faire"><select data-li="src">${tracks.map((_, i) => `<option value="${i}">Le disque ${i + 1}, à chaque frappe,</option>`).join('')}${lettres.map((g) => `<option value="g${g}">Le groupe ${g}, à chaque frappe de ses disques,</option>`).join('')}${Object.entries(SOURCES).map(([k, [lb]]) => `<option value="${k}">${lb}</option>`).join('')}</select>
@@ -364,12 +368,18 @@ export default {
         const n = e.target.closest('[data-noeud]');
         if (!n) { const li = e.target.closest('[data-lien]'); lienChoisi = li ? +li.dataset.lien : -1; renderLiens(); return; }
         const { l } = noeuds(); const a = l.find((x) => x.id === n.dataset.noeud);
+        if (modeSchema === 'deplacer' && a.type !== 's') { const [px, py] = pt(e); const bouge = [n, ...(a.type === 'g' ? tracks.map((t, i) => (t.g === a.id.slice(1) ? svg.querySelector(`[data-noeud="${i}"]`) : null)).filter(Boolean) : [])];
+          deplace = { a, px, py, x0: e.clientX, y0: e.clientY, bouge: bouge.map((g2) => [g2, l.find((x) => x.id === g2.dataset.noeud)]) }; svg.setPointerCapture(e.pointerId); e.preventDefault(); return; }
         trace = { src: a.id, x: a.x, y: a.y, x0: e.clientX, y0: e.clientY, noeud: true }; svg.setPointerCapture(e.pointerId); e.preventDefault();
       });
-      svg.addEventListener('pointermove', (e) => { if (!trace) return; const [x, y] = pt(e); svg.querySelector('.ls-trace').setAttribute('d', `M${trace.x} ${trace.y} L${x} ${y}`); });
+      let deplace = null;
+      svg.addEventListener('pointermove', (e) => {
+        if (deplace) { const [x, y] = pt(e); const dx = x - deplace.px; const dy = y - deplace.py; deplace.bouge.forEach(([g2, nd]) => g2.setAttribute('transform', `translate(${nd.x + dx} ${nd.y + dy})`)); return; }
+        if (!trace) return; const [x, y] = pt(e); svg.querySelector('.ls-trace').setAttribute('d', `M${trace.x} ${trace.y} L${x} ${y}`); });
       svg.addEventListener('pointerup', (e) => finir(e));
       // Quand on relâche le doigt sur le schéma : un simple toucher met le disque en avant ; un glisser d’un nœud à un autre crée un lien.
       function finir(e) {
+        if (deplace) { const d = deplace; deplace = null; poser(d, e); return; }
         if (!trace) return; const t = trace; trace = null; svg.querySelector('.ls-trace').setAttribute('d', '');
         // Un simple toucher sur un disque (sans tirer) : il passe en avant, dans la grande fenêtre du haut.
         if (t.noeud && Math.hypot(e.clientX - t.x0, e.clientY - t.y0) < 6 && /^\d+$/.test(t.src)) { focus = +t.src; renderTracks(); import('../ui.js').then((u) => u.toast(`Disque ${focus + 1} en avant, en haut : sa fréquence se règle à côté du cercle.`)); return; }
@@ -379,6 +389,28 @@ export default {
         if (!b.id.startsWith('g') && tracks[+b.id] && t.src === b.id) return;
         liens.push({ src: t.src, sens: 'baisse', cible: b.id, param: 'volume', force: 0.7 }); lienChoisi = liens.length - 1; renderLiens(); prevenir(t.src);
       }
+    }
+    // Poser un rond déplacé : il reste là ; sur un autre disque, ils forment un groupe ; dans un anneau, il rejoint ce
+    // groupe ; un disque sorti de son anneau quitte le groupe (un groupe d'un seul disque se défait).
+    function poser(d, e) {
+      const svg = q('.li-schema'); const m = svg.getScreenCTM().inverse(); const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(m);
+      const { l, W, H } = noeuds(); const a = d.a; const clamp = (v) => Math.max(0.06, Math.min(0.94, v));
+      const ici = (x, y) => ({ x: clamp(x / W), y: clamp(y / H) }); const nx = a.x + (p.x - d.px); const ny = a.y + (p.y - d.py);
+      if (Math.hypot(e.clientX - d.x0, e.clientY - d.y0) < 6) { if (/^\d+$/.test(a.id)) { focus = +a.id; renderTracks(); } return; }
+      const ui = (t) => import('../ui.js').then((u) => u.toast(t));
+      if (a.type === 'g') { posG[a.id.slice(1)] = ici(nx, ny); renderTracks(); return; }
+      const i = +a.id; const t = tracks[i];
+      const anneau = l.find((n) => n.type === 'g' && n.id !== `g${t.g}` && Math.hypot(n.x - p.x, n.y - p.y) <= n.r + 6);
+      const autre = l.find((n) => n.type === 'd' && n.id !== a.id && Math.hypot(n.x - p.x, n.y - p.y) <= n.r + 10);
+      const quitter = () => { const g0 = t.g; if (!g0) return; t.g = ''; t.respire = false; const reste = tracks.filter((x) => x.g === g0);
+        if (reste.length < 2) { reste.forEach((x) => { x.g = ''; x.respire = false; x.pos = posG[g0] || x.pos; }); delete posG[g0]; liens = liens.filter((k) => k.cible !== `g${g0}` && k.src !== `g${g0}`); } };
+      if (anneau) { quitter(); t.g = anneau.id.slice(1); delete t.pos; ui(`Disque ${i + 1} : dans le groupe ${t.g}.`); }
+      else if (autre) { const libre = Object.keys(GROUPES).find((x) => !tracks.some((tt) => tt.g === x));
+        if (!libre) { ui('Trois groupes déjà : dépose plutôt ce disque dans l’anneau d’un groupe.'); renderTracks(); return; }
+        quitter(); const j = +autre.id; t.g = libre; tracks[j].g = libre; posG[libre] = ici((autre.x + nx) / 2, (autre.y + ny) / 2); delete t.pos; delete tracks[j].pos; ui(`Disques ${j + 1} et ${i + 1} : groupe ${libre}.`); }
+      else if (a.type === 'm') { const gn = l.find((n) => n.id === `g${t.g}`); if (gn && Math.hypot(gn.x - p.x, gn.y - p.y) > gn.r + 4) { const g0 = t.g; quitter(); t.pos = ici(nx, ny); ui(`Disque ${i + 1} : sorti du groupe ${g0}.`); } }
+      else t.pos = ici(nx, ny);
+      presetId = 'custom'; tracksChanged();
     }
     // L'effet des liens sur un disque, maintenant : de 0 (éteint) à 1 (inchangé) ou plus.
     // Ce qu'un lien peut faire bouger chez sa cible.
@@ -642,6 +674,8 @@ export default {
       }
       const lx = e.target.closest('[data-lien-x]'); if (lx) { liens.splice(+lx.dataset.lienX, 1); lienChoisi = -1; renderLiens(); updateMutes(); return; }
       const ls = e.target.closest('[data-lien-sens]'); if (ls) { const l = liens[+ls.dataset.lienSens]; l.sens = l.sens === 'baisse' ? 'monte' : 'baisse'; lienChoisi = +ls.dataset.lienSens; renderLiens(); return; }
+      const lm = e.target.closest('[data-lsmode]');
+      if (lm) { modeSchema = lm.dataset.lsmode; store.set('laboMode', modeSchema); renderLiens(); return; }
       const gb = e.target.closest('[data-gr]');
       if (gb) {
         const a = gb.dataset.gr; const l = gb.dataset.g; const membres = tracks.filter((t) => t.g === l);
@@ -930,7 +964,7 @@ export default {
     renderReglages();
     // On retrouve le labo tel qu'on l'a laissé : disques, groupes, liens, disque en avant, vitesse.
     const garde = store.get('laboEtat', null);
-    if (garde?.tracks?.length) { tracks = garde.tracks; liens = garde.liens || []; focus = garde.focus || 0; presetId = garde.presetId || 'custom'; f = garde.f || f; tracksChanged(); } else loadPreset(presetId);
+    if (garde?.tracks?.length) { tracks = garde.tracks; liens = garde.liens || []; posG = garde.posG || {}; focus = garde.focus || 0; presetId = garde.presetId || 'custom'; f = garde.f || f; tracksChanged(); } else loadPreset(presetId);
     setF(f);
     const offLampe = brancherLampe(el);
     return () => { if (prise) { prise.proc.disconnect(); try { finalOut().disconnect(prise.proc); } catch { /* déjà débranché */ } } offMidi.forEach((o) => o()); offLampe(); io.disconnect(); stop(); stopAudio(); radar.dispose(); strip.dispose(); air.dispose(); wave.dispose(); kb.dispose(); };

@@ -161,8 +161,8 @@ function laissePasser(duree = 2.6, creux = 0.32) {
 }
 // Démarre une pièce dès que le navigateur permet le son (après un premier geste).
 function lancerPiste(id) {
-  const c = audio();
-  const go = () => demarrePiste(id);
+  const c = audio(); const gen = bande.gen || 0;
+  const go = () => { if (gen === (bande.gen || 0) && !(lecture && lecture.id === id)) demarrePiste(id); }; // jamais après un arrêt
   if (c.state === 'running') go();
   else {
     c.resume().then(go).catch(() => {});
@@ -177,14 +177,15 @@ function lancerPiste(id) {
 export function bandeStart(section = 'accueil') {
   bande.section = section;
   if (!sonActif()) return;
-  const id = pisteDe(section);
+  const id = pisteDe(section); const gen = bande.gen || 0; // un arrêt entre-temps annule ce départ (sinon la musique surgit plus tard, toute seule)
+  const encore = () => gen === (bande.gen || 0);
   // La pièce de Frog d'abord ; la bande jouée par l'app seulement si elle manque.
-  if (bufs[id] === undefined) { chargePiste(id).then((ok) => { if (ok || !bufs[id]) bandeStart(bande.section); }); return; }
+  if (bufs[id] === undefined) { chargePiste(id).then((ok) => { if (encore() && (ok || !bufs[id])) bandeStart(bande.section); }); return; }
   if (bufs[id]) { if (!lecture || lecture.id !== id) lancerPiste(id); return; }
   if (bande.t) return;
   const c = audio();
   const go = () => {
-    if (bande.t || c.state !== 'running') return;
+    if (!encore() || bande.t || c.state !== 'running') return;
     bande.next = c.currentTime + 0.12; bande.t0 = bande.next; bande.bar = 0;
     const tick = () => { if (bande.next < c.currentTime - 0.25) bande.next = c.currentTime + 0.05; while (bande.next < c.currentTime + 0.6) { mesure(bande.next, bande.bar); bande.next += MES; bande.bar++; } };
     tick(); bande.t = setInterval(tick, 200);
@@ -204,7 +205,7 @@ export function bandeSection(section, couche = 0) {
   if (lecture && lecture.id !== pisteDe(section)) bandeStart(section);
 }
 // Arrête la bande-son de la visite.
-export function bandeStop() { clearInterval(bande.t); bande.t = 0; bande.couche = 0; arretePiste(); }
+export function bandeStop() { bande.gen = (bande.gen || 0) + 1; clearInterval(bande.t); bande.t = 0; bande.couche = 0; arretePiste(); }
 
 // Vrai si le son de la visite est activé.
 export const sonActif = () => store.get('visiteSon', true);

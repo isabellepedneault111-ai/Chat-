@@ -60,6 +60,14 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.76', quand: '2026-10-29', titre: 'La guitare en même temps', items: [
+    ['Accords simplifiés pour la guitare', ['Dans l’oreille, « 🎸 accords simplifiés » : sous chaque accord, sa version de base, majeur ou mineur (Sol7 → Sol, Sim7 → Sim), dans la grille et dans la ligne qui joue. Et au-dessus du clavier, la position à faire maintenant, en grand, et la suivante.']],
+    ['4 temps égaux, toujours', ['Chaque mesure est coupée en 4 temps de même largeur : l’accord s’écrit sur le temps où il commence, un trait quand il continue, un point quand rien ne joue. Le temps qui joue s’allume.']],
+    ['La tonique, foncée', ['Le rond de la tonique (la note « maison ») est plein et foncé, sur tous les claviers.']],
+    ['La cathédrale de ce morceau', ['« → La cathédrale de ce morceau » : les accords trouvés par l’oreille (ou ceux du passage choisi) deviennent une cathédrale, une partie par accord qui revient.']],
+    ['Le labo à la main', ['Dans le schéma du labo, « ✋ Déplacer et grouper » : glisse un rond pour le placer ; un disque déposé sur un autre forme un groupe ; dans un anneau, il le rejoint ; hors de son anneau, il en sort. « ↗ Relier » tire les liens, comme avant.']],
+    ['Plus de musique surprise', ['La musique de la visite de Frog pouvait repartir toute seule, plus tard, quand elle finissait de se charger après la fin de la visite. Une chanson envoyée dans Jouer ne repart plus quand un beat démarre ailleurs (une séance, un exercice). Et un départ ralenti dans l’oreille ne part plus en retard.']],
+  ] },
   { v: '0.75', quand: '2026-10-29', titre: 'Ralentir et improviser', items: [
     ['Ralentir sans changer la hauteur', ['Dans l’oreille, « Vitesse » : 100 %, 90, 80, 75, 66 ou 50 %. La pièce ralentit sans descendre ; la grille, le clavier et les temps suivent. (La justesse en cents ne s’applique qu’à vitesse normale.)']],
     ['Les notes pour improviser', ['Sous le grand clavier de l’oreille, les mêmes cases que dans Jouer : la pentatonique, le reste de la gamme, les couleurs jazz de l’accord qui joue, les notes blues, la tonique. Des pastilles de couleur sur les touches, qui suivent l’accord. Ce que tu coches ici est coché aussi dans Jouer.']],

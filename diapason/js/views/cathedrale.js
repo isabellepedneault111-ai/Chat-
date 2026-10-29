@@ -341,10 +341,12 @@ export default {
     let jeu = null;
     const sec = (x) => `${x.toFixed(x < 10 ? 1 : 0).replace('.', ',')} s`;
     // Analyse une minute de jeu (notes MIDI, sinon le son) : quels accords, combien de temps, combien de fois ; puis propose la cathédrale de ce jeu.
-    async function depuisJeu({ midi = [], buf = null, nom = 'le filet' }) {
+    async function depuisJeu({ midi = [], buf = null, nom = 'le filet', segs = null }) {
       const box = q('.ca-jeu'); box.hidden = false; q('.nf-plus').open = true;
       const frappes = midi.filter((m) => (m.d[0] & 0xf0) === 0x90 && m.d[2]).length; let res = null; let via = '';
       if (frappes >= 3) { res = accordsDesSegments(segmentsMidi(midi)); via = `${frappes} notes MIDI`; }
+      // Venu de L'oreille : ses accords sont déjà trouvés (et corrigés à la main s'il y a lieu).
+      if (!res?.accords.length && segs?.length) { res = accordsDesSegments(segs); via = 'les accords trouvés par l’oreille'; }
       if (!res?.accords.length && buf) {
         box.innerHTML = '<p class="muted">J’écoute ta minute, accord par accord…</p>';
         try { const segs = await trouverAccords(buf, 90); res = accordsDesSegments(segs.map((g) => ({ notes: chordIntervals(g.q).map((iv) => 48 + g.r + iv), a: g.a, b: g.b }))); via = 'le son entendu'; } catch { res = null; }
