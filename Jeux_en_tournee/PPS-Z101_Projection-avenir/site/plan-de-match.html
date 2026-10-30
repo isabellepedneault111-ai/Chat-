@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Z101 · Plan de match</title>
+<meta name="robots" content="noindex">
+<style>
+/* Tableau de bord autonome pour le TNI : aucune ressource externe, polices système, couleurs du logo CFGA */
+:root{
+  --bleu:#004983; --bleu2:#1F64A6; --lime:#7AA32B; --vert:#5E8A1E; --tes:#C8553D;
+  --encre:#1A1D24; --gris:#596273; --ligne:#D5DAE1; --fond:#F4F6F9; --blanc:#fff;
+  --grpA:#004983; --grpB:#7AA32B; --G:#7A4E9E; --E:#C27C0E; --C:#C8553D; --S:#1F7A8C;
+  --texte:"Segoe UI",Calibri,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light}
+body{font-family:var(--texte);color:var(--encre);background:var(--fond);font-size:18px;line-height:1.45}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
+
+header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:4px solid var(--lime);display:flex;align-items:center;gap:18px;padding:10px 24px;flex-wrap:wrap}
+header img{width:58px;height:58px}
+header h1{font-size:24px;color:var(--bleu);line-height:1.1}
+header h1 small{display:block;font-size:14px;color:var(--gris);font-weight:600}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+nav button{border:2px solid var(--ligne);background:#fff;color:var(--bleu);font-weight:700;font-size:16px;padding:10px 16px;border-radius:999px}
+nav button[aria-selected="true"]{background:var(--bleu);border-color:var(--bleu);color:#fff}
+
+main{max-width:1500px;margin:0 auto;padding:26px 24px 60px}
+section[hidden]{display:none!important}
+h2{font-size:34px;color:var(--bleu);line-height:1.15;margin-bottom:6px}
+.sous{color:var(--gris);font-size:19px;margin-bottom:22px}
+h3{font-size:22px;color:var(--bleu)}
+.carte{background:#fff;border:1px solid var(--ligne);border-radius:14px;padding:20px 22px}
+.grille{display:grid;gap:16px}
+.pastille{display:inline-block;font-size:14px;font-weight:700;border-radius:999px;padding:3px 12px;border:2px solid currentColor}
+.btn{border:none;border-radius:10px;padding:11px 18px;font-weight:700;font-size:16px;background:var(--bleu);color:#fff}
+.btn.sec{background:#fff;color:var(--bleu);border:2px solid var(--bleu)}
+.btn.lime{background:var(--lime)}
+.outils{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}
+.note{font-size:15px;color:var(--gris)}
+.encadre{border-left:6px solid var(--lime);background:#EEF5E4;border-radius:0 12px 12px 0;padding:14px 18px}
+.alerte{border-left:6px solid var(--tes);background:#FBEDEA;border-radius:0 12px 12px 0;padding:14px 18px}
+
+/* Ordre du jour */
+.odj{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;align-items:start}
+.etape{display:grid;grid-template-columns:110px 1fr;gap:16px;padding:16px 18px;border-radius:12px;border:2px solid var(--ligne);background:#fff;margin-bottom:10px}
+.etape b.t{font-size:22px;color:var(--bleu)}
+.etape h3{font-size:21px}
+.etape p{color:var(--gris);font-size:16px}
+.etape.active{border-color:var(--lime);box-shadow:0 0 0 4px #DCEBC4}
+.minuteur{text-align:center}
+.minuteur .temps{font-size:96px;font-weight:800;color:var(--bleu);font-variant-numeric:tabular-nums;line-height:1}
+.minuteur .barre{height:14px;background:var(--fond);border-radius:8px;overflow:hidden;margin:16px 0}
+.minuteur .barre i{display:block;height:100%;background:var(--lime);width:0}
+textarea{width:100%;min-height:180px;font:inherit;font-size:16px;border:2px solid var(--ligne);border-radius:10px;padding:12px}
+
+/* Premier mardi */
+.ligne-temps{display:grid;gap:10px}
+.lt{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:start;background:#fff;border:1px solid var(--ligne);border-radius:12px;padding:14px 18px}
+.lt b{font-size:22px;color:var(--bleu);font-variant-numeric:tabular-nums}
+.lt h3{font-size:20px;margin-bottom:2px}
+.lt p{font-size:16px;color:#33384a}
+
+/* Répartition */
+.colonnes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:start}
+.col{background:#fff;border-radius:14px;border:2px solid var(--ligne);min-height:260px;display:flex;flex-direction:column}
+.col.cible{border-style:dashed;border-color:var(--lime);background:#F6FAEF}
+.col header{position:static;border:none;border-radius:12px 12px 0 0;padding:12px 14px;color:#fff;display:block}
+.col header h3{color:#fff;font-size:18px}
+.col header .compte{font-size:14px;opacity:.95}
+.col .liste{padding:10px;display:flex;flex-direction:column;gap:8px;flex:1}
+.eleve{border:2px solid var(--ligne);border-left-width:9px;border-radius:10px;padding:6px 8px;background:#fff;cursor:pointer;user-select:none;font-size:15px;transition:opacity .15s}
+.eleve.A{border-left-color:var(--grpA);background:#EAF1F9}
+.eleve.B{border-left-color:var(--grpB);background:#F1F7E8}
+.eleve.choisi{border-color:var(--bleu);box-shadow:0 0 0 3px #BFD3EA}
+.eleve.pale{opacity:.28}
+.eleve .nom{font-weight:700;color:var(--encre);display:flex;justify-content:space-between;gap:6px;align-items:center}
+.eleve .nom input{font:inherit;font-weight:700;border:2px solid var(--ligne);border-radius:6px;padding:3px 6px;width:100%;min-width:0;background:#fff;cursor:text;user-select:text}
+.eleve .nom input:focus{border-color:var(--lime);outline:none}
+.eleve .ab{flex:none;width:34px;height:30px;border-radius:8px;border:2px dashed #9AA3B2;background:#fff;color:#7A8394;font-weight:800;font-size:16px}
+.eleve .ab.A{background:var(--grpA);border:none;color:#fff}
+.eleve .ab.B{background:var(--grpB);border:none;color:#fff}
+.eleve .detail{display:none;margin-top:6px}
+.eleve.choisi .detail{display:block}
+.eleve .ch{display:flex;gap:4px;flex-wrap:wrap}
+.eleve .ch span{font-size:12px;font-weight:700;color:#fff;border-radius:6px;padding:1px 6px}
+.eleve .flag{font-size:12px;font-weight:700;display:flex;gap:6px;flex-wrap:wrap}
+.eleve .flag span{border-radius:6px;padding:1px 6px;background:var(--fond);color:var(--gris)}
+.eleve.conflit{border-color:var(--tes);background:#FDF4F2}
+.eleve .alerte-veto{color:var(--tes);font-size:13px;font-weight:700}
+.eleve .rq{font-size:13px;color:var(--gris);margin-top:4px;font-style:italic}
+.legende{display:flex;gap:18px;flex-wrap:wrap;align-items:center;font-size:16px;margin-bottom:14px}
+.legende b{display:inline-grid;place-items:center;width:30px;height:28px;border-radius:7px;color:#fff;margin-right:6px}
+.filtre button{border:2px solid var(--ligne);background:#fff;border-radius:999px;padding:6px 14px;font-weight:700;color:var(--bleu)}
+.filtre button[aria-pressed="true"]{background:var(--bleu);color:#fff;border-color:var(--bleu)}
+
+/* Fiches */
+.fiches{grid-template-columns:repeat(2,minmax(0,1fr))}
+.fiche{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--ligne);display:flex;flex-direction:column}
+.fiche .tete{color:#fff;padding:18px 22px;display:flex;align-items:center;gap:16px}
+.fiche .tete svg{width:48px;height:48px;flex:none;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.fiche .tete h3{color:#fff;font-size:26px}
+.fiche .tete p{font-size:15px;opacity:.95}
+.fiche .corps{padding:18px 22px;display:grid;gap:14px}
+.fiche .defi{font-size:19px;font-weight:700;color:var(--bleu)}
+.fiche ol{list-style:none;display:grid;gap:8px;counter-reset:e}
+.fiche ol li{counter-increment:e;display:grid;grid-template-columns:38px 1fr;gap:10px;align-items:start;font-size:17px}
+.fiche ol li::before{content:counter(e);width:34px;height:34px;border-radius:50%;background:var(--c);color:#fff;font-weight:800;display:grid;place-items:center}
+.fiche ol li.avenir::before{content:"★";background:var(--lime)}
+.fiche .duo{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fiche h4{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--gris);margin-bottom:4px}
+.fiche ul{list-style:none;display:grid;gap:4px;font-size:16px}
+.fiche ul.ok li::before{content:"☐ ";color:var(--vert);font-weight:700}
+.fiche ul.mat li::before{content:"• ";color:var(--c);font-weight:700}
+.fiche .secu{font-size:15px;background:var(--fond);border-radius:10px;padding:10px 14px}
+.fiche .plus{font-size:15px;border:2px dashed var(--ligne);border-radius:10px;padding:10px 14px;color:var(--gris)}
+.edit{border-bottom:2px dashed var(--lime);min-width:120px;display:inline-block;padding:0 4px;color:var(--encre)}
+.edit:empty::before{content:attr(data-vide);color:#9AA3B2}
+
+/* Qui fait quoi */
+table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--ligne);border-radius:12px;overflow:hidden;font-size:16px}
+th{background:var(--bleu);color:#fff;text-align:left;padding:10px 12px;font-size:15px}
+td{border-top:1px solid var(--ligne);padding:10px 12px;vertical-align:top}
+td:first-child{font-weight:700;color:var(--bleu);white-space:nowrap}
+td[contenteditable]{background:#FBFDF7}
+td[contenteditable]:focus{outline:3px solid var(--lime);outline-offset:-3px}
+.tes{color:var(--tes);font-weight:700}
+.defile{overflow-x:auto}
+
+/* Outil */
+.reco{grid-template-columns:repeat(3,minmax(0,1fr))}
+.reco .carte h3{margin-bottom:6px}
+.reco .carte .qui{font-size:14px;font-weight:700;color:var(--lime);text-transform:uppercase;letter-spacing:.08em}
+
+@media (max-width:1100px){.colonnes{grid-template-columns:repeat(2,minmax(0,1fr))}.fiches,.reco,.odj{grid-template-columns:1fr}}
+@media print{
+  header,nav,.outils,.pas-imprimer{display:none!important}
+  body{background:#fff;font-size:15px}
+  main{padding:0}
+  section{display:block!important}
+  section:not(#fiches){display:none!important}
+  #fiches h2,#fiches .sous{display:none}
+  .fiches{display:block}
+  .fiche{break-after:page;border:none}
+}
+</style>
+</head>
+<body>
+<header>
+  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAIAAAAiOjnJAAAACXBIWXMAAAAAAAAAAQCEeRdzAAAQAElEQVR4nO19B1RTWdf2fGV97/+t/3/fd6oFSCEQmqiAvY9dUUcddcZext5HHRTpvSmDXWwovVcbCAiiAlJELChFUHrvJSEB/n0TCCG59yaBhCDeZ53lktx7yj33OXvvs88+537TRYCADPCNvBtAYHiCIBYBmYAgFgGZgCAWAZmAIBYBmYAgVjdY7PbOzk55t2L44OslVjub0dBSUViV+SInICbzWlHVB4JYUsTXRaxWZn1p7fuU3MCIFBu3mN32QXNOe2qdu7vmdUEsu4Mt79YNKwx/YrWz28rrcl7k+AcnmZ6/t8rCbxKQyeCOyonbVCNP7dAk26bWGnm3cRhi2BKrjdn4uTIjJvPyjUfbLf2nnPbUNHBXNfTUMPLSNvIac9KdfjZ0+ZtPcfJu5rDFcCMWi80sqn4TnXnp4v01Zr56QKBTHmrAJGPvsSbe4yAh3PLU9n9qUttUJu/GDmcMH2I1tJQnffC+Gf2Hhe8k4JOhh4axlzaXTNwE3DrpruoYvDg1N6KDsNNljC+eWJ2dHaDywpItnUIWAJm48omfT9wEqtDQQ9Mj7s+K+k/ybvJXgS+YWO2s1qyix57xh819J4AoAuqY9Og7IUFFtwmYnfjej80mpn6DhC+SWIz25pcfw65FbeGSxqivyuNPRp5ap9zV3aIPFFdny7vVXxe+MGKxO9pfFzy8+nDDaWCMh5oxNqVAesENln7TYjNvMtsZ8m74V4cviVi5pYm3Y/cAmRBKoWm9XkHlNQYE1dWHW/PLM+TdaimjvrmyrDZX3q0QjS+DWOV1OQHPDU19dE6504298CgF6ZSHuqmP7sP0i62MJnk3XMrIKnziEr7Kyn/qw5fODS0V8m4OHoY6sdraG+PeXLMNnAXmOY4txRNUcNuFe+s+FCfKu+FSRnNb/b0UZ1NvHUMPdTAcwbL8O3xZel5oRwdL3k1Dx5AmVk7JMzCnQPFxZnx4lEI8nx7qJt46Ycn2Ta218m64lJFXmnbp/nrO0BrD97waYGh6xR8pqXkn7waiYIgSq5lRey/VwcxXD1iF6kToK6hgBKs6h614U/BY3g2XMhjtrY8yrlr4TuH0g5AnxYvjSQmc+TTrdju7Td6N7YOhSKzc0ueX7q89hfgRUFydwroPbI77aWBzVMq74VJGSXX25fubOP4ULZxOAHEOZqX74/1ldTnybnIvhhaxYNjFZl42952AOkD7UkobetzSb1LQc6Pi6ix5N1wmKKp+C3RBpiPuavhTFq4/zyF47suP4fJudTeGELFqmgo94w4hazKeeAMUOhE6GmaI/s9OFlZlyrvVMseH4iduMbtANnOMSHwrE1keDU+xaWU2yLvVQ4ZY0H3O4Uth2OE7qAw9NQw9NG9F/5FbOtzmfThgsRnpH0Mv3FsNI+o0/qjjCPLrUVvL6uS80iB/YnV2diRn+1j4TsQfkZwuUz0btjg5x6+dNbQM1cFBc1ttTOYl64BpIocf3OAUuiCrSJ5TGTkTi8lqAdENug9/IHI4Nz4kyay2qVi+DZY7iqrfeMQdBIMd3wUDPQamauIHbxi5cmmnPInVwqjzfnKUY5liej65st3l7op3hTFybOqQAqujPTnb1z7o51O4ous0Z7jeT3OUiydCbsSqaSy8Fb0TtBtO14BFBcQCQdXYOtxcCQNHWW02zBlPcRzxOHNnmAz5PTNgtDcPcvPkQ6yK+txL99cCq3CEOUgyu6DZ6R/D5NLCLwJMVuvj166g8nDMU2MvmETTPeMPtTAGdUFCDsQqqEiDCSDwBt9Oh6lNae37wW/eFwcxJtRjDe6ouMXsbh5Ebg02sfIrUp1CFuCwimMZaAYlGrcy6we5bV8uqhs/u8cdALWIY63CWB1Mbg0qsQoq0x2BVdhy+7SnBmcu49XZ2TGYDRsGgPl1RIoNDEsck2swuTV4xKqoz/s7YjmOrAJDwSZgxrvC6EFr0jADjMZn7z3MfHRxPBHArdsxu2E+LuvGDBKxYA7IXVfGNNU91M6ELc4rS5ZB5ezm+qqS4uKSkuKS0vL6VqYMqsCuu72lpqIUKi8uLq6oaWDIfjPHq4J7Vv5TDT00cLjl9eSIrOeJg0EsGB9czwLOowLtyqW9ON9Qm/cgwPXUX/t+Xz5Xb/x4XV0d3YnTf9m064SxrV90alUjWogcqyHK74q1ja2DGLCztTl7xfdzYzta5W25rxNcnU337tqwaObE8To6OuN1ZixetWP/McdrvmnZ5RJp+tKsOGcHGzt7e26lZ274fmrCi+/LKnpsGzgLe6qIrFiDFcvqkOEYkzmx2lmt3k+O4rAKxNjVhxsqG/KlWSuzOtLTceWiyTQqSUlRiUJVVuGCRqOSSYpKihQVrbm/7rkd81JglwWz4uXmiSrf/TRSQQyMHvnjKPqsgKxqgcorsp/aHtukq61GgbpJZGUarbtyZSpZSVGRTNXSnXPA5trbyhaxnqWt0HjTjB9+/Kmn1lE/jKYduynCXfyx/IUTtjkLNj7QLirDRfwelRSyJVZnV+f9NEecvQ9cc7KptUqKlTZXZVgdXEWnKJEpynS6GirodFUKWYmsPuHQWf86vnHbVpa+bao2maaKnk2gEFVllXHz/PsQi5UaeXHpdE1FRRJNBasQugqNCjdMXrH7/ssSkY+T//TGFDW+Fqmrq1CUdJYfetsgYq2mewKOwS3k2AGvsSm5gf3rZJGQLbGSs/2MPMdgxaoDqy4/+K2+pVyKNbaUvzi8brqSAkkFg1J93zBVgUzfaevDe0eM8vTt4hNLBYg1n09isZ+H2k3TpJKoNHFyU5QUtGb/fv8N/qJC/WWDlWQSRaBiEk3HIfy1yN4AbjkiG8TRuQU2vqXf5OyShAH1OAZkSKzskqfQbqzVZRBjYFdVSVcDtn2y2rMIWMVPKrqqKpVCVuTqEUQt0vjFGJBDkTbO0OsZ1+hBIRadroIBUKsUrdm+b7vF7cdE97k6ymSqSp/Kacqg/rh1k8gUFdU+fKcoKU369XhGDaatU5N9b5GuKlVolCiTSbO3WZaiWnd9kVv63DpgOpYtD5w7G7ZEym+BA1kRq6apCHEuYIwVzvMslrq1/tTbSJ2syP8WVJSpFPWxSzbsMrWzc3R0sjH5a73+DBUKWZnvJlVlMk13sW9KYRcKsehq6prjdXT19HSFoTNOe+L8TXGfGyEju/7NoVWTFEnK/KSiUKhjpi7YddLI3snJwdbmzx2/6mqrgILm3UBWHK0yeXlEDtYBXezQs3toJJKw8AUtTNGa5ZFSJE63ZBXFwjwRywcBhrz74/1MVqvUXgMHMiFWO5vhGX8Iy2CHJ7QJmCF1z0J77audS3VIlF41BBJFc6r+xbtJNXyz/Lba4iBXw8laNGWEPXRVFUSijCapH7l4H4QWsy+xVKgkvXVHMz5X1VRVVgihvKy0rLKWxVGjCR4mwOleeQTaikpf+6djyqfq3rpZTW8SA3YsnwyqjUalKCmr6e82jH5ViGUrMStTN8/X7isCe6lFUaKsNrwp5s7JjPwIU28d1Nh5Y86W8aiMc/3ueVTIhFjxb28iywtoBjtoRnNfvTefo6ReaUaovbayEk8S0WlUFb1FHk9QNw2zE3zMxlNHjVKijNGbs83AzCc2raYJ0UcM8YlVXl7T1DPKWwoM1kxRItN63zqFturY+Uq0nf2M0qQ/f5s1boa+k3dMPa79nehjqkEl8SlPOp1Pi9NpFJUpv0R+FDcKOe7NNRjSqGs+YMib+ehKNzBJ+sSCia6lP7ppBU8Fvz/Lcpd6pTAXvGbyG1mRZ+TSQWDsc7mL6S5iN4S7WlteupOWXcZvqIivCsdpa81edzK3HqmhOjts7jgVnnpVpVE0pv8e97nXA8loqUOcpAhKKyorstIeRyaklVVVV5SVliCu29LGNiFzqaXg5LppSuRe3UoHiqmr83GLTiKrHrx0X8xAvo5OdlCiMZYaAePEOVy/rln0LFVMSJlYrcx6ZIspxroN1y8nk3XAthKjrdMVe2QGZ762OCxb4kUx8Y13KkVRY+Lm1DJEKL1/6DJWjdTjXqBTFKnrjNz4HNvN7vbbtbXG9HBSb+KkyVMmT+ohqw5cOXIpQsCAz4m7qsfnZQCbavyS7Vcumk9U7zXlQaBqL9r5skYMG56DVmbDjUc7TmKsf8DvAc8NpfV2pEwsUNU47b4etUVGMQsd9XlHluuReswRFWXS+AX739dKvIAivrtBlUbWnro9vRwh1gsvyzHKSj06S1WJomVy6xlf46qtD/w8YjQJa3ZJGj167mHn6j6Sp875yHISiU8Ak5R3nAlnNn/cr69HovRYXXQVJdpYi5B08R+wrC7HIXiuoSfKJNGYczorWGOSdhoqpEmsj2XJ5r4TsQ7UswuaXVzzVorV8UNOxNqGTaynfI2rsT+yUIF/wtgXVCXSkhPn+aVrbVbEovEqPNFEV6Eqj1sU/AZxmN29fFiF3DtPVCaTZm4y/SxJ7PHrTw+5dhWaQtSQlkKUGrGYrJYbj7ahLjNzh0JaXrC06kKBzFQhXZXW7Yfqi5E/fU+bsOllOaLBUFShye3e9RpBiSXAWjpFQXmjhQff+g7Tz34Hlc/LQCVRlh49x72hrTB22QQ1Kq8QVRpJfdr1p5I5ou6nOWErFtWQJDNJ+00YUiPWs/fuWDNBaGtQoomMt4ugGu8RmCKrsxEx3i/fSf9YhWO801VoWpMXGljYOTkKrkDb2lhf8H5Qz7GMBI13ZYrmnI0JRTzPEJ+Npac3QW+cunof2adIVje43rtVq7Us6fc5WmTlXv7RqKpz1/1h63zG0dHJ3vL04gljaKq9VykkyoqTVyWyMMDYco3chLrd3MhL29RHJ7vkqehScCEdYlU1FIDmRnXBwXTD5e6KhlaZH+Yk7G5QnbDENwn1KFvWEz+L8dTRo0jUMRN+3ortbqCRlSZuMxW9kCnsbiDTVh27UNVjkCOzwpLi0rKKurrauDsm2nQyz4mAuDrHzPZ8Wcor7KmHiQaF1MdFrw7KnaLQs3hA6+u+B0VJ01kaliXZZxA+Vb7keE1RJu8w97oWtXmAcTXSIRYIT1TRCkrQ2Gvcm0/S91oJA81BShk7a+Wle8k1bb2Sq6k61+fyiSmaNCrXQUrDc5ACsSZtNykT46BJYQcpWVn997+cUz5V8UnNtg8vgrfoT1FW7vV5QvVTfzf+1Cvdco7+OplEFme1sZdaJJLKrrNhklqUcW+uoR7mA2oHjK2kbB8Jy+sDKRALuI9ls3P9CwOvQkygLelQKOra3Us6Tk5Wp/5cvXCyMlVwSUdZZ6EP2pIOl1ilYpjGnCWdyUp9l3TIfEs6djYWh7at1tVWpfAvUavSFGnj7cJe8cp5H31Bh07GDIzAgCqVPGbBtpQKyY5abWtv5B4/hqJnPBErfiB6ZuDE6vRJOIYqrkAzOoUsrG4cxHPVRS1CKyqRqMpCi9DKY/+6E88d7v0mFiDvmdusMcgyZJ/K+yxCdxjdTwAAEABJREFUU/suQquSlCgrTpyv5Fl5HdUOB5aQSFR+0tAoJJS5g6IS/9iAemAqauT5XNIOyyl5ZuarhyUUHr26IGmBPAyUWB+Kn5h6j0dbKBgLrOds8R5USBY2QxMRNiMRsUAbPwu2nQr2EUUMRUZXISkoTfvdIJ0vtKH8tf/P45T5GEOHUTB/8367M2f6TBwcneys/1owbYwy3+yVRiZN/e10gXixg/wISUY3Y0AuOAbPq2kslLhEDgZELLDvrj7cePSmgsEdFYM7NP507JbS1Yfr29rlcLysWIF+qioUkiJFYyJ+oJ8KBYx3Y7GJBWhPjDi3aApuoB+dTgMJSqGvOmST3ieItNXDZjOVREZsdQTqyGrg5BURueirgTFuBjAh5POL0Ehqky48+iBpd1U15GNNvE6B0Mo4L2mBXAyIWA0tlVEZ5x+kOz1MPyuQ7qc5FlSkDaTwAQEzNFkZCU1WVKSoaS/YcNAr/rXAQopAaPKI774dt8moTMLQ8NKseMs/1+uOFQxNVqbCD4okqsrkRWscPaOq+xbbUpLwiy75+96o6NE//KCwztQDSwYxK9O3LND6kS+K+od/fzfvsEs/Vjbi315HXYUbiNCS/zFGsoPAZgodHR29ybNXb9193MjWPz6juhXNr9ZnM4W9jbWdR1Rav74+0CqwmWL8eL25y9fv+8vINSAyrxZFkDPqc+9ccrSxteeqO3s7WzvnGy9LGrGr6HyfHOJga23fk8PW2uZa+NMWyd2FzYyac3dXogYD9ltoDWdi9YBv+1dZJUocgUzr7t7+BSipqm8Zsp/ySc72RQ4EFHI9cGdgDZKHj38NxCIgGi3Mugv3VqNGx5/yUHuadVvSAgliEegGltACtl26v1bSc00JYhHoBlhaLhErhC0toJqRl7akQb8EsQj04sm7W6j7X066030TTkhUFEEsAr2obiy0D/5ZeGXayGuMlf80iXZViSBWY1Obs0ec6fVo85sxFkQa2gneEbwpeF/w1vrNrdBkc9S4eDDhn7y7KTViFZfXf7/M9pvZJt/MNSPSF5Bmm8D7grfWb2IVVKSZ+egJr9EBsa5FbRH/nFwRxCqpqFdYd+abJdbfAL2INPTTEmt4X/DW+k0sFptx49F24ZAHsN/NfScUVone1y82sdYSxPpyEhBr7YCI1cUJBubMDQX9DmDCx2ReJoj1VSZpEKu8PhdMdeFYGpgwukZuYrLEiqD4+oilD8mG8y/f/8XKyJ9L7Iz9q04wF+fPwSJWR2eHV/wR4VgaoJqF36TSWrG+tSZtYkEXLLb6ZqHlN4usehP8CT/i5FpsLZhlEedPnN6ES7zb+lSE29RFlv+z1OofS635E/yCZMR530uhLsu+WZB//3sJJ6PUq1tkBSXzauElJNdSUfSSBrEASdk+aNoQCVkGRTnoxNK3/ccy2yl7LuufuLXk2E1eWnbilu6Oi/+JVcgSa+2t5/WP98kCf87af/V/l2GMVH0buAQ3COeCorBa+19LbXbaBoTGZIREvwzuSfD/0JiXR51D/3e5LfrL1rf5bqWD3c1H4bEZwX0zBkam/XraA6u6/1hivdMmIAytuiNnQ/+xDKO6xVaLjt4MeJgGt/FXB7U73Yn9YbWjCG5JiVjldTlW/lOFtSGIMZ+E4+LslpYqsRZaQpc1Nra0tTJaWtp4Cf6sqW3caO77zQIL4SxL/7pdVlHX1tYnS2sro7mp1eraw/9cgibqFluZXXkAN7QKVNTGgKKgQBRBssR61Bqn4nL004KhKKApIvOE61pgucnUuwujK3PyS39a7YDyspdYa252qaxCX1+DLoLhhyLFl9p8+4tdWuZHrNdxyCnkm/lCfSgDYrHYzFsxO4Xnhqc9tZxCF4rzBRrpEUvfFoQ8yAOsonzup/7XYiEVMNfMyg3zkJO01wXf/mIv+No4vZ+aiblFEwpEPDpCPa647kxpJfqbBoKCtEPXa/Mt9tgFYhHrc3H16LVOKP2zyBIkKBQrWXVLrKE0KBPr0UxcI7+ZZz4IxALEZF4SNrOMObsOc0pFB9dLkVg2YAeAqMcqCmQ7YigIqLa5ZhbY57SmvPr43UoUYsGPcAkrFxSISiycHgdpBzxALDY0Yu2yDejqQCdWQWEVCEIsYkGxklXHEatQJtajGV15OGjEyitLAg6heErd1R6/dhWZXZoSC3gTjE0suMQhlqDEMscm1gsgFprEgh9fYBPLnCCWNIjV2FoFWk943VBMM4sgFgKCWMIA6gCBhLXhaU9N53D9ZoaIjdcEsRAQxEJFbOZlVG+Wpd9kkd+cJoiFgCAWKrKKHgtvGjX2Hgu/vMwPx89LEAsBQSxUVDd+Rl3bOemu+kjUYbgEsRAQxEJFK7Me2WEhdPwfECvw+Wn8vASxEBDEQgXY775P/xI2sww91K9FbcE/54ggFgKCWFh4+NLZ4I6KsP/dIXgu/lk0Q9pB+gLbQYpDLCwHqWw871XonveFlvrHv2zPOxfJ2b7I6fB9V6M5E8MpFfV5OBmlvKQTFiv5ks6tWKws6W8KsIgFl7ByQYGoxMJdK2zBWys0w1krLENfK1xsPW7b+Vq0rfSAxgbMtcLvV9q//oB5VsKhs6GDs1bIA3KakJD/Hf4089HFX9iR6iL0IkuDc+HtDCYoZ0R38FJnZ1tL206bAJRF6AWWvxl7NdQ3C2Xp6GKzXTwe/yf0vgAX9W3hR7gENyC38efq6mxsaIYCoVjh5v3XUhtQas/SclIz80HgcVNKZn5SRt7J8xH/ZxlmdMO3K+0dbkWnZn5M6ckFCQqJT/6wxsgLvXP0oTrrY85hz9NzUvpWl5yRZ3Au4n+wArMWW6029Hjy4gN/IyGlvc6/4v90JKjdQYlu4KGsNtvSb7LAxJC70zA9L3SwiMWJZllpcGevfRC8Ql7aYx+4+NjNfyxD78r/Xmo9++A1UDcCWdae9vjnCjv0flxqA5fgBriNP9de+8C5h6/DG8Wh/j9X2ILA+/aX7gT//zfUAuYOTuwXJx6LezN/xv+3zBYvHksfqe5fQtX9q7s6vPEJJQvkgoSMMZxHkw2x6ppLrQOmo0STuqvFvbk+WMTi9ib0NYjrBXwJ/lwoJHj6dKUVWhbclw2XUCtCVWcCLBFO4jyacC5xojr7V50+Wi5xQk+lTazmtpq/w5cJn55lcIf2IP3MIBKLSPJN0iYWo735WtRm4cNCDO6ohr2wIojFl4iYd0nAYjPuPN4nHPEn8jsDRMw7EfOOh86uTr+nJ4V9pGBjecUf6ehgDQqxiJh3vvRFx7zzIzTZQnjT/SkP9duxe0GeDQqxiJh3vuq+6Jh3foQkoZzmAMrx9uN9g0IsIuadP335Me88yJ1YRMy7ILGGwVph1xAgFrEITRCrFwSxEBDEwgFBrG4QxJLyrDAJdVYIxBqcWSFBrGFKrOAkU1Ri3SEkFkGsfoPVwXSPO4DmeacHPDPEyUgQCwFBLCy0s1o5hzgIrhWCDAtNtsTJSBALAUEsLLQw6i/c+1V4P4XBHZX7aY44GQliISCIhYXG1kqH4HloG+1Vo19dxMk4pB2kRMy7AAbf817ZkG/pN0U4gvS0p2YS7ldOv66Y96IyIuZdMnyq4H7wWzDm3cR7/NvPj3AyfkUx7/+51PqAY5BQEDoSyX5KVMz72Tsxaa/zBWLen6XlbDDzQY8I4sS8H/87LDkj74uOeX+ZHw40Et6lY+E3qbj67WARa+jHvC+2Qol5/0V0zPt/LLYSjnmHovDizJCYd6t/rbD7omPeYzDOBbEOmF7XXDJYxFr2lcW8i5PxC495D39hjbZhVdMlYkUzo3YQiUUk+SapEqud3XorGsWJdcpDzTP+ELsD71u1BLGGV5IqsRpaK1B9DSDDIlJs8PMSxBpeSarE+lSRbuYr/MEmzmnvWSJOexf99a+RvzqKSyy4bSBfrppnjmd/gEU1wC9jQflYZgr8Pt9cCh/fwukoMP4GUjL+rg3ZECs5x0/44AbO/nq9/PLUARGrqalt3uHroi3iZYjnZtLeq5Y3o/v3rT3LWzHGrpFqW86hvpv/1reBib21W2y/v+Vn5RZ7/ML9f660R5kQ6Nv835X2h1zuWg2gfGi/yfVHmjsvo3NrkdXPR2/Z3H7cv8Iho/5pb7GsfqkSK/yFlcEdwbgGI08t+6A59S1lAyJWV2fHXodAEU45bppvsc8hcCCP0clmLzuB5o/m+PTvxWUOpHBATX2LIuon8pZa/7TGKRfb3y0+Vpn7ofjqliF+YCDHQEp2vZ/O2Q83eMRisJqvRm4U3qoKtvz1R9tEfqpJFLE62Dtt/cUkFtyJtaYmDlpa2hajrqAhPn3r4EeYi0ViAtNeXGr9w6+OmR/LB1h+WztruakPqm8Wf+VKHFwITxlkYpXX5Vj6Cy7miGm5d8mAWOx+P8mXTqxWJhDLF4tYOGvt4mDwiZWaGwTzQUEDi3POzMuPIk627SKIRRALCyFJZsKBo5yvjk+prMeMAOCBIBZBLBQ0tVWdDVsifMiModjfwiSIRRALBR+K4427oxgEw7DwTy/igSAWQSwUgHmO+ukvsLGyijDDnPhBEIsgliCaGbUuESsMhfQgaMazYYvF+VhhF0EsgljCeF8cb4KhB4MSjcQshCAWQSxBhKBtJOSEI2tl5N8VsxCCWASx+qC2qdgheK5wRAPoQafQhfgfDeAHQSyCWH3w/L0nZxlnrLAeDEnGOxtSAASxCGL1gslqcY3cJBzZx7W3wPYSvygRxOpks/+w8UdfWBVICyzgTri/f4/URRALF4NDrKyix8ZeY4XNdpBhlx6sa2M2il+UKInV1bnXPhBlNxVa3+13DO7f83DR3Ny26M8bKCE6HGIFEcSSObE6vZ/8Key+MuEcZRv/9oZEZYkkVtfduNff6tt88zMnUA4r/WwG99yLf9Ov5+kGo425/IQbJ9zPGnn9fOk/FloERqYNpHBAcUU9smtZeKPLUpvvVzu+yhMRYCQSQCx9Y290Yv1sZnodbxeeSLiEvkDfqC1ELOSo1X4Rq4ATL2okJK6MPLVsA2fif5JJGKKJBYhJfG905YHh5Qenr6Ak+B2uwj39eBgB3Ah8prDaYeQap1FrzvDSj6scp+++nJWLt9lIHJTXNFHW//3NbBMkWJQ3JOD/c0xHrnbMKxpoPBa7s3OrXfA3M4z6lM9Nc0wvh6UMpHDf+Lfdp5ojO3asMZIN1DV21+WahtZ+VBH4/DSquOK4r4wlLU0sYg0a2Gx2UVlNfmFFfmElX6qoqZVAu+Mg7GnW/r8jDp2/x5/gF6+HGeyOzoGXn5FTanD54YFzdwXKt3SPq2lCP8dBTDS1Mnc6R/ywygGEKyhu1PTdKgfa5nMhCe/6UX5hdabwx5j4ApElHhVDi1hfJ9jM5vKS0up6vA+WdiFTNnZ2YRWo7MyPGCmvrAjjcAqR8EP7kipHXNE94g52YJwwgAOCWPIHqzHP5dSGafPWBqcPVN33D9AfrlkAABAASURBVLmlz4U/StjtZfAa+65QrFVnARDEGhJoqUw99tvUcYv3JJaIDnWSLlhshlvMbpj3oU4Gb8fsZncw+1GsaGJ1diDAu9rZF5wfMO7uvr0fDcVvI6udyWC2o5pJjOb66qqqqpq6lnaUy50dbAaTKXChs5PNZDDa2ehPLbpAlLydnAayuBnYrHYGg8nm9AP3fvh/TVGqq4vL3eRsBpvFbOcWzXmuHgh5CPtc5YGF0WwspH8MA9PK2EvQ1c4VV1n9ElddoonFbg66br9334Ejfx43tzv36PnrFpbg1X379x/Y34N9e3fsOuj/CP0ckoqs+D8PHHSPwLMEO5rLL9qYhyZifngCrZH1nn//uWWfzbvaPudRleckX7U/uXH1wulTp0ydNe/X7QedPSIKGvqMv7LXd3dt3ejok8D/WLUfY/Zt23o+MEngFYlZ4M7Nm84HJvPnZTd+djn+x0Fn7zqEHYxID9uN247GfKzn3H/vwK5NW7Zs2bptx65du3Zs27px/W87DVw+NyFn53ifN9iwafOWzZs3btq8++hpt/vJjTx+seu7r8Llbmxat37bzQevxe+5prbqc3dXCm/F4Ygr+u3YPf0TV12iicWqNflj/vc/Kqirq6vSqCQqfd1+s8ySxt6rO+b9MII6e+6CRQs5WDB/xpzFF/3RqZMX70b6aeRh2xCcCj8lB45RGLHW4BrmebzCaK803qI7Uu2Xp6U8PdL2PNhpwQSVEQrk8TMXrd20dfM6/anjVEeOUpy2+lDU616XVd7ji+pK/6ZOWfMov9fsLX3pRlcYtcMuhI9t4hd4njrixx12ofxMZVW/2TqRNGazaTnya8vV0yu/U9Bxe4ks6H58fEGDMoKuPWnajBnTOJg8UXfu7ydzoDkdVabbp/wwSmXi9Fmzpk3UUCWNItG3mt+sbOt+6p6rM6dzc06bojNxlr1Psvg99yD9DKrNbuSlDVZXbmmi+EUJQCSx6sx3L6Rpr0zIzC94l+pstA96fPrKw6/LWnuuLqBpr36RU97S3FTfjYY2BvpxEflP3dXJ1BNOOHs8OrxtDpBG/jhm1oZXZWI7Y9orzXdOpYxd+7yMS6yOxCCrceQRGrPWXLv7vLSmsRW0XVtTVeFb77+P6iqPVJu9MTq7+6SU/CdXdTVJCoqUtaZuPJdG2SuPsTTqHqfwHukgUYGXNcikvU4RfYn1bucMut4Oqwrk19YbZusUaFPcX1V2308h7bT2r2hurKmurqpG1Gx1HUcwtVdZ7JxG0f416n1JU0Pt5w8JJrsWjBhJM3CLQxQlq7LnanFDXS1kQ3JWVTe14Z3VwY+8siRz3wnCLgbuZND/2Slx+x8NYhBr13za2LXvqrgikf3A1Vx55KgNhteRYcOGqwtoY9e8rRRLvuQnuKvhEotVk7tj0SQShaqkPPbvILFd7X2JVZ11b4kuSXXWhsgsYZ8nK8HfYoziyFl/2BZzHij/yRVdTTKNSiaNmX0n6TP3JgFiSVig5MQiK+07ew/7udYl9XRvW1nShhkqmvqHc5uB7dUCVyVCK7P+6sMNwudscyJktKwDppfUZPWjWB7EIRZCnddlPVqGVWu6bbGSxs9RH2CMNvalnQiIJNa7h9c0lFV3HjRapKu+eI9DvZhmKI9Y5cB2lo/t5pEKGjbhrzDurr9wfPkIit6N5wiN4L1q01V/Xb9l5ljq9C2WRZx31JdYTEkLlJRY6iKIxZPEgEanI3NJmqueljO6Omu4xEoWr/MFEJVxDlUJcieDMa8u9aNMfkhOrK6uFN8zFEWKpXsSmAsWoArH/BL/6mNlRVkJB8XFpQ1N6GNIFLFazx9bq6Q2J/ZNwbkjq8haC5/kibfm1fMCEiuYXYyiY6vGqcze8aYWM84iF+wqktIeZyQYsgDRRNRjzn5udptHjlK3DETEZHkPsRBiN3+WuEAJiaVJIe0w8yyqqSrt6cGyihrkRlaVILGYJYbrJ1AmrE+tYgGxEFU4ZuW9vp1fj9H5/MguSeCcLIqiBE95qF+4t7qZUSO623HRH2IVpQZqUmnHz0A/tlrvW6ZIUtbU4EGNTBtr6/YUtTB8YjUVpa2YQJ+x4VRxIzPRx4mmRDW6Ll5EQA+xkqraO+teb52sorvVrBJ7GNfkhs6gk5afvAZG3OcEhAcHXCLrKhJXT6aqzduZWd9V+9aLS6xOxM7J6EeBkhDrio4GSZWuoaXZDTVV5YlLDr6v6+zqrDb/Yypl3O9pdVw3BSsxxG6s4ogFR88jBh2rynLPHEUSTbMX6lSVcWYYnc9DQ2uFS8QvwkFXvLirt4XRYnU7LvpDrMIkXxjlJxDp3Wq1dykJun33gcOHDx08ePDQwQO79h4JiEZ3N+AT67mPk5rSaC3dKYuX6i+cO52iNHr2esMycVbYeMSqbO+qz/pjhuq49UZl2OO26kPQFFXSKiM3uOUTV8Agg6Qr9uYJ0giFfRcfFr71H98jsdjVb/tToCTEGkcnT5r/69Y/dmzlYPPG9btPnivkWFEWu2eSVKcdNbZycnI0O/nHRDVFtVm/R2VVcZ/acvcsJZUJq7f8sX0bJ+eWzb9t3HHrIV6MCYvN9E04gaUE+7fejIr+ECv6uqmSkopz2GvQE5yra1+XIutcPf5RTBcoHrHY9VY7l5LpOr9t2rJp08YtW7cumzNFWWNm2MtS0Q/Bs0VAFXZWmW+bqjTul7jPmEtvKX7moMoNbiV08WkuROs1vj+yYjx5wuqbQRcnaqh021jtFRIVmB9/SZ1M2ncmgl9xsmqyds1Q09thiWG8k/Y4hoO0a+d5OZnt3Oey2jtHgUSlUMiKo0b8NFJxysq9kZk9yz49pn1CUUMnu11MB2n82xsgq4yFIo+50XzOYUvxj6wVHxITi1mTvWORDm3ir+mlDI7xjlx9Uy6WawCHWNXvY2eqUZYfcq5mIE5qdmfnu0e3NUmkffaBeH76Do6zvZ1niyDNiHUzII9Q3OUcjj7tbsw+vlpvtNbCcI6DQMDWfhfpokNTnrVwgYaK2v4z3bNCiQr8/PyaBklpJ9c+6wGj8sU6XeqkXTaVSIktKLPCM3dRHrO90mLXdLLW0usP4u/dNhlPVVpxzLWJ72qPZSlu3ERWUSziXxDaKMF1XMG/bz5FilmUSIjrbnhfjfQ8o6HQ7shvI0dSjFyj+K9mVYvlO+ESy8D5vvClexdPKiqqXbzXK8Y7Gwp2Lhw/ZuHujxiTw/wXYYYnrF/VwNVGq13TyNprnnEcpKy6N0dW6o5QnmQd9EygyzubCy+dWj96hOJ2+wDuQBGcxLGrzh5eqqigoKRIP3C2+0cxC+SOrabCuBW6lHG/HH3T0EuVlBAr+miFLQ5BHDtNkFjqJNIB5wcoT8ilzrh1qbVQVMO5o/ojSeOd7r8WuJpSzULJK4TCqkz74LmGHoJfxeEpwbAXVuKUIyZEE8ti9yLlMUv9H8T6u11Yv3TmyFGkHaev1DH4rmotCYh69jI9LYWDpOSUT6XoH4DIf+qhqay848SFtMxXqci9L5JT0ssa2rvayo6umkqfvuFdHwu5M8DxkAJJ2+1xLmppqb4mCqPIJ+7E5L2K3DRHVX3h/pyGbgqWZdxfM1P9J6Uxmwwcwp+m5376XJCbGRtyfd+62aNGjNY/7JDf3K2phL0DZZmB83WoI0eqHnTm+xEKnKXRW2ABt8AbB37/efSI0cv+PFvSq/nags/uVho5eskek/BnL9+9SYtwt/l5PIU2dc2jbieqALGuaCmT1/7pEv00ISYawaNHUY8TM5vYgrPC+tyoFRPI9J+3J5Vy6N0tz/SvhMXEP+ZmjY58FJv1GWVCV99SfvH+WtSVZq5/wTVyYwsD/a31D6KI1V5rvH3uv777iaaiSqMq681Y4ngrooHR5+q/v/uJTOGB9OMoFfNr6Ns58uLc6KSfRimQKFTkVjJJcZTKOLekosJEX5Ufv99ockdg6JVl3B2v8OOygy6o1k173RuDjTMVYVJKVVJQHm/oHsdv1lRmxxvuXKpKUVAkU+lq6jDVUlIcTdWedtjRs6i598a8WBfS999uswnmX73xtd383f9+33dJp6sqJ8F4lz6dqqSspjVeV3f8WC1VqhJJc/KJi8HvP2SGBAWk5nRHzXe0lLiabdOgjIYHpSlTFEaNHjNnre/znJ6Smq8YLv/nCO2b6RWcBpxXI303UoGkpKSkyMGoEd/TZ+54W4ss6ZzeOPYH2rKEUm4HdMbeNlD49t+Lj12s7EA878ZbJ/3ruxGKJJJiN0Z/9xPFwFWw89uYjbdjdmMZ7Kc9NW0CZnyuwvLS9RMit3+1xgTftLSyueh6O/ppSklNo/BVK2sbO1sebCysHKKT0c9PqslPP3cG7um53cbayuHvtMLaj0lRVlYOCW8F7fTOtrogV+ezroG1rejasKXirftlu9Nm1u5RqU3Ct7TXv34WfumM1UmD4waG5s7XfJJzSgTuqvn4/IytdVD8O/7fmyteXXCwC4p7K1hke+P7xMBdqyYpKpDVtbQQkunOs7rp53Li9xEKqmci+YKzO5ozE4L+trU0NTZ3vu6fWcwff8d88cjDyuF8WkkTpwGJ55ysoU94sLG2PHs1qAI0a2dLdMAFO2ePgsZuQc5uLvS+ZGf5982sWrA9WmKCriCd3wtbSyvHh307n9He7JNwHItVYFoZeY1JzR3QLhhUEPFYkqGj/s3W6Sqq83dEvnz3JPTq1uXTKIqjRytSFuw0z2oUy9YZTLSz2/yeGQCrUKeBJt5jQQneTbWXRdUEsSRDW12et+slv7hXHd1/FjwKdr8d8PBTY38W7GQKVgcz/IUV4lwQirXiGeye8YfFOUWtHyCINTzBZLWGJlvAHFA44JgXv3DpwbrGVsyPbg4QBLGGIcCu8k04AWoOi1WGHupOoQuLa/qzn0dMEMQabmhh1Hk9OXIK064CVmlYB0zPLX0u02YQxBpWqG78fCt6JxhPWKw67alh5T9VzOMeBwKCWMMH+RWp5+6uxPIscF1WZj664h+eNhAQxBomALpYB0xDjQjlZ5U4Z/9LBXIhVmdDS0VtU1Fdcyl+6ujs/6FIXw/aWa1RGS5c6mCxytBTYzBZ1SUviZWc7W/pN9nCbyIMMtQEdoCV/5SQJDPpLmANP1Q25HvEHQRBhRoOyrPWoT9fFaBFP8sM8iEWiKLn7z04y5906BHUdNpTC8yFq5EbCioGeoDRcMXrTw+dQhdiO9a7PQs2AdMHwVoXgDxtrFcF92EkocbI9i68e6iB6Ip7c43RPth7z4cyGlorw15YcqURTu8B586ELc4rk2CnobQgZ+P9fXG8Y8gCnIkMx3TQAnrdfLTjc2WGfFs7RPC2MMbl7gpEUGH4P004p2fDDdeiNlXUowcdyRrynxWW1X5wjdzE6SZMec5dLgXx9ujV+WZGrbybLDdUNRQEJRpzFRzOUARDAvrT+8nR5raBbrbpN+RPrC7ONzYCnhuCVEfZ7qCmAAAGBElEQVSNmu3tLxBd7mrn763KyI9gd4i733d4oJXZ8Oy9h0PwXHxBxVWOMAGMyjjHZPXnXD9pYUgQCwBEiX97w9x3Ar7JxR2sMCLdH+//KPkxc18iWB3MjPy7F++vhQfHcShw5TrQDsj3Wnqh6/3GUCEWF9klCS4RK5AVCdxBCUoTppMwLv2fnSysGui3oocsYLBlFT12i9kNA+kU2qH+AuoPxLlbzK6yumx5NxzB0CIWoK65FNQidBP+fIfTldowQC39JgU+P11Qkd7VJfVjt+SGdlZbVmHs7ZjdXOMS1/rsnjuDsI9+dVFGwVX9wJAjVhfneLa0vGDHkPki7QmeoWrmq+f95M+sorih07P9A5ibaXkh16K2GHdTSvTjw20X76/JLhGxAXqQMRSJxUVVY4FvwnEQS/gzIH7pBSPbNXLj8w+etU3F8m6+ZICxVFr7PjrzElgCYEiBBBJJKS7zzH317qU6DMGZ8tAlVhenuzMLHpy7+wuQBn/C2Gt7eagDEe2D5wYmGoGB0jL0elwADS0VLz+GecYftvKfAkRBYj5xbSluAvLBY954tC2vLEneT4COIU0sLpraqiNf/m0dME0czcidHHGWg2AGMBYEQESKzYfieDl6dNDQWd9SDmMmOMkEND538Qpnsa+PbObc7BS6KPGDF3MIr0Z8AcTioqj6je/TEybe40+JSy9EgBl6anC/6fh3uH5IkmlqbnBl/UeGnOywVmZ9aW3W8/ee8CAOIfM41qEqsEocEdVjTapaBUy9l2pf21Qkl0cQH18MsbgAE9Wtd64kFr04DNMG3cF9i5b+U1wjN0Wk2IKNDDNzkGTsDllt22pnMxpaK2DGCmQKSTI7f2+Vhd8kUHYgcsTnE49SFn4TQb8XVUtwdq0c8YURq4vPu8P1B4pPL67By3FkqBvcUYH/WPpNOhu2BOybe2kOz997vC+Or6jPAyq0MhtYbAm2c3V2dbaz2loYdXXNJSU1We8KY568vQkqGBrpEDzPzEePQyZVEJ8cfScun0z6znnzK1Jl16tSx5dHLC4QehXGesQdhNcG70wc0x6VZMgUzF0NeAbv3tRHB+SZfdCcS/fX3o7dG/DM8G6K7cP0s5EvnZ9m3Un64J3Yk5I++MS/vQGXHqQ7hSZb+D89eStm5/m7K60DpoNMQvS1B1LmKcRXrsWhvgRk6jETERELFj1Iqc9VGV+cl+5LJRYXMG3ML08JSjS2DZzJmVKpSyTABN6lMWe/OXAURAswA0QFkMPgDo1LO3jT/Alu+Au5RIPXD3dyOKTJjSQbQBsQvwmUDA8CovRB+pnSgZ0wK0d82cTiAVQYiJBLD9aZcDb4wjsW34IRl3ZIgd1J2oUjViB3nmHuO+HGo20gERtbK+XdqQPCMCEWF23MRrCTQpPNYbhzPQ4Iw0Sth8gx8fgE/z9395eHL50/V2ZIZN4NWQwrYvEAwz0j/25QotHZsMWckDdVbkyE1CVNv8g0lrOojKhaUx9dnqdt6PtyJcLwJBYPwLCsolgwVq483GDpNxnEGMdgUh+gJSRh4lhvnDhYA47b1iZgOhj7MZmXPpanDNfdIsOcWDww2pvL63JScgMjUmxdIzdZ+U+FOSB3Psidu3GpNnCRZtwzCeAa+Fwem/nq2QfPuRWz60Ga0+tPkdWNhcND3+HgayEWP4Bk1Y2fPxQ/iXtzLTTZ4saj7U4hC0CeAdW4lhmwgTPRU+NNBlH2EXlq9UwP1Tl6rTsXXAIaWfpPBi18J3YfqLln793zy1MbWsrbhzuZ+PE1EksATFZLY2sVzCuBai9y/KJfXQSpFvDs1J3H+10jN5+/uxLMapuAGSDk+Lc92gfNgUvn7626Eb3dPe5AcJLp3VS7mMzLaXkheWVJlQ35TW3VLHY/v8k2DEAQCxNAC5BtYAOBWV3fUiawSxskEOdSHZPVyurvR/2GMQhiEZAJCGIRkAkIYhGQCQhiEZAJCGIRkAkIYhGQCQhiEZAJCGIRkAkIYhGQCQhiEZAJCGIRkAkIYhGQCQhiEZAJCGIRkAkIYhGQCQhiEZAJ/j8qKUY6/kgrWQAAAABJRU5ErkJggg==" alt="Logo CFGA De La Jonquière">
+  <h1>PPS Z101 · Plan de match<small>Rencontre d'équipe · Démarrage de la formule en deux sous-groupes</small></h1>
+  <nav role="tablist" aria-label="Sections">
+    <button role="tab" data-onglet="odj">Ordre du jour</button>
+    <button role="tab" data-onglet="mardi">Premier mardi</button>
+    <button role="tab" data-onglet="repartition">Répartition</button>
+    <button role="tab" data-onglet="fiches">Fiches d'atelier</button>
+    <button role="tab" data-onglet="qui">Qui fait quoi</button>
+    <button role="tab" data-onglet="outil">Outil Teams</button>
+  </nav>
+</header>
+
+<main>
+<!-- ORDRE DU JOUR -->
+<section id="odj">
+  <h2>45 minutes pour stabiliser le démarrage</h2>
+  <p class="sous">Objectif : que Mme Lisa sache exactement comment se déroule mardi, quel élève va où et qui fait quoi.</p>
+  <div class="odj">
+    <div id="etapes">
+      <div class="etape" data-de="0" data-a="5"><b class="t">0–5</b><div><h3>Ce qui est décidé</h3><p>Le projet est accepté. 8 nouveaux élèves arrivent la semaine prochaine : 23 élèves en tout.</p></div></div>
+      <div class="etape" data-de="5" data-a="15"><b class="t">5–15</b><div><h3>Le premier mardi</h3><p>Déroulement du rassemblement de 8 h 25 et des deux premières semaines de découverte.</p></div></div>
+      <div class="etape" data-de="15" data-a="30"><b class="t">15–30</b><div><h3>Qui va où</h3><p>Groupe A ou B et atelier de chaque élève, en direct.</p></div></div>
+      <div class="etape" data-de="30" data-a="40"><b class="t">30–40</b><div><h3>Fiches et qui fait quoi</h3><p>Valider les 4 fiches d'atelier et nommer l'adulte de chaque moment.</p></div></div>
+      <div class="etape" data-de="40" data-a="45"><b class="t">40–45</b><div><h3>Outil et prochaines étapes</h3><p>Où l'équipe suit la répartition. Qui fait quoi d'ici mardi.</p></div></div>
+    </div>
+    <div class="grille">
+      <div class="carte minuteur">
+        <div class="temps" id="temps">45:00</div>
+        <div class="barre"><i id="barre"></i></div>
+        <div class="outils" style="justify-content:center;margin:0">
+          <button class="btn lime" id="go">Démarrer</button>
+          <button class="btn sec" id="raz">Remettre à 45:00</button>
+        </div>
+      </div>
+      <div class="carte">
+        <h3>Décisions de la rencontre</h3>
+        <p class="note" style="margin-bottom:8px">Notez au fur et à mesure. Le texte reste sur cet ordinateur.</p>
+        <label for="notes" class="note">Notes</label>
+        <textarea id="notes" placeholder="Ex. : Ensachage ouvert dès la semaine 1. La TES accompagne le grenier le jeudi…"></textarea>
+        <div class="outils" style="margin:10px 0 0"><button class="btn sec" data-copier="notes">Copier les notes</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PREMIER MARDI -->
+<section id="mardi" hidden>
+  <h2>Le premier mardi : accueillir 8 nouveaux élèves</h2>
+  <p class="sous">Rassemblement de 8 h 25 à 9 h 00, tout le groupe ensemble. Ensuite, les sous-groupes partent en Z101 ou en atelier, selon le menu du matin.</p>
+  <div class="ligne-temps">
+    <div class="lt"><b>8 h 25</b><div><h3>Accueil à la porte</h3><p>On accueille chaque élève par son prénom. Les nouveaux reçoivent une carte-nom et s'assoient avec un élève déjà en place.</p></div></div>
+    <div class="lt"><b>8 h 30</b><div><h3>Tour de table « Mon avenir en un mot »</h3><p>Prénom + un métier, une activité ou un rêve. C'est la porte d'entrée du Z101 : se projeter vers l'avenir.</p></div></div>
+    <div class="lt"><b>8 h 40</b><div><h3>Le menu du matin</h3><p>On projette l'horaire : rassemblement, Z101, ateliers, pauses. Chacun sait où il sera à chaque période.</p></div></div>
+    <div class="lt"><b>8 h 45</b><div><h3>Les 4 ateliers en une minute chacun</h3><p>On projette les fiches : grenier de Maria, ensachage et préparation, cantine, conciergerie et services.</p></div></div>
+    <div class="lt"><b>8 h 50</b><div><h3>Où je vais aujourd'hui</h3><p>On projette la répartition. Chacun trouve son sous-groupe, son atelier et l'adulte de référence, puis signe le registre.</p></div></div>
+    <div class="lt"><b>9 h 00</b><div><h3>Départ</h3><p>Un sous-groupe reste en Z101 avec Mme Lisa, l'autre part en atelier. Mme Lisa circule vers les ateliers.</p></div></div>
+  </div>
+  <div class="grille" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:18px">
+    <div class="encadre"><h3>Deux semaines de découverte</h3><p>Pour les 8 nouveaux, qui n'ont pas répondu au sondage : ils essaient deux ateliers avant de choisir. Pour les autres : un essai d'une séance dans un 2e choix est permis, sans obligation. On confirme ensuite les placements avec Mme Lisa.</p></div>
+    <div class="encadre"><h3>Les leaders viendront ensuite</h3><p>Les premières fois, pas d'élève leader : les adultes guident avec les fiches. Pendant la découverte, on repère les élèves qui pourraient devenir leaders ou mentors.</p></div>
+  </div>
+</section>
+
+<!-- RÉPARTITION -->
+<section id="repartition" hidden>
+  <h2>Qui va où</h2>
+  <p class="sous">Touchez le nom d'un élève pour voir ses choix, puis touchez un atelier pour l'y placer. Touchez le carré <b>?</b> pour le mettre dans le groupe A ou B.</p>
+  <div class="legende">
+    <span><b style="background:var(--grpA)">A</b>Groupe A · PPS pur</span>
+    <span><b style="background:var(--grpB)">B</b>Groupe B · concomitance</span>
+    <span class="filtre" role="group" aria-label="Afficher">Afficher :
+      <button data-f="" aria-pressed="true">Tous</button> <button data-f="A" aria-pressed="false">Groupe A</button> <button data-f="B" aria-pressed="false">Groupe B</button></span>
+  </div>
+  <div class="outils">
+    <button class="btn" id="premiers">Proposer : tout le monde à son 1er choix</button>
+    <button class="btn sec" id="vider">Tout remettre « à placer »</button>
+    <button class="btn sec" id="copierRep">Copier la répartition</button>
+    <button class="btn sec" id="csv">Exporter pour Excel (CSV)</button>
+    <label class="btn sec" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="voirRq"> Remarques des élèves</label>
+    <button class="btn lime" id="enregistrer">Enregistrer une version à jour</button>
+    <label class="btn" style="display:flex;align-items:center;gap:8px">Importer la liste (fichier privé)<input type="file" id="importer" accept=".html,.htm,.csv" hidden></label>
+    <button class="btn sec" id="oublier">Effacer la liste de cet ordinateur</button>
+  </div>
+  <div class="alerte" id="vide" style="margin:14px 0" hidden><b>Aucune liste sur cet ordinateur.</b> Pour protéger les élèves, cette page en ligne ne contient aucun nom. Cliquez sur « Importer la liste (fichier privé) » et choisissez le fichier <i>Z101-plan-de-match</i> de l'équipe (ou un CSV : Élève;Groupe;Atelier). Les noms restent seulement dans ce navigateur.</div>
+  <div class="colonnes" id="colonnes"></div>
+  <p class="note" style="margin-top:12px">✕ = l'élève demande de ne pas y être placé. Ce que vous changez reste sur cet ordinateur. Pour que les profs le voient, cliquez sur « Enregistrer une version à jour » et déposez le nouveau fichier dans Teams.</p>
+  <div class="alerte" style="margin-top:14px"><b>Confidentiel.</b> La version « Enregistrer une version à jour » contient les noms et les remarques des élèves. Déposez-le seulement dans un canal privé de l'équipe ; ne le publiez pas en ligne. Projetez l'onglet avec les remarques masquées.</div>
+</section>
+
+<!-- FICHES -->
+<section id="fiches" hidden>
+  <h2>Les fiches d'atelier</h2>
+  <p class="sous">Version de départ, simple, à valider avec l'équipe. Les champs soulignés en vert se remplissent directement. Imprimez avec Ctrl + P : une fiche par page, prête à plastifier.</p>
+  <div class="outils pas-imprimer"><button class="btn" onclick="window.print()">Imprimer les 4 fiches</button></div>
+  <div class="grille fiches" id="listeFiches"></div>
+</section>
+
+<!-- QUI FAIT QUOI -->
+<section id="qui" hidden>
+  <h2>Qui fait quoi</h2>
+  <p class="sous">Touchez une case pour écrire le nom de l'adulte. Les cases déjà remplies viennent de l'horaire validé.</p>
+  <div class="outils"><button class="btn sec" id="copierQui">Copier le tableau</button></div>
+  <div class="defile"><table id="tableQui"></table></div>
+  <p class="note" style="margin-top:10px"><span class="tes">TES</span> : la technicienne en éducation spécialisée accompagne les élèves en PPS pur en atelier, le mardi en P3 et le jeudi de 9 h 00 à 10 h 35.</p>
+</section>
+
+<!-- OUTIL -->
+<section id="outil" hidden>
+  <h2>Quel outil pour suivre tout ça ?</h2>
+  <p class="sous">Planner n'est pas possible dans votre organisation. Voici ce qui fonctionne dans une équipe Teams, sans créer de nouveau groupe.</p>
+  <div class="grille reco">
+    <div class="carte"><div class="qui">Pour l'équipe</div><h3>Excel en ligne, en onglet du canal</h3><p>Un classeur « Répartition Z101 » épinglé comme onglet. Tout le monde le connaît, on le modifie à plusieurs en même temps, et il s'ouvre sur un téléphone. Collez-y l'export CSV de la répartition.</p><p class="note" style="margin-top:8px">Si votre équipe a accès à Microsoft Lists, c'est une bonne alternative : une liste « Qui fait quoi » avec une colonne par moment.</p></div>
+    <div class="carte"><div class="qui">Pour les élèves</div><h3>Un affichage visuel, pas une application</h3><p>Au rassemblement, on projette la répartition et les fiches. Dans chaque atelier, une fiche plastifiée et le registre papier. La première semaine, rien de nouveau à apprendre à l'écran.</p></div>
+    <div class="carte"><div class="qui">Ce tableau de bord</div><h3>Un fichier dans l'onglet Fichiers</h3><p>Ce fichier HTML s'ouvre dans n'importe quel navigateur, aussi au TNI, sans compte ni connexion. Les choix sont gardés sur l'ordinateur utilisé : exportez-les vers Excel à la fin de la rencontre.</p></div>
+  </div>
+  <div class="encadre" style="margin-top:18px"><h3>D'ici mardi</h3><p>1. Créer l'onglet Excel dans le canal et y coller la répartition. 2. Imprimer et plastifier les 4 fiches. 3. Confirmer l'adulte de référence de chaque atelier. 4. Préparer les cartes-noms des 8 nouveaux.</p></div>
+</section>
+</main>
+
+<script id="etat-initial" type="application/json">{}</script>
+<script>
+// Copie intacte du fichier, pour « Enregistrer une version à jour »
+const SOURCE = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+const ATELIERS = {
+  G: { nom: 'Grenier de Maria', court: 'Grenier', coul: 'var(--G)' },
+  E: { nom: 'Ensachage et préparation', court: 'Ensachage', coul: 'var(--E)' },
+  C: { nom: "Cantine de l'école", court: 'Cantine', coul: 'var(--C)' },
+  S: { nom: 'Conciergerie et services', court: 'Conciergerie', coul: 'var(--S)' },
+};
+const ORDRE = ['G', 'E', 'C', 'S'];
+// Préférences du formulaire « Choix des ateliers exploratoires » (15 répondants) : rang 1 à 4 par atelier
+// Version en ligne : AUCUN nom dans ce fichier. La liste vient du fichier privé de l'équipe,
+// importée sur cet ordinateur seulement (bouton « Importer la liste »).
+let ELEVES = [];
+const NOUVEAUX = () => Array.from({ length: 8 }, (_, i) => ({ id: 'n' + (i + 1), nom: 'Nouvel élève ' + (i + 1), nouveau: true }));
+
+// ── Sauvegarde locale (le fichier fonctionne aussi sans)
+const CLE = 'z101-plan-de-match';
+// État enregistré dans le fichier, remplacé par celui de cet ordinateur s'il est plus récent
+let etat = { place: {}, grp: {}, noms: {}, qui: {}, champs: {}, notes: '', ts: 0 };
+try { Object.assign(etat, JSON.parse(document.getElementById('etat-initial').textContent)); } catch (e) {}
+try { const local = JSON.parse(localStorage.getItem(CLE)); if (local && (local.ts || 0) >= etat.ts) Object.assign(etat, local); } catch (e) {}
+etat.grp = etat.grp || {};
+// Reprend les sous-groupes saisis avec la première version du fichier
+if (etat.sg) { for (const id in etat.sg) if (!etat.grp[id]) etat.grp[id] = { pur: 'A', conc: 'B' }[etat.sg[id]] || ''; delete etat.sg; }
+const sauver = () => { etat.ts = Date.now(); try { localStorage.setItem(CLE, JSON.stringify(etat)); } catch (e) {} };
+const nomDe = e => etat.noms[e.id] || e.nom;
+ELEVES = (etat.liste && etat.liste.length) ? etat.liste : [];
+
+// ── Onglets
+const onglets = [...document.querySelectorAll('nav button')];
+function ouvrir(id) {
+  onglets.forEach(b => b.setAttribute('aria-selected', b.dataset.onglet === id));
+  document.querySelectorAll('main > section').forEach(s => s.hidden = s.id !== id);
+  try { localStorage.setItem(CLE + '-onglet', id); } catch (e) {}
+  scrollTo(0, 0);
+}
+onglets.forEach(b => b.onclick = () => ouvrir(b.dataset.onglet));
+let depart = 'odj'; try { depart = localStorage.getItem(CLE + '-onglet') || 'odj'; } catch (e) {}
+ouvrir(depart);
+
+// ── Copier (avec repli si le presse-papiers est refusé)
+function copier(texte, bouton) {
+  const fin = ok => { const t = bouton.textContent; bouton.textContent = ok ? 'Copié' : 'Sélectionnez et copiez'; setTimeout(() => bouton.textContent = t, 1600); };
+  if (navigator.clipboard) navigator.clipboard.writeText(texte).then(() => fin(true), () => fin(false)); else fin(false);
+}
+
+// ── Minuteur et ordre du jour
+const DUREE = 45 * 60; let reste = DUREE, tic = null;
+const affT = () => {
+  const m = Math.floor(reste / 60), s = reste % 60, ecoule = (DUREE - reste) / 60;
+  document.getElementById('temps').textContent = `${m}:${String(s).padStart(2, '0')}`;
+  document.getElementById('barre').style.width = (100 * (DUREE - reste) / DUREE) + '%';
+  document.querySelectorAll('.etape').forEach(e => e.classList.toggle('active', ecoule >= +e.dataset.de && ecoule < +e.dataset.a));
+};
+document.getElementById('go').onclick = function () {
+  if (tic) { clearInterval(tic); tic = null; this.textContent = 'Reprendre'; return; }
+  this.textContent = 'Pause';
+  tic = setInterval(() => { if (reste > 0) { reste--; affT(); } else { clearInterval(tic); tic = null; } }, 1000);
+};
+document.getElementById('raz').onclick = () => { clearInterval(tic); tic = null; reste = DUREE; document.getElementById('go').textContent = 'Démarrer'; affT(); };
+affT();
+const notes = document.getElementById('notes');
+notes.value = etat.notes || '';
+notes.oninput = () => { etat.notes = notes.value; sauver(); };
+document.querySelector('[data-copier="notes"]').onclick = e => copier(notes.value, e.target);
+
+// ── Répartition
+let choisi = null, filtre = '';
+const suivantG = { '': 'A', A: 'B', B: '' };
+const RANGS = { 1: 'var(--bleu)', 2: 'var(--bleu2)', 3: '#7F93AE', 4: '#AEB8C6' };
+function carteEleve(e) {
+  const d = document.createElement('div');
+  const lieu = etat.place[e.id], g = etat.grp[e.id] || '';
+  d.className = 'eleve ' + g + (choisi === e.id ? ' choisi' : '') + (lieu && e.veto === lieu ? ' conflit' : '') + (filtre && g !== filtre ? ' pale' : '');
+  d.draggable = true; d.tabIndex = 0; d.dataset.id = e.id;
+  const nom = e.nouveau ? `<input aria-label="Nom de l'élève" value="${nomDe(e).replace(/"/g, '&quot;')}">` : `<span>${e.nom}</span>`;
+  const ch = e.pref ? '<div class="ch">' + ORDRE.slice().sort((a, b) => e.pref[a] - e.pref[b])
+    .map(k => `<span style="background:${RANGS[e.pref[k]]}">${e.pref[k]}<sup>${e.pref[k] === 1 ? 'er' : 'e'}</sup> ${ATELIERS[k].court}${e.veto === k ? ' ✕' : ''}</span>`).join('') + '</div>'
+    : '<div class="flag"><span>Découverte : essaie 2 ateliers</span></div>';
+  const veto = lieu && e.veto === lieu ? '<div class="alerte-veto">A demandé de ne pas être placé ici.</div>' : '';
+  const rq = e.rq && document.getElementById('voirRq').checked ? `<div class="rq">${e.rq}</div>` : '';
+  d.innerHTML = `<div class="nom">${nom}<button class="ab ${g}" title="Groupe A ou B" aria-label="Groupe : ${g || 'à choisir'}">${g || '?'}</button></div><div class="detail">${ch}${veto}${rq}</div>`;
+  d.querySelector('.ab').onclick = ev => { ev.stopPropagation(); etat.grp[e.id] = suivantG[g]; sauver(); rendre(); };
+  const inp = d.querySelector('input');
+  if (inp) {
+    // La case du nom se comporte comme une case de texte normale : pas de clic de carte, pas de glisser-déposer
+    ['click', 'mousedown', 'pointerdown', 'touchstart', 'keydown', 'dblclick'].forEach(t => inp.addEventListener(t, ev => ev.stopPropagation()));
+    inp.onfocus = () => { d.draggable = false; inp.select(); };
+    inp.onblur = () => { d.draggable = true; };
+    inp.oninput = () => { etat.noms[e.id] = inp.value; sauver(); };
+    inp.onkeydown = ev => { ev.stopPropagation(); if (ev.key === 'Enter') inp.blur(); };
+  }
+  d.onclick = () => { choisi = choisi === e.id ? null : e.id; rendre(); };
+  d.onkeydown = ev => { if (ev.target !== d) return; if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); d.click(); } };
+  d.ondragstart = ev => ev.dataTransfer.setData('text/plain', e.id);
+  return d;
+}
+function rendre() {
+  const zone = document.getElementById('colonnes'); zone.innerHTML = '';
+  [['', 'À placer', 'var(--gris)'], ...ORDRE.map(k => [k, ATELIERS[k].nom, ATELIERS[k].coul])].forEach(([k, titre, coul]) => {
+    const col = document.createElement('div'); col.className = 'col' + (choisi ? ' cible' : ''); col.dataset.k = k;
+    const membres = ELEVES.filter(e => (etat.place[e.id] || '') === k);
+    const nA = membres.filter(e => etat.grp[e.id] === 'A').length, nB = membres.filter(e => etat.grp[e.id] === 'B').length;
+    col.innerHTML = `<header style="background:${coul}"><h3>${titre}</h3><div class="compte">${membres.length} élève${membres.length > 1 ? 's' : ''} · A ${nA} · B ${nB}</div></header><div class="liste"></div>`;
+    const liste = col.querySelector('.liste');
+    membres.forEach(e => liste.appendChild(carteEleve(e)));
+    col.onclick = ev => { if (choisi && !ev.target.closest('.eleve')) { etat.place[choisi] = k; choisi = null; sauver(); rendre(); } };
+    col.ondragover = ev => ev.preventDefault();
+    col.ondrop = ev => { ev.preventDefault(); etat.place[ev.dataTransfer.getData('text/plain')] = k; choisi = null; sauver(); rendre(); };
+    zone.appendChild(col);
+  });
+}
+document.querySelectorAll('.filtre button').forEach(b => b.onclick = () => {
+  filtre = b.dataset.f; document.querySelectorAll('.filtre button').forEach(x => x.setAttribute('aria-pressed', x === b)); rendre();
+});
+document.getElementById('voirRq').onchange = rendre;
+function telecharger(nom, contenu, type) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([contenu], { type })); a.download = nom; a.click();
+}
+document.getElementById('enregistrer').onclick = () => {
+  if (!etat.ts) etat.ts = Date.now();
+  const json = JSON.stringify(etat).replace(/</g, '\\u003c');
+  const html = SOURCE.replace(/(<script id="etat-initial" type="application\/json">)[\s\S]*?(<\/script>)/, (m, a, b) => a + json + b);
+  const j = new Date(), date = j.getFullYear() + '-' + String(j.getMonth() + 1).padStart(2, '0') + '-' + String(j.getDate()).padStart(2, '0');
+  telecharger('Z101-plan-de-match-' + date + '.html', html, 'text/html;charset=utf-8');
+};
+document.getElementById('premiers').onclick = () => { ELEVES.forEach(e => { if (e.pref) etat.place[e.id] = ORDRE.find(k => e.pref[k] === 1); }); sauver(); rendre(); };
+document.getElementById('vider').onclick = () => { etat.place = {}; sauver(); rendre(); };
+const lignesRep = () => ELEVES.map(e => [nomDe(e), etat.grp[e.id] ? 'Groupe ' + etat.grp[e.id] : 'À préciser', etat.place[e.id] ? ATELIERS[etat.place[e.id]].nom : 'À placer']);
+document.getElementById('copierRep').onclick = ev => copier(ORDRE.concat('').map(k => {
+  const n = ELEVES.filter(e => (etat.place[e.id] || '') === k).map(e => nomDe(e) + (etat.grp[e.id] ? ` (${etat.grp[e.id]})` : ''));
+  return `${k ? ATELIERS[k].nom : 'À placer'} (${n.length}) : ${n.join(', ') || '—'}`;
+}).join('\n'), ev.target);
+document.getElementById('csv').onclick = () => {
+  const csv = '﻿' + [['Élève', 'Groupe', 'Atelier'], ...lignesRep()].map(r => r.map(c => `"${c.replace(/"/g, '""')}"`).join(';')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'repartition-z101.csv'; a.click();
+};
+
+// ── Importer la liste depuis le fichier privé (HTML du plan de match ou CSV)
+document.getElementById('vide').hidden = ELEVES.length > 0;
+const CODE = { 'Grenier de Maria': 'G', 'Ensachage et préparation': 'E', "Cantine de l'école": 'C', 'Conciergerie et services': 'S' };
+const lireEtat = t => { const j = t.match(/<script id="etat-initial" type="application\/json">([\s\S]*?)<\/script>/); try { return j ? JSON.parse(j[1]) : {}; } catch (x) { return {}; } };
+document.getElementById('importer').onchange = async ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  const t = await f.text(); let liste = [], extra = {};
+  try {
+    if (/\.csv$/i.test(f.name)) {
+      extra.grp = {}; extra.place = {};
+      t.replace(/^﻿/, '').split(/\r?\n/).slice(1).filter(l => l.trim()).forEach((l, i) => {
+        const [nom, grp = '', at = ''] = l.split(';').map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"').trim());
+        const id = 'c' + i; liste.push({ id, nom });
+        const g = (grp.match(/Groupe ([AB])/) || [])[1]; if (g) extra.grp[id] = g;
+        if (CODE[at]) extra.place[id] = CODE[at];
+      });
+    } else {
+      const e = lireEtat(t);
+      const m = t.match(/const ELEVES = (\[[\s\S]*?\])\.map\(/);
+      if (e.liste && e.liste.length) liste = e.liste;
+      else if (m) liste = Function('"use strict";return ' + m[1])().map(([nom, pref, rq, veto], i) => ({ id: 'e' + i, nom, pref, rq, veto })).concat(NOUVEAUX());
+      ['place', 'grp', 'noms', 'qui', 'champs'].forEach(k => { if (e[k]) extra[k] = e[k]; }); if (e.notes) extra.notes = e.notes;
+    }
+  } catch (x) { liste = []; }
+  if (!liste.length) { alert("Je n'ai pas trouvé de liste d'élèves dans ce fichier."); return; }
+  if (ELEVES.length && !confirm('Remplacer la liste déjà sur cet ordinateur ?')) return;
+  etat.liste = liste; Object.assign(etat, extra); sauver(); location.reload();
+};
+document.getElementById('oublier').onclick = () => {
+  if (!confirm("Effacer la liste et la répartition de ce navigateur ? Le fichier privé de l'équipe n'est pas touché.")) return;
+  try { localStorage.removeItem(CLE); } catch (e) {} location.reload();
+};
+rendre();
+
+// ── Fiches d'atelier
+const ICONES = {
+  G: '<path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/>',
+  E: '<path d="M6 7h12l-1 14H7z"/><path d="M9 7a3 3 0 0 1 6 0"/>',
+  C: '<path d="M3 11h18M5 11V7a7 4 0 0 1 14 0v4M4 15h16l-2 6H6z"/>',
+  S: '<path d="M14 4l6 6-9 9H5v-6z"/><path d="M12 6l6 6"/>',
+};
+const FICHES = {
+  G: { lieu: 'Le grenier, juste à côté de la classe de Mme Lisa', defi: 'Recevoir, trier et ranger des articles.',
+    etapes: ['Je signe le registre et je lis ma fiche.', 'Je trie les articles reçus dans les bacs : garder, réparer, recycler.', "Je plie ou j'étiquette les articles gardés.", 'Je range sur la bonne tablette et je le note dans l\'inventaire.', 'Je range mon espace.'],
+    materiel: ['Bacs de tri', 'Étiquettes et crayon', "Feuille d'inventaire"],
+    reussi: ['Les bacs sont triés.', 'Chaque article rangé a son étiquette.', "L'inventaire est à jour.", "L'espace est propre."],
+    secu: 'Je plie les genoux pour soulever. Je demande de l\'aide pour un objet lourd.' },
+  E: { lieu: 'Lieu à confirmer', defi: 'Préparer des sacs de denrées, bien comptés et bien identifiés.',
+    etapes: ['Je me lave les mains. Je mets un filet et des gants.', 'Je prépare mon poste : sacs, balance, étiquettes.', 'Je compte ou je pèse la bonne quantité, comme sur le modèle.', "Je ferme le sac et je colle l'étiquette : contenu et date.", 'Je place le sac dans le bac et je nettoie mon poste.'],
+    materiel: ['Sacs et attaches', 'Balance', 'Étiquettes', 'Sac modèle'],
+    reussi: ['Chaque sac contient la bonne quantité.', "L'étiquette est lisible.", 'Les sacs sont rangés dans le bac.', 'Le poste est propre.'],
+    secu: 'Je vérifie les dates. Je jette ce qui est abîmé. Pas de bijoux.' },
+  C: { lieu: "La cantine de l'école", defi: 'Faire fonctionner le comptoir, chacun dans un rôle.',
+    etapes: ['Je me lave les mains et je mets mon tablier.', 'Je prends ma carte de rôle : responsable du comptoir, caisse ou préparation.', "On ouvre le comptoir avec la liste d'ouverture.", 'Je sers les clients avec politesse.', 'On ferme : on nettoie, on compte la caisse, on note ce qui manque.'],
+    materiel: ['Cartes de rôle', "Liste d'ouverture et de fermeture", 'Caisse', 'Feuille « ce qui manque »'],
+    reussi: ["Le comptoir est prêt à l'heure.", 'Chaque client est bien servi.', 'Tout est propre et rangé.', 'La feuille « ce qui manque » est remplie.'],
+    secu: "Hygiène d'abord. Les rôles changent d'une semaine à l'autre.",
+    plus: "Pour plus tard : une épicerie à la cantine avec les denrées de Moisson, le loft comme entrepôt, un inventaire tenu par les élèves et, un jour, un site Web pour préparer son panier." },
+  S: { lieu: 'Les espaces du centre, avec le chariot', defi: 'Rendre un espace du centre propre et agréable.',
+    etapes: ['Je prends la liste des tâches du jour et le chariot.', 'Je mets mes gants.', 'Je fais les tâches dans l\'ordre et je coche chaque tâche.', "Je montre mon travail à l'adulte.", 'Je range le chariot et les produits.'],
+    materiel: ['Chariot', 'Gants', 'Produits identifiés', 'Liste à cocher'],
+    reussi: ['Toutes les tâches sont cochées.', 'Le chariot est rangé.', 'Les produits sont bien fermés.'],
+    secu: "J'utilise seulement les produits identifiés. Je ne mélange jamais deux produits.",
+    plus: 'À explorer : de petits travaux d\'entretien ou d\'ébénisterie avec un adulte.' },
+};
+const zoneF = document.getElementById('listeFiches');
+ORDRE.forEach(k => {
+  const f = FICHES[k], a = ATELIERS[k], cle = 'adulte-' + k;
+  const el = document.createElement('article'); el.className = 'fiche'; el.style.setProperty('--c', a.coul);
+  el.innerHTML = `<div class="tete" style="background:${a.coul}"><svg viewBox="0 0 24 24">${ICONES[k]}</svg><div><h3>${a.nom}</h3><p>${f.lieu}</p></div></div>
+  <div class="corps">
+    <div class="defi">Mon défi : ${f.defi}</div>
+    <div><h4>Adulte de référence</h4><span class="edit" contenteditable="true" data-vide="À confirmer" data-champ="${cle}"></span></div>
+    <div><h4>Les étapes</h4><ol>${f.etapes.map(s => `<li><span>${s}</span></li>`).join('')}<li class="avenir"><span><b>Ma phrase pour l'avenir :</b> « Aujourd'hui, j'ai appris… Ça pourrait me servir pour… »</span></li></ol></div>
+    <div class="duo"><div><h4>Matériel</h4><ul class="mat">${f.materiel.map(s => `<li>${s}</li>`).join('')}</ul></div>
+    <div><h4>C'est réussi quand…</h4><ul class="ok">${f.reussi.map(s => `<li>${s}</li>`).join('')}</ul></div></div>
+    <div class="secu"><b>Sécurité :</b> ${f.secu}</div>
+    ${f.plus ? `<div class="plus">${f.plus}</div>` : ''}
+  </div>`;
+  zoneF.appendChild(el);
+});
+document.querySelectorAll('[data-champ]').forEach(c => {
+  c.textContent = etat.champs[c.dataset.champ] || '';
+  c.oninput = () => { etat.champs[c.dataset.champ] = c.textContent; sauver(); };
+});
+
+// ── Qui fait quoi : moments × lieux
+const MOMENTS = [
+  ['Mardi · Rassemblement 8 h 25', { Z: 'Mme Lisa (tout le groupe)' }],
+  ['Mardi · P1 et P2 (9 h 00 – 10 h 35)', { Z: 'Mme Lisa · groupe A (PPS pur)', A: 'Groupe B (concomitance)' }],
+  ['Mardi · P3 (10 h 45 – 11 h 45)', { Z: 'Mme Lisa · groupe B (concomitance)', A: 'Groupe A (PPS pur) · TES' }],
+  ['Jeudi · Rassemblement 8 h 25', { Z: 'Mme Lisa (tout le groupe)' }],
+  ['Jeudi · P1 et P2 (9 h 00 – 10 h 35)', { Z: 'Mme Lisa · groupe B (concomitance)', A: 'Groupe A (PPS pur) · TES' }],
+  ['Jeudi · P3 (10 h 45 – 11 h 45)', { Z: 'Mme Lisa · groupe A (PPS pur)', A: 'Groupe B (concomitance)' }],
+];
+const table = document.getElementById('tableQui');
+table.innerHTML = `<tr><th>Moment</th><th>Classe Z101</th><th>Qui est en atelier</th>${ORDRE.map(k => `<th>${ATELIERS[k].court}</th>`).join('')}</tr>` +
+  MOMENTS.map(([m, v], i) => `<tr><td>${m}</td><td>${v.Z || ''}</td><td>${(v.A || '—').replace('TES', '<span class="tes">TES</span>')}</td>${ORDRE.map(k => `<td contenteditable="true" data-qui="${i}-${k}" aria-label="${m}, ${ATELIERS[k].court}"></td>`).join('')}</tr>`).join('');
+table.querySelectorAll('[data-qui]').forEach(c => {
+  c.textContent = etat.qui[c.dataset.qui] || '';
+  c.oninput = () => { etat.qui[c.dataset.qui] = c.textContent; sauver(); };
+});
+document.getElementById('copierQui').onclick = ev => copier([...table.rows].map(r => [...r.cells].map(c => c.innerText.trim()).join('\t')).join('\n'), ev.target);
+</script>
+</body>
+</html>

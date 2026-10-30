@@ -5,24 +5,23 @@
 <title>Groupes A et B</title>
 <link rel="stylesheet" href="style.css">
 <style>
-.seances{display:flex;flex-wrap:wrap;gap:8px}
-.se{font:inherit;font-weight:800;cursor:pointer;border:2.5px solid #DCDAEA;background:#fff;border-radius:14px;padding:8px 16px}
-.se.on{background:var(--nuit);color:#fff;border-color:var(--nuit)}
-.deux{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media (max-width:700px){.deux{grid-template-columns:1fr}}
-.gr{border-radius:22px;padding:20px;color:#fff;position:relative;overflow:hidden;min-height:250px}
-.gr h2{font-size:40px;margin:0}
-.gr .ou{font-size:22px;font-weight:800;margin:6px 0 10px}
-.gr ul{margin:6px 0 0;padding-left:20px}
-.gr.atel{background:linear-gradient(135deg,#E07A5F,#C9971E)}
-.gr.cls{background:linear-gradient(135deg,#3B3F8F,#5B5FC7)}
-.gr svg.fond{position:absolute;right:-10px;bottom:-10px;opacity:.18}
-.fleche{text-align:center;font-weight:800;color:var(--doux);margin:14px 0}
-table{width:100%;border-collapse:collapse;font-size:15px}
-th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #E6E4F0}
-th{background:#F0EFF8}
-td.a{color:#B3452B;font-weight:800}td.c{color:#3E41A0;font-weight:800}
-.tab-wrap{overflow-x:auto}
+.jours{display:flex;flex-wrap:wrap;gap:8px}
+.jr{font:inherit;font-weight:800;font-size:19px;cursor:pointer;border:2.5px solid #DCDAEA;background:#fff;border-radius:14px;padding:9px 22px}
+.jr.on{background:var(--nuit);color:#fff;border-color:var(--nuit)}
+.ligne{display:grid;grid-template-columns:150px 1fr 1fr;gap:12px;align-items:stretch;margin-top:12px}
+.heure{font-family:PH,NU;font-size:24px;line-height:1.1;color:var(--nuit);padding-top:10px}
+.heure small{display:block;font-family:NU;font-size:13px;color:var(--doux)}
+.case{border-radius:18px;padding:14px 16px;color:#fff;position:relative;overflow:hidden}
+.case b.g{font-family:PH,NU;font-size:30px;font-weight:400;display:block;line-height:1}
+.case .ou{font-weight:800;font-size:18px}
+.case a{color:#fff;font-weight:800}
+.atel{background:linear-gradient(135deg,#E07A5F,#C9971E)}
+.cls{background:linear-gradient(135deg,#3B3F8F,#5B5FC7)}
+.tous{grid-column:2/4;background:linear-gradient(135deg,#1B1F4B,#3B3F8F)}
+.case svg{position:absolute;right:-8px;bottom:-12px;opacity:.18}
+@media (max-width:700px){.ligne{grid-template-columns:1fr}.tous{grid-column:auto}.heure{padding-top:0}}
+.legende{display:flex;gap:18px;flex-wrap:wrap}
+.legende span{font-weight:800}
 </style>
 </head>
 <body>
@@ -30,58 +29,51 @@ td.a{color:#B3452B;font-weight:800}td.c{color:#3E41A0;font-weight:800}
  <div class="wrap">
   <div class="fil"><a href="index.html">Projection vers l'avenir</a> › Groupes A et B</div>
   <h1>Où suis-je aujourd'hui ?</h1>
-  <p class="sous">Un groupe va en atelier, l'autre reste en classe avec Lisa. À la séance suivante, on change.</p>
+  <p class="sous">On commence tous ensemble à 8 h 25. Ensuite, un groupe va en classe Z101 avec Mme Lisa et l'autre va en atelier. Puis on change.</p>
  </div>
 </header>
 <main class="wrap">
  <div class="carte">
-  <b>Choisis la séance</b>
-  <div class="seances mt" id="seances"></div>
+  <div class="legende"><span>Groupe A : PPS pur</span><span>Groupe B : concomitance</span></div>
+  <p class="petit" style="margin:4px 0 12px">Tu ne sais pas ton groupe ? Demande à Mme Lisa.</p>
+  <div class="jours" id="jours"></div>
  </div>
- <div class="deux mt" id="vue"></div>
- <p class="fleche" id="suite"></p>
+ <div id="vue"></div>
 
  <section class="carte mt2">
-  <h2>Qui va où ?</h2>
-  <div class="deux">
-   <div><span class="pill">Groupe A</span><p><b>Grenier de Maria</b> et <b>Ensachage et préparation</b></p></div>
-   <div><span class="pill">Groupe B</span><p><b>Cantine de l'école</b> et <b>Conciergerie et services</b></p></div>
-  </div>
-  <p class="petit">Lisa te dit dans quel groupe tu es. Après ton atelier, remplis ton <a href="ateliers.html">journal d'atelier</a>.</p>
+  <h2>En atelier</h2>
+  <p>Tu vas dans ton atelier : Grenier de Maria, Ensachage et préparation, Cantine de l'école, ou Conciergerie et services.</p>
+  <div class="etape"><b class="n">1</b><div>Je signe le registre et je lis ma fiche.</div></div>
+  <div class="etape"><b class="n">2</b><div>Je fais les étapes de ma fiche avec l'adulte de mon atelier.</div></div>
+  <div class="etape"><b class="n">3</b><div>Au retour, je remplis mon <a href="ateliers.html">journal d'atelier</a>.</div></div>
  </section>
 
  <section class="carte mt2">
-  <h2>Le calendrier</h2>
-  <div class="tab-wrap"><table id="cal"></table></div>
+  <h2>Nouveau au PPS ?</h2>
+  <p>Pendant tes <b>deux premières semaines</b>, tu essaies <b>deux ateliers</b>. Ensuite, tu choisis avec Mme Lisa.</p>
+  <p class="petit">Tu es déjà là depuis un moment ? Tu peux essayer un 2e atelier une fois, si tu veux. Ce n'est pas obligatoire.</p>
  </section>
 </main>
-<footer>Aucun nom d'élève sur ce site. Les listes de groupes restent avec Lisa.</footer>
+<footer>Aucun nom d'élève sur ce site. Les listes de groupes restent avec l'équipe.</footer>
 <script>
-/* Ce que fait le groupe en classe, séance par séance (Lisa peut modifier) */
-const CLASSE=[
- {t:"Mission Avenir",d:["Joue le jeu Mission Avenir","Télécharge ton bilan PDF","Remets-le à Lisa"],lien:"mission-avenir.html"},
- {t:"Mission Avenir (suite)",d:["Termine la mission","Compare ton portrait avec un ou une collègue","Choisis 3 forces pour ton portfolio"],lien:"mission-avenir.html"},
- {t:"Mon portfolio Z101",d:["Relis ton journal d'atelier","Ajoute tes forces dans l'outil Z101","Note ce qui t'a surpris"],lien:"https://ppscssdlj.netlify.app"},
- {t:"Mon portfolio Z101 (suite)",d:["Relis ton journal d'atelier","Ajoute tes milieux d'appartenance","Note une personne qui peut t'aider"],lien:"https://ppscssdlj.netlify.app"},
- {t:"Mon projet",d:["Écris ton but en une phrase","Nomme un besoin de formation","Nomme une condition de réussite"],lien:"https://ppscssdlj.netlify.app"},
- {t:"Mon projet (suite)",d:["Présente ton idée à un ou une collègue","Écoute ses questions","Ajuste ton projet"],lien:"https://ppscssdlj.netlify.app"}
-];
-const N=CLASSE.length;
-let s=1;try{s=+(localStorage.getItem("z101-seance")||1)||1}catch(e){}
-const ATEL={A:["Grenier de Maria","Ensachage et préparation"],B:["Cantine de l'école","Conciergerie et services"]};
-const fus=`<svg class="fond" viewBox="0 0 100 100" width="170"><path d="M50 8c14 14 18 40 15 62H35c-3-22 1-48 15-62z" fill="#fff"/><path d="M35 50l-12 22 14-3zM65 50l12 22-14-3z" fill="#fff"/></svg>`;
-const pla=`<svg class="fond" viewBox="0 0 100 100" width="170"><circle cx="50" cy="50" r="26" fill="#fff"/><ellipse cx="50" cy="50" rx="46" ry="11" fill="none" stroke="#fff" stroke-width="6" transform="rotate(-18 50 50)"/></svg>`;
-function qui(n){return n%2===1?{atel:"A",cls:"B"}:{atel:"B",cls:"A"}}
+/* Horaire validé par l'équipe (plan de match) */
+const HORAIRE = {
+ Mardi: [["9 h 00","10 h 35","A","B"],["10 h 45","11 h 45","B","A"]],
+ Jeudi: [["9 h 00","10 h 35","B","A"],["10 h 45","11 h 45","A","B"]]
+};
+const NOM={A:"Groupe A",B:"Groupe B"};
+const fus=`<svg viewBox="0 0 100 100" width="120"><path d="M50 8c14 14 18 40 15 62H35c-3-22 1-48 15-62z" fill="#fff"/><path d="M35 50l-12 22 14-3zM65 50l12 22-14-3z" fill="#fff"/></svg>`;
+const pla=`<svg viewBox="0 0 100 100" width="120"><circle cx="50" cy="50" r="26" fill="#fff"/><ellipse cx="50" cy="50" rx="46" ry="11" fill="none" stroke="#fff" stroke-width="6" transform="rotate(-18 50 50)"/></svg>`;
+let j=new Date().getDay()===4?"Jeudi":"Mardi";
 function rendu(){
- try{localStorage.setItem("z101-seance",s)}catch(e){}
- document.getElementById("seances").innerHTML=Array.from({length:N},(_,k)=>`<button class="se${k+1===s?" on":""}" data-n="${k+1}" aria-pressed="${k+1===s}">Séance ${k+1}</button>`).join("");
- document.querySelectorAll(".se").forEach(b=>b.onclick=()=>{s=+b.dataset.n;rendu()});
- const q=qui(s),c=CLASSE[s-1];
+ document.getElementById("jours").innerHTML=Object.keys(HORAIRE).map(d=>`<button class="jr${d===j?" on":""}" data-j="${d}" aria-pressed="${d===j}">${d}</button>`).join("");
+ document.querySelectorAll(".jr").forEach(b=>b.onclick=()=>{j=b.dataset.j;rendu()});
+ const P=HORAIRE[j];
  document.getElementById("vue").innerHTML=`
-  <div class="gr atel">${fus}<h2>Groupe ${q.atel}</h2><div class="ou">En atelier</div><ul>${ATEL[q.atel].map(a=>`<li>${a}</li>`).join("")}</ul><p style="margin-bottom:0">Au retour : ton <a href="ateliers.html" style="color:#fff;font-weight:800">journal d'atelier</a>.</p></div>
-  <div class="gr cls">${pla}<h2>Groupe ${q.cls}</h2><div class="ou">En classe : ${c.t}</div><ul>${c.d.map(x=>`<li>${x}</li>`).join("")}</ul><p style="margin-bottom:0"><a href="${c.lien}" style="color:#fff;font-weight:800">Ouvrir</a></p></div>`;
- document.getElementById("suite").textContent=s<N?`À la séance ${s+1}, on change : le groupe ${q.cls} va en atelier.`:"Dernière séance du cycle : on fait le bilan ensemble.";
- document.getElementById("cal").innerHTML=`<tr><th>Séance</th><th>Groupe A</th><th>Groupe B</th></tr>`+CLASSE.map((x,k)=>{const r=qui(k+1);const cel=g=>r.atel===g?`<td class="a">Atelier</td>`:`<td class="c">Classe : ${x.t}</td>`;return `<tr${k+1===s?' style="background:#FFF8E6"':""}><td><b>${k+1}</b></td>${cel("A")}${cel("B")}</tr>`}).join("");
+  <div class="ligne"><div class="heure">8 h 25<small>à 9 h 00</small></div><div class="case tous">${pla}<b class="g">Tout le monde</b><div class="ou">Rassemblement avec Mme Lisa</div>Le menu du matin : qui va où aujourd'hui.</div></div>
+  ${P.map(([de,a,cls,atel])=>`<div class="ligne"><div class="heure">${de}<small>à ${a}</small></div>
+   <div class="case cls">${pla}<b class="g">${NOM[cls]}</b><div class="ou">En classe Z101</div><a href="mission-avenir.html">Mission Avenir</a> · <a href="https://ppscssdlj.netlify.app" target="_blank" rel="noopener">Mon portfolio Z101</a></div>
+   <div class="case atel">${fus}<b class="g">${NOM[atel]}</b><div class="ou">En atelier</div>Au retour : <a href="ateliers.html">mon journal d'atelier</a></div></div>`).join("")}`;
 }
 rendu();
 </script>

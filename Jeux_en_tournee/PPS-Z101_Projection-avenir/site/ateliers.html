@@ -49,27 +49,41 @@ input:focus,textarea:focus,.chip:focus-visible,.at:focus-visible{outline:3px sol
 <script>
 /* ===== Contenu des ateliers : Lisa peut modifier ce bloc ===== */
 const ATELIERS = [
- { id:"grenier", nom:"Grenier de Maria", c:"#7C5CC4", cc:"#EEE8FA", groupe:"A",
-   intro:"Un comptoir où on trie, on range et on met en valeur des objets et des vêtements.",
-   taches:["Trier les dons","Plier et ranger","Mettre des étiquettes de prix","Placer les articles sur les tablettes","Accueillir les clients","Faire le ménage du local"],
-   competences:["Être minutieux","Classer","Travailler avec les clients"],
-   ico:'<path d="M8 30V16l12-8 12 8v14z" fill="#7C5CC4"/><rect x="16" y="20" width="8" height="10" fill="#fff"/>' },
- { id:"ensachage", nom:"Ensachage et préparation", c:"#3F8F74", cc:"#E3F1EC", groupe:"A",
-   intro:"On prépare des produits pour qu'ils soient prêts à être distribués : compter, mettre en sac, fermer, étiqueter.",
-   taches:["Compter les produits","Remplir les sacs","Fermer et étiqueter","Vérifier la qualité","Placer dans les boîtes","Nettoyer le poste de travail"],
-   competences:["Suivre une méthode","Garder le rythme","Vérifier son travail"],
-   ico:'<path d="M11 14h18l-2 18H13z" fill="#3F8F74"/><path d="M15 14a5 5 0 0 1 10 0" fill="none" stroke="#3F8F74" stroke-width="3"/>' },
- { id:"cantine", nom:"Cantine de l'école", c:"#E07A5F", cc:"#FCE9E3", groupe:"B",
-   intro:"Une vraie petite entreprise : on prépare, on sert, on encaisse. Les rôles changent à chaque séance.",
-   roles:["Gérant ou gérante","Caisse","Préparation","Service et propreté"],
-   taches:["Préparer les aliments ou les boissons","Servir les clients","Rendre la monnaie","Placer et remplir","Nettoyer le comptoir","Faire l'inventaire"],
-   competences:["Servir avec le sourire","Calculer la monnaie","Respecter l'hygiène"],
-   ico:'<rect x="8" y="16" width="24" height="14" rx="3" fill="#E07A5F"/><path d="M8 16l3-7h18l3 7" fill="#F2B5A4"/><rect x="17" y="21" width="6" height="9" fill="#fff"/>' },
- { id:"conciergerie", nom:"Conciergerie et services", c:"#C9971E", cc:"#FBF1D9", groupe:"B",
-   intro:"On garde l'école propre et accueillante, et on rend des services : entretien, petites réparations, déplacements de matériel.",
-   taches:["Nettoyer les surfaces","Vider les poubelles et le recyclage","Laver les planchers","Placer du matériel","Aider à une petite réparation","Faire une tournée de vérification"],
-   competences:["Être autonome","Utiliser les produits de façon sécuritaire","Remarquer ce qui manque"],
-   ico:'<rect x="18" y="6" width="4" height="20" fill="#C9971E"/><path d="M12 26h16l3 8H9z" fill="#C9971E"/>' }
+ { id:"grenier", nom:"Grenier de Maria", c:"#7A4E9E", cc:"#F0E8F6", lieu:"Le grenier, juste à côté de la classe de Mme Lisa",
+   defi:"Recevoir, trier et ranger des articles.",
+   etapes:["Je signe le registre et je lis ma fiche.","Je trie les articles reçus dans les bacs : garder, réparer, recycler.","Je plie ou j'étiquette les articles gardés.","Je range sur la bonne tablette et je le note dans l'inventaire.","Je range mon espace."],
+   materiel:["Bacs de tri","Étiquettes et crayon","Feuille d'inventaire"],
+   reussi:["Les bacs sont triés.","Chaque article rangé a son étiquette.","L'inventaire est à jour.","L'espace est propre."],
+   secu:"Je plie les genoux pour soulever. Je demande de l'aide pour un objet lourd.",
+   taches:["Trier les articles","Plier","Mettre des étiquettes","Ranger sur les tablettes","Noter dans l'inventaire","Ranger mon espace"],
+   ico:'<path d="M8 30V16l12-8 12 8v14z" fill="#7A4E9E"/><rect x="16" y="20" width="8" height="10" fill="#fff"/>' },
+ { id:"ensachage", nom:"Ensachage et préparation", c:"#C27C0E", cc:"#FBF0DC", lieu:"Lieu à confirmer",
+   defi:"Préparer des sacs de denrées, bien comptés et bien identifiés.",
+   etapes:["Je me lave les mains. Je mets un filet et des gants.","Je prépare mon poste : sacs, balance, étiquettes.","Je compte ou je pèse la bonne quantité, comme sur le modèle.","Je ferme le sac et je colle l'étiquette : contenu et date.","Je place le sac dans le bac et je nettoie mon poste."],
+   materiel:["Sacs et attaches","Balance","Étiquettes","Sac modèle"],
+   reussi:["Chaque sac contient la bonne quantité.","L'étiquette est lisible.","Les sacs sont rangés dans le bac.","Le poste est propre."],
+   secu:"Je vérifie les dates. Je jette ce qui est abîmé. Pas de bijoux.",
+   taches:["Préparer mon poste","Compter","Peser","Fermer et étiqueter les sacs","Vérifier les dates","Nettoyer mon poste"],
+   ico:'<path d="M11 14h18l-2 18H13z" fill="#C27C0E"/><path d="M15 14a5 5 0 0 1 10 0" fill="none" stroke="#C27C0E" stroke-width="3"/>' },
+ { id:"cantine", nom:"Cantine de l'école", c:"#C8553D", cc:"#F9E6E1", lieu:"La cantine de l'école",
+   defi:"Faire fonctionner le comptoir, chacun dans un rôle.",
+   etapes:["Je me lave les mains et je mets mon tablier.","Je prends ma carte de rôle : responsable du comptoir, caisse ou préparation.","On ouvre le comptoir avec la liste d'ouverture.","Je sers les clients avec politesse.","On ferme : on nettoie, on compte la caisse, on note ce qui manque."],
+   materiel:["Cartes de rôle","Liste d'ouverture et de fermeture","Caisse","Feuille « ce qui manque »"],
+   reussi:["Le comptoir est prêt à l'heure.","Chaque client est bien servi.","Tout est propre et rangé.","La feuille « ce qui manque » est remplie."],
+   secu:"Hygiène d'abord. Les rôles changent d'une semaine à l'autre.",
+   roles:["Responsable du comptoir","Caisse","Préparation"],
+   taches:["Ouvrir le comptoir","Préparer","Servir les clients","Tenir la caisse","Nettoyer","Compter la caisse","Remplir « ce qui manque »"],
+   plus:"Pour plus tard : une épicerie à la cantine, avec un inventaire tenu par les élèves.",
+   ico:'<rect x="8" y="16" width="24" height="14" rx="3" fill="#C8553D"/><path d="M8 16l3-7h18l3 7" fill="#E9A797"/><rect x="17" y="21" width="6" height="9" fill="#fff"/>' },
+ { id:"conciergerie", nom:"Conciergerie et services", c:"#1F7A8C", cc:"#E0F0F3", lieu:"Les espaces du centre, avec le chariot",
+   defi:"Rendre un espace du centre propre et agréable.",
+   etapes:["Je prends la liste des tâches du jour et le chariot.","Je mets mes gants.","Je fais les tâches dans l'ordre et je coche chaque tâche.","Je montre mon travail à l'adulte.","Je range le chariot et les produits."],
+   materiel:["Chariot","Gants","Produits identifiés","Liste à cocher"],
+   reussi:["Toutes les tâches sont cochées.","Le chariot est rangé.","Les produits sont bien fermés."],
+   secu:"J'utilise seulement les produits identifiés. Je ne mélange jamais deux produits.",
+   taches:["Suivre ma liste de tâches","Nettoyer","Cocher mes tâches","Montrer mon travail","Ranger le chariot","Petit travail d'entretien"],
+   plus:"À explorer : de petits travaux d'entretien ou d'ébénisterie avec un adulte.",
+   ico:'<rect x="18" y="6" width="4" height="20" fill="#1F7A8C"/><path d="M12 26h16l3 8H9z" fill="#1F7A8C"/>' }
 ];
 const FORCES = ["Je suis patient","Je suis minutieux","Je suis rapide","Je suis gentil avec les autres","Je travaille bien avec mes mains","Je pose des questions","Je suis organisé","Je reste concentré","Je suis ponctuel","J'aide les autres"];
 const METEO = [["soleil","J'ai aimé"],["nuage","Moyen"],["pluie","Pas aimé"]];
@@ -89,7 +103,7 @@ const icone=(t,w=26)=>({
 
 function choix(){
  $("choix").innerHTML=ATELIERS.map(a=>`<button class="at${A&&A.id===a.id?" on":""}" style="--c:${a.c};--cc:${a.cc}" data-id="${a.id}">
-  <div class="ico"><svg viewBox="0 0 40 40" width="38">${a.ico}</svg></div><b style="font-size:19px">${E(a.nom)}</b><br><span class="petit">Groupe ${a.groupe}</span></button>`).join("");
+  <div class="ico"><svg viewBox="0 0 40 40" width="38">${a.ico}</svg></div><b style="font-size:19px">${E(a.nom)}</b><br><span class="petit">${E(a.lieu)}</span></button>`).join("");
  document.querySelectorAll(".at").forEach(b=>b.onclick=()=>{A=ATELIERS.find(a=>a.id===b.dataset.id);J=Object.assign({},lire());if(J.atelier!==A.id){J={atelier:A.id,prenom:J.prenom||""}}garder();choix();fiche();$("fiche").scrollIntoView({behavior:"smooth"})});
 }
 
@@ -103,14 +117,16 @@ function fiche(){
  const a=A;
  $("fiche").innerHTML=`
  <section class="carte fiche mt2" style="--c:${a.c}">
-  <span class="pill" style="background:${a.cc};color:${a.c}">Groupe ${a.groupe}</span>
+  <span class="pill" style="background:${a.cc};color:${a.c}">${E(a.lieu)}</span>
   <h2>${E(a.nom)}</h2>
-  <p>${E(a.intro)}</p>
+  <p style="font-size:20px"><b>Mon défi :</b> ${E(a.defi)}</p>
   <div class="cols">
-   <div><b>Ce qu'on peut y faire</b><ul class="puces">${a.taches.map(t=>`<li>${E(t)}</li>`).join("")}</ul></div>
-   <div><b>Ce qu'on y développe</b><ul class="puces">${a.competences.map(t=>`<li>${E(t)}</li>`).join("")}</ul>
-   ${a.roles?`<b>Les rôles (ils changent à chaque séance)</b><ul class="puces">${a.roles.map(t=>`<li>${E(t)}</li>`).join("")}</ul>`:""}</div>
+   <div><b>Les étapes</b><ol class="puces">${a.etapes.map(t=>`<li>${E(t)}</li>`).join("")}<li><b>Ma phrase pour l'avenir :</b> « Aujourd'hui, j'ai appris… Ça pourrait me servir pour… »</li></ol></div>
+   <div><b>Matériel</b><ul class="puces">${a.materiel.map(t=>`<li>${E(t)}</li>`).join("")}</ul>
+   <b>C'est réussi quand…</b><ul class="puces">${a.reussi.map(t=>`<li>${E(t)}</li>`).join("")}</ul></div>
   </div>
+  <p class="ok" style="background:#FFF4E5"><b>Sécurité :</b> ${E(a.secu)}</p>
+  ${a.plus?`<p class="petit">${E(a.plus)}</p>`:""}
  </section>
 
  <section class="carte mt2">
@@ -127,6 +143,7 @@ function fiche(){
   <div class="q"><span class="savoir">MOTIVATION</span><b>Ce que j'ai le plus aimé, ou le moins aimé</b><textarea id="aime" maxlength="300">${E(J.aime||"")}</textarea>${dicte("aime")}</div>
   <div class="q"><span class="savoir">FACTEURS DE DÉLIMITATION</span><b>Ce qui a été difficile pour moi</b><textarea id="difficile" maxlength="300">${E(J.difficile||"")}</textarea>${dicte("difficile")}</div>
   <div class="q"><span class="savoir">BUTS</span><b>Est-ce que ça m'intéresse pour mon projet ?</b>${chips("interet",INTERET,false)}</div>
+  <div class="q"><span class="savoir">BUTS</span><b>Ma phrase pour l'avenir</b><span class="petit">Aujourd'hui, j'ai appris… Ça pourrait me servir pour…</span><textarea id="avenir" maxlength="300">${E(J.avenir||"")}</textarea>${dicte("avenir")}</div>
   <div class="q"><span class="savoir">CONDITIONS DE RÉUSSITE</span><b>La prochaine fois, je veux essayer…</b><input type="text" id="prochaine" maxlength="120" value="${E(J.prochaine||"")}"></div>
   <div class="mt2" style="display:flex;gap:10px;flex-wrap:wrap">
    <button class="btn" id="pdf">Télécharger mon journal (PDF)</button>
@@ -139,7 +156,7 @@ function fiche(){
   if(g.dataset.multi==="1"){let l=J[n]||[];if(l.includes(v))l=l.filter(x=>x!==v);else{if(l.length>=+g.dataset.max){$("msg").textContent=`Maximum ${g.dataset.max} choix. Enlève un choix d'abord.`;return}l=[...l,v]}J[n]=l}
   else J[n]=J[n]===v?null:v;
   $("msg").textContent="";garder();g.querySelectorAll(".chip").forEach(c=>{const on=g.dataset.multi==="1"?(J[n]||[]).includes(c.dataset.v):J[n]===c.dataset.v;c.classList.toggle("on",on);c.setAttribute("aria-pressed",on)})});
- ["prenom","tache_autre","aime","difficile","prochaine"].forEach(id=>$(id).oninput=()=>{J[id]=$(id).value;garder()});
+ ["prenom","tache_autre","aime","difficile","avenir","prochaine"].forEach(id=>$(id).oninput=()=>{J[id]=$(id).value;garder()});
  document.querySelectorAll("[data-dicte]").forEach(b=>b.onclick=()=>dicter(b.dataset.dicte,b));
  $("vider").onclick=()=>{if(!confirm("Effacer ce journal pour commencer une nouvelle séance ?"))return;J={atelier:A.id,prenom:J.prenom||""};garder();fiche()};
  $("pdf").onclick=pdf;
@@ -172,6 +189,7 @@ async function pdf(){
    ${L("Ce que j'ai le plus aimé, ou le moins aimé",E(J.aime||""),"MOTIVATION")}
    ${L("Ce qui a été difficile pour moi",E(J.difficile||""),"FACTEURS DE DÉLIMITATION")}
    ${L("Est-ce que ça m'intéresse pour mon projet ?",E(J.interet||""),"BUTS")}
+   ${L("Ma phrase pour l'avenir",E(J.avenir||""),"BUTS")}
    ${L("La prochaine fois, je veux essayer…",E(J.prochaine||""),"CONDITIONS DE RÉUSSITE")}
    <div style="margin-top:18px;background:${a.cc};border-radius:14px;padding:12px 16px;font-size:13px">
     <b>Pour Lisa :</b> ce journal nourrit les savoirs du critère « réalités personnelles et sociales » (expériences, habiletés, facteurs de délimitation) et du critère « élaboration du projet » (buts, conditions de réussite).
