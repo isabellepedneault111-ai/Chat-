@@ -72,7 +72,7 @@ function rendu(){
  document.getElementById("vue").innerHTML=`
   <div class="ligne"><div class="heure">8 h 25<small>à 9 h 00</small></div><div class="case tous">${pla}<b class="g">Tout le monde</b><div class="ou">Rassemblement avec Mme Lisa</div>Le menu du matin : qui va où aujourd'hui.</div></div>
   ${P.map(([de,a,cls,atel])=>`<div class="ligne"><div class="heure">${de}<small>à ${a}</small></div>
-   <div class="case cls">${pla}<b class="g">${NOM[cls]}</b><div class="ou">En classe Z101</div><a href="mission-avenir.html">Mission Avenir</a> · <a href="https://ppscssdlj.netlify.app" target="_blank" rel="noopener">Mon portfolio Z101</a></div>
+   <div class="case cls">${pla}<b class="g">${NOM[cls]}</b><div class="ou">En classe Z101</div><a href="mission-avenir.html">Mission Avenir</a> · <a href="https://ppscssdlj.netlify.app" target="_blank" rel="noopener">Le cours Z101</a></div>
    <div class="case atel">${fus}<b class="g">${NOM[atel]}</b><div class="ou">En atelier</div>Au retour : <a href="ateliers.html">mon journal d'atelier</a></div></div>`).join("")}`;
 }
 rendu();
