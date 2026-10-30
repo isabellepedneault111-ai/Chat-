@@ -11,6 +11,7 @@
 *{box-sizing:border-box}
 html,body{background:#FFFDF9}
 body{margin:0;font-family:NU,Nunito,Calibri,Arial,sans-serif;color:var(--ard);font-size:19px;line-height:1.45;overflow-x:hidden}
+html.pro,html.pro body{background:#F7F7FA}html.pro h1,html.pro h2,html.pro h3,html.pro .hand,html.pro .cv,html.pro .eq,html.pro .choix b,html.pro .ps,html.pro .pdfh h1{font-family:NU,Nunito,Arial,sans-serif;font-weight:900;letter-spacing:-.02em}html.pro .dl{font-family:NU,Arial;font-weight:900}html.pro .blob{display:none}html.pro .pdfh{background:#fff;color:var(--orf);border-bottom:5px solid var(--or)}html.pro .pdfh h1,html.pro .pdfh *{color:var(--orf)}
 .blob{position:fixed;border-radius:47% 53% 61% 39%/45% 41% 59% 55%;z-index:-1;opacity:.8;pointer-events:none}
 main{max-width:860px;margin:0 auto;padding:14px 16px 80px}
 h1,h2,h3,.hand{font-family:PH,'Patrick Hand','Segoe Print',cursive;font-weight:400}
@@ -172,7 +173,7 @@ const INTRO={};CFG.niveaux.forEach(n=>INTRO[n.id]={k:(n.intro&&n.intro.capsules)
 const AV=(CFG.autoeval||[]).map(a=>[a.element,a.phrase]);
 const AVO=["Oui, seul","Avec un peu d’aide","Pas encore"];
 const RE=CFG.reinvest||{capsules:true};
-(function(){const t=CFG.theme||{},r=document.documentElement.style;if(t.accent)r.setProperty("--or",t.accent);if(t.accentFonce)r.setProperty("--orf",t.accentFonce);if(t.accentPale)r.setProperty("--or2",t.accentPale);
+(function(){const t=CFG.theme||{},r=document.documentElement.style;if(t.style==="pro")document.documentElement.classList.add("pro");if(t.accent)r.setProperty("--or",t.accent);if(t.accentFonce)r.setProperty("--orf",t.accentFonce);if(t.accentPale)r.setProperty("--or2",t.accentPale);
  const f=t.formes||["#D8C7BB","#E3BF6A","#DDF5F2","#F6D1D6"],pos=["width:420px;height:380px;left:-190px;top:-180px","width:300px;height:280px;right:-120px;top:-140px;opacity:.55","width:380px;height:340px;right:-170px;bottom:-170px","width:300px;height:280px;left:-150px;bottom:-160px"];
  document.getElementById("formes").innerHTML=f.map((c,k)=>`<div class="blob" style="${pos[k%4]};background:${c}"></div>`).join("");
  document.head.insertAdjacentHTML("beforeend","<style>"+DECORS_CSS+"</style>")})();
