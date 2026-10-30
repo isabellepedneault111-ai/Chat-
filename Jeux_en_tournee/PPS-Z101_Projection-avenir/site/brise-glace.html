@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Boîte à animation</title>
+<meta name="description" content="Outils pour le TNI : météo, plutôt ceci ou cela, la roue des questions, chrono, vote avec les doigts.">
+<style>
+@font-face{font-family:NU;src:url(fonts/Nunito-VF.ttf);font-weight:200 1000}
+:root{--nuit:#0E1330;--n2:#1B2150;--corail:#F2542D;--violet:#5B4BFF;--sarcelle:#0E9F8E;--sable:#F6F1EA;--txt:#E9EBF5;--doux:#AEB3D0}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:NU,system-ui,sans-serif;background:var(--nuit);color:var(--txt);display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+header{display:flex;align-items:center;gap:16px;padding:14px 22px;flex-wrap:wrap;position:relative}
+header::after{content:"";position:absolute;right:0;top:0;width:220px;height:100%;background:linear-gradient(135deg,transparent 50%,rgba(242,84,45,.9) 50.5%);pointer-events:none;opacity:.9}
+.marque{font-weight:900;letter-spacing:-.02em;font-size:20px}.marque small{display:block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--corail);font-weight:800}
+nav{display:flex;gap:6px;flex-wrap:wrap;position:relative;z-index:1}
+nav button{font:inherit;font-weight:800;font-size:15px;border:1.5px solid #3A4170;background:transparent;color:var(--txt);border-radius:99px;padding:8px 16px;cursor:pointer}
+nav button[aria-selected=true]{background:var(--txt);color:var(--nuit);border-color:var(--txt)}
+nav a{color:var(--doux);font-size:14px;align-self:center;margin-left:8px}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:16px 22px 28px}
+section{width:100%;max-width:1200px;text-align:center}
+section[hidden]{display:none}
+h1{font-size:clamp(28px,4.5vw,56px);font-weight:900;letter-spacing:-.03em;margin:0 0 6px;line-height:1.05}
+.sous{color:var(--doux);font-size:clamp(15px,1.6vw,20px);margin:0 0 22px}
+.btn{font:inherit;font-weight:900;font-size:18px;border:0;border-radius:14px;padding:13px 24px;background:var(--corail);color:#fff;cursor:pointer}
+.btn.cl{background:transparent;border:1.5px solid #3A4170;color:var(--txt)}
+.btn:focus-visible,nav button:focus-visible,.carte:focus-visible{outline:3px solid #FFB199;outline-offset:3px}
+.rang{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+/* météo */
+.meteo{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.carte{font:inherit;color:inherit;cursor:pointer;border:0;border-radius:20px;padding:22px 14px;background:var(--n2);display:flex;flex-direction:column;align-items:center;gap:10px;font-weight:900;font-size:clamp(17px,1.8vw,22px);transition:transform .15s}
+.carte:hover{transform:translateY(-3px)}.carte.on{outline:3px solid var(--corail)}
+.carte svg{width:64px;height:64px}
+/* plutôt */
+.duel{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:stretch}
+.cote{border-radius:26px;padding:clamp(28px,6vw,80px) 18px;font-size:clamp(32px,6vw,84px);font-weight:900;letter-spacing:-.03em;line-height:1}
+.cote.g{background:var(--violet)}.cote.d{background:var(--corail)}
+.ou{align-self:center;font-weight:900;color:var(--doux);font-size:22px}
+.cote small{display:block;font-size:14px;letter-spacing:.18em;text-transform:uppercase;opacity:.8;margin-bottom:12px}
+/* roue */
+.paquets{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.paquets button{font:inherit;font-weight:800;border-radius:99px;padding:7px 14px;cursor:pointer;border:1.5px solid #3A4170;background:transparent;color:var(--txt)}
+.paquets button[aria-pressed=true]{background:var(--sarcelle);border-color:var(--sarcelle)}
+.question{min-height:3.4em;display:flex;align-items:center;justify-content:center;font-size:clamp(28px,4.6vw,62px);font-weight:900;letter-spacing:-.025em;line-height:1.1;padding:0 10px}
+.question.roule{animation:roule .09s linear infinite;opacity:.6}
+@keyframes roule{50%{transform:translateY(-4px)}}
+/* chrono */
+.temps{font-size:clamp(90px,20vw,260px);font-weight:900;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
+.barre{height:10px;background:var(--n2);border-radius:99px;overflow:hidden;max-width:900px;margin:10px auto 0}.barre i{display:block;height:100%;width:0;background:var(--corail);transition:width 1s linear}
+.temps.fin{color:var(--corail);animation:pouls 1s ease-in-out infinite}@keyframes pouls{50%{opacity:.4}}
+/* vote */
+.doigts{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.doigt{border-radius:18px;padding:22px 10px;font-weight:900}
+.doigt b{display:block;font-size:clamp(46px,7vw,90px);line-height:1}
+.doigt span{font-size:clamp(14px,1.5vw,19px)}
+.consigne{font-size:clamp(20px,2.6vw,32px);font-weight:900;margin-top:20px}
+@media (prefers-reduced-motion:reduce){.question.roule,.temps.fin{animation:none}.carte{transition:none}}
+@media (max-width:640px){.duel{grid-template-columns:1fr}.doigts{grid-template-columns:1fr 1fr}header::after{display:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="marque"><small>PPS-Z101 · Premier mardi</small>Boîte à animation</div>
+ <nav role="tablist" aria-label="Outils">
+  <button role="tab" data-o="meteo">Météo</button>
+  <button role="tab" data-o="plutot">Plutôt ceci ou cela</button>
+  <button role="tab" data-o="roue">La roue</button>
+  <button role="tab" data-o="chrono">Chrono</button>
+  <button role="tab" data-o="vote">Vote</button>
+  <a href="index.html">Retour au site</a>
+ </nav>
+</header>
+<main>
+ <section id="meteo">
+  <h1>Comment j'arrive aujourd'hui ?</h1><p class="sous">Chacun choisit une météo. On peut la montrer sans rien dire.</p>
+  <div class="meteo" id="meteoCartes"></div>
+ </section>
+ <section id="plutot" hidden>
+  <h1>Plutôt ceci ou cela ?</h1><p class="sous">Lève-toi et va du côté qui te ressemble.</p>
+  <div class="duel"><div class="cote g" id="pg"></div><div class="ou">ou</div><div class="cote d" id="pd"></div></div>
+  <div class="rang"><button class="btn" id="pSuiv">Suivant</button><span class="sous" id="pNo" style="margin:0;align-self:center"></span></div>
+ </section>
+ <section id="roue" hidden>
+  <h1>La roue des questions</h1><p class="sous">On répond si on veut. On peut toujours passer son tour.</p>
+  <div class="paquets" id="paquets"></div>
+  <div class="question" id="q" aria-live="polite">Clique sur « Tourner ».</div>
+  <div class="rang"><button class="btn" id="tourne">Tourner</button></div>
+ </section>
+ <section id="chrono" hidden>
+  <div class="temps" id="t" aria-live="off">2:00</div><div class="barre"><i id="tb"></i></div>
+  <div class="rang" id="prereglages"></div>
+  <div class="rang"><button class="btn" id="go">Démarrer</button><button class="btn cl" id="raz">Remettre</button></div>
+ </section>
+ <section id="vote" hidden>
+  <h1>Vote avec les doigts</h1><p class="sous">Sur une proposition : montre de 1 à 5 doigts.</p>
+  <div class="doigts">
+   <div class="doigt" style="background:#7A2E1F"><b>1</b><span>Je bloque</span></div>
+   <div class="doigt" style="background:#9A4A1E"><b>2</b><span>J'ai un doute</span></div>
+   <div class="doigt" style="background:#3A4170"><b>3</b><span>Je peux vivre avec</span></div>
+   <div class="doigt" style="background:#136F65"><b>4</b><span>J'aime</span></div>
+   <div class="doigt" style="background:var(--sarcelle)"><b>5</b><span>J'adore</span></div>
+  </div>
+  <div class="consigne">On garde la règle si tout le monde est à 3 ou plus.</div>
+  <p class="sous" style="margin-top:8px">Quelqu'un est à 1 ou 2 ? On l'écoute, puis on ajuste la proposition.</p>
+ </section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const IC={
+ soleil:'<circle cx="32" cy="32" r="12" fill="#F2C14E"/><g stroke="#F2C14E" stroke-width="4" stroke-linecap="round"><path d="M32 6v8M32 50v8M6 32h8M50 32h8M13 13l6 6M45 45l6 6M13 51l6-6M45 19l6-6"/></g>',
+ eclaircie:'<circle cx="24" cy="24" r="10" fill="#F2C14E"/><path d="M20 48a9 9 0 0 1 2-18 12 12 0 0 1 23 3 7 7 0 0 1 0 15z" fill="#C9CDE3"/>',
+ nuage:'<path d="M14 46a10 10 0 0 1 2-20 14 14 0 0 1 27 4 8 8 0 0 1 1 16z" fill="#AEB3D0"/>',
+ pluie:'<path d="M14 38a10 10 0 0 1 2-20 14 14 0 0 1 27 4 8 8 0 0 1 1 16z" fill="#8C92B5"/><g stroke="#7FB3FF" stroke-width="4" stroke-linecap="round"><path d="M20 44l-3 8M32 44l-3 8M44 44l-3 8"/></g>',
+ orage:'<path d="M14 36a10 10 0 0 1 2-20 14 14 0 0 1 27 4 8 8 0 0 1 1 16z" fill="#6B7189"/><path d="M33 38l-8 12h7l-3 10 10-14h-7l3-8z" fill="#F2C14E"/>',
+ brouillard:'<g stroke="#AEB3D0" stroke-width="5" stroke-linecap="round"><path d="M10 22h44M16 32h38M10 42h40M18 52h30"/></g>'
+};
+const METEO=[["soleil","En forme"],["eclaircie","Ça va"],["nuage","Neutre"],["brouillard","Dans la brume"],["pluie","Fatigué"],["orage","Pas facile"]];
+$("meteoCartes").innerHTML=METEO.map(([k,t])=>`<button class="carte" data-k="${k}"><svg viewBox="0 0 64 64" aria-hidden="true">${IC[k]}</svg>${t}</button>`).join("");
+document.querySelectorAll("#meteoCartes .carte").forEach(b=>b.onclick=()=>{document.querySelectorAll("#meteoCartes .carte").forEach(x=>x.classList.toggle("on",x===b))});
+
+const PLUTOT=[["Chien","Chat"],["Été","Hiver"],["Pizza","Poutine"],["Lève-tôt","Couche-tard"],["Travailler dehors","Travailler en dedans"],["Seul","En équipe"],["Parler","Écouter"],["Ville","Campagne"],["Film","Série"],["Faire","Regarder"],["Plan détaillé","Improviser"],["Bruit","Silence"],["Routine","Surprise"],["Salé","Sucré"],["Texto","Appel"],["Musique forte","Musique douce"]];
+let pi=0;const plutot=()=>{$("pg").innerHTML=`<small>Ce côté-ci</small>${PLUTOT[pi][0]}`;$("pd").innerHTML=`<small>Ce côté-là</small>${PLUTOT[pi][1]}`;$("pNo").textContent=`${pi+1} / ${PLUTOT.length}`};
+$("pSuiv").onclick=()=>{pi=(pi+1)%PLUTOT.length;plutot()};plutot();
+
+const Q={"Pour partir":["Ton repas préféré ?","Une chanson que tu écoutes souvent ?","Ton endroit préféré au Saguenay ?","Si tu gagnais 100 $ aujourd'hui ?","Un film ou une série à recommander ?","Matin ou soir ?","Ta saison préférée ?","Un talent caché ?"],
+"On jase":["Une chose que tu fais vraiment bien ?","Une personne qui t'a aidé ?","Ce qui te rend fier de toi ?","Un métier que tu trouves intéressant ?","Qu'est-ce qui t'aide à te sentir à l'aise ?","Un défi que tu as relevé ?"],
+"Vers l'avenir":["Dans un an, tu aimerais faire quoi ?","Une chose à apprendre ici ?","Un endroit où tu aimerais travailler ou t'impliquer ?","Un métier à essayer une journée ?","Une habitude que tu aimerais prendre ?","Ton prochain petit défi ?"],
+"Nos ateliers":["Quelle tâche aimerais-tu essayer en premier ?","Qu'est-ce qui fait une bonne équipe de travail ?","Comment laisser l'atelier propre pour l'autre groupe ?","Qu'est-ce qu'un bon message de passation ?","Qui aimerais-tu avoir dans ton équipe ? Pourquoi ?"]};
+let actifs=new Set(["Pour partir"]),vus=new Set();
+$("paquets").innerHTML=Object.keys(Q).map(k=>`<button data-p="${k}" aria-pressed="${actifs.has(k)}">${k}</button>`).join("");
+document.querySelectorAll("#paquets button").forEach(b=>b.onclick=()=>{const k=b.dataset.p;if(actifs.has(k)&&actifs.size>1)actifs.delete(k);else actifs.add(k);document.querySelectorAll("#paquets button").forEach(x=>x.setAttribute("aria-pressed",actifs.has(x.dataset.p)))});
+$("tourne").onclick=()=>{let pool=[...actifs].flatMap(k=>Q[k]).filter(x=>!vus.has(x));if(!pool.length){vus.clear();pool=[...actifs].flatMap(k=>Q[k])}
+ const el=$("q"),fin=pool[Math.floor(Math.random()*pool.length)];el.classList.add("roule");let n=0;
+ const reduit=matchMedia("(prefers-reduced-motion: reduce)").matches;
+ const tic=setInterval(()=>{el.textContent=pool[Math.floor(Math.random()*pool.length)];if(++n>(reduit?1:14)){clearInterval(tic);el.classList.remove("roule");el.textContent=fin;vus.add(fin)}},70)};
+
+const PRE=[1,2,5,10,15,20];let total=120,reste=120,tic=null,ctx=null;
+$("prereglages").innerHTML=PRE.map(m=>`<button class="btn cl" data-m="${m}">${m} min</button>`).join("");
+const aff=()=>{$("t").textContent=`${Math.floor(reste/60)}:${String(reste%60).padStart(2,"0")}`;$("tb").style.width=(100*(total-reste)/total)+"%";$("t").classList.toggle("fin",reste===0)};
+const bip=()=>{try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();[0,.35,.7].forEach(d=>{const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=660;g.gain.value=.15;o.connect(g);g.connect(ctx.destination);o.start(ctx.currentTime+d);o.stop(ctx.currentTime+d+.22)})}catch(e){}};
+document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{clearInterval(tic);tic=null;total=reste=b.dataset.m*60;$("go").textContent="Démarrer";aff()});
+$("go").onclick=function(){if(tic){clearInterval(tic);tic=null;this.textContent="Reprendre";return}
+ try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)()}catch(e){}
+ if(reste===0)reste=total;this.textContent="Pause";tic=setInterval(()=>{if(reste>0){reste--;aff();if(reste===0){clearInterval(tic);tic=null;$("go").textContent="Démarrer";bip()}}},1000)};
+$("raz").onclick=()=>{clearInterval(tic);tic=null;reste=total;$("go").textContent="Démarrer";aff()};aff();
+
+const onglets=[...document.querySelectorAll("nav button")];
+function ouvrir(id){onglets.forEach(b=>b.setAttribute("aria-selected",b.dataset.o===id));document.querySelectorAll("main section").forEach(s=>s.hidden=s.id!==id);try{localStorage.setItem("z101-bg",id)}catch(e){}}
+onglets.forEach(b=>b.onclick=()=>ouvrir(b.dataset.o));
+let dep="meteo";try{dep=localStorage.getItem("z101-bg")||"meteo"}catch(e){}ouvrir(dep);
+</script>
+</body>
+</html>
