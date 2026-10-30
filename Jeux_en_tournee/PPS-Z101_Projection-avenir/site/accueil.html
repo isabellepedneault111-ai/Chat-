@@ -2,82 +2,58 @@
 <html lang="fr-CA">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Le premier cours Z101</title>
+<title>Le premier mardi</title>
 <link rel="stylesheet" href="style.css">
 <style>
-.bloc{display:grid;grid-template-columns:110px 1fr;gap:18px;padding:18px 0;border-bottom:1px dashed #DCDAEA}
+.per{border-left:6px solid var(--k);margin-top:18px}
+.per .tag{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:var(--k)}
+.bloc{display:grid;grid-template-columns:90px 1fr;gap:14px;padding:12px 0;border-bottom:1px dashed #DCDAEA}
 .bloc:last-child{border:0}
-.temps{font-family:PH,NU;font-size:28px;color:var(--ac);line-height:1}
-.temps small{display:block;font-family:NU;font-size:13px;color:var(--doux);margin-top:4px}
-.qui{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
-.qui span{font-size:13px;font-weight:800;border-radius:99px;padding:3px 10px}
-.n{background:#E9E9FB;color:#3E41A0}.a{background:#FCE9E3;color:#B3452B}.t{background:#E3F1EC;color:#2F6F59}
-.astuce{background:#FFF8E6;border-left:5px solid var(--sat);border-radius:10px;padding:8px 12px;margin-top:8px;font-size:15px}
-@media (max-width:600px){.bloc{grid-template-columns:1fr;gap:4px}}
-.q li{margin:6px 0}
+.temps{font-weight:900;font-size:20px;color:var(--k)}
+@media (max-width:600px){.bloc{grid-template-columns:1fr;gap:2px}}
 </style>
 </head>
 <body>
 <header class="ciel">
  <div class="wrap">
-  <div class="fil"><a href="index.html">Projection vers l'avenir</a> › Pour Mme Lisa</div>
-  <h1>Le premier cours Z101</h1>
-  <p class="sous">Après le rassemblement de 8 h 25 (voir le <a href="plan-de-match.html" style="color:#fff">plan de match</a>), un sous-groupe reste en classe. Voici quoi y vivre, avec des nouveaux et des élèves déjà en place.</p>
+  <div class="fil"><a href="index.html">Projection vers l'avenir</a> › Pour l'équipe</div>
+  <h1>Le premier mardi</h1>
+  <p class="sous">Exceptionnellement, tout le monde ensemble : on se rencontre, on bâtit nos ateliers avec les élèves, puis on met en commun.</p>
  </div>
 </header>
 <main class="wrap">
  <div class="carte">
-  <b>L'intention</b>
-  <p style="margin:6px 0 0">Les nouveaux se sentent attendus. Les élèves déjà en place nomment ce qu'ils ont appris. Tout le monde commence son portrait (critère « réalités personnelles et sociales »).</p>
-  <p class="petit">Version P1 et P2 (95 min). Pour la P3 (60 min), garde les blocs 1, 2 et 4.</p>
-  <button class="btn cl noprint" onclick="print()">Imprimer ce plan</button>
+  <p style="margin:0"><b>Le local coocooning</b> : cercle de chaises ou de coussins, lumière douce, un mur pour afficher. On peut toujours passer son tour. Aucune question sur la famille, l'argent ou la santé.</p>
+  <p class="mt" style="margin-bottom:0"><a class="btn" href="brise-glace.html">Ouvrir la boîte à animation (TNI)</a></p>
  </div>
 
- <section class="carte mt2">
-  <h2>Le déroulement</h2>
+ <section class="carte per" style="--k:#0E9F8E">
+  <span class="tag">Période 1 · Tout le monde</span><h2>Se connaître</h2>
+  <div class="bloc"><div class="temps">10 min</div><div><b>Le cercle d'accueil.</b> Prénom et une météo (outil Météo au TNI). On peut la montrer sans parler.</div></div>
+  <div class="bloc"><div class="temps">10 min</div><div><b>Ma carte de joueur.</b> Stats, pouvoir spécial, ce qui me fait avancer. Les élèves déjà en place aident les nouveaux.</div></div>
+  <div class="bloc"><div class="temps">15 min</div><div><b>Plutôt ceci ou cela ?</b> Debout, on se place du côté qui nous ressemble (outil au TNI).</div></div>
+  <div class="bloc"><div class="temps">15 min</div><div><b>Bingo humain</b> ou <b>cercle de questions</b> avec La roue.</div></div>
+ </section>
 
-  <div class="bloc"><div class="temps">10 min<small>1. La constellation</small></div><div>
-   <div class="qui"><span class="t">Tout le sous-groupe</span></div>
-   Tout le monde est debout. Mme Lisa lit un énoncé ; ceux qui se reconnaissent font un pas en avant.
-   <ul><li>J'aime travailler avec mes mains.</li><li>J'ai déjà eu un emploi ou un stage.</li><li>Je préfère travailler seul.</li><li>J'aime aider les autres.</li><li>Je ne sais pas encore ce que je veux faire, et c'est correct.</li></ul>
-   <div class="astuce">Le dernier énoncé rassure les nouveaux. Termine toujours par lui.</div>
-  </div></div>
+ <section class="carte per" style="--k:#F2542D">
+  <span class="tag">Période 2 · A et B ensemble, par atelier</span><h2>Bâtir notre atelier</h2>
+  <div class="bloc"><div class="temps">5 min</div><div><b>Les rôles :</b> animateur, gardien du temps, secrétaire, porte-parole. Un adulte en soutien.</div></div>
+  <div class="bloc"><div class="temps">15 min</div><div><b>Nos tâches :</b> garder, changer ou enlever chaque tâche de la fiche, et ajouter nos idées.</div></div>
+  <div class="bloc"><div class="temps">15 min</div><div><b>La passation de quart :</b> comment le groupe A et le groupe B se passent le relais (carnet, tableau, photo Teams, mot au rassemblement).</div></div>
+  <div class="bloc"><div class="temps">10 min</div><div><b>Notre plan de match :</b> qui fait quoi au début, ce qu'on veut essayer, notre règle d'or.</div></div>
+ </section>
 
-  <div class="bloc"><div class="temps">35 min<small>2. Mission Avenir en duo</small></div><div>
-   <div class="qui"><span class="n">Nouveau : aux commandes</span><span class="a">Déjà en place : copilote</span></div>
-   Le nouveau joue <a href="mission-avenir.html">Mission Avenir</a> avec l'élève assis à côté de lui depuis le rassemblement. Le copilote :
-   <ul><li>peut lire la question à voix haute ;</li><li>ne donne pas la réponse ;</li><li>pose une question : « Pourquoi tu as choisi ça ? »</li></ul>
-   Les élèves déjà en place jouent aussi : leur portrait a peut-être changé.
-   <div class="astuce">Pas encore de leaders : c'est un simple duo. Observe qui aide bien ; ce sont peut-être tes futurs mentors d'atelier.</div>
-  </div></div>
-
-  <div class="bloc"><div class="temps">10 min<small>Pause</small></div><div>Entre la P1 et la P2, selon l'horaire.</div></div>
-
-  <div class="bloc"><div class="temps">20 min<small>3. Le mur des projets</small></div><div>
-   <div class="qui"><span class="t">Tout le sous-groupe</span></div>
-   Chaque élève écrit sur un papier : <b>« Dans un an, j'aimerais… »</b>. On colle les papiers sous trois planètes : Lune (je me connais), Mars (ce qui me fait avancer), Saturne (mon projet).
-   <div class="astuce">Garde le mur toute l'année. Les deux sous-groupes l'enrichissent. En juin, chaque élève relit son papier : qu'est-ce qui a changé ?</div>
-  </div></div>
-
-  <div class="bloc"><div class="temps">15 min<small>4. Mon journal d'atelier</small></div><div>
-   <div class="qui"><span class="n">Nouveaux</span><span class="a">Déjà en place</span></div>
-   On ouvre la page des <a href="ateliers.html">ateliers</a>. Les nouveaux lisent les 4 fiches et choisissent les 2 ateliers à essayer pendant la découverte. Les élèves déjà en place montrent comment remplir le journal d'atelier après une séance.
-  </div></div>
-
-  <div class="bloc"><div class="temps">5 min<small>5. Le billet de sortie</small></div><div>
-   Un seul mot pour décrire aujourd'hui. Les élèves déjà en place répondent en dernier.
-  </div></div>
+ <section class="carte per" style="--k:#5B4BFF">
+  <span class="tag">Période 3 · Tout le monde</span><h2>Mettre en commun</h2>
+  <div class="bloc"><div class="temps">20 min</div><div><b>La galerie des ateliers :</b> les plans de match au mur, 2 minutes par porte-parole, points verts (j'aime) et jaunes (question).</div></div>
+  <div class="bloc"><div class="temps">15 min</div><div><b>Notre entente de passation :</b> les règles communes, choisies par le vote avec les doigts (outil Vote au TNI).</div></div>
+  <div class="bloc"><div class="temps">15 min</div><div><b>Mon cercle d'influence</b>, seul et au calme : je contrôle, j'influence, ça ne dépend pas de moi.</div></div>
+  <div class="bloc"><div class="temps">10 min</div><div><b>Mon billet de sortie</b> (3 mots, 2 choses, 1 question), puis un mot chacun, en cercle.</div></div>
  </section>
 
  <section class="carte mt2">
-  <h2>Pistes de réflexion</h2>
-  <ul class="q">
-   <li>Un élève qui a déjà fait un stage en conciergerie pourrait-il devenir <b>mentor</b> de l'atelier, après la découverte ?</li>
-   <li>À la cantine, et si l'élève « responsable du comptoir » faisait passer une <b>mini-entrevue</b> à ses collègues avant leur premier quart ?</li>
-   <li>Et si on montrait aux élèves le tableau des choix (sans les noms) pour qu'ils <b>négocient</b> eux-mêmes la répartition ? C'est le savoir « fonctionnement en groupe » en action.</li>
-   <li>La phrase pour l'avenir de chaque fiche (« Ça pourrait me servir pour… ») : et si on en faisait une <b>bande de phrases</b> sur le mur des projets ?</li>
-   <li>Qu'est-ce qu'un nouveau devrait pouvoir dire à la fin de sa première semaine ? Peut-être : « Je sais qui m'aide ici. »</li>
-  </ul>
+  <h2>Les documents à imprimer</h2>
+  <p>Ils sont dans la trousse Z101 déposée dans Teams, dossier <b>Lecons / Premier-mardi_Accueil-et-ateliers</b> : plan, cartes de joueur, bingo, cartes de questions, fiches d'équipe par atelier, carnet de passation, entente, cercle d'influence, billet de sortie.</p>
  </section>
 </main>
 <footer>PPS-Z101-3 · CFGA De La Jonquière</footer>
