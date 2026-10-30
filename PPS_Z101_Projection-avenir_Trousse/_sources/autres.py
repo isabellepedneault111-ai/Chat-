@@ -2,6 +2,7 @@
 import os
 from style import page, doc, ico, qr, CAT, SITE, INK, CSS
 from blocs import B, ORDRE, L, CB, OPTS, SCALE
+from illus_z101 import bouquet
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 R = os.path.dirname(ICI)
@@ -15,9 +16,7 @@ CRIT = [
     dict(cat="disp", no="1", nom="Détermination rigoureuse de ses réalités personnelles et sociales", court="Me connaître",
          savoirs=["Traits de personnalité", "Habiletés", "Expériences", "Facteurs de délimitation"], blocs="C1 et C2",
          logique="Établir des liens entre ses facteurs de délimitation et leurs incidences sur sa vie quotidienne.",
-         ech=["Grande difficulté à établir des liens entre sa vie quotidienne et ses dispositions.", "Difficulté à établir des liens entre sa vie quotidienne et ses dispositions.",
-              "Établit de façon satisfaisante des liens entre sa vie quotidienne et ses dispositions.", "Établit clairement des liens entre sa vie quotidienne et ses dispositions.",
-              "Établit très clairement des liens entre sa vie quotidienne et ses dispositions."],
+         ech=["L’adulte a une grande difficulté à établir des liens entre sa vie quotidienne et ses dispositions personnelles et sociales.", "L’adulte a de la difficulté à établir des liens entre sa vie quotidienne et ses dispositions personnelles et sociales.", "L’adulte établit de façon satisfaisante des liens entre sa vie quotidienne et ses dispositions personnelles et sociales.", "L’adulte établit clairement des liens entre sa vie quotidienne et ses dispositions personnelles et sociales.", "L’adulte établit très clairement des liens entre sa vie quotidienne et ses dispositions personnelles et sociales."],
          je=["Je nomme mes intérêts, mon tempérament et mes habiletés.", "Je raconte des expériences qui m'ont appris quelque chose.", "J'explique comment ce qui me limite agit sur ma vie, avec un exemple."],
          obs=["Nomme des traits et des habiletés appuyés sur des exemples réels.", "Distingue ses expériences (familiales, scolaires, professionnelles, socioculturelles).",
               "Nomme au moins un facteur de délimitation sans se dévaloriser.", "Fait un lien explicite : facteur, effet sur la vie quotidienne, moyen d'agir."],
@@ -26,9 +25,7 @@ CRIT = [
     dict(cat="pot", no="2", nom="Reconnaissance réaliste de son potentiel d'action", court="Ce qui me fait avancer",
          savoirs=["Facteurs de motivation", "Habitudes de vie", "Fonctionnement en groupe", "Milieux d'appartenance"], blocs="C3 et C4",
          logique="Développer un sentiment d'appartenance au milieu de formation.",
-         ech=["Grande difficulté à cerner sa motivation et la contribution de ses milieux.", "Difficulté à cerner sa motivation et la contribution de ses milieux.",
-              "Cerne de façon satisfaisante sa motivation et la contribution de ses milieux.", "Cerne de façon concrète sa motivation et la contribution de ses milieux.",
-              "Cerne de façon concrète et précise sa motivation et la contribution de ses milieux."],
+         ech=["L’adulte a une grande difficulté à cerner sa motivation personnelle et la contribution de ses milieux d’appartenance.", "L’adulte a de la difficulté à cerner sa motivation personnelle et la contribution de ses milieux d’appartenance.", "L’adulte cerne de façon satisfaisante sa motivation personnelle et la contribution de ses milieux d’appartenance.", "L’adulte cerne de façon concrète sa motivation personnelle et la contribution de ses milieux d’appartenance.", "L’adulte cerne de façon concrète et précise sa motivation personnelle et la contribution de ses milieux d’appartenance."],
          je=["Je nomme ce qui me motive et comment je continue quand c'est difficile.", "Je connais mon horaire et mes moments disponibles.", "Je nomme les personnes et les milieux qui peuvent m'aider."],
          obs=["Nomme des sources de motivation personnelles et un moyen de persévérer.", "Décrit sa routine et des disponibilités réalistes.",
               "S'évalue avec réalisme en groupe (force et défi).", "Nomme des personnes significatives de plusieurs milieux, dont le centre de formation."],
@@ -37,9 +34,7 @@ CRIT = [
     dict(cat="proj", no="3", nom="Élaboration méthodique de son projet de participation sociale", court="Mon projet",
          savoirs=["Buts", "Besoins de formation", "Conditions de réussite", "Partenaires"], blocs="C5 et C6",
          logique="Mettre en relation ses réalités personnelles et sociales ainsi que son potentiel d'action.",
-         ech=["Grande difficulté à déterminer les composantes de son projet.", "Difficulté à déterminer les composantes de son projet.",
-              "Détermine de façon satisfaisante les principales composantes de son projet.", "Détermine de façon claire l'ensemble des composantes de son projet.",
-              "Détermine de façon claire et détaillée l'ensemble des composantes de son projet."],
+         ech=["L’adulte a une grande difficulté à déterminer les composantes de son projet.", "L’adulte a de la difficulté à déterminer les composantes de son projet.", "L’adulte détermine de façon satisfaisante les principales composantes de son projet.", "L’adulte détermine de façon claire l’ensemble des composantes de son projet.", "L’adulte détermine de façon claire et détaillée l’ensemble des composantes de son projet."],
          je=["Mon projet tient en une phrase et il me ressemble.", "J'ai des buts à court, moyen et long terme, et les cours qui m'aident.", "J'ai prévu mes conditions de réussite et mes partenaires."],
          obs=["Formule un projet cohérent avec ses réalités (C1-C2) et son potentiel (C3-C4).", "Hiérarchise des buts clairs, réalistes et datés.",
               "Justifie le choix de cours du programme par ses besoins.", "Prévoit priorités, échéances, transport, coûts, suivi et partenaires avec un rôle."],
@@ -100,13 +95,13 @@ def evaluation():
     # --- Enseignante : grille critérielle
     def grille_crit(c):
         k = CAT[c["cat"]]
-        cells = "".join(f'<td style="width:18%;{"background:" + k["cl"] + ";" if i == 2 else ""}"><div class="tag" style="color:{k["c"] if i >= 2 else "#6B7189"}">{ECH[i]}</div><div style="font-size:8.6pt;margin:3px 0 6px">{d}</div><span class="cb"></span></td>' for i, d in enumerate(c["ech"]))
+        cells = "".join(f'<td style="width:18%;{"background:" + k["cl"] + ";" if i == 2 else ""}"><div class="tag" style="color:{k["c"] if i >= 2 else "#6B7189"}">{ECH[i]}</div><div style="font-size:7.8pt;line-height:1.25;margin:3px 0 4px">{d}</div><span class="cb"></span></td>' for i, d in enumerate(c["ech"]))
         return f'<div class="mt"><h2 style="color:{k["c"]}">Critère {c["no"]} · {c["nom"]}</h2><table class="t grid"><tr>{cells}</tr></table></div>'
     corps = f'''<div class="g2"><div class="small"><b>Adulte :</b> ____________________________</div><div class="small"><b>Date :</b> ______________ &nbsp; <b>Forme :</b> ______________</div></div>
 {"".join(grille_crit(c) for c in CRIT)}
 <div class="card d mt"><h2>{ico("ok")}Règle de réussite</h2><p>Seuil de réussite : <b style="color:#D9431F">Acceptable</b> pour <b>chacun</b> des 3 critères. Un critère sous le seuil entraîne une reprise ciblée de ce critère seulement.</p></div>
-<div class="card mt"><h2>{ico("crayon")}Commentaires et prochaines étapes</h2>{L(2)}</div>
-<p class="xs">Échelons et descripteurs repris de l'outil Z101 du CSSDLJ (grille critérielle prescrite, PPS-Z101-3). À valider avec la définition du domaine d'évaluation en vigueur.</p>'''
+<div class="small mt"><b>Commentaires :</b> ________________________________________________________________</div>
+<p class="xs">Énoncés de la grille prescrite : DDE PPS-Z101-3, MEQ. L'épreuve dure 2 heures au maximum et touche au moins la moitié des savoirs, dans les 3 catégories.</p>'''
     jobs.append(("EV_1", doc("Grille d'évaluation critérielle", [page("base", "Grille d'évaluation critérielle", corps, kick="Enseignante seulement", sous="PPS-Z101-3 · une grille par élève", etiquette="Grille critérielle")]),
                  os.path.join(P_EV, "1_Grille-critérielle_PPS-Z101.pdf".replace("é", "e"))))
     # --- Enseignante : fiches descriptives par critère
@@ -153,7 +148,7 @@ def evaluation():
 def maitre():
     pages = []
     couv = f'''<section class="page cover">{"".join([])}
-<svg style="position:absolute;right:0;top:0" width="300" height="300" viewBox="0 0 300 300"><g fill="none" stroke-width="1.4"><line x1="40" y1="0" x2="300" y2="260" stroke="#5B4BFF"/><line x1="110" y1="0" x2="300" y2="190" stroke="#F2542D"/><line x1="180" y1="0" x2="300" y2="120" stroke="#0E9F8E"/></g><rect x="250" y="30" width="16" height="16" fill="#F2542D"/></svg>
+<div style="position:absolute;right:.6in;top:.7in;text-align:right">{bouquet(["boussole", "ampoule"], 110, 6)}<br>{bouquet(["pousse", "panneau", "drapeau"], 88, 6)}</div>
 <div style="margin-top:2.6in" class="kick">PPS-Z101-3 · Dossier maître</div>
 <h1 style="margin-top:12px">Projection<br>vers l'avenir</h1>
 <div class="sous">Mon projet de participation sociale. Le guide de l'enseignante : programme, organisation, séquence bloc par bloc, observation et évaluation.</div>
