@@ -57,7 +57,7 @@ BLOCS = [
       obs="La conclusion répond-elle à la question (quel forfait choisir, à partir de quand) ?",
       diff="Deux forfaits de cellulaire ou de location : le point de rencontre, c'est le moment où ça change."),
 ]
-TOT = 7
+TOT = 9
 
 
 def pg(titre, corps, kick, sous="", n=1):
@@ -122,7 +122,7 @@ def p_continue():
 <div class="g3"><div class="card t"><b>1 · Je relis</b><p>La feuille de notes et le piège fréquent du bloc.</p></div><div class="card t"><b>2 · Je demande à un pair</b><p>Un élève qui a terminé ce bloc (voir le tableau de suivi).</p></div><div class="card t"><b>3 · Je m'inscris</b><p>Sur la file d'aide au tableau ; l'enseignante passe dans l'ordre.</p></div></div>
 <h2 class="mt">{ico("crayon")}Tableau de suivi de la classe</h2><p class="xs">Une ligne par élève. Inscrire la date du Math-o-portrait et la couleur du feu de circulation. À garder dans l'espace de l'enseignante (pas dans un canal public).</p>
 <table class="t grid"><tr><th style="width:20%">Élève</th>{"".join(f"<th>B{i}</th>" for i in range(1, 9))}</tr>{("<tr><td style='height:24px'></td>" + "<td></td>" * 8 + "</tr>") * 10}</table>
-<div class="card k mt"><h2>{ico("attention")}Évaluation</h2><p>La trousse sert à l'apprentissage. L'évaluation en vue de la sanction suit la définition du domaine d'évaluation du cours MAT-3051-2 et les épreuves du centre : à planifier avec l'équipe.</p></div></div>'''
+<div class="card k mt"><h2>{ico("attention")}Évaluation</h2><p>L'épreuve suit la DDE de MAT-3051-2 (octobre 2021) : voir les pages 7 et 8. Pendant l'apprentissage, on donne une rétroaction sur <b>tous</b> les critères, même ceux qui ne sont pas retenus pour l'épreuve.</p></div></div>'''
     return pg("Entrée continue et suivi", corps, kick="Au quotidien", sous="Pour que chaque élève sache quoi faire, même le jour de son arrivée.", n=6)
 
 
@@ -132,13 +132,58 @@ def p_pistes():
 <li>Un <b>mur des pièges</b> : chaque élève qui tombe dans un piège fréquent l'ajoute, avec son truc pour l'éviter.</li>
 <li>Des <b>tuteurs de bloc</b> : l'élève qui a un feu vert au Math-o-portrait devient la personne-ressource du bloc pour une semaine.</li>
 <li>Pour le bloc 8, partir d'une <b>vraie décision</b> des élèves : deux forfaits de cellulaire, deux salles de sport, deux emplois.</li></ul></div>
-<div class="g2 mt"><div class="card"><h2>{ico("lien")}Les documents de la trousse</h2><ul><li>00 · Plan de rencontre de 60 min (avec les coquilles du cahier)</li><li>00 · Guide Teams pas à pas (Word et PDF)</li><li>00 · Guide OneNote : structure et liens vidéo (Word et PDF)</li><li>Bloc 0 · Passeport et ma démarche</li><li>Blocs 1 à 8 · Cahier, feuille de notes, exercices</li><li>99 · Corrigés, cahier découpé, banque d'exercices</li></ul></div>
+<div class="g2 mt"><div class="card"><h2>{ico("lien")}Les documents de la trousse</h2><ul><li>00 · Plan de rencontre de 60 min (avec les coquilles du cahier)</li><li>00 · Guide Teams pas à pas (Word et PDF)</li><li>00 · Guide OneNote : structure et liens vidéo (Word et PDF)</li><li>Bloc 0 · Passeport et ma démarche</li><li>Blocs 1 à 8 · Cahier, feuille de notes, exercices</li><li>99 · Corrigés, cahier découpé, banque d'exercices</li><li>La DDE de MAT-3051-2 (MEQ, 2021), sur Québec.ca</li></ul></div>
 <div class="card d"><h2>{ico("ok")}Pour bien démarrer</h2><ol class="steps"><li>Prendre les 5 décisions (page 2).</li><li>Déposer le Bloc 0 et le Bloc 1 dans Teams.</li><li>Faire le premier Math-o-portrait.</li><li>Ajouter les blocs suivants au fil des arrivées.</li></ol></div></div></div>'''
-    return pg("Pistes et ressources", corps, kick="Annexes", n=7)
+    return pg("Pistes et ressources", corps, kick="Annexes", n=9)
+
+
+SAVOIRS = [
+ ("Inégalité et inéquation", "Relation d'inégalité", "2"),
+ ("Inégalité et inéquation", "Résolution d'équations et d'inéquations du 1er degré à une variable", "1 · 2"),
+ ("Relation", "Observation, description, interprétation et représentation de la dépendance entre les variables", "3"),
+ ("Relation", "Fonction et réciproque", "5 · 6"),
+ ("Relation", "Représentation d'une expérimentation ou d'une étude statistique à l'aide d'un nuage de points", "4"),
+ ("Relation", "Représentation et interprétation de la réciproque d'une fonction", "6"),
+ ("Relation", "Détermination de la règle de correspondance", "3 · 4"),
+ ("Relation", "Description des propriétés d'une fonction en contexte", "7"),
+ ("Relation", "Description qualitative de l'effet de la modification d'un paramètre d'une fonction affine", "3 (section 3.6)"),
+ ("Système", "Résolution de systèmes d'équations du 1er degré à deux variables", "8")]
+DDE_URL = "https://cdn-contenu.quebec.ca/cdn-contenu/education/formation-generale-adultes/definitions-domaine-evaluation/mathematique/FGA-DDE-mathematique-MAT-3051-2-modelisation-algebrique-graphique.pdf"
+
+
+def p_dde():
+    crit = [("1.1", "Manifestation, oralement ou par écrit, d'une compréhension adéquate de la situation-problème", "10", "Dégager les informations pertinentes et ce qui est cherché."),
+            ("1.2", "Mobilisation de stratégies et de savoirs mathématiques appropriés", "20", "Choisir une stratégie pertinente et les bons savoirs."),
+            ("2.1", "Utilisation correcte des concepts et des processus mathématiques appropriés", "15 + 5", "Appliquer les savoirs avec justesse (15) ; obtenir les bons résultats (5)."),
+            ("2.2", "Mise en œuvre convenable d'un raisonnement mathématique adapté à la situation", "20", "Démarche cohérente, étapes dégagées."),
+            ("2.3", "Structuration adéquate des étapes d'une démarche pertinente", "5 + 5", "Démarche structurée, conventions respectées ; réponse cohérente avec le contexte.")]
+    corps = f"""<div class="dense">
+<div class="g3"><div class="card t"><span class="tag" style="color:{C}">Compétence 1 · 30 %</span><h3>Utiliser des stratégies de résolution de situations-problèmes</h3></div>
+<div class="card t"><span class="tag" style="color:{C}">Compétence 2 · 50 %</span><h3>Déployer un raisonnement mathématique</h3></div>
+<div class="card t"><span class="tag" style="color:{C}">Connaissances · 20 %</span><h3>Évaluation explicite des connaissances</h3></div></div>
+<p class="xs mt">La compétence 3, « Communiquer à l'aide du langage mathématique », n'est pas évaluée à part ; elle est prise en compte dans les grilles. Famille de situations : <b>Relation entre quantités</b>. Domaines généraux de formation : Santé et bien-être, Environnement et consommation.</p>
+<h2 class="mt">{ico("cible")}Les critères de l'épreuve (grilles prescrites)</h2>
+<table class="t"><tr><th style="width:7%">Critère</th><th style="width:40%">Énoncé</th><th style="width:10%">Points</th><th>Concrètement</th></tr>
+{"".join(f"<tr><td><b>{a}</b></td><td>{b}</td><td>/{c}</td><td>{d}</td></tr>" for a, b, c, d in crit)}</table>
+<p class="xs">Échelle : marquée, assurée, acceptable, peu développée, très peu développée.</p>
+<h2 class="mt">{ico("etapes")}L'épreuve</h2>
+<div class="g2"><div class="card"><ul><li><b>180 minutes</b>, une seule séance, un seul cahier.</li><li><b>Section 1 :</b> 4 questions d'application (connaissances, 20 %).</li><li><b>Section 2 :</b> 3 tâches à partir de situations réalistes (compétences, 80 %).</li><li>Le jugement repose sur <b>au moins 2 tâches</b> : une seule tâche terminée = échec.</li><li><b>Seuil : 60 %.</b> La reprise se fait <b>en entier</b>.</li><li>Toutes les catégories et <b>au moins 7 des 10 savoirs</b> sont touchés.</li></ul></div>
+<div class="card k"><h2>{ico("crayon")}Matériel autorisé</h2><ul><li>Calculatrice scientifique ou graphique <b>sans calcul formel</b> (mémoire effacée avant et après)</li><li>Règle, équerre, compas, rapporteur, papier brouillon et quadrillé</li><li><b>Aide-mémoire :</b> 1 page recto 8½ × 11, manuscrite ou à l'ordinateur (12 points minimum), faite par l'élève et approuvée par l'enseignante. Exemples et formules acceptés.</li></ul></div></div>
+<p class="xs mt">Source : Définition du domaine d'évaluation MAT-3051-2, MEQ, octobre 2021 (prescrite).</p></div>"""
+    return pg("L'épreuve selon la DDE", corps, kick="Évaluation", sous="Ce que prescrit la définition du domaine d'évaluation.", n=7)
+
+
+def p_savoirs():
+    rows = "".join(f'<tr><td class="small" style="color:{C};font-weight:800">{c}</td><td>{s}</td><td style="text-align:center"><b>{b}</b></td><td>{CB("")}</td></tr>' for c, s, b in SAVOIRS)
+    corps = f"""<div class="dense"><table class="t grid"><tr><th style="width:18%">Catégorie</th><th>Savoir prescrit</th><th style="width:16%">Bloc(s) du cahier</th><th style="width:10%">Vu</th></tr>{rows}</table>
+<div class="g2 mt"><div class="card d"><h2>{ico("idee")}L'aide-mémoire se bâtit pendant le cours</h2><p>Chaque feuille de notes a « L'essentiel » et « Mon exemple perso ». À la fin de chaque bloc, l'élève choisit <b>une ligne</b> à recopier sur son aide-mémoire. Au bloc 8, il a sa page recto, faite par lui, prête à faire approuver.</p></div>
+<div class="card"><h2>{ico("logique")}Préparer aux 3 tâches</h2><ul><li>S'entraîner à <b>dégager ce qui est cherché</b> avant de calculer (critère 1.1).</li><li>Exiger une <b>phrase de conclusion</b> avec les unités (critère 2.3).</li><li>Les problèmes de contexte des blocs 2, 3, 4 et 8 sont les plus proches des tâches.</li><li>Faire une épreuve de pratique de 180 minutes avant la vraie.</li></ul></div></div>
+<div class="card t mt"><h2>{ico("ok")}Rétroaction en cours d'apprentissage</h2><p>Le feu de circulation et le Math-o-portrait servent de rétroaction sur tous les critères. On peut reprendre les mots des grilles avec l'élève : « Tu as bien dégagé ce qui est cherché ; ta démarche manque d'une étape. »</p></div></div>"""
+    return pg("Les 10 savoirs et le cahier", corps, kick="Évaluation", sous="Où chaque savoir prescrit est travaillé dans la trousse.", n=8)
 
 
 def construire():
-    pages = [couverture(), p_trousse(), p_sequence(), p_blocs(0, 4, 4), p_blocs(4, 8, 5), p_continue(), p_pistes()]
+    pages = [couverture(), p_trousse(), p_sequence(), p_blocs(0, 4, 4), p_blocs(4, 8, 5), p_continue(), p_dde(), p_savoirs(), p_pistes()]
     out = os.path.join(R, "00_COMMENCER-ICI", "0_Dossier-maitre_Enseignante.pdf")
     tmp = "/tmp/claude-0/pps/mathtml"; os.makedirs(tmp, exist_ok=True)
     h = os.path.join(tmp, "dm.html"); open(h, "w").write(doc("Dossier maître MAT-3051", pages))
