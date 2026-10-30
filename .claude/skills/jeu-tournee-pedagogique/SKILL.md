@@ -6,7 +6,7 @@ description: >-
 
 # Jeu en tournée pédagogique
 
-Ce skill produit un site statique : une page HTML, des polices et jsPDF. Le site se publie sur Netlify ou sur tout autre hébergement statique. Tout le contenu vient d'**un seul fichier de configuration JSON**, et le moteur fait le reste. Exemple complet et éprouvé en classe : `exemples/estimer-au-saguenay.json`, un jeu de mathématiques financières en PPS. Il est en ligne sur https://pps-z128-estimer.netlify.app/estimer-au-saguenay.html.
+Ce skill produit un site statique : une page HTML, des polices et jsPDF. Le site se publie sur Netlify ou sur tout autre hébergement statique. Tout le contenu vient d'**un seul fichier de configuration JSON**, et le moteur fait le reste. Exemple complet et éprouvé en classe : `exemples/estimer-au-saguenay.json`, un jeu de mathématiques financières en PPS. Il est en ligne sur https://pps-z128-estimer.netlify.app/estimer-au-saguenay.html. Pour un cours sans mathématiques, avec des questions de connaissance de soi (type `portrait`, non noté) et le thème espace, vois `exemples/mission-avenir.json` (PPS-Z101).
 
 ## Ce que l'élève vit (et pourquoi)
 
@@ -32,7 +32,7 @@ Ce qu'il faut savoir avant d'écrire. Propose des choix par défaut plutôt que 
 - **Les trois niveaux :** des noms neutres qui ne stigmatisent pas (arbres, rivières, saisons…). Par défaut, la progression va du concret à l'imagé à l'abstrait.
 - **La grille :** de 3 à 6 éléments **observables**, liés au programme, chacun avec 4 descripteurs.
 - **Le contexte :** des lieux réels et proches des élèves ; c'est ce qui rend le jeu vivant.
-- **Les visuels :** les décors (montre `assets/galerie-decors.png`), la mascotte (`renard`, `hibou` ou `aucune`), la couleur d'accent.
+- **Les visuels :** les décors (montre `assets/galerie-decors.png`), la mascotte (`renard`, `hibou`, `astronaute` ou `aucune`), la couleur d'accent.
 - **La durée :** `valider.py` l'estime (environ 1 min par défi, plus les capsules et les stations). 25 min ≈ 18 à 20 défis, 30 min ≈ 22 à 26 défis.
 - **L'équipe et le canal Teams** où publier les défis des élèves.
 

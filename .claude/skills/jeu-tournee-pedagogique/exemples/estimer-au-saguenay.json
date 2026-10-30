@@ -1509,80 +1509,314 @@
     "equipe": "Budget et consommation PPS",
     "canal": "le canal de ton cours (PPS-Z128)"
    },
-   "suggestions": [
-    [
-     "Café moyen",
-     2.39
+   "suggestions": {
+    "Tim Hortons": [
+     [
+      "Café moyen",
+      2.39
+     ],
+     [
+      "Beigne",
+      1.79
+     ],
+     [
+      "Muffin aux bleuets",
+      2.5
+     ],
+     [
+      "Bagel au fromage à la crème",
+      3.49
+     ],
+     [
+      "Chocolat chaud",
+      2.29
+     ],
+     [
+      "Timbits (10)",
+      3.29
+     ],
+     [
+      "Sandwich déjeuner",
+      5.49
+     ],
+     [
+      "Thé glacé",
+      2.79
+     ]
     ],
-    [
-     "Beigne",
-     1.79
+    "Dépanneur du quartier": [
+     [
+      "Croustilles",
+      4.29
+     ],
+     [
+      "Lait au chocolat",
+      4.59
+     ],
+     [
+      "Pain tranché",
+      4.49
+     ],
+     [
+      "Gomme",
+      1.99
+     ],
+     [
+      "Boisson gazeuse 2 L",
+      4.79
+     ],
+     [
+      "Sac de bonbons",
+      4.5
+     ],
+     [
+      "Barre de chocolat",
+      2.25
+     ],
+     [
+      "Bouteille d’eau",
+      1.99
+     ]
     ],
-    [
-     "Muffin aux bleuets",
-     2.5
+    "Dollarama": [
+     [
+      "Bonbons d’Halloween",
+      3.75
+     ],
+     [
+      "Maquillage",
+      2.25
+     ],
+     [
+      "Citrouille en plastique",
+      1.5
+     ],
+     [
+      "Cahier",
+      1.25
+     ],
+     [
+      "Crayons de couleur",
+      4.85
+     ],
+     [
+      "Bâton de colle",
+      2.5
+     ],
+     [
+      "Décorations",
+      4.0
+     ],
+     [
+      "Ballons",
+      1.5
+     ]
     ],
-    [
-     "Bagel",
-     3.49
+    "Maxi": [
+     [
+      "Lait 2 L",
+      5.29
+     ],
+     [
+      "Pain",
+      3.79
+     ],
+     [
+      "Bleuets du Lac",
+      4.99
+     ],
+     [
+      "Sac de pommes",
+      5.49
+     ],
+     [
+      "Tourtière du Lac",
+      12.99
+     ],
+     [
+      "Fromage en grains",
+      6.49
+     ],
+     [
+      "Céréales",
+      4.89
+     ],
+     [
+      "Œufs (12)",
+      4.49
+     ]
     ],
-    [
-     "Lait 2 L",
-     5.29
+    "Cinéma Jonquière": [
+     [
+      "Billet",
+      10.99
+     ],
+     [
+      "Billet du mardi",
+      7.5
+     ],
+     [
+      "Popcorn moyen",
+      6.49
+     ],
+     [
+      "Boisson",
+      3.79
+     ],
+     [
+      "Bonbons",
+      2.19
+     ],
+     [
+      "Bouteille d’eau",
+      1.99
+     ]
     ],
-    [
-     "Pain",
-     3.79
+    "Pizzéria du coin": [
+     [
+      "Pizza moyenne",
+      18.79
+     ],
+     [
+      "Boisson",
+      2.49
+     ],
+     [
+      "Frites",
+      4.25
+     ],
+     [
+      "Poutine",
+      9.99
+     ],
+     [
+      "Salade César",
+      7.49
+     ]
     ],
-    [
-     "Bleuets du Lac",
-     4.99
+    "Centre Georges-Vézina": [
+     [
+      "Billet étudiant",
+      14.5
+     ],
+     [
+      "Hot-dog",
+      4.75
+     ],
+     [
+      "Chocolat chaud",
+      2.95
+     ],
+     [
+      "Frites",
+      5.25
+     ],
+     [
+      "Casquette des Saguenéens",
+      29.99
+     ]
     ],
-    [
-     "Fromage en grains",
-     6.49
+    "Walmart": [
+     [
+      "Céréales",
+      4.99
+     ],
+     [
+      "Lait 2 L",
+      5.29
+     ],
+     [
+      "Bananes",
+      1.89
+     ],
+     [
+      "Croustilles",
+      4.49
+     ],
+     [
+      "Savon à vaisselle",
+      3.49
+     ],
+     [
+      "Écouteurs",
+      14.97
+     ],
+     [
+      "Bas (paquet)",
+      9.97
+     ]
     ],
-    [
-     "Tourtière du Lac",
-     12.99
+    "Jean Coutu": [
+     [
+      "Shampoing",
+      7.99
+     ],
+     [
+      "Déodorant",
+      5.49
+     ],
+     [
+      "Baume à lèvres",
+      3.29
+     ],
+     [
+      "Brosse à dents",
+      4.49
+     ],
+     [
+      "Dentifrice",
+      3.79
+     ],
+     [
+      "Savon",
+      2.89
+     ]
     ],
-    [
-     "Croustilles",
-     4.49
+    "Place du Royaume": [
+     [
+      "Tuque",
+      30.0
+     ],
+     [
+      "Mitaines",
+      19.99
+     ],
+     [
+      "Bottes d’hiver",
+      79.99
+     ],
+     [
+      "Foulard",
+      24.99
+     ],
+     [
+      "Chandail",
+      34.99
+     ]
     ],
-    [
-     "Boisson gazeuse",
-     2.99
-    ],
-    [
-     "Billet de cinéma",
-     10.99
-    ],
-    [
-     "Popcorn moyen",
-     6.49
-    ],
-    [
-     "Pizza moyenne",
-     18.79
-    ],
-    [
-     "Billet des Saguenéens",
-     14.5
-    ],
-    [
-     "Tuque",
-     30.0
-    ],
-    [
-     "Shampoing",
-     7.99
-    ],
-    [
-     "Bonbons d’Halloween",
-     3.75
+    "Party d’Halloween": [
+     [
+      "Gros sac de bonbons",
+      9.97
+     ],
+     [
+      "Croustilles",
+      4.49
+     ],
+     [
+      "Boisson gazeuse 2 L",
+      2.99
+     ],
+     [
+      "Décorations",
+      6.25
+     ],
+     [
+      "Pizza surgelée",
+      7.99
+     ]
     ]
-   ]
+   }
   }
  }
 }

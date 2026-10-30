@@ -4,10 +4,10 @@ Affiche les ERREURS (bloquantes) et les AVERTISSEMENTS (à regarder), puis une e
 import json, sys, os
 
 DECORS = ["cafe", "depanneur", "magasin", "epicerie", "cinema", "restaurant", "arena", "grande-surface", "pharmacie",
-          "centre-commercial", "maison-halloween", "ecole", "bibliotheque", "parc", "banque", "clinique", "maison", "cuisine", "gare", "casse-croute", "cafeteria"]
+          "centre-commercial", "maison-halloween", "ecole", "bibliotheque", "parc", "banque", "clinique", "maison", "cuisine", "gare", "casse-croute", "cafeteria", "planete", "station-spatiale", "observatoire", "lancement", "base-lunaire", "tour-controle", "atelier-robot", "constellation", "asteroides", "cockpit"]
 TYPES = {"droite": ["a", "p"], "tri": ["boites", "etiquettes"], "jetons": ["articles"], "qcm": ["choix", "bonne"],
          "num": ["accepteMin", "accepteMax"], "assez": ["budget", "reponse"], "ordre": ["etapes"],
-         "curseur": ["min", "max", "accepteMin", "accepteMax"], "vf": ["reponse"], "erreur": ["lignes", "fausses"], "texte": []}
+         "curseur": ["min", "max", "accepteMin", "accepteMax"], "vf": ["reponse"], "erreur": ["lignes", "fausses"], "texte": [], "portrait": ["options"]}
 VISUELS = {"comparer", "tableauNutritif", "droite", "recu", "recuArrondi", "billets", "taxes", "grand", "colonnes", "mascotte", "decor", "image", "html"}
 
 def valider(cfg):
@@ -63,7 +63,7 @@ def valider(cfg):
         else: prev = q["station"]
         if q.get("element") not in els: err.append(f"{o} : élément de grille inconnu « {q.get('element')} ».")
         if q.get("truc") and q["truc"] not in trucs: err.append(f"{o} : truc inconnu « {q['truc']} ».")
-        if t != "texte" and not q.get("truc"): warn.append(f"{o} : pas de « truc » (indice) associé.")
+        if t not in ("texte", "portrait") and not q.get("truc"): warn.append(f"{o} : pas de « truc » (indice) associé.")
         if t == "qcm" and not 0 <= q.get("bonne", -1) < len(q.get("choix", [])): err.append(f"{o} : « bonne » hors des choix.")
         if t == "tri":
             for e in q.get("etiquettes", []):

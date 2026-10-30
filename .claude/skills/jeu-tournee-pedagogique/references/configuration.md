@@ -22,9 +22,10 @@ Un jeu = un fichier JSON. L'exemple complet est `exemples/estimer-au-saguenay.js
 | `intention` | L'intention pédagogique : elle figure dans l'espace enseignant et dans le bilan PDF. |
 | `duree` | Durée annoncée, en minutes. |
 | `unite` | Unité par défaut des nombres (`"$"` par défaut, `""` pour aucune unité). Avec `"$"`, un nombre s'affiche avec 2 décimales (4,99 $). Avec une autre unité, il s'affiche tel quel (280 mg, 12,5 g). Chaque défi peut avoir son propre `unite`, qui s'applique à ses `articles`, à ses `lignes`, à `num` et à `curseur`. |
-| `mascotte` | `{fichier: "renard" \| "hibou" \| "aucune", nom: "le renard", du: "du renard"}`. Le champ `du` forme les libellés « Le truc du renard », « Les trucs du renard ». |
+| `mascotte` | `{fichier: "renard" \| "hibou" \| "astronaute" \| "aucune", nom: "le renard", du: "du renard"}`. Le champ `du` forme les libellés « Le truc du renard », « Les trucs du renard ». |
 | `theme` | `{accent, accentFonce, accentPale, formes: [4 couleurs des formes de fond]}`. |
-| `carte` | `{trajet: "de Jonquière à Chicoutimi", depart, arrivee, riviere}`. La rivière est facultative. |
+| `carte` | `{trajet: "de Jonquière à Chicoutimi", depart, arrivee, riviere, theme}`. La rivière est facultative. `theme: "espace"` donne une carte de nuit étoilée (avec les décors spatiaux). |
+| `portraitTitre` | Titre de la section du bilan qui regroupe les réponses `portrait` (par défaut « Mon portrait »). |
 | `remise` | Phrase qui explique comment remettre le bilan (facultatif). |
 
 ## 2. Niveaux, grille, autoévaluation
@@ -56,7 +57,7 @@ Un jeu = un fichier JSON. L'exemple complet est `exemples/estimer-au-saguenay.js
 ```
 - `court` est l'étiquette sur la carte (16 caractères au maximum).
 - `capsules` (facultatif) joue une capsule sur l'écran de la station, juste avant ses défis. C'est l'endroit idéal pour un nouveau truc difficile.
-- **Décors disponibles** : `cafe`, `depanneur`, `magasin` (avec citrouilles et ballons), `epicerie`, `cinema`, `restaurant` (pizzéria), `casse-croute` (frites et table à pique-nique), `cafeteria` (intérieur, menu du jour), `arena`, `grande-surface`, `pharmacie`, `centre-commercial` (avec neige), `maison-halloween`, `ecole`, `bibliotheque`, `parc`, `banque`, `clinique`, `maison`, `cuisine` (intérieur), `gare` (arrêt d'autobus). Ils sont tous animés : fumée, néon, chauves-souris, autobus, flocons… Pour voir la galerie : `python3 scripts/galerie.py`.
+- **Décors disponibles** : `cafe`, `depanneur`, `magasin` (avec citrouilles et ballons), `epicerie`, `cinema`, `restaurant` (pizzéria), `casse-croute` (frites et table à pique-nique), `cafeteria` (intérieur, menu du jour), `arena`, `grande-surface`, `pharmacie`, `centre-commercial` (avec neige), `maison-halloween`, `ecole`, `bibliotheque`, `parc`, `banque`, `clinique`, `maison`, `cuisine` (intérieur), `gare` (arrêt d'autobus). Ils sont tous animés : fumée, néon, chauves-souris, autobus, flocons… Pour voir la galerie : `python3 scripts/galerie.py`. **Thème espace** (avec `carte.theme: "espace"`) : `planete`, `station-spatiale`, `observatoire`, `lancement`, `base-lunaire`, `tour-controle`, `atelier-robot`, `constellation`, `asteroides`, `cockpit`.
 - Quand une station a des `capsules`, la capsule s'affiche **avant** le bouton de départ (avec un lien « Passer le truc »).
 
 ## 4. Trucs et capsules
@@ -98,6 +99,7 @@ La liste des défis est la clé **`questions`**. Champs communs : `id`, `station
 | `curseur` | `min`, `max`, `pas`, `depart`, `accepteMin`, `accepteMax` | glisse un curseur (+/−) |
 | `erreur` | `lignes: [[texte, valeur]]`, `fausses: [index]` | touche la ligne fausse d'un reçu ou d'une liste |
 | `texte` | — | écrit ou dicte une réponse ; un exemple de réponse s'affiche ensuite |
+| `portrait` | `options: [..]`, `max` (facultatif), `multiple: false` (un seul choix), `autre: false` (cache le champ « Autre chose ») | choisit ce qui lui ressemble ; **non noté**, aucune mauvaise réponse. Les choix vont dans la section portrait du bilan. Idéal pour se connaître (intérêts, forces, motivation). |
 | `droite` | `a`, `p` | choisit l'entier le plus proche sur une droite animée (argent) |
 | `jetons` | `articles` | met des pièces de 1 $ par article (argent) |
 | `assez` | `budget`, `reponse`, `articles` | choisit « J'ai assez » ou « Pas assez » (argent) |
