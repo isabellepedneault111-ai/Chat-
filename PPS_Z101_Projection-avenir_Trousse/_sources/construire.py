@@ -3,6 +3,9 @@ import os, re, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from style import page, doc, ico, qr, CAT, SITE
 from blocs import B, ORDRE
+import style as _style
+from illus_z101 import deco_page, bouquet, pour
+_style.orbite = deco_page
 
 ICI = os.path.dirname(os.path.abspath(__file__))
 RACINE = os.path.dirname(ICI)
@@ -28,7 +31,7 @@ def mission(bid, b):
 <p class="lede">{b["lede"]}</p>
 <div class="g21 mt2">
  <div><h2>{ico("etapes")}Ce que je vais faire</h2><ol class="steps">{"".join(f"<li>{x}</li>" for x in b["faire"])}</ol></div>
- <div class="card t"><h2>{ico("cible")}Pourquoi</h2><p>{b["pourquoi"]}</p>
+ <div class="card t"><div style="text-align:center;margin-bottom:4px">{bouquet(pour(k["c"]), 44)}</div><h2>{ico("cible")}Pourquoi</h2><p>{b["pourquoi"]}</p>
   <div class="tag mt" style="color:var(--c)">{k["crit"] or "Avant de commencer"}</div><div class="small"><b>{k["nom"]}</b></div>
   <div class="savoirs mt">{savoirs_html(b)}</div></div>
 </div>
@@ -39,7 +42,7 @@ def mission(bid, b):
 </div>
 <div class="card k mt2"><h2>{ico("lien")}Avec mon atelier</h2><p class="small">Après chaque séance, je remplis mon journal d'atelier. Ce que j'y écris m'aide à remplir ce bloc.</p></div>
 <div class="fill"></div>
-<div class="card mt" style="border-style:dashed"><h2>{ico("crayon")}Avant de commencer : ce que j'en pense</h2><div class="lines l4"></div></div>'''
+<div class="card mt" style="border-style:dashed"><h2>{ico("crayon")}Avant de commencer : ce que j'en pense</h2><div class="lines l2"></div></div>'''
     return page(b["cat"], b["titre"], corps, no=bid, kick="Ma mission", sous=b["sous"], bloc=f"Bloc {bid}", etiquette="Ma mission")
 
 
