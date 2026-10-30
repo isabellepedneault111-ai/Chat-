@@ -515,6 +515,9 @@ nav .wrap{height:88px}
 #royaume text{fill:rgba(255,255,255,.88);font-family:var(--mono);font-size:14px;letter-spacing:.06em;text-transform:uppercase}
 #royaume text.grand{font-size:15px;fill:#BFE3F0}
 #royaume text.moi{fill:var(--balise);font-weight:600}
+#royaume text.leg{fill:#fff;font-size:13.5px;letter-spacing:.03em}
+#royaume text.leg .n{fill:var(--balise);font-weight:700}
+#royaume text.leg-t{fill:#FFD9C7;font-size:12.5px;letter-spacing:.12em}
 /* police plus grosse */
 body{font-size:19px}
 .mono{font-size:15px}
@@ -570,6 +573,23 @@ body.fit .borne{display:none}
 .pas{padding-right:max(16px,calc((100% - 1240px)/2),230px)}
 @media (max-width:900px){.pas{padding-right:16px;padding-bottom:58px}}
 
+
+.legende{position:absolute;top:150px;right:16px;z-index:2;background:rgba(11,31,26,.82);border:1.5px solid rgba(255,255,255,.35);padding:12px 16px;width:min(360px,34vw)}
+.legende .mono{color:#FFD9C7;font-size:12.5px}
+.legende ol{list-style:none;counter-reset:a;margin-top:6px;display:grid;gap:3px}
+.legende li{counter-increment:a;font-size:15px;color:#fff;display:flex;gap:8px;align-items:baseline}
+.legende li::before{content:counter(a);display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--balise);font-size:12px;font-weight:700;flex:none}
+@media (max-width:900px){.legende{display:none}}
+.panneau{margin-top:30vh}
+
+
+.coords{align-items:center;gap:16px}
+.leg-ligne{text-transform:none;letter-spacing:0;font-family:'Archivo',sans-serif;font-size:15px;color:#fff;text-align:center}
+.leg-ligne b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--balise);color:#fff;font-size:12px;margin:0 4px 0 12px}
+.leg-ligne b:first-child{margin-left:0}
+@media (max-width:1100px){.leg-ligne{display:none}}
+.panneau{margin-top:24vh}
+
 @media (prefers-reduced-motion:reduce){.empreintes,.randonneuse{display:none}}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
@@ -590,7 +610,7 @@ body.fit .borne{display:none}
   <svg id="topo" aria-hidden="true"></svg>
   <svg id="royaume" aria-label="Carte stylisée du Saguenay–Lac-Saint-Jean" role="img"></svg>
   <svg class="foret" id="foret-hero" aria-hidden="true" preserveAspectRatio="xMidYMax slice"></svg>
-  <div class="coords mono" aria-hidden="true"><span>48°25′ N · 71°15′ O</span><span>Jonquière · Royaume du Saguenay–Lac-Saint-Jean</span><span>Ouverture août 2027</span></div>
+  <div class="coords mono" aria-hidden="true"><span>48°25′ N · 71°15′ O</span><span class="leg-ligne"><b>1</b> Jonquière · rivière aux Sables, mont Jacob <b>2</b> Arvida · pont d’aluminium <b>3</b> Chicoutimi · la Pulperie <b>4</b> Fjord · les bélugas</span><span>Ouverture août 2027</span></div>
   <div class="wrap">
     <div>
       <h1 class="cond titre-flex"><span class="mot">Ce</span> <span class="mot">qui</span> <span class="mot">plie</span><br><span class="o"><span class="mot">ne</span> <span class="mot">casse</span> <span class="mot">pas.</span></span></h1>
@@ -1009,15 +1029,17 @@ function royaume(){
   const P=(x,y)=>[x*W,y*H];
   const lac=P(.42,.17), riv=[P(.465,.19),P(.5,.2),P(.535,.205),P(.57,.215),P(.61,.235),P(.65,.245),P(.69,.27),P(.74,.29),P(.8,.31),P(.87,.33),P(.94,.35),P(1.02,.37)];
   const d='M'+riv.map(p=>p.map(v=>v.toFixed(1)).join(' ')).join(' L');
-  const villes=[['Alma',P(.47,.155),0],['Jonquière',P(.57,.215),1],['Chicoutimi',P(.65,.245),0],['La Baie',P(.74,.29),0],['Tadoussac',P(.975,.36),0]];
+  const villes=[['Alma',P(.47,.155),0],['Jonquière',P(.57,.215),1],['La Baie',P(.74,.29),0],['Tadoussac',P(.975,.36),0]];
   let h=`<ellipse class="lac" cx="${lac[0]}" cy="${lac[1]}" rx="${W*.05}" ry="${H*.045}"/>`;
   h+=`<path class="eau" d="${d}" stroke-width="5"/><path class="eau" d="M${P(.69,.27).join(' ')} L${P(.74,.29).join(' ')} L${P(.8,.31).join(' ')} L${P(.87,.33).join(' ')} L${P(.94,.35).join(' ')} L${P(1.02,.37).join(' ')}" stroke-width="12"/>`;
-  const valin=P(.68,.11);
-  h+=`<path class="trace" d="M${P(.57,.215).join(' ')} Q ${P(.6,.12).join(' ')} ${valin.join(' ')}"/>`;
-  h+=`<path d="M${valin[0]-12} ${valin[1]+8} L${valin[0]} ${valin[1]-12} L${valin[0]+12} ${valin[1]+8} Z" fill="#fff" opacity=".85"/><text x="${valin[0]+18}" y="${valin[1]+4}">Monts-Valin</text>`;
+  // sentier des activités : Jonquière → Arvida → Chicoutimi → fjord
+  const arrets=[[P(.57,.215),'Jonquière · rivière aux Sables, mont Jacob'],[P(.615,.232),'Arvida · pont d’aluminium'],[P(.665,.25),'Chicoutimi · la Pulperie'],[P(.86,.325),'Fjord · les bélugas']];
+  h+=`<path class="trace" d="M${arrets.map(a=>[a[0][0],a[0][1]-14].map(v=>v.toFixed(1)).join(' ')).join(' L')}"/>`;
+  arrets.forEach(([[x,y]],k)=>{h+=`<circle cx="${x}" cy="${y-14}" r="12" fill="var(--balise)" stroke="#fff" stroke-width="2.5"/><text x="${x}" y="${y-9.5}" text-anchor="middle" style="fill:#fff;font-weight:700;font-size:13px">${k+1}</text>`});
+  h+=`<text class="moi" x="${arrets[0][0][0]}" y="${arrets[0][0][1]-34}" text-anchor="middle">vous êtes ici</text>`;
   h+=`<text class="grand" x="${lac[0]-W*.04}" y="${lac[1]-H*.055}">Lac Saint-Jean</text><text class="grand" x="${P(.83,.29)[0]}" y="${P(.83,.29)[1]}">Fjord du Saguenay</text>`;
   villes.forEach(([n,[x,y],moi])=>{
-    h+=moi?`<circle class="ici" cx="${x}" cy="${y}" r="9"/><text class="moi" text-anchor="end" x="${x+10}" y="${y+32}">Jonquière · vous êtes ici</text>`:`<circle class="ville" cx="${x}" cy="${y}" r="4.5"/><text ${n==='Tadoussac'?'text-anchor="end" ':''}x="${n==='Tadoussac'?x-8:x+9}" y="${y-11}">${n}</text>`;
+    h+=moi?``:`<circle class="ville" cx="${x}" cy="${y}" r="4.5"/><text ${n==='Tadoussac'?'text-anchor="end" ':''}x="${n==='Tadoussac'?x-8:x+9}" y="${y-11}">${n}</text>`;
   });
   svg.innerHTML=h;
 }
