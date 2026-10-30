@@ -35,7 +35,7 @@ def mission(bid, b):
 <div class="g2 mt2">
  <div class="card"><h2>{ico("ok")}Je sais que j'ai réussi quand…</h2><ul class="ticks">{"".join(f"<li>{x}</li>" for x in b["reussi"])}</ul></div>
  <div class="card d"><h2>{ico("ecran")}En ligne</h2><div class="qr"><div style="background:#fff;padding:6px;border-radius:8px">{qr(url, 70)}</div>
-  <div><b>{titre_lien}</b><div class="xs" style="color:#AEB3D0">{url.replace("https://", "")}</div></div></div></div>
+  <div><b>{titre_lien}</b><div class="xs" style="color:#6B7189">{url.replace("https://", "")}</div></div></div></div>
 </div>
 <div class="card k mt2"><h2>{ico("lien")}Avec mon atelier</h2><p class="small">Après chaque séance, je remplis mon journal d'atelier. Ce que j'y écris m'aide à remplir ce bloc.</p></div>
 <div class="fill"></div>

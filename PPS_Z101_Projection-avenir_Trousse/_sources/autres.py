@@ -66,14 +66,14 @@ def evaluation():
  <div class="card"><h2>{ico("ecran")}Ma façon de présenter</h2>{OPTS(["Entrevue avec Mme Lisa", "Présentation orale", "Portfolio", "Journal de bord", "Questionnaire écrit"])}
   <p class="xs mt">Toutes les façons sont valables. Ce qui compte : couvrir les 3 critères.</p></div>
 </div>
-<div class="card d mt2"><h2>{ico("ok")}Pour réussir</h2><p>Je dois atteindre le niveau <b style="color:#FF8A6B">Acceptable</b> dans <b>chacun</b> des 3 critères. Si un critère n'est pas encore atteint, je peux le reprendre.</p></div>
+<div class="card d mt2"><h2>{ico("ok")}Pour réussir</h2><p>Je dois atteindre le niveau <b style="color:#D9431F">Acceptable</b> dans <b>chacun</b> des 3 critères. Si un critère n'est pas encore atteint, je peux le reprendre.</p></div>
 <div class="card k mt2"><h2>{ico("idee")}Ce que j'apporte</h2><ul class="ticks"><li>Mon cahier (blocs C0 à C6)</li><li>Mes journaux d'atelier</li><li>Mon projet en une page</li><li>Une photo ou un objet lié à mon projet (si je veux)</li></ul></div>'''
     jobs.append(("C7_1", doc("Fiche descriptive de l'épreuve", [page("base", "Je présente mon projet", corps, no="C7", kick="Fiche descriptive de l'épreuve", sous="L'épreuve finale du cours, expliquée simplement.", bloc="Bloc C7", etiquette="L'épreuve")]),
                  os.path.join(P_EPR, "C7_1_Fiche-descriptive-de-l-epreuve.pdf")))
     # --- Élève : mon projet en une page
     sec = lambda cat, titre, contenu: f'<div class="card" style="--c:{CAT[cat]["c"]};border-top:5px solid {CAT[cat]["c"]}"><h2 style="color:{CAT[cat]["c"]}">{titre}</h2>{contenu}</div>'
     corps = f'''
-<div class="card d"><span class="tag" style="color:#FF8A6B">Mon projet en une phrase</span><div class="lines l2" style="background-image:repeating-linear-gradient(transparent 0 26px,#3A4170 26px 27px)"></div></div>
+<div class="card d"><span class="tag" style="color:#D9431F">Mon projet en une phrase</span><div class="lines l2" style="background-image:repeating-linear-gradient(transparent 0 26px,#CDD2E0 26px 27px)"></div></div>
 <div class="g3 mt">
  {sec("disp", "Qui je suis", '<p class="xs">Intérêts et forces</p>' + L(2) + '<p class="xs">Ce qui me limite et mon moyen</p>' + L(2))}
  {sec("pot", "Ce qui me fait avancer", '<p class="xs">Ma motivation</p>' + L(2) + '<p class="xs">Mes moments disponibles</p>' + L(2))}
@@ -93,7 +93,7 @@ def evaluation():
     rows = "".join(f'''<div class="card mt" style="border-left:6px solid {CAT[c["cat"]]["c"]}"><span class="tag" style="color:{CAT[c["cat"]]["c"]}">Critère {c["no"]} · {c["court"]}</span>
 <table class="t mt">{"".join(f'<tr><td>{j}</td><td style="width:44%"><span class="opt" style="color:#127A45"><span class="dot" style="margin-right:4px"></span>Oui</span><span class="opt" style="color:#946200"><span class="dot" style="margin-right:4px"></span>Presque</span><span class="opt" style="color:#B3341B"><span class="dot" style="margin-right:4px"></span>Pas encore</span></td></tr>' for j in c["je"])}</table></div>''' for c in CRIT)
     corps = f'''<p class="lede">Je colorie le rond qui me ressemble. <b>Pas de note</b> : c'est pour voir où j'en suis et quoi améliorer.</p>{rows}
-<div class="card d mt2"><h2>{ico("fusee")}Ma prochaine étape</h2><p class="small" style="color:#C9CDE3">Ce que je vais améliorer avant de présenter :</p><div class="lines l2" style="background-image:repeating-linear-gradient(transparent 0 26px,#3A4170 26px 27px)"></div></div>'''
+<div class="card d mt"><h2>{ico("fusee")}Ma prochaine étape</h2><p class="small" style="color:#4A5068">Ce que je vais améliorer avant de présenter :</p><div class="lines l2" style="background-image:repeating-linear-gradient(transparent 0 26px,#CDD2E0 26px 27px)"></div></div>'''
     jobs.append(("C7_3", doc("Mon autoévaluation", [page("base", "Mon autoévaluation", corps, no="C7", kick="Je fais le point", sous="Avant l'épreuve, puis après.", bloc="Bloc C7", etiquette="Autoévaluation")]),
                  os.path.join(P_EPR, "C7_3_Mon-autoevaluation.pdf")))
 
@@ -104,7 +104,7 @@ def evaluation():
         return f'<div class="mt"><h2 style="color:{k["c"]}">Critère {c["no"]} · {c["nom"]}</h2><table class="t grid"><tr>{cells}</tr></table></div>'
     corps = f'''<div class="g2"><div class="small"><b>Adulte :</b> ____________________________</div><div class="small"><b>Date :</b> ______________ &nbsp; <b>Forme :</b> ______________</div></div>
 {"".join(grille_crit(c) for c in CRIT)}
-<div class="card d mt"><h2>{ico("ok")}Règle de réussite</h2><p>Seuil de réussite : <b style="color:#FF8A6B">Acceptable</b> pour <b>chacun</b> des 3 critères. Un critère sous le seuil entraîne une reprise ciblée de ce critère seulement.</p></div>
+<div class="card d mt"><h2>{ico("ok")}Règle de réussite</h2><p>Seuil de réussite : <b style="color:#D9431F">Acceptable</b> pour <b>chacun</b> des 3 critères. Un critère sous le seuil entraîne une reprise ciblée de ce critère seulement.</p></div>
 <div class="card mt"><h2>{ico("crayon")}Commentaires et prochaines étapes</h2>{L(2)}</div>
 <p class="xs">Échelons et descripteurs repris de l'outil Z101 du CSSDLJ (grille critérielle prescrite, PPS-Z101-3). À valider avec la définition du domaine d'évaluation en vigueur.</p>'''
     jobs.append(("EV_1", doc("Grille d'évaluation critérielle", [page("base", "Grille d'évaluation critérielle", corps, kick="Enseignante seulement", sous="PPS-Z101-3 · une grille par élève", etiquette="Grille critérielle")]),
@@ -118,7 +118,7 @@ def evaluation():
 <div class="card t"><h2>{ico("crayon")}Traces dans la trousse</h2><ul>{"".join(f"<li>{t}</li>" for t in c["traces"])}</ul></div></div>
 <div class="card k mt2"><h2>{ico("logique")}Raisonner avec logique</h2><p>{c["logique"]}</p></div>
 <div class="g2 mt2"><div class="card"><h2>{ico("groupe")}Questions pour l'entrevue</h2><ol class="steps">{"".join(f"<li>{q}</li>" for q in c["q"])}</ol></div>
-<div class="card d"><h2>{ico("ok")}Le seuil, concrètement</h2><p style="color:#E9EBF5">{c["ech"][2]}</p><p class="xs" style="color:#AEB3D0">Au-delà (Assurée, Marquée) : les liens ou les composantes sont clairs, précis, détaillés, sans relance.</p></div></div>
+<div class="card d"><h2>{ico("ok")}Le seuil, concrètement</h2><p >{c["ech"][2]}</p><p class="xs" style="color:#6B7189">Au-delà (Assurée, Marquée) : les liens ou les composantes sont clairs, précis, détaillés, sans relance.</p></div></div>
 <div class="card mt2"><h2>{ico("crayon")}Mes notes d'observation</h2>{L(3)}</div></div>'''
         pages.append(page(c["cat"], c["court"], corps, no=c["no"], kick=f"Fiche descriptive · Critère {c['no']}", sous=f"Blocs {c['blocs']}", etiquette="Fiches descriptives", n=int(c["no"]), tot=3))
     jobs.append(("EV_2", doc("Fiches descriptives par critère", pages), os.path.join(P_EV, "2_Fiches-descriptives_par-critere.pdf")))
@@ -153,11 +153,11 @@ def evaluation():
 def maitre():
     pages = []
     couv = f'''<section class="page cover">{"".join([])}
-<svg style="position:absolute;right:0;top:0" width="430" height="560" viewBox="0 0 430 560"><polygon points="130,0 430,0 430,420" fill="#1B2150"/><polygon points="250,0 430,0 430,250" fill="#5B4BFF"/><polygon points="330,0 430,0 430,140" fill="#F2542D"/><g stroke="#3A4170" stroke-width="1.2"><line x1="40" y1="0" x2="430" y2="520"/><line x1="0" y1="60" x2="380" y2="560"/></g><rect x="60" y="430" width="16" height="16" fill="#0E9F8E"/></svg>
+<svg style="position:absolute;right:0;top:0" width="300" height="300" viewBox="0 0 300 300"><g fill="none" stroke-width="1.4"><line x1="40" y1="0" x2="300" y2="260" stroke="#5B4BFF"/><line x1="110" y1="0" x2="300" y2="190" stroke="#F2542D"/><line x1="180" y1="0" x2="300" y2="120" stroke="#0E9F8E"/></g><rect x="250" y="30" width="16" height="16" fill="#F2542D"/></svg>
 <div style="margin-top:2.6in" class="kick">PPS-Z101-3 · Dossier maître</div>
 <h1 style="margin-top:12px">Projection<br>vers l'avenir</h1>
 <div class="sous">Mon projet de participation sociale. Le guide de l'enseignante : programme, organisation, séquence bloc par bloc, observation et évaluation.</div>
-<div class="g3" style="margin-top:.9in;max-width:6.2in">{"".join(f'<div><div style="height:4px;background:{CAT[c]["c"]};border-radius:4px"></div><div style="font-weight:800;margin-top:8px">{CAT[c]["court"]}</div><div style="font-size:9pt;color:#8C92B5">{CAT[c]["crit"]}</div></div>' for c in ["disp", "pot", "proj"])}</div>
+<div class="g3" style="margin-top:.9in;max-width:6.2in">{"".join(f'<div><div style="height:4px;background:{CAT[c]["c"]};border-radius:4px"></div><div style="font-weight:800;margin-top:8px">{CAT[c]["court"]}</div><div style="font-size:9pt;color:#6B7189">{CAT[c]["crit"]}</div></div>' for c in ["disp", "pot", "proj"])}</div>
 <div class="foot" style="margin-top:auto"><span>CFGA De La Jonquière · Participation sociale</span><span>Trousse Z101</span></div></section>'''
     pages.append(couv)
     # p2 le cours en une page
@@ -174,7 +174,7 @@ def maitre():
 <tr><td>Élaboration du projet</td><td>Définir ses buts à court terme · repérer des cours dans les thématiques · prévoir des mesures de suivi · informer ses partenaires</td></tr></table></div>
 <div class="g2 mt"><div class="card t"><h2>{ico("ok")}Évaluation</h2><p>3 critères, grille critérielle à 5 échelons. Seuil : <b>Acceptable</b> pour chaque critère. L'épreuve touche au moins 6 des 12 savoirs et les 3 catégories.</p></div>
 <div class="card t"><h2>{ico("personne")}Attitude visée : le réalisme</h2><p>L'adulte considère ses forces et ses défis de façon objective. C'est ce qui rend le projet signifiant et réalisable.</p></div></div>
-<p class="xs mt">Source : Programme d'études Participation sociale, MEQ 2022, cours PPS-Z101-3.</p></div>'''
+<p class="xs" style="margin-top:6px">Source : Programme d'études Participation sociale, MEQ 2022, cours PPS-Z101-3.</p></div>'''
     pages.append(page("base", "Le cours en une page", corps, kick="Programme", sous="Ce que prescrit le programme d'études.", etiquette="Dossier maître", n=2, tot=9))
     # p3 organisation chez nous
     corps = f'''<div class="dense">
@@ -212,7 +212,7 @@ def maitre():
     pages.append(page("base", "Bloc par bloc", '<div class="dense" style="display:flex;flex-direction:column;gap:9px">' + "".join(fiche(b) for b in ORDRE[:3]) + "</div>", kick="Pistes d'observation", sous="Avant, pendant, après. Ce qu'on regarde. Comment différencier.", etiquette="Dossier maître", n=5, tot=9))
     pages.append(page("base", "", '<div class="dense" style="display:flex;flex-direction:column;gap:9px;margin-top:14px">' + "".join(fiche(b) for b in ORDRE[3:6]) + "</div>", kick="Pistes d'observation", etiquette="Dossier maître", n=6, tot=9))
     pages.append(page("base", "", '<div class="dense" style="display:flex;flex-direction:column;gap:9px;margin-top:14px">' + "".join(fiche(b) for b in ORDRE[6:]) + f'''
-<div class="card d"><h3 style="margin-top:0;color:#fff">C7 · Je présente mon projet</h3><p style="color:#E9EBF5">Choisir la forme avec l'élève. Rassembler les traces (blocs, journaux d'atelier, bilan Mission Avenir). Faire remplir « Mon projet en une page » et l'autoévaluation. Évaluer avec la grille critérielle et les fiches descriptives.</p></div></div>''', kick="Pistes d'observation", etiquette="Dossier maître", n=7, tot=9))
+<div class="card d"><h3 style="margin-top:0;color:#fff">C7 · Je présente mon projet</h3><p >Choisir la forme avec l'élève. Rassembler les traces (blocs, journaux d'atelier, bilan Mission Avenir). Faire remplir « Mon projet en une page » et l'autoévaluation. Évaluer avec la grille critérielle et les fiches descriptives.</p></div></div>''', kick="Pistes d'observation", etiquette="Dossier maître", n=7, tot=9))
     # p7 évaluation
     corps = f'''<div class="dense">
 <div class="g3">{"".join(f'<div class="card t" style="--c:{CAT[c["cat"]]["c"]};--cl:{CAT[c["cat"]]["cl"]}"><span class="tag" style="color:{CAT[c["cat"]]["c"]}">Critère {c["no"]}</span><h3>{c["nom"]}</h3><p class="xs">Seuil : {c["ech"][2]}</p></div>' for c in CRIT)}</div>
@@ -236,7 +236,7 @@ def maitre():
 <li>Inviter un partenaire réel (intervenant, employeur de stage) à la présentation du projet.</li></ul></div>
 <div class="card mt"><h2>{ico("idee")}10 principes pour ce cours en PPS</h2><ol class="steps" style="columns:2;column-gap:20px">
 <li>Partir du vécu de l'atelier.</li><li>Modeler avant de demander.</li><li>Une idée par ligne, une consigne à la fois.</li><li>Lire à voix haute, toujours.</li><li>L'oral et le dessin valent l'écrit.</li><li>Valoriser les forces avant les limites.</li><li>Confidentialité des facteurs de délimitation.</li><li>Faire dire « parce que » et « donc ».</li><li>Code couleur, jamais de note pour l'élève.</li><li>Le projet change : c'est normal.</li></ol></div>
-<div class="card d mt"><h2>{ico("attention")}Confidentialité</h2><p style="color:#E9EBF5">Cette trousse ne contient aucun nom d'élève. Les grilles remplies, la répartition des groupes et les facteurs de délimitation restent dans un espace privé (dossier de l'élève, canal privé de l'équipe).</p></div></div>'''
+<div class="card d mt"><h2>{ico("attention")}Confidentialité</h2><p >Cette trousse ne contient aucun nom d'élève. Les grilles remplies, la répartition des groupes et les facteurs de délimitation restent dans un espace privé (dossier de l'élève, canal privé de l'équipe).</p></div></div>'''
     pages.append(page("base", "Matériel et ressources", corps, kick="Annexes", etiquette="Dossier maître", n=9, tot=9))
     jobs = [("M_1", doc("Dossier maître Z101", pages), os.path.join(P_COM, "1_Dossier-maitre_Enseignante.pdf"))]
     # guide Teams OneNote
@@ -273,7 +273,7 @@ def materiel():
     cartes = [(t, c, code, nom) for t, (c, l) in TH.items() for code, nom in l]
     pages = []
     for i in range(0, len(cartes), 12):
-        cs = "".join(f'<div class="cut" style="border-radius:12px;height:2.05in;padding:12px;display:flex;flex-direction:column;justify-content:space-between;background:{c};color:#fff"><span class="tag" style="color:#fff;opacity:.85">{t}</span><div><div style="font-size:24pt;font-weight:900;letter-spacing:-.03em;opacity:.35">{code}</div><div style="font-size:14pt;font-weight:850;line-height:1.12">{nom}</div></div><span class="xs" style="color:#fff;opacity:.8">PPS-{code} · bloc C5</span></div>' for t, c, code, nom in cartes[i:i + 12])
+        cs = "".join(f'<div class="cut" style="border-radius:12px;height:2.05in;padding:12px;display:flex;flex-direction:column;justify-content:space-between;border-top:10px solid {c}"><span class="tag" style="color:{c}">{t}</span><div><div style="font-size:24pt;font-weight:900;letter-spacing:-.03em;color:transparent;-webkit-text-stroke:1.2px {c}">{code}</div><div style="font-size:14pt;font-weight:850;line-height:1.12">{nom}</div></div><span class="xs">PPS-{code} · bloc C5</span></div>' for t, c, code, nom in cartes[i:i + 12])
         pages.append(page("proj", "Cartes des 27 cours" if i == 0 else "", f'<div class="g3" style="gap:8px;margin-top:{6 if i == 0 else 18}px">{cs}</div>', kick="Matériel à imprimer", sous="Pour choisir les cours liés au projet. Trier : oui, peut-être, non." if i == 0 else "", etiquette="Cartes des cours", n=i // 12 + 1, tot=3, deco=(i == 0)))
     jobs.append(("MAT_2", doc("Cartes des 27 cours", pages), os.path.join(P_MAT, "Cartes-des-27-cours_4-thematiques.pdf")))
     q = lambda sav, t, contenu: f'<div style="margin-top:7px"><span class="tag" style="color:var(--c)">{sav}</span><div style="font-weight:800">{t}</div>{contenu}</div>'

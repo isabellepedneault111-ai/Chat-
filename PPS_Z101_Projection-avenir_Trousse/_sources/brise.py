@@ -69,7 +69,7 @@ def plan():
 <tr><td><b>Vote avec les doigts</b></td><td>1 = je bloque, 3 = je peux vivre avec, 5 = j'adore. On garde ce qui est à 3 et plus pour tout le monde.</td><td>Période 3</td></tr>
 <tr><td><b>Cercle d'influence</b></td><td>Trois cercles : je contrôle, j'influence, ça ne dépend pas de moi. Pour agir là où on a du pouvoir.</td><td>Période 3</td></tr></table>
 <div class="g2 mt"><div class="card"><h2>{ico("crayon")}À préparer</h2><ul class="ticks"><li>Cartes de joueur, bingos, cartes de questions</li><li>Une fiche d'équipe par atelier et des carnets de passation</li><li>Points autocollants verts et jaunes, gommette</li><li>Billets de sortie et cercles d'influence</li><li>La page brise-glace ouverte au TNI</li></ul></div>
-<div class="card d"><h2>{ico("ecran")}Au TNI</h2><div class="qr"><div style="background:#fff;padding:6px;border-radius:8px">{qr(URL, 70)}</div><div><b>Boîte à animation</b><div class="xs" style="color:#AEB3D0">{URL.replace("https://", "")}</div><div class="xs" style="color:#AEB3D0">Météo · Plutôt ceci ou cela · La roue · Chrono</div></div></div></div></div>
+<div class="card d"><h2>{ico("ecran")}Au TNI</h2><div class="qr"><div style="background:#fff;padding:6px;border-radius:8px">{qr(URL, 70)}</div><div><b>Boîte à animation</b><div class="xs" style="color:#6B7189">{URL.replace("https://", "")}</div><div class="xs" style="color:#6B7189">Météo · Plutôt ceci ou cela · La roue · Chrono</div></div></div></div></div>
 <div class="card k mt"><h2>{ico("logique")}Le lien avec le Z101</h2><p>Fonctionnement en groupe, milieux d'appartenance, motivation (sentiment d'appartenance) et la compétence « développer un sentiment d'appartenance au milieu de formation ». Les cartes de joueur et les cercles d'influence nourrissent les blocs C1 et C4. Les plans de match d'atelier deviennent une trace pour le critère 2.</p></div></div>"""
     p2 = page("pot", "", corps, kick="Animation", etiquette="Plan du premier mardi", n=2, tot=2)
     return [p1, p2]
@@ -86,7 +86,7 @@ def fiche_equipe():
 <tr><td><b>Nouvelle tâche :</b></td><td colspan="4" style="height:30px"></td></tr><tr><td><b>Nouvelle tâche :</b></td><td colspan="4" style="height:30px"></td></tr></table>
 <h2 class="mt">{ico("groupe")}2. Qui fait quoi au début ?</h2>
 <table class="t grid"><tr><th style="width:40%">Tâche</th><th>Groupe A</th><th>Groupe B</th></tr>{"<tr><td style='height:28px'></td><td></td><td></td></tr>" * 3}</table>
-<div class="g2 mt"><div class="card"><h2>{ico("fusee")}3. Ce qu'on veut essayer</h2>{L(2)}</div><div class="card d"><h2>{ico("drapeau")}Notre règle d'or</h2><div class="lines l2" style="background-image:repeating-linear-gradient(transparent 0 26px,#3A4170 26px 27px)"></div></div></div></div>"""
+<div class="g2 mt"><div class="card"><h2>{ico("fusee")}3. Ce qu'on veut essayer</h2>{L(2)}</div><div class="card d"><h2>{ico("drapeau")}Notre règle d'or</h2><div class="lines l2" style="background-image:repeating-linear-gradient(transparent 0 26px,#CDD2E0 26px 27px)"></div></div></div></div>"""
         pages.append(f'<div style="--c:{c}">' + page("pot", f"Notre plan de match", corps, kick=f"Période 2 · {nom}", sous="Équipe d'atelier : groupes A et B ensemble. On décide ensemble.", etiquette="Fiche d'équipe", n=len(pages) + 1, tot=4).replace('style="--c:#F2542D;--cl:#FFEDE8"', f'style="--c:{c};--cl:#F6F1EC"') + "</div>")
     return pages
 
@@ -103,7 +103,7 @@ def passation():
 def entente():
     corps = f"""<p class="lede">Nos <b>règles communes</b> pour les passations entre le groupe A et le groupe B. On les a choisies ensemble, on les affiche dans chaque atelier.</p>
 <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px">{"".join(f'<div class="card" style="display:grid;grid-template-columns:60px 1fr 150px;gap:14px;align-items:center;padding:14px"><div style="font-size:34pt;font-weight:900;color:var(--c);letter-spacing:-.04em;line-height:1">0{n}</div><div class="lines" style="min-height:54px"></div><div><span class="tag">Vote</span><div style="display:flex;gap:4px;margin-top:4px">' + "".join(f'<span style="width:22px;height:22px;border:1.4px solid #B9BFD0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:8pt;font-weight:800;color:#6B7189">{k}</span>' for k in range(1, 6)) + "</div></div></div>" for n in range(1, 6))}</div>
-<div class="card d mt2"><h2>{ico("ok")}On s'engage</h2><p style="color:#C9CDE3">On relit l'entente dans 3 semaines. Si une règle ne marche pas, on la change ensemble.</p></div>"""
+<div class="card d mt2"><h2>{ico("ok")}On s'engage</h2><p style="color:#4A5068">On relit l'entente dans 3 semaines. Si une règle ne marche pas, on la change ensemble.</p></div>"""
     return page("disp", "Notre entente de passation", corps, kick="Période 3 · grand groupe", sous="Affiche à remplir en grand groupe (agrandir en 11 x 17 au besoin).", etiquette="Entente")
 
 
@@ -131,8 +131,8 @@ def billet():
 def carte_joueur():
     def carte():
         return f'''<div class="cut" style="border-radius:18px;overflow:hidden;display:flex;flex-direction:column;height:4.62in">
-<div style="background:#0E1330;color:#fff;padding:12px 14px;position:relative"><svg style="position:absolute;right:0;top:0" width="120" height="80" viewBox="0 0 120 80"><polygon points="30,0 120,0 120,80" fill="#F2542D"/><polygon points="75,0 120,0 120,40" fill="#5B4BFF"/></svg>
-<div class="tag" style="color:#FF8A6B">Carte de joueur · Z101</div><div style="font-size:9pt;color:#AEB3D0;margin-top:14px">Prénom</div><div style="border-bottom:1.5px solid #3A4170;height:24px"></div></div>
+<div style="background:#fff;border-bottom:3px solid #0E1330;padding:12px 14px;position:relative"><svg style="position:absolute;right:0;top:0" width="120" height="80" viewBox="0 0 120 80"><polygon points="70,0 120,0 120,50" fill="#F2542D"/><line x1="40" y1="0" x2="120" y2="80" stroke="#5B4BFF" stroke-width="1.4"/></svg>
+<div class="tag" style="color:#D9431F">Carte de joueur · Z101</div><div style="font-size:9pt;color:#6B7189;margin-top:14px">Prénom</div><div style="border-bottom:1.5px solid #CDD2E0;height:24px"></div></div>
 <div style="padding:10px 14px;display:flex;flex-direction:column;gap:7px;flex:1;font-size:9.6pt">
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><div class="tag">Position</div>{CB("Nouveau")}<br>{CB("Déjà au PPS")}</div><div class="box" style="height:62px;display:flex;align-items:center;justify-content:center;color:#B9BFD0;font-size:8pt">Mon logo ou un dessin</div></div>
 <div><div class="tag">Mes stats</div>{"".join(f'<div style="display:flex;align-items:center;gap:6px;margin:3px 0"><span style="width:84px">{s}</span>' + "".join('<span style="width:14px;height:10px;border:1.3px solid #0E1330;border-radius:2px;display:inline-block"></span>' for _ in range(5)) + "</div>" for s in ["Énergie", "Patience", "Humour", "Créativité"])}</div>
@@ -145,7 +145,7 @@ def carte_joueur():
 
 def bingo():
     cases = BINGO[:12] + ["CASE LIBRE"] + BINGO[12:24]
-    cells = "".join(f'<td style="height:1.18in;width:20%;vertical-align:top;padding:8px;{"background:#0E1330;color:#fff;text-align:center;vertical-align:middle;font-weight:900;letter-spacing:.1em" if c == "CASE LIBRE" else ""}">{"Z101" if c == "CASE LIBRE" else f"<div style=font-weight:800;font-size:10pt;line-height:1.2>{c}</div><div style=margin-top:16px;border-bottom:1px solid #CDD2E0></div>"}</td>' + ("</tr><tr>" if (i + 1) % 5 == 0 and i < 24 else "") for i, c in enumerate(cases))
+    cells = "".join(f'<td style="height:1.18in;width:20%;vertical-align:top;padding:8px;{"background:#fff;color:#0E1330;border:2px solid #0E1330;text-align:center;vertical-align:middle;font-weight:900;letter-spacing:.1em" if c == "CASE LIBRE" else ""}">{"Z101" if c == "CASE LIBRE" else f"<div style=font-weight:800;font-size:10pt;line-height:1.2>{c}</div><div style=margin-top:16px;border-bottom:1px solid #CDD2E0></div>"}</td>' + ("</tr><tr>" if (i + 1) % 5 == 0 and i < 24 else "") for i, c in enumerate(cases))
     corps = f'''<div class="steps-inline small" style="display:flex;gap:18px;margin-bottom:10px"><span><b style="color:var(--c)">01</b> Je circule.</span><span><b style="color:var(--c)">02</b> Je pose la question.</span><span><b style="color:var(--c)">03</b> Si c'est oui, j'écris son prénom.</span><span><b style="color:var(--c)">04</b> Une personne = une case.</span></div>
 <table class="t grid" style="table-layout:fixed"><tr>{cells}</tr></table>
 <div class="card t mt"><b>Une ligne complète ?</b> Je crie « Bingo ! ». Une personne que je ne connaissais pas et que j'aimerais revoir : ______________________</div>'''
@@ -164,7 +164,7 @@ def cartes_jasette():
 def tour():
     corps = f'''<div class="g21"><div><p class="lede">Avec <b>10 feuilles</b> et <b>30 cm de ruban adhésif</b>, construisez la tour la plus haute qui tient debout toute seule.</p>
 <ol class="steps"><li>2 minutes : on planifie sans toucher aux feuilles.</li><li>8 minutes : on construit.</li><li>On mesure. La tour doit tenir 10 secondes.</li></ol></div>
-<div class="card d"><div class="tag" style="color:#FF8A6B">Notre résultat</div><div style="font-size:40pt;font-weight:900;letter-spacing:-.03em;margin-top:6px">___ cm</div><div class="xs" style="color:#AEB3D0">Nom de l'équipe : ______________</div></div></div>
+<div class="card d"><div class="tag" style="color:#D9431F">Notre résultat</div><div style="font-size:40pt;font-weight:900;letter-spacing:-.03em;margin-top:6px">___ cm</div><div class="xs" style="color:#6B7189">Nom de l'équipe : ______________</div></div></div>
 <h2 class="mt2">{ico("groupe")}Les rôles</h2><div class="g4">{"".join(f'<div class="card t"><b>{r}</b><p class="xs">{d}</p><div class="lines" style="min-height:27px"></div></div>' for r, d in [("Architecte", "Propose le plan"), ("Constructeur", "Plie et assemble"), ("Gardien du temps", "Surveille le chrono"), ("Porte-parole", "Présente au groupe")])}</div>
 <h2 class="mt2">{ico("logique")}Après le défi : on en parle</h2>
 <table class="t grid"><tr><th>Question</th><th style="width:52%">Notre réponse</th></tr>
@@ -178,7 +178,7 @@ def reserve():
     corps = f'''<div class="g2"><div class="card"><h2>{ico("idee")}Deux vérités, un mensonge</h2><p class="small">J'écris 3 phrases sur moi. Une seule est fausse. Le groupe devine laquelle.</p>
 {"".join(f'<div style="margin-top:8px"><b>{n}.</b><div class="lines" style="min-height:27px"></div></div>' for n in (1, 2, 3))}<p class="xs mt">Le mensonge, c'est la phrase n° ___ (je le cache).</p></div>
 <div class="card"><h2>{ico("personne")}Si j'étais…</h2><table class="t">{"".join(f"<tr><td style='width:44%'>Si j'étais {s}, je serais…</td><td><div class='lines' style='min-height:27px'></div></td></tr>" for s in si)}</table><p class="xs mt">Je choisis ma réponse préférée et j'explique pourquoi au groupe.</p></div></div>
-<div class="card d mt2"><h2>{ico("fusee")}Le mot de la fin</h2><p style="color:#C9CDE3">Un seul mot pour décrire le cours d'aujourd'hui :</p><div style="border-bottom:1.5px solid #3A4170;height:40px"></div></div>'''
+<div class="card d mt2"><h2>{ico("fusee")}Le mot de la fin</h2><p style="color:#4A5068">Un seul mot pour décrire le cours d'aujourd'hui :</p><div style="border-bottom:1.5px solid #CDD2E0;height:40px"></div></div>'''
     return page("disp", "En réserve", corps, kick="Brise-glace · papier", sous="Pour un groupe rapide ou pour un prochain cours.", etiquette="En réserve")
 
 

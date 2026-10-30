@@ -55,8 +55,8 @@ B["C0"] = dict(
 <h2 class="mt2">{ico("crayon")}Où je garde mes traces</h2>
 <ol class="steps"><li>Mon cahier : je le garde dans ma chemise Z101.</li><li>Mes PDF (bilan, journal d'atelier) : je les remets dans le devoir Teams.</li>
 <li>Mes photos ou mes idées : je les mets dans ma section OneNote « Mon projet ».</li></ol>
-<div class="card d mt2"><h2>{ico("fusee")}Mon idée de départ</h2><p class="small" style="color:#C9CDE3">Même si ce n'est pas clair encore. Ça va changer, et c'est normal.</p>
-<p>Dans un an, j'aimerais…</p><div class="lines l3" style="background-image:repeating-linear-gradient(transparent 0 26px,#3A4170 26px 27px)"></div></div>'''],
+<div class="card d mt2"><h2>{ico("fusee")}Mon idée de départ</h2><p class="small" style="color:#4A5068">Même si ce n'est pas clair encore. Ça va changer, et c'est normal.</p>
+<p>Dans un an, j'aimerais…</p><div class="lines l3" style="background-image:repeating-linear-gradient(transparent 0 26px,#CDD2E0 26px 27px)"></div></div>'''],
     exos=[f'''
 {ex(1, "Mission Avenir : mon premier portrait", f"""<ol class="steps"><li>Je vais sur le site du cours et je clique sur Mission Avenir.</li><li>Je joue jusqu'à la fin (environ 30 minutes).</li><li>Je télécharge mon bilan et je le remets dans Teams.</li></ol>
 <p class="mt">Trois choses que le jeu m'a apprises sur moi :</p>{L(3)}""", "En ligne")}

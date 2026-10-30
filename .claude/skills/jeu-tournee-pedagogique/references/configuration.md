@@ -25,6 +25,7 @@ Un jeu = un fichier JSON. L'exemple complet est `exemples/estimer-au-saguenay.js
 | `mascotte` | `{fichier: "renard" \| "hibou" \| "astronaute" \| "aucune", nom: "le renard", du: "du renard"}`. Le champ `du` forme les libellés « Le truc du renard », « Les trucs du renard ». |
 | `theme` | `{accent, accentFonce, accentPale, formes: [4 couleurs des formes de fond]}`. |
 | `carte` | `{trajet: "de Jonquière à Chicoutimi", depart, arrivee, riviere, theme}`. La rivière est facultative. `theme: "espace"` donne une carte de nuit étoilée (avec les décors spatiaux). |
+| `theme.style` | `"pro"` : style adulte et sobre (titres en Nunito gras, fond uni, pas de formes décoratives, en-tête du PDF blanc pour économiser l'encre). |
 | `portraitTitre` | Titre de la section du bilan qui regroupe les réponses `portrait` (par défaut « Mon portrait »). |
 | `remise` | Phrase qui explique comment remettre le bilan (facultatif). |
 

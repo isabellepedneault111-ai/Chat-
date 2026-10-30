@@ -1,8 +1,8 @@
 {
- "id": "z101-mission-avenir-v1",
+ "id": "z101-mission-avenir-v2",
  "fichier": "mission-avenir",
  "titre": "Mission Avenir",
- "sousTitre": "PPS-Z101-3 · Projection vers l’avenir · avec Lisa",
+ "sousTitre": "PPS-Z101-3 · Projection vers l’avenir · avec Mme Lisa",
  "cours": "PPS-Z101-3",
  "matiere": "Projection vers l’avenir",
  "enseignant": "Lisa",
@@ -13,37 +13,37 @@
  "intention": "Amorcer le projet de participation sociale : déterminer ses réalités personnelles et sociales, reconnaître son potentiel d’action et commencer à élaborer son projet (PPS-Z101-3). Aide à l’apprentissage seulement : ne remplace pas l’épreuve prescrite.",
  "portraitTitre": "Mon portrait de départ (pour mon projet)",
  "mascotte": {
-  "fichier": "astronaute",
-  "nom": "Nova",
-  "du": "de Nova"
+  "fichier": "aucune",
+  "nom": "Mme Lisa",
+  "du": ""
  },
  "theme": {
-  "accent": "#5B5FC7",
-  "accentFonce": "#3E41A0",
-  "accentPale": "#E8E9FB",
+  "style": "pro",
+  "accent": "#5B4BFF",
+  "accentFonce": "#0E1330",
+  "accentPale": "#EEEDFF",
   "formes": [
-   "#DCE6F2",
-   "#E8E9FB",
-   "#FBE9DC",
-   "#F6E3A6"
+   "#EEEDFF",
+   "#FFEDE8",
+   "#E2F6F3",
+   "#F4F5F9"
   ]
  },
  "carte": {
-  "theme": "espace",
-  "trajet": "de la Lune à Saturne",
+  "trajet": "de moi à mon projet",
   "depart": "Départ",
-  "arrivee": "Lancement !"
+  "arrivee": "Mon projet"
  },
  "remise": "Remets-le à Lisa : dans le devoir Teams, ou dans ton OneNote (section Z101).",
  "niveaux": [
   {
    "id": "L",
-   "nom": "Lune",
-   "clair": "#DCE6F2",
-   "fonce": "#3E5C8A",
-   "description": "je me connais",
+   "nom": "Me connaître",
+   "clair": "#EEEDFF",
+   "fonce": "#5B4BFF",
+   "description": "étape 1",
    "intro": {
-    "texte": "Sur la Lune, tu découvres qui tu es : tes intérêts, tes forces, tes expériences et tes défis.",
+    "texte": "Étape 1 : tu découvres qui tu es : tes intérêts, tes forces, tes expériences et tes défis.",
     "capsules": [
      "qui"
     ]
@@ -51,12 +51,12 @@
   },
   {
    "id": "M",
-   "nom": "Mars",
-   "clair": "#F5C6C2",
-   "fonce": "#A9372B",
-   "description": "ce qui me fait avancer",
+   "nom": "Ce qui me fait avancer",
+   "clair": "#FFEDE8",
+   "fonce": "#C8432A",
+   "description": "étape 2",
    "intro": {
-    "texte": "Sur Mars, tu découvres ce qui te fait avancer : ta motivation, ta routine, le travail en équipe et les personnes qui t’aident.",
+    "texte": "Étape 2 : tu découvres ce qui te fait avancer : ta motivation, ta routine, le travail en équipe et les personnes qui t’aident.",
     "capsules": [
      "potentiel"
     ]
@@ -64,12 +64,12 @@
   },
   {
    "id": "S",
-   "nom": "Saturne",
-   "clair": "#F6E3A6",
-   "fonce": "#8A6100",
-   "description": "mon projet",
+   "nom": "Mon projet",
+   "clair": "#E2F6F3",
+   "fonce": "#0E7F72",
+   "description": "étape 3",
    "intro": {
-    "texte": "Sur Saturne, tu prépares ton projet : tes buts, tes cours, tes conditions de réussite et tes partenaires.",
+    "texte": "Étape 3 : tu prépares ton projet : tes buts, tes cours, tes conditions de réussite et tes partenaires.",
     "capsules": [
      "projet"
     ]
@@ -160,93 +160,93 @@
  ],
  "stations": [
   {
-   "nom": "Planète Moi",
-   "lieu": "Lune",
+   "nom": "Le centre",
+   "lieu": "Me connaître",
    "niveau": "L",
-   "couleur": "#3E7CB1",
-   "decor": "planete",
-   "texte": "Bienvenue à bord ! Première escale : toi. Qu’est-ce qui t’intéresse ?"
+   "couleur": "#5B4BFF",
+   "decor": "ecole",
+   "texte": "Bienvenue ! Premier arrêt : toi. Qu’est-ce qui t’intéresse ?"
   },
   {
-   "nom": "Atelier des talents",
+   "nom": "La cuisine",
    "court": "Talents",
-   "lieu": "Lune",
+   "lieu": "Me connaître",
    "niveau": "L",
-   "couleur": "#5B5FC7",
-   "decor": "atelier-robot",
+   "couleur": "#4A3BD1",
+   "decor": "cuisine",
    "texte": "Tout le monde a des talents. Lesquels sont les tiens ?"
   },
   {
-   "nom": "Observatoire des souvenirs",
-   "court": "Souvenirs",
-   "lieu": "Lune",
+   "nom": "La bibliothèque",
+   "court": "Expériences",
+   "lieu": "Me connaître",
    "niveau": "L",
-   "couleur": "#7B5AA6",
-   "decor": "observatoire",
-   "texte": "On regarde dans le télescope… tes expériences passées !"
+   "couleur": "#3E3290",
+   "decor": "bibliotheque",
+   "texte": "On ouvre le livre de ton parcours : tes expériences."
   },
   {
-   "nom": "Ceinture d’astéroïdes",
-   "court": "Astéroïdes",
-   "lieu": "Lune",
+   "nom": "Le parc",
+   "court": "Défis",
+   "lieu": "Me connaître",
    "niveau": "L",
-   "couleur": "#D9661B",
-   "decor": "asteroides",
+   "couleur": "#2F2690",
+   "decor": "parc",
    "texte": "Tout le monde a des défis. Les connaître aide à trouver des moyens pour les contourner."
   },
   {
-   "nom": "Base Motivation",
+   "nom": "Le café",
    "court": "Motivation",
-   "lieu": "Mars",
+   "lieu": "Ce qui me fait avancer",
    "niveau": "M",
-   "couleur": "#A9372B",
-   "decor": "base-lunaire",
+   "couleur": "#F2542D",
+   "decor": "cafe",
    "texte": "Qu’est-ce qui te donne de l’énergie pour avancer ?"
   },
   {
-   "nom": "Station Routine",
+   "nom": "À la maison",
    "court": "Routine",
-   "lieu": "Mars",
+   "lieu": "Ce qui me fait avancer",
    "niveau": "M",
-   "couleur": "#0B6FC4",
-   "decor": "station-spatiale",
+   "couleur": "#D9431F",
+   "decor": "maison",
    "texte": "Ta routine et ton horaire t’aident à être là, à l’heure, prêt à apprendre."
   },
   {
-   "nom": "Cockpit de l’équipage",
-   "court": "Équipage",
-   "lieu": "Mars",
+   "nom": "La cafétéria",
+   "court": "Équipe",
+   "lieu": "Ce qui me fait avancer",
    "niveau": "M",
-   "couleur": "#2E6B45",
-   "decor": "cockpit",
-   "texte": "Dans un vaisseau, on travaille en équipe. Et toi, en groupe ?"
+   "couleur": "#B8361A",
+   "decor": "cafeteria",
+   "texte": "À la cantine comme à l’atelier, on travaille en équipe. Et toi, en groupe ?"
   },
   {
-   "nom": "Constellation de soutien",
+   "nom": "Le casse-croûte",
    "court": "Soutien",
-   "lieu": "Mars",
+   "lieu": "Ce qui me fait avancer",
    "niveau": "M",
-   "couleur": "#8A6100",
-   "decor": "constellation",
-   "texte": "Les personnes qui comptent pour toi forment ta constellation."
+   "couleur": "#94300F",
+   "decor": "casse-croute",
+   "texte": "Là où on retrouve ses gens : les personnes qui comptent pour toi."
   },
   {
-   "nom": "Tour de contrôle",
-   "court": "Contrôle",
-   "lieu": "Saturne",
+   "nom": "La gare",
+   "court": "Direction",
+   "lieu": "Mon projet",
    "niveau": "S",
-   "couleur": "#1F3A93",
-   "decor": "tour-controle",
+   "couleur": "#0E9F8E",
+   "decor": "gare",
    "texte": "Ici, on choisit la direction : tes buts et les cours qui vont t’aider."
   },
   {
-   "nom": "Rampe de lancement",
-   "court": "Lancement",
-   "lieu": "Saturne",
+   "nom": "Le centre-ville",
+   "court": "Mon projet",
+   "lieu": "Mon projet",
    "niveau": "S",
-   "couleur": "#C0551F",
-   "decor": "lancement",
-   "texte": "Dernière étape avant le décollage : ton projet !"
+   "couleur": "#0B7A6D",
+   "decor": "centre-commercial",
+   "texte": "Dernier arrêt : ton projet, dans ta communauté !"
   }
  ],
  "trucs": {
@@ -259,8 +259,8 @@
     "Mes défis : ce qui est plus difficile pour moi."
    ],
    "visuel": {
-    "type": "mascotte",
-    "taille": 110
+    "type": "grand",
+    "html": "intérêts · forces · expériences · défis"
    }
   },
   "th": {
@@ -297,8 +297,8 @@
     "Mes personnes-ressources : ceux qui m’aident."
    ],
    "visuel": {
-    "type": "mascotte",
-    "taille": 110
+    "type": "grand",
+    "html": "motivation · routine · groupe · soutien"
    }
   },
   "tb": {
@@ -335,8 +335,8 @@
     {
      "texte": "Pour bâtir ton projet, tu commences par te connaître.",
      "visuel": {
-      "type": "mascotte",
-      "taille": 150
+      "type": "grand",
+      "html": "1 · Me connaître"
      }
     },
     {
@@ -357,9 +357,9 @@
      "texte": "Tes expériences : à la maison, à l’école, au travail, dans tes loisirs.",
      "visuel": {
       "type": "decor",
-      "decor": "observatoire",
-      "nom": "Mes souvenirs",
-      "couleur": "#7B5AA6"
+      "decor": "bibliotheque",
+      "nom": "Mes expériences",
+      "couleur": "#3E3290"
      }
     },
     {
@@ -377,17 +377,17 @@
     {
      "texte": "Ton potentiel d’action, c’est tout ce qui t’aide à avancer.",
      "visuel": {
-      "type": "mascotte",
-      "taille": 150
+      "type": "grand",
+      "html": "2 · Ce qui me fait avancer"
      }
     },
     {
      "texte": "Ta motivation : tes efforts, ta persévérance, te sentir capable et te sentir à ta place.",
      "visuel": {
       "type": "decor",
-      "decor": "base-lunaire",
-      "nom": "Base Motivation",
-      "couleur": "#A9372B"
+      "decor": "cafe",
+      "nom": "Ma motivation",
+      "couleur": "#F2542D"
      }
     },
     {
@@ -401,18 +401,18 @@
      "texte": "En groupe : on écoute, on se respecte, on collabore.",
      "visuel": {
       "type": "decor",
-      "decor": "cockpit",
-      "nom": "L’équipage",
-      "couleur": "#2E6B45"
+      "decor": "cafeteria",
+      "nom": "Mon équipe",
+      "couleur": "#B8361A"
      }
     },
     {
      "texte": "Tes milieux d’appartenance : les personnes qui comptent pour toi et qui peuvent t’aider.",
      "visuel": {
       "type": "decor",
-      "decor": "constellation",
+      "decor": "casse-croute",
       "nom": "Mon soutien",
-      "couleur": "#8A6100"
+      "couleur": "#94300F"
      }
     }
    ]
@@ -424,9 +424,9 @@
      "texte": "Ton projet de participation sociale, c’est ton plan pour être plus autonome et participer à ta communauté.",
      "visuel": {
       "type": "decor",
-      "decor": "lancement",
+      "decor": "centre-commercial",
       "nom": "Mon projet",
-      "couleur": "#C0551F"
+      "couleur": "#0B7A6D"
      }
     },
     {
@@ -462,8 +462,7 @@
     {
      "texte": "Tes partenaires : les personnes qui t’accompagnent dans ton projet.",
      "visuel": {
-      "type": "mascotte",
-      "taille": 150,
+      "type": "grand",
       "html": "Tu n’es pas seul !"
      }
     }
@@ -974,7 +973,7 @@
     "Un coach ou un mentor"
    ],
    "explication": [
-    "Ces personnes forment ta constellation de soutien.",
+    "Ces personnes forment ton réseau de soutien.",
     "Elles pourront devenir tes partenaires de projet."
    ]
   },
@@ -1125,7 +1124,7 @@
  "reinvest": {
   "capsules": true,
   "creation": {
-   "titre": "Crée ta question pour l’équipage",
+   "titre": "Crée ta question pour les nouveaux",
    "description": "Invente une question pour accueillir les nouveaux du PPS et publie-la dans Teams.",
    "consigne": "Ta question peut parler du centre, du PPS, des ateliers ou de ce qui t’aide à réussir.",
    "amorces": [
