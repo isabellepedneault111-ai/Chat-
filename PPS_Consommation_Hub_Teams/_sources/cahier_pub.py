@@ -8,11 +8,13 @@ sys.path.insert(0, Z101)
 import style
 from style import doc, ico, CAT
 from blocs import L, CB, OPTS, SCALE
+sys.path.insert(0, ICI)
+from renard import renard, tete
 
 style.COURS = "PPS-Z128-2"
 style.TITRE_COURS = "Budget et consommation"
-CAT["pub"] = dict(nom="Publicité et sollicitation", court="Détectives de la pub", c="#0F766E", cl="#E3F4F1", crit="")
-CAT["sol"] = dict(nom="Publicité et sollicitation", court="Détectives de la pub", c="#C2410C", cl="#FFF1E7", crit="")
+CAT["pub"] = dict(nom="Publicité et sollicitation", court="Détectives de la pub", c="#B45318", cl="#FFF1E7", crit="")
+CAT["sol"] = dict(nom="Publicité et sollicitation", court="Détectives de la pub", c="#0F766E", cl="#E3F4F1", crit="")
 D = os.path.join(RACINE, "Lecons", "Cahier_Publicite-et-sollicitation")
 CORR = os.path.join(RACINE, "99_ENSEIGNANTE_SEULEMENT", "Corriges")
 os.makedirs(D, exist_ok=True); os.makedirs(CORR, exist_ok=True)
@@ -44,17 +46,22 @@ SOLLIC = [("Au téléphone", "« Bonjour ! Vous avez gagné une croisière. Il s
 NOM = '<div class="g2" style="margin-bottom:6px"><div class="small"><b>Prénom :</b> ______________________</div><div class="small"><b>Date :</b> ____________</div></div>'
 
 
+def truc(texte):
+    return f'<div style="display:flex;gap:10px;align-items:center;border:1.5px dashed #D9844A;border-radius:14px;padding:6px 12px;margin-top:8px">{tete(46)}<div><span class="tag" style="color:#B45318">Le truc du renard</span><div class="small">{texte}</div></div></div>'
+
+
 def pg(cat, titre, corps, kick, sous="", n=1, tot=12, etiq="Cahier de l'élève"):
     return style.page(cat, titre, corps, kick=kick, sous=sous, etiquette=etiq, n=n, tot=tot)
 
 
 def couverture(tot):
     parts = [("1", "La pub est partout"), ("2", "Les 8 ruses de la pub"), ("3", "Enquêtes de détective"), ("4", "La sollicitation"), ("5", "Je résiste et je crée"), ("6", "Mon bilan")]
-    corps = f'''<div style="margin-top:.9in"><div class="kick" style="color:#0F766E;font-size:10pt;letter-spacing:.2em;text-transform:uppercase;font-weight:800">PPS-Z128 · Cahier de l'élève</div>
+    corps = f'''<div style="margin-top:.9in"><div class="kick" style="color:#B45318;font-size:10pt;letter-spacing:.2em;text-transform:uppercase;font-weight:800">PPS-Z128 · Cahier de l'élève</div>
 <div style="font-size:50pt;font-weight:900;letter-spacing:-.035em;line-height:.95;margin-top:10px;color:#0E1330">Détectives<br>de la pub</div>
-<div class="lede" style="margin-top:14px;max-width:5in">La publicité et la sollicitation : repérer les ruses, calculer le vrai prix, savoir dire non.</div></div>
+<div class="lede" style="margin-top:14px;max-width:4.2in">La publicité et la sollicitation : repérer les ruses, calculer le vrai prix, savoir dire non.</div></div>
+<div style="position:absolute;right:.6in;bottom:.75in">{renard(330)}</div>
 <div class="card" style="margin-top:.5in;max-width:4.6in"><div class="small"><b>Mon nom :</b> ____________________________________</div><div class="small mt"><b>Mon groupe :</b> ______________</div></div>
-<div class="g3" style="margin-top:.55in">{"".join(f'<div style="border-top:3px solid #0F766E;padding-top:8px"><div style="font-size:22pt;font-weight:900;color:transparent;-webkit-text-stroke:1.2px #0F766E;line-height:1">0{n}</div><div style="font-weight:800;margin-top:4px">{t}</div></div>' for n, t in parts)}</div>'''
+<div class="g3" style="margin-top:.55in">{"".join(f'<div style="border-top:3px solid #B45318;padding-top:8px"><div style="font-size:22pt;font-weight:900;color:transparent;-webkit-text-stroke:1.2px #B45318;line-height:1">0{n}</div><div style="font-weight:800;margin-top:4px">{t}</div></div>' for n, t in parts)}</div>'''
     return pg("pub", "", corps, kick="", n=1, tot=tot)
 
 
@@ -68,7 +75,8 @@ def p_partout(n, tot):
 {OPTS(["À m'informer gratuitement", "À me faire acheter", "À me divertir"])}<div class="logic">{ico("logique", 16)}<span>La pub peut informer ou divertir, mais son vrai but est toujours de <b>vendre</b>.</span></div></div>
 <div class="ex"><div class="h"><span class="n">3</span><b>Besoin ou désir ?</b><span class="tag">Rappel</span></div>
 <div class="g2"><div class="card t"><b>Un besoin</b><p class="small">Je ne peux pas m'en passer : manger, me loger, me soigner, me déplacer.</p></div><div class="card t" style="--cl:#FFF1E7"><b>Un désir</b><p class="small">Ce serait le fun, mais je peux vivre sans.</p></div></div>
-<p class="mt">Une pub qui m'a donné envie d'un <b>désir</b> :</p>{L(1)}</div>'''
+<p class="mt">Une pub qui m'a donné envie d'un <b>désir</b> :</p>{L(1)}</div>
+{truc("Quand une pub me parle, je me demande : qui a payé pour ce message, et qu'est-ce qu'il veut que je fasse ?")}'''
     return pg("pub", "La pub est partout", corps, kick="Partie 1", sous="Combien de pubs je vois dans une journée ?", n=n, tot=tot)
 
 
@@ -86,9 +94,10 @@ def p_musee(n, tot):
 
 
 def p_ruses(n, tot):
-    cartes = "".join(f'<div class="card" style="padding:10px 12px;display:grid;grid-template-columns:42px 1fr;gap:10px"><div style="font-size:26pt;font-weight:900;line-height:1;color:transparent;-webkit-text-stroke:1.3px #0F766E">{i + 1}</div><div><b>{t}</b><div class="small" style="color:#0F766E;font-weight:700">{ex}</div><div class="small">{d}</div></div></div>' for i, (t, ex, d) in enumerate(RUSES))
+    cartes = "".join(f'<div class="card" style="padding:10px 12px;display:grid;grid-template-columns:42px 1fr;gap:10px"><div style="font-size:26pt;font-weight:900;line-height:1;color:transparent;-webkit-text-stroke:1.3px #B45318">{i + 1}</div><div><b>{t}</b><div class="small" style="color:#B45318;font-weight:700">{ex}</div><div class="small">{d}</div></div></div>' for i, (t, ex, d) in enumerate(RUSES))
     corps = f'''<p class="lede">Les publicitaires utilisent des <b>ruses</b> pour me donner envie. Quand je les connais, je les repère.</p>
 <div class="g2 mt" style="gap:9px">{cartes}</div>
+{truc("Une seule ruse suffit pour me faire acheter trop vite. J'en cherche toujours au moins deux.")}
 <div class="card k mt"><h2>{ico("loupe")}Mon truc pour m'en souvenir</h2><p class="small">La ruse que je trouve la plus sournoise, c'est la n° ____ parce que…</p>{L(1)}</div>'''
     return pg("pub", "Les 8 ruses de la pub", corps, kick="Partie 2", sous="Ma fiche de référence. Je la garde pour les enquêtes.", n=n, tot=tot)
 
@@ -101,7 +110,7 @@ def enquete(i, p):
 
 
 def p_enquetes(a, b, n, tot):
-    corps = f'''<p class="small" style="margin-bottom:8px">Fausses publicités créées pour la classe. J'encercle les numéros des ruses. Je réponds à la question, avec un calcul s'il le faut. <b>Taxes : environ 15 %</b>.</p>
+    corps = f'''<p class="small" style="margin-bottom:8px">Fausses publicités créées pour la classe. J'encercle les numéros des ruses. Je réponds à la question, avec un calcul s'il le faut. <b>Taxes : environ 15 %</b>.</p>{truc("Je lis toujours les petits caractères en premier : c'est là que se cache le vrai prix.") if a == 0 else ""}
 {"".join(enquete(i + 1, PUBS[i]) for i in range(a, b))}'''
     return pg("pub", "Enquêtes de détective" if a == 0 else "", corps, kick="Partie 3", sous="Six fausses pubs à analyser, seul ou en équipe." if a == 0 else "", n=n, tot=tot)
 
@@ -111,7 +120,8 @@ def p_sollic(n, tot):
     corps = f'''<p class="lede">La <b>sollicitation</b>, c'est quand quelqu'un vient me chercher pour me vendre quelque chose : au téléphone, à la porte, par texto, sur les réseaux.</p>
 <table class="t grid mt"><tr><th>Où</th><th>Ce qu'on me dit</th><th>Mon avis</th></tr>{cas}</table>
 <div class="g2 mt"><div class="card"><h2>{ico("attention")}Les signes d'alerte</h2><ul class="ticks"><li>On me presse : « aujourd'hui seulement ».</li><li>On me demande ma carte, mon NAS ou un mot de passe.</li><li>J'ai « gagné » à un concours où je ne me suis pas inscrit.</li><li>On veut que je signe tout de suite.</li><li>C'est trop beau pour être vrai.</li></ul></div>
-<div class="card t" style="--cl:#FFF1E7"><h2>{ico("ok")}Mes 3 réflexes</h2><ol class="steps"><li><span><b>Je prends mon temps.</b> Une bonne offre sera encore là demain.</span></li><li><span><b>Je ne donne jamais</b> ma carte, mon NAS ou mes mots de passe.</span></li><li><span><b>J'en parle</b> à une personne de confiance avant de dire oui.</span></li></ol></div></div>'''
+<div class="card t" style="--cl:#FFF1E7"><h2>{ico("ok")}Mes 3 réflexes</h2><ol class="steps"><li><span><b>Je prends mon temps.</b> Une bonne offre sera encore là demain.</span></li><li><span><b>Je ne donne jamais</b> ma carte, mon NAS ou mes mots de passe.</span></li><li><span><b>J'en parle</b> à une personne de confiance avant de dire oui.</span></li></ol></div></div>
+{truc("Si c'est trop beau pour être vrai, c'est probablement faux.")}'''
     return pg("sol", "La sollicitation", corps, kick="Partie 4", sous="Quand on vient me chercher pour me vendre quelque chose.", n=n, tot=tot)
 
 
@@ -134,6 +144,7 @@ def p_creer(n, tot):
 <tr><td>Mes petits caractères (le vrai prix ou la condition cachée)</td><td style="height:48px"></td></tr>
 <tr><td>Mes ruses (au moins 3)</td><td>{"".join(f'<span class="opt"><span class="cb"></span>{k}</span>' for k in range(1, 9))}</td></tr></table>
 <div class="card box mt" style="flex:1;min-height:2.6in"><span class="tag">Le croquis de ma pub</span></div>
+{truc("Ma pub doit avoir l'air honnête au premier coup d'œil. Le piège est caché dans les détails.")}
 <p class="small mt">Le vrai prix, avec les taxes (environ 15 %) : __________ $ &nbsp;·&nbsp; Ruses trouvées par les autres : ____ sur ____</p>'''
     return pg("pub", "Je crée ma pub piège", corps, kick="Partie 5", sous="Le meilleur moyen de comprendre une ruse : l'utiliser soi-même.", n=n, tot=tot)
 
@@ -143,7 +154,7 @@ def p_bouclier(n, tot):
 <div class="ex mt"><div class="h"><span class="n">1</span><b>Le vrai prix</b><span class="tag">J'estime</span></div>
 <table class="t grid"><tr><th>Prix affiché</th><th>Arrondi</th><th>Taxes (≈ 15 %)</th><th>Vrai prix environ</th></tr>
 <tr><td>19,99 $</td><td></td><td></td><td></td></tr><tr><td>39,95 $</td><td></td><td></td><td></td></tr><tr><td>149,99 $</td><td></td><td></td><td></td></tr></table>
-<div class="logic">{ico("logique", 16)}<span>Truc : 10 % de 40 $, c'est 4 $. La moitié, c'est 2 $. 4 $ + 2 $ = 6 $ de taxes environ.</span></div></div>
+{truc("Pour les taxes : 10 % de 40 $, c'est 4 $. La moitié de 4 $, c'est 2 $. 4 $ + 2 $ = environ 6 $ de taxes.")}</div>
 <div class="ex"><div class="h"><span class="n">2</span><b>J'applique mon bouclier</b></div><p class="small">Une chose que j'ai envie d'acheter en ce moment :</p>{L(1)}
 <p class="small">Besoin ou désir ? ____________ &nbsp; Vrai prix : ________ $ &nbsp; Je peux attendre ? {OPTS(["Oui", "Non"])}</p><p class="small">Ma décision :</p>{L(1)}</div>'''
     return pg("pub", "Mon bouclier", corps, kick="Partie 5", sous="Ce que je fais avant chaque achat.", n=n, tot=tot)
@@ -156,7 +167,8 @@ def p_bilan(n, tot):
     corps = f'''<p class="lede">Je colorie le rond qui me ressemble. <b>Pas de note</b> : c'est pour savoir où j'en suis.</p>
 <table class="t mt">{rows}</table>
 <div class="g2 mt2"><div class="card"><h2>{ico("idee")}Aujourd'hui, j'ai appris…</h2>{L(3)}</div><div class="card"><h2>{ico("fusee")}La prochaine fois que je vois une pub, je vais…</h2>{L(3)}</div></div>
-<div class="card k mt2"><h2>{ico("crayon")}Mon billet de sortie</h2><p class="small">La ruse que je vais le plus surveiller : n° ____ &nbsp; Une personne à qui je peux demander conseil avant un gros achat :</p>{L(1)}</div>'''
+<div class="card k mt2"><h2>{ico("crayon")}Mon billet de sortie</h2><p class="small">La ruse que je vais le plus surveiller : n° ____ &nbsp; Une personne à qui je peux demander conseil avant un gros achat :</p>{L(1)}</div>
+<div style="display:flex;justify-content:flex-end;align-items:flex-end;gap:10px;margin-top:auto"><div class="quote small" style="max-width:3in">Bravo, détective ! Tu sais maintenant repérer les ruses et dire non.</div>{renard(120, loupe=False)}</div>'''
     return pg("pub", "Mon bilan", corps, kick="Partie 6", sous="Ce que je sais faire maintenant.", n=n, tot=tot)
 
 
