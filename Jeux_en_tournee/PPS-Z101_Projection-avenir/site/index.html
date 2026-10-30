@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Projection vers l'avenir</title>
+<meta name="description" content="PPS-Z101-3 Projection vers l'avenir · CFGA De La Jonquière : Mission Avenir, ateliers exploratoires, groupes A et B.">
+<link rel="stylesheet" href="style.css">
+<style>
+.hero{display:grid;grid-template-columns:1fr 220px;gap:20px;align-items:center}
+.fusee{animation:monte 3.5s ease-in-out infinite alternate}
+@keyframes monte{to{transform:translateY(-10px)}}
+@media (prefers-reduced-motion:reduce){.fusee{animation:none}}
+@media (max-width:640px){.hero{grid-template-columns:1fr}.hero svg{max-width:140px;justify-self:center}}
+.grande a.carte{min-height:190px}
+.grande h3{margin-top:4px}
+.chemin{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-weight:800}
+.chemin span{background:#fff;border-radius:99px;padding:6px 14px;box-shadow:0 2px 8px rgba(27,31,75,.08)}
+</style>
+</head>
+<body>
+<header class="ciel">
+ <div class="wrap hero">
+  <div>
+   <div class="fil">CFGA De La Jonquière · Participation sociale</div>
+   <h1>Projection vers l'avenir</h1>
+   <p class="sous">PPS-Z101-3 avec Lisa. Ici, on apprend à se connaître, on explore des milieux de travail et on prépare son projet.</p>
+  </div>
+  <svg class="fusee" viewBox="0 0 200 200" width="200" height="200" aria-hidden="true">
+   <circle cx="150" cy="45" r="22" fill="#E9B949"/><ellipse cx="150" cy="45" rx="38" ry="8" fill="none" stroke="#F4D78A" stroke-width="4" transform="rotate(-18 150 45)"/>
+   <circle cx="40" cy="150" r="12" fill="#E07A5F"/>
+   <g transform="rotate(35 100 100)">
+    <path d="M100 30c18 18 24 50 20 80H80c-4-30 2-62 20-80z" fill="#fff"/>
+    <circle cx="100" cy="70" r="10" fill="#5B5FC7" stroke="#272C66" stroke-width="4"/>
+    <path d="M80 92l-16 26 18-4zM120 92l16 26-18-4z" fill="#E07A5F"/>
+    <path d="M86 110h28l-6 14h-16z" fill="#9AA7D9"/>
+    <path d="M92 124c2 14 6 22 8 26 2-4 6-12 8-26z" fill="#E9B949"/>
+   </g>
+  </svg>
+ </div>
+</header>
+<main class="wrap">
+ <div class="chemin" aria-label="Le parcours">
+  <span>1. Je me connais</span><span>→</span><span>2. J'explore</span><span>→</span><span>3. Je bâtis mon projet</span>
+ </div>
+
+ <div class="grille grande mt">
+  <a class="carte" href="mission-avenir.html">
+   <div class="ico" style="background:#E9E9FB"><svg viewBox="0 0 40 40" width="38"><circle cx="20" cy="20" r="11" fill="#5B5FC7"/><ellipse cx="20" cy="20" rx="18" ry="5" fill="none" stroke="#E9B949" stroke-width="3" transform="rotate(-20 20 20)"/></svg></div>
+   <span class="pill">Environ 30 min</span>
+   <h3>Mission Avenir</h3>
+   <p>Le jeu de la rentrée : de la Lune à Saturne avec Nova. À la fin, ton bilan PDF pour Lisa.</p>
+  </a>
+  <a class="carte" href="ateliers.html">
+   <div class="ico" style="background:#FCE9E3"><svg viewBox="0 0 40 40" width="38"><rect x="8" y="14" width="24" height="18" rx="3" fill="#E07A5F"/><path d="M15 14v-4h10v4" fill="none" stroke="#E07A5F" stroke-width="3"/><rect x="8" y="20" width="24" height="3" fill="#fff" opacity=".7"/></svg></div>
+   <span class="pill">4 ateliers</span>
+   <h3>Ateliers exploratoires</h3>
+   <p>Grenier de Maria, Ensachage, Cantine, Conciergerie. Après chaque séance : ton journal d'atelier.</p>
+  </a>
+  <a class="carte" href="rotation.html">
+   <div class="ico" style="background:#FBF1D9"><svg viewBox="0 0 40 40" width="38"><path d="M10 16a11 11 0 0 1 19-5" fill="none" stroke="#C9971E" stroke-width="3.5" stroke-linecap="round"/><path d="M30 6v6h-6" fill="none" stroke="#C9971E" stroke-width="3.5" stroke-linecap="round"/><path d="M30 24a11 11 0 0 1-19 5" fill="none" stroke="#5B5FC7" stroke-width="3.5" stroke-linecap="round"/><path d="M10 34v-6h6" fill="none" stroke="#5B5FC7" stroke-width="3.5" stroke-linecap="round"/></svg></div>
+   <span class="pill">Groupes A et B</span>
+   <h3>Où suis-je aujourd'hui ?</h3>
+   <p>Un groupe en atelier, l'autre en classe. Puis on change.</p>
+  </a>
+  <a class="carte" href="https://ppscssdlj.netlify.app" target="_blank" rel="noopener">
+   <div class="ico" style="background:#E3F1EC"><svg viewBox="0 0 40 40" width="38"><rect x="9" y="7" width="22" height="27" rx="3" fill="#3F8F74"/><path d="M14 15h12M14 21h12M14 27h7" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+   <span class="pill">Outil Z101</span>
+   <h3>Mon portfolio Z101</h3>
+   <p>L'outil du cours : mes forces, mes milieux, mon projet. S'ouvre dans un nouvel onglet.</p>
+  </a>
+ </div>
+
+ <section class="carte mt2">
+  <h2>Pour Lisa</h2>
+  <div class="grille">
+   <div><b>Le cours d'accueil</b><br><span class="petit">Nouveaux et anciens ensemble : un plan prêt à vivre.</span><br><a class="btn cl mt" href="accueil.html">Ouvrir le plan</a></div>
+   <div><b>Espace enseignante du jeu</b><br><span class="petit">Grille, corrigé, capsules à projeter.</span><br><a class="btn cl mt" href="mission-avenir.html?mode=lisa">Ouvrir</a></div>
+   <div><b>Créer une question</b><br><span class="petit">Le studio où les anciens créent une question pour les nouveaux.</span><br><a class="btn cl mt" href="mission-avenir.html?mode=question">Ouvrir le studio</a></div>
+  </div>
+ </section>
+</main>
+<footer>Aucune donnée n'est envoyée sur Internet : ce que tu écris reste sur ton appareil jusqu'à ce que tu télécharges ton PDF.</footer>
+</body>
+</html>

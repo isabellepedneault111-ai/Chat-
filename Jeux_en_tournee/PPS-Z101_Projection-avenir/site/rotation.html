@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Groupes A et B</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.seances{display:flex;flex-wrap:wrap;gap:8px}
+.se{font:inherit;font-weight:800;cursor:pointer;border:2.5px solid #DCDAEA;background:#fff;border-radius:14px;padding:8px 16px}
+.se.on{background:var(--nuit);color:#fff;border-color:var(--nuit)}
+.deux{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:700px){.deux{grid-template-columns:1fr}}
+.gr{border-radius:22px;padding:20px;color:#fff;position:relative;overflow:hidden;min-height:250px}
+.gr h2{font-size:40px;margin:0}
+.gr .ou{font-size:22px;font-weight:800;margin:6px 0 10px}
+.gr ul{margin:6px 0 0;padding-left:20px}
+.gr.atel{background:linear-gradient(135deg,#E07A5F,#C9971E)}
+.gr.cls{background:linear-gradient(135deg,#3B3F8F,#5B5FC7)}
+.gr svg.fond{position:absolute;right:-10px;bottom:-10px;opacity:.18}
+.fleche{text-align:center;font-weight:800;color:var(--doux);margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #E6E4F0}
+th{background:#F0EFF8}
+td.a{color:#B3452B;font-weight:800}td.c{color:#3E41A0;font-weight:800}
+.tab-wrap{overflow-x:auto}
+</style>
+</head>
+<body>
+<header class="ciel">
+ <div class="wrap">
+  <div class="fil"><a href="index.html">Projection vers l'avenir</a> › Groupes A et B</div>
+  <h1>Où suis-je aujourd'hui ?</h1>
+  <p class="sous">Un groupe va en atelier, l'autre reste en classe avec Lisa. À la séance suivante, on change.</p>
+ </div>
+</header>
+<main class="wrap">
+ <div class="carte">
+  <b>Choisis la séance</b>
+  <div class="seances mt" id="seances"></div>
+ </div>
+ <div class="deux mt" id="vue"></div>
+ <p class="fleche" id="suite"></p>
+
+ <section class="carte mt2">
+  <h2>Qui va où ?</h2>
+  <div class="deux">
+   <div><span class="pill">Groupe A</span><p><b>Grenier de Maria</b> et <b>Ensachage et préparation</b></p></div>
+   <div><span class="pill">Groupe B</span><p><b>Cantine de l'école</b> et <b>Conciergerie et services</b></p></div>
+  </div>
+  <p class="petit">Lisa te dit dans quel groupe tu es. Après ton atelier, remplis ton <a href="ateliers.html">journal d'atelier</a>.</p>
+ </section>
+
+ <section class="carte mt2">
+  <h2>Le calendrier</h2>
+  <div class="tab-wrap"><table id="cal"></table></div>
+ </section>
+</main>
+<footer>Aucun nom d'élève sur ce site. Les listes de groupes restent avec Lisa.</footer>
+<script>
+/* Ce que fait le groupe en classe, séance par séance (Lisa peut modifier) */
+const CLASSE=[
+ {t:"Mission Avenir",d:["Joue le jeu Mission Avenir","Télécharge ton bilan PDF","Remets-le à Lisa"],lien:"mission-avenir.html"},
+ {t:"Mission Avenir (suite)",d:["Termine la mission","Compare ton portrait avec un ou une collègue","Choisis 3 forces pour ton portfolio"],lien:"mission-avenir.html"},
+ {t:"Mon portfolio Z101",d:["Relis ton journal d'atelier","Ajoute tes forces dans l'outil Z101","Note ce qui t'a surpris"],lien:"https://ppscssdlj.netlify.app"},
+ {t:"Mon portfolio Z101 (suite)",d:["Relis ton journal d'atelier","Ajoute tes milieux d'appartenance","Note une personne qui peut t'aider"],lien:"https://ppscssdlj.netlify.app"},
+ {t:"Mon projet",d:["Écris ton but en une phrase","Nomme un besoin de formation","Nomme une condition de réussite"],lien:"https://ppscssdlj.netlify.app"},
+ {t:"Mon projet (suite)",d:["Présente ton idée à un ou une collègue","Écoute ses questions","Ajuste ton projet"],lien:"https://ppscssdlj.netlify.app"}
+];
+const N=CLASSE.length;
+let s=1;try{s=+(localStorage.getItem("z101-seance")||1)||1}catch(e){}
+const ATEL={A:["Grenier de Maria","Ensachage et préparation"],B:["Cantine de l'école","Conciergerie et services"]};
+const fus=`<svg class="fond" viewBox="0 0 100 100" width="170"><path d="M50 8c14 14 18 40 15 62H35c-3-22 1-48 15-62z" fill="#fff"/><path d="M35 50l-12 22 14-3zM65 50l12 22-14-3z" fill="#fff"/></svg>`;
+const pla=`<svg class="fond" viewBox="0 0 100 100" width="170"><circle cx="50" cy="50" r="26" fill="#fff"/><ellipse cx="50" cy="50" rx="46" ry="11" fill="none" stroke="#fff" stroke-width="6" transform="rotate(-18 50 50)"/></svg>`;
+function qui(n){return n%2===1?{atel:"A",cls:"B"}:{atel:"B",cls:"A"}}
+function rendu(){
+ try{localStorage.setItem("z101-seance",s)}catch(e){}
+ document.getElementById("seances").innerHTML=Array.from({length:N},(_,k)=>`<button class="se${k+1===s?" on":""}" data-n="${k+1}" aria-pressed="${k+1===s}">Séance ${k+1}</button>`).join("");
+ document.querySelectorAll(".se").forEach(b=>b.onclick=()=>{s=+b.dataset.n;rendu()});
+ const q=qui(s),c=CLASSE[s-1];
+ document.getElementById("vue").innerHTML=`
+  <div class="gr atel">${fus}<h2>Groupe ${q.atel}</h2><div class="ou">En atelier</div><ul>${ATEL[q.atel].map(a=>`<li>${a}</li>`).join("")}</ul><p style="margin-bottom:0">Au retour : ton <a href="ateliers.html" style="color:#fff;font-weight:800">journal d'atelier</a>.</p></div>
+  <div class="gr cls">${pla}<h2>Groupe ${q.cls}</h2><div class="ou">En classe : ${c.t}</div><ul>${c.d.map(x=>`<li>${x}</li>`).join("")}</ul><p style="margin-bottom:0"><a href="${c.lien}" style="color:#fff;font-weight:800">Ouvrir</a></p></div>`;
+ document.getElementById("suite").textContent=s<N?`À la séance ${s+1}, on change : le groupe ${q.cls} va en atelier.`:"Dernière séance du cycle : on fait le bilan ensemble.";
+ document.getElementById("cal").innerHTML=`<tr><th>Séance</th><th>Groupe A</th><th>Groupe B</th></tr>`+CLASSE.map((x,k)=>{const r=qui(k+1);const cel=g=>r.atel===g?`<td class="a">Atelier</td>`:`<td class="c">Classe : ${x.t}</td>`;return `<tr${k+1===s?' style="background:#FFF8E6"':""}><td><b>${k+1}</b></td>${cel("A")}${cel("B")}</tr>`}).join("");
+}
+rendu();
+</script>
+</body>
+</html>

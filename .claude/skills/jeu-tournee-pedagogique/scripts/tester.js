@@ -46,6 +46,7 @@ fs.mkdirSync(OUT, { recursive: true });
         case 'ordre': if (w) { [...q.steps.keys()].reverse().forEach(k => c(z.querySelector(`.ord [data-k="${k}"]`))); } else { q.steps.forEach((s, k) => c(z.querySelector(`.ord [data-k="${k}"]`))); } c(z.querySelector('#ov')); break;
         case 'curseur': { const r = z.querySelector('#rg'); r.value = w ? (q.max > q.okMax ? q.max : q.min) : q.okMin; r.dispatchEvent(new Event('input')); c(z.querySelector('#vc')); break; }
         case 'erreur': c(z.querySelector(`[data-k="${w ? q.lignes.findIndex((l, i) => !q.bad.includes(i)) : q.bad[0]}"]`)); break;
+        case 'portrait': { c(z.querySelector('.pco')); const b = z.querySelectorAll('.pco'); if (q.multiple !== false && b[1]) c(b[1]); c(z.querySelector('#pvp')); break; }
         case 'texte': { const t = z.querySelector('#tx'); t.value = 'Voici mon explication avec mes mots, étape par étape.'; t.dispatchEvent(new Event('input')); c(z.querySelector('#tv')); break; }
       } };
       fait(faux); if (faux && !cur.done) fait(false);

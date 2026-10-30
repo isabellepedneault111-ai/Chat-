@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ateliers exploratoires</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.choix{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.at{font:inherit;text-align:left;cursor:pointer;background:#fff;border:3px solid transparent;border-radius:20px;padding:16px;box-shadow:0 4px 18px rgba(27,31,75,.08)}
+.at.on{border-color:var(--c)}
+.at .ico{background:var(--cc)}
+.fiche{border-top:8px solid var(--c)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:700px){.cols{grid-template-columns:1fr}}
+ul.puces{padding-left:20px;margin:6px 0}
+.q{margin-top:22px}
+.q>b{display:block;font-size:19px}
+.q .savoir{font-size:12.5px;font-weight:800;color:var(--doux);letter-spacing:.02em}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{font:inherit;font-weight:700;cursor:pointer;background:#fff;border:2.5px solid #DCDAEA;border-radius:14px;padding:8px 14px}
+.chip.on{background:var(--ac2);border-color:var(--ac)}
+.chip svg{vertical-align:-6px;margin-right:4px}
+input[type=text],input[type=date],textarea{font:inherit;width:100%;border:2.5px solid #DCDAEA;border-radius:12px;padding:9px 12px;background:#fff}
+textarea{min-height:70px;resize:vertical}
+input:focus,textarea:focus,.chip:focus-visible,.at:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.dicte{font:inherit;font-size:14px;font-weight:800;border:0;background:none;color:var(--ac);cursor:pointer;padding:4px 0}
+.msg{color:#B3452B;font-weight:800}
+.ok{background:#E3F1EC;border-radius:14px;padding:10px 14px;margin-top:12px}
+#feuille{position:fixed;left:-3000px;top:0;width:816px;background:#fff;font-family:NU,sans-serif;color:#2A2D45}
+</style>
+</head>
+<body>
+<header class="ciel">
+ <div class="wrap">
+  <div class="fil"><a href="index.html">Projection vers l'avenir</a> › Ateliers exploratoires</div>
+  <h1>Ateliers exploratoires</h1>
+  <p class="sous">On essaie un vrai milieu de travail pour découvrir ce qu'on aime, ce qu'on fait bien et ce qu'on veut apprendre.</p>
+ </div>
+</header>
+<main class="wrap">
+ <h2>1. Choisis ton atelier</h2>
+ <div class="choix" id="choix"></div>
+ <div id="fiche"></div>
+</main>
+<div id="feuille" aria-hidden="true"></div>
+<footer>Ton journal reste sur cet appareil. Rien n'est envoyé sur Internet.</footer>
+<script src="lib/html2canvas.min.js"></script>
+<script src="lib/jspdf.umd.min.js"></script>
+<script>
+/* ===== Contenu des ateliers : Lisa peut modifier ce bloc ===== */
+const ATELIERS = [
+ { id:"grenier", nom:"Grenier de Maria", c:"#7C5CC4", cc:"#EEE8FA", groupe:"A",
+   intro:"Un comptoir où on trie, on range et on met en valeur des objets et des vêtements.",
+   taches:["Trier les dons","Plier et ranger","Mettre des étiquettes de prix","Placer les articles sur les tablettes","Accueillir les clients","Faire le ménage du local"],
+   competences:["Être minutieux","Classer","Travailler avec les clients"],
+   ico:'<path d="M8 30V16l12-8 12 8v14z" fill="#7C5CC4"/><rect x="16" y="20" width="8" height="10" fill="#fff"/>' },
+ { id:"ensachage", nom:"Ensachage et préparation", c:"#3F8F74", cc:"#E3F1EC", groupe:"A",
+   intro:"On prépare des produits pour qu'ils soient prêts à être distribués : compter, mettre en sac, fermer, étiqueter.",
+   taches:["Compter les produits","Remplir les sacs","Fermer et étiqueter","Vérifier la qualité","Placer dans les boîtes","Nettoyer le poste de travail"],
+   competences:["Suivre une méthode","Garder le rythme","Vérifier son travail"],
+   ico:'<path d="M11 14h18l-2 18H13z" fill="#3F8F74"/><path d="M15 14a5 5 0 0 1 10 0" fill="none" stroke="#3F8F74" stroke-width="3"/>' },
+ { id:"cantine", nom:"Cantine de l'école", c:"#E07A5F", cc:"#FCE9E3", groupe:"B",
+   intro:"Une vraie petite entreprise : on prépare, on sert, on encaisse. Les rôles changent à chaque séance.",
+   roles:["Gérant ou gérante","Caisse","Préparation","Service et propreté"],
+   taches:["Préparer les aliments ou les boissons","Servir les clients","Rendre la monnaie","Placer et remplir","Nettoyer le comptoir","Faire l'inventaire"],
+   competences:["Servir avec le sourire","Calculer la monnaie","Respecter l'hygiène"],
+   ico:'<rect x="8" y="16" width="24" height="14" rx="3" fill="#E07A5F"/><path d="M8 16l3-7h18l3 7" fill="#F2B5A4"/><rect x="17" y="21" width="6" height="9" fill="#fff"/>' },
+ { id:"conciergerie", nom:"Conciergerie et services", c:"#C9971E", cc:"#FBF1D9", groupe:"B",
+   intro:"On garde l'école propre et accueillante, et on rend des services : entretien, petites réparations, déplacements de matériel.",
+   taches:["Nettoyer les surfaces","Vider les poubelles et le recyclage","Laver les planchers","Placer du matériel","Aider à une petite réparation","Faire une tournée de vérification"],
+   competences:["Être autonome","Utiliser les produits de façon sécuritaire","Remarquer ce qui manque"],
+   ico:'<rect x="18" y="6" width="4" height="20" fill="#C9971E"/><path d="M12 26h16l3 8H9z" fill="#C9971E"/>' }
+];
+const FORCES = ["Je suis patient","Je suis minutieux","Je suis rapide","Je suis gentil avec les autres","Je travaille bien avec mes mains","Je pose des questions","Je suis organisé","Je reste concentré","Je suis ponctuel","J'aide les autres"];
+const METEO = [["soleil","J'ai aimé"],["nuage","Moyen"],["pluie","Pas aimé"]];
+const INTERET = ["Oui, j'aimerais continuer","Peut-être","Non, pas pour moi"];
+
+/* ===== Moteur de la page ===== */
+const E=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const $=id=>document.getElementById(id);
+let A=null, J={};
+const lire=()=>{try{return JSON.parse(localStorage.getItem("z101-journal")||"{}")}catch(e){return{}}};
+const garder=()=>{try{localStorage.setItem("z101-journal",JSON.stringify(J))}catch(e){}};
+const icone=(t,w=26)=>({
+ soleil:`<svg viewBox="0 0 30 30" width="${w}"><circle cx="15" cy="15" r="7" fill="#E9B949"/><g stroke="#E9B949" stroke-width="2.5" stroke-linecap="round"><path d="M15 2v4M15 24v4M2 15h4M24 15h4M6 6l3 3M21 21l3 3M6 24l3-3M21 9l3-3"/></g></svg>`,
+ nuage:`<svg viewBox="0 0 30 30" width="${w}"><circle cx="11" cy="12" r="5" fill="#E9B949"/><path d="M8 24a5 5 0 0 1 1-10 7 7 0 0 1 13 2 4 4 0 0 1 0 8z" fill="#AEB4CF"/></svg>`,
+ pluie:`<svg viewBox="0 0 30 30" width="${w}"><path d="M7 19a5 5 0 0 1 1-10 7 7 0 0 1 13 2 4 4 0 0 1 0 8z" fill="#8C93B5"/><path d="M10 22l-1 4M15 22l-1 4M20 22l-1 4" stroke="#5B5FC7" stroke-width="2.5" stroke-linecap="round"/></svg>`
+})[t];
+
+function choix(){
+ $("choix").innerHTML=ATELIERS.map(a=>`<button class="at${A&&A.id===a.id?" on":""}" style="--c:${a.c};--cc:${a.cc}" data-id="${a.id}">
+  <div class="ico"><svg viewBox="0 0 40 40" width="38">${a.ico}</svg></div><b style="font-size:19px">${E(a.nom)}</b><br><span class="petit">Groupe ${a.groupe}</span></button>`).join("");
+ document.querySelectorAll(".at").forEach(b=>b.onclick=()=>{A=ATELIERS.find(a=>a.id===b.dataset.id);J=Object.assign({},lire());if(J.atelier!==A.id){J={atelier:A.id,prenom:J.prenom||""}}garder();choix();fiche();$("fiche").scrollIntoView({behavior:"smooth"})});
+}
+
+function chips(nom,opts,multi,max){
+ const v=J[nom]||(multi?[]:null);
+ return `<div class="chips" data-nom="${nom}" data-multi="${multi?1:0}" data-max="${max||99}">${opts.map((o,k)=>{const lab=Array.isArray(o)?o[1]:o,ic=Array.isArray(o)?icone(o[0]):"";const on=multi?v.includes(lab):v===lab;return `<button type="button" class="chip${on?" on":""}" data-v="${E(lab)}" aria-pressed="${on}">${ic}${E(lab)}</button>`}).join("")}</div>`;
+}
+const dicte=id=>("webkitSpeechRecognition" in window||"SpeechRecognition" in window)?`<button type="button" class="dicte" data-dicte="${id}">Dicter ma réponse</button>`:"";
+
+function fiche(){
+ const a=A;
+ $("fiche").innerHTML=`
+ <section class="carte fiche mt2" style="--c:${a.c}">
+  <span class="pill" style="background:${a.cc};color:${a.c}">Groupe ${a.groupe}</span>
+  <h2>${E(a.nom)}</h2>
+  <p>${E(a.intro)}</p>
+  <div class="cols">
+   <div><b>Ce qu'on peut y faire</b><ul class="puces">${a.taches.map(t=>`<li>${E(t)}</li>`).join("")}</ul></div>
+   <div><b>Ce qu'on y développe</b><ul class="puces">${a.competences.map(t=>`<li>${E(t)}</li>`).join("")}</ul>
+   ${a.roles?`<b>Les rôles (ils changent à chaque séance)</b><ul class="puces">${a.roles.map(t=>`<li>${E(t)}</li>`).join("")}</ul>`:""}</div>
+  </div>
+ </section>
+
+ <section class="carte mt2">
+  <h2>2. Mon journal d'atelier</h2>
+  <p class="petit">À remplir après chaque séance. Ça prend 5 minutes. Il n'y a pas de mauvaise réponse.</p>
+  <div class="cols">
+   <div class="q"><b>Mon prénom</b><input type="text" id="prenom" maxlength="40" value="${E(J.prenom||"")}" autocomplete="given-name"></div>
+   <div class="q"><b>Séance numéro</b><div class="chips" data-nom="seance" data-multi="0">${[1,2,3,4,5,6].map(n=>`<button type="button" class="chip${J.seance==n?" on":""}" data-v="${n}">${n}</button>`).join("")}</div></div>
+  </div>
+  ${a.roles?`<div class="q"><b>Mon rôle aujourd'hui</b>${chips("role",a.roles,false)}</div>`:""}
+  <div class="q"><span class="savoir">EXPÉRIENCES</span><b>Ce que j'ai fait aujourd'hui</b>${chips("taches",a.taches,true)}<input type="text" id="tache_autre" class="mt" placeholder="Autre chose ? Écris-le ici" maxlength="80" value="${E(J.tache_autre||"")}"></div>
+  <div class="q"><span class="savoir">HABILETÉS</span><b>Une force que j'ai utilisée (jusqu'à 2)</b>${chips("forces",FORCES,true,2)}</div>
+  <div class="q"><span class="savoir">MOTIVATION</span><b>Comment j'ai trouvé l'atelier</b>${chips("meteo",METEO,false)}</div>
+  <div class="q"><span class="savoir">MOTIVATION</span><b>Ce que j'ai le plus aimé, ou le moins aimé</b><textarea id="aime" maxlength="300">${E(J.aime||"")}</textarea>${dicte("aime")}</div>
+  <div class="q"><span class="savoir">FACTEURS DE DÉLIMITATION</span><b>Ce qui a été difficile pour moi</b><textarea id="difficile" maxlength="300">${E(J.difficile||"")}</textarea>${dicte("difficile")}</div>
+  <div class="q"><span class="savoir">BUTS</span><b>Est-ce que ça m'intéresse pour mon projet ?</b>${chips("interet",INTERET,false)}</div>
+  <div class="q"><span class="savoir">CONDITIONS DE RÉUSSITE</span><b>La prochaine fois, je veux essayer…</b><input type="text" id="prochaine" maxlength="120" value="${E(J.prochaine||"")}"></div>
+  <div class="mt2" style="display:flex;gap:10px;flex-wrap:wrap">
+   <button class="btn" id="pdf">Télécharger mon journal (PDF)</button>
+   <button class="btn cl" id="vider">Nouvelle séance (effacer)</button>
+  </div>
+  <p class="msg" id="msg" role="status"></p><div id="boite"></div>
+  <p class="petit">Ensuite : remets ton PDF dans le devoir Teams de Lisa, ou classe-le dans ton portfolio Z101.</p>
+ </section>`;
+ document.querySelectorAll("#fiche .chips").forEach(g=>g.onclick=e=>{const b=e.target.closest(".chip");if(!b)return;const n=g.dataset.nom,v=b.dataset.v;
+  if(g.dataset.multi==="1"){let l=J[n]||[];if(l.includes(v))l=l.filter(x=>x!==v);else{if(l.length>=+g.dataset.max){$("msg").textContent=`Maximum ${g.dataset.max} choix. Enlève un choix d'abord.`;return}l=[...l,v]}J[n]=l}
+  else J[n]=J[n]===v?null:v;
+  $("msg").textContent="";garder();g.querySelectorAll(".chip").forEach(c=>{const on=g.dataset.multi==="1"?(J[n]||[]).includes(c.dataset.v):J[n]===c.dataset.v;c.classList.toggle("on",on);c.setAttribute("aria-pressed",on)})});
+ ["prenom","tache_autre","aime","difficile","prochaine"].forEach(id=>$(id).oninput=()=>{J[id]=$(id).value;garder()});
+ document.querySelectorAll("[data-dicte]").forEach(b=>b.onclick=()=>dicter(b.dataset.dicte,b));
+ $("vider").onclick=()=>{if(!confirm("Effacer ce journal pour commencer une nouvelle séance ?"))return;J={atelier:A.id,prenom:J.prenom||""};garder();fiche()};
+ $("pdf").onclick=pdf;
+}
+
+function dicter(id,b){const R=window.SpeechRecognition||window.webkitSpeechRecognition;const r=new R();r.lang="fr-CA";r.continuous=true;r.interimResults=false;
+ const t=$(id),dep=t.value;let fin=false;b.textContent="J'écoute… (clique pour arrêter)";
+ r.onresult=e=>{let s="";for(const x of e.results)s+=x[0].transcript;t.value=(dep?dep+" ":"")+s;J[id]=t.value;garder()};
+ r.onend=()=>{if(!fin){try{r.start()}catch(e){}}else b.textContent="Dicter ma réponse"};
+ b.onclick=()=>{fin=true;r.stop();b.onclick=()=>dicter(id,b)};r.start()}
+
+async function pdf(){
+ const a=A;
+ if(!(J.prenom||"").trim()){$("msg").textContent="Écris ton prénom avant de télécharger.";$("prenom").focus();return}
+ $("msg").textContent="";$("pdf").disabled=true;$("pdf").textContent="Préparation…";
+ const L=(t,v,sav)=>`<div style="margin:0 0 14px"><div style="font-size:11px;font-weight:800;color:#8B8FAE;letter-spacing:.04em">${sav}</div><div style="font-size:15px;font-weight:800">${t}</div><div style="font-size:15px;margin-top:3px;min-height:20px;border-bottom:1.5px dashed #DCDAEA;padding-bottom:4px">${v||"<span style='color:#aaa'>(pas de réponse)</span>"}</div></div>`;
+ const liste=l=>(l&&l.length)?l.map(E).join(" · "):"";
+ const met=METEO.find(m=>m[1]===J.meteo);
+ const d=new Date().toLocaleDateString("fr-CA",{day:"numeric",month:"long",year:"numeric"});
+ $("feuille").innerHTML=`<div style="height:1056px;padding:0;position:relative">
+  <div style="background:#1B1F4B;color:#fff;padding:26px 44px 22px;border-bottom:10px solid ${a.c}">
+   <div style="font-size:13px;opacity:.85">PPS-Z101-3 · Projection vers l'avenir · Journal d'atelier</div>
+   <div style="font-family:PH,NU;font-size:40px;line-height:1.1">${E(a.nom)}</div>
+   <div style="font-size:16px;margin-top:4px">${E(J.prenom)} · ${d}${J.seance?" · séance "+E(J.seance):""}${J.role?" · rôle : "+E(J.role):""}</div>
+  </div>
+  <div style="padding:26px 44px">
+   ${L("Ce que j'ai fait",[liste(J.taches),E(J.tache_autre||"")].filter(Boolean).join(" · "),"EXPÉRIENCES")}
+   ${L("Une force que j'ai utilisée",liste(J.forces),"HABILETÉS")}
+   ${L("Comment j'ai trouvé l'atelier",met?`<span style="display:inline-flex;align-items:center;gap:6px">${icone(met[0],22)} ${E(met[1])}</span>`:"","MOTIVATION")}
+   ${L("Ce que j'ai le plus aimé, ou le moins aimé",E(J.aime||""),"MOTIVATION")}
+   ${L("Ce qui a été difficile pour moi",E(J.difficile||""),"FACTEURS DE DÉLIMITATION")}
+   ${L("Est-ce que ça m'intéresse pour mon projet ?",E(J.interet||""),"BUTS")}
+   ${L("La prochaine fois, je veux essayer…",E(J.prochaine||""),"CONDITIONS DE RÉUSSITE")}
+   <div style="margin-top:18px;background:${a.cc};border-radius:14px;padding:12px 16px;font-size:13px">
+    <b>Pour Lisa :</b> ce journal nourrit les savoirs du critère « réalités personnelles et sociales » (expériences, habiletés, facteurs de délimitation) et du critère « élaboration du projet » (buts, conditions de réussite).
+   </div>
+  </div>
+  <div style="position:absolute;bottom:22px;left:44px;right:44px;font-size:11px;color:#8B8FAE;display:flex;justify-content:space-between"><span>CFGA De La Jonquière · Participation sociale</span><span>Journal d'atelier</span></div>
+ </div>`;
+ try{
+  await document.fonts.ready;
+  const cv=await html2canvas($("feuille").firstElementChild,{scale:2,backgroundColor:"#fff",useCORS:true});
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({unit:"pt",format:"letter"});
+  doc.addImage(cv.toDataURL("image/jpeg",.92),"JPEG",0,0,612,792);
+  const nom=`Journal-${a.id}_${(J.prenom||"").trim().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9-]+/g,"-")}_${new Date().toISOString().slice(0,10)}.pdf`;
+  let url=null;try{url=URL.createObjectURL(doc.output("blob"));const l=document.createElement("a");l.href=url;l.download=nom;document.body.appendChild(l);l.click();l.remove()}catch(e){doc.save(nom)}
+  if(url)$("boite").innerHTML=`<div class="ok">Ton PDF est prêt (dossier Téléchargements). Il ne s'est pas ouvert ? <a href="${url}" target="_blank" rel="noopener" download="${E(nom)}"><b>Clique ici</b></a>. Dans Teams, ouvre plutôt cette page dans Edge ou Chrome.</div>`;
+ }catch(e){$("msg").textContent="Le PDF n'a pas pu être créé. Essaie dans Edge ou Chrome."}
+ $("pdf").disabled=false;$("pdf").textContent="Télécharger mon journal (PDF)";
+}
+
+J=lire();
+const dep=new URLSearchParams(location.search).get("atelier")||J.atelier;
+A=ATELIERS.find(a=>a.id===dep)||null;
+choix();if(A)fiche();
+</script>
+</body>
+</html>
