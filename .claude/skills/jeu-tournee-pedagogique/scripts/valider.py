@@ -4,7 +4,7 @@ Affiche les ERREURS (bloquantes) et les AVERTISSEMENTS (à regarder), puis une e
 import json, sys, os
 
 DECORS = ["cafe", "depanneur", "magasin", "epicerie", "cinema", "restaurant", "arena", "grande-surface", "pharmacie",
-          "centre-commercial", "maison-halloween", "ecole", "bibliotheque", "parc", "banque", "clinique", "maison", "cuisine", "gare", "casse-croute", "cafeteria"]
+          "centre-commercial", "maison-halloween", "ecole", "bibliotheque", "parc", "banque", "clinique", "maison", "cuisine", "gare", "casse-croute", "cafeteria", "planete", "station-spatiale", "observatoire", "lancement", "base-lunaire", "tour-controle", "atelier-robot", "constellation", "asteroides", "cockpit"]
 TYPES = {"droite": ["a", "p"], "tri": ["boites", "etiquettes"], "jetons": ["articles"], "qcm": ["choix", "bonne"],
          "num": ["accepteMin", "accepteMax"], "assez": ["budget", "reponse"], "ordre": ["etapes"],
          "curseur": ["min", "max", "accepteMin", "accepteMax"], "vf": ["reponse"], "erreur": ["lignes", "fausses"], "texte": []}

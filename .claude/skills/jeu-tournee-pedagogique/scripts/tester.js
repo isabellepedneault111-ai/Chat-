@@ -78,7 +78,7 @@ fs.mkdirSync(OUT, { recursive: true });
     else { await p.fill('#qq', 'Quelle est la bonne réponse à ma question de test ?'); const cc = await p.$$('.cc'); for (const [k, i] of cc.entries()) await i.fill('Choix ' + k); }
     await p.waitForTimeout(300); await p.screenshot({ path: OUT + `/97_${kind}_3contenu.png`, fullPage: true });
     await p.click('#sv'); if (await p.isVisible('#msg') && (await p.textContent('#msg'))) errs.push(kind + ' : étape contenu refusée : ' + await p.textContent('#msg'));
-    if (kind === 'argent') { await p.fill('#rp', 'J’arrondis et j’additionne : environ 12 $.'); await p.click('#vc2'); }
+    if (kind === 'argent') { await p.click('#vr'); await p.waitForTimeout(150); await p.click('#vr'); await p.waitForTimeout(150); await p.click('#sol'); await p.waitForTimeout(300); if (!(await p.evaluate(() => S.reinv.studio_argent.vu))) errs.push('argent : résolution non validée'); }
     else if (await p.$('#pq')) await p.fill('#pq', 'Parce que c’est ce qu’on a appris en classe.');
     await p.click('#sv');
     await p.click('[data-sk="eclair"]'); await p.click('[data-et="2"]'); await p.click('[data-ch="30"]');
