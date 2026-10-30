@@ -6,6 +6,7 @@ INK = "#0E1330"
 COURS = "PPS-Z101-3"
 TITRE_COURS = "Projection vers l'avenir"
 SITE = "https://pps-z101-avenir.netlify.app"
+FOOT = "Participation sociale"
 
 # 3 catégories de savoirs = 3 couleurs
 CAT = {
@@ -167,5 +168,5 @@ def page(cat, titre, corps, *, no="", kick="", sous="", bloc="", etiquette="", n
     head = (f'<div class="head">{f"<div class=no>{no}</div>" if no else ""}<div><div class="kick">{kick}</div>'
             f'<h1>{titre}</h1>{f"<div class=sous>{sous}</div>" if sous else ""}</div></div>') if titre else ""
     return (f'<section class="page" style="--c:{k["c"]};--cl:{k["cl"]}">{orbite(k["c"], k["cl"]) if deco else ""}'
-            f'{run}{head}{corps}<div class="foot"><span>CFGA De La Jonquière · Participation sociale · {COURS}</span>'
+            f'{run}{head}{corps}<div class="foot"><span>CFGA De La Jonquière · {FOOT} · {COURS}</span>'
             f'<span>{etiquette} · {n}/{tot}</span></div></section>')
