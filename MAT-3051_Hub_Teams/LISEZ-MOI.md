@@ -4,6 +4,7 @@ CFGA de Jonquière · 2026-2027
 
 ## Par où commencer
 
+0. `00_COMMENCER-ICI/0_Dossier-maitre_Enseignante.pdf` (7 pages) : la trousse, la séquence des 8 blocs, les pistes d'observation bloc par bloc, l'entrée continue et le tableau de suivi.
 1. `00_COMMENCER-ICI/1_Plan-de-rencontre_60-min.pdf` : l'ordre du jour de la rencontre, les 5 décisions à prendre et les coquilles relevées dans le cahier.
 2. `00_COMMENCER-ICI/2_Guide-Teams_pas-a-pas_enseignante` (Word modifiable et PDF).
 3. `00_COMMENCER-ICI/3_Guide-OneNote_structure-et-liens` (Word modifiable et PDF) : structure du bloc-notes et **tous les liens vidéo, prêts à coller**.

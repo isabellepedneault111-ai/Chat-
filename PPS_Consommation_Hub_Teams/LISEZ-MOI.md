@@ -47,6 +47,18 @@ Les élèves suivent deux personnages fil rouge : **Sam** pour *Achat et consomm
 | `3_Atelier-ordi_Piege-le-renard.html` | Sans Internet : enquête, fabrique de pub (image téléchargeable pour Teams), mode détective |
 | `4_Materiel-a-imprimer.pdf` | 6 pubs couleur, cartes-loupes, cartes-produits, étiquettes-ruses, gabarit, cartes portefeuille |
 
+## Cahier papier : la publicité et la sollicitation
+
+`Lecons/Cahier_Publicite-et-sollicitation/Cahier-eleve_Detectives-de-la-pub_complet.pdf` (11 pages, économe en encre). Il couvre :
+1. la pub est partout ;
+2. le musée des pubs ;
+3. les 8 ruses ;
+4. six enquêtes de détective, avec le calcul du vrai prix ;
+5. la sollicitation (téléphone, porte, texto, réseaux) et le refus, avec un jeu de rôle ;
+6. ma pub piège, mon bouclier et le bilan en code couleur.
+
+Le corrigé est dans `99_ENSEIGNANTE_SEULEMENT/Corriges/Pub_Corrige_Cahier-Detectives-de-la-pub.pdf`.
+
 ## Mettre les jeux en ligne
 
 Le dossier `Site_Netlify` (ou `Site_Netlify.zip`) contient les deux jeux et une page d'accueil. Le site est en ligne : https://pps-z128-estimer.netlify.app (projet Netlify « pps-z128-estimer »).
