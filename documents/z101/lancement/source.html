@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escouade Z101 · Lancement</title>
+<style>
+/* Présentation autonome pour le TNI : polices et logo intégrés, aucune connexion requise.
+   Scène 1600 × 900 mise à l'échelle de l'écran. Flèches, espace ou clic = avancer. F = plein écran. */
+@font-face{font-family:'Montserrat';font-weight:800;src:url(data:font/woff2;base64,__MONT800__) format('woff2')}
+@font-face{font-family:'Montserrat';font-weight:700;src:url(data:font/woff2;base64,__MONT700__) format('woff2')}
+@font-face{font-family:'Montserrat';font-weight:500;src:url(data:font/woff2;base64,__MONT500__) format('woff2')}
+@font-face{font-family:'League Gothic';src:url(data:font/woff2;base64,__LEAGUE__) format('woff2')}
+:root{
+  --bleu:#004983; --bleu2:#1F64A6; --lime:#7AA32B; --vert:#5E8A1E; --corail:#E8604C; --soleil:#F2B33D;
+  --nuit:#0E2440; --creme:#F7F5EF; --encre:#1A1D24; --gris:#5B6474;
+  --titre:'League Gothic','Arial Narrow',Impact,sans-serif; --texte:'Montserrat','Segoe UI',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#000;overflow:hidden}
+body{font-family:var(--texte);color:var(--encre)}
+#scene{position:absolute;width:1600px;height:900px;left:50%;top:50%;transform-origin:center;overflow:hidden;background:var(--creme)}
+.slide{position:absolute;inset:0;padding:70px 90px 90px;display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:translateX(60px);transition:opacity .55s,transform .55s,visibility 0s .55s}
+.slide.active{opacity:1;visibility:visible;transform:none;transition:opacity .55s,transform .55s}
+.slide.passee{transform:translateX(-60px)}
+.quadrille{background-image:linear-gradient(#E6E2D6 1.5px,transparent 1.5px),linear-gradient(90deg,#E6E2D6 1.5px,transparent 1.5px);background-size:50px 50px}
+
+/* Fragments : apparaissent un à un au clic */
+.f,.auto{opacity:0;transition:opacity .5s,transform .6s cubic-bezier(.2,.8,.2,1.2)}
+.f.up,.auto.up{transform:translateY(40px)} .f.pop,.auto.pop{transform:scale(.6)} .f.gauche,.auto.gauche{transform:translateX(-80px)} .f.droite,.auto.droite{transform:translateX(80px)}
+.f.on,.auto.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.slide,.f,.auto{transition:none!important}}
+
+/* Typographie */
+.sur{font-weight:800;font-size:24px;letter-spacing:.3em;text-transform:uppercase;color:var(--lime)}
+h1{font-family:var(--titre);font-weight:400;font-size:190px;line-height:.86;text-transform:uppercase;color:var(--bleu)}
+h2{font-family:var(--titre);font-weight:400;font-size:120px;line-height:.9;text-transform:uppercase;color:var(--bleu)}
+.grand{font-size:46px;font-weight:700;line-height:1.25}
+p.txt{font-size:34px;font-weight:500;line-height:1.4;color:#2a2f3a}
+.lime{color:var(--lime)} .corail{color:var(--corail)} .soleil{color:var(--soleil)} .blanc{color:#fff}
+
+/* Barre de phases */
+#phases{position:absolute;left:0;right:0;bottom:0;height:46px;display:flex;align-items:center;gap:6px;padding:0 24px;z-index:5;background:rgba(255,255,255,.85);border-top:1px solid #DDD8CA}
+#phases span{font-size:15px;font-weight:700;color:#8A8F99;padding:5px 14px;border-radius:999px;letter-spacing:.04em}
+#phases span.on{background:var(--bleu);color:#fff}
+#phases img{height:32px;margin-right:10px}
+#phases .num{margin-left:auto;color:#8A8F99;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+#phases.cache{opacity:0}
+
+/* Pages de section */
+.section{justify-content:center;color:#fff}
+.section h1,.section h2{color:#fff}
+.section .sur{color:rgba(255,255,255,.85)}
+.section .regle{display:flex;gap:26px;margin-top:40px;flex-wrap:wrap}
+.section .regle div{background:rgba(255,255,255,.16);border:3px solid rgba(255,255,255,.5);border-radius:22px;padding:22px 28px;font-size:28px;font-weight:700;max-width:320px;line-height:1.3}
+.section .regle b{display:block;font-family:var(--titre);font-weight:400;font-size:60px;line-height:1}
+.forme{position:absolute;border-radius:50%;opacity:.18;background:#fff}
+
+/* Accueil */
+.accueil{justify-content:center;align-items:flex-start;background:var(--nuit);color:#fff}
+.accueil h1{color:#fff;font-size:230px}
+.accueil h1 em{font-style:normal;color:var(--lime)}
+.accueil .logo{position:absolute;top:60px;right:90px;width:150px;height:150px;border-radius:50%;background:#fff;display:grid;place-items:center}
+.accueil .logo img{width:128px}
+.accueil .sous{font-size:38px;font-weight:700;margin-top:30px;color:#C9D8EA}
+.bulle{position:absolute;border-radius:50%;animation:flotte 9s ease-in-out infinite}
+@keyframes flotte{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
+
+/* Escouade : 23 personnes */
+.escouade{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin-top:40px}
+.perso{width:86px;height:110px}
+.perso svg{width:100%;height:100%}
+.compteur{font-family:var(--titre);font-size:260px;line-height:.8;color:var(--corail)}
+
+/* Plateaux */
+.plateaux{display:grid;grid-template-columns:repeat(4,1fr);gap:26px;margin-top:46px}
+.plateau{border-radius:26px;padding:34px 28px;color:#fff;min-height:400px;display:flex;flex-direction:column;gap:16px}
+.plateau svg{width:90px;height:90px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.plateau h3{font-family:var(--titre);font-weight:400;font-size:62px;line-height:.95;text-transform:uppercase}
+.plateau p{font-size:26px;font-weight:600;line-height:1.35;opacity:.95}
+
+/* Engrenages */
+.moteur{display:grid;grid-template-columns:1fr 560px;gap:40px;align-items:center;flex:1}
+.engrenages{position:relative;height:560px}
+.eng{position:absolute;animation:tourne 12s linear infinite}
+.eng.inv{animation-direction:reverse}
+@keyframes tourne{to{transform:rotate(360deg)}}
+
+/* Chemin Z101 */
+.chemin{position:relative;height:440px;margin-top:30px}
+.chemin svg{position:absolute;inset:0;width:100%;height:100%}
+.noeud{position:absolute;border-radius:28px;padding:22px 30px;font-weight:800;font-size:32px;color:#fff;text-align:center;line-height:1.15}
+.noeud small{display:block;font-size:22px;font-weight:600;opacity:.9}
+
+/* Ça ou ça */
+.ouca{padding:0;flex-direction:row}
+.ouca .moitie{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;color:#fff;padding:120px 60px 80px;text-align:center}
+.ouca .g{background:var(--bleu);padding-right:120px} .ouca .d{background:var(--lime);padding-left:120px}
+.ouca .moitie b{font-family:var(--titre);font-weight:400;font-size:104px;line-height:.92;text-transform:uppercase}
+.ouca .moitie .fleche{font-size:40px;font-weight:800;letter-spacing:.2em;opacity:.9}
+.ouca .q{position:absolute;top:44px;left:50%;transform:translateX(-50%);background:#fff;color:var(--nuit);font-weight:800;font-size:40px;padding:18px 40px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.18);white-space:nowrap;z-index:2}
+.ouca .ou{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:130px;height:130px;border-radius:50%;background:var(--soleil);color:var(--nuit);font-family:var(--titre);font-size:76px;display:grid;place-items:center;z-index:2;box-shadow:0 0 0 12px rgba(255,255,255,.35)}
+.ouca .indice{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);background:var(--nuit);color:#fff;font-weight:700;font-size:22px;padding:10px 24px;border-radius:999px;z-index:2;white-space:nowrap}
+.ouca.active .g{animation:entreG .7s cubic-bezier(.2,.8,.2,1)} .ouca.active .d{animation:entreD .7s cubic-bezier(.2,.8,.2,1)}
+@keyframes entreG{from{transform:translateX(-100%)}} @keyframes entreD{from{transform:translateX(100%)}}
+.ouca.active .ou{animation:boing .8s .5s both}
+@keyframes boing{0%{transform:translate(-50%,-50%) scale(0)}70%{transform:translate(-50%,-50%) scale(1.2)}100%{transform:translate(-50%,-50%) scale(1)}}
+
+/* Minuterie */
+.minuterie{position:relative;width:300px;height:300px;cursor:pointer;flex:none}
+.minuterie svg{width:100%;height:100%;transform:rotate(-90deg)}
+.minuterie .t{position:absolute;inset:0;display:grid;place-items:center;font-weight:800;font-size:64px;font-variant-numeric:tabular-nums;color:var(--bleu)}
+.minuterie .aide{position:absolute;bottom:-38px;left:0;right:0;text-align:center;font-size:18px;font-weight:600;color:var(--gris)}
+.minuterie.blanc .t{color:#fff} .minuterie.blanc .aide{color:rgba(255,255,255,.8)}
+.minuterie.fini .t{color:var(--corail)}
+
+/* Étapes numérotées */
+.etapes{display:grid;gap:18px;margin-top:30px}
+.etape{display:grid;grid-template-columns:76px 1fr;gap:22px;align-items:center;font-size:32px;font-weight:600;line-height:1.3}
+.etape i{font-style:normal;width:68px;height:68px;border-radius:50%;background:var(--bleu);color:#fff;display:grid;place-items:center;font-family:var(--titre);font-size:44px}
+.etape b{color:var(--bleu)}
+.astuce{margin-top:24px;background:#fff;border-left:10px solid var(--soleil);border-radius:0 18px 18px 0;padding:18px 26px;font-size:26px;font-weight:600}
+
+/* Vote 1-2-3 */
+.vote{display:flex;gap:40px;justify-content:center;margin-top:30px}
+.vote div{width:230px;height:230px;border-radius:36px;display:grid;place-items:center;font-family:var(--titre);font-size:170px;color:#fff}
+
+/* Boîte à questions */
+.boite{display:grid;grid-template-columns:1fr 620px;gap:50px;align-items:center;flex:1}
+.carte3d{height:430px;perspective:1600px;cursor:pointer}
+.carte3d .in{position:relative;width:100%;height:100%;transition:transform .8s;transform-style:preserve-3d}
+.carte3d.tourne .in{transform:rotateY(180deg)}
+.carte3d .face{position:absolute;inset:0;border-radius:30px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:44px}
+.carte3d .avant{background:var(--corail);color:#fff;flex-direction:column;gap:14px}
+.carte3d .avant b{font-family:var(--titre);font-weight:400;font-size:110px;line-height:.9}
+.carte3d .arriere{background:#fff;border:6px solid var(--corail);transform:rotateY(180deg);font-size:46px;font-weight:800;color:var(--nuit);line-height:1.25}
+.btn{display:inline-block;border:none;border-radius:999px;padding:18px 34px;font:inherit;font-weight:800;font-size:26px;background:var(--nuit);color:#fff;cursor:pointer;margin-top:24px}
+
+/* Groupes A / B */
+.ab{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:34px}
+.groupe{border-radius:28px;color:#fff;padding:30px 34px;display:flex;flex-direction:column;gap:18px}
+.groupe .lettre{font-family:var(--titre);font-size:140px;line-height:.8}
+.groupe .bloc{background:rgba(255,255,255,.16);border-radius:16px;padding:16px 20px;font-size:28px;font-weight:700;line-height:1.3}
+.groupe .bloc small{display:block;font-size:20px;font-weight:600;opacity:.85;letter-spacing:.08em;text-transform:uppercase}
+
+canvas#confettis{position:absolute;inset:0;pointer-events:none;z-index:6}
+#aidePlein{position:fixed;top:12px;right:14px;color:#9aa3b2;font:600 13px var(--texte);z-index:9;opacity:.7}
+</style>
+</head>
+<body>
+<div id="aidePlein">F = plein écran · → avancer · ← reculer</div>
+<div id="scene">
+<canvas id="confettis" width="1600" height="900"></canvas>
+
+<!-- 0 · ACCUEIL -->
+<section class="slide accueil" data-phase="0" data-entre="confettis">
+  <div class="bulle" style="width:420px;height:420px;right:-90px;bottom:-140px;background:var(--lime);opacity:.22"></div>
+  <div class="bulle" style="width:220px;height:220px;right:420px;bottom:80px;background:var(--corail);opacity:.25;animation-delay:-3s"></div>
+  <div class="bulle" style="width:140px;height:140px;left:860px;top:90px;background:var(--soleil);opacity:.3;animation-delay:-5s"></div>
+  <div class="logo"><img src="data:image/png;base64,__LOGO__" alt="CFGA De La Jonquière"></div>
+  <div class="sur auto up">Lancement · mardi 3 novembre</div>
+  <h1 class="auto up" style="margin-top:18px">Bienvenue dans<br>l'escouade <em>Z101</em></h1>
+  <div class="sous auto up">Installe-toi. On commence à 8 h 25.</div>
+</section>
+
+<!-- 1 · PITCH -->
+<section class="slide quadrille" data-phase="1">
+  <div class="sur">Le kick-off</div>
+  <h2 style="margin-top:14px">Aujourd'hui,<br>on lance un projet.</h2>
+  <div style="display:grid;gap:26px;margin-top:50px">
+    <div class="grand f gauche">Une équipe.</div>
+    <div class="grand f gauche"><span class="lime">Quatre plateaux</span> à faire rouler.</div>
+    <div class="grand f gauche">Et une place pour <span class="corail">chacun</span>.</div>
+  </div>
+</section>
+
+<section class="slide quadrille" data-phase="1" data-entre="escouade">
+  <div style="display:flex;align-items:flex-end;gap:40px">
+    <div class="compteur" id="compteur">0</div>
+    <div class="grand" style="padding-bottom:24px">personnes dans l'escouade.<br><span class="lime">23 profils. 23 façons d'apporter quelque chose.</span></div>
+  </div>
+  <div class="escouade" id="escouade"></div>
+</section>
+
+<section class="slide quadrille" data-phase="1">
+  <div class="sur">Nos plateaux de travail</div>
+  <h2 style="margin-top:10px">Ce qu'on fait rouler</h2>
+  <div class="plateaux">
+    <div class="plateau f up" style="background:var(--corail)"><svg viewBox="0 0 24 24"><path d="M3 11h18M5 11V7a7 4 0 0 1 14 0v4M4 15h16l-2 6H6z"/></svg><h3>La cantine</h3><p>On nourrit le centre : on prépare, on sert, on accueille.</p></div>
+    <div class="plateau f up" style="background:var(--bleu2)"><svg viewBox="0 0 24 24"><path d="M14 4l6 6-9 9H5v-6z"/><path d="M12 6l6 6"/></svg><h3>Conciergerie et services</h3><p>On garde le centre propre, beau et accueillant.</p></div>
+    <div class="plateau f up" style="background:var(--vert)"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg><h3>La friperie</h3><p>Au grenier de Maria : on trie, on range, on donne une 2<sup>e</sup> vie aux objets.</p></div>
+    <div class="plateau f up" style="background:#B7790B"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 14H7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><h3>L'atelier ensachage</h3><p>On prépare et on emballe, avec précision.</p></div>
+  </div>
+</section>
+
+<section class="slide quadrille" data-phase="1">
+  <div class="moteur">
+    <div>
+      <div class="sur">Notre moteur</div>
+      <h2 style="margin-top:10px">La diversité,<br>c'est notre moteur</h2>
+      <p class="txt f up" style="margin-top:30px">Une cantine a besoin de quelqu'un qui cuisine, qui sert, qui compte la caisse et qui sourit aux clients.</p>
+      <div class="grand f up" style="margin-top:26px">Personne n'est bon en tout.<br><span class="lime">Ensemble, on est bon en tout.</span></div>
+    </div>
+    <div class="engrenages">
+      <svg class="eng" style="left:40px;top:40px;width:300px" viewBox="-50 -50 100 100"><g fill="var(--bleu)"><circle r="32"/>__DENTS__</g><circle r="11" fill="var(--creme)"/></svg>
+      <svg class="eng inv" style="left:290px;top:230px;width:220px" viewBox="-50 -50 100 100"><g fill="var(--lime)"><circle r="32"/>__DENTS__</g><circle r="11" fill="var(--creme)"/></svg>
+      <svg class="eng" style="left:90px;top:330px;width:170px" viewBox="-50 -50 100 100"><g fill="var(--corail)"><circle r="32"/>__DENTS__</g><circle r="11" fill="var(--creme)"/></svg>
+    </div>
+  </div>
+</section>
+
+<section class="slide quadrille" data-phase="1">
+  <div class="sur">Le cours Z101</div>
+  <h2 style="margin-top:10px">Notre point de départ commun</h2>
+  <div class="chemin">
+    <svg viewBox="0 0 1420 440"><path d="M330 220 C 560 220, 600 70, 840 70 M330 220 L 840 220 M330 220 C 560 220, 600 370, 840 370" stroke="#C9C3B2" stroke-width="10" fill="none" stroke-dasharray="20 16"/></svg>
+    <div class="noeud f pop" style="left:0;top:150px;width:330px;background:var(--bleu);padding:30px">Z101<small>Le cours 1 : le seul obligatoire</small></div>
+    <div class="noeud f droite" style="left:840px;top:20px;background:var(--lime)">Ton projet<small>ce qui compte pour toi</small></div>
+    <div class="noeud f droite" style="left:840px;top:170px;background:var(--corail)">Tes cours<small>c'est toi qui les choisis</small></div>
+    <div class="noeud f droite" style="left:840px;top:320px;background:#B7790B">Ton avenir<small>travail, vie, communauté</small></div>
+  </div>
+</section>
+
+<!-- 2 · ÇA OU ÇA -->
+<section class="slide section" data-phase="2" style="background:var(--corail)">
+  <div class="forme" style="width:600px;height:600px;right:-160px;top:-180px"></div>
+  <div class="sur">Brise-glace · 15 minutes</div>
+  <h1 style="margin-top:14px">Ça ou ça?</h1>
+  <div class="regle">
+    <div class="f up"><b>Debout!</b>Déplace-toi du côté de ton choix.</div>
+    <div class="f up"><b>← Gauche</b>Le choix en bleu.</div>
+    <div class="f up"><b>Droite →</b>Le choix en vert.</div>
+    <div class="f up"><b>Aucune</b>mauvaise réponse. Juste toi.</div>
+  </div>
+</section>
+__OUCA__
+<section class="slide quadrille" data-phase="2">
+  <div class="sur">Ce qu'on vient de voir</div>
+  <h2 style="margin-top:10px">On ne fait pas tous<br>les mêmes choix.</h2>
+  <div class="grand f up" style="margin-top:40px">Ceux qui aiment le contact? <span class="corail">La cantine.</span></div>
+  <div class="grand f up" style="margin-top:14px">Ceux qui aiment l'ordre? <span class="lime">La friperie, l'ensachage.</span></div>
+  <div class="grand f up" style="margin-top:14px">Ceux qui aiment bouger? <span style="color:var(--bleu2)">La conciergerie.</span></div>
+  <div class="grand f up" style="margin-top:34px">C'est exactement ce dont nos plateaux ont besoin.</div>
+</section>
+
+<!-- 3 · VÉRITÉ OU IMPOSTEUR -->
+<section class="slide section" data-phase="3" style="background:var(--bleu)">
+  <div class="forme" style="width:520px;height:520px;left:-140px;bottom:-200px"></div>
+  <div class="sur">Activité numérique · 20 minutes</div>
+  <h1 style="margin-top:14px">Vérité<br>ou imposteur?</h1>
+  <div class="regle"><div class="f up"><b>2 vérités</b>vécues pour vrai.</div><div class="f up"><b>1 mensonge</b>bien caché.</div><div class="f up"><b>Le groupe</b>démasque l'imposteur!</div></div>
+</section>
+
+<section class="slide quadrille" data-phase="3">
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:50px;flex:1">
+    <div>
+      <div class="sur">À toi de jouer · 8 minutes</div>
+      <h2 style="margin-top:10px;font-size:96px">Ta diapo secrète</h2>
+      <div class="etapes">
+        <div class="etape f up"><i>1</i><span>Prends un <b>portable</b> sur le chariot.</span></div>
+        <div class="etape f up"><i>2</i><span>Ouvre <b>Teams</b>, l'équipe du groupe, puis <b>Fichiers</b>.</span></div>
+        <div class="etape f up"><i>3</i><span>Ouvre <b>« Vérité ou imposteur »</b> et prends une diapo libre.</span></div>
+        <div class="etape f up"><i>4</i><span>Écris ton prénom, <b>2 vérités</b> et <b>1 mensonge</b>, dans le désordre.</span></div>
+      </div>
+      <div class="astuce f up">Écris seulement ce que tu serais à l'aise de dire à tout le groupe. Et chut : garde ton secret!</div>
+    </div>
+    <div style="display:flex;align-items:center"><div class="minuterie" data-sec="480"></div></div>
+  </div>
+</section>
+
+<section class="slide quadrille" data-phase="3">
+  <div class="sur">On joue!</div>
+  <h2 style="margin-top:10px">Où se cache l'imposteur?</h2>
+  <p class="txt f up" style="margin-top:24px">La personne lit ses 3 phrases. Le groupe vote à main levée. Puis on révèle!</p>
+  <div class="vote">
+    <div class="f pop" style="background:var(--bleu)">1</div>
+    <div class="f pop" style="background:var(--lime)">2</div>
+    <div class="f pop" style="background:var(--corail)">3</div>
+  </div>
+</section>
+
+<!-- 4 · BOÎTE À QUESTIONS -->
+<section class="slide section" data-phase="4" style="background:var(--vert)">
+  <div class="forme" style="width:560px;height:560px;right:-120px;bottom:-220px"></div>
+  <div class="sur">On jase · 15 minutes</div>
+  <h1 style="margin-top:14px">La boîte<br>à questions</h1>
+  <div class="regle"><div class="f up"><b>100 %</b>volontaire.</div><div class="f up"><b>« Je passe »</b>c'est correct.</div><div class="f up"><b>On écoute</b>sans juger.</div></div>
+</section>
+
+<section class="slide quadrille" data-phase="4">
+  <div class="boite">
+    <div>
+      <div class="sur">Tire une question</div>
+      <h2 style="margin-top:10px">Pige au hasard!</h2>
+      <p class="txt" style="margin-top:20px">Touchez la carte pour piger une nouvelle question. La boîte peut aussi circuler pour vrai dans la classe.</p>
+      <button class="btn" id="piger">Piger une question</button>
+      <p class="txt" style="font-size:22px;margin-top:14px;color:var(--gris)" id="reste"></p>
+    </div>
+    <div class="carte3d" id="carte"><div class="in"><div class="face avant"><b>?</b><span style="font-size:28px;font-weight:700">Touche pour piger</span></div><div class="face arriere" id="question"></div></div></div>
+  </div>
+</section>
+
+<!-- PAUSE -->
+<section class="slide section" data-phase="5" style="background:var(--nuit)" data-entre="pause">
+  <div style="display:grid;grid-template-columns:1fr 360px;gap:60px;align-items:center">
+    <div>
+      <div class="sur" style="color:var(--soleil)">Pause</div>
+      <h1 style="margin-top:14px">10 minutes</h1>
+      <div class="grand" style="margin-top:24px;color:#C9D8EA">On se retrouve à <span class="soleil">9 h 35</span>.<br>Ensuite, chacun part de son côté : groupe A ou groupe B.</div>
+    </div>
+    <div class="minuterie blanc" data-sec="600" data-auto="1" style="width:360px;height:360px"></div>
+  </div>
+</section>
+
+<!-- 6 · EN ROUTE -->
+<section class="slide quadrille" data-phase="6">
+  <div class="sur">Ce matin</div>
+  <h2 style="margin-top:10px">Groupe A, groupe B : où je vais?</h2>
+  <div class="ab">
+    <div class="groupe f gauche" style="background:var(--bleu)">
+      <div class="lettre">A</div>
+      <div class="bloc"><small>9 h 35 à 10 h 35</small>En classe pour le <b>Z101</b>, avec Mme Lisa.</div>
+      <div class="bloc"><small>10 h 45 à 11 h 45</small>Sur ton <b>plateau</b>, avec Janie-Lee.</div>
+    </div>
+    <div class="groupe f droite" style="background:var(--lime)">
+      <div class="lettre">B</div>
+      <div class="bloc"><small>9 h 35 à 10 h 35</small>Sur ton <b>plateau</b>. Ta fiche t'attend.</div>
+      <div class="bloc"><small>10 h 45 à 11 h 45</small>En classe pour le <b>Z101</b>, avec Mme Lisa.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide quadrille" data-phase="6">
+  <div class="sur">La marche à suivre</div>
+  <h2 style="margin-top:10px">C'est parti!</h2>
+  <div class="etapes">
+    <div class="etape f up"><i>1</i><span>Regarde ta <b>lettre</b> : A ou B.</span></div>
+    <div class="etape f up"><i>2</i><span><b>Groupe A</b> : tu restes ici avec Mme Lisa.</span></div>
+    <div class="etape f up"><i>3</i><span><b>Groupe B</b> : tu rejoins l'adulte de ton plateau. Ta fiche t'explique quoi faire.</span></div>
+    <div class="etape f up"><i>4</i><span>À <b>10 h 35</b> : pause, puis <b>on change de place</b>.</span></div>
+  </div>
+  <div class="astuce f up">Tu ne sais pas où aller? Lève la main. Dans l'escouade, on ne laisse personne derrière.</div>
+</section>
+
+<section class="slide accueil" data-phase="6" data-entre="confettis">
+  <div class="bulle" style="width:460px;height:460px;left:-120px;bottom:-180px;background:var(--lime);opacity:.22"></div>
+  <div class="bulle" style="width:200px;height:200px;right:160px;top:120px;background:var(--corail);opacity:.25;animation-delay:-4s"></div>
+  <div class="logo"><img src="data:image/png;base64,__LOGO__" alt="CFGA De La Jonquière"></div>
+  <h1 class="auto up">Bienvenue<br>dans l'<em>escouade</em>!</h1>
+  <div class="sous auto up">Ce matin, chacun a apporté quelque chose. On continue ensemble.</div>
+</section>
+
+<div id="phases"><img src="data:image/png;base64,__LOGO__" alt=""><span data-p="1">Le kick-off</span><span data-p="2">Ça ou ça?</span><span data-p="3">Vérité ou imposteur</span><span data-p="4">Boîte à questions</span><span data-p="5">Pause</span><span data-p="6">En route</span><div class="num" id="num"></div></div>
+</div>
+
+<script>
+const scene = document.getElementById('scene');
+const ajuster = () => { const k = Math.min(innerWidth / 1600, innerHeight / 900); scene.style.transform = `translate(-50%,-50%) scale(${k})`; };
+addEventListener('resize', ajuster); ajuster();
+
+const slides = [...document.querySelectorAll('.slide')];
+let i = 0;
+const frags = s => [...s.querySelectorAll('.f')];
+
+// ── Minuteries
+const R = 46, CIRC = 2 * Math.PI * R;
+document.querySelectorAll('.minuterie').forEach(m => {
+  const total = +m.dataset.sec, coul = m.classList.contains('blanc') ? '#F2B33D' : '#7AA32B', fond = m.classList.contains('blanc') ? 'rgba(255,255,255,.18)' : '#E6E2D6';
+  m.innerHTML = `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="${R}" stroke="${fond}" stroke-width="8" fill="none"/><circle class="arc" cx="50" cy="50" r="${R}" stroke="${coul}" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="${CIRC}" stroke-dashoffset="0"/></svg><div class="t"></div><div class="aide">Touchez pour démarrer</div>`;
+  m.reste = total; m.tic = null;
+  m.affiche = () => {
+    m.querySelector('.t').textContent = Math.floor(m.reste / 60) + ':' + String(m.reste % 60).padStart(2, '0');
+    m.querySelector('.arc').style.strokeDashoffset = CIRC * (1 - m.reste / total);
+    m.classList.toggle('fini', m.reste === 0);
+  };
+  m.demarre = () => { if (m.tic) return; m.querySelector('.aide').textContent = 'Touchez pour mettre en pause'; m.tic = setInterval(() => { if (m.reste > 0) { m.reste--; m.affiche(); } else { clearInterval(m.tic); m.tic = null; m.querySelector('.aide').textContent = 'Terminé!'; } }, 1000); };
+  m.arrete = () => { clearInterval(m.tic); m.tic = null; m.querySelector('.aide').textContent = 'Touchez pour reprendre'; };
+  m.onclick = ev => { ev.stopPropagation(); m.tic ? m.arrete() : (m.reste === 0 ? (m.reste = total, m.affiche(), m.demarre()) : m.demarre()); };
+  m.affiche();
+});
+
+// ── Escouade de 23 personnes, couleurs variées
+const COULEURS = ['#004983', '#7AA32B', '#E8604C', '#F2B33D', '#1F64A6', '#5E8A1E', '#B7790B', '#0E2440'];
+const esc = document.getElementById('escouade');
+for (let k = 0; k < 23; k++) {
+  const c = COULEURS[k % COULEURS.length], d = document.createElement('div');
+  d.className = 'perso auto pop'; d.style.transitionDelay = (k * 70) + 'ms';
+  d.innerHTML = `<svg viewBox="0 0 40 52"><circle cx="20" cy="13" r="10" fill="${c}"/><path d="M2 52c0-12 8-20 18-20s18 8 18 20z" fill="${c}"/></svg>`;
+  esc.appendChild(d);
+}
+
+// ── Confettis
+const cv = document.getElementById('confettis'), cx = cv.getContext('2d');
+let parts = [], anim = null;
+function confettis() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  parts = Array.from({ length: 160 }, () => ({ x: Math.random() * 1600, y: -20 - Math.random() * 400, vx: (Math.random() - .5) * 3, vy: 3 + Math.random() * 4, r: Math.random() * 6.28, vr: (Math.random() - .5) * .3, c: COULEURS[Math.floor(Math.random() * 6)], w: 10 + Math.random() * 10 }));
+  const debut = performance.now(); cancelAnimationFrame(anim);
+  const pas = t => {
+    cx.clearRect(0, 0, 1600, 900);
+    parts.forEach(p => { p.x += p.vx; p.y += p.vy; p.r += p.vr; cx.save(); cx.translate(p.x, p.y); cx.rotate(p.r); cx.fillStyle = p.c; cx.fillRect(-p.w / 2, -4, p.w, 8); cx.restore(); });
+    if (t - debut < 4200) anim = requestAnimationFrame(pas); else cx.clearRect(0, 0, 1600, 900);
+  };
+  anim = requestAnimationFrame(pas);
+}
+
+// ── Compteur 0 → 23
+function compter() {
+  const el = document.getElementById('compteur'); let n = 0; el.textContent = 0;
+  const t = setInterval(() => { el.textContent = ++n; if (n >= 23) clearInterval(t); }, 55);
+}
+
+// ── Navigation
+function montrer(n, toutVoir) {
+  n = Math.max(0, Math.min(slides.length - 1, n));
+  slides.forEach((s, k) => { s.classList.toggle('active', k === n); s.classList.toggle('passee', k < n); });
+  const s = slides[n]; i = n;
+  frags(s).forEach(f => f.classList.toggle('on', !!toutVoir));
+  s.querySelectorAll('.auto').forEach(a => a.classList.remove('on'));
+  requestAnimationFrame(() => setTimeout(() => s.querySelectorAll('.auto').forEach(a => a.classList.add('on')), 60));
+  const e = s.dataset.entre;
+  if (e === 'confettis') confettis();
+  if (e === 'escouade') compter();
+  s.querySelectorAll('.minuterie[data-auto]').forEach(m => m.demarre());
+  document.querySelectorAll('#phases span').forEach(p => p.classList.toggle('on', p.dataset.p === s.dataset.phase));
+  document.getElementById('phases').classList.toggle('cache', s.dataset.phase === '0');
+  document.getElementById('num').textContent = (n + 1) + ' / ' + slides.length;
+  try { sessionStorage.setItem('z101-lancement', n); } catch (er) {}
+}
+function suivant() { const r = frags(slides[i]).filter(f => !f.classList.contains('on')); if (r.length) r[0].classList.add('on'); else montrer(i + 1); }
+function precedent() { montrer(i - 1, true); }
+addEventListener('keydown', ev => {
+  if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(ev.key)) { ev.preventDefault(); suivant(); }
+  else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(ev.key)) { ev.preventDefault(); precedent(); }
+  else if (ev.key === 'Home') montrer(0);
+  else if (ev.key === 'End') montrer(slides.length - 1);
+  else if (ev.key.toLowerCase() === 'f') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.().catch(() => {}); }
+  else if (ev.key.toLowerCase() === 'q') piger();
+});
+scene.addEventListener('click', ev => { if (ev.target.closest('button,.minuterie,.carte3d')) return; ev.clientX < innerWidth * 0.2 ? precedent() : suivant(); });
+
+// ── Boîte à questions
+const QUESTIONS = __QUESTIONS__;
+let paquet = [];
+function piger() {
+  if (!paquet.length) paquet = QUESTIONS.slice().sort(() => Math.random() - .5);
+  const carte = document.getElementById('carte'), q = paquet.pop();
+  const montre = () => { document.getElementById('question').textContent = q; carte.classList.add('tourne'); document.getElementById('reste').textContent = paquet.length + ' questions encore dans la boîte'; };
+  if (carte.classList.contains('tourne')) { carte.classList.remove('tourne'); setTimeout(montre, 450); } else montre();
+}
+document.getElementById('carte').onclick = ev => { ev.stopPropagation(); piger(); };
+document.getElementById('piger').onclick = ev => { ev.stopPropagation(); piger(); };
+
+let depart = 0; try { depart = +sessionStorage.getItem('z101-lancement') || 0; } catch (er) {}
+montrer(depart);
+</script>
+</body>
+</html>
