@@ -12,7 +12,7 @@ OUCA = [
   ("Ton café", "Tim Hortons", "McDo", ""),
   ("Au travail, je préfère…", "Être avec les clients", "Travailler en coulisses", "Indice : ça peut t'aider à choisir ton plateau!"),
   ("Devant une nouvelle tâche", "Une liste claire, étape par étape", "J'improvise en chemin", "Indice : ça peut t'aider à choisir ton plateau!"),
-  ("En équipe", "Je prends les commandes", "J'aime suivre le plan", "Les deux sont essentiels dans une escouade."),
+  ("En équipe", "Je prends les commandes", "J'aime suivre le plan", "Les deux sont essentiels dans une équipe."),
   ("Un samedi parfait", "Sortie entre amis", "Pyjama et série", ""),
   ("Pour jaser", "Texto", "Appel", ""),
   ("L'hiver au Saguenay", "J'adore la neige", "J'hiberne jusqu'en avril", ""),

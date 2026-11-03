@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Escouade Z101 · Lancement</title>
+<title>Groupe Z101 · Lancement</title>
 <style>
 /* Présentation autonome pour le TNI : polices et logo intégrés, aucune connexion requise.
    Scène 1600 × 900 mise à l'échelle de l'écran. Flèches, espace ou clic = avancer. F = plein écran. */
@@ -159,7 +159,7 @@ canvas#confettis{position:absolute;inset:0;pointer-events:none;z-index:6}
   <div class="bulle" style="width:140px;height:140px;left:860px;top:90px;background:var(--soleil);opacity:.3;animation-delay:-5s"></div>
   <div class="logo"><img src="data:image/png;base64,__LOGO__" alt="CFGA De La Jonquière"></div>
   <div class="sur auto up">Lancement · mardi 3 novembre</div>
-  <h1 class="auto up" style="margin-top:18px">Bienvenue dans<br>l'escouade <em>Z101</em></h1>
+  <h1 class="auto up" style="margin-top:18px">Bienvenue dans<br>l'équipe <em>Z101</em></h1>
   <div class="sous auto up">Installe-toi. On commence à 8 h 25.</div>
 </section>
 
@@ -177,7 +177,7 @@ canvas#confettis{position:absolute;inset:0;pointer-events:none;z-index:6}
 <section class="slide quadrille" data-phase="1" data-entre="escouade">
   <div style="display:flex;align-items:flex-end;gap:40px">
     <div class="compteur" id="compteur">0</div>
-    <div class="grand" style="padding-bottom:24px">personnes dans l'escouade.<br><span class="lime">23 profils. 23 façons d'apporter quelque chose.</span></div>
+    <div class="grand" style="padding-bottom:24px">personnes dans le groupe.<br><span class="lime">23 profils. 23 façons d'apporter quelque chose.</span></div>
   </div>
   <div class="escouade" id="escouade"></div>
 </section>
@@ -306,7 +306,7 @@ __OUCA__
     <div>
       <div class="sur" style="color:var(--soleil)">Pause</div>
       <h1 style="margin-top:14px">10 minutes</h1>
-      <div class="grand" style="margin-top:24px;color:#C9D8EA">On se retrouve à <span class="soleil">9 h 35</span>.<br>Ensuite, chacun part de son côté : groupe A ou groupe B.</div>
+      <div class="grand" style="margin-top:24px;color:#C9D8EA">On se retrouve à <span class="soleil">9 h 35</span>.<br>Aujourd'hui, on reste tous ensemble jusqu'à la fin de l'avant-midi.</div>
     </div>
     <div class="minuterie blanc" data-sec="600" data-auto="1" style="width:360px;height:360px"></div>
   </div>
@@ -314,39 +314,49 @@ __OUCA__
 
 <!-- 6 · EN ROUTE -->
 <section class="slide quadrille" data-phase="6">
-  <div class="sur">Ce matin</div>
-  <h2 style="margin-top:10px">Groupe A, groupe B : où je vais?</h2>
+  <div class="sur">Après la pause</div>
+  <h2 style="margin-top:10px">Aujourd'hui, on reste<br>tous ensemble</h2>
+  <div class="ab" style="grid-template-columns:1fr 1fr">
+    <div class="groupe f gauche" style="background:var(--bleu)"><div class="bloc"><small>P2 · 9 h 35 à 10 h 35</small>Tout le groupe, avec Mme Lisa.</div></div>
+    <div class="groupe f droite" style="background:var(--bleu2)"><div class="bloc"><small>P3 · 10 h 45 à 11 h 45</small>Tout le groupe, avec Mme Lisa.</div></div>
+  </div>
+  <div class="astuce f up">Exceptionnellement ce matin, pas de séparation. On prend le temps de bien se connaître.</div>
+</section>
+
+<section class="slide quadrille" data-phase="6">
+  <div class="sur">À partir de jeudi</div>
+  <h2 style="margin-top:10px">Groupe A, groupe B : où j'irai?</h2>
   <div class="ab">
     <div class="groupe f gauche" style="background:var(--bleu)">
       <div class="lettre">A</div>
-      <div class="bloc"><small>9 h 35 à 10 h 35</small>En classe pour le <b>Z101</b>, avec Mme Lisa.</div>
-      <div class="bloc"><small>10 h 45 à 11 h 45</small>Sur ton <b>plateau</b>, avec Janie-Lee.</div>
+      <div class="bloc"><small>Jeudi · 9 h 00 à 10 h 35</small>Sur ton <b>plateau</b>, avec Janie-Lee.</div>
+      <div class="bloc"><small>Jeudi · 10 h 45 à 11 h 45</small>En classe pour le <b>Z101</b>, avec Mme Lisa.</div>
     </div>
     <div class="groupe f droite" style="background:var(--lime)">
       <div class="lettre">B</div>
-      <div class="bloc"><small>9 h 35 à 10 h 35</small>Sur ton <b>plateau</b>. Ta fiche t'attend.</div>
-      <div class="bloc"><small>10 h 45 à 11 h 45</small>En classe pour le <b>Z101</b>, avec Mme Lisa.</div>
+      <div class="bloc"><small>Jeudi · 9 h 00 à 10 h 35</small>En classe pour le <b>Z101</b>, avec Mme Lisa.</div>
+      <div class="bloc"><small>Jeudi · 10 h 45 à 11 h 45</small>Sur ton <b>plateau</b>. Ta fiche t'attend.</div>
     </div>
   </div>
 </section>
 
 <section class="slide quadrille" data-phase="6">
   <div class="sur">La marche à suivre</div>
-  <h2 style="margin-top:10px">C'est parti!</h2>
+  <h2 style="margin-top:10px">Jeudi, c'est parti!</h2>
   <div class="etapes">
-    <div class="etape f up"><i>1</i><span>Regarde ta <b>lettre</b> : A ou B.</span></div>
-    <div class="etape f up"><i>2</i><span><b>Groupe A</b> : tu restes ici avec Mme Lisa.</span></div>
-    <div class="etape f up"><i>3</i><span><b>Groupe B</b> : tu rejoins l'adulte de ton plateau. Ta fiche t'explique quoi faire.</span></div>
+    <div class="etape f up"><i>1</i><span>Tu connaîtras ta <b>lettre</b> : A ou B.</span></div>
+    <div class="etape f up"><i>2</i><span>On commence <b>tous ensemble</b> à 8 h 25, comme ce matin.</span></div>
+    <div class="etape f up"><i>3</i><span>À 9 h 00, chaque groupe va à sa place. <b>Ta fiche de plateau</b> t'explique quoi faire.</span></div>
     <div class="etape f up"><i>4</i><span>À <b>10 h 35</b> : pause, puis <b>on change de place</b>.</span></div>
   </div>
-  <div class="astuce f up">Tu ne sais pas où aller? Lève la main. Dans l'escouade, on ne laisse personne derrière.</div>
+  <div class="astuce f up">Tu ne sais pas où aller? Lève la main. Dans notre groupe, on ne laisse personne derrière.</div>
 </section>
 
 <section class="slide accueil" data-phase="6" data-entre="confettis">
   <div class="bulle" style="width:460px;height:460px;left:-120px;bottom:-180px;background:var(--lime);opacity:.22"></div>
   <div class="bulle" style="width:200px;height:200px;right:160px;top:120px;background:var(--corail);opacity:.25;animation-delay:-4s"></div>
   <div class="logo"><img src="data:image/png;base64,__LOGO__" alt="CFGA De La Jonquière"></div>
-  <h1 class="auto up">Bienvenue<br>dans l'<em>escouade</em>!</h1>
+  <h1 class="auto up">Bienvenue<br>dans l'<em>équipe</em>!</h1>
   <div class="sous auto up">Ce matin, chacun a apporté quelque chose. On continue ensemble.</div>
 </section>
 

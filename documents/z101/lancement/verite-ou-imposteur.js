@@ -1,7 +1,7 @@
 // Modèle « Vérité ou imposteur » : 1 diapo de consignes + 25 diapos élèves, zones de texte bien délimitées
 const pptxgen = require('pptxgenjs');
 const p = new pptxgen(); p.layout = 'LAYOUT_WIDE'; // 13,33 × 7,5 po
-p.title = 'Vérité ou imposteur · Escouade Z101';
+p.title = 'Vérité ou imposteur · Groupe Z101';
 const C = { bleu: '004983', lime: '7AA32B', corail: 'E8604C', soleil: 'F2B33D', nuit: '0E2440', creme: 'F7F5EF', gris: '5B6474' };
 const F = 'Segoe UI';
 const logo = '/home/user/Chat-/documents/z101/lancement/logo-220.png';
@@ -9,7 +9,7 @@ const logo = '/home/user/Chat-/documents/z101/lancement/logo-220.png';
 // Consignes
 let s = p.addSlide(); s.background = { color: C.nuit };
 s.addText('VÉRITÉ OU IMPOSTEUR?', { x: .7, y: .6, w: 10, h: 1.1, fontFace: F, bold: true, fontSize: 48, color: 'FFFFFF' });
-s.addText('Escouade Z101 · Lancement', { x: .7, y: 1.6, w: 10, h: .5, fontFace: F, fontSize: 20, color: C.soleil, bold: true });
+s.addText('Groupe Z101 · Lancement', { x: .7, y: 1.6, w: 10, h: .5, fontFace: F, fontSize: 20, color: C.soleil, bold: true });
 s.addImage({ path: logo, x: 11.4, y: .5, w: 1.3, h: 1.3 });
 const etapes = ['Prends une diapo LIBRE (sans prénom).', 'Écris ton prénom en haut.', 'Écris 2 vérités et 1 mensonge, dans le désordre.', 'Garde le secret : ne dis à personne où est ton mensonge!', 'Ne touche pas aux diapos des autres.'];
 etapes.forEach((t, k) => {
