@@ -23,9 +23,9 @@ const kids = [
   H1('01', 'Intentions et objectifs'),
   ...note('Intention générale', ['Faire découvrir comment une démarche d’engagement citoyen (la démarche « de l’idée à l’action ») donne du sens aux apprentissages et soutient l’autodétermination des adultes en formation, puis outiller les participants pour en transposer une partie dans leur contexte, en groupe comme en enseignement individualisé.']),
   tbl(['', 'À la fin, les participants pourront…', 'Ce qu’on observera'], [
-    ['1', '**décrire** les étapes de la démarche « de l’idée à l’action », de l’enjeu qui touche les élèves jusqu’au projet réalisé ;', 'Ils replacent les 5 marches dans l’ordre (diapo 12).'],
-    ['2', '**reconnaître** les composantes de l’autodétermination mobilisées (choisir, se fixer un but, décider, résoudre, s’autoévaluer) ;', 'Ils trient de vrais mots d’élèves et de parents (diapo 5).'],
-    ['3', '**analyser** les conditions qui facilitent ou freinent le transfert selon leur contexte ;', 'Discussion en îlots regroupés par profil (diapo 13).'],
+    ['1', '**décrire** les étapes de la démarche « de l’idée à l’action », de l’enjeu qui touche les élèves jusqu’au projet réalisé ;', 'Ils replacent les 5 marches dans l’ordre (diapo 11).'],
+    ['2', '**reconnaître** les composantes de l’autodétermination mobilisées (choisir, se fixer un but, décider, résoudre, s’autoévaluer) ;', 'Ils trient de vrais mots d’élèves et de parents (diapo 4).'],
+    ['3', '**analyser** les conditions qui facilitent ou freinent le transfert selon leur contexte ;', 'Discussion en îlots regroupés par profil (diapo 12).'],
     ['4', '**esquisser** un premier pas réaliste à mettre à l’essai avec leurs élèves.', 'Chacun remplit sa fiche « Mon premier pas » : une action, une date, un allié.']
   ], [500, 5500, 4080], { firstAccent: true }),
   P('Les verbes suivent une progression : décrire, reconnaître, analyser, esquisser. On passe de comprendre la démarche à se l’approprier.', { before: 100, run: { italics: true, color: C.grey } }),
@@ -34,12 +34,12 @@ const kids = [
   P('Quatre phases : 30, 30, 20 et 10 minutes. Le numéro de diapo renvoie à la présentation (la touche N affiche les notes et le nom de la personne qui anime).'),
   tbl(['Temps', 'Phase', 'Ce que vivent les participants', 'Qui', 'Diapo'], [
     ['0–5', '**Phase 1 · Diagnostic** : accueil et mur d’enjeux', 'En entrant : « Qu’est-ce qui vous dérange dans le monde, ici ou ailleurs ? » Un papillon adhésif par personne.', 'Francis', '1–3'],
-    ['5–15', '**Phase 1 · Diagnostic** : ce qui allume un élève', 'De vrais mots d’élèves et de parents (anonymisés), une citation à la fois. De vive voix : autonomie, compétence ou appartenance ?', 'Isabelle', '4'],
-    ['15–30', '**Phase 1 · Diagnostic** : monde idéal, triade, engagement et 4 sphères', 'Monde idéal (3 min seul, 5 min en îlot). Triade école-communauté-environnement. L’engagement : vrai ou faux, les 4 besoins, les gestes. Les 4 sphères.', 'Francis, puis Isabelle', '5–9'],
-    ['30–45', '**Phase 2 · Pivot stratégique** : pyramide, résultat ou action', 'La pyramide de rétention : où se situait votre dernière formation ? Résultat ou action : le nom contre le verbe.', 'Isabelle', '10–11'],
-    ['45–60', '**Phase 2 · Pivot stratégique** : la démarche en vrai', 'Les 5 marches, les projets du CFGA, la voix des élèves (vidéo). Les scénarios A, B et C pour l’individualisé.', 'Francis, puis Isabelle', '12–14'],
-    ['60–80', '**Phase 3 · Idéation et vote créatif par jetons**', 'Un enjeu du mur, transformé en actions, enrichi avec Copilot, puis le vote avec 3 jetons.', 'Duo', '15–17'],
-    ['80–90', '**Phase 4 · Bilan et dépliant** : mon premier pas', 'Fiche « Mon premier pas ». Objectivation 3-2-1. Cahier et code QR.', 'Duo', '18–20']
+    ['5–15', '**Phase 1 · Diagnostic** : présentations et intentions', 'Les fiches de présentation d’Isabelle et de Francis, puis les intentions de l’atelier.', 'Isabelle et Francis', '2 et 4'],
+    ['15–30', '**Phase 1 · Diagnostic** : monde idéal, triade, engagement et 4 sphères', 'Monde idéal (3 min seul, 5 min en îlot). Triade école-communauté-environnement. L’engagement : vrai ou faux, les 4 besoins, les gestes. Les 4 sphères.', 'Francis, puis Isabelle', '5–8'],
+    ['30–45', '**Phase 2 · Pivot stratégique** : pyramide, résultat ou action', 'La pyramide de rétention : où se situait votre dernière formation ? Résultat ou action : le nom contre le verbe.', 'Isabelle', '9–10'],
+    ['45–60', '**Phase 2 · Pivot stratégique** : la démarche en vrai', 'Les 5 marches, les projets du CFGA, la voix des élèves (vidéo). Les scénarios A, B et C pour l’individualisé.', 'Francis, puis Isabelle', '11–13'],
+    ['60–80', '**Phase 3 · Idéation et vote créatif par jetons**', 'Un enjeu du mur, transformé en actions, enrichi avec Copilot, puis le vote avec 3 jetons.', 'Duo', '14–16'],
+    ['80–90', '**Phase 4 · Bilan et dépliant** : mon premier pas', 'Fiche « Mon premier pas ». Objectivation 3-2-1. Ce qui reste : de vrais mots d’élèves, reliés aux 4 besoins. Code QR.', 'Duo', '17–20']
   ], [800, 2100, 4580, 1500, 1100], { firstAccent: true }),
 
   H2('Rôles et passages de relais'),
@@ -50,12 +50,12 @@ const kids = [
   ], [2000, 4040, 4040]),
 
   H2('Plan B chrono · 10 minutes de retard'),
-  B('**Couper d’abord** la triade école-communauté-environnement (diapo 7) : 30 secondes, et on renvoie au cahier.'),
+  B('**Couper d’abord** la triade école-communauté-environnement (diapo 6) : 30 secondes, et on renvoie au cahier.'),
   B('**Raccourcir ensuite** la démonstration Copilot : elle devient « à essayer chez vous » avec l’aide-mémoire.'),
   B('**Ne jamais couper** la fiche « Mon premier pas » et l’objectivation. Sans eux, l’atelier reste une belle présentation au lieu d’un engagement.'),
   H2('Plan B technique'),
   B('La présentation est un seul fichier HTML qui fonctionne sans Internet. En copier deux exemplaires sur deux clés USB.'),
-  B('La vidéo des élèves doit être enregistrée localement. On la glisse dans la diapo 14 avec le bouton « Choisir une vidéo ».'),
+  B('La vidéo des élèves doit être enregistrée localement. On la glisse dans la diapo 13 avec le bouton « Choisir une vidéo ».'),
   B('Prévoir des adaptateurs HDMI, USB-C et VGA, et une rallonge.'),
   B('**Aller où on veut :** le bouton « Plan » (touche M) affiche toutes les diapos ; on touche celle qu’on veut, selon les questions de la salle.'),
 
@@ -64,7 +64,7 @@ const kids = [
   H3('Accueil et mur d’enjeux · Francis'),
   P('À l’entrée, une grande affiche : « Qu’est-ce qui vous dérange dans le monde, ici ou ailleurs ? » Chaque personne colle un papillon adhésif avant de s’asseoir. Dans la présentation, on tape les enjeux en direct : ils viennent s’accrocher à un globe 3D qui tourne.'),
   ...note('Phrase d’ouverture', ['« Ce que vous venez de faire en entrant, c’est la première marche de la démarche « de l’idée à l’action ». Nos élèves commencent exactement comme ça : par ce qui les dérange. »']),
-  H3('Ce qui allume un élève · Isabelle'),
+  H3('Ce qui reste (à la fin, avant le merci) · Isabelle'),
   P('Isabelle présente de vrais mots reçus d’élèves et de parents. Les noms ont été retirés. On pose la question de vive voix, sans cartes : selon la théorie de l’autodétermination (Deci et Ryan), ce mot nourrit-il l’==autonomie==, la ==compétence== ou l’==appartenance== ? Il n’y a pas de mauvaise réponse. On ne montre pas des compliments : on fait repérer les mots qui parlent de projets, de confiance, de forces et d’appartenance.'),
   tbl(['Parole reçue', 'Lecture possible'], [
     ['« […] redonné envie d’aller à l’école. »', 'Appartenance et compétence. C’est ce qu’on cherche en FGA : le raccrochage.'],

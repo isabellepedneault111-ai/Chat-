@@ -35,15 +35,16 @@ Ce qui est interactif :
 
 - **Diapo 2 :** les présentations d’Isabelle et de Francis (ma devise, mon outil préféré, si c’était à refaire, mon conseil numéro 1). On clique sur un champ pour l’écrire.
 - **Diapo 3 :** le globe 3D des enjeux. On tape un enjeu et il s’accroche au globe.
-- **Diapo 8 :** l’engagement : vrai ou faux, puis les définitions (motivation, engagement, engagement citoyen).
-- **Diapo 9 :** les 4 sphères en 3D. On clique sur une planète pour voir sa définition.
-- **Diapo 10 :** la pyramide 3D. On vote pour l’étage de sa dernière formation.
-- **Diapo 11 :** le détecteur « résultat ou action ? », et des cartes qu’on retourne.
-- **Diapo 12 :** les marches de la démarche, qu’on révèle une à une.
-- **Diapo 13 :** les scénarios, à filtrer par matière.
-- **Diapo 14 :** l’espace pour glisser la vidéo des élèves (fichier local).
-- **Diapo 16 :** le générateur d’invites Copilot.
-- **Diapo 17 :** les piles de jetons 3D du vote.
+- **Diapo 7 :** l’engagement : vrai ou faux, puis les définitions (motivation, engagement, engagement citoyen).
+- **Diapo 8 :** les 4 sphères en 3D. On clique sur une planète pour voir sa définition.
+- **Diapo 9 :** la pyramide 3D. On vote pour l’étage de sa dernière formation.
+- **Diapo 10 :** le détecteur « résultat ou action ? », et des cartes qu’on retourne.
+- **Diapo 11 :** les marches de la démarche, qu’on révèle une à une.
+- **Diapo 12 :** les scénarios, à filtrer par matière.
+- **Diapo 13 :** l’espace pour glisser la vidéo des élèves (fichier local).
+- **Diapo 15 :** le générateur d’invites Copilot.
+- **Diapo 16 :** les piles de jetons 3D du vote.
+- **Diapo 19 :** ce qui reste : de vrais mots d’élèves, reliés aux 4 besoins de l’engagement.
 - **Diapo 20 :** le code QR des ressources, dont on peut changer l’adresse.
 
 Ce que la salle saisit (enjeux, votes) reste sur l’ordinateur qui présente. Les boutons « Vider » et « Remettre à zéro » effacent ces données entre deux séances.

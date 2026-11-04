@@ -210,6 +210,11 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .lbls{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .lbl{position:absolute;left:0;top:0;white-space:nowrap;font-family:var(--display);letter-spacing:.04em;text-transform:uppercase;color:#FFFDF7;background:var(--ink);padding:3px 9px 2px;border-radius:2px;opacity:0;transition:opacity .4s;box-shadow:0 2px 0 rgba(0,0,0,.15)}
 .lbl.hand{font-family:var(--hand);text-transform:none;letter-spacing:0;background:transparent;color:var(--mauve);box-shadow:none;font-weight:700}
+.capts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:14px;margin-top:6px}
+.capt{margin:0;background:#fff;border:3px solid var(--paper);padding:6px}
+.capt img{display:block;width:100%;height:auto}
+.capt figcaption{display:flex;gap:8px;align-items:center;font-family:var(--ui);font-size:13px;color:var(--ink);padding-top:6px}
+.capt .chip{font-family:var(--display);font-size:16px;letter-spacing:.04em;background:var(--gold);color:var(--ink);padding:1px 8px;text-transform:uppercase}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:18px;align-items:start}
 .gallery figure{margin:0;cursor:zoom-in}
 .gallery figure img{border:3px solid var(--ink);width:100%;height:auto;background:#fff}
@@ -325,18 +330,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <div class="mur" id="mur" aria-live="polite"></div>
 </section>
 
-<!-- 3 -->
-<section class="slide" data-phase="0" data-who="Isabelle" data-notes="Toucher pour passer d’une citation à l’autre. On regarde les mots surlignés (projets, confiance, forces, accepté). De vive voix : « Autonomie, compétence ou appartenance ? » Puis : « Lequel pourrait avoir été écrit par un adulte de 17 ans au CFGA ? » Réponse attendue : tous.">
-  <div class="kick">Ce qui allume un élève</div>
-  <h2>Les mots qui reviennent</h2>
-  <div class="qbig" id="qbig" role="button" tabindex="0" aria-label="Citation suivante">
-    <p class="qtext" id="qtext"></p>
-    <p class="qsrc" id="qsrc"></p>
-    <div class="qdots" id="qdots" aria-hidden="true"></div>
-    <figure class="frag qfrag"><img src="__IMG_FRAG1__" alt="Écriture d’un élève : envie d’aller à l’école"></figure>
-  </div>
-  <p class="cap">Touchez la citation pour passer à la suivante</p>
-</section>
+
 
 <!-- 5 -->
 <section class="slide" data-phase="1" data-who="Francis" data-notes="Les 4 objectifs. Insister sur la progression des verbes : on passe de comprendre la démarche à se l’approprier. Promesse : chacun repart avec un premier pas.">
@@ -529,6 +523,14 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   </div>
 </section>
 
+<!-- mots qui restent -->
+<section class="slide" data-phase="4" data-who="Isabelle" data-notes="Avant le merci. Ce sont de vrais mots reçus, recadrés sur l’essentiel. On ne lit pas des compliments : on montre ce qui reste quand les 4 besoins sont nourris. Lire un ou deux extraits, pointer le besoin. Puis : « C’est ça qu’on souhaite à vos élèves. »">
+  <div class="kick">Phase 4 · ce qui reste</div>
+  <h2>Quand les besoins sont nourris, voici ce qui reste</h2>
+  <div class="capts"><figure class="capt"><img src="__IMG_CAP_ACCEPTE__" alt="Extrait authentique d’un mot reçu"><figcaption><span class="chip">Appartenance</span>Écrit par un parent</figcaption></figure><figure class="capt"><img src="__IMG_CAP_VALORISER__" alt="Extrait authentique d’un mot reçu"><figcaption><span class="chip">Compétence</span>Écrit par des parents</figcaption></figure><figure class="capt"><img src="__IMG_CAP_CONFIANCE__" alt="Extrait authentique d’un mot reçu"><figcaption><span class="chip">Compétence</span>Écrit par une famille</figcaption></figure><figure class="capt"><img src="__IMG_FRAG_PROJETS__" alt="Extrait authentique d’un mot reçu"><figcaption><span class="chip">Autonomie</span>Écrit par des parents</figcaption></figure><figure class="capt"><img src="__IMG_FRAG_ECOLE__" alt="Extrait authentique d’un mot reçu"><figcaption><span class="chip">Sens</span>Écrit par un élève, 2017</figcaption></figure></div>
+  <p class="cap">De vrais mots reçus, recadrés sur l’essentiel. Les noms ont été retirés.</p>
+</section>
+
 <!-- 19 -->
 <section class="slide" data-phase="4" data-who="Isabelle et Francis" data-notes="Remercier. Code QR des ressources. Annoncer : « Dans six semaines, on vous écrit : avez-vous fait votre premier pas ? »">
   <div class="kick">Merci</div>
@@ -591,7 +593,7 @@ if (location.hash === '#presenter') {
   draw(0); send({ hello: 1 }); return;
 }
 onMsg(m => { if (typeof m.go === 'number') go(m.go); else if (m.hello) send({ cur }); });
-const DARK = [3, 4, 7, 10, 14, 17, 19];
+const DARK = [3, 6, 9, 13, 16, 18, 19];
 slides.forEach((sl, i) => { if (sl.classList.contains('s1')) return; const sh = document.createElement('div'); sh.className = 'sheet' + (DARK.includes(i) ? ' dark' : ''); while (sl.firstChild) sh.appendChild(sl.firstChild); sl.appendChild(sh); });
 let cur = 0;
 const store = { get(k, d) { try { const v = localStorage.getItem('rmd:' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('rmd:' + k, JSON.stringify(v)); } catch (e) {} } };
@@ -667,8 +669,7 @@ const QB = [['Il se sent écouté, compris et surtout, <mark>accepté</mark>.', 
 let qi = 0;
 function drawQ() { $('#qtext').innerHTML = '« ' + QB[qi][0] + ' »'; $('#qsrc').textContent = QB[qi][1]; $('#qdots').innerHTML = QB.map((_, k) => '<i' + (k === qi ? ' class="on"' : '') + '></i>').join(''); $('#qtext').classList.remove('pop'); void $('#qtext').offsetWidth; $('#qtext').classList.add('pop'); }
 const nextQ = () => { qi = (qi + 1) % QB.length; drawQ(); };
-$('#qbig').addEventListener('click', nextQ); $('#qbig').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); nextQ(); } });
-drawQ();
+if ($('#qbig')) { $('#qbig').addEventListener('click', nextQ); $('#qbig').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); nextQ(); } }); drawQ(); }
 
 // ---------- galerie ----------
 $('#gallery') && $('#gallery').addEventListener('click', e => { const im = e.target.closest('img'); if (!im) return; const z = document.createElement('div'); z.className = 'zoom'; z.innerHTML = '<img alt="">'; z.firstChild.src = im.src; z.firstChild.alt = im.alt; z.onclick = () => z.remove(); document.body.appendChild(z); });
@@ -741,7 +742,7 @@ drawQR();
 
 // =================== MONDE 3D EN CEL-SHADING ===================
 // Un seul monde, 11 stations reliées par un sentier. La caméra vole d'une station à l'autre.
-const STATIONS = ['aerial', 'aerial', 'globe', 'aerial', 'aerial', 'village', 'triade', 'spheres', 'spheres', 'pyr', 'nomverbe', 'escalier', 'portes', 'aerial', 'aerial', 'aerial', 'jetons', 'pas', 'maison', 'aerial'];
+const STATIONS = ['aerial', 'aerial', 'globe', 'aerial', 'village', 'triade', 'spheres', 'spheres', 'pyr', 'nomverbe', 'escalier', 'portes', 'aerial', 'aerial', 'aerial', 'jetons', 'pas', 'maison', 'aerial', 'aerial'];
 const G3 = (() => {
   if (!window.THREE) return { activate() {}, st: {} };
   const T = THREE, V = T.Vector3;
