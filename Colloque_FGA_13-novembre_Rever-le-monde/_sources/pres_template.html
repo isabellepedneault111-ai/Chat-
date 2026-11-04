@@ -122,6 +122,16 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 @media (prefers-reduced-motion:reduce){.s1-photo{animation:none}}
 .sheet{width:min(820px,100%);margin-block:auto;background:rgba(251,248,239,.96);border:3px solid var(--ink);box-shadow:10px 10px 0 var(--ink);padding:clamp(16px,2.2vw,30px);min-width:0}
 @media (min-width:821px){.sheet{width:min(820px,55vw)}}
+.pres{max-width:1100px;margin:0 auto;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
+.pres-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.pres-clock{font-family:var(--display);font-size:42px;background:var(--ink);color:var(--gold);padding:2px 14px;font-variant-numeric:tabular-nums}
+.pres-cur{display:flex;gap:18px;align-items:center;border:3px solid var(--ink);background:var(--paper);box-shadow:8px 8px 0 var(--mauve);padding:14px 18px}
+.pres-n{font-family:var(--display);font-size:56px;color:var(--mauve);white-space:nowrap}
+.pres-who{font-family:var(--hand);font-size:28px;color:var(--mauve)}
+.pres-cur h2{margin:0;font-size:clamp(26px,3vw,40px)}
+.pres-notes{font-size:clamp(20px,2.2vw,28px);line-height:1.45;max-width:none;margin:0}
+.pres-next{font-family:var(--ui);font-size:16px;color:var(--muted);border-top:2px dashed var(--hair);padding-top:10px;margin:0}
+.pres-btns{display:flex;gap:12px;flex-wrap:wrap}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:18px;align-items:start}
 .gallery figure{margin:0;cursor:zoom-in}
 .gallery figure img{border:3px solid var(--ink);width:100%;height:auto;background:#fff}
@@ -452,9 +462,10 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <button id="prev" aria-label="Diapo précédente">‹</button>
   <span class="count" id="count">1 / 20</span>
   <div class="phases" id="phases" aria-hidden="true"></div>
-  <span class="who" id="who"></span>
+  <span class="who" id="who" hidden></span>
   <button id="tBtn" title="Minuteur (T)">T</button>
-  <button id="nBtn" title="Notes (N)">N</button>
+  <button id="pBtn" title="Mode présentateur, dans une 2e fenêtre (P)">P</button>
+  <button id="nBtn" title="Notes (N) : visibles par la salle">N</button>
   <button id="fBtn" title="Plein écran (F)">F</button>
   <button id="next" aria-label="Diapo suivante">›</button>
 </div>
@@ -467,6 +478,29 @@ __QR_SCRIPT__
 (() => {
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const slides = $$('.slide');
+// ---------- canal entre la projection et la fenêtre présentateur ----------
+const bc = ('BroadcastChannel' in window) ? new BroadcastChannel('rmd') : null;
+const send = m => { try { bc && bc.postMessage(m); } catch (e) {} try { localStorage.setItem('rmd:msg', JSON.stringify(Object.assign({ t: Date.now() + Math.random() }, m))); } catch (e) {} };
+const onMsg = f => { if (bc) bc.onmessage = e => f(e.data); addEventListener('storage', e => { if (e.key === 'rmd:msg' && e.newValue) { try { f(JSON.parse(e.newValue)); } catch (x) {} } }); };
+if (location.hash === '#presenter') {
+  const info = slides.map((sl, i) => ({ who: sl.dataset.who, notes: sl.dataset.notes, title: ((sl.querySelector('h1,h2') || {}).textContent || '').replace(/\s+/g, ' ').trim() }));
+  document.querySelectorAll('.deck,.bar,.notes,.timer').forEach(e => { e.hidden = true; e.style.display = 'none'; });
+  document.body.style.overflow = 'auto';
+  const box = document.createElement('main'); box.className = 'pres';
+  box.innerHTML = '<div class="pres-top"><span class="kick">Mode présentateur · cette fenêtre reste sur votre écran</span><span class="pres-clock" id="pc">0:00</span></div>'
+    + '<div class="pres-cur"><div class="pres-n" id="pn"></div><div><div class="pres-who" id="pw"></div><h2 id="pt"></h2></div></div>'
+    + '<p class="pres-notes" id="pno"></p><p class="pres-next" id="pnx"></p>'
+    + '<div class="pres-btns"><button class="btn alt" id="pp">‹ Précédente</button><button class="btn" id="pnext">Suivante ›</button><button class="btn alt" id="pcr">Chrono à zéro</button></div>';
+  document.body.appendChild(box); let cur = 0, t0 = Date.now();
+  const el = id => document.getElementById(id);
+  const draw = c => { cur = c; const a = info[c], b = info[c + 1]; el('pn').textContent = (c + 1) + ' / ' + info.length; el('pw').textContent = 'anime : ' + a.who; el('pt').textContent = a.title; el('pno').textContent = a.notes; el('pnx').textContent = b ? 'Ensuite : ' + b.title + ' (' + b.who + ')' : 'C’est la dernière diapo.'; };
+  onMsg(m => { if (typeof m.cur === 'number') draw(m.cur); });
+  el('pp').onclick = () => send({ go: cur - 1 }); el('pnext').onclick = () => send({ go: cur + 1 }); el('pcr').onclick = () => { t0 = Date.now(); };
+  addEventListener('keydown', e => { if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); send({ go: cur + 1 }); } else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); send({ go: cur - 1 }); } });
+  setInterval(() => { const s = Math.floor((Date.now() - t0) / 1000); el('pc').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }, 1000);
+  draw(0); send({ hello: 1 }); return;
+}
+onMsg(m => { if (typeof m.go === 'number') go(m.go); else if (m.hello) send({ cur }); });
 slides.forEach(sl => { if (sl.classList.contains('s1')) return; const sh = document.createElement('div'); sh.className = 'sheet'; while (sl.firstChild) sh.appendChild(sl.firstChild); sl.appendChild(sh); });
 let cur = 0;
 const store = { get(k, d) { try { const v = localStorage.getItem('rmd:' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('rmd:' + k, JSON.stringify(v)); } catch (e) {} } };
@@ -483,16 +517,19 @@ function go(n) {
   $('#nTitle').textContent = 'Diapo ' + (cur + 1) + ' · ' + slides[cur].dataset.who;
   $('#nBody').textContent = slides[cur].dataset.notes;
   if (location.hash !== '#s' + (cur + 1)) history.replaceState(null, '', '#s' + (cur + 1));
+  send({ cur });
   G3.activate(slides[cur]);
 }
 $('#prev').onclick = () => go(cur - 1); $('#next').onclick = () => go(cur + 1);
 $('#nBtn').onclick = () => { $('#notes').hidden = !$('#notes').hidden; };
+$('#pBtn').onclick = () => { let w = null; try { w = window.open(location.href.split('#')[0] + '#presenter', 'rmd-presenter', 'width=980,height=720'); } catch (e) {} if (!w) { $('#notes').hidden = false; $('#nTitle').textContent = 'Mode présentateur'; $('#nBody').textContent = 'Ouvrez ce même fichier dans une 2e fenêtre en ajoutant #presenter à la fin de l’adresse, puis gardez-la sur l’écran de votre portable.'; } };
 $('#fBtn').onclick = () => { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {}); } catch (e) {} };
 document.addEventListener('keydown', e => {
   if (e.target.matches('input,textarea,select,[contenteditable]')) return;
   if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(cur + 1); }
   else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(cur - 1); }
   else if (e.key === 'n' || e.key === 'N') $('#nBtn').click();
+  else if (e.key === 'p' || e.key === 'P') $('#pBtn').click();
   else if (e.key === 't' || e.key === 'T') $('#tBtn').click();
   else if (e.key === 'f' || e.key === 'F') $('#fBtn').click();
   else if (e.key === 'Home') go(0); else if (e.key === 'End') go(slides.length - 1);
@@ -664,7 +701,7 @@ const G3 = (() => {
   { const LAY = ['Écouter', 'Lire', 'Voir, observer', 'Discuter', 'Faire, pratiquer', 'Enseigner aux autres'], LCOL = [CREAM, CREAM, CREAM, GOLD, GOLD, MAUVE];
     const grp = new T.Group(); add('pyr', grp, 0, .35, 0); const layers = []; const tokens = new T.Group(); grp.add(tokens); const H = .62;
     LAY.forEach((n, i) => { const rTop = .3 + i * .55, rBot = .3 + (i + 1) * .55; const g = inked(new T.CylinderGeometry(rTop, rBot, H, 4, 1), LCOL[i], .03); g.children.forEach(c => c.rotation.y = Math.PI / 4); g.userData.target = (5 - i) * (H + .02) + H / 2; g.userData.delay = (5 - i) * .22; g.userData.body.userData.i = i; grp.add(g); layers.push(g); S.pyr.pick.push(g.userData.body);
-      const l = lab(n.toUpperCase(), { w: 1024, size: 64, scale: 4.2, color: i === 5 ? '#FBF8EF' : '#1E1A22', stroke: i === 5 }); l.material.depthTest = false; l.renderOrder = 10; l.position.set(0, 0, (rTop + rBot) / 2 * .7071 + .1); g.add(l); });
+      const l = lab(n.toUpperCase(), { w: 1024, size: 64, scale: 4.2, color: i === 5 ? '#FBF8EF' : '#1E1A22', stroke: i === 5 }); l.position.set(0, 0, (rTop + rBot) / 2 * .7071 + .12); g.add(l); });
     const st = S.pyr; st.look = 2; st.dist = 13.5; st.mode = 0; st.votes = store.get('pyr', [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]);
     st.redraw = () => { while (tokens.children.length) tokens.remove(tokens.children[0]); st.votes.forEach((arr, m) => arr.forEach((n, i) => { for (let k = 0; k < n; k++) { const t = inked(new T.CylinderGeometry(.16, .16, .07, 20), m ? MAUVE : GOLD, .08); const r = .3 + (i + .5) * .55; t.position.set((m ? 1 : -1) * (r * .55 + .3 + (k % 4) * .36), layers[i].userData.target + .38 + Math.floor(k / 4) * .09, r * .62); tokens.add(t); } })); };
     st.redraw(); st.onPick = o => { st.votes[st.mode][o.userData.i]++; store.set('pyr', st.votes); st.redraw(); };
@@ -672,8 +709,8 @@ const G3 = (() => {
     st.tick = () => layers.forEach(L => { const p = Math.min(1, Math.max(0, ((performance.now() - t0) / 1000 - .9 - L.userData.delay) / .6)); const e = 1 - Math.pow(1 - p, 3); L.position.y = reduce ? L.userData.target : L.userData.target + (1 - e) * 7; }); }
 
   // ---------- nom → verbe ----------
-  { const a = inked(new T.BoxGeometry(1.7, 1.7, 1.7), CREAM, .05); add('nomverbe', a, -2.3, 1.2, 0); add('nomverbe', lab('UN NOM', { scale: 2.4, color: '#FBF8EF' }), -2.3, 2.7, 0); add('nomverbe', lab('résultat', { font: 'Caveat, cursive', size: 80, scale: 2.2, color: '#5B2A86', stroke: false }), -2.3, 3.4, 0);
-    const b = inked(new T.BoxGeometry(1.7, 1.7, 1.7), GOLD, .05); add('nomverbe', b, 2.3, 1.2, 0); add('nomverbe', lab('UN VERBE', { scale: 2.4 }), 2.3, 2.7, 0); add('nomverbe', lab('action !', { font: 'Caveat, cursive', size: 80, scale: 2.2, color: '#5B2A86', stroke: false }), 2.3, 3.4, 0);
+  { const a = inked(new T.BoxGeometry(1.7, 1.7, 1.7), CREAM, .05); add('nomverbe', a, -2.3, 1.2, 0); add('nomverbe', lab('UN NOM', { scale: 3.6, color: '#FBF8EF' }), -2.3, 2.7, 0); add('nomverbe', lab('résultat', { font: 'Caveat, cursive', size: 80, scale: 3, color: '#5B2A86', stroke: false }), -2.3, 3.6, 0);
+    const b = inked(new T.BoxGeometry(1.7, 1.7, 1.7), GOLD, .05); add('nomverbe', b, 2.3, 1.2, 0); add('nomverbe', lab('UN VERBE', { scale: 3.6 }), 2.3, 2.7, 0); add('nomverbe', lab('action !', { font: 'Caveat, cursive', size: 80, scale: 3, color: '#5B2A86', stroke: false }), 2.3, 3.6, 0);
     const ar = new T.Group(); const sh = inked(new T.CylinderGeometry(.12, .12, 1.6, 10), MAUVE, .15); sh.rotation.z = Math.PI / 2; const tp = inked(new T.ConeGeometry(.35, .6, 12), MAUVE, .1); tp.rotation.z = -Math.PI / 2; tp.position.x = 1; ar.add(sh, tp); add('nomverbe', ar, -.1, 1.2, 0);
     S.nomverbe.look = 2; S.nomverbe.tick = t => { b.rotation.y = t * 1.2; b.position.y = 1.2 + Math.abs(Math.sin(t * 2.4)) * .6; ar.position.x = -.1 + Math.sin(t * 3) * .15; }; }
 
@@ -700,25 +737,25 @@ const G3 = (() => {
     S.pas.look = 1.6; S.pas.tick = t => { const k = (t * .5) % 1; pw.position.x = -3 + k * 6; pw.position.y = .35 + Math.abs(Math.sin(k * Math.PI * 8)) * .2; steps.forEach((f, i) => f.material.color.setHex((-3 + i * .8) < pw.position.x ? GOLD : MAUVE)); }; }
 
   // ---------- maison à 3 étages ----------
-  { const floors = [[CREAM, '1ER', 'besoins de base'], [MAUVE, '2E', 'émotions'], [GOLD, '3E', 'apprentissages']].map(([c, n, s], i) => { const g = new T.Group(); const b = inked(new T.BoxGeometry(3, 1.25, 2.2), c, .03); g.add(b); const l = lab(n + ' · ' + s.toUpperCase(), { scale: 2.4, w: 768, size: 60, color: c === MAUVE ? '#FBF8EF' : '#F2C230' }); l.position.set(0, 0, 1.25); l.material.depthTest = false; g.add(l); add('maison', g, 0, .35 + .63 + i * 1.27, 0); return g; });
+  { const floors = [[CREAM, '1ER', 'besoins de base'], [MAUVE, '2E', 'émotions'], [GOLD, '3E', 'apprentissages']].map(([c, n, s], i) => { const g = new T.Group(); const b = inked(new T.BoxGeometry(3, 1.25, 2.2), c, .03); g.add(b); const l = lab(n + ' · ' + s.toUpperCase(), { scale: 3.4, w: 768, size: 60, color: c === MAUVE ? '#FBF8EF' : '#F2C230' }); l.position.set(0, 0, 1.3); g.add(l); add('maison', g, 0, .35 + .63 + i * 1.27, 0); return g; });
     const roof = inked(new T.ConeGeometry(2.4, 1.4, 4), MAUVE, .04); roof.rotation.y = Math.PI / 4; add('maison', roof, 0, 4.9, 0);
     let open = 0; const st = S.maison; st.look = 2.8; st.dist = 15.5;
     st.tick = (t, active) => { open += ((active ? 1 : 0) - open) * .05; floors.forEach((g, i) => { g.position.y = .35 + .63 + i * (1.27 + open * .55); g.rotation.y = open * (i - 1) * .25; }); roof.position.y = .35 + 3 * 1.27 + open * 2 + .7; }; }
 
   // ---------- caméra ----------
-  let camPos = new V(0, 30, 33), camTgt = new V(0, 0, 0), from = null, to = null, t0 = 0, curName = 'aerial', pending = null;
+  let K = 1; let camPos = new V(0, 30, 33), camTgt = new V(0, 0, 0), from = null, to = null, t0 = 0, curName = 'aerial', pending = null;
   function poseFor(n) { if (!S[n]) return { p: new V(0, 30, 33), t: new V(0, 0, 3) }; const s = S[n], out = s.g.userData.out, side = new V(-out.z, 0, out.x);
-    return { p: s.g.position.clone().add(out.clone().multiplyScalar(s.dist)).add(side.multiplyScalar(2.2)).add(new V(0, s.h, 0)), t: s.g.position.clone().add(new V(0, s.look, 0)) }; }
+    return { p: s.g.position.clone().add(out.clone().multiplyScalar(s.dist * K)).add(side.multiplyScalar(2.2)).add(new V(0, s.h * K, 0)), t: s.g.position.clone().add(new V(0, s.look, 0)) }; }
   const ease = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
   function activate(slide) { const i = [...document.querySelectorAll('.slide')].indexOf(slide); const n = STATIONS[i] || 'aerial'; if (n === curName && from === null && to === null && pending === null) { S[n] && S[n].enter && S[n].enter(); return; }
     curName = n; const pose = poseFor(n); if (reduce) { camPos.copy(pose.p); camTgt.copy(pose.t); } else { from = { p: camPos.clone(), t: camTgt.clone() }; to = pose; t0 = performance.now(); } S[n] && S[n].enter && S[n].enter(); }
-  function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; if (w > 820) camera.setViewOffset(w, h, -w * .27, 0, w, h); else camera.clearViewOffset(); camera.updateProjectionMatrix(); }
+  function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; if (w > 820) { const sw = Math.min(820, w * .55) + Math.max(16, w * .04) + 14; const xc = (sw + w) / 2; camera.setViewOffset(w, h, -(xc - w / 2), 0, w, h); const free = w - sw; const k2 = Math.min(1.9, Math.max(1, (w * .42) / free)); if (Math.abs(k2 - K) > .01) { K = k2; if (!to) { const pp = poseFor(curName); camPos.copy(pp.p); camTgt.copy(pp.t); } } } else { camera.clearViewOffset(); K = 1.35; } camera.updateProjectionMatrix(); }
   addEventListener('resize', resize); resize();
   const clock = new T.Clock();
   (function loop() { requestAnimationFrame(loop); const t = clock.getElapsedTime();
     if (to) { const k = Math.min(1, (performance.now() - t0) / 1900), e = ease(k); camPos.lerpVectors(from.p, to.p, e); camPos.y += Math.sin(Math.PI * e) * Math.min(16, from.p.distanceTo(to.p) * .35); camTgt.lerpVectors(from.t, to.t, e); if (k >= 1) { from = to = null; } }
     const sw = reduce ? 0 : Math.sin(t * .25) * .5; camera.position.set(camPos.x + sw, camPos.y + (reduce ? 0 : Math.sin(t * .4) * .12), camPos.z); camera.lookAt(camTgt);
-    NAMES.forEach(n => S[n].tick && S[n].tick(t, n === curName)); renderer.render(scene, camera); })();
+    NAMES.forEach(n => { S[n].tick && S[n].tick(t, n === curName); const on = n === curName && !to; S[n].g.traverse(o => { if (o.isSprite) o.visible = on; }); }); renderer.render(scene, camera); })();
   // pointeur : clic sur une station active, glisser pour tourner le globe
   const ray = new T.Raycaster(), mv = new T.Vector2(); let drag = null;
   cv.addEventListener('pointerdown', e => { const s = S[curName]; if (!s) return; drag = e.clientX; if (!s.pick.length || !s.onPick) return; mv.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mv, camera); const h = ray.intersectObjects(s.pick, false)[0]; if (h) s.onPick(h.object); });
