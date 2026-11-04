@@ -109,6 +109,7 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .idc dd:focus{outline:none;background:#fff5d1}
 @media (max-width:520px){.idc dl{grid-template-columns:1fr}}
 #world{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
+.deck{position:relative}
 .deck{z-index:1;pointer-events:none}
 .slide{pointer-events:none}
 .slide>*{pointer-events:auto}
@@ -206,6 +207,9 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .crit li{display:flex;gap:10px;align-items:baseline;font-size:clamp(16px,1.4vw,20px);max-width:none}
 .crit i{flex:0 0 22px;height:22px;border:3px solid var(--ink);border-radius:50%;transform:translateY(4px)}
 .crit b{font-family:var(--display);font-weight:400;font-size:clamp(20px,1.8vw,26px);min-width:6.5em}
+.lbls{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.lbl{position:absolute;left:0;top:0;white-space:nowrap;font-family:var(--display);letter-spacing:.04em;text-transform:uppercase;color:#FFFDF7;background:var(--ink);padding:3px 9px 2px;border-radius:2px;opacity:0;transition:opacity .4s;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.lbl.hand{font-family:var(--hand);text-transform:none;letter-spacing:0;background:transparent;color:var(--mauve);box-shadow:none;font-weight:700}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:18px;align-items:start}
 .gallery figure{margin:0;cursor:zoom-in}
 .gallery figure img{border:3px solid var(--ink);width:100%;height:auto;background:#fff}
@@ -250,10 +254,10 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 .prompt-out{font-family:Consolas,"Courier New",monospace;font-size:clamp(14px,1.25vw,17px);white-space:pre-wrap;border:3px solid var(--ink);background:#fff;padding:12px;min-height:150px}
 .rctc label{font-family:var(--display);font-size:20px;color:var(--mauve);display:block;margin-top:8px}
 .rctc select{width:100%;font-size:clamp(17px,1.5vw,21px)}
-.votes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:10px}
+.votes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:10px}
 .votes div{border:2px solid var(--ink);padding:6px 8px;background:var(--paper)}
 .votes input{width:100%;font-size:20px}
-.votes button{border:2px solid var(--ink);font-family:var(--display);font-size:16px;padding:2px 8px;margin:4px 4px 0 0}
+.votes button{border:2px solid var(--ink);font-family:var(--display);font-size:15px;padding:3px 8px;margin:4px 4px 0 0;display:block;width:100%;text-align:left}
 .house{max-width:min(520px,100%)}
 .qr{background:#fff;border:3px solid var(--ink);padding:10px;display:inline-block}
 .qr img,.qr canvas{display:block}
@@ -705,11 +709,11 @@ st.forEach(([t, c], i) => { const b = document.createElement('button'); b.style.
   b.innerHTML = `<span class="n">${i + 1}</span><span>${t}<br><span class="c">${c}</span></span>`; b.onclick = () => b.classList.toggle('show'); $('#steps').appendChild(b); });
 
 // ---------- scénarios ----------
-const subj = { 'Français': ['Lettre ouverte ou texte argumentatif sur l’enjeu choisi.', 'Un court journal de bord, puis une affiche pour le centre.', 'Réviser la lettre de demande du groupe PPS.'], 'Mathématiques': ['Un sondage et ses statistiques, ou le budget d’une action.', 'Mesurer un phénomène (déchets d’une semaine) et le représenter.', 'Calculer le budget du projet du groupe PPS.'], 'Anglais': ['Une affiche ou une capsule bilingue sur l’enjeu.', 'Écrire à un organisme anglophone.', 'Traduire l’affiche du projet.'], 'Sciences': ['Expliquer le phénomène derrière l’enjeu (compost, eau, énergie).', 'Une petite expérience : comparer deux solutions.', 'Valider une donnée environnementale du projet.'] };
+const subj = { 'PPS': ['Z107 Alimentation saine : le gaspillage devient le contexte de la semaine planifiée et du mets présenté.', 'Z128 Consommation : on enquête sur une pub qui dérange et on écrit à l’annonceur.', 'Le groupe PPS porte le projet ; des élèves en individualisé calculent le budget ou révisent la lettre.'], 'DHS': ['Un enjeu de la vie du groupe sert de contexte à une tâche du cours.', 'Un petit geste citoyen réalisé en quelques périodes, puis présenté au groupe.', 'Le groupe DHS porte un projet avec un organisme du quartier, appuyé par d’autres élèves.'], 'Français': ['Lettre ouverte ou texte argumentatif sur l’enjeu choisi.', 'Un court journal de bord, puis une affiche pour le centre.', 'Réviser la lettre de demande du groupe PPS.'], 'Mathématiques': ['Un sondage et ses statistiques, ou le budget d’une action.', 'Mesurer un phénomène (déchets d’une semaine) et le représenter.', 'Calculer le budget du projet du groupe PPS.'], 'Anglais': ['Une affiche ou une capsule bilingue sur l’enjeu.', 'Écrire à un organisme anglophone.', 'Traduire l’affiche du projet.'], 'Sciences': ['Expliquer le phénomène derrière l’enjeu (compost, eau, énergie).', 'Une petite expérience : comparer deux solutions.', 'Valider une donnée environnementale du projet.'] };
 const sc = [['A · L’enjeu comme contexte de tâche', 'La tâche du sigle (écrire, calculer, lire) se fait à partir d’un enjeu choisi par l’élève. Aucun projet collectif requis.'], ['B · Le micro-projet', 'Enjeu, idée, petit geste : une version courte de la démarche, en parallèle du parcours, sur quelques périodes.'], ['C · Le projet-pont', 'Un groupe PPS ou DHS porte un projet. Des élèves en individualisé y contribuent comme « experts » ponctuels.']];
 function drawScen(s) { $('#scen').innerHTML = sc.map(([h, p], i) => `<article><h3>${h}</h3><p>${p}</p><div class="ex">${s} : ${subj[s][i]}</div></article>`).join(''); $$('#subj .chip').forEach(c => c.classList.toggle('on', c.textContent === s)); }
 Object.keys(subj).forEach(s => { const c = document.createElement('button'); c.className = 'chip'; c.textContent = s; c.onclick = () => drawScen(s); $('#subj').appendChild(c); });
-drawScen('Français');
+drawScen('PPS');
 
 // ---------- vidéo ----------
 function loadVid(f) { if (!f || !f.type.startsWith('video')) return; const v = $('#vid'); v.src = URL.createObjectURL(f); v.hidden = false; $('#vidZone').hidden = true; }
@@ -743,23 +747,18 @@ const G3 = (() => {
   const T = THREE, V = T.Vector3;
   const cv = document.createElement('canvas'); cv.id = 'world'; cv.setAttribute('aria-hidden', 'true'); document.body.prepend(cv);
   const renderer = new T.WebGLRenderer({ canvas: cv, antialias: true });
-  renderer.setPixelRatio(Math.min(2, devicePixelRatio)); renderer.setClearColor(0xE2D8C4);
+  renderer.setPixelRatio(Math.min(2, devicePixelRatio)); renderer.setClearColor(0xE2D8C4); renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
   const scene = new T.Scene(); scene.fog = new T.Fog(0xE2D8C4, 34, 110);
   const camera = new T.PerspectiveCamera(42, 1, .1, 300);
-  scene.add(new T.AmbientLight(0xffffff, .42)); const dl = new T.DirectionalLight(0xffffff, .62); dl.position.set(20, 40, 25); scene.add(dl);
+  scene.add(new T.HemisphereLight(0xfffaf0, 0xb9a98c, .75)); const dl = new T.DirectionalLight(0xfff4e0, .9); dl.position.set(-22, 38, 18); dl.castShadow = true; dl.shadow.mapSize.set(2048, 2048); const sc = dl.shadow.camera; sc.left = -50; sc.right = 50; sc.top = 50; sc.bottom = -50; sc.near = 1; sc.far = 120; dl.shadow.bias = -.0006; dl.shadow.radius = 4; scene.add(dl);
   const grad = (() => { const d = new Uint8Array([105, 105, 105, 255, 185, 185, 185, 255, 235, 235, 235, 255]); const t = new T.DataTexture(d, 3, 1, T.RGBAFormat); t.minFilter = t.magFilter = T.NearestFilter; t.needsUpdate = true; return t; })();
-  const toon = c => new T.MeshToonMaterial({ color: c, gradientMap: grad });
+  const toon = c => new T.MeshStandardMaterial({ color: c, roughness: .88, metalness: 0 });
+  const EDGE = new T.LineBasicMaterial({ color: 0x1E1A22, transparent: true, opacity: .28 });
   const INK = new T.MeshBasicMaterial({ color: 0x1E1A22, side: T.BackSide });
-  const GOLD = 0xF2C230, MAUVE = 0x5B2A86, CREAM = 0xFBF8EF, PAPER2 = 0xF3EDDF;
-  function inked(geo, color, w = .05) { const g = new T.Group(); const m = new T.Mesh(geo, toon(color)); const o = new T.Mesh(geo, INK); o.scale.setScalar(1 + w); g.add(m, o); g.userData.body = m; return g; }
-  function lab(txt, o = {}) {
-    const w = o.w || 512, h = o.h || 128, c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d');
-    if (o.bg) { x.fillStyle = o.bg; x.fillRect(0, 0, w, h); x.strokeStyle = '#1E1A22'; x.lineWidth = 8; x.strokeRect(4, 4, w - 8, h - 8); }
-    x.font = (o.size || 70) + 'px ' + (o.font || 'Anton, Impact, sans-serif'); x.textAlign = 'center'; x.textBaseline = 'middle';
-    if (o.stroke !== false) { x.lineWidth = o.lw || 10; x.strokeStyle = '#1E1A22'; x.lineJoin = 'round'; x.strokeText(txt, w / 2, h / 2 + 4); }
-    x.fillStyle = o.color || '#F2C230'; x.fillText(txt, w / 2, h / 2 + 4);
-    const s = new T.Sprite(new T.SpriteMaterial({ map: new T.CanvasTexture(c), transparent: true })); const sc = o.scale || 3; s.scale.set(sc, sc * h / w, 1); return s;
-  }
+  const GOLD = 0xE6B52A, MAUVE = 0x5B2A86, CREAM = 0xF4EEE2, PAPER2 = 0xF3EDDF;
+  function inked(geo, color, w = .05) { const g = new T.Group(); const m = new T.Mesh(geo, toon(color)); m.castShadow = true; m.receiveShadow = true; g.add(m); if (!geo.type.startsWith('Sphere')) g.add(new T.LineSegments(new T.EdgesGeometry(geo, 28), EDGE)); g.userData.body = m; return g; }
+  const LBL = []; const lblBox = document.createElement('div'); lblBox.className = 'lbls'; lblBox.setAttribute('aria-hidden', 'true'); document.body.appendChild(lblBox);
+  function lab(txt, o = {}) { const a = new T.Object3D(); a.material = {}; const el = document.createElement('span'); el.className = 'lbl' + ((o.font || '').includes('Caveat') ? ' hand' : '') + (o.color === '#FBF8EF' || o.color === '#F2C230' ? '' : ''); el.textContent = txt; el.style.fontSize = Math.round(12 + (o.scale || 3) * 3.4) + 'px'; lblBox.appendChild(el); LBL.push({ a, el }); return a; }
   function noteTex(txt, bg = '#F2C230') { const c = document.createElement('canvas'); c.width = 256; c.height = 200; const x = c.getContext('2d'); x.fillStyle = bg; x.fillRect(0, 0, 256, 200); x.strokeStyle = '#1E1A22'; x.lineWidth = 10; x.strokeRect(5, 5, 246, 190); x.fillStyle = '#1E1A22'; x.font = '600 40px Caveat, cursive'; x.textAlign = 'center';
     const words = txt.split(' '); let lines = [''], i = 0; words.forEach(w => { if ((lines[i] + ' ' + w).length > 13) lines[++i] = w; else lines[i] = (lines[i] + ' ' + w).trim(); }); lines = lines.slice(0, 4); lines.forEach((l, k) => x.fillText(l, 128, 100 - (lines.length - 1) * 21 + k * 42 + 12)); return new T.CanvasTexture(c); }
   function pawn(color, s = 1) { const g = new T.Group(); const b = inked(new T.CylinderGeometry(.5 * s, .78 * s, 1.5 * s, 24), color, .06); b.position.y = .75 * s; const h = inked(new T.SphereGeometry(.52 * s, 24, 16), color, .06); h.position.y = 2.05 * s; g.add(b, h); return g; }
@@ -767,7 +766,7 @@ const G3 = (() => {
 
   // ---------- sol, stations, sentier ----------
   const dots = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'); x.fillStyle = '#D9CDB5'; x.fillRect(0, 0, 64, 64); x.fillStyle = 'rgba(91,42,134,.28)'; [[16, 16], [48, 48]].forEach(([a, b]) => { x.beginPath(); x.arc(a, b, 5, 0, 7); x.fill(); }); const t = new T.CanvasTexture(c); t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(60, 60); return t; })();
-  const ground = new T.Mesh(new T.CircleGeometry(46, 96), new T.MeshBasicMaterial({ map: dots })); ground.rotation.x = -Math.PI / 2; scene.add(ground);
+  const ground = new T.Mesh(new T.CircleGeometry(46, 96), new T.MeshStandardMaterial({ map: dots, roughness: 1 })); ground.receiveShadow = true; ground.rotation.x = -Math.PI / 2; scene.add(ground);
   const rim = new T.Mesh(new T.RingGeometry(46, 46.6, 96), new T.MeshBasicMaterial({ color: 0x1E1A22 })); rim.rotation.x = -Math.PI / 2; rim.position.y = .01; scene.add(rim);
   const NAMES = ['globe', 'village', 'triade', 'spheres', 'pyr', 'nomverbe', 'escalier', 'portes', 'jetons', 'pas', 'maison'];
   const S = {};
@@ -776,7 +775,7 @@ const G3 = (() => {
     S[n] = { g, pick: [], tick: null, enter: null, look: 2.2, dist: 15, h: 5.6 }; });
   const curve = new T.CatmullRomCurve3(NAMES.map(n => S[n].g.position.clone().setY(.06)));
   const path = new T.Mesh(new T.TubeGeometry(curve, 500, .16, 6), new T.MeshBasicMaterial({ color: MAUVE })); scene.add(path);
-  for (let k = 0; k < 120; k++) { const p = curve.getPointAt(k / 120); const d = new T.Mesh(new T.CylinderGeometry(.22, .22, .08, 12), new T.MeshBasicMaterial({ color: GOLD })); d.position.copy(p).setY(.1); scene.add(d); }
+  for (let k = 0; k < 60; k++) { const p = curve.getPointAt(k / 60); const d = new T.Mesh(new T.CylinderGeometry(.22, .22, .08, 12), new T.MeshBasicMaterial({ color: GOLD })); d.position.copy(p).setY(.1); scene.add(d); }
   const add = (n, o, x = 0, y = 0, z = 0) => { o.position.set(x, y, z); S[n].g.add(o); return o; };
 
   // ---------- globe ----------
@@ -798,11 +797,11 @@ const G3 = (() => {
     for (let i = 0; i < 9; i++) { const a = i / 9 * Math.PI * 2, r = 1.6 + rnd() * 1.2; const h = new T.Group(); const b = inked(new T.BoxGeometry(.9, .8 + rnd() * .6, .9), CREAM, .05); b.position.y = b.userData.body.geometry.parameters.height / 2; const rf = inked(new T.ConeGeometry(.8, .7, 4), i % 3 ? GOLD : MAUVE, .05); rf.rotation.y = Math.PI / 4; rf.position.y = b.userData.body.geometry.parameters.height + .35; h.add(b, rf); h.rotation.y = rnd() * 3; add('village', h, Math.cos(a) * r, .35, Math.sin(a) * r); }
     const ch = new T.Group(); const cb = inked(new T.BoxGeometry(.9, 1.8, .9), CREAM, .05); cb.position.y = .9; const sp = inked(new T.ConeGeometry(.45, 1.6, 4), GOLD, .05); sp.rotation.y = Math.PI / 4; sp.position.y = 2.6; ch.add(cb, sp); add('village', ch, 0, .35, 0);
     for (let i = 0; i < 6; i++) { const tr = inked(new T.ConeGeometry(.35, 1.2, 6), MAUVE, .06); add('village', tr, Math.cos(i) * 3, .95, Math.sin(i) * 3); }
-    const yr = add('village', lab('2036', { size: 110, scale: 3.4 }), 0, 4.6, 0); S.village.look = 1.8; S.village.tick = t => { yr.position.y = 4.6 + Math.sin(t * 1.5) * .2; }; }
+    const yr = add('village', lab('2036', { size: 110, scale: 3.4 }), 0, 4.6, 0); S.village.look = 1.8; S.village.tick = null; }
 
   // ---------- triade ----------
   { const rings = [[GOLD, -1, 0, 'ÉCOLE'], [MAUVE, 1, 0, 'COMMUNAUTÉ'], [CREAM, 0, -1.6, 'ENVIRONNEMENT']].map(([c, x, y, n]) => { const r = inked(new T.TorusGeometry(1.4, .22, 14, 60), c, .06); add('triade', r, x, 3.6 + y, 0); add('triade', lab(n, { scale: 2.2, color: c === MAUVE ? '#FBF8EF' : '#F2C230' }), x * 2.1, 3.6 + y * 1.9 + (y ? -.4 : 1.9), 0); return r; });
-    S.triade.look = 3; S.triade.tick = t => rings.forEach((r, i) => { r.rotation.y = Math.sin(t * .6 + i) * .5; r.rotation.x = Math.cos(t * .5 + i) * .3; }); }
+    S.triade.look = 3; S.triade.tick = t => rings.forEach((r, i) => { r.rotation.y = Math.sin(t * .25 + i) * .3; r.rotation.x = Math.cos(t * .2 + i) * .2; }); }
 
   // ---------- 4 sphères ----------
   { const SPH = [['Affective', GOLD, 'Motivation, sentiment de compétence, plaisir d’apprendre.', 'Il arrive à l’heure, sourit, parle de son projet en dehors de la classe.'], ['Cognitive', MAUVE, 'Stratégies actives : faire des liens, questionner, planifier.', 'Elle pose des questions, explique sa démarche, fait des liens avec sa vie.'], ['Comportementale', CREAM, 'Persévérance, régularité, présence.', 'Il revient après un échec et termine ce qu’il commence.'], ['Citoyenne', GOLD, 'Agir concrètement dans son milieu, pour d’autres.', 'Elle propose, mobilise d’autres personnes, agit pour quelqu’un d’autre.']];
@@ -810,7 +809,7 @@ const G3 = (() => {
     const pl = SPH.map((d, i) => { const g = inked(new T.SphereGeometry(.7, 32, 24), d[1], .05); g.userData.body.userData.i = i; S.spheres.g.add(g); S.spheres.pick.push(g.userData.body); const l = lab(d[0].toUpperCase(), { scale: 2, color: d[1] === MAUVE ? '#FBF8EF' : '#F2C230' }); g.add(l); l.position.y = 1.15; return g; });
     let sel = -1; S.spheres.look = 2.8;
     S.spheres.onPick = o => { sel = o.userData.i; const d = SPH[sel]; const out = document.getElementById('sphereOut'); if (out) out.innerHTML = `<h3>${d[0]}</h3><p>${d[2]}</p><p class="hand">Je l’observe quand… ${d[3]}</p>`; };
-    S.spheres.tick = t => { const a = reduce ? 0 : t * .3; pl.forEach((p, i) => { const th = a + i * Math.PI / 2; p.position.set(Math.cos(th) * 2.7, 2.8 + Math.sin(th * 2) * .35, Math.sin(th) * 2.7); p.scale.setScalar(i === sel ? 1.3 : 1); }); star.rotation.y = a * 2; }; }
+    S.spheres.tick = t => { const a = reduce ? 0 : t * .12; pl.forEach((p, i) => { const th = a + i * Math.PI / 2; p.position.set(Math.cos(th) * 2.7, 2.8 + Math.sin(th * 2) * .35, Math.sin(th) * 2.7); p.scale.setScalar(i === sel ? 1.3 : 1); }); star.rotation.y = a * 2; }; }
 
   // ---------- pyramide ----------
   { const LAY = ['Écouter', 'Lire', 'Voir, observer', 'Discuter', 'Faire, pratiquer', 'Enseigner aux autres'], LCOL = [CREAM, CREAM, CREAM, GOLD, GOLD, MAUVE];
@@ -827,29 +826,28 @@ const G3 = (() => {
   { const a = inked(new T.BoxGeometry(1.7, 1.7, 1.7), CREAM, .05); add('nomverbe', a, -2.3, 1.2, 0); add('nomverbe', lab('UN NOM', { scale: 3.6, color: '#FBF8EF' }), -2.3, 2.7, 0); add('nomverbe', lab('résultat', { font: 'Caveat, cursive', size: 80, scale: 3, color: '#5B2A86', stroke: false }), -2.3, 3.6, 0);
     const b = inked(new T.BoxGeometry(1.7, 1.7, 1.7), GOLD, .05); add('nomverbe', b, 2.3, 1.2, 0); add('nomverbe', lab('UN VERBE', { scale: 3.6 }), 2.3, 2.7, 0); add('nomverbe', lab('action !', { font: 'Caveat, cursive', size: 80, scale: 3, color: '#5B2A86', stroke: false }), 2.3, 3.6, 0);
     const ar = new T.Group(); const sh = inked(new T.CylinderGeometry(.12, .12, 1.6, 10), MAUVE, .15); sh.rotation.z = Math.PI / 2; const tp = inked(new T.ConeGeometry(.35, .6, 12), MAUVE, .1); tp.rotation.z = -Math.PI / 2; tp.position.x = 1; ar.add(sh, tp); add('nomverbe', ar, -.1, 1.2, 0);
-    S.nomverbe.look = 2; S.nomverbe.tick = t => { b.rotation.y = t * 1.2; b.position.y = 1.2 + Math.abs(Math.sin(t * 2.4)) * .6; ar.position.x = -.1 + Math.sin(t * 3) * .15; }; }
+    S.nomverbe.look = 2; S.nomverbe.tick = t => { b.rotation.y = Math.sin(t * .5) * .35; ar.position.x = -.1 + Math.sin(t * 1.2) * .08; }; }
 
   // ---------- escalier ----------
   { const steps = []; for (let i = 0; i < 5; i++) { const h = .55 * (i + 1); const s = inked(new T.BoxGeometry(1.1, h, 1.8), i % 2 ? MAUVE : GOLD, .04); add('escalier', s, -2.6 + i * 1.15, .35 + h / 2, 0); steps.push(.35 + h); add('escalier', lab(String(i + 1), { scale: 1.3, color: i % 2 ? '#F2C230' : '#5B2A86' }), -2.6 + i * 1.15, .35 + h + .9, .95); }
     const pole = inked(new T.CylinderGeometry(.04, .04, 1.6, 8), 0x1E1A22, .1); add('escalier', pole, 2.2, steps[4] + .8, -.6); const flag = inked(new T.BoxGeometry(.9, .5, .04), GOLD, .08); add('escalier', flag, 2.65, steps[4] + 1.35, -.6);
-    const pw = add('escalier', pawn(CREAM, .55), -2.6, steps[0], .2); S.escalier.look = 2;
-    S.escalier.tick = t => { const k = (t * .9) % 6, i = Math.min(4, Math.floor(k)), f = k - Math.floor(k); if (k >= 5) { pw.position.set(2.0, steps[4], .2); return; } const from = i === 0 && f < .001 ? 0 : i; const x0 = -2.6 + Math.max(0, i - 1) * 1.15, x1 = -2.6 + i * 1.15; const y0 = steps[Math.max(0, i - 1)], y1 = steps[i]; pw.position.set(x0 + (x1 - x0) * f, y0 + (y1 - y0) * f + Math.sin(f * Math.PI) * .7, .2); flag.rotation.y = Math.sin(t * 4) * .3; }; }
+    S.escalier.look = 2;
+    S.escalier.tick = null; }
 
   // ---------- portes A B C ----------
   { const doors = [[GOLD, 'A'], [MAUVE, 'B'], [CREAM, 'C']].map(([c, L], i) => { const x = -2.4 + i * 2.4; const fr = inked(new T.BoxGeometry(1.7, 2.8, .3), 0x1E1A22, .02); add('portes', fr, x, 1.75, 0); const hinge = new T.Group(); add('portes', hinge, x - .7, 1.7, .2); const d = inked(new T.BoxGeometry(1.4, 2.5, .12), c, .05); d.position.x = .7; hinge.add(d); add('portes', lab(L, { size: 110, scale: 1.3, color: c === MAUVE ? '#FBF8EF' : '#F2C230' }), x, 3.7, 0); return hinge; });
-    S.portes.look = 2; S.portes.tick = t => doors.forEach((h, i) => { h.rotation.y = -(Math.sin(t * .9 + i * 1.2) * .5 + .5) * 1.3; }); }
+    S.portes.look = 2; S.portes.tick = (t, active) => doors.forEach((h, i) => { const target = active ? -.9 - i * .12 : 0; h.rotation.y += (target - h.rotation.y) * .03; }); }
 
   // ---------- jetons ----------
   { const grp = new T.Group(); add('jetons', grp, 0, .35, 0); const VC = [GOLD, 0xD9541E, MAUVE]; const falling = [];
     S.jetons.look = 1.6; S.jetons.dist = 12.5;
-    S.jetons.draw = data => { while (grp.children.length) grp.remove(grp.children[0]); falling.length = 0; const n = data.length; data.forEach((p, i) => { const x = (i - (n - 1) / 2) * 1.35; let y = .02; grp.add(Object.assign(lab((p.n || '').slice(0, 14), { font: 'Caveat, cursive', size: 70, scale: 1.6, color: '#5B2A86', stroke: false }), {}).translateX(x).translateY(-.1).translateZ(1.2));
-      [0, 1, 2].forEach(k => { for (let j = 0; j < p.v[k]; j++) { const c = inked(new T.CylinderGeometry(.5, .5, .16, 28), VC[k], .06); c.position.set(x, y + .08 + 4 + j * .2, 0); c.userData.y = y + .08; grp.add(c); falling.push(c); y += .18; } }); }); };
+    S.jetons.draw = data => { while (grp.children.length) grp.remove(grp.children[0]); falling.length = 0; const n = data.length; data.forEach((p, i) => { const x = (i - (n - 1) / 2) * 1.35; let y = .02; [0, 1, 2].forEach(k => { for (let j = 0; j < p.v[k]; j++) { const c = inked(new T.CylinderGeometry(.5, .5, .16, 28), VC[k], .06); c.position.set(x, y + .08 + 4 + j * .2, 0); c.userData.y = y + .08; grp.add(c); falling.push(c); y += .18; } }); }); };
     S.jetons.tick = () => falling.forEach(c => { c.position.y += (c.userData.y - c.position.y) * (reduce ? 1 : .12); }); }
 
   // ---------- premier pas ----------
   { const steps = []; for (let i = 0; i < 8; i++) { const f = new T.Mesh(new T.CircleGeometry(.28, 20), new T.MeshBasicMaterial({ color: MAUVE })); f.scale.set(1, 1.7, 1); f.rotation.x = -Math.PI / 2; f.rotation.z = -Math.PI / 2; add('pas', f, -3 + i * .8, .37, i % 2 ? .35 : -.35); steps.push(f); }
-    const pw = add('pas', pawn(GOLD, .7), -3, .35, 0); add('pas', lab('MON PREMIER PAS', { scale: 3.6, w: 768 }), 0, 3.6, 0);
-    S.pas.look = 1.6; S.pas.tick = t => { const k = (t * .5) % 1; pw.position.x = -3 + k * 6; pw.position.y = .35 + Math.abs(Math.sin(k * Math.PI * 8)) * .2; steps.forEach((f, i) => f.material.color.setHex((-3 + i * .8) < pw.position.x ? GOLD : MAUVE)); }; }
+    add('pas', lab('MON PREMIER PAS', { scale: 3.6 }), 0, 2.2, 0);
+    S.pas.look = 1.2; S.pas.tick = t => { const k = Math.floor((t * .8) % 10); steps.forEach((f, n) => f.material.color.setHex(n <= k ? GOLD : MAUVE)); }; }
 
   // ---------- maison à 3 étages ----------
   { const floors = [[CREAM, '1ER', 'besoins de base'], [MAUVE, '2E', 'émotions'], [GOLD, '3E', 'apprentissages']].map(([c, n, s], i) => { const g = new T.Group(); const b = inked(new T.BoxGeometry(3, 1.25, 2.2), c, .03); g.add(b); const l = lab(n + ' · ' + s.toUpperCase(), { scale: 3.4, w: 768, size: 60, color: c === CREAM ? '#5B2A86' : '#FBF8EF' }); l.position.set(0, 0, 1.3); g.add(l); add('maison', g, 0, .35 + .63 + i * 1.27, 0); return g; });
@@ -869,8 +867,14 @@ const G3 = (() => {
   const clock = new T.Clock();
   (function loop() { requestAnimationFrame(loop); const t = clock.getElapsedTime();
     if (to) { const k = Math.min(1, (performance.now() - t0) / 1900), e = ease(k); camPos.lerpVectors(from.p, to.p, e); camPos.y += Math.sin(Math.PI * e) * Math.min(16, from.p.distanceTo(to.p) * .35); camTgt.lerpVectors(from.t, to.t, e); if (k >= 1) { from = to = null; } }
-    const sw = reduce ? 0 : Math.sin(t * .25) * .5; camera.position.set(camPos.x + sw, camPos.y + (reduce ? 0 : Math.sin(t * .4) * .12), camPos.z); camera.lookAt(camTgt);
-    NAMES.forEach(n => { S[n].tick && S[n].tick(t, n === curName); const on = n === curName && !to; S[n].g.traverse(o => { if (o.isSprite) o.visible = on; }); }); renderer.render(scene, camera); })();
+    const sw = reduce ? 0 : Math.sin(t * .15) * .25; camera.position.set(camPos.x + sw, camPos.y, camPos.z); camera.lookAt(camTgt);
+    NAMES.forEach(n => { S[n].tick && S[n].tick(t, n === curName); });
+    const W2 = innerWidth, H2 = innerHeight, vv = new V();
+    LBL.forEach(L => { let st = L.st; if (st === undefined) { let o = L.a; while (o && !o.userData.out) o = o.parent; st = L.st = o ? NAMES.find(n => S[n].g === o) : null; }
+      const on = st === curName && !to; if (!on) { L.el.style.opacity = 0; return; }
+      L.a.getWorldPosition(vv); vv.project(camera); if (vv.z > 1) { L.el.style.opacity = 0; return; }
+      L.el.style.opacity = 1; L.el.style.transform = 'translate(-50%,-50%) translate(' + ((vv.x + 1) / 2 * W2).toFixed(1) + 'px,' + ((1 - vv.y) / 2 * H2).toFixed(1) + 'px)'; });
+    renderer.render(scene, camera); })();
   // pointeur : clic sur une station active, glisser pour tourner le globe
   const ray = new T.Raycaster(), mv = new T.Vector2(); let drag = null;
   cv.addEventListener('pointerdown', e => { const s = S[curName]; if (!s) return; drag = e.clientX; if (!s.pick.length || !s.onPick) return; mv.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mv, camera); const h = ray.intersectObjects(s.pick, false)[0]; if (h) s.onPick(h.object); });
@@ -892,7 +896,7 @@ $('#pyrReset').onclick = () => { const s = G3.st.pyr; if (!s) return; s.votes = 
 // votes
 const vData = store.get('votes', [1, 2, 3, 4, 5].map(i => ({ n: 'Îlot ' + i, v: [0, 0, 0] })));
 const vEl = $('#votes');
-function drawVotes() { vEl.innerHTML = ''; vData.forEach((p, i) => { const d = document.createElement('div'); d.innerHTML = `<input type="text" id="vn${i}" aria-label="Nom du projet ${i + 1}" value="${p.n.replace(/"/g, '&quot;')}"><div><button style="background:var(--gold)">+ I</button><button style="background:#D9541E;color:#fff">+ F</button><button style="background:var(--mauve);color:var(--paper)">+ O</button></div><div class="cap">${p.v[0]} · ${p.v[1]} · ${p.v[2]}</div>`;
+function drawVotes() { vEl.innerHTML = ''; vData.forEach((p, i) => { const d = document.createElement('div'); d.innerHTML = `<input type="text" id="vn${i}" aria-label="Nom du projet ${i + 1}" value="${p.n.replace(/"/g, '&quot;')}"><div><button style="background:var(--gold)">+ Impact</button><button style="background:#D9541E;color:#fff">+ Faisabilité</button><button style="background:var(--mauve);color:var(--paper)">+ Originalité</button></div><div class="cap">Impact ${p.v[0]} · Faisabilité ${p.v[1]} · Originalité ${p.v[2]}</div>`;
   d.querySelector('input').onchange = e => { p.n = e.target.value; store.set('votes', vData); G3.st.jetons && G3.st.jetons.draw(vData); };
   d.querySelectorAll('button').forEach((b, k) => b.onclick = () => { p.v[k]++; store.set('votes', vData); drawVotes(); });
   vEl.appendChild(d); }); G3.st.jetons && G3.st.jetons.draw(vData); }

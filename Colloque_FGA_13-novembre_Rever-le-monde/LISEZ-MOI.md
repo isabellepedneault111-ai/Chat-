@@ -13,6 +13,9 @@ Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (éd
 | `04_Annexe_Objectivation.docx` | Chaque participant | Définition, la maison à trois étages, la banque de questions, 7 formats, un gabarit de carnet de bord |
 | `05_Materiel-a-imprimer.docx` | Les animateurs | Affiche du mur d’enjeux, fiches « Mon premier pas », jetons, cartons de signaux |
 | `06_Presenter-au-TNI.docx` | Les animateurs | La marche à suivre pour présenter au TNI : la veille, le jour J, les gestes au doigt, le dépannage |
+| `07_Annexe_Jai-mon-plan.docx` | Chaque participant | Les capacités et la banque de moyens de « J’ai MON plan! » (Parcours FGA), à cocher, et le lien avec la démarche |
+| `08_Fiche-eleve_De-l-idee-a-l-action.docx` | Les élèves | La démarche en 5 marches, à photocopier et à remplir |
+| `09_Aide-memoire_Engagement.docx` | Chaque participant | L’affiche « L’engagement, un écosystème vivant » en une page, et la CUA de la Boussole CP |
 | `presentation/index.html` | La salle | Présentation interactive de 20 diapos, en 3D, qui fonctionne sans Internet |
 
 ## La présentation

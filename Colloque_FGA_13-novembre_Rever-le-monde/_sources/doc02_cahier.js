@@ -108,8 +108,8 @@ const kids = [
   H1('08', 'Et en individualisé ?'),
   P('Pas de groupe qui avance ensemble ? Trois portes d’entrée.'),
   tbl(['Scénario', 'Comment ça se vit', 'Exemples'], [
-    ['**A · L’enjeu comme contexte de tâche**', 'La tâche du sigle (écrire, calculer, lire) se fait à partir d’un enjeu choisi par l’élève.', 'Français : lettre ouverte. Mathématiques : sondage et statistiques, budget. Anglais : affiche bilingue.'],
-    ['**B · Le micro-projet**', 'Enjeu, idée, petit geste : une version courte, en parallèle du parcours.', 'Une fiche en 4 étapes et un court journal de bord.'],
+    ['**A · L’enjeu comme contexte de tâche**', 'La tâche du sigle (écrire, calculer, lire) se fait à partir d’un enjeu choisi par l’élève.', 'PPS Z107 : le gaspillage comme contexte de la semaine planifiée. Français : lettre ouverte. Mathématiques : sondage, budget.'],
+    ['**B · Le micro-projet**', 'Enjeu, idée, petit geste : une version courte, en parallèle du parcours.', 'PPS Z128 : enquêter sur une pub qui dérange et écrire à l’annonceur. DHS : un petit geste citoyen présenté au groupe.'],
     ['**C · Le projet-pont**', 'Un groupe PPS ou DHS porte un projet. Des élèves en individualisé y contribuent comme « experts ».', 'Mathématiques : le budget. Français : la lettre de demande. Sciences : valider une donnée.']
   ], [2600, 3700, 3600]),
   SP(120),

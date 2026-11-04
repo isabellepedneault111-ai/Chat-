@@ -105,7 +105,7 @@ const kids = [
   img(I + 'nb_compost.jpg', 560, 315),
   L.caption('De l’idée à l’action : un projet de compostage'),
   img(I + 'il_escalier.png', 480, 248),
-  P('Francis présente les 5 marches et les projets en cours au CFGA. Isabelle enchaîne sur la question des enseignants matières : « Et moi, en individualisé, avec 20 adultes dans 8 sigles ? » Les trois scénarios sont détaillés dans le cahier du participant : A, l’enjeu comme contexte de tâche ; B, le micro-projet ; C, le projet-pont.'),
+  P('Francis présente les 5 marches et les projets en cours au CFGA. Isabelle enchaîne sur la question des enseignants matières : « Et moi, en individualisé, avec 20 adultes dans 8 sigles ? » Exemples en PPS : Z107 Alimentation saine (le gaspillage comme contexte), Z128 Consommation (enquêter sur une pub et écrire à l’annonceur). Les trois scénarios sont détaillés dans le cahier du participant : A, l’enjeu comme contexte de tâche ; B, le micro-projet ; C, le projet-pont.'),
 
   H2('Phase 3 · Idéation et vote par jetons (60–80 min)'),
   P('**À la carte.** On fait vivre l’autonomie dont on vient de parler : chacun choisit son parcours, seul, en duo ou en îlot (15 min), puis la galerie et les jetons (5 min).'),
