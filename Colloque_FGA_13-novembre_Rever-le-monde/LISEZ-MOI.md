@@ -18,6 +18,8 @@ Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (éd
 
 Ouvrir `presentation/index.html` dans Chrome ou Edge.
 
+La présentation est un voyage dans un seul monde 3D en cel-shading : un sol de papier tramé, un sentier mauve et 11 stations (globe des enjeux, village 2036, triade, 4 sphères, pyramide, nom et verbe, escalier des 5 marches, trois portes, jetons, premier pas, maison à trois étages). À chaque diapo pertinente, la caméra s’envole vers la station suivante ; sur les autres, elle revient à une vue aérienne du parcours. Le contenu est posé sur des cartes papier à gauche.
+
 - **Navigation :** flèches du clavier ou barre d’espace. Sur une tablette, glisser vers la gauche ou la droite.
 - **N** affiche les notes d’animation et le nom de la personne qui anime.
 - **T** lance un minuteur de 5 minutes. Plusieurs diapos ont aussi leurs propres boutons de minuteur.
