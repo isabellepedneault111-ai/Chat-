@@ -28,7 +28,7 @@ const citations = [
 const kids = [
   label('Matériel à imprimer · Colloque régional FGA · 13 novembre 2026', { size: 16 }),
   big('MATÉRIEL À IMPRIMER', 64, C.ink, { after: 200 }),
-  P('Cinq pièces : l’affiche du mur d’enjeux, les cartes-citations, les fiches « Mon premier pas », les jetons de vote et les cartons de signaux. Les traits pointillés indiquent où découper.', { run: { italics: true, color: C.grey } }),
+  P('Quatre pièces : l’affiche du mur d’enjeux, les fiches « Mon premier pas », les jetons de vote et les cartons de signaux. Les traits pointillés indiquent où découper.', { run: { italics: true, color: C.grey } }),
   BR(),
 
   // Affiche
@@ -38,29 +38,19 @@ const kids = [
   P('Collez votre papillon. Une idée par papillon.', { align: d.AlignmentType.CENTER, run: { font: 'Cambria', italics: true, size: 32, color: C.grey } }),
   BR(),
 
-  // Cartes-citations
-  H1('A', 'Cartes-citations · 1 jeu par îlot'),
-  P('Mots d’élèves et de parents, anonymisés. Les îlots les classent : autonomie, compétence ou appartenance ?', { run: { size: 19, color: C.grey } }),
-  grid(citations.map(t => [
-    new d.Paragraph({ children: [new d.TextRun({ text: '«', font: 'Anton', size: 56, color: C.accent })], spacing: { after: 0 } }),
-    new d.Paragraph({ spacing: { after: 120, line: 300 }, children: [new d.TextRun({ text: t, italics: true, size: 24 })] }),
-    new d.Paragraph({ children: [new d.TextRun({ text: 'Mot d’élève ou de parent, au primaire', font: SANS, size: 14, smallCaps: true, characterSpacing: 30, color: C.grey })] })
-  ]), 2, 3600),
-  BR(),
-
   // Fiches Mon premier pas
-  H1('B', 'Fiches « Mon premier pas » · 3 par page'),
+  H1('A', 'Fiches « Mon premier pas » · 3 par page'),
   ...[1, 2, 3].flatMap(() => [img(I + 'il_billet.png', 600, 229, { after: 0 }), new d.Paragraph({ children: [], spacing: { after: 260 }, border: { bottom: cut } })]),
   BR(),
 
   // Jetons
-  H1('C', 'Jetons de vote · 3 par personne'),
+  H1('B', 'Jetons de vote · 3 par personne'),
   P('À imprimer sur carton. Ou, plus simple : des gommettes de trois couleurs.', { run: { size: 19, color: C.grey } }),
   ...Array(4).fill(0).map(() => img(I + "il_jetons.png", 540, 180, { after: 60 })),
   BR(),
 
   // Cartons signaux
-  H1('D', 'Cartons de signaux · pour la coanimation'),
+  H1('C', 'Cartons de signaux · pour la coanimation'),
   grid([['VERT', 'on continue'], ['JAUNE', 'encore 5 minutes'], ['ROUGE', 'on conclut en une phrase']].map(([a, b]) => [
     big(a, 120, C.ink, { after: 0 }), new d.Paragraph({ alignment: d.AlignmentType.CENTER, children: [new d.TextRun({ text: b, font: 'Cambria', italics: true, size: 30, color: C.grey })] })
   ]), 1, 3900)

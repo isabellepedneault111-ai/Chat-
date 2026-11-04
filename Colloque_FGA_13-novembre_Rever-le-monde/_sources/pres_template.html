@@ -9,6 +9,7 @@
   --display:"Anton","Impact","Arial Narrow Bold",sans-serif; --hand:"Caveat","Segoe Print","Comic Sans MS",cursive; --body:"Cambria","Georgia","Times New Roman",serif; --ui:"Arial","Helvetica",sans-serif;
   color-scheme:light;
 }
+[hidden]{display:none!important}
 html,body{height:100%}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);overflow:hidden;margin:0}
 *{box-sizing:border-box}
@@ -87,17 +88,17 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .s1-cap{position:absolute;left:7%;bottom:6%;font-family:var(--hand);font-size:clamp(24px,2.4vw,38px);color:var(--mauve);margin:0;transform:rotate(-3deg);z-index:4}
 @media (max-width:800px){.slide.s1{grid-template-columns:1fr;grid-template-rows:46vh auto;overflow-y:auto}.s1-img{order:-1;border-bottom:6px solid var(--ink)}.s1-cap{display:none}.s1-panel{border-right:0}}
 .frags{display:flex;flex-wrap:wrap;gap:clamp(16px,3vw,48px);align-items:center;margin:4px 0 clamp(14px,2vh,26px)}
-.frag{position:relative;margin:0;background:#fff;padding:8px;border:3px solid var(--ink);box-shadow:8px 8px 0 rgba(30,26,34,.16);max-width:min(640px,100%);flex:1 1 380px}
+.frag{position:relative;margin:0;background:#fff;padding:8px;border:3px solid var(--ink);box-shadow:8px 8px 0 var(--ink);max-width:min(640px,100%);flex:1 1 380px}
 .frag img{display:block;width:100%;height:auto}
-.frag::before{content:"";position:absolute;top:-14px;left:-18px;width:90px;height:26px;background:rgba(242,194,48,.85);border:2px solid rgba(30,26,34,.25);transform:rotate(-4deg)}
-.f1{transform:rotate(-2deg)}.f2{transform:rotate(1.5deg)}
+.frag::before{display:none}
+.f1,.f2{transform:none}
 .quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:clamp(12px,1.6vw,22px)}
 .quotes blockquote{margin:0;border-left:6px solid var(--mauve);padding:6px 0 6px 16px;font-style:italic;font-size:clamp(17px,1.6vw,23px);line-height:1.4}
 .quotes mark{background:linear-gradient(transparent 50%,var(--gold) 50%);color:inherit;font-style:normal;font-weight:700;padding:0 .08em}
 .quotes cite{display:block;font-style:normal;font-family:var(--ui);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:6px}
 .ids{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:clamp(16px,2.5vw,36px)}
 .idc{border:3px solid var(--ink);background:var(--paper);box-shadow:8px 8px 0 var(--ink);min-width:0}
-.idc:nth-child(1){transform:rotate(-.8deg)}.idc:nth-child(2){transform:rotate(.8deg)}
+.idc{transform:none}
 .idc header{background-color:var(--mauve);background-image:radial-gradient(rgba(30,26,34,.35) 1.4px,transparent 1.6px);background-size:11px 11px;padding:12px 16px;border-bottom:3px solid var(--ink);display:flex;flex-direction:column;gap:4px}
 .idc-name{font-family:var(--display);font-size:clamp(28px,3vw,44px);color:var(--gold);text-shadow:3px 3px 0 var(--ink);line-height:1}
 .idc-role{font-family:var(--ui);font-size:clamp(11px,1vw,14px);color:#E9DFF5;letter-spacing:.04em}
@@ -108,7 +109,7 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .idc dd:focus{outline:none;background:#fff5d1}
 @media (max-width:520px){.idc dl{grid-template-columns:1fr}}
 #world{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
-.deck{z-index:1}
+.deck{z-index:1;pointer-events:none}
 .slide{pointer-events:none}
 .slide>*{pointer-events:auto}
 .slide.s1>.s1-open{pointer-events:none;background:transparent!important}
@@ -122,10 +123,10 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 @keyframes papin{from{opacity:0;transform:translateY(-30px) rotate(calc(var(--r) * 3))}to{opacity:1;transform:rotate(var(--r))}}
 @media (prefers-reduced-motion:reduce){.s1-open .pap{animation:none}}
 @media (max-width:800px){.s1-open .pap{width:110px;font-size:18px}}
-.s1-photo{position:relative;margin:0;width:min(88%,760px);background:#fff;padding:10px;border:3px solid var(--ink);box-shadow:12px 12px 0 rgba(30,26,34,.22);transform:rotate(2.5deg);animation:s1in 1.2s cubic-bezier(.2,.8,.2,1) both .3s}
+.s1-photo{position:relative;margin:0;width:min(88%,760px);background:#fff;padding:10px;border:3px solid var(--ink);box-shadow:10px 10px 0 var(--ink);animation:s1in .9s cubic-bezier(.2,.8,.2,1) both .3s}
 .s1-photo img{display:block;width:100%;height:auto}
-.s1-photo::before{content:"";position:absolute;top:-16px;left:50%;width:130px;height:30px;margin-left:-65px;background:rgba(242,194,48,.85);border:2px solid rgba(30,26,34,.25);transform:rotate(-3deg)}
-@keyframes s1in{from{opacity:0;transform:translateY(40px) rotate(8deg)}to{opacity:1;transform:rotate(2.5deg)}}
+.s1-photo::before{display:none}
+@keyframes s1in{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.s1-photo{animation:none}}
 .sheet{width:min(820px,100%);margin-block:auto;background:rgba(251,248,239,.96);border:3px solid var(--ink);box-shadow:10px 10px 0 var(--ink);padding:clamp(16px,2.2vw,30px);min-width:0}
 @media (min-width:821px){.sheet{width:min(820px,55vw)}}
@@ -157,6 +158,39 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .sheet.dark input[type=text]{border-color:var(--paper)}
 .sheet.dark ol li{color:var(--paper)}
 .sheet.dark b[style*="var(--ink)"]{color:var(--gold)!important}
+.mur{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;max-height:46vh;overflow:auto;padding:6px 4px 10px}
+.pap.mini{width:clamp(110px,10vw,150px);font-size:clamp(17px,1.5vw,22px);padding:10px}
+.editbar{position:fixed;top:0;left:0;right:0;z-index:40;background:var(--gold);border-bottom:3px solid var(--ink);padding:8px max(16px,env(safe-area-inset-left,0px));padding-top:calc(8px + env(safe-area-inset-top,0px));font-family:var(--ui);font-size:15px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.editing [contenteditable]{outline:2px dashed var(--mauve);outline-offset:3px;cursor:text}
+.editing [contenteditable]:focus{background:#fff5d1;color:var(--ink)}
+.qbig{position:relative;cursor:pointer;padding:clamp(10px,2vw,28px) clamp(10px,2vw,28px) 54px;min-height:clamp(220px,40vh,420px);display:flex;flex-direction:column;justify-content:center}
+.qtext{font-family:var(--hand);font-size:clamp(36px,4.6vw,72px);line-height:1.12;margin:0;max-width:18ch}
+.qtext mark{background:linear-gradient(transparent 52%,var(--gold) 52%);color:inherit;padding:0 .08em}
+.sheet.dark .qtext mark{background:linear-gradient(transparent 52%,var(--mauve2) 52%)}
+.qtext.pop{animation:qpop .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes qpop{from{opacity:0;transform:translateY(14px) rotate(-1deg)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.qtext.pop{animation:none}}
+.qsrc{font-family:var(--ui);font-size:13px;letter-spacing:.16em;text-transform:uppercase;margin:14px 0 0;opacity:.8}
+.qdots{position:absolute;left:clamp(10px,2vw,28px);bottom:16px;display:flex;gap:8px}
+.qdots i{width:12px;height:12px;border:2px solid currentColor;border-radius:50%}
+.qdots i.on{background:var(--gold);border-color:var(--gold)}
+.qfrag{position:absolute;right:0;bottom:0;width:min(40%,280px);transform:none}
+.eng-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:12px}
+.eng-grid div{border:3px solid var(--paper);padding:10px 14px}
+.eng-grid b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(26px,2.6vw,38px);color:var(--gold)}
+.eng-grid span{font-family:var(--hand);font-size:clamp(22px,2vw,30px)}
+.eng mark{background:linear-gradient(transparent 52%,var(--mauve2) 52%);color:inherit}
+.besoins{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:12px}
+.bes{border:3px solid var(--paper);padding:10px 14px}
+.bes b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(22px,2.1vw,32px);color:var(--gold)}
+.bes p{font-family:var(--hand);font-size:clamp(20px,1.8vw,26px);line-height:1.15;margin:4px 0 6px}
+.bes span{font-family:var(--ui);font-size:13px;letter-spacing:.04em;opacity:.85}
+.gestes{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:10px}
+.gestes li{border:3px solid var(--paper);padding:8px 12px;font-family:var(--hand);font-size:clamp(19px,1.7vw,24px);line-height:1.15;max-width:none}
+.gestes li b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(20px,1.9vw,28px);color:var(--gold)}
+.eng-cit{margin-top:14px;border-left:6px solid var(--gold);padding-left:14px}
+.eng-cit b{font-family:var(--display);font-weight:400;font-size:clamp(22px,2vw,30px);color:var(--gold)}
+.eng-cit p{font-style:italic;margin:4px 0}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:18px;align-items:start}
 .gallery figure{margin:0;cursor:zoom-in}
 .gallery figure img{border:3px solid var(--ink);width:100%;height:auto;background:#fff}
@@ -184,10 +218,10 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .flip button{border:3px solid var(--ink);background:var(--paper);text-align:left;padding:12px;min-height:96px;font-family:var(--hand);font-size:clamp(20px,1.9vw,26px);box-shadow:4px 4px 0 var(--ink)}
 .flip button.back{background:var(--gold)}
 .flip small{display:block;font-family:var(--ui);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mauve)}
-.steps{display:flex;align-items:flex-end;gap:8px;height:clamp(200px,38vh,360px)}
-.steps button{flex:1;border:3px solid var(--ink);display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;padding:8px;text-align:left;font-family:var(--display);font-size:clamp(14px,1.3vw,19px);min-width:0;overflow:hidden}
+.steps{display:flex;align-items:flex-end;gap:10px;height:clamp(280px,50vh,460px)}
+.steps button{flex:1;border:3px solid var(--ink);display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;padding:10px;text-align:left;font-family:var(--display);font-size:clamp(17px,1.55vw,24px);line-height:1.08;letter-spacing:.02em;min-width:0;overflow:hidden;overflow-wrap:normal;hyphens:none}
 .steps button .n{font-size:clamp(34px,4vw,60px);line-height:1}
-.steps button .c{font-family:var(--hand);font-size:clamp(17px,1.5vw,22px);opacity:0;transition:opacity .3s}
+.steps button .c{font-family:var(--hand);font-size:clamp(19px,1.7vw,26px);line-height:1.05;display:block;margin-top:4px;opacity:0;transition:opacity .3s}
 .steps button.show .c{opacity:1}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
 .chip{border:2px solid var(--ink);background:var(--paper);padding:3px 12px;font-family:var(--ui);font-size:14px}
@@ -209,6 +243,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 .qr{background:#fff;border:3px solid var(--ink);padding:10px;display:inline-block}
 .qr img,.qr canvas{display:block}
 @media (max-width:900px){.cover::after{background:linear-gradient(180deg,rgba(251,248,239,.96) 0 55%,rgba(251,248,239,.7) 75%,rgba(251,248,239,.2))}}
+@media (pointer:coarse){.bar{height:62px}.bar button{min-width:52px;min-height:46px;font-size:22px}.slide{padding-bottom:78px}.notes,.timer{bottom:74px}.btn{min-height:46px}}
 @media (max-width:700px){.bar .who{display:none}.slide{padding-bottom:70px}.stage3d{min-height:300px}}
 </style>
 
@@ -260,7 +295,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 </section>
 
 <!-- 2 -->
-<section class="slide" data-phase="0" data-who="Francis" data-notes="Taper quelques enjeux du mur pendant que les gens s’installent. Chaque papillon s’accroche au globe. Phrase clé : « Ce que vous venez de faire, c’est la première marche de l’Incubateur solidaire. »">
+<section class="slide" data-phase="0" data-who="Francis" data-notes="Taper quelques enjeux du mur pendant que les gens s’installent. Chaque papillon s’accroche au globe. Phrase clé : « Ce que vous venez de faire, c’est la première marche de la démarche « de l’idée à l’action ». »">
   <div class="kick">Accueil · mur d’enjeux</div>
   <h2>Qu’est-ce qui vous <span class="hl">dérange</span> dans le monde, ici ou ailleurs ?</h2>
   <form class="checker" id="enjeuForm" style="margin-bottom:12px">
@@ -268,36 +303,20 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
     <button class="btn" type="submit">Accrocher au globe</button>
     <button class="btn alt" type="button" id="enjeuClear">Vider</button>
   </form>
+  <div class="mur" id="mur" aria-live="polite"></div>
 </section>
 
 <!-- 3 -->
-<section class="slide" data-phase="0" data-who="Isabelle" data-notes="Des mots reçus d’élèves et de parents, au primaire. On ne regarde pas les compliments : on regarde les mots surlignés (projets, confiance, forces, accepté). Question : « Lequel pourrait avoir été écrit par un adulte de 17 ans au CFGA ? » Réponse attendue : tous.">
+<section class="slide" data-phase="0" data-who="Isabelle" data-notes="Toucher pour passer d’une citation à l’autre. On regarde les mots surlignés (projets, confiance, forces, accepté). De vive voix : « Autonomie, compétence ou appartenance ? » Puis : « Lequel pourrait avoir été écrit par un adulte de 17 ans au CFGA ? » Réponse attendue : tous.">
   <div class="kick">Ce qui allume un élève</div>
   <h2>Les mots qui reviennent</h2>
-  <div class="frags">
-    <figure class="frag f1"><img src="__IMG_FRAG1__" alt="Écriture d’un élève : envie d’aller à l’école"></figure>
-    <figure class="frag f2"><img src="__IMG_FRAG2__" alt="Lettre de parents : espaces d’accomplissement, donner envie de faire des projets"></figure>
+  <div class="qbig" id="qbig" role="button" tabindex="0" aria-label="Citation suivante">
+    <p class="qtext" id="qtext"></p>
+    <p class="qsrc" id="qsrc"></p>
+    <div class="qdots" id="qdots" aria-hidden="true"></div>
+    <figure class="frag qfrag"><img src="__IMG_FRAG1__" alt="Écriture d’un élève : envie d’aller à l’école"></figure>
   </div>
-  <div class="quotes">
-    <blockquote>« Il n’y a pas un matin qu’il n’a hâte de se rendre dans sa classe. Il se sent <mark>écouté, compris</mark> et surtout, <mark>accepté</mark>. »<cite>Un parent</cite></blockquote>
-    <blockquote>« […] multiplier les <mark>espaces d’accomplissement</mark>, <mark>donner envie de faire des projets</mark> ! »<cite>Des parents</cite></blockquote>
-    <blockquote>« […] de la <mark>confiance en eux</mark> et une meilleure <mark>connaissance d’eux-mêmes et de leurs forces</mark>. »<cite>Des parents</cite></blockquote>
-    <blockquote>« […] <mark>valoriser leurs forces</mark> et améliorer les aspects plus difficiles pour eux, et ça <mark>sans jugement</mark>. »<cite>Des parents</cite></blockquote>
-    <blockquote>« […] <mark>construire leur confiance</mark> jour après jour. »<cite>Une famille</cite></blockquote>
-    <blockquote>« […] <mark>redonné envie d’aller à l’école</mark>. »<cite>Un élève, 2017</cite></blockquote>
-  </div>
-</section>
-
-<!-- 4 -->
-<section class="slide" data-phase="0" data-who="Isabelle" data-notes="Les îlots trient les cartes papier. Ici, on refait le tri en grand avec les propositions de la salle : glisser chaque citation (ou la toucher, puis toucher une colonne). Il n’y a pas de mauvais classement : ce qui compte, c’est la justification.">
-  <div class="kick">Tri en îlots · théorie de l’autodétermination (Deci et Ryan)</div>
-  <h2>Autonomie, compétence ou appartenance ?</h2>
-  <div class="pool" id="pool"></div>
-  <div class="sort">
-    <div class="bin" data-bin="a"><h4>Autonomie</h4><p class="hand" style="font-size:20px">je choisis</p></div>
-    <div class="bin" data-bin="c"><h4>Compétence</h4><p class="hand" style="font-size:20px">je suis capable</p></div>
-    <div class="bin" data-bin="p"><h4>Appartenance</h4><p class="hand" style="font-size:20px">je compte ici</p></div>
-  </div>
+  <p class="cap">Touchez la citation pour passer à la suivante</p>
 </section>
 
 <!-- 5 -->
@@ -305,7 +324,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <div class="kick">Phase 1 · nos intentions</div>
   <h2>À la fin, vous pourrez…</h2>
   <div class="verbs">
-    <div><b>décrire</b>les 5 marches de l’Incubateur solidaire, de l’enjeu au projet réalisé.</div>
+    <div><b>décrire</b>les 5 marches de la démarche « de l’idée à l’action », de l’enjeu au projet réalisé.</div>
     <div><b>reconnaître</b>les composantes de l’autodétermination qu’il mobilise.</div>
     <div><b>analyser</b>ce qui facilite ou freine le transfert dans votre milieu.</div>
     <div><b>esquisser</b>un premier pas réaliste avec vos élèves.</div>
@@ -319,7 +338,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <div class="row">
     <div class="col"><p class="hand" style="font-size:clamp(28px,3vw,44px)">Qu’est-ce qu’on y voit ?<br>Qu’est-ce qu’on y entend ?<br>Qui y entre ?</p>
       <p><button class="btn" data-timer="180">Lancer 3 min seul</button> <button class="btn alt" data-timer="300">5 min en îlot</button></p></div>
-    <div class="col"><img class="photo" src="__IMG_ESCALIER__" alt="Les 5 marches de l’Incubateur, de « ça me dérange » à « on l’a fait »"><div class="cap">Vous êtes sur la 2e marche : je rêve</div></div>
+    <div class="col"><img class="photo" src="__IMG_ESCALIER__" alt="Les 5 marches de la démarche, de « ça me dérange » à « on l’a fait »"><div class="cap">Vous êtes sur la 2e marche : je rêve</div></div>
   </div>
 </section>
 
@@ -342,6 +361,23 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 </section>
 
 <!-- 8 -->
+<!-- engagement -->
+<section class="slide" data-phase="1" data-who="Isabelle, puis Francis" data-notes="Tiré de l’affiche « L’engagement : un écosystème vivant ». 1) Vrai ou faux à main levée, puis Révéler. 2) Les 4 besoins : compétence, autonomie, sens, appartenance. 3) Les gestes qui nourrissent. Francis ajoute l’engagement citoyen. Enchaîner sur les 4 sphères : comment ça se voit en classe.">
+  <div class="kick">Phase 1 · l’engagement, un écosystème vivant</div>
+  <h2 id="engH">Vrai ou faux ?</h2>
+  <div id="eng1"><p class="qtext" style="max-width:22ch">La motivation et l’engagement, c’est la même chose.</p></div>
+  <div id="eng2" hidden>
+    <div class="eng-grid">
+      <div><b>Motivation</b><span>la <mark>force</mark> qui pousse à l’action (valeurs, objectifs…). Ce n’est pas une question de « j’ai envie » ou « ça me tente ».</span></div>
+      <div><b>Engagement</b><span>la <mark>décision</mark> de prendre part activement à une activité, un projet, une mission.</span></div>
+    </div>
+    <div class="eng-cit"><b>Et l’engagement citoyen ?</b><p>« Un acte conscient, délibéré, de bravoure et de courage, qui nous permet de nous aligner dans une <mark>trajectoire commune</mark>. Avancer ensemble. »</p><span class="cap">Centre de solidarité internationale du Saguenay–Lac-Saint-Jean</span></div>
+  </div>
+  <div id="eng3" hidden><div class="besoins"><div class="bes"><b>Sentiment de compétence</b><p>Croire qu’en faisant des efforts et des erreurs, j’apprends et je deviens meilleur.</p><span>défi optimal · mentalité de croissance · rétroaction de qualité · progression visible</span></div><div class="bes"><b>Autonomie</b><p>Je fais des choix en accord avec mes valeurs et mes intérêts.</p><span>choix · voix et participation · contrôle sur la tâche · pouvoir agir selon ses valeurs</span></div><div class="bes"><b>Sens</b><p>Je comprends pourquoi c’est important et en quoi ça a du sens pour moi.</p><span>utilité · pertinence · but personnel · authenticité · transfert</span></div><div class="bes"><b>Appartenance</b><p>Les émotions et les comportements positifs sont contagieux.</p><span>relations positives · se sentir important · temps de qualité · climat sécurisant · plus de positif que de négatif</span></div></div></div>
+  <div id="eng4" hidden><ul class="gestes"><li><b>Questionner</b> susciter la curiosité</li><li><b>Écouter</b> comprendre</li><li><b>Faire réfléchir</b> activer la pensée</li><li><b>Rétroagir</b> faire progresser</li><li><b>Coopérer</b> apprendre ensemble</li><li><b>Donner un défi</b> ni trop facile, ni trop difficile</li><li><b>Raconter</b> donner du sens, créer des liens</li><li><b>Différencier</b> soutenir chacun selon ses besoins</li><li><b>Laisser choisir</b> offrir des options</li></ul></div>
+  <button class="btn" id="engBtn" type="button" style="margin-top:14px;align-self:flex-start">Révéler</button>
+</section>
+
 <section class="slide" data-phase="1" data-who="Isabelle" data-notes="Cliquer sur chaque planète. Demander : « Laquelle de ces sphères est la plus souvent négligée chez vos élèves ? » Souvent : la citoyenne.">
   <div class="kick">Phase 1 · les 4 sphères de l’engagement</div>
   <h2>Ce qui gravite autour de l’élève</h2>
@@ -380,12 +416,10 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 
 <!-- 11 -->
 <section class="slide" data-phase="2" data-who="Francis" data-notes="Francis raconte les projets vécus au CFGA. Cliquer sur chaque marche pour révéler la composante de l’autodétermination. Défi : la salle nomme les marches dans l’ordre avant le dévoilement.">
-  <div class="kick">Phase 2 · l’Incubateur solidaire en vrai</div>
+  <div class="kick">Phase 2 · la démarche en vrai</div>
   <h2>De « ça me dérange » à « on l’a fait ! »</h2>
-  <div class="row" style="align-items:flex-end">
-    <div class="col" style="flex:1.3 1 380px"><div class="steps" id="steps"></div></div>
-    <div class="col"><img class="photo" src="__IMG_COMPOST__" alt="Des jeunes adultes construisent un bac de compost devant leur centre"><div class="cap">De l’idée à l’action</div></div>
-  </div>
+  <div class="steps" id="steps"></div>
+  <p class="cap" style="margin-top:10px">Touchez une marche pour révéler la composante de l’autodétermination</p>
 </section>
 
 <!-- 12 -->
@@ -492,11 +526,13 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <div class="phases" id="phases" aria-hidden="true"></div>
   <span class="who" id="who" hidden></span>
   <button id="tBtn" title="Minuteur (T)">T</button>
+  <button id="eBtn" title="Modifier les textes (E)">E</button>
   <button id="pBtn" title="Mode présentateur, dans une 2e fenêtre (P)">P</button>
   <button id="nBtn" title="Notes (N) : visibles par la salle">N</button>
   <button id="fBtn" title="Plein écran (F)">F</button>
   <button id="next" aria-label="Diapo suivante">›</button>
 </div>
+<div class="editbar" id="editbar" hidden><b>Mode modification</b> Touchez un texte pour le changer. Les changements restent sur cet ordinateur. <button class="btn" id="eDone">Terminer</button> <button class="btn alt" id="eReset">Tout remettre comme avant</button></div>
 <aside class="notes" id="notes" hidden><h3 id="nTitle">Notes</h3><p id="nBody"></p></aside>
 <div class="timer" id="timer" hidden title="Cliquer pour arrêter">0:00</div>
 
@@ -511,7 +547,7 @@ const bc = ('BroadcastChannel' in window) ? new BroadcastChannel('rmd') : null;
 const send = m => { try { bc && bc.postMessage(m); } catch (e) {} try { localStorage.setItem('rmd:msg', JSON.stringify(Object.assign({ t: Date.now() + Math.random() }, m))); } catch (e) {} };
 const onMsg = f => { if (bc) bc.onmessage = e => f(e.data); addEventListener('storage', e => { if (e.key === 'rmd:msg' && e.newValue) { try { f(JSON.parse(e.newValue)); } catch (x) {} } }); };
 if (location.hash === '#presenter') {
-  const info = slides.map((sl, i) => ({ who: sl.dataset.who, notes: sl.dataset.notes, title: ((sl.querySelector('h1,h2') || {}).textContent || '').replace(/\s+/g, ' ').trim() }));
+  const info = slides.map((sl, i) => ({ who: sl.dataset.who, notes: sl.dataset.notes, title: (() => { const h = sl.querySelector('h1,h2'); if (!h) return ''; const c = h.cloneNode(true); c.querySelectorAll('br').forEach(b => b.replaceWith(' ')); return c.textContent.replace(/\s+/g, ' ').trim(); })() }));
   document.querySelectorAll('.deck,.bar,.notes,.timer').forEach(e => { e.hidden = true; e.style.display = 'none'; });
   document.body.style.overflow = 'auto';
   const box = document.createElement('main'); box.className = 'pres';
@@ -529,7 +565,7 @@ if (location.hash === '#presenter') {
   draw(0); send({ hello: 1 }); return;
 }
 onMsg(m => { if (typeof m.go === 'number') go(m.go); else if (m.hello) send({ cur }); });
-const DARK = [5, 10, 14, 17, 19];
+const DARK = [3, 4, 7, 10, 14, 17, 19];
 slides.forEach((sl, i) => { if (sl.classList.contains('s1')) return; const sh = document.createElement('div'); sh.className = 'sheet' + (DARK.includes(i) ? ' dark' : ''); while (sl.firstChild) sh.appendChild(sl.firstChild); sl.appendChild(sh); });
 let cur = 0;
 const store = { get(k, d) { try { const v = localStorage.getItem('rmd:' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('rmd:' + k, JSON.stringify(v)); } catch (e) {} } };
@@ -551,6 +587,14 @@ function go(n) {
 }
 $('#prev').onclick = () => go(cur - 1); $('#next').onclick = () => go(cur + 1);
 $('#nBtn').onclick = () => { $('#notes').hidden = !$('#notes').hidden; };
+// ---------- mode modification ----------
+const EDSEL = '.sheet h1,.sheet h2,.sheet h3,.sheet p:not(.cap),.sheet li,.sheet blockquote,.s1-panel h1,.s1-panel p';
+const edEls = []; slides.forEach((sl, i) => sl.querySelectorAll(EDSEL).forEach((el, k) => { if (el.closest('form,.idc,.votes,.mur,.pool,.bin,.flip,.scen,.verdict')) return; el.dataset.ek = i + ':' + k; edEls.push(el); const v = store.get('edit:' + el.dataset.ek, null); if (v !== null) el.innerHTML = v; }));
+function setEdit(on) { document.body.classList.toggle('editing', on); $('#editbar').hidden = !on; edEls.forEach(el => { if (on) el.setAttribute('contenteditable', 'true'); else el.removeAttribute('contenteditable'); }); }
+edEls.forEach(el => el.addEventListener('blur', () => { if (document.body.classList.contains('editing')) store.set('edit:' + el.dataset.ek, el.innerHTML); }));
+$('#eBtn').onclick = () => setEdit(!document.body.classList.contains('editing'));
+$('#eDone').onclick = () => setEdit(false);
+$('#eReset').onclick = () => { try { Object.keys(localStorage).filter(k => k.startsWith('rmd:edit:')).forEach(k => localStorage.removeItem(k)); } catch (e) {} location.reload(); };
 $('#pBtn').onclick = () => { let w = null; try { w = window.open(location.href.split('#')[0] + '#presenter', 'rmd-presenter', 'width=980,height=720'); } catch (e) {} if (!w) { $('#notes').hidden = false; $('#nTitle').textContent = 'Mode présentateur'; $('#nBody').textContent = 'La version en ligne ne peut pas ouvrir de 2e fenêtre. Le jour J, utilisez le fichier de la clé USB (presentation/index.html) : la touche P y ouvre toute seule la fenêtre présentateur, que vous glissez sur l’écran de votre portable. En attendant, ces notes s’affichent ici, et la salle les voit.'; } };
 $('#fBtn').onclick = () => { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {}); } catch (e) {} };
 document.addEventListener('keydown', e => {
@@ -559,6 +603,7 @@ document.addEventListener('keydown', e => {
   else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(cur - 1); }
   else if (e.key === 'n' || e.key === 'N') $('#nBtn').click();
   else if (e.key === 'p' || e.key === 'P') $('#pBtn').click();
+  else if (e.key === 'e' || e.key === 'E') $('#eBtn').click();
   else if (e.key === 't' || e.key === 'T') $('#tBtn').click();
   else if (e.key === 'f' || e.key === 'F') $('#fBtn').click();
   else if (e.key === 'Home') go(0); else if (e.key === 'End') go(slides.length - 1);
@@ -581,12 +626,24 @@ $$('.idc dd').forEach(dd => { const k = 'id:' + dd.dataset.k; const v = store.ge
   dd.addEventListener('blur', () => { const t = dd.textContent.trim(); if (!t) { dd.textContent = 'à compléter'; dd.classList.add('todo'); } store.set(k, dd.textContent); });
   dd.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); dd.blur(); } }); });
 
+// ---------- engagement ----------
+let engStep = 1; const ENG = [null, ['Vrai ou faux ?', 'Révéler'], ['Motivation ≠ engagement', 'Les 4 besoins →'], ['Les 4 besoins de l’engagement', 'Les gestes qui nourrissent →'], ['Des gestes qui nourrissent l’engagement', 'Recommencer']];
+$('#engBtn').onclick = () => { engStep = engStep % 4 + 1; [1, 2, 3, 4].forEach(k => { $('#eng' + k).hidden = k !== engStep; }); $('#engH').textContent = ENG[engStep][0]; $('#engBtn').textContent = ENG[engStep][1]; };
+
+// ---------- les mots qui reviennent ----------
+const QB = [['Il se sent écouté, compris et surtout, <mark>accepté</mark>.', 'Un parent'], ['<mark>Donner envie de faire des projets</mark> !', 'Des parents'], ['De la <mark>confiance en eux</mark> et une meilleure connaissance de <mark>leurs forces</mark>.', 'Des parents'], ['Valoriser leurs forces… et ça <mark>sans jugement</mark>.', 'Des parents'], ['<mark>Construire leur confiance</mark> jour après jour.', 'Une famille'], ['Redonné <mark>envie d’aller à l’école</mark>.', 'Un élève, 2017']];
+let qi = 0;
+function drawQ() { $('#qtext').innerHTML = '« ' + QB[qi][0] + ' »'; $('#qsrc').textContent = QB[qi][1]; $('#qdots').innerHTML = QB.map((_, k) => '<i' + (k === qi ? ' class="on"' : '') + '></i>').join(''); $('#qtext').classList.remove('pop'); void $('#qtext').offsetWidth; $('#qtext').classList.add('pop'); }
+const nextQ = () => { qi = (qi + 1) % QB.length; drawQ(); };
+$('#qbig').addEventListener('click', nextQ); $('#qbig').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); nextQ(); } });
+drawQ();
+
 // ---------- galerie ----------
 $('#gallery') && $('#gallery').addEventListener('click', e => { const im = e.target.closest('img'); if (!im) return; const z = document.createElement('div'); z.className = 'zoom'; z.innerHTML = '<img alt="">'; z.firstChild.src = im.src; z.firstChild.alt = im.alt; z.onclick = () => z.remove(); document.body.appendChild(z); });
 
 // ---------- tri des citations ----------
 const quotes = ['« […] redonné envie d’aller à l’école. »', '« Il se sent écouté, compris et surtout, accepté. »', '« Vous avez confiance en eux, en leur capacité […] sans jugement. »', '« Donner envie de faire des projets ! »', '« Construire leur confiance jour après jour. »', '« Une meilleure connaissance d’eux-mêmes et de leurs forces. »'];
-const pool = $('#pool'); let picked = null;
+const pool = $('#pool'); let picked = null; if (pool) {
 const place = store.get('tri', {});
 quotes.forEach((q, i) => { const c = document.createElement('div'); c.className = 'card'; c.textContent = q; c.dataset.i = i; c.draggable = true; c.tabIndex = 0;
   c.addEventListener('dragstart', ev => ev.dataTransfer.setData('text/plain', i));
@@ -596,6 +653,7 @@ function drop(bin, card) { bin.appendChild(card); card.classList.remove('sel'); 
 $$('.bin').forEach(b => { b.addEventListener('dragover', e => { e.preventDefault(); b.classList.add('over'); }); b.addEventListener('dragleave', () => b.classList.remove('over'));
   b.addEventListener('drop', e => { e.preventDefault(); b.classList.remove('over'); drop(b, document.querySelector(`.card[data-i="${e.dataTransfer.getData('text/plain')}"]`)); });
   b.addEventListener('click', e => { if (picked && !e.target.closest('.card')) drop(b, picked); }); });
+}
 
 // ---------- triade ----------
 const venn = { e: ['ÉCOLE', 'Les savoirs des sigles, les compétences du programme, le temps de classe. Ex. : une lettre à la direction, un budget en mathématiques.'], c: ['COMMUNAUTÉ', 'Les organismes, la Ville, les familles, les commerces du quartier. Ex. : le Centre de solidarité internationale, une banque alimentaire, le conseil municipal.'], n: ['ENVIRONNEMENT', 'Le milieu de vie, le territoire, la nature. Ex. : la cour, le trajet vers le parc, les déchets de la cafétéria.'] };
@@ -620,7 +678,7 @@ st.forEach(([t, c], i) => { const b = document.createElement('button'); b.style.
 
 // ---------- scénarios ----------
 const subj = { 'Français': ['Lettre ouverte ou texte argumentatif sur l’enjeu choisi.', 'Un court journal de bord, puis une affiche pour le centre.', 'Réviser la lettre de demande du groupe PPS.'], 'Mathématiques': ['Un sondage et ses statistiques, ou le budget d’une action.', 'Mesurer un phénomène (déchets d’une semaine) et le représenter.', 'Calculer le budget du projet du groupe PPS.'], 'Anglais': ['Une affiche ou une capsule bilingue sur l’enjeu.', 'Écrire à un organisme anglophone.', 'Traduire l’affiche du projet.'], 'Sciences': ['Expliquer le phénomène derrière l’enjeu (compost, eau, énergie).', 'Une petite expérience : comparer deux solutions.', 'Valider une donnée environnementale du projet.'] };
-const sc = [['A · L’enjeu comme contexte de tâche', 'La tâche du sigle (écrire, calculer, lire) se fait à partir d’un enjeu choisi par l’élève. Aucun projet collectif requis.'], ['B · Le micro-incubateur', 'Enjeu, idée, petit geste : une version courte de la démarche, en parallèle du parcours, sur quelques périodes.'], ['C · Le projet-pont', 'Un groupe PPS ou DHS porte un projet. Des élèves en individualisé y contribuent comme « experts » ponctuels.']];
+const sc = [['A · L’enjeu comme contexte de tâche', 'La tâche du sigle (écrire, calculer, lire) se fait à partir d’un enjeu choisi par l’élève. Aucun projet collectif requis.'], ['B · Le micro-projet', 'Enjeu, idée, petit geste : une version courte de la démarche, en parallèle du parcours, sur quelques périodes.'], ['C · Le projet-pont', 'Un groupe PPS ou DHS porte un projet. Des élèves en individualisé y contribuent comme « experts » ponctuels.']];
 function drawScen(s) { $('#scen').innerHTML = sc.map(([h, p], i) => `<article><h3>${h}</h3><p>${p}</p><div class="ex">${s} : ${subj[s][i]}</div></article>`).join(''); $$('#subj .chip').forEach(c => c.classList.toggle('on', c.textContent === s)); }
 Object.keys(subj).forEach(s => { const c = document.createElement('button'); c.className = 'chip'; c.textContent = s; c.onclick = () => drawScen(s); $('#subj').appendChild(c); });
 drawScen('Français');
@@ -651,7 +709,7 @@ drawQR();
 
 // =================== MONDE 3D EN CEL-SHADING ===================
 // Un seul monde, 11 stations reliées par un sentier. La caméra vole d'une station à l'autre.
-const STATIONS = ['aerial', 'aerial', 'globe', 'aerial', 'aerial', 'aerial', 'village', 'triade', 'spheres', 'pyr', 'nomverbe', 'escalier', 'portes', 'aerial', 'aerial', 'aerial', 'jetons', 'pas', 'maison', 'aerial'];
+const STATIONS = ['aerial', 'aerial', 'globe', 'aerial', 'aerial', 'village', 'triade', 'spheres', 'spheres', 'pyr', 'nomverbe', 'escalier', 'portes', 'aerial', 'aerial', 'aerial', 'jetons', 'pas', 'maison', 'aerial'];
 const G3 = (() => {
   if (!window.THREE) return { activate() {}, st: {} };
   const T = THREE, V = T.Vector3;
@@ -730,9 +788,9 @@ const G3 = (() => {
   { const LAY = ['Écouter', 'Lire', 'Voir, observer', 'Discuter', 'Faire, pratiquer', 'Enseigner aux autres'], LCOL = [CREAM, CREAM, CREAM, GOLD, GOLD, MAUVE];
     const grp = new T.Group(); add('pyr', grp, 0, .35, 0); const layers = []; const tokens = new T.Group(); grp.add(tokens); const H = .62;
     LAY.forEach((n, i) => { const rTop = .3 + i * .55, rBot = .3 + (i + 1) * .55; const g = inked(new T.CylinderGeometry(rTop, rBot, H, 4, 1), LCOL[i], .03); g.children.forEach(c => c.rotation.y = Math.PI / 4); g.userData.target = (5 - i) * (H + .02) + H / 2; g.userData.delay = (5 - i) * .22; g.userData.body.userData.i = i; grp.add(g); layers.push(g); S.pyr.pick.push(g.userData.body);
-      const l = lab(n.toUpperCase(), { w: 1024, size: 64, scale: 4.2, color: i === 5 ? '#FBF8EF' : '#1E1A22', stroke: i === 5 }); l.position.set(0, 0, (rTop + rBot) / 2 * .7071 + .12); g.add(l); });
+      const l = lab(n.toUpperCase(), { w: 1024, size: 64, scale: 4.2, color: i === 5 ? '#FBF8EF' : '#1E1A22', stroke: i === 5 }); l.material.depthTest = false; l.renderOrder = 10; l.position.set(0, 0, (rTop + rBot) / 2 * .7071 + .12); g.add(l); });
     const st = S.pyr; st.look = 2; st.dist = 13.5; st.mode = 0; st.votes = store.get('pyr', [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]);
-    st.redraw = () => { while (tokens.children.length) tokens.remove(tokens.children[0]); st.votes.forEach((arr, m) => arr.forEach((n, i) => { for (let k = 0; k < n; k++) { const t = inked(new T.CylinderGeometry(.16, .16, .07, 20), m ? MAUVE : GOLD, .08); const r = .3 + (i + .5) * .55; t.position.set((m ? 1 : -1) * (r * .55 + .3 + (k % 4) * .36), layers[i].userData.target + .38 + Math.floor(k / 4) * .09, r * .62); tokens.add(t); } })); };
+    st.redraw = () => { while (tokens.children.length) tokens.remove(tokens.children[0]); st.votes.forEach((arr, m) => arr.forEach((n, i) => { for (let k = 0; k < n; k++) { const t = inked(new T.CylinderGeometry(.2, .2, .08, 20), m ? MAUVE : GOLD, .1); t.rotation.x = Math.PI / 2; const rb = .3 + (i + 1) * .55; t.position.set((m ? 1 : -1) * (.75 + (k % 6) * .46), layers[i].userData.target - .05 + Math.floor(k / 6) * .3, rb * .7071 + .28); tokens.add(t); } })); };
     st.redraw(); st.onPick = o => { st.votes[st.mode][o.userData.i]++; store.set('pyr', st.votes); st.redraw(); };
     let t0 = -1e9; st.enter = () => { t0 = performance.now(); };
     st.tick = () => layers.forEach(L => { const p = Math.min(1, Math.max(0, ((performance.now() - t0) / 1000 - .9 - L.userData.delay) / .6)); const e = 1 - Math.pow(1 - p, 3); L.position.y = reduce ? L.userData.target : L.userData.target + (1 - e) * 7; }); }
@@ -790,12 +848,16 @@ const G3 = (() => {
   cv.addEventListener('pointerdown', e => { const s = S[curName]; if (!s) return; drag = e.clientX; if (!s.pick.length || !s.onPick) return; mv.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mv, camera); const h = ray.intersectObjects(s.pick, false)[0]; if (h) s.onPick(h.object); });
   addEventListener('pointermove', e => { if (drag === null) return; S[curName] && S[curName].drag && S[curName].drag(e.clientX - drag); drag = e.clientX; });
   addEventListener('pointerup', () => { drag = null; });
+  const screenOf = obj => { const v = new V(); obj.getWorldPosition(v); v.project(camera); return { x: (v.x + 1) / 2 * innerWidth, y: (1 - v.y) / 2 * innerHeight }; };
+  window.__monde = { S, screenOf };
   return { activate, st: S };
 })();
 
 // globe : formulaire
-$('#enjeuForm').addEventListener('submit', e => { e.preventDefault(); const v = $('#enjeuIn').value.trim(); if (!v || !G3.st.globe) return; G3.st.globe.add(v); $('#enjeuIn').value = ''; });
-$('#enjeuClear').onclick = () => G3.st.globe && G3.st.globe.clear();
+function drawMur() { const l = store.get('enjeux', ['le gaspillage alimentaire', 'l’isolement', 'le coût des loyers']); $('#mur').innerHTML = ''; l.forEach((t, i) => { const d = document.createElement('span'); d.className = 'pap mini' + (i % 4 === 2 ? ' alt' : ''); d.textContent = t; d.style.transform = 'rotate(' + ((i * 37 % 9) - 4) + 'deg)'; $('#mur').appendChild(d); }); }
+$('#enjeuForm').addEventListener('submit', e => { e.preventDefault(); const v = $('#enjeuIn').value.trim(); if (!v) return; if (G3.st.globe) G3.st.globe.add(v); else { const l = store.get('enjeux', []); l.push(v); store.set('enjeux', l); } $('#enjeuIn').value = ''; drawMur(); });
+$('#enjeuClear').onclick = () => { if (G3.st.globe) G3.st.globe.clear(); else store.set('enjeux', []); drawMur(); };
+drawMur();
 // pyramide : bascule
 $('#pyrSwitch').onclick = () => { const s = G3.st.pyr; if (!s) return; s.mode = 1 - s.mode; $('#pyrQ').textContent = s.mode ? 'Où se situe l’atelier d’aujourd’hui ?' : 'Où se situait votre dernière formation ?'; $('#pyrSwitch').textContent = s.mode ? 'Revenir à la dernière formation' : 'Et l’atelier d’aujourd’hui ?'; };
 $('#pyrReset').onclick = () => { const s = G3.st.pyr; if (!s) return; s.votes = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]; store.set('pyr', s.votes); s.redraw(); };

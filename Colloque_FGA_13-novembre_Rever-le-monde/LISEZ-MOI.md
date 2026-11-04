@@ -11,7 +11,8 @@ Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (éd
 | `02_Cahier-du-participant.docx` | Chaque participant | Le cahier qui suit l’atelier, avec des espaces pour noter à chaque phase et la fiche « Mon premier pas » |
 | `03_Aide-memoire-Copilot.docx` | Chaque participant | La formule rôle, contexte, tâche, contraintes, 5 invites prêtes à copier, les balises |
 | `04_Annexe_Objectivation.docx` | Chaque participant | Définition, la maison à trois étages, la banque de questions, 7 formats, un gabarit de carnet de bord |
-| `05_Materiel-a-imprimer.docx` | Les animateurs | Affiche du mur d’enjeux, cartes-citations, fiches « Mon premier pas », jetons, cartons de signaux |
+| `05_Materiel-a-imprimer.docx` | Les animateurs | Affiche du mur d’enjeux, fiches « Mon premier pas », jetons, cartons de signaux |
+| `06_Presenter-au-TNI.docx` | Les animateurs | La marche à suivre pour présenter au TNI : la veille, le jour J, les gestes au doigt, le dépannage |
 | `presentation/index.html` | La salle | Présentation interactive de 20 diapos, en 3D, qui fonctionne sans Internet |
 
 ## La présentation
@@ -30,22 +31,22 @@ Ce qui est interactif :
 
 - **Diapo 2 :** les présentations d’Isabelle et de Francis (ma devise, mon outil préféré, si c’était à refaire, mon conseil numéro 1). On clique sur un champ pour l’écrire.
 - **Diapo 3 :** le globe 3D des enjeux. On tape un enjeu et il s’accroche au globe.
-- **Diapo 5 :** le tri des citations, en glisser-déposer.
+- **Diapo 8 :** l’engagement : vrai ou faux, puis les définitions (motivation, engagement, engagement citoyen).
 - **Diapo 9 :** les 4 sphères en 3D. On clique sur une planète pour voir sa définition.
 - **Diapo 10 :** la pyramide 3D. On vote pour l’étage de sa dernière formation.
 - **Diapo 11 :** le détecteur « résultat ou action ? », et des cartes qu’on retourne.
-- **Diapo 12 :** les marches de l’Incubateur, qu’on révèle une à une.
+- **Diapo 12 :** les marches de la démarche, qu’on révèle une à une.
 - **Diapo 13 :** les scénarios, à filtrer par matière.
 - **Diapo 14 :** l’espace pour glisser la vidéo des élèves (fichier local).
 - **Diapo 16 :** le générateur d’invites Copilot.
 - **Diapo 17 :** les piles de jetons 3D du vote.
 - **Diapo 20 :** le code QR des ressources, dont on peut changer l’adresse.
 
-Ce que la salle saisit (enjeux, votes, tri) reste sur l’ordinateur qui présente. Les boutons « Vider » et « Remettre à zéro » effacent ces données entre deux séances.
+Ce que la salle saisit (enjeux, votes) reste sur l’ordinateur qui présente. Les boutons « Vider » et « Remettre à zéro » effacent ces données entre deux séances.
 
 ## Les exemples concrets
 
-Les mots d’élèves et de parents viennent de la classe d’Isabelle, du temps où elle enseignait au primaire. Seuls les extraits qui parlent de projets, de confiance, de forces et d’appartenance sont utilisés, sans nom, sans prénom et sans signature.
+Les mots d’élèves et de parents viennent de la classe d’Isabelle, du temps où elle enseignait. Seuls les extraits qui parlent de projets, de confiance, de forces et d’appartenance sont utilisés, sans nom, sans prénom et sans signature.
 
 ## Les choix graphiques
 

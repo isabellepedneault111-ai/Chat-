@@ -67,10 +67,10 @@ const kids = [
   img(I + 'nb_bulletin.jpg', 400, 300, { before: 160 }),
   caption('La rencontre de suivi animée par l’élève'),
   H2('Des exemples vécus'),
-  P('**En classe, au primaire (2021).** La planification hebdomadaire des élèves d’Isabelle comportait une ligne « Objectivation » sous chaque matière (mathématiques, écriture, étude), avec une pensée de la semaine : « Un but ne doit pas toujours être atteint, souvent il sert juste à nous donner une direction. »'),
+  P('**En classe (2021).** La planification hebdomadaire des élèves d’Isabelle comportait une ligne « Objectivation » sous chaque matière (mathématiques, écriture, étude), avec une pensée de la semaine : « Un but ne doit pas toujours être atteint, souvent il sert juste à nous donner une direction. »'),
   P('**Entre collègues (août 2025).** Isabelle et Francis ont tenu un tableau de priorités hebdomadaires avec une colonne « Objectivation, à faire après la séquence ». Leur réponse à « Si j’avais à revivre cette activité » : réserver les blocs de travail intensif au travail de profondeur, couper les sonneries, mettre le minuteur sur un autre appareil, faire des blocs plus courts. **On objective aussi entre adultes.**'),
 
-  H1('07', 'Objectiver chaque marche de l’Incubateur'),
+  H1('07', 'Objectiver chaque marche de la démarche'),
   tbl(['Marche', 'Question d’objectivation'], [
     ['1 · Ça me dérange', 'Pourquoi cet enjeu me touche-t-il, moi ?'],
     ['2 · Je rêve', 'Mon monde idéal, est-ce que je le vois assez clairement pour le décrire à quelqu’un ?'],
