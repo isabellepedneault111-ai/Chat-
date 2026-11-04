@@ -1,8 +1,8 @@
 <title>Rêver le monde de demain</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
-@font-face{font-family:"Anton";src:url(__FONT_ANTON__) format("truetype");font-display:block}
-@font-face{font-family:"Caveat";src:url(__FONT_CAVEAT__) format("truetype");font-display:block}
+@font-face{font-family:"Anton";src:url(__FONT_ANTON__) format("truetype");font-display:swap}
+@font-face{font-family:"Caveat";src:url(__FONT_CAVEAT__) format("truetype");font-display:swap}
 /* Carnet d'atelier en cel-shading : papier crème, encre noire en trait, mauve d'imprimerie, jaune or. Un seul univers visuel, assumé. */
 :root{
   --paper:#FBF8EF; --paper2:#F3EDDF; --ink:#1E1A22; --mauve:#5B2A86; --mauve2:#7A45AB; --gold:#F2C230; --muted:#6B6472; --hair:#C3BACB;
@@ -15,7 +15,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);overflow:h
 button{font:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--mauve);outline-offset:2px}
 .deck{position:relative;height:100%;width:100%}
-.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding-block:clamp(18px,3.2vh,40px) 64px;padding-left:max(16px,env(safe-area-inset-left,0px),4vw);padding-right:max(16px,env(safe-area-inset-right,0px),4vw);opacity:0;visibility:hidden;transition:opacity .35s ease;overflow-y:auto;overflow-x:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;isolation:isolate;padding-block:clamp(18px,3.2vh,40px) 64px;padding-left:max(16px,env(safe-area-inset-left,0px),4vw);padding-right:max(16px,env(safe-area-inset-right,0px),4vw);opacity:0;visibility:hidden;transition:opacity .35s ease;overflow-y:auto;overflow-x:hidden}
 .slide.on{opacity:1;visibility:visible}
 @media (prefers-reduced-motion:reduce){.slide{transition:none}}
 .kick{font-family:var(--ui);font-size:clamp(11px,1.1vw,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--mauve);font-weight:700}
@@ -112,6 +112,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 .house{max-width:min(520px,100%)}
 .qr{background:#fff;border:3px solid var(--ink);padding:10px;display:inline-block}
 .qr img,.qr canvas{display:block}
+@media (max-width:900px){.cover::after{background:linear-gradient(180deg,rgba(251,248,239,.96) 0 55%,rgba(251,248,239,.7) 75%,rgba(251,248,239,.2))}}
 @media (max-width:700px){.bar .who{display:none}.slide{padding-bottom:70px}.stage3d{min-height:300px}}
 </style>
 
