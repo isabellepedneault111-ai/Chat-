@@ -291,14 +291,18 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
 .chip{border:2px solid var(--ink);background:var(--paper);padding:3px 12px;font-family:var(--ui);font-size:14px}
 .chip.on{background:var(--mauve);color:var(--paper)}
-.scen{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px}
-.scen article{border:3px solid var(--ink);padding:14px;background:var(--paper)}
-.scen h3{font-family:var(--display);font-weight:400;font-size:clamp(24px,2.3vw,32px);margin:0 0 6px}
-.scen .ex{font-family:var(--body);font-size:clamp(16px,1.4vw,20px);color:var(--ink);font-weight:700;border-top:2px dashed var(--hair);padding-top:6px;margin-top:8px}
+.scen{display:grid;grid-template-columns:1fr;gap:clamp(6px,1.2vh,12px)}
+.scen article{border:3px solid var(--ink);padding:clamp(6px,1.2vh,12px) 14px;background:var(--paper);display:grid;grid-template-columns:minmax(140px,28%) 1fr;column-gap:16px;align-items:start}
+.scen h3{font-family:var(--display);font-weight:400;font-size:clamp(20px,min(2vw,3.4vh),30px);margin:0;grid-row:span 2;line-height:1.1}
+.scen p{margin:0;font-size:clamp(15px,min(1.3vw,2.3vh),19px)}
+.scen .ex{font-family:var(--body);font-size:clamp(15px,min(1.3vw,2.3vh),19px);color:var(--ink);font-weight:700;border-top:2px dashed var(--hair);padding-top:4px;margin-top:4px}
+@media (max-width:700px){.scen article{grid-template-columns:1fr}.scen h3{grid-row:auto}}
 video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--ink)}
 .drop{border:3px dashed var(--ink);padding:24px;text-align:center;background:var(--paper2)}
-.prompt-out{font-family:Consolas,"Courier New",monospace;font-size:clamp(14px,1.25vw,17px);white-space:pre-wrap;border:3px solid var(--ink);background:#fff;padding:12px;min-height:150px}
-.rctc label{font-family:var(--display);font-size:20px;color:var(--mauve);display:block;margin-top:8px}
+.prompt-out{font-family:Consolas,"Courier New",monospace;font-size:clamp(12px,min(1.05vw,1.9vh),16px);line-height:1.3;white-space:pre-wrap;border:3px solid var(--ink);background:#fff;padding:10px;min-height:150px;max-height:52vh;overflow:auto}
+.rctc label{font-family:var(--display);font-size:clamp(15px,2.4vh,20px);color:var(--mauve);display:block;margin-top:clamp(2px,0.8vh,8px)}
+.rctc input,.rctc select{padding-top:3px!important;padding-bottom:3px!important}
+.rctc textarea{min-height:0}
 .rctc select{width:100%;font-size:clamp(17px,1.5vw,21px)}
 .votes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:10px}
 .votes div{border:2px solid var(--ink);padding:6px 8px;background:var(--paper)}
@@ -434,7 +438,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   </div>
 </section>
 
-<section class="slide" data-phase="2" data-who="Isabelle" data-notes="Conflit cognitif : avant d’expliquer, chacun écrit une action pour son enjeu sur un papillon. En lire trois : la plupart sont des résultats. Puis montrer la différence et tester des phrases de la salle.">
+<section class="slide" data-phase="2" data-who="Isabelle" data-notes="Conflit cognitif : avant d’expliquer, chacun écrit une action pour son enjeu sur un papillon. En lire trois : la plupart sont des résultats. Puis montrer la différence et tester des phrases de la salle. Exemple en mathématiques (8 inscrits) : « une meilleure compréhension du budget familial » devient « Nous comparons le prix de 10 produits dans deux épiceries et calculons l’écart d’ici vendredi. »">
   <div class="kick">Phase 2 · le pivot</div>
   <h2>Résultat ou action ?</h2>
   <div class="duo2">
@@ -452,7 +456,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <p class="cap" style="margin-top:10px">Touchez une marche pour révéler la composante de l’autodétermination</p>
 </section>
 
-<section class="slide" data-phase="2" data-who="Isabelle" data-notes="La question des enseignants matières. Regrouper les îlots par profil. Choisir une matière pour voir les exemples.">
+<section class="slide" data-phase="2" data-who="Isabelle" data-notes="La question des enseignants matières. Regrouper les îlots par profil. Choisir une matière pour voir les exemples : commencer par PPS, puis IS · ISP (le tiers de la salle), puis Mathématiques.">
   <div class="kick">Phase 2 · et en individualisé ?</div>
   <h2>Trois portes d’entrée</h2>
   <div class="chips" id="subj" role="group" aria-label="Matière"></div>
@@ -477,7 +481,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <ol class="etapes">
     <li><b>Choisir un enjeu du mur</b><span>les papillons collés à l’entrée</span><button class="btn alt" data-timer="120">2 min</button></li>
     <li><b>Vivre la démarche</b><span>un résultat (un nom), puis 2 ou 3 actions (un verbe, qui, quand)</span><button class="btn alt" data-timer="300">5 min</button></li>
-    <li><b>L’adapter à vos groupes</b><span>PPS, DHS ou vos sigles : le scénario A, B ou C</span><button class="btn alt" data-timer="240">4 min</button></li>
+    <li><b>L’adapter à vos groupes</b><span>PPS, DHS, IS, ISP ou vos sigles : le scénario A, B ou C</span><button class="btn alt" data-timer="240">4 min</button></li>
     <li><b>S’aider de Copilot</b><span>enrichir une action ou créer une grille (diapo suivante)</span><button class="btn alt" data-timer="240">4 min</button></li>
   </ol>
 </section>
@@ -489,9 +493,10 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
     <div class="col rctc">
       <label for="r1">Rôle</label><select id="r1"></select><input type="text" id="r1x" placeholder="ou écrivez votre rôle" hidden>
       <label for="g1">Contexte : mon groupe</label><input type="text" id="g1" placeholder="ex. un groupe de Participation sociale (PPS)">
+      <label for="g3">Contexte : le sigle ou le cours</label><input type="text" id="g3" placeholder="ex. MAT-3051, ou le programme Intégration sociale">
       <label for="g2">Contexte : notre enjeu</label><input type="text" id="g2" placeholder="ex. le gaspillage à la cafétéria">
       <label for="r3">Tâche</label><select id="r3"></select><input type="text" id="r3x" placeholder="ou écrivez votre tâche" hidden>
-      <label for="r4">Contraintes</label><textarea id="r4" rows="3" placeholder="Écrivez vos contraintes, ou touchez une suggestion"></textarea>
+      <label for="r4">Contraintes</label><textarea id="r4" rows="2" placeholder="Écrivez vos contraintes, ou touchez une suggestion"></textarea>
       <div class="chips" id="r4s"></div>
     </div>
     <div class="col"><div class="prompt-out" id="pOut"></div><p><button class="btn" id="pCopy">Copier l’invite</button> <span class="hand" id="pMsg" style="font-size:22px"></span></p>
@@ -521,7 +526,8 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
     <li>Demander lundi à mon groupe : « Qu’est-ce qui vous dérange ? »</li>
     <li>Transformer une tâche de mon sigle à partir d’un enjeu choisi par l’élève.</li>
     <li>Terminer une période par un 3-2-1.</li>
-    <li>Proposer un projet-pont à une ou un collègue de PPS ou de DHS.</li>
+    <li>Proposer un projet-pont à une ou un collègue de PPS, de DHS, d’IS ou d’ISP.</li>
+    <li>Direction ou services : réserver une période commune pour qu’une équipe essaie la démarche.</li>
     <li>Tester une invite Copilot pour bâtir une grille.</li>
   </ul>
   <p><button class="btn" data-timer="180">3 min · ma fiche</button> <button class="btn alt" data-timer="120">2 min · retour express</button></p>
@@ -726,7 +732,7 @@ $('#raForm').addEventListener('submit', e => { e.preventDefault(); const t = $('
   else if (ACT.test(t) && date) o.innerHTML = '<span class="hl">Une action !</span> <span class="hand">Un sujet, un verbe, une date. Bravo.</span>';
   else if (ACT.test(t)) o.innerHTML = '<span class="hl">Presque une action</span> <span class="hand">Il manque une date.</span>';
   else o.innerHTML = '<span style="color:var(--mauve)">À préciser</span> <span class="hand">Ajoutez qui agit (nous, notre groupe…) et quand.</span>'; });
-const pairs = [['la réduction des déchets à la cafétéria', 'Nous installons trois bacs de compost vendredi avec le concierge.'], ['un trajet plus sécuritaire jusqu’au parc', 'Notre groupe cartographie les trois traverses dangereuses et écrit à la Ville d’ici le 1er décembre.'], ['la sécurité alimentaire des élèves', 'Nous sondons 40 élèves sur leurs déjeuners avant le 1er décembre.'], ['un sentiment d’appartenance au centre', 'Nous organisons un dîner « recette de chez nous » le 12 décembre.']];
+const pairs = [['une meilleure compréhension du budget familial', 'Nous comparons le prix de 10 produits dans deux épiceries et calculons l’écart d’ici vendredi.'], ['la réduction des déchets à la cafétéria', 'Nous installons trois bacs de compost vendredi avec le concierge.'], ['un trajet plus sécuritaire jusqu’au parc', 'Notre groupe cartographie les trois traverses dangereuses et écrit à la Ville d’ici le 1er décembre.'], ['la sécurité alimentaire des élèves', 'Nous sondons 40 élèves sur leurs déjeuners avant le 1er décembre.'], ['un sentiment d’appartenance au centre', 'Nous organisons un dîner « recette de chez nous » le 12 décembre.']];
 if ($('#flip')) pairs.forEach(([a, b]) => { const bt = document.createElement('button'); bt.innerHTML = `<small>Résultat · touchez pour l’action</small>${a}`; bt.onclick = () => { const back = bt.classList.toggle('back'); bt.innerHTML = back ? `<small>Action</small>${b}` : `<small>Résultat · touchez pour l’action</small>${a}`; }; $('#flip').appendChild(bt); });
 
 // ---------- marches ----------
@@ -736,8 +742,8 @@ st.forEach(([t, c], i) => { const col = document.createElement('button'); col.cl
   col.onclick = () => col.classList.toggle('show'); $('#steps').appendChild(col); });
 
 // ---------- scénarios ----------
-const subj = { 'PPS': ['Z107 Alimentation saine : le gaspillage devient le contexte de la semaine planifiée et du mets présenté.', 'Z128 Consommation : on enquête sur une pub qui dérange et on écrit à l’annonceur.', 'Le groupe PPS porte le projet ; des élèves en individualisé calculent le budget ou révisent la lettre.'], 'DHS': ['Un enjeu de la vie du groupe sert de contexte à une tâche du cours.', 'Un petit geste citoyen réalisé en quelques périodes, puis présenté au groupe.', 'Le groupe DHS porte un projet avec un organisme du quartier, appuyé par d’autres élèves.'], 'Français': ['Lettre ouverte ou texte argumentatif sur l’enjeu choisi.', 'Un court journal de bord, puis une affiche pour le centre.', 'Réviser la lettre de demande du groupe PPS.'], 'Mathématiques': ['Un sondage et ses statistiques, ou le budget d’une action.', 'Mesurer un phénomène (déchets d’une semaine) et le représenter.', 'Calculer le budget du projet du groupe PPS.'], 'Anglais': ['Une affiche ou une capsule bilingue sur l’enjeu.', 'Écrire à un organisme anglophone.', 'Traduire l’affiche du projet.'], 'Sciences': ['Expliquer le phénomène derrière l’enjeu (compost, eau, énergie).', 'Une petite expérience : comparer deux solutions.', 'Valider une donnée environnementale du projet.'] };
-const sc = [['A · L’enjeu comme contexte de tâche', 'La tâche du sigle (écrire, calculer, lire) se fait à partir d’un enjeu choisi par l’élève. Aucun projet collectif requis.'], ['B · Le micro-projet', 'Enjeu, idée, petit geste : une version courte de la démarche, en parallèle du parcours, sur quelques périodes.'], ['C · Le projet-pont', 'Un groupe PPS ou DHS porte un projet. Des élèves en individualisé y contribuent comme « experts » ponctuels.']];
+const subj = { 'PPS': ['Z107 Alimentation saine : le gaspillage devient le contexte de la semaine planifiée et du mets présenté.', 'Z128 Consommation : on enquête sur une pub qui dérange et on écrit à l’annonceur.', 'Le groupe PPS porte le projet ; des élèves en individualisé calculent le budget ou révisent la lettre.'], 'DHS': ['Un enjeu de la vie du groupe sert de contexte à une tâche du cours.', 'Un petit geste citoyen réalisé en quelques périodes, puis présenté au groupe.', 'Le groupe DHS porte un projet avec un organisme du quartier, appuyé par d’autres élèves.'], 'IS · ISP': ['un enjeu du quotidien (transport, épicerie, budget) devient le contexte de la tâche ; en ISP, un enjeu observé en stage.', 'un geste avec un partenaire de la communauté : l’organisme, l’horaire et le rôle de chacun sont planifiés avec le groupe.', 'le groupe IS ou ISP porte un projet de participation sociale ; des élèves en individualisé calculent, écrivent ou traduisent.'], 'Français': ['Lettre ouverte ou texte argumentatif sur l’enjeu choisi.', 'Un court journal de bord, puis une affiche pour le centre.', 'Réviser la lettre de demande du groupe PPS.'], 'Mathématiques': ['Un sondage sur l’enjeu : moyenne, diagramme, pourcentage. Ou le budget d’une action.', 'Mesurer un phénomène (les déchets d’une semaine), le représenter et prédire la suite.', 'Calculer le budget ou les quantités du projet du groupe PPS, IS ou ISP.'], 'Anglais': ['Une affiche ou une capsule bilingue sur l’enjeu.', 'Écrire à un organisme anglophone.', 'Traduire l’affiche du projet.'], 'Direction · services': ['en orthopédagogie, l’enjeu choisi par l’élève devient le texte d’entraînement ; en orientation, on le relie au projet de vie.', 'la direction libère quelques périodes pour un micro-projet ; la CP accompagne un premier essai en classe.', 'la direction prévoit l’horaire commun et les partenariats d’un projet-pont entre programmes.'], 'Sciences': ['Expliquer le phénomène derrière l’enjeu (compost, eau, énergie).', 'Une petite expérience : comparer deux solutions.', 'Valider une donnée environnementale du projet.'] };
+const sc = [['A · L’enjeu comme contexte de tâche', 'La tâche du sigle (écrire, calculer, lire) se fait à partir d’un enjeu choisi par l’élève. Aucun projet collectif requis.'], ['B · Le micro-projet', 'Enjeu, idée, petit geste : une version courte de la démarche, en parallèle du parcours, sur quelques périodes.'], ['C · Le projet-pont', 'Un groupe PPS, DHS, IS ou ISP porte un projet. Des élèves en individualisé y contribuent comme « experts » ponctuels.']];
 function drawScen(s) { $('#scen').innerHTML = sc.map(([h, p], i) => `<article><h3>${h}</h3><p>${p}</p><div class="ex">${s} : ${subj[s][i]}</div></article>`).join(''); $$('#subj .chip').forEach(c => c.classList.toggle('on', c.textContent === s)); }
 Object.keys(subj).forEach(s => { const c = document.createElement('button'); c.className = 'chip'; c.textContent = s; c.onclick = () => drawScen(s); $('#subj').appendChild(c); });
 drawScen('PPS');
@@ -748,18 +754,18 @@ $('#vidIn').onchange = e => loadVid(e.target.files[0]);
 const vz = $('#vidZone'); vz.addEventListener('dragover', e => e.preventDefault()); vz.addEventListener('drop', e => { e.preventDefault(); loadVid(e.dataTransfer.files[0]); });
 
 // ---------- Copilot ----------
-const ROLES = ['Tu es enseignant·e en Participation sociale (PPS) en FGA.', 'Tu es enseignant·e en DHS en FGA.', 'Tu es enseignant·e en adaptation scolaire.', 'Tu es intervenant·e scolaire en FGA.', 'Tu es enseignant·e de français en FGA, en enseignement individualisé.', 'Tu es enseignant·e de mathématiques en FGA, en enseignement individualisé.', 'Tu es conseiller·ère pédagogique en FGA au Québec.'];
+const ROLES = ['Tu es enseignant·e en Participation sociale (PPS) en FGA.', 'Tu es enseignant·e en DHS en FGA.', 'Tu es enseignant·e en Intégration sociale (IS) en FGA.', 'Tu es enseignant·e en Insertion socioprofessionnelle (ISP) en FGA.', 'Tu es enseignant·e en adaptation scolaire.', 'Tu es intervenant·e scolaire en FGA.', 'Tu es enseignant·e de français en FGA, en enseignement individualisé.', 'Tu es enseignant·e de mathématiques et sciences en FGA, en enseignement individualisé.', 'Tu es orthopédagogue en FGA.', 'Tu es enseignant·e d’anglais en FGA.', 'Tu es conseiller·ère d’orientation en FGA.', 'Tu es direction d’un centre de formation générale des adultes.', 'Tu es conseiller·ère pédagogique en FGA au Québec.'];
 const TACHES = ['Transforme notre résultat en 3 actions SMART, avec un verbe conjugué, un responsable et une date.', 'Génère une grille d’évaluation descriptive à 4 niveaux centrée sur la résolution de problèmes.', 'Propose 8 questions d’objectivation : 2 avant, 3 pendant, 3 après.', 'Propose une situation d’apprentissage de 3 périodes en 3 niveaux de complexité.'];
 const CONTR = ['Langage simple, accessible aux élèves.', 'Présentation en tableau.', 'Aucune note chiffrée.', 'Liens avec les savoirs du sigle.', 'Liste du matériel.', 'Signale toute formulation qui est encore un résultat.'];
 function fillSel(id, arr) { const sel = $('#' + id); arr.forEach((t, i) => { const o = document.createElement('option'); o.value = i; o.textContent = t; sel.appendChild(o); }); const o = document.createElement('option'); o.value = 'x'; o.textContent = 'Autre : je l’écris moi-même'; sel.appendChild(o);
   sel.onchange = () => { $('#' + id + 'x').hidden = sel.value !== 'x'; upd(); }; $('#' + id + 'x').oninput = upd; }
 fillSel('r1', ROLES); fillSel('r3', TACHES);
 CONTR.forEach(t => { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = t; b.onclick = () => { const a = $('#r4'); a.value = (a.value.trim() ? a.value.trim() + ' ' : '') + t; upd(); }; $('#r4s').appendChild(b); });
-['g1', 'g2', 'r4'].forEach(id => $('#' + id).oninput = upd);
+['g1', 'g2', 'g3', 'r4'].forEach(id => $('#' + id).oninput = upd);
 const pOut = $('#pOut');
 const val = id => { const s = $('#' + id); return s.value === 'x' ? ($('#' + id + 'x').value.trim() || '…') : (id === 'r1' ? ROLES : TACHES)[s.value]; };
-function upd() { const g = $('#g1').value.trim() || 'un groupe d’adultes en FGA', e = $('#g2').value.trim() || 'un enjeu qui les touche';
-  pOut.textContent = 'Rôle : ' + val('r1') + '\nContexte : ' + g + ' réalise un projet citoyen sur ' + e + '.\nTâche : ' + val('r3') + '\nContraintes : ' + ($('#r4').value.trim() || 'langage simple, présentation en tableau.'); }
+function upd() { const g = $('#g1').value.trim() || 'un groupe d’adultes en FGA', e = $('#g2').value.trim() || 'un enjeu qui les touche', sg = $('#g3').value.trim();
+  pOut.textContent = 'Rôle : ' + val('r1') + '\nContexte : ' + g + ' réalise un projet citoyen sur ' + e + (sg ? ', dans le cadre de ' + sg : '') + '.\nProgramme : Appuie-toi sur le programme d’études officiel de la formation générale des adultes du ministère de l’Éducation du Québec pour ' + (sg ? 'ce sigle' : 'le sigle visé') + ' : nomme les compétences, les savoirs et la famille de situations de vie visés. Si tu n’es pas certain d’un élément du programme, dis-le plutôt que de l’inventer.\nTâche : ' + val('r3') + '\nContraintes : ' + ($('#r4').value.trim() || 'langage simple, présentation en tableau.'); }
 upd();
 $('#pCopy').onclick = () => { const t = pOut.textContent; navigator.clipboard?.writeText(t).then(() => $('#pMsg').textContent = 'Copiée !').catch(() => { const r = document.createRange(); r.selectNodeContents(pOut); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(r); $('#pMsg').textContent = 'Sélectionnée : faites Ctrl+C'; }); };
 

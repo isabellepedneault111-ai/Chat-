@@ -11,8 +11,7 @@ const kids = [
     image: { path: I + 'nb_mur.jpg', w: 640, h: 360, cap: 'Du « ça me dérange » au « on l’a fait ! »' },
     meta: ['**Isabelle Pedneault**, conseillère pédagogique, CFGA De Jonquière (CSSDLJ)', '**Francis Laroche**, éducateur en citoyenneté mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI)', 'Présentation interactive : presentation/index.html (aussi utilisable hors ligne)']
   }),
-  ...(require('fs').existsSync(I + 'logo_cfga.png') ? [img(I + 'logo_cfga.png', 200, 60, { align: L.AlignmentType.LEFT, before: 120 })] : []),
-  img(I + 'logo_csi.png', 230, 50, { align: L.AlignmentType.LEFT, before: 120 }),
+  L.logos([[I + 'logo_cfga.png', 62, 61], [I + 'logo_csi.png', 230, 50]]),
   BR(),
 
   label('En un coup d’œil'),
@@ -31,7 +30,36 @@ const kids = [
   ], [500, 5500, 4080], { firstAccent: true }),
   P('Les verbes suivent une progression : décrire, reconnaître, analyser, esquisser. On passe de comprendre la démarche à se l’approprier.', { before: 100, run: { italics: true, color: C.grey } }),
 
-  H1('02', 'Déroulé minuté'),
+  H1('02', 'Qui sera dans la salle'),
+  P('D’après le portrait des inscriptions du 4 novembre (146 personnes à la journée, quatre CSS). Les noms restent dans le document interne du comité ; ici, seulement ce qui change notre animation.', { run: { size: 19, color: C.grey } }),
+  tbl(['', 'Ce qu’on sait', 'Ce que ça change'], [
+    ['**Combien**', '34 personnes ont mis l’atelier en 1er ou 2e choix (19 et 15). 22 autres l’ont en réserve.', 'Prévoir 40 cahiers et 6 ou 7 îlots de 5 ou 6 personnes. Tout le matériel est compté pour 40.'],
+    ['**D’où**', 'Les quatre CSS : Rives-du-Saguenay 12, Lac-Saint-Jean 10, De La Jonquière 6, Pays-des-Bleuets 6.', 'Mélanger les centres dans chaque îlot : l’appartenance se construit aussi entre collègues de la région.'],
+    ['**Qui**', 'IS et ISP : 11. Mathématiques et sciences : 8. PPS et DHS : 6. Français, orthopédagogie, orientation et CP, direction : 2 chacun. Anglais : 1.', 'La moitié enseigne en PPS, DHS, IS ou ISP : on nomme IS et ISP partout avec PPS et DHS. L’autre moitié compte aussi : un exemple en mathématiques, une porte « Anglais », une porte « Direction · services », et des rôles Copilot pour chacun.']
+  ], [1500, 4300, 4280], { firstAccent: true }),
+  H3('Ce qu’elles et ils souhaitent aborder, et où on y répond'),
+  tbl(['Souhait exprimé à l’inscription', 'Où on y répond'], [
+    ['L’autodétermination à travers le programme de participation sociale', 'Les 5 marches et leurs composantes (diapo 10), J’ai mon plan (annexe 07)'],
+    ['Des exemples concrets de projets de participation sociale', 'Les projets du CFGA et la vidéo (diapos 10 à 12), la porte IS · ISP (diapo 11)'],
+    ['Les partenariats avec la communauté : le rôle de l’enseignant, l’horaire, le terrain', 'Francis et le CSI, la triade (diapo 6), scénario B avec un partenaire (diapo 11)'],
+    ['La cohérence du projet PPS avec les cours matières, sans alourdir la tâche', 'Le scénario C, le projet-pont (diapo 11) : les élèves en individualisé contribuent comme « experts »'],
+    ['Le DHS, la déficience intellectuelle, le TSA ; des outils pour le DHS', 'Les portes PPS et DHS, la fiche élève en 5 marches (annexe 08), les 4 étapes en îlot'],
+    ['Le développement de l’autonomie chez les jeunes de 16 ans', 'Les 4 besoins et les 9 gestes (diapo 7, annexe 09)'],
+    ['Le plan d’intervention multidisciplinaire', 'L’annexe 10 : les interventions universelles avant le plan d’intervention'],
+    ['L’IA', 'Copilot en îlot (diapo 14) et l’aide-mémoire Copilot (annexe 03)']
+  ], [5000, 5080], { firstAccent: true }),
+  H3('Une place pour chaque profil'),
+  tbl(['Profil', 'Son angle dans l’atelier'], [
+    ['**IS, ISP, PPS, DHS**', 'Vivre la démarche avec leur groupe, du début à la fin : c’est leur terrain.'],
+    ['**Mathématiques et sciences**', 'Le scénario A : un sondage, une mesure, un budget. Le scénario C : l’« expert » du projet-pont.'],
+    ['**Français et anglais**', 'Le résultat (un nom) et l’action (un verbe) : un pont direct avec la grammaire. Une lettre, une affiche bilingue, une capsule.'],
+    ['**Orthopédagogie**', 'L’enjeu choisi par l’élève comme texte d’entraînement ; l’annexe 10 sur les interventions universelles.'],
+    ['**Orientation et CP**', 'Relier l’enjeu au projet de vie et à J’ai mon plan ; accompagner une équipe qui fait un premier essai.'],
+    ['**Directions**', 'Les conditions qui rendent la démarche possible : une période commune, l’horaire d’un projet-pont, les partenariats avec la communauté.']
+  ], [2800, 7280], { firstAccent: true }),
+  ...note('Composer les îlots', ['En entrant, chacun prend un papillon de la couleur de son profil : IS, ISP, PPS et DHS ; mathématiques et sciences ; français et anglais ; directions et services (orthopédagogie, orientation, CP). On forme des îlots qui mêlent les CSS et les profils. Les directions et les professionnels se répartissent dans les îlots : leur regard sur les conditions (horaire, partenariats) enrichit chaque projet.'], { before: 160 }),
+
+  H1('03', 'Déroulé minuté'),
   P('Quatre phases : 30, 30, 20 et 10 minutes. Le numéro de diapo renvoie à la présentation (la touche N affiche les notes et le nom de la personne qui anime).'),
   tbl(['Temps', 'Phase', 'Ce que vivent les participants', 'Qui', 'Diapo'], [
     ['0–5', '**Phase 1 · Diagnostic** : accueil et mur d’enjeux', 'En entrant : « Qu’est-ce qui vous dérange dans le monde, ici ou ailleurs ? » Un papillon adhésif par personne.', 'Francis', '1–3'],
@@ -61,7 +89,7 @@ const kids = [
   B('Prévoir des adaptateurs HDMI, USB-C et VGA, et une rallonge.'),
   B('**Aller où on veut :** le bouton « Plan » (touche M) affiche toutes les diapos ; on touche celle qu’on veut, selon les questions de la salle.'),
 
-  H1('03', 'Le script, phase par phase'),
+  H1('04', 'Le script, phase par phase'),
   H2('Phase 1 · Diagnostic et monde idéal (0–30 min)'),
   H3('Accueil et mur d’enjeux · Francis'),
   P('À l’entrée, une grande affiche : « Qu’est-ce qui vous dérange dans le monde, ici ou ailleurs ? » Chaque personne colle un papillon adhésif avant de s’asseoir. Dans la présentation, on tape les enjeux en direct : ils viennent s’accrocher à un globe 3D qui tourne.'),
@@ -93,7 +121,8 @@ const kids = [
     ['la réduction des déchets à la cafétéria', '==installer== trois bacs de compost vendredi avec le concierge'],
     ['un trajet plus sécuritaire jusqu’au parc', '==cartographier== les trois traverses dangereuses et ==écrire== à la Ville'],
     ['la sécurité alimentaire des élèves', '==sonder== 40 élèves sur leurs déjeuners d’ici le 1er décembre'],
-    ['un sentiment d’appartenance au centre', '==organiser== un dîner « recette de chez nous » le 12 décembre']
+    ['un sentiment d’appartenance au centre', '==organiser== un dîner « recette de chez nous » le 12 décembre'],
+    ['une meilleure compréhension du budget familial (mathématiques)', '==comparer== le prix de 10 produits dans deux épiceries et ==calculer== l’écart d’ici vendredi']
   ], [4600, 5480]),
   img(I + 'il_gngv.png', 560, 243, { before: 200 }),
   P('**Le lien avec le français.** Le résultat se dit avec un groupe du nom (noyau et expansions). L’action demande un groupe du verbe conjugué, avec un sujet qui agit. Transformer un GN en GV, c’est passer du rêve à l’action.'),
@@ -101,7 +130,7 @@ const kids = [
   img(I + 'nb_compost.jpg', 560, 315),
   L.caption('De l’idée à l’action : un projet de compostage'),
   img(I + 'il_escalier.png', 480, 248),
-  P('Francis présente les 5 marches et les projets en cours au CFGA. Isabelle enchaîne sur les trois portes d’entrée, en commençant par la PPS et le DHS, puis la question des enseignants matières : « Et moi, en individualisé, avec 20 adultes dans 8 sigles ? » Exemples en PPS : Z107 Alimentation saine (le gaspillage comme contexte), Z128 Consommation (enquêter sur une pub et écrire à l’annonceur). Les trois scénarios sont détaillés dans le cahier du participant : A, l’enjeu comme contexte de tâche ; B, le micro-projet ; C, le projet-pont.'),
+  P('Francis présente les 5 marches et les projets en cours au CFGA. Isabelle enchaîne sur les trois portes d’entrée, en commençant par la PPS et le DHS, puis l’IS et l’ISP (le tiers de la salle), puis la question des enseignants matières : « Et moi, en individualisé, avec 20 adultes dans 8 sigles ? » Exemples en PPS : Z107 Alimentation saine (le gaspillage comme contexte), Z128 Consommation (enquêter sur une pub et écrire à l’annonceur). Les trois scénarios sont détaillés dans le cahier du participant : A, l’enjeu comme contexte de tâche ; B, le micro-projet ; C, le projet-pont.'),
 
   H2('Phase 3 · Idéation en îlot et vote par jetons (60–80 min)'),
   P('**En équipe, c’est plus riche.** Le plan de match parle de co-construction en sous-groupes : on travaille en îlot de 4 à 6 personnes. Les 4 étapes sont **obligatoires** et se font dans l’ordre, avec le minuteur de la diapo 13. Chaque îlot note tout dans son cahier, section « Notre projet d’îlot ».'),
@@ -138,12 +167,13 @@ const kids = [
   ...note('Pour aller plus loin', ['L’annexe 10 propose une autoévaluation des interventions universelles, d’après la grille réflexive EN.1.1 de « J’ai MON plan! ». Avant de cibler un élève, on regarde ce qu’on offre à tout le groupe.'], { before: 160 }),
 
   BR(),
-  H1('04', 'Matériel et logistique'),
+  H1('05', 'Matériel et logistique'),
   tbl(['Quoi', 'Quantité', ''], [
-    ['Cahier du participant imprimé (prévoir 10 % de plus)', '28', '☐'],
-    ['Fiches « Mon premier pas » (aussi dans le cahier)', '28', '☐'],
+    ['Cahier du participant imprimé (34 inscrits, plus une marge)', '40', '☐'],
+    ['Fiches « Mon premier pas » (aussi dans le cahier)', '40', '☐'],
+    ['Annexes imprimées (03, 04, 07, 09, 10) ou code QR seulement : à décider', '40', '☐'],
     ['Jetons de vote en 3 couleurs, en sachets par îlot', '3 par personne', '☐'],
-    ['Papillons adhésifs de 4 couleurs et marqueurs noirs à pointe moyenne', '1 paquet par îlot', '☐'],
+    ['Papillons adhésifs de 4 couleurs (une couleur par profil) et marqueurs noirs', '1 paquet par îlot', '☐'],
     ['Affiche du mur d’enjeux à l’entrée (le « mur » de la phase 3) et grand code QR', '1 de chaque', '☐'],
     ['Cartons de signaux vert, jaune et rouge', '2 jeux', '☐'],
     ['Présentation sur 2 clés USB et vidéo enregistrée localement', '2', '☐'],
@@ -153,21 +183,21 @@ const kids = [
   H2('Aménagement'),
   B('Des îlots de 4 à 6 personnes. À chaque place : le cahier du participant et le sachet de jetons.'),
   B('Le mur d’enjeux et le grand code QR à l’entrée.'),
-  B('Pour la phase 2, regrouper les îlots par profil : PPS et DHS, groupes, français et langues, mathématiques et sciences, soutien.'),
+  B('Des îlots qui mêlent les quatre CSS et les profils, avec une direction ou une personne des services dans le plus d’îlots possible.'),
 
-  H1('05', 'Après le colloque'),
+  H1('06', 'Après le colloque'),
   B('**Le mur d’enjeux régional.** Les papillons des quatre CSS deviennent une « carte des préoccupations » du Saguenay–Lac-Saint-Jean, rapportée en classe comme banque d’enjeux.'),
   B('**La relance à six semaines.** Un courriel aux participants (« Avez-vous fait votre premier pas ? ») transforme l’atelier en petite communauté de pratique.'),
   B('**Le jumelage interprogrammes.** Un groupe PPS ou DHS avec une enseignante matières (scénario C), prêt à démarrer en janvier.'),
   B('**L’accompagnement du CSI.** Un ou deux enseignants qui démarrent une démarche semblable, y compris dans les autres CSS.'),
 
-  H1('06', 'À valider entre nous'),
+  H1('07', 'À valider entre nous'),
   B('Des élèves de PPS peuvent-ils témoigner en personne ou en vidéo ? Les autorisations de diffusion sont-elles signées ?'),
   B('Quels outils de la démarche remettons-nous (gabarits, fiches, liens) ? Les déposons-nous dans l’équipe Teams du colloque ?'),
   B('Les deux séances ont-elles lieu le matin et l’après-midi ? Le minutage est-il le même ?'),
   B('Qui fait la relance à six semaines, et à partir de quelle liste ?'),
 
-  H1('07', 'Éthique des exemples concrets'),
+  H1('08', 'Éthique des exemples concrets'),
   P('Les mots d’élèves et de parents de l’accroche proviennent de la classe d’Isabelle, du temps où elle enseignait. Ils ont été **recadrés et anonymisés** : aucun prénom, aucun nom, aucune signature. On précise à la salle qu’il s’agit de mots reçus, pas de témoignages sollicités.'),
 ];
 

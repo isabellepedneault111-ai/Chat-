@@ -30,8 +30,7 @@ const kids = [
     image: { path: I + 'nb_mur.jpg', w: 620, h: 349, cap: 'Du « ça me dérange » au « on l’a fait ! »' },
     meta: []
   }),
-  ...(require('fs').existsSync(I + 'logo_cfga.png') ? [img(I + 'logo_cfga.png', 200, 60, { align: L.AlignmentType.LEFT, before: 120 })] : []),
-  img(I + 'logo_csi.png', 230, 50, { align: L.AlignmentType.LEFT, before: 120 }),
+  L.logos([[I + 'logo_cfga.png', 62, 61], [I + 'logo_csi.png', 230, 50]]),
   zone('Ce cahier appartient à', 700),
   SP(120),
   P('Ce cahier vous suit pendant tout l’atelier. Écrivez-y, raturez-y, collez-y des papillons. Il est fait pour être utilisé, pas pour rester propre.', { run: { italics: true, color: C.grey } }),
@@ -95,9 +94,9 @@ const kids = [
   H1('06', 'Et en individualisé ?'),
   P('Pas de groupe qui avance ensemble ? Trois portes d’entrée.'),
   tbl(['Scénario', 'Comment ça se vit', 'Exemples'], [
-    ['**A · L’enjeu comme contexte de tâche**', 'La tâche du sigle (écrire, calculer, lire) se fait à partir d’un enjeu choisi par l’élève.', 'PPS Z107 : le gaspillage comme contexte de la semaine planifiée. Français : lettre ouverte. Mathématiques : sondage, budget.'],
-    ['**B · Le micro-projet**', 'Enjeu, idée, petit geste : une version courte, en parallèle du parcours.', 'PPS Z128 : enquêter sur une pub qui dérange et écrire à l’annonceur. DHS : un petit geste citoyen présenté au groupe.'],
-    ['**C · Le projet-pont**', 'Un groupe PPS ou DHS porte un projet. Des élèves en individualisé y contribuent comme « experts ».', 'Mathématiques : le budget. Français : la lettre de demande. Sciences : valider une donnée.']
+    ['**A · L’enjeu comme contexte de tâche**', 'La tâche du sigle (écrire, calculer, lire) se fait à partir d’un enjeu choisi par l’élève.', 'PPS Z107 : le gaspillage comme contexte de la semaine planifiée. IS : un enjeu du quotidien (transport, épicerie). Mathématiques : sondage, moyenne, budget.'],
+    ['**B · Le micro-projet**', 'Enjeu, idée, petit geste : une version courte, en parallèle du parcours.', 'PPS Z128 : enquêter sur une pub qui dérange et écrire à l’annonceur. ISP : un geste avec un partenaire de stage. DHS : un petit geste citoyen présenté au groupe.'],
+    ['**C · Le projet-pont**', 'Un groupe PPS, DHS, IS ou ISP porte un projet. Des élèves en individualisé y contribuent comme « experts ».', 'Mathématiques : le budget. Français : la lettre de demande. Sciences : valider une donnée.']
   ], [2600, 3700, 3600]),
   SP(120),
   zone('Le scénario qui me parle (A, B ou C), et pourquoi', 1300),
@@ -107,14 +106,15 @@ const kids = [
   tbl(null, [
     [P('**1 · Notre enjeu** (choisi sur le mur à l’entrée) · 2 min', { after: 480 })],
     [P('**2 · Vivre la démarche** · 5 min', { after: 60 }), P('Notre résultat (un nom) :', { after: 420, run: { size: 19, color: C.grey } }), P('Nos actions (un verbe, qui, quand) :', { after: 900, run: { size: 19, color: C.grey } })],
-    [P('**3 · L’adapter à nos groupes** (PPS, DHS ou nos sigles : scénario A, B ou C) · 4 min', { after: 900 })]
+    [P('**3 · L’adapter à nos groupes** (PPS, DHS, IS, ISP ou nos sigles : scénario A, B ou C) · 4 min', { after: 900 })]
   ].map(r => [r]), [W]),
   SP(120),
   H2('4 · Notre invite Copilot · 4 min'),
   P('On l’écrit ici, puis on la tape dans Copilot sur un appareil de l’îlot (compte du centre de services). Les 5 invites de l’aide-mémoire sont aussi dans le dossier partagé, prêtes à copier.', { run: { size: 19 } }),
   tbl(['', 'Ce que l’îlot écrit'], [
-    ['**Rôle**', 'Agis comme… (enseignant·e en PPS ou en DHS, intervenant·e scolaire, enseignant·e en adaptation scolaire…)'],
-    ['**Contexte**', 'Notre groupe : … · Notre enjeu : …'],
+    ['**Rôle**', 'Agis comme… (enseignant·e en PPS, DHS, IS, ISP, mathématiques et sciences, français ou anglais ; orthopédagogue, conseiller·ère d’orientation, direction, intervenant·e scolaire…)'],
+    ['**Contexte**', 'Notre groupe : … · Notre enjeu : … · Le sigle ou le cours : …'],
+    ['**Programme**', 'Appuie-toi sur le programme d’études officiel de la FGA (ministère de l’Éducation du Québec) pour ce sigle : nomme les compétences, les savoirs et la famille de situations de vie visés.'],
     ['**Tâche**', 'Propose… (enrichir une action, créer une grille, des questions d’objectivation…)'],
     ['**Contraintes**', 'Niveau de lecture, durée, format, ce qu’on ne veut pas…']
   ].map(r => [r[0], P(r[1], { after: 520, run: { size: 18, color: C.grey, italics: true } })]), [1800, 8240], { firstAccent: true }),
@@ -129,7 +129,7 @@ const kids = [
   H1('08', 'Mon premier pas, de retour dans mon milieu'),
   img(I + 'il_billet.png', 600, 229),
   P('Remplissez la fiche (aussi en version détachable), puis photographiez-la. Dans six semaines, on vous écrira : « Avez-vous fait votre premier pas ? »', { run: { italics: true, color: C.grey } }),
-  P('Des idées : demander lundi à mon groupe « Qu’est-ce qui vous dérange ? » · transformer une tâche de mon sigle à partir d’un enjeu choisi par l’élève · terminer une période par un 3-2-1 · proposer un projet-pont à une ou un collègue de PPS ou de DHS · tester une invite Copilot pour bâtir une grille.', { run: { size: 19 } }),
+  P('Des idées : demander lundi à mon groupe « Qu’est-ce qui vous dérange ? » · transformer une tâche de mon sigle à partir d’un enjeu choisi par l’élève · terminer une période par un 3-2-1 · proposer un projet-pont à une ou un collègue de PPS, de DHS, d’IS ou d’ISP · direction ou services : réserver une période commune pour qu’une équipe essaie la démarche · tester une invite Copilot pour bâtir une grille.', { run: { size: 19 } }),
   zone('1 · Mon action (un verbe !)', 900),
   SP(60),
   zones(['2 · Quand', '3 · Avec qui (mon allié)'], 700),

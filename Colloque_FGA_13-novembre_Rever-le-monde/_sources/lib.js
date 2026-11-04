@@ -90,6 +90,14 @@ function img(path, w, h, o = {}) {
   return new Paragraph({ alignment: o.align ?? AlignmentType.CENTER, spacing: { after: o.after ?? 80, before: o.before ?? 0 }, keepNext: o.keepNext,
     children: [new ImageRun({ type: path.endsWith('.png') ? 'png' : 'jpg', data: fs.readFileSync(path), transformation: { width: w, height: h } })] });
 }
+function logos(list, o = {}) {
+  const kids = [];
+  list.filter(l => fs.existsSync(l[0])).forEach((l, i) => {
+    if (i) kids.push(new TextRun({ text: '      ' }));
+    kids.push(new ImageRun({ type: l[0].endsWith('.png') ? 'png' : 'jpg', data: fs.readFileSync(l[0]), transformation: { width: l[1], height: l[2] } }));
+  });
+  return new Paragraph({ alignment: o.align ?? AlignmentType.LEFT, spacing: { before: o.before ?? 120, after: o.after ?? 80 }, children: kids });
+}
 const caption = t => new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 200 }, children: [new TextRun({ text: t, font: SANS, size: 15, smallCaps: true, characterSpacing: 30, color: C.grey })] });
 
 function styles() {
@@ -128,4 +136,4 @@ function cover({ kicker, title, sub, meta, image }) {
 async function save(doc, path) { fs.writeFileSync(path, await d.Packer.toBuffer(doc)); console.log('écrit', path); }
 const page = (landscape) => ({ size: { width: 12240, height: 15840, ...(landscape ? { orientation: d.PageOrientation.LANDSCAPE } : {}) } });
 
-module.exports = { EMBED, DISPLAY, d, C, SERIF, SANS, runs, P, label, H1, H2, H3, B, N, BR, CB, SP, rule, note, quote, tbl, lines, img, caption, styles, numbering, footer, cover, save, page, AlignmentType, TextRun, Paragraph };
+module.exports = { logos, EMBED, DISPLAY, d, C, SERIF, SANS, runs, P, label, H1, H2, H3, B, N, BR, CB, SP, rule, note, quote, tbl, lines, img, caption, styles, numbering, footer, cover, save, page, AlignmentType, TextRun, Paragraph };

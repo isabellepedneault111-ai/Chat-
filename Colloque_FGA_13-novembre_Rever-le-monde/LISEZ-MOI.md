@@ -41,10 +41,10 @@ Ce qui est interactif :
 - **Diapo 8 :** les 4 sphères en 3D. On touche une planète ou son nom pour voir sa définition.
 - **Diapo 9 :** le détecteur « résultat ou action ? ».
 - **Diapo 10 :** les 5 marches de la démarche, qu’on révèle une à une.
-- **Diapo 11 :** les trois portes d’entrée (PPS et DHS d’abord).
+- **Diapo 11 :** les trois portes d’entrée, avec des exemples pour la PPS, le DHS, l’IS et l’ISP, chaque matière, et les directions et services.
 - **Diapo 12 :** l’espace pour glisser la vidéo des élèves (fichier local).
 - **Diapo 13 :** en îlot, les 4 étapes obligatoires avec leur minuteur.
-- **Diapo 14 :** le générateur d’invites Copilot : on choisit le rôle et on écrit son groupe, son enjeu et ses contraintes ; le bouton « Copier » met l’invite dans le presse-papier.
+- **Diapo 14 :** le générateur d’invites Copilot : on choisit le rôle et on écrit son groupe, son sigle, son enjeu et ses contraintes. L’invite demande à Copilot de s’appuyer sur le programme d’études officiel de la FGA (compétences, savoirs, famille de situations de vie) ; le bouton « Copier » la met dans le presse-papier.
 - **Diapo 15 :** les piles de jetons 3D du vote, sous le nom de l’enjeu de chaque îlot.
 - **Diapo 16 :** Mon premier pas, avec des exemples.
 - **Diapo 17 :** la pyramide 3D, en retour sur l’atelier. On touche l’étage de sa dernière formation.

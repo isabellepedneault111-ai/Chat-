@@ -18,6 +18,7 @@ const kids = [
   tbl(['Ingrédient', 'La question à se poser', 'Exemple'], [
     ['**Rôle**', 'Qui doit répondre ?', 'Tu es conseiller pédagogique en FGA au Québec.'],
     ['**Contexte**', 'Pour qui, dans quelle situation ?', 'Un groupe PPS réalise un projet sur le gaspillage alimentaire.'],
+    ['**Sigle et programme**', 'À quel cours et à quel programme officiel je me rattache ?', 'Pour le sigle MAT-3051, appuie-toi sur le programme d’études de la FGA du ministère de l’Éducation du Québec : nomme les savoirs et la famille de situations de vie visés.'],
     ['**Tâche**', 'Qu’est-ce que je veux, exactement ?', 'Génère une grille descriptive à 4 niveaux.'],
     ['**Contraintes**', 'Quel format, quelle limite ?', 'Langage simple, tableau, verbes observables, pas de note chiffrée.']
   ], [1800, 3300, 4920], { firstAccent: true }),
@@ -28,6 +29,7 @@ const kids = [
     'Tu es conseiller pédagogique en formation générale des adultes au Québec.',
     'Contexte : un groupe d’adultes du programme Participation sociale réalise un projet citoyen sur [l’enjeu].',
     'Tâche : génère une grille d’évaluation descriptive à 4 niveaux pour le cours [sigle], centrée sur la résolution de problèmes dans un projet communautaire.',
+    'Programme : Appuie-toi sur le programme d’études officiel de la formation générale des adultes du ministère de l’Éducation du Québec pour ce sigle : nomme les compétences, les savoirs et la famille de situations de vie visés. Si tu n’es pas certain d’un élément du programme, dis-le plutôt que de l’inventer.',
     'Contraintes : langage simple que les élèves comprennent, verbes observables, présentation en tableau, aucune note chiffrée.'
   ]),
   ...prompt('2 · Des relances métacognitives (objectivation)', [
@@ -43,6 +45,7 @@ const kids = [
   ...prompt('4 · Un enjeu comme contexte de tâche (scénario A)', [
     'Tu es enseignant de mathématiques en FGA, en enseignement individualisé.',
     'Contexte : un élève inscrit en [sigle] veut travailler sur l’enjeu [enjeu].',
+    'Programme : Appuie-toi sur le programme d’études officiel de la formation générale des adultes du ministère de l’Éducation du Québec pour ce sigle : nomme les compétences, les savoirs et la famille de situations de vie visés. Si tu n’es pas certain d’un élément du programme, dis-le plutôt que de l’inventer.',
     'Tâche : propose une situation d’apprentissage de 3 périodes où il réalise un petit sondage et en analyse les résultats, en 3 niveaux de complexité.',
     'Contraintes : liens explicites avec les savoirs du sigle, liste du matériel, une question d’objectivation à la fin.'
   ]),
@@ -55,7 +58,7 @@ const kids = [
   H1('03', 'Les balises'),
   B('**Aucun renseignement personnel** dans une invite : pas de nom d’élève, pas de diagnostic, pas de résultat scolaire identifiable.'),
   B('**Le compte du centre de services** (Copilot avec protection des données d’entreprise), pas un compte personnel.'),
-  B('**L’IA propose, l’enseignant dispose.** On vérifie les liens avec le programme, les faits et le niveau de langue.'),
+  B('**L’IA propose, l’enseignant dispose.** Copilot n’a pas toujours accès au programme exact : on vérifie chaque lien avec le programme d’études officiel, les faits et le niveau de langue. Coller l’extrait pertinent du programme dans l’invite donne de bien meilleurs résultats.'),
   B('**On le dit aux élèves** quand un outil a été préparé avec l’IA, et on leur montre comment l’utiliser de façon critique.'),
   B('On consulte les balises de son CSS avant tout usage avec les élèves.'),
 
