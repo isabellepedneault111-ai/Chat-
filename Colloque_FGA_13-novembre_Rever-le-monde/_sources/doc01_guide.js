@@ -9,7 +9,7 @@ const kids = [
     title: 'RÊVER LE MONDE DE DEMAIN',
     sub: 'De l’idéation à l’action. Engagement citoyen et autodétermination en FGA. Guide d’animation pour la coanimation (90 minutes).',
     image: { path: I + 'nb_mur.jpg', w: 640, h: 357, cap: 'Du « ça me dérange » au « on l’a fait ! »' },
-    meta: ['**Isabelle Pedneault**, conseillère pédagogique, CFGA De Jonquière (CSSDLJ)', '**Francis Laroche**, éducation à la citoyenneté mondiale, CSI-SLSJ', 'Présentation interactive : presentation/index.html (aussi utilisable hors ligne)']
+    meta: ['**Isabelle Pedneault**, conseillère pédagogique, CFGA De Jonquière (CSSDLJ)', '**Francis Laroche**, éducation à la citoyenneté mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI)', 'Présentation interactive : presentation/index.html (aussi utilisable hors ligne)']
   }),
   BR(),
 
@@ -148,7 +148,7 @@ const kids = [
   B('**Le mur d’enjeux régional.** Les papillons des quatre CSS deviennent une « carte des préoccupations » du Saguenay–Lac-Saint-Jean, rapportée en classe comme banque d’enjeux.'),
   B('**La relance à six semaines.** Un courriel aux participants (« Avez-vous fait votre premier pas ? ») transforme l’atelier en petite communauté de pratique.'),
   B('**Le jumelage interprogrammes.** Un groupe PPS ou DHS avec une enseignante matières (scénario C), prêt à démarrer en janvier.'),
-  B('**L’accompagnement du CSI-SLSJ.** Un ou deux enseignants qui démarrent un incubateur, y compris dans les autres CSS.'),
+  B('**L’accompagnement du CSI.** Un ou deux enseignants qui démarrent un incubateur, y compris dans les autres CSS.'),
 
   H1('06', 'À valider entre nous'),
   B('Des élèves de PPS peuvent-ils témoigner en personne ou en vidéo ? Les autorisations de diffusion sont-elles signées ?'),

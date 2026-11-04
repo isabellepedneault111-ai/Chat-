@@ -33,7 +33,7 @@ const kids = [
   zone('Ce cahier appartient à', 700),
   SP(120),
   P('Ce cahier vous suit pendant tout l’atelier. Écrivez-y, raturez-y, collez-y des papillons. Il est fait pour être utilisé, pas pour rester propre.', { run: { italics: true, color: C.grey } }),
-  P('Isabelle Pedneault, CP, CFGA De Jonquière · Francis Laroche, CSI-SLSJ', { run: { size: 18, color: C.grey } }),
+  P('Isabelle Pedneault, CP, CFGA De Jonquière · Francis Laroche, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean', { run: { size: 18, color: C.grey } }),
   BR(),
 
   H1('01', 'Ce qui me dérange'),
@@ -138,7 +138,7 @@ const kids = [
   B('**« J’ai mon plan ».** Un outil pour que l’adulte s’approprie son parcours de formation : ses cours, ses échéances, ses buts.'),
   B('**La rencontre de suivi animée par l’élève (20 min).** L’adulte présente lui-même son plan de formation (« J’ai mon plan »), les sigles réussis, ce qui l’aide, ce qui bloque et ses prochains objectifs. L’enseignant ou l’intervenant écoute, questionne, puis on ajuste le plan ensemble. On passe de juge à coach.'),
   B('**L’objectivation.** L’annexe remise avec ce cahier propose une banque de questions et 7 formats à essayer dès lundi.'),
-  B('**Le CSI-SLSJ** accompagne les groupes qui veulent démarrer un incubateur, dans les quatre CSS de la région.'),
+  B('**Le Centre de solidarité internationale (CSI)** accompagne les groupes qui veulent démarrer un incubateur, dans les quatre CSS de la région.'),
   SP(200),
   label('Références'),
   P('Deci, E. L. et Ryan, R. M. (2000). The « what » and « why » of goal pursuits: Human needs and the self-determination of behavior. *Psychological Inquiry*, 11(4), 227-268.', { run: { size: 18 } }),

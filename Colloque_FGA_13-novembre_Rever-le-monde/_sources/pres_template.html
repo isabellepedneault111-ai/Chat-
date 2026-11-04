@@ -60,7 +60,20 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .cover img{width:100%;height:100%;object-fit:cover;filter:saturate(.95)}
 .cover::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(251,248,239,.97) 0 38%,rgba(251,248,239,.75) 52%,rgba(251,248,239,0) 75%)}
 .title-wrap{max-width:min(720px,100%);margin-top:auto;margin-bottom:auto}
-.sticker{display:inline-block;background:var(--gold);border:3px solid var(--ink);padding:.15em .5em;font-family:var(--display);transform:rotate(-2deg);box-shadow:4px 4px 0 var(--ink)}
+.sticker{display:inline-block;color:var(--ink);background:var(--gold);border:3px solid var(--ink);padding:.15em .5em;font-family:var(--display);transform:rotate(-2deg);box-shadow:4px 4px 0 var(--ink)}
+/* diapo 1 : affiche */
+.slide.s1{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);padding:0;padding-bottom:46px}
+.s1-panel{background-color:var(--mauve);background-image:radial-gradient(rgba(30,26,34,.35) 1.4px,transparent 1.6px);background-size:11px 11px;color:var(--paper);display:flex;flex-direction:column;justify-content:center;gap:.4em;padding-block:clamp(20px,4vh,48px);padding-left:max(16px,env(safe-area-inset-left,0px),4vw);padding-right:clamp(16px,3vw,48px);border-right:6px solid var(--ink);min-width:0}
+.s1-title{font-size:clamp(46px,8.2vw,132px);line-height:.92;margin:.1em 0 .1em;color:var(--paper);text-shadow:5px 5px 0 var(--ink);-webkit-text-stroke:2px var(--ink);paint-order:stroke fill}
+.s1-title span{color:var(--gold)}
+.s1-hand{font-family:var(--hand);font-size:clamp(28px,3.2vw,50px);color:var(--gold);margin:0;transform:rotate(-2deg);transform-origin:left}
+.s1-sub{color:var(--paper);margin:0 0 .6em;font-size:clamp(16px,1.5vw,22px)}
+.s1-who{display:flex;flex-direction:column;gap:12px}
+.s1-who div{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.s1-who small{font-family:var(--ui);font-size:clamp(11px,1vw,14px);letter-spacing:.06em;color:#E9DFF5}
+.s1-img{position:relative;min-height:0;overflow:hidden;background:var(--ink)}
+.s1-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 50%}
+@media (max-width:800px){.slide.s1{grid-template-columns:1fr;grid-template-rows:34vh auto;overflow-y:auto}.s1-img{order:-1;border-bottom:6px solid var(--ink)}.s1-panel{border-right:0}}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:18px;align-items:start}
 .gallery figure{margin:0;cursor:zoom-in}
 .gallery figure img{border:3px solid var(--ink);width:100%;height:auto;background:#fff}
@@ -119,16 +132,18 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 <div class="deck" id="deck">
 
 <!-- 1 -->
-<section class="slide" data-phase="0" data-who="Isabelle et Francis" data-notes="Accueil. Laisser la diapo pendant que les gens entrent et collent leur papillon au mur. Présenter le duo en 30 secondes.">
-  <div class="cover"><img src="__IMG_MUR__" alt="Des jeunes adultes collent des papillons sur une carte du monde dans un centre de formation"></div>
-  <div class="title-wrap">
-    <div class="kick">Colloque régional FGA · 13 novembre 2026 · CFGA De Jonquière</div>
-    <h1>Rêver le monde de demain…</h1>
-    <p class="hand" style="font-size:clamp(28px,3vw,44px)">de l’idéation à l’action</p>
-    <p>Engagement citoyen et autodétermination en FGA</p>
-    <p style="margin-top:1.4em"><span class="sticker">Isabelle Pedneault</span> &nbsp; <span class="sticker" style="background:var(--paper)">Francis Laroche</span></p>
-    <p class="cap">CP, CFGA De Jonquière · Éducation à la citoyenneté mondiale, CSI-SLSJ</p>
+<section class="slide s1" data-phase="0" data-who="Isabelle et Francis" data-notes="Accueil. Laisser la diapo pendant que les gens entrent et collent leur papillon au mur. Présenter le duo en 30 secondes.">
+  <div class="s1-panel">
+    <div class="kick" style="color:var(--gold)">Colloque régional FGA · 13 novembre 2026 · CFGA De Jonquière</div>
+    <h1 class="s1-title">Rêver<br>le monde<br>de <span>demain</span></h1>
+    <p class="s1-hand">de l’idéation à l’action</p>
+    <p class="s1-sub">Engagement citoyen et autodétermination en FGA</p>
+    <div class="s1-who">
+      <div><span class="sticker">Isabelle Pedneault</span><small>Conseillère pédagogique · CFGA De Jonquière</small></div>
+      <div><span class="sticker" style="background:var(--paper)">Francis Laroche</span><small>Centre de solidarité internationale du Saguenay–Lac-Saint-Jean</small></div>
+    </div>
   </div>
+  <div class="s1-img"><img src="__IMG_MUR__" alt="Des jeunes adultes collent des papillons sur une carte du monde dans un centre de formation"></div>
 </section>
 
 <!-- 2 -->
@@ -434,7 +449,7 @@ $$('.bin').forEach(b => { b.addEventListener('dragover', e => { e.preventDefault
   b.addEventListener('click', e => { if (picked && !e.target.closest('.card')) drop(b, picked); }); });
 
 // ---------- triade ----------
-const venn = { e: ['ÉCOLE', 'Les savoirs des sigles, les compétences du programme, le temps de classe. Ex. : une lettre à la direction, un budget en mathématiques.'], c: ['COMMUNAUTÉ', 'Les organismes, la Ville, les familles, les commerces du quartier. Ex. : le CSI-SLSJ, une banque alimentaire, le conseil municipal.'], n: ['ENVIRONNEMENT', 'Le milieu de vie, le territoire, la nature. Ex. : la cour, le trajet vers le parc, les déchets de la cafétéria.'] };
+const venn = { e: ['ÉCOLE', 'Les savoirs des sigles, les compétences du programme, le temps de classe. Ex. : une lettre à la direction, un budget en mathématiques.'], c: ['COMMUNAUTÉ', 'Les organismes, la Ville, les familles, les commerces du quartier. Ex. : le Centre de solidarité internationale, une banque alimentaire, le conseil municipal.'], n: ['ENVIRONNEMENT', 'Le milieu de vie, le territoire, la nature. Ex. : la cour, le trajet vers le parc, les déchets de la cafétéria.'] };
 $$('.venn circle').forEach(c => c.addEventListener('click', () => { const v = venn[c.dataset.z]; $('#vennOut').innerHTML = `<h3>${v[0]}</h3><p>${v[1]}</p><p class="hand">Et à l’intersection des trois : le projet.</p>`; }));
 
 // ---------- résultat ou action ----------

@@ -1,7 +1,7 @@
 # Rêver le monde de demain… De l’idéation à l’action
 
 Atelier du colloque régional FGA, le 13 novembre 2026, au CFGA De Jonquière. Engagement citoyen et autodétermination en FGA.
-Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (CSI-SLSJ). Durée : 90 minutes, en 4 phases (30, 30, 20 et 10 minutes).
+Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI)). Durée : 90 minutes, en 4 phases (30, 30, 20 et 10 minutes).
 
 ## Les fichiers
 
@@ -76,4 +76,4 @@ Ces prompts décrivent la technique (cel-shading BD) sans nommer d’œuvre exis
 - Wehmeyer, M. L. (1999). A functional model of self-determination. *Focus on Autism and Other Developmental Disabilities*, 14(1), 53-61.
 - Fredricks, J. A., Blumenfeld, P. C. et Paris, A. H. (2004). School engagement. *Review of Educational Research*, 74(1), 59-109.
 - Pedneault, I. *L’objectivation*, fiche de classe.
-- Documents de préparation de l’atelier : offre de service du CSI-SLSJ, pistes de clarification, plans de synthèse 1.1 à 1.4.
+- Documents de préparation de l’atelier : offre de service du Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI), pistes de clarification, plans de synthèse 1.1 à 1.4.
