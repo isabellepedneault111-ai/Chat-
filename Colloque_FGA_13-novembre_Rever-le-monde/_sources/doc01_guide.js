@@ -57,6 +57,7 @@ const kids = [
   B('La présentation est un seul fichier HTML qui fonctionne sans Internet. En copier deux exemplaires sur deux clés USB.'),
   B('La vidéo des élèves doit être enregistrée localement. On la glisse dans la diapo 14 avec le bouton « Choisir une vidéo ».'),
   B('Prévoir des adaptateurs HDMI, USB-C et VGA, et une rallonge.'),
+  B('**Aller où on veut :** le bouton « Plan » (touche M) affiche toutes les diapos ; on touche celle qu’on veut, selon les questions de la salle.'),
 
   H1('03', 'Le script, phase par phase'),
   H2('Phase 1 · Diagnostic et monde idéal (0–30 min)'),
@@ -107,6 +108,14 @@ const kids = [
   P('Francis présente les 5 marches et les projets en cours au CFGA. Isabelle enchaîne sur la question des enseignants matières : « Et moi, en individualisé, avec 20 adultes dans 8 sigles ? » Les trois scénarios sont détaillés dans le cahier du participant : A, l’enjeu comme contexte de tâche ; B, le micro-projet ; C, le projet-pont.'),
 
   H2('Phase 3 · Idéation et vote par jetons (60–80 min)'),
+  P('**À la carte.** On fait vivre l’autonomie dont on vient de parler : chacun choisit son parcours, seul, en duo ou en îlot (15 min), puis la galerie et les jetons (5 min).'),
+  tbl(['Parcours', 'Ce qu’on fait'], [
+    ['**1 · Vivre la démarche**', 'Un enjeu du mur, un résultat (un nom), 2 ou 3 actions (un verbe, quand, qui).'],
+    ['**2 · L’adapter à mon sigle**', 'Le scénario A, B ou C pour mes élèves, en groupe ou en individualisé.'],
+    ['**3 · Préparer avec Copilot**', 'Une invite de l’aide-mémoire pour une tâche, une grille ou des questions d’objectivation.'],
+    ['**4 · Mon propre chemin**', 'Une autre idée ? On y va. Seule question en circulant : « Qu’est-ce que tu en retires ? »']
+  ], [3000, 7080], { firstAccent: true }),
+  P('Le déroulé ci-dessous décrit le parcours 1, le plus guidé.', { before: 100, run: { italics: true, color: C.grey } }),
   N('Chaque îlot choisit un enjeu du mur (2 min).', 3),
   N('Il formule le résultat (GN), puis 2 ou 3 actions (GV, date, responsable) (6 min).', 3),
   N('Il utilise une invite de l’aide-mémoire Copilot pour enrichir ou différencier une action (5 min).', 3),

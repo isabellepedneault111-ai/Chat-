@@ -115,7 +115,10 @@ const kids = [
   SP(120),
   zone('Le scénario qui me parle (A, B ou C), et pourquoi', 1300),
 
-  H1('09', 'Notre projet d’îlot'),
+  H1('09', 'Mon parcours'),
+  P('Choisissez : **1** vivre la démarche · **2** l’adapter à mon sigle · **3** préparer avec Copilot · **4** mon propre chemin. Seul, en duo ou en îlot.'),
+  zones(['Mon parcours (1, 2, 3 ou 4)', 'Avec qui'], 700),
+  SP(100),
   tbl(null, [
     [P('**Notre enjeu**', { after: 420 })],
     [P('**Notre résultat** (un nom)', { after: 420 })],

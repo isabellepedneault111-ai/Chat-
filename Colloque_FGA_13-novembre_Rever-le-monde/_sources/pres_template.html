@@ -5,13 +5,13 @@
 @font-face{font-family:"Caveat";src:url(__FONT_CAVEAT__) format("truetype");font-display:swap}
 /* Carnet d'atelier en cel-shading : papier crème, encre noire en trait, mauve d'imprimerie, jaune or. Un seul univers visuel, assumé. */
 :root{
-  --paper:#FBF8EF; --paper2:#F3EDDF; --ink:#1E1A22; --mauve:#5B2A86; --mauve2:#7A45AB; --gold:#F2C230; --muted:#6B6472; --hair:#C3BACB;
+  --paper:#FBF8EF; --paper2:#F3EDDF; --ink:#1E1A22; --mauve:#5B2A86; --mauve2:#7A45AB; --gold:#F2C230; --muted:#45404D; --hair:#8F859A;
   --display:"Anton","Impact","Arial Narrow Bold",sans-serif; --hand:"Caveat","Segoe Print","Comic Sans MS",cursive; --body:"Cambria","Georgia","Times New Roman",serif; --ui:"Arial","Helvetica",sans-serif;
   color-scheme:light;
 }
 [hidden]{display:none!important}
 html,body{height:100%}
-body{background:var(--paper);color:var(--ink);font-family:var(--body);overflow:hidden;margin:0}
+body{background:#E2D8C4;color:var(--ink);font-family:var(--body);overflow:hidden;margin:0}
 *{box-sizing:border-box}
 button{font:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--mauve);outline-offset:2px}
@@ -19,7 +19,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .slide{position:absolute;inset:0;display:flex;flex-direction:column;isolation:isolate;padding-block:clamp(18px,3.2vh,40px) 64px;padding-left:max(16px,env(safe-area-inset-left,0px),4vw);padding-right:max(16px,env(safe-area-inset-right,0px),4vw);opacity:0;visibility:hidden;transition:opacity .35s ease;overflow-y:auto;overflow-x:hidden}
 .slide.on{opacity:1;visibility:visible}
 @media (prefers-reduced-motion:reduce){.slide{transition:none}}
-.kick{font-family:var(--ui);font-size:clamp(11px,1.1vw,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--mauve);font-weight:700}
+.kick{font-family:var(--ui);font-size:clamp(13px,1.2vw,16px);letter-spacing:.14em;text-transform:uppercase;color:var(--mauve);font-weight:800}
 h1,h2{font-family:var(--display);font-weight:400;letter-spacing:.01em;line-height:1.02;margin:.15em 0 .3em;text-wrap:balance}
 h1{font-size:clamp(40px,7.4vw,112px)}
 h2{font-size:clamp(30px,4.6vw,68px)}
@@ -39,9 +39,9 @@ p,li{font-size:clamp(16px,1.55vw,22px);line-height:1.45;max-width:62ch}
 input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2vw,28px);border:3px solid var(--ink);background:var(--paper);padding:.2em .5em;color:var(--ink);min-width:0}
 .stage3d{position:relative;flex:1 1 auto;min-height:340px;border:3px solid var(--ink);background:radial-gradient(circle at 50% 40%,#fffdf6,var(--paper2));overflow:hidden}
 .stage3d canvas{display:block;width:100%!important;height:100%!important}
-.stage3d .tip{position:absolute;left:12px;bottom:10px;font-family:var(--hand);font-size:22px;color:var(--muted);pointer-events:none}
+.stage3d .tip{color:var(--ink)!important;position:absolute;left:12px;bottom:10px;font-family:var(--hand);font-size:22px;color:var(--muted);pointer-events:none}
 .photo{border:3px solid var(--ink);display:block;max-width:100%;height:auto}
-.cap{font-family:var(--ui);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.cap{font-family:var(--ui);font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px}
 /* barre du bas */
 .bar{position:fixed;left:0;right:0;bottom:0;height:46px;display:flex;align-items:center;gap:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper);border-top:3px solid var(--ink);z-index:20;font-family:var(--ui);font-size:13px}
 .phases{flex:1;display:flex;gap:3px;height:14px;min-width:0}
@@ -49,7 +49,7 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .phases i.done{background:var(--mauve)}
 .phases i.cur{background:var(--gold)}
 .bar .who{font-family:var(--hand);font-size:20px;color:var(--mauve);white-space:nowrap}
-.bar button{border:2px solid var(--ink);background:var(--paper);padding:2px 10px;font-family:var(--display);font-size:15px}
+.bar button{border:2px solid var(--ink);background:var(--paper);padding:2px 10px;font-family:var(--display);font-size:15px;white-space:nowrap}
 .bar .count{font-variant-numeric:tabular-nums;white-space:nowrap}
 /* notes et minuteur */
 .notes{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:58px;width:min(440px,calc(100vw - 32px));max-height:50vh;overflow:auto;background:var(--paper);border:3px solid var(--ink);box-shadow:8px 8px 0 var(--mauve);padding:14px 16px;z-index:30;font-size:16px}
@@ -77,7 +77,7 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .s1-sub{color:var(--paper);margin:0;font-size:clamp(15px,min(1.4vw,2.6vh),21px)}
 .s1-who{display:flex;flex-direction:column;gap:clamp(8px,1.4vh,14px);margin-top:clamp(4px,1vh,12px)}
 .s1-who div{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
-.s1-who small{font-family:var(--ui);font-size:clamp(11px,1vw,14px);letter-spacing:.06em;color:#E9DFF5}
+.s1-who small{font-family:var(--ui);font-size:clamp(13px,1.05vw,15px);letter-spacing:.04em;color:#FFFFFF}
 .s1-img{position:relative;min-height:0;overflow:hidden;background-color:var(--paper);background-image:linear-gradient(var(--paper2) 1px,transparent 1px),linear-gradient(90deg,var(--paper2) 1px,transparent 1px);background-size:28px 28px;display:grid;place-items:center}
 .note{position:absolute;margin:0;background:#fff;padding:10px;border:3px solid var(--ink);box-shadow:10px 10px 0 rgba(30,26,34,.18)}
 .note img{display:block;width:100%;height:auto}
@@ -101,7 +101,7 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .idc{transform:none}
 .idc header{background-color:var(--mauve);background-image:radial-gradient(rgba(30,26,34,.35) 1.4px,transparent 1.6px);background-size:11px 11px;padding:12px 16px;border-bottom:3px solid var(--ink);display:flex;flex-direction:column;gap:4px}
 .idc-name{font-family:var(--display);font-size:clamp(28px,3vw,44px);color:var(--gold);text-shadow:3px 3px 0 var(--ink);line-height:1}
-.idc-role{font-family:var(--ui);font-size:clamp(11px,1vw,14px);color:#E9DFF5;letter-spacing:.04em}
+.idc-role{font-family:var(--ui);font-size:clamp(13px,1.05vw,15px);color:#FFFFFF;letter-spacing:.03em}
 .idc dl{margin:0;padding:10px 16px 14px;display:grid;grid-template-columns:auto 1fr;gap:8px 14px;align-items:baseline}
 .idc dt{font-family:var(--ui);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mauve);white-space:nowrap}
 .idc dd{margin:0;font-family:var(--hand);font-size:clamp(20px,1.9vw,28px);line-height:1.15;border-bottom:2px dashed var(--hair);padding-bottom:2px;min-height:1.2em;cursor:text}
@@ -128,7 +128,7 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .s1-photo::before{display:none}
 @keyframes s1in{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.s1-photo{animation:none}}
-.sheet{width:min(820px,100%);margin-block:auto;background:rgba(251,248,239,.96);border:3px solid var(--ink);box-shadow:10px 10px 0 var(--ink);padding:clamp(16px,2.2vw,30px);min-width:0}
+.sheet{width:min(820px,100%);margin-block:auto;background:#FFFDF7;border:3px solid var(--ink);box-shadow:10px 10px 0 var(--ink);padding:clamp(16px,2.2vw,30px);min-width:0}
 @media (min-width:821px){.sheet{width:min(820px,55vw)}}
 .pres{max-width:1100px;margin:0 auto;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
 .pres-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -145,7 +145,7 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .sheet.dark .kick{color:var(--gold)}
 .sheet.dark .hand{color:var(--gold)}
 .sheet.dark .hl{background:linear-gradient(transparent 55%,var(--mauve2) 55%)}
-.sheet.dark .cap{color:#CFC6D8}
+.sheet.dark .cap{color:#EDE6F5}
 .sheet.dark .verbs div,.sheet.dark .flip button,.sheet.dark .panel{color:var(--ink)}
 .sheet.dark .verbs div{background:var(--paper)}
 .sheet.dark .verbs b{color:var(--mauve)}
@@ -170,7 +170,7 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .qtext.pop{animation:qpop .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes qpop{from{opacity:0;transform:translateY(14px) rotate(-1deg)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.qtext.pop{animation:none}}
-.qsrc{font-family:var(--ui);font-size:13px;letter-spacing:.16em;text-transform:uppercase;margin:14px 0 0;opacity:.8}
+.qsrc{font-family:var(--ui);font-size:15px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin:14px 0 0;color:var(--gold)}
 .qdots{position:absolute;left:clamp(10px,2vw,28px);bottom:16px;display:flex;gap:8px}
 .qdots i{width:12px;height:12px;border:2px solid currentColor;border-radius:50%}
 .qdots i.on{background:var(--gold);border-color:var(--gold)}
@@ -184,13 +184,24 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .bes{border:3px solid var(--paper);padding:10px 14px}
 .bes b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(22px,2.1vw,32px);color:var(--gold)}
 .bes p{font-family:var(--hand);font-size:clamp(20px,1.8vw,26px);line-height:1.15;margin:4px 0 6px}
-.bes span{font-family:var(--ui);font-size:13px;letter-spacing:.04em;opacity:.85}
+.bes span{font-family:var(--ui);font-size:14px;letter-spacing:.03em;color:#EDE6F5}
 .gestes{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:10px}
 .gestes li{border:3px solid var(--paper);padding:8px 12px;font-family:var(--hand);font-size:clamp(19px,1.7vw,24px);line-height:1.15;max-width:none}
 .gestes li b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(20px,1.9vw,28px);color:var(--gold)}
 .eng-cit{margin-top:14px;border-left:6px solid var(--gold);padding-left:14px}
 .eng-cit b{font-family:var(--display);font-weight:400;font-size:clamp(22px,2vw,30px);color:var(--gold)}
 .eng-cit p{font-style:italic;margin:4px 0}
+.parcours{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:12px}
+.parcours article{border:3px solid var(--paper);padding:10px 14px}
+.parcours article.libre{border-style:dashed;border-color:var(--gold)}
+.parcours b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(22px,2vw,30px);color:var(--gold)}
+.parcours p{font-family:var(--hand);font-size:clamp(19px,1.7vw,24px);line-height:1.15;margin:4px 0 0}
+.plan{position:fixed;inset:0;z-index:45;background:rgba(30,26,34,.9);overflow:auto;padding-block:calc(20px + env(safe-area-inset-top,0px)) 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.plan h3{font-family:var(--display);font-weight:400;color:var(--gold);font-size:34px;margin:0 0 12px}
+.plan ol{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(230px,100%),1fr));gap:10px}
+.plan button{width:100%;text-align:left;border:3px solid var(--ink);background:var(--paper);padding:10px 12px;font-family:var(--body);font-size:16px;min-height:64px;box-shadow:4px 4px 0 var(--gold)}
+.plan button b{font-family:var(--display);font-weight:400;color:var(--mauve);font-size:22px;margin-right:6px}
+.plan button.cur{background:var(--gold)}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:18px;align-items:start}
 .gallery figure{margin:0;cursor:zoom-in}
 .gallery figure img{border:3px solid var(--ink);width:100%;height:auto;background:#fff}
@@ -444,18 +455,17 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 </section>
 
 <!-- 14 -->
-<section class="slide" data-phase="3" data-who="Duo" data-notes="Cahier, section 09. 2 min pour choisir l’enjeu, 6 min pour le résultat et les actions. Circuler dans les îlots.">
+<section class="slide" data-phase="3" data-who="Duo" data-notes="On fait vivre l’autonomie : chacun choisit son parcours (1, 2, 3 ou son propre chemin), seul, en duo ou en îlot. 15 minutes. Cahier, section 09. Circuler, demander « Qu’est-ce que tu en retires ? ». Puis galerie et jetons sur ce qui a été produit.">
   <div class="kick">Phase 3 · idéation en îlot</div>
-  <h2>À vous de jouer</h2>
-  <div class="row">
-    <ol class="col" style="font-size:clamp(18px,1.8vw,26px)">
-      <li>Choisissez un enjeu du mur.</li>
-      <li>Écrivez le <span class="hl">résultat</span> (un nom).</li>
-      <li>Écrivez 2 ou 3 <span class="hl">actions</span> : un verbe, quand, qui.</li>
-      <li>Enrichissez une action avec Copilot.</li>
-    </ol>
-    <div class="col"><p><button class="btn" data-timer="120">2 min · l’enjeu</button></p><p><button class="btn" data-timer="360">6 min · résultat et actions</button></p><p><button class="btn alt" data-timer="300">5 min · Copilot</button></p></div>
+  <h2>À vous de jouer : choisissez votre parcours</h2>
+  <div class="parcours">
+    <article><b>1 · Vivre la démarche</b><p>Un enjeu du mur, un résultat (un nom), 2 ou 3 actions (un verbe, quand, qui).</p></article>
+    <article><b>2 · L’adapter à mon sigle</b><p>Le scénario A, B ou C pour mes élèves, en groupe ou en individualisé.</p></article>
+    <article><b>3 · Préparer avec Copilot</b><p>Une invite pour une tâche, une grille ou des questions d’objectivation.</p></article>
+    <article class="libre"><b>4 · Mon propre chemin</b><p>Vous avez une autre idée ? Allez-y. On vous demandera seulement ce que vous en retirez.</p></article>
   </div>
+  <p style="margin-top:12px"><button class="btn" data-timer="900">15 min · en parcours</button> <button class="btn alt" data-timer="300">5 min · galerie et jetons</button></p>
+  <p class="cap">Seul, en duo ou en îlot : c’est vous qui choisissez</p>
 </section>
 
 <!-- 15 -->
@@ -525,6 +535,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <span class="count" id="count">1 / 20</span>
   <div class="phases" id="phases" aria-hidden="true"></div>
   <span class="who" id="who" hidden></span>
+  <button id="mBtn" title="Plan : aller à n’importe quelle diapo (M)">Plan</button>
   <button id="tBtn" title="Minuteur (T)">T</button>
   <button id="eBtn" title="Modifier les textes (E)">E</button>
   <button id="pBtn" title="Mode présentateur, dans une 2e fenêtre (P)">P</button>
@@ -533,6 +544,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <button id="next" aria-label="Diapo suivante">›</button>
 </div>
 <div class="editbar" id="editbar" hidden><b>Mode modification</b> Touchez un texte pour le changer. Les changements restent sur cet ordinateur. <button class="btn" id="eDone">Terminer</button> <button class="btn alt" id="eReset">Tout remettre comme avant</button></div>
+<div class="plan" id="plan" hidden><h3>Aller où on veut</h3><ol id="planList"></ol></div>
 <aside class="notes" id="notes" hidden><h3 id="nTitle">Notes</h3><p id="nBody"></p></aside>
 <div class="timer" id="timer" hidden title="Cliquer pour arrêter">0:00</div>
 
@@ -587,6 +599,10 @@ function go(n) {
 }
 $('#prev').onclick = () => go(cur - 1); $('#next').onclick = () => go(cur + 1);
 $('#nBtn').onclick = () => { $('#notes').hidden = !$('#notes').hidden; };
+// ---------- plan : aller à n’importe quelle diapo ----------
+function openPlan() { const ol = $('#planList'); ol.innerHTML = ''; slides.forEach((sl, k) => { const h = sl.querySelector('h1,h2'); let t = ''; if (h) { const c = h.cloneNode(true); c.querySelectorAll('br').forEach(b => b.replaceWith(' ')); t = c.textContent.replace(/\s+/g, ' ').trim(); } const li = document.createElement('li'); const b = document.createElement('button'); b.className = k === cur ? 'cur' : ''; b.innerHTML = '<b>' + (k + 1) + '</b>'; b.appendChild(document.createTextNode(t)); b.onclick = () => { $('#plan').hidden = true; go(k); }; li.appendChild(b); ol.appendChild(li); }); $('#plan').hidden = false; }
+$('#mBtn').onclick = () => { if ($('#plan').hidden) openPlan(); else $('#plan').hidden = true; };
+$('#plan').addEventListener('click', e => { if (e.target.id === 'plan') $('#plan').hidden = true; });
 // ---------- mode modification ----------
 const EDSEL = '.sheet h1,.sheet h2,.sheet h3,.sheet p:not(.cap),.sheet li,.sheet blockquote,.s1-panel h1,.s1-panel p';
 const edEls = []; slides.forEach((sl, i) => sl.querySelectorAll(EDSEL).forEach((el, k) => { if (el.closest('form,.idc,.votes,.mur,.pool,.bin,.flip,.scen,.verdict')) return; el.dataset.ek = i + ':' + k; edEls.push(el); const v = store.get('edit:' + el.dataset.ek, null); if (v !== null) el.innerHTML = v; }));
@@ -604,6 +620,8 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'n' || e.key === 'N') $('#nBtn').click();
   else if (e.key === 'p' || e.key === 'P') $('#pBtn').click();
   else if (e.key === 'e' || e.key === 'E') $('#eBtn').click();
+  else if (e.key === 'm' || e.key === 'M') $('#mBtn').click();
+  else if (e.key === 'Escape') { $('#plan').hidden = true; }
   else if (e.key === 't' || e.key === 'T') $('#tBtn').click();
   else if (e.key === 'f' || e.key === 'F') $('#fBtn').click();
   else if (e.key === 'Home') go(0); else if (e.key === 'End') go(slides.length - 1);
@@ -715,8 +733,8 @@ const G3 = (() => {
   const T = THREE, V = T.Vector3;
   const cv = document.createElement('canvas'); cv.id = 'world'; cv.setAttribute('aria-hidden', 'true'); document.body.prepend(cv);
   const renderer = new T.WebGLRenderer({ canvas: cv, antialias: true });
-  renderer.setPixelRatio(Math.min(2, devicePixelRatio)); renderer.setClearColor(0xFBF8EF);
-  const scene = new T.Scene(); scene.fog = new T.Fog(0xFBF8EF, 30, 100);
+  renderer.setPixelRatio(Math.min(2, devicePixelRatio)); renderer.setClearColor(0xE2D8C4);
+  const scene = new T.Scene(); scene.fog = new T.Fog(0xE2D8C4, 34, 110);
   const camera = new T.PerspectiveCamera(42, 1, .1, 300);
   scene.add(new T.AmbientLight(0xffffff, .42)); const dl = new T.DirectionalLight(0xffffff, .62); dl.position.set(20, 40, 25); scene.add(dl);
   const grad = (() => { const d = new Uint8Array([105, 105, 105, 255, 185, 185, 185, 255, 235, 235, 235, 255]); const t = new T.DataTexture(d, 3, 1, T.RGBAFormat); t.minFilter = t.magFilter = T.NearestFilter; t.needsUpdate = true; return t; })();
@@ -738,7 +756,7 @@ const G3 = (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ---------- sol, stations, sentier ----------
-  const dots = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'); x.fillStyle = '#F3EDDF'; x.fillRect(0, 0, 64, 64); x.fillStyle = 'rgba(91,42,134,.16)'; [[16, 16], [48, 48]].forEach(([a, b]) => { x.beginPath(); x.arc(a, b, 5, 0, 7); x.fill(); }); const t = new T.CanvasTexture(c); t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(60, 60); return t; })();
+  const dots = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'); x.fillStyle = '#D9CDB5'; x.fillRect(0, 0, 64, 64); x.fillStyle = 'rgba(91,42,134,.28)'; [[16, 16], [48, 48]].forEach(([a, b]) => { x.beginPath(); x.arc(a, b, 5, 0, 7); x.fill(); }); const t = new T.CanvasTexture(c); t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(60, 60); return t; })();
   const ground = new T.Mesh(new T.CircleGeometry(46, 96), new T.MeshBasicMaterial({ map: dots })); ground.rotation.x = -Math.PI / 2; scene.add(ground);
   const rim = new T.Mesh(new T.RingGeometry(46, 46.6, 96), new T.MeshBasicMaterial({ color: 0x1E1A22 })); rim.rotation.x = -Math.PI / 2; rim.position.y = .01; scene.add(rim);
   const NAMES = ['globe', 'village', 'triade', 'spheres', 'pyr', 'nomverbe', 'escalier', 'portes', 'jetons', 'pas', 'maison'];

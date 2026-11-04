@@ -24,6 +24,7 @@ La présentation est un voyage dans un seul monde 3D en cel-shading : un sol de 
 - **Navigation :** flèches du clavier ou barre d’espace. Sur une tablette, glisser vers la gauche ou la droite.
 - **P** ouvre le mode présentateur dans une 2e fenêtre : notes, qui anime, diapo suivante, chrono, boutons pour avancer. Gardez-la sur l’écran du portable (Windows + P, « Étendre ») ; la salle ne voit que la projection.
 - **N** affiche les notes sur l’écran projeté : la salle les voit aussi.
+- **Plan** (touche M) affiche toutes les diapos : on touche celle où on veut aller.
 - **T** lance un minuteur de 5 minutes. Plusieurs diapos ont aussi leurs propres boutons de minuteur.
 - **F** passe en plein écran.
 
