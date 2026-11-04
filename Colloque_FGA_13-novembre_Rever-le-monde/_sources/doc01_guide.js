@@ -55,7 +55,7 @@ const kids = [
     ['**Français et anglais**', 'Le résultat (un nom) et l’action (un verbe) : un pont direct avec la grammaire. Une lettre, une affiche bilingue, une capsule.'],
     ['**Orthopédagogie**', 'L’enjeu choisi par l’élève comme texte d’entraînement ; l’annexe 10 sur les interventions universelles.'],
     ['**Orientation et CP**', 'Relier l’enjeu au projet de vie et à J’ai mon plan ; accompagner une équipe qui fait un premier essai.'],
-    ['**Directions**', 'Les conditions qui rendent la démarche possible : une période commune, l’horaire d’un projet-pont, les partenariats avec la communauté.']
+    ['**Directions**', 'Les conditions qui rendent la démarche possible : du **temps protégé** à l’horaire (le cadre d’innovation du CFGA), l’horaire d’un projet-pont, les partenariats avec la communauté.']
   ], [2800, 7280], { firstAccent: true }),
   ...note('Composer les îlots', ['En entrant, chacun prend un papillon de la couleur de son profil : IS, ISP, PPS et DHS ; mathématiques et sciences ; français et anglais ; directions et services (orthopédagogie, orientation, CP). On forme des îlots qui mêlent les CSS et les profils. Les directions et les professionnels se répartissent dans les îlots : leur regard sur les conditions (horaire, partenariats) enrichit chaque projet.'], { before: 160 }),
 
@@ -163,6 +163,7 @@ const kids = [
   N('**La pyramide de rétention (1 min, diapo 17).** On touche l’étage : « Où se situait votre dernière formation ? » Puis : « Et l’atelier d’aujourd’hui ? » Il devrait se situer dans le bas : discuter, faire, enseigner aux autres.', 4),
   N('**Objectivation 3-2-1 (3 min, diapo 18).** 3 idées que je retiens, 2 choses que j’essaie, 1 question qui me reste. On modélise ce qu’on propose : voir l’annexe sur l’objectivation.', 4),
   N('**Ce qui reste et merci (1 min, diapos 19 et 20).** Un ou deux vrais mots d’élèves, le besoin qu’ils nourrissent. Le code QR mène au dossier partagé. Annonce de la relance à six semaines : « Avez-vous fait votre premier pas ? »', 4),
+  ...note('Le pont avec le cadre d’innovation du CFGA', ['Un premier pas, c’est une petite innovation. Le cadre adapté des COP IA (Giroux, Munger et Pedneault, 2026) repose sur quatre fondations, dont **le droit d’essayer** et **du temps protégé**. Dans la fiche : la date devient du temps protégé, réservé à l’horaire et tenu ; l’allié, c’est la validation par les pairs. Les 6 questions du cadre sont dans le cahier, juste sous la fiche. Aux directions présentes : leur premier pas peut être de protéger ce temps pour une équipe.'], { before: 160 }),
   ...note('La pyramide, sans chiffres', ['Les pourcentages qui circulent avec cette pyramide (10 %, 20 %… 90 %) ne proviennent d’aucune étude solide. On la présente comme un **repère du passif à l’actif**. Le message, lui, est bien appuyé par la recherche : générer, s’expliquer, se rappeler activement et enseigner à un autre aident à apprendre.'], { before: 160 }),
   ...note('Pour aller plus loin', ['L’annexe 10 propose une autoévaluation des interventions universelles, d’après la grille réflexive EN.1.1 de « J’ai MON plan! ». Avant de cibler un élève, on regarde ce qu’on offre à tout le groupe.'], { before: 160 }),
 
@@ -187,7 +188,7 @@ const kids = [
 
   H1('06', 'Après le colloque'),
   B('**Le mur d’enjeux régional.** Les papillons des quatre CSS deviennent une « carte des préoccupations » du Saguenay–Lac-Saint-Jean, rapportée en classe comme banque d’enjeux.'),
-  B('**La relance à six semaines.** Un courriel aux participants (« Avez-vous fait votre premier pas ? ») transforme l’atelier en petite communauté de pratique.'),
+  B('**La relance à six semaines.** Un courriel aux participants (« Avez-vous fait votre premier pas ? ») transforme l’atelier en petite communauté de pratique. On y joint la question 6 du cadre d’innovation : « Qui l’a vue assez de fois pour la refaire sans moi ? »'),
   B('**Le jumelage interprogrammes.** Un groupe PPS ou DHS avec une enseignante matières (scénario C), prêt à démarrer en janvier.'),
   B('**L’accompagnement du CSI.** Un ou deux enseignants qui démarrent une démarche semblable, y compris dans les autres CSS.'),
 

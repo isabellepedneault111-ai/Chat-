@@ -132,7 +132,12 @@ const kids = [
   P('Des idées : demander lundi à mon groupe « Qu’est-ce qui vous dérange ? » · transformer une tâche de mon sigle à partir d’un enjeu choisi par l’élève · terminer une période par un 3-2-1 · proposer un projet-pont à une ou un collègue de PPS, de DHS, d’IS ou d’ISP · direction ou services : réserver une période commune pour qu’une équipe essaie la démarche · tester une invite Copilot pour bâtir une grille.', { run: { size: 19 } }),
   zone('1 · Mon action (un verbe !)', 900),
   SP(60),
-  zones(['2 · Quand', '3 · Avec qui (mon allié)'], 700),
+  zones(['2 · Quand (mon temps protégé)', '3 · Avec qui (mon allié)'], 700),
+  SP(100),
+  H2('Avant de me lancer : six questions'),
+  P('Un premier pas, c’est une petite innovation. Le cadre d’innovation du CFGA repose sur quatre fondations : la durabilité, **le droit d’essayer**, **du temps protégé** (réservé à l’horaire, et tenu) et la réussite des adultes. Un « non » ne bloque rien : il signale qu’il reste à réfléchir.', { run: { size: 19 } }),
+  tbl(['Question', 'Oui', 'Non'], [['Pertinence pédagogique', 'Mon projet a-t-il une pertinence pédagogique ?'], ['Éthique', 'Ai-je réfléchi aux principes éthiques en jeu ?'], ['Cadre légal', 'Mon initiative respecte-t-elle le cadre légal ?'], ['Soutien', 'Ai-je accès au soutien nécessaire pour la mettre en œuvre ?'], ['Validation par les pairs', 'Ai-je consulté mes pairs pour enrichir mon idée et en voir les angles morts ?'], ['Pérennité', 'Peut-elle être maintenue dans le temps et adaptée ailleurs ?']].map(q => ['**' + q[0] + '** · ' + q[1], '☐', '☐']), [8040, 1000, 1000], { firstAccent: true }),
+  P('La question qui tranche : « Qui l’a vue assez de fois pour la refaire sans moi ? » Adapté du cadre des COP IA : Giroux, Munger et Pedneault (2026).', { before: 80, run: { size: 17, italics: true, color: C.grey } }),
 
   H1('09', 'Retour sur l’atelier : la pyramide'),
   img(I + 'il_pyramide.png', 340, 243),

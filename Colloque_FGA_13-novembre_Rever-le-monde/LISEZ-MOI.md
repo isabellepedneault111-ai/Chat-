@@ -46,7 +46,7 @@ Ce qui est interactif :
 - **Diapo 13 :** en îlot, les 4 étapes obligatoires avec leur minuteur.
 - **Diapo 14 :** le générateur d’invites Copilot : on choisit le rôle et on écrit son groupe, son sigle, son enjeu et ses contraintes. L’invite demande à Copilot de s’appuyer sur le programme d’études officiel de la FGA (compétences, savoirs, famille de situations de vie) ; le bouton « Copier » la met dans le presse-papier.
 - **Diapo 15 :** les piles de jetons 3D du vote, sous le nom de l’enjeu de chaque îlot.
-- **Diapo 16 :** Mon premier pas, avec des exemples.
+- **Diapo 16 :** Mon premier pas, avec des exemples et le pont avec le cadre d’innovation du CFGA (temps protégé, validation par les pairs, pérennité).
 - **Diapo 17 :** la pyramide 3D, en retour sur l’atelier. On touche l’étage de sa dernière formation.
 - **Diapo 19 :** ce qui reste : de vrais mots d’élèves, reliés aux 4 besoins de l’engagement.
 - **Diapo 20 :** le code QR mène au dossier Drive partagé des ressources (à partager en lecture).
@@ -98,5 +98,6 @@ Ces prompts décrivent la technique (cel-shading BD) sans nommer d’œuvre exis
 - Wehmeyer, M. L. (1999). A functional model of self-determination. *Focus on Autism and Other Developmental Disabilities*, 14(1), 53-61.
 - Fredricks, J. A., Blumenfeld, P. C. et Paris, A. H. (2004). School engagement. *Review of Educational Research*, 74(1), 59-109.
 - Pedneault, I. *L’objectivation*, fiche de classe.
+- Giroux, P., Munger, M. et Pedneault, I. (2026). *Cadre d’innovation des COP IA du CSSDLJ*, adapté pour le CFGA (Boussole CP).
 - Gaudreau, N., Duchaine, M.-P. et Bernier, S. *Grille réflexive des interventions universelles* (EN.1.1), « J’ai MON plan! », Université Laval.
 - Documents de préparation de l’atelier : offre de service du Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI), pistes de clarification, plans de synthèse 1.1 à 1.4.

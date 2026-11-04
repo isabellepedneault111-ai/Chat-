@@ -55,14 +55,19 @@ const kids = [
     'Contraintes : 6 items, corrigé à part, thème lié à leur centre ou à leur quartier.'
   ]),
 
-  H1('03', 'Les balises'),
+  H1('03', 'Innover au CFGA : six questions avant de se lancer'),
+  P('Le cadre d’innovation du CFGA, adapté du cadre des COP IA du CSSDLJ. Quatre fondations : la durabilité et la flexibilité, **le droit d’essayer**, **du temps protégé** (le temps de planification et de concertation existe ; l’enjeu est de le réserver et de le tenir) et la réussite des adultes.', { run: { size: 19 } }),
+  tbl(['', 'Question', 'Oui', 'Non'], [['Pertinence pédagogique', 'Mon projet a-t-il une pertinence pédagogique ?'], ['Éthique', 'Ai-je réfléchi aux principes éthiques en jeu ?'], ['Cadre légal', 'Mon initiative respecte-t-elle le cadre légal ?'], ['Soutien', 'Ai-je accès au soutien nécessaire pour la mettre en œuvre ?'], ['Validation par les pairs', 'Ai-je consulté mes pairs pour enrichir mon idée et en voir les angles morts ?'], ['Pérennité', 'Peut-elle être maintenue dans le temps et adaptée ailleurs ?']].map((q, i) => [String(i + 1), '**' + q[0] + '** · ' + q[1], '☐', '☐']), [500, 7540, 1000, 1000], { firstAccent: true }),
+  P('Les trois premières viennent du cadre ministériel ; les trois dernières sont les ajouts des COP IA. En FGA, la question 4 est la plus souvent oubliée : le soutien, c’est du temps réservé à l’horaire, et tenu. Adapté du cadre des COP IA : Giroux, Munger et Pedneault (2026).', { before: 80, run: { size: 17, italics: true, color: C.grey } }),
+
+  H1('04', 'Les balises'),
   B('**Aucun renseignement personnel** dans une invite : pas de nom d’élève, pas de diagnostic, pas de résultat scolaire identifiable.'),
   B('**Le compte du centre de services** (Copilot avec protection des données d’entreprise), pas un compte personnel.'),
   B('**L’IA propose, l’enseignant dispose.** Copilot n’a pas toujours accès au programme exact : on vérifie chaque lien avec le programme d’études officiel, les faits et le niveau de langue. Coller l’extrait pertinent du programme dans l’invite donne de bien meilleurs résultats.'),
   B('**On le dit aux élèves** quand un outil a été préparé avec l’IA, et on leur montre comment l’utiliser de façon critique.'),
   B('On consulte les balises de son CSS avant tout usage avec les élèves.'),
 
-  H1('04', 'Mes tests'),
+  H1('05', 'Mes tests'),
   P('Avant l’atelier, essayez une invite et notez ce qui en est sorti.'),
   tbl(['Invite', 'Ce que Copilot a produit', 'Ce que j’ajuste'], [1, 2].map(n => [`n° ${n}`, P(' ', { after: 500 }), P(' ', { after: 500 })]), [1400, 4310, 4310])
 ];
