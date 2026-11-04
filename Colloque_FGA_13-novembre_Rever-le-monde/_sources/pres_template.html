@@ -1,0 +1,583 @@
+<title>Rêver le monde de demain</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+@font-face{font-family:"Anton";src:url(__FONT_ANTON__) format("truetype");font-display:block}
+@font-face{font-family:"Caveat";src:url(__FONT_CAVEAT__) format("truetype");font-display:block}
+/* Carnet d'atelier en cel-shading : papier crème, encre noire en trait, mauve d'imprimerie, jaune or. Un seul univers visuel, assumé. */
+:root{
+  --paper:#FBF8EF; --paper2:#F3EDDF; --ink:#1E1A22; --mauve:#5B2A86; --mauve2:#7A45AB; --gold:#F2C230; --muted:#6B6472; --hair:#C3BACB;
+  --display:"Anton","Impact","Arial Narrow Bold",sans-serif; --hand:"Caveat","Segoe Print","Comic Sans MS",cursive; --body:"Cambria","Georgia","Times New Roman",serif; --ui:"Arial","Helvetica",sans-serif;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);overflow:hidden}
+*{box-sizing:border-box}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--mauve);outline-offset:2px}
+.deck{position:relative;height:100%;width:100%}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;padding-block:clamp(18px,3.2vh,40px) 64px;padding-left:max(16px,env(safe-area-inset-left,0px),4vw);padding-right:max(16px,env(safe-area-inset-right,0px),4vw);opacity:0;visibility:hidden;transition:opacity .35s ease;overflow-y:auto;overflow-x:hidden}
+.slide.on{opacity:1;visibility:visible}
+@media (prefers-reduced-motion:reduce){.slide{transition:none}}
+.kick{font-family:var(--ui);font-size:clamp(11px,1.1vw,14px);letter-spacing:.18em;text-transform:uppercase;color:var(--mauve);font-weight:700}
+h1,h2{font-family:var(--display);font-weight:400;letter-spacing:.01em;line-height:1.02;margin:.15em 0 .3em;text-wrap:balance}
+h1{font-size:clamp(40px,7.4vw,112px)}
+h2{font-size:clamp(30px,4.6vw,68px)}
+h2 .num{display:inline-block;background:var(--gold);color:var(--mauve);padding:0 .22em;margin-right:.25em;border:3px solid var(--ink);transform:rotate(-3deg)}
+.hand{font-family:var(--hand);font-size:clamp(22px,2.3vw,34px);color:var(--mauve);line-height:1.15}
+p,li{font-size:clamp(16px,1.55vw,22px);line-height:1.45;max-width:62ch}
+.hl{background:linear-gradient(transparent 55%,var(--gold) 55%);padding:0 .1em}
+.row{display:flex;gap:clamp(16px,2.5vw,40px);flex-wrap:wrap;align-items:flex-start;min-height:0}
+.col{flex:1 1 300px;min-width:0}
+.ink-box{border:3px solid var(--ink);background:var(--paper);box-shadow:8px 8px 0 0 var(--ink);padding:clamp(12px,1.6vw,22px)}
+.hatch-shadow{position:relative}
+.hatch-shadow::after{content:"";position:absolute;inset:10px -10px -10px 10px;z-index:-1;background:repeating-linear-gradient(45deg,var(--ink) 0 2px,transparent 2px 9px)}
+.btn{border:3px solid var(--ink);background:var(--gold);color:var(--ink);font-family:var(--display);letter-spacing:.04em;font-size:clamp(15px,1.4vw,20px);padding:.35em .9em;box-shadow:4px 4px 0 var(--ink);transition:transform .08s}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn.alt{background:var(--paper)}
+.btn.mv{background:var(--mauve);color:var(--paper)}
+input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2vw,28px);border:3px solid var(--ink);background:var(--paper);padding:.2em .5em;color:var(--ink);min-width:0}
+.stage3d{position:relative;flex:1 1 auto;min-height:340px;border:3px solid var(--ink);background:radial-gradient(circle at 50% 40%,#fffdf6,var(--paper2));overflow:hidden}
+.stage3d canvas{display:block;width:100%!important;height:100%!important}
+.stage3d .tip{position:absolute;left:12px;bottom:10px;font-family:var(--hand);font-size:22px;color:var(--muted);pointer-events:none}
+.photo{border:3px solid var(--ink);display:block;max-width:100%;height:auto}
+.cap{font-family:var(--ui);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+/* barre du bas */
+.bar{position:fixed;left:0;right:0;bottom:0;height:46px;display:flex;align-items:center;gap:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper);border-top:3px solid var(--ink);z-index:20;font-family:var(--ui);font-size:13px}
+.phases{flex:1;display:flex;gap:3px;height:14px;min-width:0}
+.phases i{flex:1;border:2px solid var(--ink);background:var(--paper)}
+.phases i.done{background:var(--mauve)}
+.phases i.cur{background:var(--gold)}
+.bar .who{font-family:var(--hand);font-size:20px;color:var(--mauve);white-space:nowrap}
+.bar button{border:2px solid var(--ink);background:var(--paper);padding:2px 10px;font-family:var(--display);font-size:15px}
+.bar .count{font-variant-numeric:tabular-nums;white-space:nowrap}
+/* notes et minuteur */
+.notes{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:58px;width:min(440px,calc(100vw - 32px));max-height:50vh;overflow:auto;background:var(--paper);border:3px solid var(--ink);box-shadow:8px 8px 0 var(--mauve);padding:14px 16px;z-index:30;font-size:16px}
+.notes h3{font-family:var(--display);font-weight:400;margin:0 0 6px;font-size:22px}
+.timer{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:58px;z-index:30;background:var(--ink);color:var(--gold);font-family:var(--display);font-size:clamp(34px,4vw,56px);padding:4px 16px;border:3px solid var(--gold);font-variant-numeric:tabular-nums;cursor:pointer}
+.timer.warn{background:var(--gold);color:var(--ink);border-color:var(--ink)}
+/* éléments par diapo */
+.cover{position:absolute;inset:0;z-index:-1}
+.cover img{width:100%;height:100%;object-fit:cover;filter:saturate(.95)}
+.cover::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(251,248,239,.97) 0 38%,rgba(251,248,239,.75) 52%,rgba(251,248,239,0) 75%)}
+.title-wrap{max-width:min(720px,100%);margin-top:auto;margin-bottom:auto}
+.sticker{display:inline-block;background:var(--gold);border:3px solid var(--ink);padding:.15em .5em;font-family:var(--display);transform:rotate(-2deg);box-shadow:4px 4px 0 var(--ink)}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:18px;align-items:start}
+.gallery figure{margin:0;cursor:zoom-in}
+.gallery figure img{border:3px solid var(--ink);width:100%;height:auto;background:#fff}
+.zoom{position:fixed;inset:0;background:rgba(30,26,34,.86);display:flex;align-items:center;justify-content:center;z-index:50;padding:24px;cursor:zoom-out}
+.zoom img{max-width:min(1100px,100%);max-height:86vh;border:4px solid var(--paper)}
+.sort{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:14px}
+.bin{border:3px dashed var(--ink);min-height:180px;padding:10px;background:var(--paper)}
+.bin.over{background:#fff5d1}
+.bin h4{font-family:var(--display);font-weight:400;font-size:24px;margin:0 0 8px;color:var(--mauve)}
+.card{border:2px solid var(--ink);background:#fff;padding:8px 10px;margin:0 0 8px;font-style:italic;font-size:clamp(14px,1.2vw,17px);cursor:grab;box-shadow:3px 3px 0 var(--ink);touch-action:none}
+.card.sel{outline:3px solid var(--gold)}
+.pool{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.pool .card{flex:1 1 260px;margin:0}
+.verbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:16px;counter-reset:v}
+.verbs div{border:3px solid var(--ink);padding:14px;background:var(--paper)}
+.verbs b{font-family:var(--display);font-weight:400;font-size:clamp(28px,3vw,44px);display:block;color:var(--mauve)}
+.venn{max-width:min(620px,100%);height:auto}
+.venn circle{stroke:var(--ink);stroke-width:4;mix-blend-mode:multiply;cursor:pointer}
+.panel{border:3px solid var(--ink);background:var(--paper);padding:14px 18px;box-shadow:6px 6px 0 var(--gold)}
+.panel h3{font-family:var(--display);font-weight:400;font-size:clamp(26px,2.6vw,38px);margin:0 0 6px;color:var(--mauve)}
+.checker{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.checker input{flex:1 1 320px}
+.verdict{font-family:var(--display);font-size:clamp(26px,3vw,42px);margin-top:10px;min-height:1.2em}
+.flip{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:14px;margin-top:14px}
+.flip button{border:3px solid var(--ink);background:var(--paper);text-align:left;padding:12px;min-height:96px;font-family:var(--hand);font-size:clamp(20px,1.9vw,26px);box-shadow:4px 4px 0 var(--ink)}
+.flip button.back{background:var(--gold)}
+.flip small{display:block;font-family:var(--ui);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mauve)}
+.steps{display:flex;align-items:flex-end;gap:8px;height:clamp(200px,38vh,360px)}
+.steps button{flex:1;border:3px solid var(--ink);display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;padding:8px;text-align:left;font-family:var(--display);font-size:clamp(14px,1.3vw,19px);min-width:0;overflow:hidden}
+.steps button .n{font-size:clamp(34px,4vw,60px);line-height:1}
+.steps button .c{font-family:var(--hand);font-size:clamp(17px,1.5vw,22px);opacity:0;transition:opacity .3s}
+.steps button.show .c{opacity:1}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.chip{border:2px solid var(--ink);background:var(--paper);padding:3px 12px;font-family:var(--ui);font-size:14px}
+.chip.on{background:var(--mauve);color:var(--paper)}
+.scen{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px}
+.scen article{border:3px solid var(--ink);padding:14px;background:var(--paper)}
+.scen h3{font-family:var(--display);font-weight:400;font-size:clamp(24px,2.3vw,32px);margin:0 0 6px}
+.scen .ex{font-family:var(--hand);font-size:clamp(20px,1.8vw,24px);color:var(--mauve);border-top:2px dashed var(--hair);padding-top:6px;margin-top:8px}
+video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--ink)}
+.drop{border:3px dashed var(--ink);padding:24px;text-align:center;background:var(--paper2)}
+.prompt-out{font-family:Consolas,"Courier New",monospace;font-size:clamp(14px,1.25vw,17px);white-space:pre-wrap;border:3px solid var(--ink);background:#fff;padding:12px;min-height:150px}
+.rctc label{font-family:var(--display);font-size:20px;color:var(--mauve);display:block;margin-top:8px}
+.rctc select{width:100%;font-size:clamp(17px,1.5vw,21px)}
+.votes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:10px}
+.votes div{border:2px solid var(--ink);padding:6px 8px;background:var(--paper)}
+.votes input{width:100%;font-size:20px}
+.votes button{border:2px solid var(--ink);font-family:var(--display);font-size:16px;padding:2px 8px;margin:4px 4px 0 0}
+.house{max-width:min(520px,100%)}
+.qr{background:#fff;border:3px solid var(--ink);padding:10px;display:inline-block}
+.qr img,.qr canvas{display:block}
+@media (max-width:700px){.bar .who{display:none}.slide{padding-bottom:70px}.stage3d{min-height:300px}}
+</style>
+
+<div class="deck" id="deck">
+
+<!-- 1 -->
+<section class="slide" data-phase="0" data-who="Isabelle et Francis" data-notes="Accueil. Laisser la diapo pendant que les gens entrent et collent leur papillon au mur. Présenter le duo en 30 secondes.">
+  <div class="cover"><img src="__IMG_MUR__" alt="Des jeunes adultes collent des papillons sur une carte du monde dans un centre de formation"></div>
+  <div class="title-wrap">
+    <div class="kick">Colloque régional FGA · 13 novembre 2026 · CFGA De Jonquière</div>
+    <h1>Rêver le monde de demain…</h1>
+    <p class="hand" style="font-size:clamp(28px,3vw,44px)">de l’idéation à l’action</p>
+    <p>Engagement citoyen et autodétermination en FGA</p>
+    <p style="margin-top:1.4em"><span class="sticker">Isabelle Pedneault</span> &nbsp; <span class="sticker" style="background:var(--paper)">Francis Laroche</span></p>
+    <p class="cap">CP, CFGA De Jonquière · Éducation à la citoyenneté mondiale, CSI-SLSJ</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-phase="0" data-who="Francis" data-notes="Taper quelques enjeux du mur pendant que les gens s’installent. Chaque papillon s’accroche au globe. Phrase clé : « Ce que vous venez de faire, c’est la première marche de l’Incubateur solidaire. »">
+  <div class="kick">Accueil · mur d’enjeux</div>
+  <h2>Qu’est-ce qui vous <span class="hl">dérange</span> dans le monde, ici ou ailleurs ?</h2>
+  <form class="checker" id="enjeuForm" style="margin-bottom:12px">
+    <input type="text" id="enjeuIn" maxlength="40" placeholder="ex. le gaspillage à la cafétéria" aria-label="Un enjeu">
+    <button class="btn" type="submit">Accrocher au globe</button>
+    <button class="btn alt" type="button" id="enjeuClear">Vider</button>
+  </form>
+  <div class="stage3d" id="g-globe"><span class="tip">glisser pour tourner le globe</span></div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-phase="0" data-who="Isabelle" data-notes="De vrais mots reçus quand Isabelle enseignait au primaire. Noms retirés. Cliquer pour agrandir. Question : « Lequel pourrait avoir été écrit par un adulte de 17 ans au CFGA ? » Réponse attendue : tous.">
+  <div class="kick">Ce qui allume un élève</div>
+  <h2>« Vous m’avez redonné envie d’aller à l’école. »</h2>
+  <div class="gallery" id="gallery">
+    <figure><img src="__IMG_Q1__" alt="Mot d’un élève : vous m’avez redonné envie d’aller à l’école"><figcaption class="cap">Un élève · juin 2017</figcaption></figure>
+    <figure><img src="__IMG_Q2__" alt="Mot d’un parent : il se sent écouté, compris et accepté"><figcaption class="cap">Un parent</figcaption></figure>
+    <figure><img src="__IMG_Q3__" alt="Mot de parents : vous avez confiance en eux, sans jugement"><figcaption class="cap">Des parents</figcaption></figure>
+    <figure><img src="__IMG_Q4__" alt="Mot de parents : de la confiance en eux et de leurs forces"><figcaption class="cap">Des parents</figcaption></figure>
+    <figure><img src="__IMG_Q5__" alt="Mot de parents : donner envie de faire des projets"><figcaption class="cap">Des parents</figcaption></figure>
+    <figure><img src="__IMG_Q6__" alt="Carte d’une famille : construire leur confiance jour après jour"><figcaption class="cap">Une famille</figcaption></figure>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-phase="0" data-who="Isabelle" data-notes="Les îlots trient les cartes papier. Ici, on refait le tri en grand avec les propositions de la salle : glisser chaque citation (ou la toucher, puis toucher une colonne). Il n’y a pas de mauvais classement : ce qui compte, c’est la justification.">
+  <div class="kick">Tri en îlots · théorie de l’autodétermination (Deci et Ryan)</div>
+  <h2>Autonomie, compétence ou appartenance ?</h2>
+  <div class="pool" id="pool"></div>
+  <div class="sort">
+    <div class="bin" data-bin="a"><h4>Autonomie</h4><p class="hand" style="font-size:20px">je choisis</p></div>
+    <div class="bin" data-bin="c"><h4>Compétence</h4><p class="hand" style="font-size:20px">je suis capable</p></div>
+    <div class="bin" data-bin="p"><h4>Appartenance</h4><p class="hand" style="font-size:20px">je compte ici</p></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-phase="1" data-who="Francis" data-notes="Les 4 objectifs. Insister sur la progression des verbes : on passe de comprendre la démarche à se l’approprier. Promesse : chacun repart avec un premier pas.">
+  <div class="kick">Phase 1 · nos intentions</div>
+  <h2>À la fin, vous pourrez…</h2>
+  <div class="verbs">
+    <div><b>décrire</b>les 5 marches de l’Incubateur solidaire, de l’enjeu au projet réalisé.</div>
+    <div><b>reconnaître</b>les composantes de l’autodétermination qu’il mobilise.</div>
+    <div><b>analyser</b>ce qui facilite ou freine le transfert dans votre milieu.</div>
+    <div><b>esquisser</b>un premier pas réaliste avec vos élèves.</div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-phase="1" data-who="Francis" data-notes="3 minutes seul (bouton du minuteur), puis 5 minutes en îlot. Le cahier, section 03.">
+  <div class="kick">Phase 1 · monde idéal</div>
+  <h2><span class="num">2036</span>Votre centre est devenu exactement ce que vous souhaitiez.</h2>
+  <div class="row">
+    <div class="col"><p class="hand" style="font-size:clamp(28px,3vw,44px)">Qu’est-ce qu’on y voit ?<br>Qu’est-ce qu’on y entend ?<br>Qui y entre ?</p>
+      <p><button class="btn" data-timer="180">Lancer 3 min seul</button> <button class="btn alt" data-timer="300">5 min en îlot</button></p></div>
+    <div class="col"><img class="photo" src="__IMG_ESCALIER__" alt="Les 5 marches de l’Incubateur, de « ça me dérange » à « on l’a fait »"><div class="cap">Vous êtes sur la 2e marche : je rêve</div></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-phase="1" data-who="Isabelle" data-notes="Cliquer sur un cercle pour afficher des exemples. Chaque îlot place un élément de son monde idéal dans une zone ou à une intersection (cahier, section 03). Diapo à couper en cas de retard.">
+  <div class="kick">Phase 1 · la triade</div>
+  <h2>École · communauté · environnement</h2>
+  <div class="row">
+    <svg class="venn col" viewBox="0 0 600 520" role="img" aria-label="Trois cercles qui se chevauchent : école, communauté, environnement">
+      <circle data-z="e" cx="220" cy="200" r="160" fill="#F2C230"/>
+      <circle data-z="c" cx="380" cy="200" r="160" fill="#B88BD6"/>
+      <circle data-z="n" cx="300" cy="340" r="160" fill="#FBF8EF"/>
+      <g font-family="Anton,Impact,sans-serif" font-size="34" fill="#1E1A22" pointer-events="none">
+        <text x="120" y="160">ÉCOLE</text><text x="370" y="160">COMMUNAUTÉ</text><text x="190" y="460">ENVIRONNEMENT</text>
+      </g>
+      <text x="300" y="270" text-anchor="middle" font-family="Caveat,cursive" font-size="34" fill="#5B2A86" pointer-events="none">le projet</text>
+    </svg>
+    <div class="col panel" id="vennOut"><h3>Touchez un cercle</h3><p>Chaque projet d’élève tire sa force des liens entre ces trois mondes.</p></div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-phase="1" data-who="Isabelle" data-notes="Cliquer sur chaque planète. Demander : « Laquelle de ces sphères est la plus souvent négligée chez vos élèves ? » Souvent : la citoyenne.">
+  <div class="kick">Phase 1 · les 4 sphères de l’engagement</div>
+  <h2>Ce qui gravite autour de l’élève</h2>
+  <div class="row" style="flex:1;align-items:stretch">
+    <div class="stage3d col" id="g-spheres" style="flex:2 1 420px"><span class="tip">cliquer sur une planète</span></div>
+    <div class="panel col" id="sphereOut" style="flex:1 1 260px"><h3>Quatre sphères</h3><p>Affective, cognitive, comportementale et citoyenne. Touchez une planète pour voir ce qu’on peut observer en classe.</p></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-phase="2" data-who="Isabelle" data-notes="La pyramide se construit du passif (haut) à l’actif (base). Chacun vote : où se situait sa dernière formation ? Puis l’atelier d’aujourd’hui ? Relance : « Et vos élèves, ils passent combien de temps en haut de la pyramide ? » Les pourcentages qui circulent ne viennent d’aucune étude solide : on présente la pyramide comme un repère, sans chiffres.">
+  <div class="kick">Phase 2 · le pivot</div>
+  <h2>La pyramide de rétention</h2>
+  <div class="row" style="flex:1;align-items:stretch">
+    <div class="stage3d col" id="g-pyr" style="flex:2 1 420px"><span class="tip">cliquer sur un étage pour voter</span></div>
+    <div class="col" style="flex:1 1 260px">
+      <div class="panel"><h3 id="pyrQ">Où se situait votre dernière formation ?</h3><p>Touchez l’étage : un jeton s’y pose.</p>
+      <p><button class="btn alt" id="pyrSwitch">Et l’atelier d’aujourd’hui ?</button> <button class="btn alt" id="pyrReset">Effacer</button></p></div>
+      <p class="hand">plus on fait, plus on retient</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-phase="2" data-who="Isabelle" data-notes="Conflit cognitif : avant d’expliquer, chacun écrit une action pour son enjeu sur un papillon. En lire trois : la plupart sont des résultats. Puis tester des phrases dans la boîte. Retourner les cartes pour voir l’action.">
+  <div class="kick">Phase 2 · le pivot</div>
+  <h2>Résultat <span class="hand" style="font-size:.6em">ou</span> action ?</h2>
+  <div class="row">
+    <div class="col">
+      <p>Le <span class="hl">résultat</span> est ce qu’on souhaite : souvent un <b>nom</b>. L’<span class="hl">action</span> est ce qu’on fait lundi : un <b>verbe</b> conjugué, quelqu’un qui agit, une date.</p>
+      <form class="checker" id="raForm"><input type="text" id="raIn" placeholder="écrivez votre « action »" aria-label="Phrase à tester"><button class="btn" type="submit">Tester</button></form>
+      <div class="verdict" id="raOut"></div>
+    </div>
+    <div class="col"><img class="photo" src="__IMG_GNGV__" alt="Du groupe du nom au groupe du verbe : une cafétéria sans déchets devient notre groupe réduit les déchets d’ici le 20 décembre"></div>
+  </div>
+  <div class="flip" id="flip"></div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-phase="2" data-who="Francis" data-notes="Francis raconte les projets vécus au CFGA. Cliquer sur chaque marche pour révéler la composante de l’autodétermination. Défi : la salle nomme les marches dans l’ordre avant le dévoilement.">
+  <div class="kick">Phase 2 · l’Incubateur solidaire en vrai</div>
+  <h2>De « ça me dérange » à « on l’a fait ! »</h2>
+  <div class="row" style="align-items:flex-end">
+    <div class="col" style="flex:1.3 1 380px"><div class="steps" id="steps"></div></div>
+    <div class="col"><img class="photo" src="__IMG_COMPOST__" alt="Des jeunes adultes construisent un bac de compost devant leur centre"><div class="cap">De l’idée à l’action</div></div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-phase="2" data-who="Isabelle" data-notes="La question des enseignants matières. Regrouper les îlots par profil. Choisir une matière pour voir les exemples.">
+  <div class="kick">Phase 2 · et en individualisé ?</div>
+  <h2>Trois portes d’entrée</h2>
+  <div class="chips" id="subj" role="group" aria-label="Matière"></div>
+  <div class="scen" id="scen"></div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-phase="2" data-who="Francis" data-notes="Glisser la vidéo des élèves (fichier local, fonctionne sans Internet). Vérifier les autorisations de diffusion. Sinon, témoignage en personne.">
+  <div class="kick">Phase 2 · la parole aux élèves</div>
+  <h2>Ils l’ont fait</h2>
+  <div id="vidZone" class="drop">
+    <p class="hand">Glissez ici la vidéo des élèves, ou</p>
+    <label class="btn" for="vidIn">Choisir une vidéo</label>
+    <input type="file" id="vidIn" accept="video/*" hidden>
+    <p class="cap">La vidéo reste sur cet ordinateur. Elle n’est envoyée nulle part.</p>
+  </div>
+  <video id="vid" controls hidden></video>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-phase="3" data-who="Duo" data-notes="Cahier, section 09. 2 min pour choisir l’enjeu, 6 min pour le résultat et les actions. Circuler dans les îlots.">
+  <div class="kick">Phase 3 · idéation en îlot</div>
+  <h2>À vous de jouer</h2>
+  <div class="row">
+    <ol class="col" style="font-size:clamp(18px,1.8vw,26px)">
+      <li>Choisissez un enjeu du mur.</li>
+      <li>Écrivez le <span class="hl">résultat</span> (un nom).</li>
+      <li>Écrivez 2 ou 3 <span class="hl">actions</span> : un verbe, quand, qui.</li>
+      <li>Enrichissez une action avec Copilot.</li>
+    </ol>
+    <div class="col"><p><button class="btn" data-timer="120">2 min · l’enjeu</button></p><p><button class="btn" data-timer="360">6 min · résultat et actions</button></p><p><button class="btn alt" data-timer="300">5 min · Copilot</button></p></div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-phase="3" data-who="Isabelle" data-notes="Montrer la formule rôle, contexte, tâche, contraintes. Composer une invite en direct et la copier dans Copilot. L’aide-mémoire papier contient 5 invites prêtes.">
+  <div class="kick">Phase 3 · Copilot</div>
+  <h2>Rôle · contexte · tâche · contraintes</h2>
+  <div class="row">
+    <div class="col rctc">
+      <label for="r1">Rôle</label><select id="r1"></select>
+      <label for="r2">Contexte</label><select id="r2"></select>
+      <label for="r3">Tâche</label><select id="r3"></select>
+      <label for="r4">Contraintes</label><select id="r4"></select>
+    </div>
+    <div class="col"><div class="prompt-out" id="pOut"></div><p><button class="btn" id="pCopy">Copier l’invite</button> <span class="hand" id="pMsg" style="font-size:22px"></span></p>
+      <p class="cap">Jamais de nom d’élève ni de renseignement personnel dans une invite.</p></div>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-phase="3" data-who="Duo" data-notes="Galerie : chacun dépose 3 jetons sur les projets des autres îlots. On saisit ici les totaux : les piles montent. Jaune = impact, crème = faisabilité, mauve = originalité.">
+  <div class="kick">Phase 3 · vote par jetons</div>
+  <h2>Impact · faisabilité · originalité</h2>
+  <div class="row" style="flex:1;align-items:stretch">
+    <div class="stage3d col" id="g-coins" style="flex:2 1 420px"><span class="tip">les piles montent à chaque jeton</span></div>
+    <div class="col" style="flex:1 1 280px"><div class="votes" id="votes"></div></div>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-phase="4" data-who="Duo" data-notes="Chacun remplit sa fiche (cahier, section 10). C’est le premier pas du participant, pas de l’élève. On la photographie. Annoncer la relance à six semaines.">
+  <div class="kick">Phase 4 · mon premier pas</div>
+  <h2>Moi, de retour dans mon milieu</h2>
+  <img class="photo" src="__IMG_BILLET__" alt="Fiche Mon premier pas : mon action, quand, avec qui" style="max-width:min(900px,100%)">
+  <p><button class="btn" data-timer="240">4 min</button> <span class="hand">une action (un verbe !), une date, un allié</span></p>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-phase="4" data-who="Isabelle" data-notes="On modélise ce qu’on propose : l’objectivation. 3 idées, 2 essais, 1 question. Cahier section 11. Mentionner l’annexe : la maison à trois étages.">
+  <div class="kick">Phase 4 · objectivation</div>
+  <h2>3 · 2 · 1</h2>
+  <div class="row">
+    <div class="col">
+      <p class="hand" style="font-size:clamp(28px,3vw,42px)"><b style="font-family:var(--display);color:var(--ink)">3</b> idées que je retiens<br><b style="font-family:var(--display);color:var(--ink)">2</b> choses que j’essaie<br><b style="font-family:var(--display);color:var(--ink)">1</b> question qui me reste</p>
+      <p><button class="btn" data-timer="240">4 min</button></p>
+      <p>« Le temps consacré à l’objectivation n’est pas perdu : il est gagné. »</p>
+    </div>
+    <div class="col"><img class="photo house" src="__IMG_MAISON__" alt="Une maison en forme de tête à trois étages : besoins de base, émotions, apprentissages"><div class="cap">La maison à trois étages · annexe</div></div>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-phase="4" data-who="Isabelle et Francis" data-notes="Remercier. Code QR des ressources. Annoncer : « Dans six semaines, on vous écrit : avez-vous fait votre premier pas ? »">
+  <div class="kick">Merci</div>
+  <h2>Dans six semaines, on vous écrit :<br><span class="hl">avez-vous fait votre premier pas ?</span></h2>
+  <div class="row">
+    <div class="col"><div class="qr" id="qr"></div>
+      <p class="cap">Ressources de l’atelier</p>
+      <form class="checker" id="qrForm"><input type="text" id="qrIn" aria-label="Adresse des ressources" style="font-family:var(--ui);font-size:15px"><button class="btn alt" type="submit">Mettre à jour le code</button></form></div>
+    <div class="col"><img class="photo" src="__IMG_BULLETIN__" alt="Un jeune adulte présente son plan de formation à son enseignante"><div class="cap">Et si c’était l’élève qui menait la rencontre de suivi ?</div></div>
+  </div>
+</section>
+
+</div>
+
+<div class="bar" role="navigation" aria-label="Navigation">
+  <button id="prev" aria-label="Diapo précédente">‹</button>
+  <span class="count" id="count">1 / 19</span>
+  <div class="phases" id="phases" aria-hidden="true"></div>
+  <span class="who" id="who"></span>
+  <button id="tBtn" title="Minuteur (T)">T</button>
+  <button id="nBtn" title="Notes (N)">N</button>
+  <button id="fBtn" title="Plein écran (F)">F</button>
+  <button id="next" aria-label="Diapo suivante">›</button>
+</div>
+<aside class="notes" id="notes" hidden><h3 id="nTitle">Notes</h3><p id="nBody"></p></aside>
+<div class="timer" id="timer" hidden title="Cliquer pour arrêter">0:00</div>
+
+__THREE_SCRIPT__
+__QR_SCRIPT__
+<script>
+(() => {
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const slides = $$('.slide');
+let cur = 0;
+const store = { get(k, d) { try { const v = localStorage.getItem('rmd:' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('rmd:' + k, JSON.stringify(v)); } catch (e) {} } };
+
+// ---------- navigation ----------
+const phases = $('#phases');
+slides.forEach(() => phases.appendChild(document.createElement('i')));
+function go(n) {
+  n = Math.max(0, Math.min(slides.length - 1, n));
+  slides[cur].classList.remove('on'); cur = n; slides[cur].classList.add('on');
+  $('#count').textContent = (cur + 1) + ' / ' + slides.length;
+  [...phases.children].forEach((b, i) => { b.className = i < cur ? 'done' : i === cur ? 'cur' : ''; });
+  $('#who').textContent = 'anime : ' + slides[cur].dataset.who;
+  $('#nTitle').textContent = 'Diapo ' + (cur + 1) + ' · ' + slides[cur].dataset.who;
+  $('#nBody').textContent = slides[cur].dataset.notes;
+  if (location.hash !== '#s' + (cur + 1)) history.replaceState(null, '', '#s' + (cur + 1));
+  G3.activate(slides[cur]);
+}
+$('#prev').onclick = () => go(cur - 1); $('#next').onclick = () => go(cur + 1);
+$('#nBtn').onclick = () => { $('#notes').hidden = !$('#notes').hidden; };
+$('#fBtn').onclick = () => { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {}); } catch (e) {} };
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input,textarea,select')) return;
+  if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(cur + 1); }
+  else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(cur - 1); }
+  else if (e.key === 'n' || e.key === 'N') $('#nBtn').click();
+  else if (e.key === 't' || e.key === 'T') $('#tBtn').click();
+  else if (e.key === 'f' || e.key === 'F') $('#fBtn').click();
+  else if (e.key === 'Home') go(0); else if (e.key === 'End') go(slides.length - 1);
+});
+let tx = null;
+document.addEventListener('touchstart', e => { tx = e.target.closest('.stage3d,.card,.bin') ? null : e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', e => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 70) go(cur + (dx < 0 ? 1 : -1)); tx = null; });
+
+// ---------- minuteur ----------
+const tEl = $('#timer'); let tLeft = 0, tInt = null;
+function startTimer(s) { clearInterval(tInt); tLeft = s; tEl.hidden = false; tick(); tInt = setInterval(() => { tLeft--; tick(); if (tLeft <= 0) { clearInterval(tInt); } }, 1000); }
+function tick() { const m = Math.floor(Math.max(0, tLeft) / 60), s = Math.max(0, tLeft) % 60; tEl.textContent = m + ':' + String(s).padStart(2, '0'); tEl.classList.toggle('warn', tLeft <= 30); }
+tEl.onclick = () => { clearInterval(tInt); tEl.hidden = true; };
+$('#tBtn').onclick = () => tEl.hidden ? startTimer(300) : tEl.onclick();
+$$('[data-timer]').forEach(b => b.onclick = () => startTimer(+b.dataset.timer));
+
+// ---------- galerie ----------
+$('#gallery').addEventListener('click', e => { const im = e.target.closest('img'); if (!im) return; const z = document.createElement('div'); z.className = 'zoom'; z.innerHTML = '<img alt="">'; z.firstChild.src = im.src; z.firstChild.alt = im.alt; z.onclick = () => z.remove(); document.body.appendChild(z); });
+
+// ---------- tri des citations ----------
+const quotes = ['« Vous m’avez redonné envie d’aller à l’école. »', '« Il se sent écouté, compris et surtout, accepté. »', '« Vous avez confiance en eux, en leur capacité […] sans jugement. »', '« Donner envie de faire des projets ! »', '« Construire leur confiance jour après jour. »', '« Une meilleure connaissance d’eux-mêmes et de leurs forces. »'];
+const pool = $('#pool'); let picked = null;
+const place = store.get('tri', {});
+quotes.forEach((q, i) => { const c = document.createElement('div'); c.className = 'card'; c.textContent = q; c.dataset.i = i; c.draggable = true; c.tabIndex = 0;
+  c.addEventListener('dragstart', ev => ev.dataTransfer.setData('text/plain', i));
+  c.addEventListener('click', () => { $$('.card').forEach(x => x.classList.remove('sel')); picked = picked === c ? null : c; if (picked) c.classList.add('sel'); });
+  (place[i] ? document.querySelector(`[data-bin="${place[i]}"]`) : pool).appendChild(c); });
+function drop(bin, card) { bin.appendChild(card); card.classList.remove('sel'); picked = null; place[card.dataset.i] = bin.dataset.bin; store.set('tri', place); }
+$$('.bin').forEach(b => { b.addEventListener('dragover', e => { e.preventDefault(); b.classList.add('over'); }); b.addEventListener('dragleave', () => b.classList.remove('over'));
+  b.addEventListener('drop', e => { e.preventDefault(); b.classList.remove('over'); drop(b, document.querySelector(`.card[data-i="${e.dataTransfer.getData('text/plain')}"]`)); });
+  b.addEventListener('click', e => { if (picked && !e.target.closest('.card')) drop(b, picked); }); });
+
+// ---------- triade ----------
+const venn = { e: ['ÉCOLE', 'Les savoirs des sigles, les compétences du programme, le temps de classe. Ex. : une lettre à la direction, un budget en mathématiques.'], c: ['COMMUNAUTÉ', 'Les organismes, la Ville, les familles, les commerces du quartier. Ex. : le CSI-SLSJ, une banque alimentaire, le conseil municipal.'], n: ['ENVIRONNEMENT', 'Le milieu de vie, le territoire, la nature. Ex. : la cour, le trajet vers le parc, les déchets de la cafétéria.'] };
+$$('.venn circle').forEach(c => c.addEventListener('click', () => { const v = venn[c.dataset.z]; $('#vennOut').innerHTML = `<h3>${v[0]}</h3><p>${v[1]}</p><p class="hand">Et à l’intersection des trois : le projet.</p>`; }));
+
+// ---------- résultat ou action ----------
+const DET = /^(le|la|les|l'|l’|un|une|des|du|de|plus|moins|davantage|meilleure?s?|moins de|beaucoup|aucun|zéro|0|100)\b/i;
+const ACT = /\b(nous|on|notre groupe|j[e'’]|je|il|elle|ils|elles|chaque)\b.*\b\w+(ons|ez|ent|e|es|t|is|it|ra|rai|rons|ront)\b/i;
+$('#raForm').addEventListener('submit', e => { e.preventDefault(); const t = $('#raIn').value.trim(); const o = $('#raOut'); if (!t) { o.textContent = ''; return; }
+  const date = /\b(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|demain|d’ici|d'ici|avant|le \d|janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre|semaine)\b/i.test(t);
+  if (DET.test(t)) o.innerHTML = '<span style="color:var(--mauve)">Un résultat !</span> <span class="hand">Ça commence par un nom. Qui fait quoi, et quand ?</span>';
+  else if (ACT.test(t) && date) o.innerHTML = '<span class="hl">Une action !</span> <span class="hand">Un sujet, un verbe, une date. Bravo.</span>';
+  else if (ACT.test(t)) o.innerHTML = '<span class="hl">Presque une action</span> <span class="hand">Il manque une date.</span>';
+  else o.innerHTML = '<span style="color:var(--mauve)">À préciser</span> <span class="hand">Ajoutez qui agit (nous, notre groupe…) et quand.</span>'; });
+const pairs = [['la réduction des déchets à la cafétéria', 'Nous installons trois bacs de compost vendredi avec le concierge.'], ['un trajet plus sécuritaire jusqu’au parc', 'Notre groupe cartographie les trois traverses dangereuses et écrit à la Ville d’ici le 1er décembre.'], ['la sécurité alimentaire des élèves', 'Nous sondons 40 élèves sur leurs déjeuners avant le 1er décembre.'], ['un sentiment d’appartenance au centre', 'Nous organisons un dîner « recette de chez nous » le 12 décembre.']];
+pairs.forEach(([a, b]) => { const bt = document.createElement('button'); bt.innerHTML = `<small>Résultat · touchez pour l’action</small>${a}`; bt.onclick = () => { const back = bt.classList.toggle('back'); bt.innerHTML = back ? `<small>Action</small>${b}` : `<small>Résultat · touchez pour l’action</small>${a}`; }; $('#flip').appendChild(bt); });
+
+// ---------- marches ----------
+const st = [['ÇA ME DÉRANGE', 'faire des choix'], ['JE RÊVE', 'se fixer un but'], ['JE CIBLE', 'prendre des décisions'], ['J’AGIS', 'résoudre des problèmes'], ['JE REGARDE LE CHEMIN', 's’autoévaluer']];
+st.forEach(([t, c], i) => { const b = document.createElement('button'); b.style.height = (34 + i * 16) + '%'; b.style.background = i % 2 ? 'var(--mauve)' : 'var(--gold)'; b.style.color = i % 2 ? 'var(--paper)' : 'var(--ink)';
+  b.innerHTML = `<span class="n">${i + 1}</span><span>${t}<br><span class="c">${c}</span></span>`; b.onclick = () => b.classList.toggle('show'); $('#steps').appendChild(b); });
+
+// ---------- scénarios ----------
+const subj = { 'Français': ['Lettre ouverte ou texte argumentatif sur l’enjeu choisi.', 'Un court journal de bord, puis une affiche pour le centre.', 'Réviser la lettre de demande du groupe PPS.'], 'Mathématiques': ['Un sondage et ses statistiques, ou le budget d’une action.', 'Mesurer un phénomène (déchets d’une semaine) et le représenter.', 'Calculer le budget du projet du groupe PPS.'], 'Anglais': ['Une affiche ou une capsule bilingue sur l’enjeu.', 'Écrire à un organisme anglophone.', 'Traduire l’affiche du projet.'], 'Sciences': ['Expliquer le phénomène derrière l’enjeu (compost, eau, énergie).', 'Une petite expérience : comparer deux solutions.', 'Valider une donnée environnementale du projet.'] };
+const sc = [['A · L’enjeu comme contexte de tâche', 'La tâche du sigle (écrire, calculer, lire) se fait à partir d’un enjeu choisi par l’élève. Aucun projet collectif requis.'], ['B · Le micro-incubateur', 'Enjeu, idée, petit geste : une version courte de la démarche, en parallèle du parcours, sur quelques périodes.'], ['C · Le projet-pont', 'Un groupe PPS ou DHS porte un projet. Des élèves en individualisé y contribuent comme « experts » ponctuels.']];
+function drawScen(s) { $('#scen').innerHTML = sc.map(([h, p], i) => `<article><h3>${h}</h3><p>${p}</p><div class="ex">${s} : ${subj[s][i]}</div></article>`).join(''); $$('#subj .chip').forEach(c => c.classList.toggle('on', c.textContent === s)); }
+Object.keys(subj).forEach(s => { const c = document.createElement('button'); c.className = 'chip'; c.textContent = s; c.onclick = () => drawScen(s); $('#subj').appendChild(c); });
+drawScen('Français');
+
+// ---------- vidéo ----------
+function loadVid(f) { if (!f || !f.type.startsWith('video')) return; const v = $('#vid'); v.src = URL.createObjectURL(f); v.hidden = false; $('#vidZone').hidden = true; }
+$('#vidIn').onchange = e => loadVid(e.target.files[0]);
+const vz = $('#vidZone'); vz.addEventListener('dragover', e => e.preventDefault()); vz.addEventListener('drop', e => { e.preventDefault(); loadVid(e.dataTransfer.files[0]); });
+
+// ---------- Copilot ----------
+const R = {
+  r1: ['Tu es conseiller pédagogique en formation générale des adultes au Québec.', 'Tu es enseignant de français en FGA, en enseignement individualisé.', 'Tu es enseignant de mathématiques en FGA, en enseignement individualisé.', 'Tu es un coach pédagogique qui accompagne des adultes de 16 à 25 ans.'],
+  r2: ['Un groupe du programme Participation sociale réalise un projet citoyen sur le gaspillage alimentaire.', 'Un élève veut travailler sur la sécurité du trajet jusqu’au parc.', 'Des élèves en individualisé contribuent au projet d’un groupe PPS (projet-pont).', 'Un groupe DHS prépare une action pour le Jour de la Terre.'],
+  r3: ['Génère une grille d’évaluation descriptive à 4 niveaux centrée sur la résolution de problèmes.', 'Propose 8 questions d’objectivation : 2 avant, 3 pendant, 3 après.', 'Transforme ce résultat en 3 actions SMART avec un verbe conjugué, un responsable et une date.', 'Propose une situation d’apprentissage de 3 périodes en 3 niveaux de complexité.'],
+  r4: ['Langage simple, verbes observables, présentation en tableau, aucune note chiffrée.', 'Phrases courtes, au « je », une question au moins par sphère de l’engagement.', 'Liens explicites avec les savoirs du sigle, liste du matériel.', 'Signale toute formulation qui est encore un résultat et explique pourquoi.']
+};
+const pOut = $('#pOut');
+Object.entries(R).forEach(([id, arr]) => { const s = $('#' + id); arr.forEach((t, i) => { const o = document.createElement('option'); o.value = i; o.textContent = t; s.appendChild(o); }); s.onchange = upd; });
+function upd() { pOut.textContent = ['r1', 'r2', 'r3', 'r4'].map((id, k) => ['Rôle', 'Contexte', 'Tâche', 'Contraintes'][k] + ' : ' + R[id][$('#' + id).value]).join('\n'); }
+upd();
+$('#pCopy').onclick = () => { const t = pOut.textContent; navigator.clipboard?.writeText(t).then(() => $('#pMsg').textContent = 'Copiée !').catch(() => { const r = document.createRange(); r.selectNodeContents(pOut); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $('#pMsg').textContent = 'Sélectionnée : faites Ctrl+C'; }); };
+
+// ---------- QR ----------
+const qrIn = $('#qrIn'); qrIn.value = store.get('qr', location.href.split('#')[0]);
+function drawQR() { const box = $('#qr'); box.innerHTML = ''; if (window.QRCode) new QRCode(box, { text: qrIn.value || ' ', width: 180, height: 180, colorDark: '#1E1A22', colorLight: '#ffffff' }); else box.textContent = qrIn.value; }
+$('#qrForm').addEventListener('submit', e => { e.preventDefault(); store.set('qr', qrIn.value); drawQR(); });
+drawQR();
+
+// =================== 3D en cel-shading ===================
+const G3 = (() => {
+  const ok = !!window.THREE; if (!ok) { $$('.stage3d').forEach(s => s.insertAdjacentHTML('beforeend', '<p style="padding:20px" class="hand">La 3D n’a pas pu se charger.</p>')); return { activate() {} }; }
+  const T = THREE;
+  const renderer = new T.WebGLRenderer({ antialias: true, alpha: true }); renderer.setPixelRatio(Math.min(2, devicePixelRatio));
+  const grad = (() => { const d = new Uint8Array([105, 105, 105, 255, 185, 185, 185, 255, 235, 235, 235, 255]); const t = new T.DataTexture(d, 3, 1, T.RGBAFormat); t.minFilter = t.magFilter = T.NearestFilter; t.needsUpdate = true; return t; })();
+  const toon = c => new T.MeshToonMaterial({ color: c, gradientMap: grad });
+  const INK = new T.MeshBasicMaterial({ color: 0x1E1A22, side: T.BackSide });
+  // contour d'encre : coque inversée légèrement agrandie
+  function inked(geo, color, w = 0.045) { const g = new T.Group(); const m = new T.Mesh(geo, toon(color)); const o = new T.Mesh(geo, INK); o.scale.setScalar(1 + w); g.add(m, o); g.userData.body = m; return g; }
+  function lights(sc) { sc.add(new T.AmbientLight(0xffffff, .42)); const d = new T.DirectionalLight(0xffffff, .62); d.position.set(4, 6, 5); sc.add(d); }
+  const scenes = {}; let active = null, raf = null;
+  function make(id, build) { scenes[id] = { build, ready: false }; }
+  function ensure(id) { const s = scenes[id]; if (!s.ready) { s.scene = new T.Scene(); s.camera = new T.PerspectiveCamera(40, 1, .1, 100); lights(s.scene); s.build(s); s.ready = true; } return s; }
+  function resize() { if (!active) return; const el = active.el; const w = el.clientWidth, h = el.clientHeight; renderer.setSize(w, h, false); active.camera.aspect = w / h; active.camera.updateProjectionMatrix(); }
+  function loop(t) { raf = requestAnimationFrame(loop); if (!active) return; active.tick && active.tick(t / 1000); renderer.render(active.scene, active.camera); }
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  addEventListener('resize', resize);
+  // pointeur commun
+  const ray = new T.Raycaster(), mv = new T.Vector2();
+  function pick(e, list) { const r = renderer.domElement.getBoundingClientRect(); mv.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(mv, active.camera); const h = ray.intersectObjects(list, true)[0]; return h && h.object; }
+  renderer.domElement.addEventListener('pointerdown', e => active && active.down && active.down(e));
+  renderer.domElement.addEventListener('pointermove', e => active && active.move && active.move(e));
+  addEventListener('pointerup', e => active && active.up && active.up(e));
+  // texture de papillon
+  function noteTex(txt, bg = '#F2C230') { const c = document.createElement('canvas'); c.width = 256; c.height = 200; const x = c.getContext('2d'); x.fillStyle = bg; x.fillRect(0, 0, 256, 200); x.strokeStyle = '#1E1A22'; x.lineWidth = 10; x.strokeRect(5, 5, 246, 190); x.fillStyle = '#1E1A22'; x.font = '600 40px Caveat, cursive'; x.textAlign = 'center';
+    const words = txt.split(' '); let lines = [''], i = 0; words.forEach(w => { if ((lines[i] + ' ' + w).length > 13) lines[++i] = w; else lines[i] = (lines[i] + ' ' + w).trim(); }); lines = lines.slice(0, 4); lines.forEach((l, k) => x.fillText(l, 128, 100 - (lines.length - 1) * 21 + k * 42 + 12)); const t = new T.CanvasTexture(c); return t; }
+
+  // --- globe ---
+  make('g-globe', s => { s.camera.position.set(0, 0, 8.2); const globe = inked(new T.SphereGeometry(2.2, 48, 32), 0xF2C230, .06); s.scene.add(globe);
+    const grid = new T.LineSegments(new T.WireframeGeometry(new T.SphereGeometry(2.21, 12, 8)), new T.LineBasicMaterial({ color: 0x5B2A86, transparent: true, opacity: .55 })); globe.add(grid);
+    const notes = new T.Group(); globe.add(notes); s.notes = notes; let rotY = 0, drag = null, vel = .004;
+    s.add = (txt, save = true) => { const m = new T.Mesh(new T.PlaneGeometry(1.5, 1.17), new T.MeshBasicMaterial({ map: noteTex(txt, notes.children.length % 3 === 2 ? '#FBF8EF' : '#F2C230'), side: T.DoubleSide }));
+      const n = notes.children.length, phi = Math.acos(1 - 2 * ((n * .618 + .1) % 1)), th = n * 2.4; const p = new T.Vector3().setFromSphericalCoords(2.6, phi, th); m.position.copy(p); m.lookAt(p.clone().multiplyScalar(2)); m.rotateZ((Math.random() - .5) * .4);
+      const pin = new T.Mesh(new T.CylinderGeometry(.03, .03, .45), INK); pin.position.copy(p.clone().multiplyScalar(.93)); pin.lookAt(0, 0, 0); pin.rotateX(Math.PI / 2); notes.add(m); notes.add(pin);
+      if (save) { const l = store.get('enjeux', []); l.push(txt); store.set('enjeux', l); } };
+    s.clear = () => { while (notes.children.length) notes.remove(notes.children[0]); store.set('enjeux', []); };
+    s.down = e => { drag = e.clientX; }; s.move = e => { if (drag !== null) { rotY += (e.clientX - drag) * .01; drag = e.clientX; } }; s.up = () => { drag = null; };
+    s.tick = () => { if (drag === null && !reduce) rotY += vel; globe.rotation.y = rotY; globe.rotation.x = .25; };
+    document.fonts.ready.then(() => { const l = store.get('enjeux', null); (l && l.length ? l : ['le gaspillage alimentaire', 'l’isolement', 'le coût des loyers']).forEach(t => s.add(t, !!(l && l.length) ? false : true)); });
+  });
+  // --- sphères ---
+  const SPH = [['Affective', 0xF2C230, 'Motivation, sentiment de compétence, plaisir d’apprendre.', 'Il arrive à l’heure, sourit, parle de son projet en dehors de la classe.'], ['Cognitive', 0x5B2A86, 'Stratégies actives : faire des liens, questionner, planifier.', 'Elle pose des questions, explique sa démarche, fait des liens avec sa vie.'], ['Comportementale', 0xFBF8EF, 'Persévérance, régularité, présence.', 'Il revient après un échec et termine ce qu’il commence.'], ['Citoyenne', 0xF2C230, 'Agir concrètement dans son milieu, pour d’autres.', 'Elle propose, mobilise d’autres personnes, agit pour quelqu’un d’autre.']];
+  make('g-spheres', s => { s.camera.position.set(0, 4.5, 11); s.camera.lookAt(0, 0, 0);
+    const star = inked(new T.OctahedronGeometry(.9), 0xF2C230, .06); s.scene.add(star);
+    const ring = new T.Mesh(new T.TorusGeometry(4.2, .03, 6, 120), INK.clone()); ring.material.side = T.FrontSide; ring.rotation.x = Math.PI / 2; s.scene.add(ring);
+    s.pl = SPH.map((d, i) => { const g = inked(new T.SphereGeometry(.85, 32, 24), d[1], .05); g.userData.i = i; g.userData.body.userData.i = i; s.scene.add(g); return g; });
+    let sel = -1;
+    s.down = e => { const o = pick(e, s.pl.map(p => p.userData.body)); if (!o) return; sel = o.userData.i; const d = SPH[sel]; $('#sphereOut').innerHTML = `<h3>${d[0]}</h3><p>${d[2]}</p><p class="hand">Je l’observe quand… ${d[3]}</p>`; };
+    s.tick = t => { const a = reduce ? 0 : t * .25; s.pl.forEach((p, i) => { const th = a + i * Math.PI / 2; p.position.set(Math.cos(th) * 4.2, Math.sin(th * 2) * .3, Math.sin(th) * 4.2); p.scale.setScalar(i === sel ? 1.25 : 1); }); star.rotation.y = a * 2; };
+  });
+  // --- pyramide ---
+  const LAY = ['Écouter', 'Lire', 'Voir, observer', 'Discuter', 'Faire, pratiquer', 'Enseigner aux autres'];
+  const LCOL = [0xFBF8EF, 0xFBF8EF, 0xFBF8EF, 0xF2C230, 0xF2C230, 0x5B2A86];
+  make('g-pyr', s => { s.camera.position.set(0, 3.4, 10.5); s.camera.lookAt(0, 1.9, 0); const grp = new T.Group(); s.scene.add(grp); s.layers = []; s.tokens = new T.Group(); grp.add(s.tokens);
+    const H = .62; LAY.forEach((n, i) => { const k = i; const rTop = .3 + (k) * .62, rBot = .3 + (k + 1) * .62; const g = inked(new T.CylinderGeometry(rTop, rBot, H, 4, 1), LCOL[i], .03); g.children.forEach(ch => ch.rotation.y = Math.PI / 4); g.position.y = (5 - i) * (H + .02) + H / 2 + 6; g.userData.target = (5 - i) * (H + .02) + H / 2; g.userData.body.userData.i = i; g.userData.delay = (5 - i) * .25; grp.add(g); s.layers.push(g);
+      const c = document.createElement('canvas'); c.width = 512; c.height = 80; const x = c.getContext('2d'); x.font = '44px Anton, Impact, sans-serif'; x.fillStyle = i === 5 ? '#FBF8EF' : '#1E1A22'; x.textAlign = 'center'; x.fillText(n.toUpperCase(), 256, 58); const lab = new T.Sprite(new T.SpriteMaterial({ map: new T.CanvasTexture(c), depthTest: false })); lab.scale.set(3.4, .53, 1); lab.position.set(0, 0, (rTop + rBot) / 2 * .7071 + .12); lab.renderOrder = 10; g.add(lab); });
+    s.mode = 0; s.votes = store.get('pyr', [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]);
+    s.redraw = () => { while (s.tokens.children.length) s.tokens.remove(s.tokens.children[0]); s.votes.forEach((arr, m) => arr.forEach((n, i) => { for (let k = 0; k < n; k++) { const t = inked(new T.CylinderGeometry(.16, .16, .07, 20), m ? 0x5B2A86 : 0xF2C230, .08); const L = s.layers[i]; const kk = i; const r = .35 + (kk + .5) * .55; t.position.set((m ? 1 : -1) * (r * .55 + .3 + (k % 4) * .36), L.userData.target + .38 + Math.floor(k / 4) * .09, r * .62); s.tokens.add(t); } })); };
+    s.redraw();
+    s.down = e => { const o = pick(e, s.layers.map(l => l.userData.body)); if (!o) return; s.votes[s.mode][o.userData.i]++; store.set('pyr', s.votes); s.redraw(); };
+    let t0 = null; s.tick = t => { if (t0 === null) t0 = t; s.layers.forEach(L => { const p = Math.min(1, Math.max(0, (t - t0 - L.userData.delay) / .6)); const e = 1 - Math.pow(1 - p, 3); L.position.y = reduce ? L.userData.target : L.userData.target + (1 - e) * 6; }); grp.rotation.y = reduce ? 0 : Math.sin(t * .3) * .18; };
+    s.restart = () => { t0 = null; };
+  });
+  // --- jetons ---
+  const VC = [0xF2C230, 0xFBF8EF, 0x5B2A86];
+  make('g-coins', s => { s.camera.position.set(0, 4.2, 11); s.camera.lookAt(0, 1.6, 0); s.grp = new T.Group(); s.scene.add(s.grp);
+    const floor = new T.Mesh(new T.PlaneGeometry(30, 30), new T.MeshBasicMaterial({ color: 0xF3EDDF })); floor.rotation.x = -Math.PI / 2; s.scene.add(floor);
+    s.draw = (data) => { while (s.grp.children.length) s.grp.remove(s.grp.children[0]); const n = data.length; data.forEach((p, i) => { const x = (i - (n - 1) / 2) * 2.3; let y = .12; const base = inked(new T.BoxGeometry(1.7, .12, 1.7), 0xFBF8EF, .04); base.position.set(x, .06, 0); s.grp.add(base);
+      const c2 = document.createElement('canvas'); c2.width = 256; c2.height = 64; const x2 = c2.getContext('2d'); x2.font = '40px Caveat, cursive'; x2.fillStyle = '#5B2A86'; x2.textAlign = 'center'; x2.fillText(p.n.slice(0, 16), 128, 46); const lab = new T.Sprite(new T.SpriteMaterial({ map: new T.CanvasTexture(c2), depthTest: false })); lab.scale.set(2, .5, 1); lab.position.set(x, -.35, 1); s.grp.add(lab); [0, 1, 2].forEach(k => { for (let j = 0; j < p.v[k]; j++) { const c = inked(new T.CylinderGeometry(.65, .65, .2, 28), VC[k], .06); c.position.set(x + (Math.random() - .5) * .06, y + .1, 0); c.userData.y = c.position.y; c.position.y += 3 + j * .2; c.userData.fall = true; s.grp.add(c); y += .22; } }); }); };
+    s.tick = () => s.grp.children.forEach(c => { if (c.userData.fall) { c.position.y += (c.userData.y - c.position.y) * (reduce ? 1 : .15); if (Math.abs(c.position.y - c.userData.y) < .001) c.userData.fall = false; } });
+  });
+  function activate(slide) { const st = slide.querySelector('.stage3d'); if (!st || !scenes[st.id]) { active = null; return; } const s = ensure(st.id); s.el = st; st.prepend(renderer.domElement); active = s; s.restart && s.restart(); requestAnimationFrame(resize); if (!raf) raf = requestAnimationFrame(loop); }
+  return { activate, scenes, ensure };
+})();
+
+// globe : formulaire
+$('#enjeuForm').addEventListener('submit', e => { e.preventDefault(); const v = $('#enjeuIn').value.trim(); if (!v || !G3.scenes['g-globe']) return; G3.ensure('g-globe').add(v); $('#enjeuIn').value = ''; });
+$('#enjeuClear').onclick = () => G3.scenes['g-globe'] && G3.ensure('g-globe').clear();
+// pyramide : bascule
+$('#pyrSwitch').onclick = () => { const s = G3.scenes['g-pyr'] && G3.ensure('g-pyr'); if (!s) return; s.mode = 1 - s.mode; $('#pyrQ').textContent = s.mode ? 'Où se situe l’atelier d’aujourd’hui ?' : 'Où se situait votre dernière formation ?'; $('#pyrSwitch').textContent = s.mode ? 'Revenir à la dernière formation' : 'Et l’atelier d’aujourd’hui ?'; };
+$('#pyrReset').onclick = () => { const s = G3.scenes['g-pyr'] && G3.ensure('g-pyr'); if (!s) return; s.votes = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]; store.set('pyr', s.votes); s.redraw(); };
+// votes
+const vData = store.get('votes', [1, 2, 3, 4, 5].map(i => ({ n: 'Îlot ' + i, v: [0, 0, 0] })));
+const vEl = $('#votes');
+function drawVotes() { vEl.innerHTML = ''; vData.forEach((p, i) => { const d = document.createElement('div'); d.innerHTML = `<input type="text" id="vn${i}" aria-label="Nom du projet ${i + 1}" value="${p.n.replace(/"/g, '&quot;')}"><div><button style="background:var(--gold)">+ I</button><button style="background:var(--paper)">+ F</button><button style="background:var(--mauve);color:var(--paper)">+ O</button></div><div class="cap">${p.v[0]} · ${p.v[1]} · ${p.v[2]}</div>`;
+  d.querySelector('input').onchange = e => { p.n = e.target.value; store.set('votes', vData); };
+  d.querySelectorAll('button').forEach((b, k) => b.onclick = () => { p.v[k]++; store.set('votes', vData); drawVotes(); });
+  vEl.appendChild(d); }); const s = G3.scenes['g-coins'] && G3.ensure('g-coins'); s && s.draw(vData); }
+drawVotes();
+const rz = document.createElement('button'); rz.className = 'btn alt'; rz.textContent = 'Remettre à zéro'; rz.style.marginTop = '10px'; rz.onclick = () => { vData.forEach(p => p.v = [0, 0, 0]); store.set('votes', vData); drawVotes(); }; vEl.after(rz);
+
+const h = parseInt((location.hash.match(/^#s(\d+)$/) || [])[1] || '1', 10);
+go(h - 1);
+addEventListener('hashchange', () => { const m = location.hash.match(/^#s(\d+)$/); if (m && +m[1] - 1 !== cur) go(+m[1] - 1); });
+})();
+</script>
