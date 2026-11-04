@@ -85,7 +85,7 @@ const docOf = (title, kids, foot) => new d.Document({ creator: 'Isabelle Pedneau
     ['Sentiment d’appartenance', 'Les émotions et les comportements positifs sont contagieux.', 'Relations positives · se sentir important · prendre des nouvelles · temps de qualité · virus de gentillesse · climat sécurisant · plus de commentaires positifs que négatifs']];
   const kids = [
     ...titre('Aide-mémoire · d’après l’affiche d’Isabelle Pedneault', 'L’ENGAGEMENT, UN ÉCOSYSTÈME VIVANT', 'Construire une vie riche de sens. Un moteur invisible qui fait grandir les personnes, les communautés, le monde.'),
-    H1('01', 'Motivation ≠ engagement'),
+    H1('01', 'Motivation et engagement : pas pareil'),
     tbl(['', 'C’est…'], [['**Motivation**', 'la ==force== qui pousse à l’action (valeurs, objectifs…). Ce n’est pas une question de « j’ai envie » ou « ça me tente ».'], ['**Engagement**', 'la ==décision== de prendre part activement à une activité, un projet, une mission.']], [2400, 7640], { firstAccent: true }),
     H1('02', 'Les 4 besoins'),
     tbl(['Besoin', 'Dans la tête de l’élève', 'Ce qui le nourrit'], BES.map(b => ['**' + b[0] + '**', '*' + b[1] + '*', b[2]]), [2300, 3600, 4140], { firstAccent: true }),
@@ -105,4 +105,71 @@ const docOf = (title, kids, foot) => new d.Document({ creator: 'Isabelle Pedneau
     P('« Un acte conscient, délibéré, de bravoure et de courage, qui nous permet à toutes et à tous de nous aligner dans une trajectoire commune. Avancer ensemble. » Centre de solidarité internationale du Saguenay–Lac-Saint-Jean.', { run: { italics: true } })
   ];
   save(docOf('Aide-mémoire · L’engagement', kids, 'Rêver le monde de demain · aide-mémoire : l’engagement'), DIR + '/09_Aide-memoire_Engagement.docx');
+}
+// ANNEXE10
+
+// ===================== 4. AUTOÉVALUATION · INTERVENTIONS UNIVERSELLES =====================
+{
+  const SRC = 'Gaudreau, N., Duchaine, M.-P. et Bernier, S. Grille réflexive des interventions universelles (EN.1.1), « J’ai MON plan! », Université Laval.';
+  const o = '○';
+  const BES = [
+    ['Compétence', 'Je crois qu’en faisant des efforts, j’apprends.', [
+      'J’amène l’élève à s’autoévaluer et à se fixer des objectifs personnels d’apprentissage.',
+      'Je segmente les tâches complexes en petites étapes afin de maintenir la motivation de l’élève.',
+      'J’offre à l’élève des outils de planification et d’organisation.',
+      'Je reconnais les efforts fournis par l’élève en nommant ce qui a été observé.']],
+    ['Autonomie', 'Je fais des choix.', [
+      'J’offre à l’élève l’occasion de prendre part aux décisions de la classe.',
+      'J’offre une structure qui permet aux élèves de s’exprimer (conseil de coopération, journal de classe, blogue, etc.).',
+      'J’interviens de manière à ce que l’élève fasse des choix éclairés et en assume les conséquences.',
+      'J’attribue des responsabilités à l’élève en tenant compte de ses forces afin de le valoriser en classe.']],
+    ['Sens', 'Je comprends pourquoi c’est important pour moi.', [
+      'Je communique aux élèves les objectifs d’apprentissage.',
+      'J’adapte mon enseignement en fonction des intérêts et des capacités de l’élève.',
+      'Je m’intéresse à ce qui fascine l’élève, à ce qui le rend heureux.',
+      'Je planifie des activités d’enseignement-apprentissage qui demandent à l’élève d’être actif (autant que possible).']],
+    ['Appartenance', 'Je suis important ici.', [
+      'Au début du cours, j’accueille les élèves à la porte.',
+      'J’incite les élèves à s’entraider et je favorise les échanges entre eux.',
+      'J’organise des activités favorisant la création de liens positifs.',
+      'Je me préoccupe de la qualité de ma relation avec l’élève.']]
+  ];
+  const kids = [
+    ...titre('Annexe 10 · Colloque régional FGA · 13 novembre 2026', 'MES INTERVENTIONS UNIVERSELLES', 'Une autoévaluation, d’après la grille réflexive EN.1.1 de l’outil « J’ai MON plan! ». Avant de cibler un élève, je regarde ce que j’offre déjà à tout le groupe.'),
+    H1('01', 'Pourquoi ici ?'),
+    P('Dans l’atelier, on a vu que l’engagement se nourrit de 4 besoins : **compétence**, **autonomie**, **sens** et **appartenance**. La démarche de l’idée à l’action les nourrit pour tout le groupe, pas seulement pour l’élève qui a un plan d’intervention. C’est le principe de la CUA : ce qui est essentiel pour quelques-uns est bon pour tous.'),
+    P('La grille réflexive EN.1.1 est l’outil de la recherche « J’ai MON plan! » qui pose exactement cette question à l’enseignant·e : avant d’établir un plan d’intervention, quelles **interventions universelles** sont déjà en place dans ma classe, et lesquelles ajuster d’abord ?'),
+    ...note('Pour la FGA', ['Les énoncés parlent de « classe » et d’« élève » : lisez « groupe » ou « local » et « adulte ». En individualisé, pensez à vos rencontres de suivi et à votre façon d’accueillir chaque personne.'], { before: 120 }),
+    H1('02', 'Comment l’utiliser'),
+    tbl(['Échelle de la grille', 'Je le fais…'], [['**–**', 'rarement ou pas encore'], ['**+**', 'parfois'], ['**++**', 'souvent, c’est une habitude']], [3000, 7040], { firstAccent: true }),
+    N('Prenez 10 minutes, seul·e ou avec un·e collègue. Cochez une case par énoncé, sans vous juger.', 5),
+    N('Repérez **2 forces** (++) : ce sont vos appuis.', 5),
+    N('Choisissez **1 levier** (– ou +) qui nourrirait un besoin peu servi dans votre groupe.', 5),
+    N('Transformez ce levier en premier pas : une action (un verbe !), une date, un allié.', 5),
+    N('Refaites la grille dans 6 semaines, au moment de la relance de l’atelier.', 5),
+    BR(),
+    H1('03', 'Ma grille express : 16 énoncés, 4 besoins'),
+    P('Les énoncés sont tirés tels quels de la grille EN.1.1. Ils ont été regroupés selon le besoin de l’engagement qu’ils nourrissent le plus.', { run: { size: 19, color: C.grey } }),
+    ...BES.flatMap(b => [H3(b[0] + ' · « ' + b[1] + ' »'), tbl(['Énoncé de la grille EN.1.1', '–', '+', '++'], b[2].map(t => [t, o, o, o]), [7340, 900, 900, 900])]),
+    H1('04', 'Les 5 domaines de la grille complète'),
+    P('La grille complète compte environ 80 énoncés, en 5 domaines. Les énoncés en italique y portent sur vos pratiques envers l’élève ciblé.', { run: { size: 19 } }),
+    tbl(['Domaine de la grille', 'Ce qu’on y regarde', 'Besoin surtout nourri'], [
+      ['**La gestion des ressources**', 'Le temps, l’horaire, le matériel, l’aménagement, la technologie.', 'Compétence'],
+      ['**L’établissement d’attentes claires**', 'Les règles, les routines, les rôles, les objectifs annoncés.', 'Sens et compétence'],
+      ['**Le développement de relations sociales positives**', 'L’accueil, le climat, l’entraide, la relation avec l’élève.', 'Appartenance'],
+      ['**L’engagement des élèves sur l’objet d’apprentissage**', 'Les activités actives, la variété, l’autoévaluation, les intérêts.', 'Autonomie, sens et compétence'],
+      ['**La gestion des comportements d’indiscipline**', 'Les interventions graduelles, calmes, cohérentes et respectueuses.', 'Appartenance (un climat sécurisant)']
+    ], [3300, 4440, 2300], { firstAccent: true }),
+    P('La grille complète est dans le dossier partagé (code QR de l’atelier), sous le nom « 10b_EN.1.1_Grille-reflexive_Jai-MON-plan.pdf ». Elle existe aussi en versions élève, parent, direction et services complémentaires sur le site de « J’ai MON plan! » : www.fse.ulaval.ca/recherche-ng/jaimonplan', { before: 100, run: { size: 19 } }),
+    BR(),
+    H1('05', 'Mon bilan'),
+    zone('Mes 2 forces (++)', 1100), SP(60),
+    zone('Mon levier (– ou +) et le besoin qu’il nourrit', 1100), SP(60),
+    zone('De retour dans mon milieu, je… (une action, une date, un allié)', 1200), SP(60),
+    zone('Je refais la grille le… et ce qui a changé', 1000),
+    SP(200),
+    label('Source'),
+    P(SRC + ' Tiré de www.fse.ulaval.ca/recherche-ng/jaimonplan', { run: { size: 18 } })
+  ];
+  save(docOf('Annexe 10 · Mes interventions universelles', kids, 'Rêver le monde de demain · annexe 10 : mes interventions universelles'), DIR + '/10_Annexe_Autoevaluation-interventions-universelles.docx');
 }

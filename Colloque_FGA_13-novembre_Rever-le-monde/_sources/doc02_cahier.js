@@ -35,7 +35,6 @@ const kids = [
   SP(120),
   P('Ce cahier vous suit pendant tout l’atelier. Écrivez-y, raturez-y, collez-y des papillons. Il est fait pour être utilisé, pas pour rester propre.', { run: { italics: true, color: C.grey } }),
   P('Isabelle Pedneault, CP, CFGA De Jonquière · Francis Laroche, éducateur en citoyenneté mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean', { run: { size: 18, color: C.grey } }),
-  BR(),
 
   H1('01', 'Ce qui me dérange'),
   P('Première marche de la démarche « de l’idée à l’action » : partir de ce qui nous touche. Avant de coller votre papillon au mur, notez-le ici.'),
@@ -72,12 +71,7 @@ const kids = [
     ['**Citoyenne**', 'Action concrète dans son milieu, pour d’autres.', '']
   ].map(r => [r[0], r[1], P(' ', { after: 520 })]), [2100, 3300, 4500], { firstAccent: true }),
 
-  H1('04', 'La pyramide de rétention'),
-  img(I + 'il_pyramide.png', 380, 271),
-  P('Un repère du passif à l’actif : plus on fait, plus on retient. Les pourcentages qu’on voit souvent avec cette pyramide ne viennent d’aucune étude solide. L’idée, elle, tient : discuter, pratiquer et expliquer à un autre aident à apprendre.', { run: { size: 19 } }),
-  zones(['Ma dernière formation se situait…', 'L’atelier d’aujourd’hui se situe…', 'Mes élèves passent surtout leur temps…'], 1300),
-
-  H1('05', 'Résultat ou action ?'),
+  H1('04', 'Résultat ou action ?'),
   zone('Avant d’aller plus loin, écrivez une action pour votre enjeu', 900),
   SP(120),
   P('Le ==résultat== est ce qu’on souhaite. C’est souvent un **nom** : « la réduction des déchets ». L’==action== est ce qu’on fait lundi. C’est un **verbe** conjugué, avec quelqu’un qui agit et une date : « Notre groupe installe trois bacs vendredi. »'),
@@ -87,7 +81,7 @@ const kids = [
     [1, 2, 3].map(() => [P(' ', { after: 520 }), P(' ', { after: 520 })]), [4300, 5600]),
   P('**Une action solide est SMART :** spécifique, mesurable, atteignable, réaliste et datée.', { before: 100, run: { size: 19 } }),
 
-  H1('06', 'La démarche en 5 marches'),
+  H1('05', 'La démarche en 5 marches'),
   img(I + 'nb_compost.jpg', 520, 293),
   img(I + 'il_escalier.png', 460, 238),
   tbl(['Marche', 'Composante de l’autodétermination', 'Ce que j’en retiens'], [
@@ -97,7 +91,7 @@ const kids = [
   SP(100),
   zone('Les projets d’élèves du CFGA qui m’ont marqué·e', 1300),
 
-  H1('07', 'Et en individualisé ?'),
+  H1('06', 'Et en individualisé ?'),
   P('Pas de groupe qui avance ensemble ? Trois portes d’entrée.'),
   tbl(['Scénario', 'Comment ça se vit', 'Exemples'], [
     ['**A · L’enjeu comme contexte de tâche**', 'La tâche du sigle (écrire, calculer, lire) se fait à partir d’un enjeu choisi par l’élève.', 'PPS Z107 : le gaspillage comme contexte de la semaine planifiée. Français : lettre ouverte. Mathématiques : sondage, budget.'],
@@ -107,29 +101,43 @@ const kids = [
   SP(120),
   zone('Le scénario qui me parle (A, B ou C), et pourquoi', 1300),
 
-  H1('08', 'Mon parcours'),
-  P('Choisissez : **1** vivre la démarche · **2** l’adapter à mon sigle · **3** préparer avec Copilot · **4** mon propre chemin. Seul, en duo ou en îlot.'),
-  zones(['Mon parcours (1, 2, 3 ou 4)', 'Avec qui'], 700),
-  SP(100),
+  H1('07', 'Notre projet d’îlot'),
+  P('En équipe, les 4 étapes, dans l’ordre. Le minuteur est à l’écran.'),
   tbl(null, [
-    [P('**Notre enjeu**', { after: 420 })],
-    [P('**Notre résultat** (un nom)', { after: 420 })],
-    [P('**Nos actions** (un verbe, quand, qui)', { after: 900 })],
-    [P('**L’invite Copilot utilisée et ce qu’elle a ajouté**', { after: 700 })]
-  ], [W]),
+    [P('**1 · Notre enjeu** (choisi sur le mur à l’entrée) · 2 min', { after: 480 })],
+    [P('**2 · Vivre la démarche** · 5 min', { after: 60 }), P('Notre résultat (un nom) :', { after: 420, run: { size: 19, color: C.grey } }), P('Nos actions (un verbe, qui, quand) :', { after: 900, run: { size: 19, color: C.grey } })],
+    [P('**3 · L’adapter à nos groupes** (PPS, DHS ou nos sigles : scénario A, B ou C) · 4 min', { after: 900 })]
+  ].map(r => [r]), [W]),
   SP(120),
+  H2('4 · Notre invite Copilot · 4 min'),
+  P('On l’écrit ici, puis on la tape dans Copilot sur un appareil de l’îlot (compte du centre de services). Les 5 invites de l’aide-mémoire sont aussi dans le dossier partagé, prêtes à copier.', { run: { size: 19 } }),
+  tbl(['', 'Ce que l’îlot écrit'], [
+    ['**Rôle**', 'Agis comme… (enseignant·e en PPS ou en DHS, intervenant·e scolaire, enseignant·e en adaptation scolaire…)'],
+    ['**Contexte**', 'Notre groupe : … · Notre enjeu : …'],
+    ['**Tâche**', 'Propose… (enrichir une action, créer une grille, des questions d’objectivation…)'],
+    ['**Contraintes**', 'Niveau de lecture, durée, format, ce qu’on ne veut pas…']
+  ].map(r => [r[0], P(r[1], { after: 520, run: { size: 18, color: C.grey, italics: true } })]), [1800, 8240], { firstAccent: true }),
+  zone('Ce que Copilot a ajouté, et ce qu’on garde', 900),
+  SP(120),
+  H2('La galerie'),
+  P('Une personne par îlot reste pour présenter le projet en 30 secondes ; à mi-temps, on change. Les autres circulent.', { run: { size: 19 } }),
   img(I + 'il_jetons.png', 330, 110),
   P('**Le vote.** Déposez vos 3 jetons sur les projets des autres îlots : **impact** (ça changerait quelque chose pour quelqu’un), **faisabilité** (des adultes en formation pourraient le réaliser en quelques semaines), **originalité** (ça m’a surpris).', { run: { size: 19 } }),
   zone('Le projet qui m’a le plus inspiré·e', 900),
 
-  H1('09', 'Mon premier pas'),
+  H1('08', 'Mon premier pas, de retour dans mon milieu'),
   img(I + 'il_billet.png', 600, 229),
   P('Remplissez la fiche (aussi en version détachable), puis photographiez-la. Dans six semaines, on vous écrira : « Avez-vous fait votre premier pas ? »', { run: { italics: true, color: C.grey } }),
+  P('Des idées : demander lundi à mon groupe « Qu’est-ce qui vous dérange ? » · transformer une tâche de mon sigle à partir d’un enjeu choisi par l’élève · terminer une période par un 3-2-1 · proposer un projet-pont à une ou un collègue de PPS ou de DHS · tester une invite Copilot pour bâtir une grille.', { run: { size: 19 } }),
   zone('1 · Mon action (un verbe !)', 900),
   SP(60),
   zones(['2 · Quand', '3 · Avec qui (mon allié)'], 700),
 
-  BR(),
+  H1('09', 'Retour sur l’atelier : la pyramide'),
+  img(I + 'il_pyramide.png', 340, 243),
+  P('Un repère du passif à l’actif : plus on fait, plus on retient. Les pourcentages qu’on voit souvent avec cette pyramide ne viennent d’aucune étude solide. L’idée, elle, tient : discuter, pratiquer et expliquer à un autre aident à apprendre.', { run: { size: 19 } }),
+  zones(['Ma dernière formation se situait…', 'L’atelier d’aujourd’hui se situait…'], 900),
+
   H1('10', 'Objectivation 3-2-1'),
   P('On termine comme on aimerait que nos élèves terminent : en regardant le chemin parcouru.'),
   zone('3 idées que je retiens', 1400),
@@ -139,7 +147,7 @@ const kids = [
   zone('1 question qui me reste', 800),
 
   H1('11', 'Ce qui reste'),
-  P('Des mots d’élèves et de parents. Repérez ceux qui parlent de projets, de confiance, de forces et d’appartenance.'),
+  P('Quand les 4 besoins sont nourris (compétence, autonomie, sens, appartenance), voici ce qui reste. De vrais mots d’élèves et de parents, sans nom.'),
   img(I + 'frag_ecole.jpg', 360, 53, { before: 80 }),
   caption('Écriture d’un élève, 2017'),
   ...quote('Il n’y a pas un matin qu’il n’a hâte de se rendre dans sa classe. Il se sent écouté, compris et surtout, accepté.', 'Un parent', { size: 24 }),
@@ -152,6 +160,7 @@ const kids = [
   B('**« J’ai mon plan ».** Un outil pour que l’adulte s’approprie son parcours de formation : ses cours, ses échéances, ses buts.'),
   B('**La rencontre de suivi animée par l’élève (20 min).** L’adulte présente lui-même son plan de formation (« J’ai mon plan »), les sigles réussis, ce qui l’aide, ce qui bloque et ses prochains objectifs. L’enseignant ou l’intervenant écoute, questionne, puis on ajuste le plan ensemble. On passe de juge à coach.'),
   B('**L’objectivation.** L’annexe remise avec ce cahier propose une banque de questions et 7 formats à essayer dès lundi.'),
+  B('**Mes interventions universelles.** L’annexe 10 : une autoévaluation d’après la grille réflexive EN.1.1 de « J’ai MON plan! ». Avant de cibler un élève, regarder ce qu’on offre à tout le groupe.'),
   B('**Le Centre de solidarité internationale (CSI)** accompagne les groupes qui veulent démarrer une démarche semblable, dans les quatre CSS de la région.'),
   SP(200),
   label('Références'),

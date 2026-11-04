@@ -16,6 +16,8 @@ Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (éd
 | `07_Annexe_Jai-mon-plan.docx` | Chaque participant | Les capacités et la banque de moyens de « J’ai MON plan! » (Parcours FGA), à cocher, et le lien avec la démarche |
 | `08_Fiche-eleve_De-l-idee-a-l-action.docx` | Les élèves | La démarche en 5 marches, à photocopier et à remplir |
 | `09_Aide-memoire_Engagement.docx` | Chaque participant | L’affiche « L’engagement, un écosystème vivant » en une page, et la CUA de la Boussole CP |
+| `10_Annexe_Autoevaluation-interventions-universelles.docx` | Chaque participant | L’autoévaluation de ses interventions universelles : 16 énoncés de la grille EN.1.1 reliés aux 4 besoins, et un bilan |
+| `10b_EN.1.1_Grille-reflexive_Jai-MON-plan.pdf` | Chaque participant | La grille réflexive complète de « J’ai MON plan! » (Gaudreau, Duchaine et Bernier, Université Laval) |
 | `presentation/index.html` | La salle | Présentation interactive de 20 diapos, en 3D, qui fonctionne sans Internet |
 
 ## La présentation
@@ -34,18 +36,20 @@ La présentation est un voyage dans un seul monde 3D en cel-shading : un sol de 
 Ce qui est interactif :
 
 - **Diapo 2 :** les présentations d’Isabelle et de Francis (ma devise, mon outil préféré, si c’était à refaire, mon conseil numéro 1). On clique sur un champ pour l’écrire.
-- **Diapo 3 :** le globe 3D des enjeux. On tape un enjeu et il s’accroche au globe.
+- **Diapo 3 :** le globe 3D des enjeux. On tape un enjeu et il s’accroche au globe, en 4 couleurs.
 - **Diapo 7 :** l’engagement : vrai ou faux, puis les définitions (motivation, engagement, engagement citoyen).
-- **Diapo 8 :** les 4 sphères en 3D. On clique sur une planète pour voir sa définition.
-- **Diapo 9 :** la pyramide 3D. On vote pour l’étage de sa dernière formation.
-- **Diapo 10 :** le détecteur « résultat ou action ? », et des cartes qu’on retourne.
-- **Diapo 11 :** les marches de la démarche, qu’on révèle une à une.
-- **Diapo 12 :** les scénarios, à filtrer par matière.
-- **Diapo 13 :** l’espace pour glisser la vidéo des élèves (fichier local).
-- **Diapo 15 :** le générateur d’invites Copilot.
-- **Diapo 16 :** les piles de jetons 3D du vote.
+- **Diapo 8 :** les 4 sphères en 3D. On touche une planète ou son nom pour voir sa définition.
+- **Diapo 9 :** le détecteur « résultat ou action ? ».
+- **Diapo 10 :** les 5 marches de la démarche, qu’on révèle une à une.
+- **Diapo 11 :** les trois portes d’entrée (PPS et DHS d’abord).
+- **Diapo 12 :** l’espace pour glisser la vidéo des élèves (fichier local).
+- **Diapo 13 :** en îlot, les 4 étapes obligatoires avec leur minuteur.
+- **Diapo 14 :** le générateur d’invites Copilot : on choisit le rôle et on écrit son groupe, son enjeu et ses contraintes ; le bouton « Copier » met l’invite dans le presse-papier.
+- **Diapo 15 :** les piles de jetons 3D du vote, sous le nom de l’enjeu de chaque îlot.
+- **Diapo 16 :** Mon premier pas, avec des exemples.
+- **Diapo 17 :** la pyramide 3D, en retour sur l’atelier. On touche l’étage de sa dernière formation.
 - **Diapo 19 :** ce qui reste : de vrais mots d’élèves, reliés aux 4 besoins de l’engagement.
-- **Diapo 20 :** le code QR des ressources, dont on peut changer l’adresse.
+- **Diapo 20 :** le code QR mène au dossier Drive partagé des ressources (à partager en lecture).
 
 Ce que la salle saisit (enjeux, votes) reste sur l’ordinateur qui présente. Les boutons « Vider » et « Remettre à zéro » effacent ces données entre deux séances.
 
@@ -86,4 +90,5 @@ Ces prompts décrivent la technique (cel-shading BD) sans nommer d’œuvre exis
 - Wehmeyer, M. L. (1999). A functional model of self-determination. *Focus on Autism and Other Developmental Disabilities*, 14(1), 53-61.
 - Fredricks, J. A., Blumenfeld, P. C. et Paris, A. H. (2004). School engagement. *Review of Educational Research*, 74(1), 59-109.
 - Pedneault, I. *L’objectivation*, fiche de classe.
+- Gaudreau, N., Duchaine, M.-P. et Bernier, S. *Grille réflexive des interventions universelles* (EN.1.1), « J’ai MON plan! », Université Laval.
 - Documents de préparation de l’atelier : offre de service du Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI), pistes de clarification, plans de synthèse 1.1 à 1.4.
