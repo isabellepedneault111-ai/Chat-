@@ -12,7 +12,7 @@ Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (éd
 | `03_Aide-memoire-Copilot.docx` | Chaque participant | La formule rôle, contexte, tâche, contraintes, 5 invites prêtes à copier, les balises |
 | `04_Annexe_Objectivation.docx` | Chaque participant | Définition, la maison à trois étages, la banque de questions, 7 formats, un gabarit de carnet de bord |
 | `05_Materiel-a-imprimer.docx` | Les animateurs | Affiche du mur d’enjeux, cartes-citations, fiches « Mon premier pas », jetons, cartons de signaux |
-| `presentation/index.html` | La salle | Présentation interactive de 19 diapos, en 3D, qui fonctionne sans Internet |
+| `presentation/index.html` | La salle | Présentation interactive de 20 diapos, en 3D, qui fonctionne sans Internet |
 
 ## La présentation
 
@@ -25,23 +25,24 @@ Ouvrir `presentation/index.html` dans Chrome ou Edge.
 
 Ce qui est interactif :
 
-- **Diapo 2 :** le globe 3D des enjeux. On tape un enjeu et il s’accroche au globe.
-- **Diapo 4 :** le tri des citations, en glisser-déposer.
-- **Diapo 8 :** les 4 sphères en 3D. On clique sur une planète pour voir sa définition.
-- **Diapo 9 :** la pyramide 3D. On vote pour l’étage de sa dernière formation.
-- **Diapo 10 :** le détecteur « résultat ou action ? », et des cartes qu’on retourne.
-- **Diapo 11 :** les marches de l’Incubateur, qu’on révèle une à une.
-- **Diapo 12 :** les scénarios, à filtrer par matière.
-- **Diapo 13 :** l’espace pour glisser la vidéo des élèves (fichier local).
-- **Diapo 15 :** le générateur d’invites Copilot.
-- **Diapo 16 :** les piles de jetons 3D du vote.
-- **Diapo 19 :** le code QR des ressources, dont on peut changer l’adresse.
+- **Diapo 2 :** les fiches d’identité d’Isabelle et de Francis. On clique sur un champ pour l’écrire.
+- **Diapo 3 :** le globe 3D des enjeux. On tape un enjeu et il s’accroche au globe.
+- **Diapo 5 :** le tri des citations, en glisser-déposer.
+- **Diapo 9 :** les 4 sphères en 3D. On clique sur une planète pour voir sa définition.
+- **Diapo 10 :** la pyramide 3D. On vote pour l’étage de sa dernière formation.
+- **Diapo 11 :** le détecteur « résultat ou action ? », et des cartes qu’on retourne.
+- **Diapo 12 :** les marches de l’Incubateur, qu’on révèle une à une.
+- **Diapo 13 :** les scénarios, à filtrer par matière.
+- **Diapo 14 :** l’espace pour glisser la vidéo des élèves (fichier local).
+- **Diapo 16 :** le générateur d’invites Copilot.
+- **Diapo 17 :** les piles de jetons 3D du vote.
+- **Diapo 20 :** le code QR des ressources, dont on peut changer l’adresse.
 
 Ce que la salle saisit (enjeux, votes, tri) reste sur l’ordinateur qui présente. Les boutons « Vider » et « Remettre à zéro » effacent ces données entre deux séances.
 
 ## Les exemples concrets
 
-Les mots d’élèves et de parents viennent de la classe d’Isabelle, du temps où elle enseignait au primaire. Ils ont été recadrés pour ne montrer aucun nom, aucun prénom et aucune signature.
+Les mots d’élèves et de parents viennent de la classe d’Isabelle, du temps où elle enseignait au primaire. Seuls les extraits qui parlent de projets, de confiance, de forces et d’appartenance sont utilisés, sans nom, sans prénom et sans signature.
 
 ## Les choix graphiques
 

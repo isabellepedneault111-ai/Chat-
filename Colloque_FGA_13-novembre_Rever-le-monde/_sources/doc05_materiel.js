@@ -17,12 +17,12 @@ const big = (t, size = 120, color = C.ink, o = {}) => new d.Paragraph({ alignmen
   children: [new d.TextRun({ text: t, font: 'Anton', size, color })] });
 
 const citations = [
-  'Vous m’avez redonné envie d’aller à l’école.',
+  '[…] redonné envie d’aller à l’école.',
   'Il n’y a pas un matin qu’il n’a hâte de se rendre dans sa classe. Il se sent écouté, compris et surtout, accepté.',
-  'Vous avez confiance en eux, en leur capacité, vous les amenez à valoriser leurs forces et à améliorer les aspects plus difficiles pour eux, et ça sans jugement.',
-  'Merci d’ouvrir tous ces possibles, de multiplier les espaces d’accomplissement, de donner envie de faire des projets !',
-  'Merci de leur permettre de construire leur confiance jour après jour.',
-  'Merci de transmettre des connaissances, mais aussi de la confiance en eux et une meilleure connaissance d’eux-mêmes et de leurs forces.'
+  '[…] valoriser leurs forces et améliorer les aspects plus difficiles pour eux, et ça sans jugement.',
+  '[…] ouvrir tous ces possibles, multiplier les espaces d’accomplissement, donner envie de faire des projets !',
+  '[…] leur permettre de construire leur confiance jour après jour.',
+  '[…] des connaissances, mais aussi de la confiance en eux et une meilleure connaissance d’eux-mêmes et de leurs forces.'
 ];
 
 const kids = [
@@ -44,7 +44,7 @@ const kids = [
   grid(citations.map(t => [
     new d.Paragraph({ children: [new d.TextRun({ text: '«', font: 'Anton', size: 56, color: C.accent })], spacing: { after: 0 } }),
     new d.Paragraph({ spacing: { after: 120, line: 300 }, children: [new d.TextRun({ text: t, italics: true, size: 24 })] }),
-    new d.Paragraph({ children: [new d.TextRun({ text: 'Mot reçu par Isabelle, enseignante au primaire', font: SANS, size: 14, smallCaps: true, characterSpacing: 30, color: C.grey })] })
+    new d.Paragraph({ children: [new d.TextRun({ text: 'Mot d’élève ou de parent, au primaire', font: SANS, size: 14, smallCaps: true, characterSpacing: 30, color: C.grey })] })
   ]), 2, 3600),
   BR(),
 

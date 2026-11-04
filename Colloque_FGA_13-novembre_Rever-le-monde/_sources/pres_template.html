@@ -62,6 +62,12 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .title-wrap{max-width:min(720px,100%);margin-top:auto;margin-bottom:auto}
 .sticker{display:inline-block;color:var(--ink);background:var(--gold);border:3px solid var(--ink);padding:.15em .5em;font-family:var(--display);transform:rotate(-2deg);box-shadow:4px 4px 0 var(--ink)}
 /* diapo 1 : affiche */
+.s1-wall .s1-cap{position:static;flex-basis:100%;text-align:center;transform:rotate(-2deg);margin-top:8px}
+.s1-wall{display:flex!important;flex-wrap:wrap;align-content:center;justify-content:center;gap:clamp(12px,1.6vw,22px);padding:clamp(20px,3vw,48px)}
+.pap{background:var(--gold);border:3px solid var(--ink);box-shadow:6px 6px 0 rgba(30,26,34,.18);font-family:var(--hand);font-size:clamp(20px,2vw,32px);line-height:1.05;padding:14px;width:clamp(120px,12.5vw,200px);aspect-ratio:1;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ink)}
+.pap:nth-child(3n+1){transform:rotate(-4deg)}.pap:nth-child(3n+2){transform:rotate(3deg)}.pap:nth-child(3n){transform:rotate(-1.5deg) translateY(8px)}
+.pap.alt{background:var(--paper)}
+.pap.done{background:var(--mauve);color:var(--gold);font-family:var(--display);font-size:clamp(24px,2.4vw,38px);transform:rotate(5deg) scale(1.08)}
 .slide.s1{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);padding:0;padding-bottom:46px}
 .s1-panel{background-color:var(--mauve);background-image:radial-gradient(rgba(30,26,34,.35) 1.4px,transparent 1.6px);background-size:11px 11px;color:var(--paper);display:flex;flex-direction:column;justify-content:center;gap:.4em;padding-block:clamp(20px,4vh,48px);padding-left:max(16px,env(safe-area-inset-left,0px),4vw);padding-right:clamp(16px,3vw,48px);border-right:6px solid var(--ink);min-width:0}
 .s1-title{font-size:clamp(46px,8.2vw,132px);line-height:.92;margin:.1em 0 .1em;color:var(--paper);text-shadow:5px 5px 0 var(--ink);-webkit-text-stroke:2px var(--ink);paint-order:stroke fill}
@@ -80,6 +86,27 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .n2::before{transform:rotate(6deg);background:rgba(91,42,134,.55)}
 .s1-cap{position:absolute;left:7%;bottom:6%;font-family:var(--hand);font-size:clamp(24px,2.4vw,38px);color:var(--mauve);margin:0;transform:rotate(-3deg);z-index:4}
 @media (max-width:800px){.slide.s1{grid-template-columns:1fr;grid-template-rows:46vh auto;overflow-y:auto}.s1-img{order:-1;border-bottom:6px solid var(--ink)}.s1-cap{display:none}.s1-panel{border-right:0}}
+.frags{display:flex;flex-wrap:wrap;gap:clamp(16px,3vw,48px);align-items:center;margin:4px 0 clamp(14px,2vh,26px)}
+.frag{position:relative;margin:0;background:#fff;padding:8px;border:3px solid var(--ink);box-shadow:8px 8px 0 rgba(30,26,34,.16);max-width:min(640px,100%);flex:1 1 380px}
+.frag img{display:block;width:100%;height:auto}
+.frag::before{content:"";position:absolute;top:-14px;left:-18px;width:90px;height:26px;background:rgba(242,194,48,.85);border:2px solid rgba(30,26,34,.25);transform:rotate(-4deg)}
+.f1{transform:rotate(-2deg)}.f2{transform:rotate(1.5deg)}
+.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:clamp(12px,1.6vw,22px)}
+.quotes blockquote{margin:0;border-left:6px solid var(--mauve);padding:6px 0 6px 16px;font-style:italic;font-size:clamp(17px,1.6vw,23px);line-height:1.4}
+.quotes mark{background:linear-gradient(transparent 50%,var(--gold) 50%);color:inherit;font-style:normal;font-weight:700;padding:0 .08em}
+.quotes cite{display:block;font-style:normal;font-family:var(--ui);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.ids{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:clamp(16px,2.5vw,36px)}
+.idc{border:3px solid var(--ink);background:var(--paper);box-shadow:8px 8px 0 var(--ink);min-width:0}
+.idc:nth-child(1){transform:rotate(-.8deg)}.idc:nth-child(2){transform:rotate(.8deg)}
+.idc header{background-color:var(--mauve);background-image:radial-gradient(rgba(30,26,34,.35) 1.4px,transparent 1.6px);background-size:11px 11px;padding:12px 16px;border-bottom:3px solid var(--ink);display:flex;flex-direction:column;gap:4px}
+.idc-name{font-family:var(--display);font-size:clamp(28px,3vw,44px);color:var(--gold);text-shadow:3px 3px 0 var(--ink);line-height:1}
+.idc-role{font-family:var(--ui);font-size:clamp(11px,1vw,14px);color:#E9DFF5;letter-spacing:.04em}
+.idc dl{margin:0;padding:10px 16px 14px;display:grid;grid-template-columns:auto 1fr;gap:8px 14px;align-items:baseline}
+.idc dt{font-family:var(--ui);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mauve);white-space:nowrap}
+.idc dd{margin:0;font-family:var(--hand);font-size:clamp(20px,1.9vw,28px);line-height:1.15;border-bottom:2px dashed var(--hair);padding-bottom:2px;min-height:1.2em;cursor:text}
+.idc dd.todo{color:var(--muted)}
+.idc dd:focus{outline:none;background:#fff5d1}
+@media (max-width:520px){.idc dl{grid-template-columns:1fr}}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:18px;align-items:start}
 .gallery figure{margin:0;cursor:zoom-in}
 .gallery figure img{border:3px solid var(--ink);width:100%;height:auto;background:#fff}
@@ -149,10 +176,41 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
       <div><span class="sticker" style="background:var(--paper)">Francis Laroche</span><small>Éducateur en citoyenneté mondiale · Centre de solidarité internationale du Saguenay–Lac-Saint-Jean</small></div>
     </div>
   </div>
-  <div class="s1-img">
-    <figure class="note n1"><img src="__IMG_Q1__" alt="Mot manuscrit d’un élève : vous m’avez redonné envie d’aller à l’école"></figure>
-    <figure class="note n2"><img src="__IMG_Q6__" alt="Carte manuscrite d’une famille : merci de leur permettre de construire leur confiance jour après jour"></figure>
-    <p class="s1-cap">de vrais mots reçus en classe</p>
+  <div class="s1-img s1-wall" aria-label="Un mur de papillons adhésifs avec des enjeux">
+    <span class="pap">le gaspillage à la cafétéria</span>
+    <span class="pap alt">l’isolement des jeunes</span>
+    <span class="pap">le coût des loyers</span>
+    <span class="pap">un trajet pas sécuritaire</span>
+    <span class="pap alt">la crise climatique</span>
+    <span class="pap">avoir faim en classe</span>
+    <span class="pap done">on l’a fait !</span>
+    <p class="s1-cap">votre mur d’enjeux, dans dix minutes</p>
+  </div>
+</section>
+
+<!-- 1b -->
+<section class="slide" data-phase="0" data-who="Isabelle et Francis" data-notes="Présentation éclair, 30 secondes chacun. Cliquer sur un champ pour l’écrire ou le corriger : ce qui est écrit reste sur cet ordinateur. Finir sur « Ce qui me dérange » : c’est la question qu’on pose ensuite à la salle.">
+  <div class="kick">Qui sommes-nous ?</div>
+  <h2>Deux fiches, trente secondes chacune</h2>
+  <div class="ids">
+    <article class="idc">
+      <header><span class="idc-name">Isabelle Pedneault</span><span class="idc-role">Conseillère pédagogique · CFGA De Jonquière</span></header>
+      <dl>
+        <dt>Ma devise</dt><dd contenteditable="true" data-k="i1">« Un but ne doit pas toujours être atteint, souvent il sert juste à nous donner une direction. » (Bruce Lee)</dd>
+        <dt>Avant</dt><dd contenteditable="true" data-k="i2">Enseignante au 3e cycle du primaire.</dd>
+        <dt>Aujourd’hui</dt><dd contenteditable="true" data-k="i3">CP en FGA, pédagonumérique.</dd>
+        <dt>Ce qui me dérange</dt><dd contenteditable="true" data-k="i4" class="todo">à compléter</dd>
+      </dl>
+    </article>
+    <article class="idc">
+      <header><span class="idc-name">Francis Laroche</span><span class="idc-role">Éducateur en citoyenneté mondiale · Centre de solidarité internationale du Saguenay–Lac-Saint-Jean</span></header>
+      <dl>
+        <dt>Ma devise</dt><dd contenteditable="true" data-k="f1" class="todo">à compléter</dd>
+        <dt>Avant</dt><dd contenteditable="true" data-k="f2" class="todo">à compléter</dd>
+        <dt>Aujourd’hui</dt><dd contenteditable="true" data-k="f3">J’accompagne des groupes de l’idée à l’action avec l’Incubateur solidaire.</dd>
+        <dt>Ce qui me dérange</dt><dd contenteditable="true" data-k="f4" class="todo">à compléter</dd>
+      </dl>
+    </article>
   </div>
 </section>
 
@@ -169,16 +227,20 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 </section>
 
 <!-- 3 -->
-<section class="slide" data-phase="0" data-who="Isabelle" data-notes="De vrais mots reçus quand Isabelle enseignait au primaire. Noms retirés. Cliquer pour agrandir. Question : « Lequel pourrait avoir été écrit par un adulte de 17 ans au CFGA ? » Réponse attendue : tous.">
+<section class="slide" data-phase="0" data-who="Isabelle" data-notes="Des mots reçus d’élèves et de parents, au primaire. On ne regarde pas les compliments : on regarde les mots surlignés (projets, confiance, forces, accepté). Question : « Lequel pourrait avoir été écrit par un adulte de 17 ans au CFGA ? » Réponse attendue : tous.">
   <div class="kick">Ce qui allume un élève</div>
-  <h2>« Vous m’avez redonné envie d’aller à l’école. »</h2>
-  <div class="gallery" id="gallery">
-    <figure><img src="__IMG_Q1__" alt="Mot d’un élève : vous m’avez redonné envie d’aller à l’école"><figcaption class="cap">Un élève · juin 2017</figcaption></figure>
-    <figure><img src="__IMG_Q2__" alt="Mot d’un parent : il se sent écouté, compris et accepté"><figcaption class="cap">Un parent</figcaption></figure>
-    <figure><img src="__IMG_Q3__" alt="Mot de parents : vous avez confiance en eux, sans jugement"><figcaption class="cap">Des parents</figcaption></figure>
-    <figure><img src="__IMG_Q4__" alt="Mot de parents : de la confiance en eux et de leurs forces"><figcaption class="cap">Des parents</figcaption></figure>
-    <figure><img src="__IMG_Q5__" alt="Mot de parents : donner envie de faire des projets"><figcaption class="cap">Des parents</figcaption></figure>
-    <figure><img src="__IMG_Q6__" alt="Carte d’une famille : construire leur confiance jour après jour"><figcaption class="cap">Une famille</figcaption></figure>
+  <h2>Les mots qui reviennent</h2>
+  <div class="frags">
+    <figure class="frag f1"><img src="__IMG_FRAG1__" alt="Écriture d’un élève : envie d’aller à l’école"></figure>
+    <figure class="frag f2"><img src="__IMG_FRAG2__" alt="Lettre de parents : espaces d’accomplissement, donner envie de faire des projets"></figure>
+  </div>
+  <div class="quotes">
+    <blockquote>« Il n’y a pas un matin qu’il n’a hâte de se rendre dans sa classe. Il se sent <mark>écouté, compris</mark> et surtout, <mark>accepté</mark>. »<cite>Un parent</cite></blockquote>
+    <blockquote>« […] multiplier les <mark>espaces d’accomplissement</mark>, <mark>donner envie de faire des projets</mark> ! »<cite>Des parents</cite></blockquote>
+    <blockquote>« […] de la <mark>confiance en eux</mark> et une meilleure <mark>connaissance d’eux-mêmes et de leurs forces</mark>. »<cite>Des parents</cite></blockquote>
+    <blockquote>« […] <mark>valoriser leurs forces</mark> et améliorer les aspects plus difficiles pour eux, et ça <mark>sans jugement</mark>. »<cite>Des parents</cite></blockquote>
+    <blockquote>« […] <mark>construire leur confiance</mark> jour après jour. »<cite>Une famille</cite></blockquote>
+    <blockquote>« […] <mark>redonné envie d’aller à l’école</mark>. »<cite>Un élève, 2017</cite></blockquote>
   </div>
 </section>
 
@@ -384,7 +446,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 
 <div class="bar" role="navigation" aria-label="Navigation">
   <button id="prev" aria-label="Diapo précédente">‹</button>
-  <span class="count" id="count">1 / 19</span>
+  <span class="count" id="count">1 / 20</span>
   <div class="phases" id="phases" aria-hidden="true"></div>
   <span class="who" id="who"></span>
   <button id="tBtn" title="Minuteur (T)">T</button>
@@ -422,7 +484,7 @@ $('#prev').onclick = () => go(cur - 1); $('#next').onclick = () => go(cur + 1);
 $('#nBtn').onclick = () => { $('#notes').hidden = !$('#notes').hidden; };
 $('#fBtn').onclick = () => { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {}); } catch (e) {} };
 document.addEventListener('keydown', e => {
-  if (e.target.matches('input,textarea,select')) return;
+  if (e.target.matches('input,textarea,select,[contenteditable]')) return;
   if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(cur + 1); }
   else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(cur - 1); }
   else if (e.key === 'n' || e.key === 'N') $('#nBtn').click();
@@ -442,11 +504,17 @@ tEl.onclick = () => { clearInterval(tInt); tEl.hidden = true; };
 $('#tBtn').onclick = () => tEl.hidden ? startTimer(300) : tEl.onclick();
 $$('[data-timer]').forEach(b => b.onclick = () => startTimer(+b.dataset.timer));
 
+// ---------- fiches d'identité ----------
+$$('.idc dd').forEach(dd => { const k = 'id:' + dd.dataset.k; const v = store.get(k, null); if (v !== null) { dd.textContent = v; dd.classList.toggle('todo', v === 'à compléter'); }
+  dd.addEventListener('focus', () => { if (dd.classList.contains('todo')) { dd.textContent = ''; dd.classList.remove('todo'); } });
+  dd.addEventListener('blur', () => { const t = dd.textContent.trim(); if (!t) { dd.textContent = 'à compléter'; dd.classList.add('todo'); } store.set(k, dd.textContent); });
+  dd.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); dd.blur(); } }); });
+
 // ---------- galerie ----------
-$('#gallery').addEventListener('click', e => { const im = e.target.closest('img'); if (!im) return; const z = document.createElement('div'); z.className = 'zoom'; z.innerHTML = '<img alt="">'; z.firstChild.src = im.src; z.firstChild.alt = im.alt; z.onclick = () => z.remove(); document.body.appendChild(z); });
+$('#gallery') && $('#gallery').addEventListener('click', e => { const im = e.target.closest('img'); if (!im) return; const z = document.createElement('div'); z.className = 'zoom'; z.innerHTML = '<img alt="">'; z.firstChild.src = im.src; z.firstChild.alt = im.alt; z.onclick = () => z.remove(); document.body.appendChild(z); });
 
 // ---------- tri des citations ----------
-const quotes = ['« Vous m’avez redonné envie d’aller à l’école. »', '« Il se sent écouté, compris et surtout, accepté. »', '« Vous avez confiance en eux, en leur capacité […] sans jugement. »', '« Donner envie de faire des projets ! »', '« Construire leur confiance jour après jour. »', '« Une meilleure connaissance d’eux-mêmes et de leurs forces. »'];
+const quotes = ['« […] redonné envie d’aller à l’école. »', '« Il se sent écouté, compris et surtout, accepté. »', '« Vous avez confiance en eux, en leur capacité […] sans jugement. »', '« Donner envie de faire des projets ! »', '« Construire leur confiance jour après jour. »', '« Une meilleure connaissance d’eux-mêmes et de leurs forces. »'];
 const pool = $('#pool'); let picked = null;
 const place = store.get('tri', {});
 quotes.forEach((q, i) => { const c = document.createElement('div'); c.className = 'card'; c.textContent = q; c.dataset.i = i; c.draggable = true; c.tabIndex = 0;
