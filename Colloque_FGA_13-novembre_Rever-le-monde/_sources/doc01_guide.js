@@ -9,7 +9,7 @@ const kids = [
     title: 'RÊVER LE MONDE DE DEMAIN',
     sub: 'De l’idéation à l’action. Engagement citoyen et autodétermination en FGA. Guide d’animation pour la coanimation (90 minutes).',
     image: { path: I + 'nb_mur.jpg', w: 640, h: 357, cap: 'Du « ça me dérange » au « on l’a fait ! »' },
-    meta: ['**Isabelle Pedneault**, conseillère pédagogique, CFGA De Jonquière (CSSDLJ)', '**Francis Laroche**, éducation à la citoyenneté mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI)', 'Présentation interactive : presentation/index.html (aussi utilisable hors ligne)']
+    meta: ['**Isabelle Pedneault**, conseillère pédagogique, CFGA De Jonquière (CSSDLJ)', '**Francis Laroche**, éducateur en citoyenneté mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI)', 'Présentation interactive : presentation/index.html (aussi utilisable hors ligne)']
   }),
   BR(),
 

@@ -33,7 +33,7 @@ const kids = [
   zone('Ce cahier appartient à', 700),
   SP(120),
   P('Ce cahier vous suit pendant tout l’atelier. Écrivez-y, raturez-y, collez-y des papillons. Il est fait pour être utilisé, pas pour rester propre.', { run: { italics: true, color: C.grey } }),
-  P('Isabelle Pedneault, CP, CFGA De Jonquière · Francis Laroche, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean', { run: { size: 18, color: C.grey } }),
+  P('Isabelle Pedneault, CP, CFGA De Jonquière · Francis Laroche, éducateur en citoyenneté mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean', { run: { size: 18, color: C.grey } }),
   BR(),
 
   H1('01', 'Ce qui me dérange'),
