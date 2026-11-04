@@ -8,7 +8,7 @@ const kids = [
     kicker: 'Journée régionale FGA · 13 novembre 2026 · CFGA De Jonquière',
     title: 'RÊVER LE MONDE DE DEMAIN',
     sub: 'De l’idéation à l’action. Engagement citoyen et autodétermination en FGA. Guide d’animation pour la coanimation (90 minutes).',
-    image: { path: I + 'nb_mur.jpg', w: 640, h: 357, cap: 'Du « ça me dérange » au « on l’a fait ! »' },
+    image: { path: I + 'nb_mur.jpg', w: 640, h: 360, cap: 'Du « ça me dérange » au « on l’a fait ! »' },
     meta: ['**Isabelle Pedneault**, conseillère pédagogique, CFGA De Jonquière (CSSDLJ)', '**Francis Laroche**, éducateur en citoyenneté mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI)', 'Présentation interactive : presentation/index.html (aussi utilisable hors ligne)']
   }),
   BR(),
@@ -99,7 +99,7 @@ const kids = [
   img(I + 'il_gngv.png', 560, 243, { before: 200 }),
   P('**Le lien avec le français.** Le résultat se dit avec un groupe du nom (noyau et expansions). L’action demande un groupe du verbe conjugué, avec un sujet qui agit. Transformer un GN en GV, c’est passer du rêve à l’action.'),
   H3('L’Incubateur en vrai et l’individualisé'),
-  img(I + 'nb_compost.jpg', 560, 312),
+  img(I + 'nb_compost.jpg', 560, 315),
   L.caption('De l’idée à l’action : un projet de compostage'),
   img(I + 'il_escalier.png', 480, 248),
   P('Francis présente les 5 marches et les projets en cours au CFGA. Isabelle enchaîne sur la question des enseignants matières : « Et moi, en individualisé, avec 20 adultes dans 8 sigles ? » Les trois scénarios sont détaillés dans le cahier du participant : A, l’enjeu comme contexte de tâche ; B, le micro-incubateur ; C, le projet-pont.'),

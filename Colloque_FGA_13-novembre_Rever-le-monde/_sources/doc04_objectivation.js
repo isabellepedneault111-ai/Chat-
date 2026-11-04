@@ -64,7 +64,7 @@ const kids = [
     ['**La rencontre de suivi animée par l’élève**', 'L’adulte présente son plan de formation et ses progrès (10 min), dit ce qui l’aide et ce qui bloque (5 min), puis on ajuste le plan ensemble (5 min).', '20 min']
   ], [3000, 5840, 1200], { firstAccent: true }),
 
-  img(I + 'nb_bulletin.jpg', 400, 299, { before: 160 }),
+  img(I + 'nb_bulletin.jpg', 400, 300, { before: 160 }),
   caption('La rencontre de suivi animée par l’élève'),
   H2('Des exemples vécus'),
   P('**En classe, au primaire (2021).** La planification hebdomadaire des élèves d’Isabelle comportait une ligne « Objectivation » sous chaque matière (mathématiques, écriture, étude), avec une pensée de la semaine : « Un but ne doit pas toujours être atteint, souvent il sert juste à nous donner une direction. »'),

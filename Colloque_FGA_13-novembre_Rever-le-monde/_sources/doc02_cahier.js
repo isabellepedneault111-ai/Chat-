@@ -27,7 +27,7 @@ const kids = [
     kicker: 'Colloque régional FGA · 13 novembre 2026 · CFGA De Jonquière',
     title: 'CAHIER DU PARTICIPANT',
     sub: 'Rêver le monde de demain… De l’idéation à l’action. Engagement citoyen et autodétermination en FGA.',
-    image: { path: I + 'nb_mur.jpg', w: 620, h: 346, cap: 'Du « ça me dérange » au « on l’a fait ! »' },
+    image: { path: I + 'nb_mur.jpg', w: 620, h: 349, cap: 'Du « ça me dérange » au « on l’a fait ! »' },
     meta: []
   }),
   zone('Ce cahier appartient à', 700),
@@ -85,7 +85,7 @@ const kids = [
   P('**Une action solide est SMART :** spécifique, mesurable, atteignable, réaliste et datée.', { before: 100, run: { size: 19 } }),
 
   H1('07', 'L’Incubateur solidaire en 5 marches'),
-  img(I + 'nb_compost.jpg', 520, 290),
+  img(I + 'nb_compost.jpg', 520, 293),
   img(I + 'il_escalier.png', 460, 238),
   tbl(['Marche', 'Composante de l’autodétermination', 'Ce que j’en retiens'], [
     ['1 · Ça me dérange', 'Faire des choix', ''], ['2 · Je rêve', 'Se fixer un but', ''], ['3 · Je cible', 'Prendre des décisions', ''],
@@ -133,7 +133,7 @@ const kids = [
   zone('1 question qui me reste', 800),
 
   H1('12', 'Pour aller plus loin'),
-  img(I + 'nb_bulletin.jpg', 420, 314),
+  img(I + 'nb_bulletin.jpg', 420, 315),
   caption('La rencontre de suivi animée par l’élève : c’est lui qui mène'),
   B('**« J’ai mon plan ».** Un outil pour que l’adulte s’approprie son parcours de formation : ses cours, ses échéances, ses buts.'),
   B('**La rencontre de suivi animée par l’élève (20 min).** L’adulte présente lui-même son plan de formation (« J’ai mon plan »), les sigles réussis, ce qui l’aide, ce qui bloque et ses prochains objectifs. L’enseignant ou l’intervenant écoute, questionne, puis on ajuste le plan ensemble. On passe de juge à coach.'),
