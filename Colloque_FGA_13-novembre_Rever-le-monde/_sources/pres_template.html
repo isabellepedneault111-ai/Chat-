@@ -112,6 +112,14 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .slide{pointer-events:none}
 .slide>*{pointer-events:auto}
 .slide.s1>.s1-open{pointer-events:none;background:transparent!important}
+.logos{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:10px}
+.logos img{height:clamp(34px,4vw,52px);width:auto;background:#fff;padding:6px 10px;border:3px solid var(--ink)}
+.s1-open{display:flex!important;align-items:center;justify-content:center;padding:clamp(20px,4vw,60px)}
+.s1-photo{position:relative;margin:0;width:min(88%,760px);background:#fff;padding:10px;border:3px solid var(--ink);box-shadow:12px 12px 0 rgba(30,26,34,.22);transform:rotate(2.5deg);animation:s1in 1.2s cubic-bezier(.2,.8,.2,1) both .3s}
+.s1-photo img{display:block;width:100%;height:auto}
+.s1-photo::before{content:"";position:absolute;top:-16px;left:50%;width:130px;height:30px;margin-left:-65px;background:rgba(242,194,48,.85);border:2px solid rgba(30,26,34,.25);transform:rotate(-3deg)}
+@keyframes s1in{from{opacity:0;transform:translateY(40px) rotate(8deg)}to{opacity:1;transform:rotate(2.5deg)}}
+@media (prefers-reduced-motion:reduce){.s1-photo{animation:none}}
 .sheet{width:min(820px,100%);margin-block:auto;background:rgba(251,248,239,.96);border:3px solid var(--ink);box-shadow:10px 10px 0 var(--ink);padding:clamp(16px,2.2vw,30px);min-width:0}
 @media (min-width:821px){.sheet{width:min(820px,55vw)}}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:18px;align-items:start}
@@ -182,8 +190,9 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
       <div><span class="sticker">Isabelle Pedneault</span><small>Conseillère pédagogique · CFGA De Jonquière</small></div>
       <div><span class="sticker" style="background:var(--paper)">Francis Laroche</span><small>Éducateur en citoyenneté mondiale · Centre de solidarité internationale du Saguenay–Lac-Saint-Jean</small></div>
     </div>
+    <div class="logos"><img src="__LOGO_CSI__" alt="Centre de solidarité internationale du Saguenay–Lac-Saint-Jean"></div>
   </div>
-  <div class="s1-img s1-open" aria-hidden="true"></div>
+  <div class="s1-img s1-open"><figure class="s1-photo"><img src="__IMG_MUR__" alt="Des jeunes adultes collent des papillons sur une carte du monde, devant une fenêtre sur la rivière enneigée"></figure></div>
 </section>
 
 <!-- 1b -->
@@ -431,6 +440,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <div class="row">
     <div class="col"><div class="qr" id="qr"></div>
       <p class="cap">Ressources de l’atelier</p>
+      <div class="logos"><img src="__LOGO_CSI__" alt="Centre de solidarité internationale du Saguenay–Lac-Saint-Jean"></div>
       <form class="checker" id="qrForm"><input type="text" id="qrIn" aria-label="Adresse des ressources" style="font-family:var(--ui);font-size:15px"><button class="btn alt" type="submit">Mettre à jour le code</button></form></div>
     <div class="col"><img class="photo" src="__IMG_BULLETIN__" alt="Un jeune adulte présente son plan de formation à son enseignante"><div class="cap">Et si c’était l’élève qui menait la rencontre de suivi ?</div></div>
   </div>

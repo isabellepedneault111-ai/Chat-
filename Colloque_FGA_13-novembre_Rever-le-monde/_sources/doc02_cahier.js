@@ -30,6 +30,7 @@ const kids = [
     image: { path: I + 'nb_mur.jpg', w: 620, h: 349, cap: 'Du « ça me dérange » au « on l’a fait ! »' },
     meta: []
   }),
+  img(I + 'logo_csi.png', 230, 50, { align: L.AlignmentType.LEFT, before: 120 }),
   zone('Ce cahier appartient à', 700),
   SP(120),
   P('Ce cahier vous suit pendant tout l’atelier. Écrivez-y, raturez-y, collez-y des papillons. Il est fait pour être utilisé, pas pour rester propre.', { run: { italics: true, color: C.grey } }),
