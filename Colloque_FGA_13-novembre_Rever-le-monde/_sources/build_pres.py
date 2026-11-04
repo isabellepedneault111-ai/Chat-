@@ -19,6 +19,7 @@ rep = {
  '__IMG_Q5__': uri(I + 'mot_parent_projets.jpg', 700, 82), '__IMG_Q6__': uri(I + 'mot_famille_etincelles.jpg', 800, 80),
  '__IMG_FRAG1__': uri(I + 'frag_ecole.jpg', 900, 85), '__IMG_FRAG2__': uri(I + 'frag_projets.jpg', 800, 85),
  '__LOGO_CSI__': uri(I + 'logo_csi.png', 600, png=True),
+ '__IMG_RISO_MUR__': uri(I + 'riso_mur.jpg', 1400, 80),
  '__IMG_ESCALIER__': uri(I + 'il_escalier.png', 1000, png=True), '__IMG_GNGV__': uri(I + 'il_gngv.png', 1100, png=True),
  '__IMG_BILLET__': uri(I + 'il_billet.png', 1100, png=True),
 }

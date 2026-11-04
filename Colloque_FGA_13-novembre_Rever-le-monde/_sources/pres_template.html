@@ -69,12 +69,12 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .pap.alt{background:var(--paper)}
 .pap.done{background:var(--mauve);color:var(--gold);font-family:var(--display);font-size:clamp(24px,2.4vw,38px);transform:rotate(5deg) scale(1.08)}
 .slide.s1{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);padding:0;padding-bottom:46px}
-.s1-panel{background-color:var(--mauve);background-image:radial-gradient(rgba(30,26,34,.35) 1.4px,transparent 1.6px);background-size:11px 11px;color:var(--paper);display:flex;flex-direction:column;justify-content:center;gap:.4em;padding-block:clamp(20px,4vh,48px);padding-left:max(16px,env(safe-area-inset-left,0px),4vw);padding-right:clamp(16px,3vw,48px);border-right:6px solid var(--ink);min-width:0}
-.s1-title{font-size:clamp(46px,8.2vw,132px);line-height:.92;margin:.1em 0 .1em;color:var(--paper);text-shadow:5px 5px 0 var(--ink);-webkit-text-stroke:2px var(--ink);paint-order:stroke fill}
+.s1-panel{background-color:var(--mauve);background-image:radial-gradient(rgba(30,26,34,.35) 1.4px,transparent 1.6px);background-size:11px 11px;color:var(--paper);display:flex;flex-direction:column;justify-content:center;gap:clamp(8px,2.2vh,24px);overflow-y:auto;padding-block:clamp(20px,4vh,48px);padding-left:max(16px,env(safe-area-inset-left,0px),4vw);padding-right:clamp(16px,3vw,48px);border-right:6px solid var(--ink);min-width:0}
+.s1-title{font-size:clamp(40px,min(6.6vw,11.5vh),116px);line-height:1.02;letter-spacing:.015em;margin:0;color:var(--paper);text-shadow:4px 4px 0 var(--ink)}
 .s1-title span{color:var(--gold)}
-.s1-hand{font-family:var(--hand);font-size:clamp(28px,3.2vw,50px);color:var(--gold);margin:0;transform:rotate(-2deg);transform-origin:left}
-.s1-sub{color:var(--paper);margin:0 0 .6em;font-size:clamp(16px,1.5vw,22px)}
-.s1-who{display:flex;flex-direction:column;gap:12px}
+.s1-hand{font-family:var(--hand);font-size:clamp(26px,min(3vw,5vh),48px);color:var(--gold);margin:0;transform:rotate(-2deg);transform-origin:left}
+.s1-sub{color:var(--paper);margin:0;font-size:clamp(15px,min(1.4vw,2.6vh),21px)}
+.s1-who{display:flex;flex-direction:column;gap:clamp(8px,1.4vh,14px);margin-top:clamp(4px,1vh,12px)}
 .s1-who div{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 .s1-who small{font-family:var(--ui);font-size:clamp(11px,1vw,14px);letter-spacing:.06em;color:#E9DFF5}
 .s1-img{position:relative;min-height:0;overflow:hidden;background-color:var(--paper);background-image:linear-gradient(var(--paper2) 1px,transparent 1px),linear-gradient(90deg,var(--paper2) 1px,transparent 1px);background-size:28px 28px;display:grid;place-items:center}
@@ -113,8 +113,15 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .slide>*{pointer-events:auto}
 .slide.s1>.s1-open{pointer-events:none;background:transparent!important}
 .logos{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:10px}
-.logos img{height:clamp(34px,4vw,52px);width:auto;background:#fff;padding:6px 10px;border:3px solid var(--ink)}
-.s1-open{display:flex!important;align-items:center;justify-content:center;padding:clamp(20px,4vw,60px)}
+.logos img{height:clamp(30px,min(3.4vw,5.5vh),50px);width:auto;background:#fff;padding:6px 10px;border:3px solid var(--ink)}
+.s1-open{display:flex!important;align-items:center;justify-content:center;position:relative;padding:clamp(20px,4vw,60px)}
+.s1-open .p6{left:auto!important;right:6%;top:auto!important;bottom:10%;z-index:3}
+.s1-open .pap{position:absolute;animation:papin .9s cubic-bezier(.2,.8,.2,1) both}
+.s1-open .p1{left:8%;top:10%;--r:-6deg;animation-delay:.2s}.s1-open .p2{left:58%;top:7%;--r:4deg;animation-delay:.35s}.s1-open .p3{left:72%;top:42%;--r:-3deg;animation-delay:.5s}.s1-open .p4{left:12%;top:60%;--r:5deg;animation-delay:.65s}.s1-open .p5{left:40%;top:74%;--r:-4deg;animation-delay:.8s}.s1-open .p6{left:36%;top:30%;--r:6deg;animation-delay:1.1s}
+.s1-open .pap{transform:rotate(var(--r))}
+@keyframes papin{from{opacity:0;transform:translateY(-30px) rotate(calc(var(--r) * 3))}to{opacity:1;transform:rotate(var(--r))}}
+@media (prefers-reduced-motion:reduce){.s1-open .pap{animation:none}}
+@media (max-width:800px){.s1-open .pap{width:110px;font-size:18px}}
 .s1-photo{position:relative;margin:0;width:min(88%,760px);background:#fff;padding:10px;border:3px solid var(--ink);box-shadow:12px 12px 0 rgba(30,26,34,.22);transform:rotate(2.5deg);animation:s1in 1.2s cubic-bezier(.2,.8,.2,1) both .3s}
 .s1-photo img{display:block;width:100%;height:auto}
 .s1-photo::before{content:"";position:absolute;top:-16px;left:50%;width:130px;height:30px;margin-left:-65px;background:rgba(242,194,48,.85);border:2px solid rgba(30,26,34,.25);transform:rotate(-3deg)}
@@ -210,7 +217,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 <!-- 1 -->
 <section class="slide s1" data-phase="0" data-who="Isabelle et Francis" data-notes="Accueil. Laisser la diapo pendant que les gens entrent et collent leur papillon au mur. Présenter le duo en 30 secondes.">
   <div class="s1-panel">
-    <div class="kick" style="color:var(--gold)">Colloque régional FGA · 13 novembre 2026 · CFGA De Jonquière</div>
+    <div class="kick" style="color:var(--gold);line-height:1.5">Colloque régional FGA · 13 novembre 2026<br>CFGA De Jonquière</div>
     <h1 class="s1-title">Rêver<br>le monde<br>de <span>demain</span></h1>
     <p class="s1-hand">de l’idéation à l’action</p>
     <p class="s1-sub">Engagement citoyen et autodétermination en FGA</p>
@@ -220,7 +227,10 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
     </div>
     <div class="logos"><img src="__LOGO_CSI__" alt="Centre de solidarité internationale du Saguenay–Lac-Saint-Jean"></div>
   </div>
-  <div class="s1-img s1-open"><figure class="s1-photo"><img src="__IMG_MUR__" alt="Des jeunes adultes collent des papillons sur une carte du monde, devant une fenêtre sur la rivière enneigée"></figure></div>
+  <div class="s1-img s1-open">
+    <figure class="s1-photo"><img src="__IMG_RISO_MUR__" alt="Des jeunes adultes collent des papillons sur une carte du monde, devant une fenêtre sur la rivière enneigée"></figure>
+    <span class="pap done p6" aria-hidden="true">on l’a fait !</span>
+  </div>
 </section>
 
 <!-- 1b -->
@@ -541,7 +551,7 @@ function go(n) {
 }
 $('#prev').onclick = () => go(cur - 1); $('#next').onclick = () => go(cur + 1);
 $('#nBtn').onclick = () => { $('#notes').hidden = !$('#notes').hidden; };
-$('#pBtn').onclick = () => { let w = null; try { w = window.open(location.href.split('#')[0] + '#presenter', 'rmd-presenter', 'width=980,height=720'); } catch (e) {} if (!w) { $('#notes').hidden = false; $('#nTitle').textContent = 'Mode présentateur'; $('#nBody').textContent = 'Ouvrez ce même fichier dans une 2e fenêtre en ajoutant #presenter à la fin de l’adresse, puis gardez-la sur l’écran de votre portable.'; } };
+$('#pBtn').onclick = () => { let w = null; try { w = window.open(location.href.split('#')[0] + '#presenter', 'rmd-presenter', 'width=980,height=720'); } catch (e) {} if (!w) { $('#notes').hidden = false; $('#nTitle').textContent = 'Mode présentateur'; $('#nBody').textContent = 'La version en ligne ne peut pas ouvrir de 2e fenêtre. Le jour J, utilisez le fichier de la clé USB (presentation/index.html) : la touche P y ouvre toute seule la fenêtre présentateur, que vous glissez sur l’écran de votre portable. En attendant, ces notes s’affichent ici, et la salle les voit.'; } };
 $('#fBtn').onclick = () => { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {}); } catch (e) {} };
 document.addEventListener('keydown', e => {
   if (e.target.matches('input,textarea,select,[contenteditable]')) return;
