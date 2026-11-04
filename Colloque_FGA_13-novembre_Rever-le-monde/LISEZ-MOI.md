@@ -25,7 +25,7 @@ Ouvrir `presentation/index.html` dans Chrome ou Edge.
 
 Ce qui est interactif :
 
-- **Diapo 2 :** les fiches d’identité d’Isabelle et de Francis. On clique sur un champ pour l’écrire.
+- **Diapo 2 :** les présentations d’Isabelle et de Francis (ma devise, mon outil préféré, si c’était à refaire, mon conseil numéro 1). On clique sur un champ pour l’écrire.
 - **Diapo 3 :** le globe 3D des enjeux. On tape un enjeu et il s’accroche au globe.
 - **Diapo 5 :** le tri des citations, en glisser-déposer.
 - **Diapo 9 :** les 4 sphères en 3D. On clique sur une planète pour voir sa définition.
