@@ -30,6 +30,7 @@ const kids = [
     image: { path: I + 'nb_mur.jpg', w: 620, h: 349, cap: 'Du « ça me dérange » au « on l’a fait ! »' },
     meta: []
   }),
+  ...(require('fs').existsSync(I + 'logo_cfga.png') ? [img(I + 'logo_cfga.png', 200, 60, { align: L.AlignmentType.LEFT, before: 120 })] : []),
   img(I + 'logo_csi.png', 230, 50, { align: L.AlignmentType.LEFT, before: 120 }),
   zone('Ce cahier appartient à', 700),
   SP(120),
@@ -82,8 +83,8 @@ const kids = [
   P('**Une action solide est SMART :** spécifique, mesurable, atteignable, réaliste et datée.', { before: 100, run: { size: 19 } }),
 
   H1('05', 'La démarche en 5 marches'),
-  img(I + 'nb_compost.jpg', 520, 293),
-  img(I + 'il_escalier.png', 460, 238),
+  img(I + 'nb_compost.jpg', 330, 186),
+  img(I + 'il_escalier.png', 330, 171),
   tbl(['Marche', 'Composante de l’autodétermination', 'Ce que j’en retiens'], [
     ['1 · Ça me dérange', 'Faire des choix', ''], ['2 · Je rêve', 'Se fixer un but', ''], ['3 · Je cible', 'Prendre des décisions', ''],
     ['4 · J’agis', 'Résoudre des problèmes', ''], ['5 · Je regarde le chemin', 'S’autoévaluer', '']

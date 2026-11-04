@@ -1,3 +1,4 @@
+import os
 import base64, io, sys
 from PIL import Image
 B = sys.argv[1]; OUT_OFF = sys.argv[2]; OUT_WEB = sys.argv[3]
@@ -19,6 +20,7 @@ rep = {
  '__IMG_Q5__': uri(I + 'mot_parent_projets.jpg', 700, 82), '__IMG_Q6__': uri(I + 'mot_famille_etincelles.jpg', 800, 80),
  '__IMG_FRAG1__': uri(I + 'frag_ecole.jpg', 900, 85), '__IMG_FRAG2__': uri(I + 'frag_projets.jpg', 800, 85),
  '__LOGO_CSI__': uri(I + 'logo_csi.png', 600, png=True),
+ '__LOGO_CFGA__': uri(I + 'logo_cfga.png', 600, png=True) if os.path.exists(I + 'logo_cfga.png') else '',
  '__IMG_RISO_MUR__': uri(I + 'riso_mur.jpg', 1400, 80),
  '__IMG_CAP_ACCEPTE__': uri(I + 'cap_accepte.jpg', 700, 86), '__IMG_CAP_VALORISER__': uri(I + 'cap_valoriser.jpg', 700, 86), '__IMG_CAP_CONFIANCE__': uri(I + 'cap_confiance.jpg', 700, 86), '__IMG_FRAG_PROJETS__': uri(I + 'frag_projets.jpg', 700, 86), '__IMG_FRAG_ECOLE__': uri(I + 'frag_ecole.jpg', 700, 86),
  '__IMG_ESCALIER__': uri(I + 'il_escalier.png', 1000, png=True), '__IMG_GNGV__': uri(I + 'il_gngv.png', 1100, png=True),

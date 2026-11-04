@@ -75,6 +75,14 @@ node doc01_guide.js ../01_Guide-animation_Isabelle-Francis.docx
 python3 build_pres.py . ../presentation/index.html /tmp/presentation_web.html
 ```
 
+Après avoir régénéré un document Word, on garde chaque section sur une seule page (aucune section ni question coupée en deux) :
+
+```bash
+python3 keep.py ../02_Cahier-du-participant.docx && python3 nosplit.py ../02_Cahier-du-participant.docx
+```
+
+**Le logo du CFGA.** Déposez-le sous le nom `_sources/img/logo_cfga.png`, puis régénérez : il s’affiche à côté du logo du CSI sur la diapo 1, la diapo 20, le guide et le cahier.
+
 ## Les prompts d’images
 
 Ces prompts décrivent la technique (cel-shading BD) sans nommer d’œuvre existante, et aucun ne représente de vrai élève.

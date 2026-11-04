@@ -11,6 +11,7 @@ const kids = [
     image: { path: I + 'nb_mur.jpg', w: 640, h: 360, cap: 'Du « ça me dérange » au « on l’a fait ! »' },
     meta: ['**Isabelle Pedneault**, conseillère pédagogique, CFGA De Jonquière (CSSDLJ)', '**Francis Laroche**, éducateur en citoyenneté mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI)', 'Présentation interactive : presentation/index.html (aussi utilisable hors ligne)']
   }),
+  ...(require('fs').existsSync(I + 'logo_cfga.png') ? [img(I + 'logo_cfga.png', 200, 60, { align: L.AlignmentType.LEFT, before: 120 })] : []),
   img(I + 'logo_csi.png', 230, 50, { align: L.AlignmentType.LEFT, before: 120 }),
   BR(),
 
