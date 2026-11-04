@@ -124,7 +124,7 @@ const kids = [
   img(I + 'il_jetons.png', 380, 127, { before: 100 }),
   tbl(['Jeton', 'Question à se poser'], [
     ['**Impact** (jaune)', 'Est-ce que ça changerait vraiment quelque chose pour quelqu’un ?'],
-    ['**Faisabilité** (lilas)', 'Des adultes en formation pourraient-ils le réaliser en quelques semaines ?'],
+    ['**Faisabilité** (orange)', 'Des adultes en formation pourraient-ils le réaliser en quelques semaines ?'],
     ['**Originalité** (mauve)', 'Est-ce que ça m’a surpris ?']
   ], [2600, 7480]),
 

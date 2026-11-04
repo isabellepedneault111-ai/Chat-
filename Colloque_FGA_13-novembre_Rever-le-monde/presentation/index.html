@@ -202,6 +202,10 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .plan button{width:100%;text-align:left;border:3px solid var(--ink);background:var(--paper);padding:10px 12px;font-family:var(--body);font-size:16px;min-height:64px;box-shadow:4px 4px 0 var(--gold)}
 .plan button b{font-family:var(--display);font-weight:400;color:var(--mauve);font-size:22px;margin-right:6px}
 .plan button.cur{background:var(--gold)}
+.crit{list-style:none;padding:0;margin:0 0 10px;display:grid;gap:6px}
+.crit li{display:flex;gap:10px;align-items:baseline;font-size:clamp(16px,1.4vw,20px);max-width:none}
+.crit i{flex:0 0 22px;height:22px;border:3px solid var(--ink);border-radius:50%;transform:translateY(4px)}
+.crit b{font-family:var(--display);font-weight:400;font-size:clamp(20px,1.8vw,26px);min-width:6.5em}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:18px;align-items:start}
 .gallery figure{margin:0;cursor:zoom-in}
 .gallery figure img{border:3px solid var(--ink);width:100%;height:auto;background:#fff}
@@ -485,9 +489,15 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 </section>
 
 <!-- 16 -->
-<section class="slide" data-phase="3" data-who="Duo" data-notes="Galerie : chacun dépose 3 jetons sur les projets des autres îlots. On saisit ici les totaux : les piles montent. Jaune = impact, crème = faisabilité, mauve = originalité.">
+<section class="slide" data-phase="3" data-who="Duo" data-notes="Galerie : chacun dépose 3 jetons sur les projets des autres îlots. On saisit ici les totaux : les piles montent. Or = impact, orange = faisabilité, mauve = originalité.">
   <div class="kick">Phase 3 · vote par jetons</div>
   <h2>Impact · faisabilité · originalité</h2>
+  <ul class="crit">
+    <li><i style="background:var(--gold)"></i><b>Impact</b> Est-ce que ça changerait vraiment quelque chose pour quelqu’un ?</li>
+    <li><i style="background:#D9541E"></i><b>Faisabilité</b> Des adultes en formation pourraient-ils le réaliser en quelques semaines ?</li>
+    <li><i style="background:var(--mauve)"></i><b>Originalité</b> Est-ce que ça m’a surpris ?</li>
+  </ul>
+  <p class="cap">Chaque personne dépose ses 3 jetons, un de chaque couleur, sur les projets des autres îlots. On saisit ici les totaux.</p>
   <div class="row" style="flex:1;align-items:stretch">
     <div class="col" style="flex:1 1 280px"><div class="votes" id="votes"></div></div>
   </div>
@@ -836,7 +846,7 @@ const G3 = (() => {
     S.portes.look = 2; S.portes.tick = t => doors.forEach((h, i) => { h.rotation.y = -(Math.sin(t * .9 + i * 1.2) * .5 + .5) * 1.3; }); }
 
   // ---------- jetons ----------
-  { const grp = new T.Group(); add('jetons', grp, 0, .35, 0); const VC = [GOLD, CREAM, MAUVE]; const falling = [];
+  { const grp = new T.Group(); add('jetons', grp, 0, .35, 0); const VC = [GOLD, 0xD9541E, MAUVE]; const falling = [];
     S.jetons.look = 1.6; S.jetons.dist = 12.5;
     S.jetons.draw = data => { while (grp.children.length) grp.remove(grp.children[0]); falling.length = 0; const n = data.length; data.forEach((p, i) => { const x = (i - (n - 1) / 2) * 1.35; let y = .02; grp.add(Object.assign(lab((p.n || '').slice(0, 14), { font: 'Caveat, cursive', size: 70, scale: 1.6, color: '#5B2A86', stroke: false }), {}).translateX(x).translateY(-.1).translateZ(1.2));
       [0, 1, 2].forEach(k => { for (let j = 0; j < p.v[k]; j++) { const c = inked(new T.CylinderGeometry(.5, .5, .16, 28), VC[k], .06); c.position.set(x, y + .08 + 4 + j * .2, 0); c.userData.y = y + .08; grp.add(c); falling.push(c); y += .18; } }); }); };
@@ -888,7 +898,7 @@ $('#pyrReset').onclick = () => { const s = G3.st.pyr; if (!s) return; s.votes = 
 // votes
 const vData = store.get('votes', [1, 2, 3, 4, 5].map(i => ({ n: 'Îlot ' + i, v: [0, 0, 0] })));
 const vEl = $('#votes');
-function drawVotes() { vEl.innerHTML = ''; vData.forEach((p, i) => { const d = document.createElement('div'); d.innerHTML = `<input type="text" id="vn${i}" aria-label="Nom du projet ${i + 1}" value="${p.n.replace(/"/g, '&quot;')}"><div><button style="background:var(--gold)">+ I</button><button style="background:var(--paper)">+ F</button><button style="background:var(--mauve);color:var(--paper)">+ O</button></div><div class="cap">${p.v[0]} · ${p.v[1]} · ${p.v[2]}</div>`;
+function drawVotes() { vEl.innerHTML = ''; vData.forEach((p, i) => { const d = document.createElement('div'); d.innerHTML = `<input type="text" id="vn${i}" aria-label="Nom du projet ${i + 1}" value="${p.n.replace(/"/g, '&quot;')}"><div><button style="background:var(--gold)">+ I</button><button style="background:#D9541E;color:#fff">+ F</button><button style="background:var(--mauve);color:var(--paper)">+ O</button></div><div class="cap">${p.v[0]} · ${p.v[1]} · ${p.v[2]}</div>`;
   d.querySelector('input').onchange = e => { p.n = e.target.value; store.set('votes', vData); G3.st.jetons && G3.st.jetons.draw(vData); };
   d.querySelectorAll('button').forEach((b, k) => b.onclick = () => { p.v[k]++; store.set('votes', vData); drawVotes(); });
   vEl.appendChild(d); }); G3.st.jetons && G3.st.jetons.draw(vData); }

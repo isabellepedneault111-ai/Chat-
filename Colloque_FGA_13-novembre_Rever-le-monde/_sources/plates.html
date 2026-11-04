@@ -216,12 +216,12 @@ st.forEach(([t,s],i)=>{const w=200,x=40+i*210,h=170+i*75,y=600-h;
  <text x="${x+18}" y="${y+h-48}" font-size="${t.length>14?20:26}" style="fill:${tc}">${t}</text>
  <text x="${x+18}" y="${y+h-16}" font-size="30" style="font-family:Caveat;fill:${tc}">${s}</text>`)});
 // jetons
-const co=[['IMPACT','#F2C230','I'],['FAISABILITÉ','#FBF8EF','F'],['ORIGINALITÉ','#5B2A86','O']];
+const co=[['IMPACT','#F2C230','I'],['FAISABILITÉ','#D9541E','F'],['ORIGINALITÉ','#5B2A86','O']];
 const cg=document.getElementById('coins');
 co.forEach(([n,c,l],i)=>{const x=150+i*300;
  cg.insertAdjacentHTML('beforeend',`<ellipse cx="${x+8}" cy="${138}" rx="100" ry="100" fill="url(#hatchL)"/>
- <circle cx="${x}" cy="130" r="100" fill="${c}" class="ink"/><circle cx="${x}" cy="130" r="78" fill="none" stroke="${i==2?'#F2C230':'#1E1A22'}" stroke-width="4" stroke-dasharray="7 7"/>
- <text x="${x}" y="168" font-size="110" text-anchor="middle" style="fill:${i==2?'#F2C230':'#1E1A22'}">${l}</text>
+ <circle cx="${x}" cy="130" r="100" fill="${c}" class="ink"/><circle cx="${x}" cy="130" r="78" fill="none" stroke="${i==0?'#1E1A22':'#FBF8EF'}" stroke-width="4" stroke-dasharray="7 7"/>
+ <text x="${x}" y="168" font-size="110" text-anchor="middle" style="fill:${i==0?'#1E1A22':'#FBF8EF'}">${l}</text>
  <text x="${x}" y="280" font-size="34" text-anchor="middle">${n}</text>`)});
 </script>
 </body></html>
