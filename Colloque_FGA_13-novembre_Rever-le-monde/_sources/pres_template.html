@@ -132,6 +132,24 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .pres-notes{font-size:clamp(20px,2.2vw,28px);line-height:1.45;max-width:none;margin:0}
 .pres-next{font-family:var(--ui);font-size:16px;color:var(--muted);border-top:2px dashed var(--hair);padding-top:10px;margin:0}
 .pres-btns{display:flex;gap:12px;flex-wrap:wrap}
+.sheet.dark{background-color:var(--ink);background-image:radial-gradient(rgba(122,69,171,.45) 1.3px,transparent 1.5px);background-size:10px 10px;color:var(--paper);box-shadow:10px 10px 0 var(--gold);border-color:var(--ink)}
+.sheet.dark h1,.sheet.dark h2{color:var(--paper)}
+.sheet.dark .kick{color:var(--gold)}
+.sheet.dark .hand{color:var(--gold)}
+.sheet.dark .hl{background:linear-gradient(transparent 55%,var(--mauve2) 55%)}
+.sheet.dark .cap{color:#CFC6D8}
+.sheet.dark .verbs div,.sheet.dark .flip button,.sheet.dark .panel{color:var(--ink)}
+.sheet.dark .verbs div{background:var(--paper)}
+.sheet.dark .verbs b{color:var(--mauve)}
+.sheet.dark h2 .num{color:var(--mauve)}
+.sheet.dark .btn.alt{background:var(--paper);color:var(--ink)}
+.sheet.dark .verdict{color:var(--paper)}
+.sheet.dark .verdict span[style]{color:var(--gold)!important}
+.sheet.dark .photo{border-color:var(--paper)}
+.sheet.dark .qr{border-color:var(--paper)}
+.sheet.dark input[type=text]{border-color:var(--paper)}
+.sheet.dark ol li{color:var(--paper)}
+.sheet.dark b[style*="var(--ink)"]{color:var(--gold)!important}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:18px;align-items:start}
 .gallery figure{margin:0;cursor:zoom-in}
 .gallery figure img{border:3px solid var(--ink);width:100%;height:auto;background:#fff}
@@ -501,7 +519,8 @@ if (location.hash === '#presenter') {
   draw(0); send({ hello: 1 }); return;
 }
 onMsg(m => { if (typeof m.go === 'number') go(m.go); else if (m.hello) send({ cur }); });
-slides.forEach(sl => { if (sl.classList.contains('s1')) return; const sh = document.createElement('div'); sh.className = 'sheet'; while (sl.firstChild) sh.appendChild(sl.firstChild); sl.appendChild(sh); });
+const DARK = [5, 10, 14, 17, 19];
+slides.forEach((sl, i) => { if (sl.classList.contains('s1')) return; const sh = document.createElement('div'); sh.className = 'sheet' + (DARK.includes(i) ? ' dark' : ''); while (sl.firstChild) sh.appendChild(sl.firstChild); sl.appendChild(sh); });
 let cur = 0;
 const store = { get(k, d) { try { const v = localStorage.getItem('rmd:' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('rmd:' + k, JSON.stringify(v)); } catch (e) {} } };
 
@@ -665,8 +684,8 @@ const G3 = (() => {
   const add = (n, o, x = 0, y = 0, z = 0) => { o.position.set(x, y, z); S[n].g.add(o); return o; };
 
   // ---------- globe ----------
-  { const globe = inked(new T.SphereGeometry(2.3, 48, 32), GOLD, .05); add('globe', globe, 0, 3.1, 0);
-    globe.add(new T.LineSegments(new T.WireframeGeometry(new T.SphereGeometry(2.31, 12, 8)), new T.LineBasicMaterial({ color: MAUVE, transparent: true, opacity: .5 })));
+  { const globe = inked(new T.SphereGeometry(2.3, 48, 32), MAUVE, .05); add('globe', globe, 0, 3.1, 0);
+    globe.add(new T.LineSegments(new T.WireframeGeometry(new T.SphereGeometry(2.31, 12, 8)), new T.LineBasicMaterial({ color: GOLD, transparent: true, opacity: .55 })));
     const notes = new T.Group(); globe.add(notes); let rotY = 0, vel = .004;
     const st = S.globe; st.look = 3; st.dist = 13.5;
     st.add = (txt, save = true) => { const m = new T.Mesh(new T.PlaneGeometry(1.5, 1.17), new T.MeshBasicMaterial({ map: noteTex(txt, notes.children.length % 4 === 2 ? '#FBF8EF' : '#F2C230'), side: T.DoubleSide }));
@@ -737,7 +756,7 @@ const G3 = (() => {
     S.pas.look = 1.6; S.pas.tick = t => { const k = (t * .5) % 1; pw.position.x = -3 + k * 6; pw.position.y = .35 + Math.abs(Math.sin(k * Math.PI * 8)) * .2; steps.forEach((f, i) => f.material.color.setHex((-3 + i * .8) < pw.position.x ? GOLD : MAUVE)); }; }
 
   // ---------- maison à 3 étages ----------
-  { const floors = [[CREAM, '1ER', 'besoins de base'], [MAUVE, '2E', 'émotions'], [GOLD, '3E', 'apprentissages']].map(([c, n, s], i) => { const g = new T.Group(); const b = inked(new T.BoxGeometry(3, 1.25, 2.2), c, .03); g.add(b); const l = lab(n + ' · ' + s.toUpperCase(), { scale: 3.4, w: 768, size: 60, color: c === MAUVE ? '#FBF8EF' : '#F2C230' }); l.position.set(0, 0, 1.3); g.add(l); add('maison', g, 0, .35 + .63 + i * 1.27, 0); return g; });
+  { const floors = [[CREAM, '1ER', 'besoins de base'], [MAUVE, '2E', 'émotions'], [GOLD, '3E', 'apprentissages']].map(([c, n, s], i) => { const g = new T.Group(); const b = inked(new T.BoxGeometry(3, 1.25, 2.2), c, .03); g.add(b); const l = lab(n + ' · ' + s.toUpperCase(), { scale: 3.4, w: 768, size: 60, color: c === CREAM ? '#5B2A86' : '#FBF8EF' }); l.position.set(0, 0, 1.3); g.add(l); add('maison', g, 0, .35 + .63 + i * 1.27, 0); return g; });
     const roof = inked(new T.ConeGeometry(2.4, 1.4, 4), MAUVE, .04); roof.rotation.y = Math.PI / 4; add('maison', roof, 0, 4.9, 0);
     let open = 0; const st = S.maison; st.look = 2.8; st.dist = 15.5;
     st.tick = (t, active) => { open += ((active ? 1 : 0) - open) * .05; floors.forEach((g, i) => { g.position.y = .35 + .63 + i * (1.27 + open * .55); g.rotation.y = open * (i - 1) * .25; }); roof.position.y = .35 + 3 * 1.27 + open * 2 + .7; }; }
