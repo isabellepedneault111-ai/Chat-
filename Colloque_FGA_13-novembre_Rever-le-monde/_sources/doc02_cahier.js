@@ -33,11 +33,11 @@ const kids = [
   L.logos([[I + 'logo_cfga.png', 62, 61], [I + 'logo_csi.png', 230, 50]]),
   zone('Ce cahier appartient à', 700),
   SP(120),
-  P('Ce cahier vous suit pendant tout l’atelier. Écrivez-y, raturez-y, collez-y des papillons. Il est fait pour être utilisé, pas pour rester propre.', { run: { italics: true, color: C.grey } }),
+  P('Ce cahier vous suit pendant tout l’atelier. Écrivez-y, raturez-y, collez-y des post-it. Il est fait pour être utilisé, pas pour rester propre.', { run: { italics: true, color: C.grey } }),
   P('Isabelle Pedneault, CP, CFGA De Jonquière · Francis Laroche, éducateur en citoyenneté mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean', { run: { size: 18, color: C.grey } }),
 
   H1('01', 'Ce qui me dérange'),
-  P('Première marche de la démarche « de l’idée à l’action » : partir de ce qui nous touche. Avant de coller votre papillon au mur, notez-le ici.'),
+  P('Première marche de la démarche « de l’idée à l’action » : partir de ce qui nous touche. Avant de coller votre post-it au mur, notez-le ici.'),
   zone('Dans le monde, ici ou ailleurs, ce qui me dérange, c’est…', 1300),
   SP(80),
   zone('Les enjeux du mur qui m’ont frappé·e', 1300),

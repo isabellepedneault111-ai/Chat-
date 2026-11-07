@@ -57,12 +57,12 @@ const kids = [
     ['**Orientation et CP**', 'Relier l’enjeu au projet de vie et à J’ai mon plan ; accompagner une équipe qui fait un premier essai.'],
     ['**Directions**', 'Les conditions qui rendent la démarche possible : du **temps protégé** à l’horaire (le cadre d’innovation du CFGA), l’horaire d’un projet-pont, les partenariats avec la communauté.']
   ], [2800, 7280], { firstAccent: true }),
-  ...note('Composer les îlots', ['En entrant, chacun prend un papillon de la couleur de son profil : IS, ISP, PPS et DHS ; mathématiques et sciences ; français et anglais ; directions et services (orthopédagogie, orientation, CP). On forme des îlots qui mêlent les CSS et les profils. Les directions et les professionnels se répartissent dans les îlots : leur regard sur les conditions (horaire, partenariats) enrichit chaque projet.'], { before: 160 }),
+  ...note('Composer les îlots', ['En entrant, chacun prend un post-it de la couleur de son profil : IS, ISP, PPS et DHS ; mathématiques et sciences ; français et anglais ; directions et services (orthopédagogie, orientation, CP). On forme des îlots qui mêlent les CSS et les profils. Les directions et les professionnels se répartissent dans les îlots : leur regard sur les conditions (horaire, partenariats) enrichit chaque projet.'], { before: 160 }),
 
   H1('03', 'Déroulé minuté'),
   P('Quatre phases : 30, 30, 20 et 10 minutes. Le numéro de diapo renvoie à la présentation (la touche N affiche les notes et le nom de la personne qui anime).'),
   tbl(['Temps', 'Phase', 'Ce que vivent les participants', 'Qui', 'Diapo'], [
-    ['0–5', '**Phase 1 · Diagnostic** : accueil et mur d’enjeux', 'En entrant : « Qu’est-ce qui vous dérange dans le monde, ici ou ailleurs ? » Un papillon adhésif par personne.', 'Francis', '1–3'],
+    ['0–5', '**Phase 1 · Diagnostic** : accueil et mur d’enjeux', 'En entrant : « Qu’est-ce qui vous dérange dans le monde, ici ou ailleurs ? » Un post-it par personne.', 'Francis', '1–3'],
     ['5–15', '**Phase 1 · Diagnostic** : présentations et intentions', 'Les fiches de présentation d’Isabelle et de Francis, puis les intentions de l’atelier.', 'Isabelle et Francis', '2 et 4'],
     ['15–30', '**Phase 1 · Diagnostic** : monde idéal, triade, engagement et 4 sphères', 'Monde idéal (3 min seul, 5 min en îlot). Triade école-communauté-environnement. L’engagement : vrai ou faux, les 4 besoins, les gestes. Les 4 sphères.', 'Francis, puis Isabelle', '5–8'],
     ['30–45', '**Phase 2 · Pivot stratégique** : résultat ou action', 'Le conflit cognitif : « une action pour mon enjeu ». Résultat ou action : le nom contre le verbe.', 'Isabelle', '9'],
@@ -92,7 +92,14 @@ const kids = [
   H1('04', 'Le script, phase par phase'),
   H2('Phase 1 · Diagnostic et monde idéal (0–30 min)'),
   H3('Accueil et mur d’enjeux · Francis'),
-  P('À l’entrée, une grande affiche : « Qu’est-ce qui vous dérange dans le monde, ici ou ailleurs ? » Chaque personne colle un papillon adhésif avant de s’asseoir. Dans la présentation, on tape les enjeux en direct : ils viennent s’accrocher à un globe 3D qui tourne.'),
+  P('À l’entrée, une grande affiche : « Qu’est-ce qui vous dérange dans le monde, ici ou ailleurs ? » Chaque personne colle un post-it avant de s’asseoir. Dans la présentation, on tape les enjeux en direct : ils viennent s’accrocher à un globe 3D qui tourne.'),
+  tbl(['Le mur d’enjeux', 'En bref'], [
+    ['**C’est quoi ?**', 'Une grande affiche à l’entrée du local : « Qu’est-ce qui vous dérange dans le monde, ici ou ailleurs ? » Les participants y collent des post-it.'],
+    ['**Quand ?**', 'En entrant, avant de s’asseoir (minutes 0 à 5). Une table près de la porte avec les post-it et les marqueurs.'],
+    ['**Comment ?**', 'Un enjeu par post-it, en quelques mots. La couleur du post-it indique le profil (voir « Composer les îlots »).'],
+    ['**Et ensuite ?**', 'Diapo 3 : Francis tape 4 ou 5 post-it, qui s’accrochent au globe 3D. Phase 3 : chaque îlot vient choisir son enjeu sur le mur. Après : on photographie le mur pour la carte régionale.']
+  ], [2200, 7880], { firstAccent: true }),
+  SP(100),
   ...note('Phrase d’ouverture', ['« Ce que vous venez de faire en entrant, c’est la première marche de la démarche « de l’idée à l’action ». Nos élèves commencent exactement comme ça : par ce qui les dérange. »']),
   H3('Ce qui reste (à la fin, avant le merci) · Isabelle'),
   P('Isabelle présente de vrais mots reçus d’élèves et de parents. Les noms ont été retirés. On pose la question de vive voix, sans cartes : selon la théorie de l’autodétermination (Deci et Ryan), ce mot nourrit-il l’==autonomie==, la ==compétence== ou l’==appartenance== ? Il n’y a pas de mauvaise réponse. On ne montre pas des compliments : on fait repérer les mots qui parlent de projets, de confiance, de forces et d’appartenance.'),
@@ -114,7 +121,7 @@ const kids = [
 
   H2('Phase 2 · Le pivot (30–60 min)'),
   H3('Le conflit cognitif : « mais c’est une action, ça ! »'),
-  P('Avant l’enseignement explicite, chaque personne écrit sur un papillon « une action pour mon enjeu ». Isabelle en lit trois à voix haute. La plupart sont en fait des résultats (« plus de respect », « moins de gaspillage »). La déstabilisation est bienveillante, et elle prépare la suite.'),
+  P('Avant l’enseignement explicite, chaque personne écrit sur un post-it « une action pour mon enjeu ». Isabelle en lit trois à voix haute. La plupart sont en fait des résultats (« plus de respect », « moins de gaspillage »). La déstabilisation est bienveillante, et elle prépare la suite.'),
   H3('Résultat ou action : le nom contre le verbe'),
   P('Enseignement explicite : on modélise, on pratique ensemble, puis chacun essaie seul.'),
   tbl(['Résultat · un nom', 'Action · un verbe'], [
@@ -135,7 +142,7 @@ const kids = [
   H2('Phase 3 · Idéation en îlot et vote par jetons (60–80 min)'),
   P('**En équipe, c’est plus riche.** Le plan de match parle de co-construction en sous-groupes : on travaille en îlot de 4 à 6 personnes. Les 4 étapes sont **obligatoires** et se font dans l’ordre, avec le minuteur de la diapo 13. Chaque îlot note tout dans son cahier, section « Notre projet d’îlot ».'),
   tbl(['Étape', 'Ce qu’on fait', 'Temps'], [
-    ['**1 · Choisir un enjeu du mur**', 'Le mur, c’est l’**affiche physique à l’entrée** où chacun a collé son papillon en arrivant (les mêmes enjeux sont aussi sur le globe 3D, diapo 3). Un membre va la consulter et choisit avec son îlot.', '2 min'],
+    ['**1 · Choisir un enjeu du mur**', 'Le mur, c’est l’**affiche physique à l’entrée** où chacun a collé son post-it en arrivant (les mêmes enjeux sont aussi sur le globe 3D, diapo 3). Un membre va la consulter et choisit avec son îlot.', '2 min'],
     ['**2 · Vivre la démarche**', 'Un résultat (un nom), puis 2 ou 3 actions (un verbe, qui, quand).', '5 min'],
     ['**3 · L’adapter à vos groupes**', 'PPS, DHS ou vos sigles : le scénario A, B ou C, en groupe ou en individualisé.', '4 min'],
     ['**4 · S’aider de Copilot**', 'Une invite bâtie par l’îlot (rôle, contexte, tâche, contraintes) pour enrichir une action ou créer une grille.', '4 min']
@@ -174,7 +181,7 @@ const kids = [
     ['Fiches « Mon premier pas » (aussi dans le cahier)', '40', '☐'],
     ['Annexes imprimées (03, 04, 07, 09, 10) ou code QR seulement : à décider', '40', '☐'],
     ['Jetons de vote en 3 couleurs, en sachets par îlot', '3 par personne', '☐'],
-    ['Papillons adhésifs de 4 couleurs (une couleur par profil) et marqueurs noirs', '1 paquet par îlot', '☐'],
+    ['Post-it de 4 couleurs (une couleur par profil) et marqueurs noirs', '1 paquet par îlot', '☐'],
     ['Affiche du mur d’enjeux à l’entrée (le « mur » de la phase 3) et grand code QR', '1 de chaque', '☐'],
     ['Cartons de signaux vert, jaune et rouge', '2 jeux', '☐'],
     ['Présentation sur 2 clés USB et vidéo enregistrée localement', '2', '☐'],
@@ -187,7 +194,7 @@ const kids = [
   B('Des îlots qui mêlent les quatre CSS et les profils, avec une direction ou une personne des services dans le plus d’îlots possible.'),
 
   H1('06', 'Après le colloque'),
-  B('**Le mur d’enjeux régional.** Les papillons des quatre CSS deviennent une « carte des préoccupations » du Saguenay–Lac-Saint-Jean, rapportée en classe comme banque d’enjeux.'),
+  B('**Le mur d’enjeux régional.** Les post-it des quatre CSS deviennent une « carte des préoccupations » du Saguenay–Lac-Saint-Jean, rapportée en classe comme banque d’enjeux.'),
   B('**La relance à six semaines.** Un courriel aux participants (« Avez-vous fait votre premier pas ? ») transforme l’atelier en petite communauté de pratique. On y joint la question 6 du cadre d’innovation : « Qui l’a vue assez de fois pour la refaire sans moi ? »'),
   B('**Le jumelage interprogrammes.** Un groupe PPS ou DHS avec une enseignante matières (scénario C), prêt à démarrer en janvier.'),
   B('**L’accompagnement du CSI.** Un ou deux enseignants qui démarrent une démarche semblable, y compris dans les autres CSS.'),

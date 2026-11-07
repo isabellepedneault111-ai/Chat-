@@ -35,7 +35,7 @@ const kids = [
   SP(600),
   big('QU’EST-CE QUI', 110, C.ink, { after: 0 }), big('VOUS DÉRANGE', 150, C.accent, { after: 0 }), big('DANS LE MONDE,', 110, C.ink, { after: 0 }),
   new d.Paragraph({ alignment: d.AlignmentType.CENTER, spacing: { after: 600 }, children: [new d.TextRun({ text: ' ICI OU AILLEURS ? ', font: 'Anton', size: 110, shading: { type: d.ShadingType.CLEAR, color: 'auto', fill: C.yellow } })] }),
-  P('Collez votre papillon. Une idée par papillon.', { align: d.AlignmentType.CENTER, run: { font: 'Cambria', italics: true, size: 32, color: C.grey } }),
+  P('Collez votre post-it. Une idée par post-it.', { align: d.AlignmentType.CENTER, run: { font: 'Cambria', italics: true, size: 32, color: C.grey } }),
   BR(),
 
   // Fiches Mon premier pas
