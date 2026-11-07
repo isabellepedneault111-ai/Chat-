@@ -17,7 +17,7 @@ const kids = [
   H1('02', 'Le jour J, avant que la salle arrive'),
   N('Ouvrez le fichier. Touchez **F** (ou le bouton F en bas) pour le plein écran.', 2),
   N('Si vous voulez vos notes à l’abri des regards et que l’ordinateur a son propre écran : Windows + P, « Étendre », puis touchez **P**. La fenêtre présentateur s’ouvre : glissez-la sur l’écran de l’ordinateur. Sinon, oubliez cette étape : le guide imprimé contient les mêmes notes.', 2),
-  N('Entre deux séances, à la diapo 3, touchez **Vider** ; à la diapo 15 (jetons), touchez **Remettre à zéro** ; à la diapo 17 (pyramide), touchez **Effacer**.', 2),
+  N('Entre les deux séances (11 h 50 à 13 h 30) : à la diapo 3, touchez **Vider** ; à la diapo 15 (jetons), **Remettre à zéro** ; à la diapo 17 (pyramide), **Effacer**. Photographiez le mur d’enjeux avant de le défaire.', 2),
   N('Restez sur la diapo 1 pendant que les gens entrent.', 2),
 
   H1('03', 'Pendant l’atelier'),

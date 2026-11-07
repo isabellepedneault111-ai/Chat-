@@ -28,14 +28,12 @@ const citations = [
 const kids = [
   label('Matériel à imprimer · Colloque régional FGA · 13 novembre 2026', { size: 16 }),
   big('MATÉRIEL À IMPRIMER', 64, C.ink, { after: 200 }),
-  P('Quatre pièces : l’affiche du mur d’enjeux, les fiches « Mon premier pas », les jetons de vote et les cartons de signaux. Les traits pointillés indiquent où découper.', { run: { italics: true, color: C.grey } }),
+  P('Quatre pièces : l’affiche du mur d’enjeux (avec ses trois cercles : école, communauté, environnement), les fiches « Mon premier pas », les jetons de vote et les cartons de signaux. Les traits pointillés indiquent où découper.', { run: { italics: true, color: C.grey } }),
   BR(),
 
-  // Affiche
-  SP(600),
-  big('QU’EST-CE QUI', 110, C.ink, { after: 0 }), big('VOUS DÉRANGE', 150, C.accent, { after: 0 }), big('DANS LE MONDE,', 110, C.ink, { after: 0 }),
-  new d.Paragraph({ alignment: d.AlignmentType.CENTER, spacing: { after: 600 }, children: [new d.TextRun({ text: ' ICI OU AILLEURS ? ', font: 'Anton', size: 110, shading: { type: d.ShadingType.CLEAR, color: 'auto', fill: C.yellow } })] }),
-  P('Collez votre post-it. Une idée par post-it.', { align: d.AlignmentType.CENTER, run: { font: 'Cambria', italics: true, size: 32, color: C.grey } }),
+  // Affiche : la même que le fichier 05b (11 × 17 po), réduite à la page
+  img(I + 'affiche_mur.png', 560, 865, { after: 80 }),
+  P('Pour l’entrée, imprimez plutôt le fichier 05b en 11 × 17 po, ou faites-le agrandir. Une affiche par séance.', { align: d.AlignmentType.CENTER, run: { italics: true, size: 18, color: C.grey } }),
   BR(),
 
   // Fiches Mon premier pas

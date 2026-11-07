@@ -33,8 +33,8 @@ const kids = [
   L.logos([[I + 'logo_cfga.png', 62, 61], [I + 'logo_csi.png', 230, 50]]),
   zone('Ce cahier appartient à', 700),
   SP(120),
-  P('Ce cahier vous suit pendant tout l’atelier. Écrivez-y, raturez-y, collez-y des post-it. Il est fait pour être utilisé, pas pour rester propre.', { run: { italics: true, color: C.grey } }),
-  P('Isabelle Pedneault, CP, CFGA De Jonquière · Francis Laroche, éducateur en citoyenneté mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean', { run: { size: 18, color: C.grey } }),
+  P('Ce cahier vous suit pendant tout l’atelier. Tous les documents, en PDF et en Word, sont aussi sur la page Ressources : claude.ai/artifact/SMB1bWSXHDzLNmfYQsGvwG#ressources. Écrivez-y, raturez-y, collez-y des post-it. Il est fait pour être utilisé, pas pour rester propre.', { run: { italics: true, color: C.grey } }),
+  P('Isabelle Pedneault, CP, CFGA De Jonquière · Francis Laroche, chargé de projet en éducation citoyenne mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean', { run: { size: 18, color: C.grey } }),
 
   H1('01', 'Ce qui me dérange'),
   P('Première marche de la démarche « de l’idée à l’action » : partir de ce qui nous touche. Avant de coller votre post-it au mur, notez-le ici.'),
@@ -110,7 +110,7 @@ const kids = [
   ].map(r => [r]), [W]),
   SP(120),
   H2('4 · Notre invite Copilot · 4 min'),
-  P('On l’écrit ici, puis on la tape dans Copilot sur un appareil de l’îlot (compte du centre de services). Les 5 invites de l’aide-mémoire sont aussi dans le dossier partagé, prêtes à copier.', { run: { size: 19 } }),
+  P('Sur votre ordinateur, ouvrez la page Ressources (code QR à l’écran, ou claude.ai/artifact/SMB1bWSXHDzLNmfYQsGvwG#ressources), section « Mon invite Copilot ». Remplissez les champs, touchez Copier l’invite, puis collez-la dans Copilot avec votre compte du centre de services. Notez ici l’invite de votre îlot.', { run: { size: 19 } }),
   tbl(['', 'Ce que l’îlot écrit'], [
     ['**Rôle**', 'Agis comme… (enseignant·e en PPS, DHS, IS, ISP, mathématiques et sciences, français ou anglais ; orthopédagogue, conseiller·ère d’orientation, direction, intervenant·e scolaire…)'],
     ['**Contexte**', 'Notre groupe : … · Notre enjeu : … · Le sigle ou le cours : …'],

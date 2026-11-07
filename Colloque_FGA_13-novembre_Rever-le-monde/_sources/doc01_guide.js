@@ -9,7 +9,7 @@ const kids = [
     title: 'RÊVER LE MONDE DE DEMAIN',
     sub: 'De l’idéation à l’action. Engagement citoyen et autodétermination en FGA. Guide d’animation pour la coanimation (90 minutes).',
     image: { path: I + 'nb_mur.jpg', w: 640, h: 360, cap: 'Du « ça me dérange » au « on l’a fait ! »' },
-    meta: ['**Isabelle Pedneault**, conseillère pédagogique, CFGA De Jonquière (CSSDLJ)', '**Francis Laroche**, éducateur en citoyenneté mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI)', 'Présentation interactive : presentation/index.html (aussi utilisable hors ligne)']
+    meta: ['**Isabelle Pedneault**, conseillère pédagogique, CFGA De Jonquière (CSSDLJ)', '**Francis Laroche**, chargé de projet en éducation citoyenne mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI)', 'Présentation interactive : presentation/index.html (aussi utilisable hors ligne)']
   }),
   L.logos([[I + 'logo_cfga.png', 62, 61], [I + 'logo_csi.png', 230, 50]]),
   BR(),
@@ -57,9 +57,18 @@ const kids = [
     ['**Orientation et CP**', 'Relier l’enjeu au projet de vie et à J’ai mon plan ; accompagner une équipe qui fait un premier essai.'],
     ['**Directions**', 'Les conditions qui rendent la démarche possible : du **temps protégé** à l’horaire (le cadre d’innovation du CFGA), l’horaire d’un projet-pont, les partenariats avec la communauté.']
   ], [2800, 7280], { firstAccent: true }),
-  ...note('Composer les îlots', ['En entrant, chacun prend un post-it de la couleur de son profil : IS, ISP, PPS et DHS ; mathématiques et sciences ; français et anglais ; directions et services (orthopédagogie, orientation, CP). On forme des îlots qui mêlent les CSS et les profils. Les directions et les professionnels se répartissent dans les îlots : leur regard sur les conditions (horaire, partenariats) enrichit chaque projet.'], { before: 160 }),
+  ...note('Les îlots', ['Les participants seront mélangés : on ne sait pas d’avance qui viendra à quelle séance. Les îlots se forment comme les gens s’assoient. Si un îlot réunit seulement des collègues du même centre, on invite une personne à changer de table : l’appartenance se construit aussi entre collègues de la région.'], { before: 160 }),
 
   H1('03', 'Déroulé minuté'),
+  H3('Deux séances, le même atelier'),
+  tbl(['Phase', 'Séance du matin', 'Séance de l’après-midi', 'Diapos'], [
+    ['**Phase 1 · Diagnostic** (30 min)', '10 h 20 à 10 h 50', '13 h 30 à 14 h', '1 à 8'],
+    ['**Phase 2 · Pivot stratégique** (30 min)', '10 h 50 à 11 h 20', '14 h à 14 h 30', '9 à 12'],
+    ['**Phase 3 · Idéation et vote** (20 min)', '11 h 20 à 11 h 40', '14 h 30 à 14 h 50', '13 à 15'],
+    ['**Phase 4 · Bilan** (10 min)', '11 h 40 à 11 h 50', '14 h 50 à 15 h', '16 à 20']
+  ], [3500, 2200, 2400, 1980], { firstAccent: true }),
+  P('**Entre les deux séances (11 h 50 à 13 h 30).** Photographier le mur d’enjeux, puis retirer les post-it ou en commencer une deuxième affiche. Dans la présentation : diapo 3, **Vider** ; diapo 15, **Remettre à zéro** ; diapo 17, **Effacer**. Remettre les jetons dans les sachets.', { before: 100 }),
+  SP(80),
   P('Quatre phases : 30, 30, 20 et 10 minutes. Le numéro de diapo renvoie à la présentation (la touche N affiche les notes et le nom de la personne qui anime).'),
   tbl(['Temps', 'Phase', 'Ce que vivent les participants', 'Qui', 'Diapo'], [
     ['0–5', '**Phase 1 · Diagnostic** : accueil et mur d’enjeux', 'En entrant : « Qu’est-ce qui vous dérange dans le monde, ici ou ailleurs ? » Un post-it par personne.', 'Francis', '1–3'],
@@ -96,8 +105,8 @@ const kids = [
   tbl(['Le mur d’enjeux', 'En bref'], [
     ['**C’est quoi ?**', 'Une grande affiche à l’entrée du local : « Qu’est-ce qui vous dérange dans le monde, ici ou ailleurs ? » Les participants y collent des post-it.'],
     ['**Quand ?**', 'En entrant, avant de s’asseoir (minutes 0 à 5). Une table près de la porte avec les post-it et les marqueurs.'],
-    ['**Comment ?**', 'Un enjeu par post-it, en quelques mots. La couleur du post-it indique le profil (voir « Composer les îlots »).'],
-    ['**Et ensuite ?**', 'Diapo 3 : Francis tape 4 ou 5 post-it, qui s’accrochent au globe 3D. Phase 3 : chaque îlot vient choisir son enjeu sur le mur. Après : on photographie le mur pour la carte régionale.']
+    ['**Comment ?**', 'Un enjeu par post-it, en quelques mots. Chacun le colle dans le cercle qui lui ressemble : **école**, **communauté** ou **environnement**, ou au centre s’il touche les trois. Les catégories ressortent d’elles-mêmes : c’est la triade de la diapo 6, vécue avant d’être expliquée.'],
+    ['**Et ensuite ?**', 'Diapo 3 : Francis tape 4 ou 5 post-it en choisissant leur cercle ; ils s’accrochent au globe 3D, et un compteur montre où ils sont tombés. Diapo 6 : le même compteur revient sous la triade. Phase 3 : chaque îlot vient choisir son enjeu sur le mur. Après : on photographie le mur pour la carte régionale.']
   ], [2200, 7880], { firstAccent: true }),
   SP(100),
   ...note('Phrase d’ouverture', ['« Ce que vous venez de faire en entrant, c’est la première marche de la démarche « de l’idée à l’action ». Nos élèves commencent exactement comme ça : par ce qui les dérange. »']),
@@ -149,7 +158,7 @@ const kids = [
   ], [2900, 6180, 1000], { firstAccent: true }),
   H3('La modélisation Copilot · Isabelle (diapo 14)'),
   P('Isabelle prend un îlot comme exemple. Dans la diapo, elle choisit le rôle (enseignant·e en PPS ou en DHS, intervenant·e scolaire, enseignant·e en adaptation scolaire), écrit leur groupe et leur enjeu, puis les contraintes que l’îlot dicte. Le bouton « Copier » met l’invite dans le presse-papier : on la colle dans Copilot sur l’ordinateur du TNI et la salle voit la réponse.'),
-  P('**Comment les participants y accèdent.** Chacun écrit l’invite de son îlot dans son cahier (section « Notre invite Copilot »), puis la tape dans Copilot sur son appareil, avec son compte du centre de services. Les 5 invites de l’aide-mémoire Copilot sont aussi dans le dossier partagé (code QR) : on les copie-colle et on remplace les crochets.'),
+  P('**Comment les participants y accèdent.** Sur leur ordinateur, ils ouvrent la page **Ressources** (code QR à la diapo 14 et à la diapo 20, ou l’adresse claude.ai/artifact/SMB1bWSXHDzLNmfYQsGvwG#ressources). La section « Mon invite Copilot » reprend le générateur de la diapo : on remplit son groupe, son sigle et son enjeu, on touche **Copier l’invite**, puis on la colle dans Copilot avec son compte du centre de services. Les 5 invites de l’aide-mémoire y sont aussi, chacune avec son bouton Copier. Le cahier garde une trace écrite de l’invite de l’îlot.'),
   H3('La galerie et le vote · Duo (diapo 15)'),
   N('Une personne par îlot reste à sa table pour présenter le projet en 30 secondes. Les autres circulent.', 3),
   N('À mi-temps, on change de présentateur pour que celui-ci aille voter à son tour.', 3),
@@ -169,7 +178,7 @@ const kids = [
   N('**Retour express (2 min).** Chaque îlot nomme à voix haute un premier pas. On photographie sa fiche avec son téléphone.', 4),
   N('**La pyramide de rétention (1 min, diapo 17).** On touche l’étage : « Où se situait votre dernière formation ? » Puis : « Et l’atelier d’aujourd’hui ? » Il devrait se situer dans le bas : discuter, faire, enseigner aux autres.', 4),
   N('**Objectivation 3-2-1 (3 min, diapo 18).** 3 idées que je retiens, 2 choses que j’essaie, 1 question qui me reste. On modélise ce qu’on propose : voir l’annexe sur l’objectivation.', 4),
-  N('**Ce qui reste et merci (1 min, diapos 19 et 20).** Un ou deux vrais mots d’élèves, le besoin qu’ils nourrissent. Le code QR mène au dossier partagé. Annonce de la relance à six semaines : « Avez-vous fait votre premier pas ? »', 4),
+  N('**Ce qui reste et merci (1 min, diapos 19 et 20).** Un ou deux vrais mots d’élèves, le besoin qu’ils nourrissent. Le code QR mène à la page Ressources : l’invite Copilot, tous les documents en PDF et en Word, les six questions. Annonce de la relance à six semaines : « Avez-vous fait votre premier pas ? »', 4),
   ...note('Le pont avec le cadre d’innovation du CFGA', ['Un premier pas, c’est une petite innovation. Le cadre adapté des COP IA (Giroux, Munger et Pedneault, 2026) repose sur quatre fondations, dont **le droit d’essayer** et **du temps protégé**. Dans la fiche : la date devient du temps protégé, réservé à l’horaire et tenu ; l’allié, c’est la validation par les pairs. Les 6 questions du cadre sont dans le cahier, juste sous la fiche. Aux directions présentes : leur premier pas peut être de protéger ce temps pour une équipe.'], { before: 160 }),
   ...note('La pyramide, sans chiffres', ['Les pourcentages qui circulent avec cette pyramide (10 %, 20 %… 90 %) ne proviennent d’aucune étude solide. On la présente comme un **repère du passif à l’actif**. Le message, lui, est bien appuyé par la recherche : générer, s’expliquer, se rappeler activement et enseigner à un autre aident à apprendre.'], { before: 160 }),
   ...note('Pour aller plus loin', ['L’annexe 10 propose une autoévaluation des interventions universelles, d’après la grille réflexive EN.1.1 de « J’ai MON plan! ». Avant de cibler un élève, on regarde ce qu’on offre à tout le groupe.'], { before: 160 }),
@@ -179,10 +188,11 @@ const kids = [
   tbl(['Quoi', 'Quantité', ''], [
     ['Cahier du participant imprimé (34 inscrits, plus une marge)', '40', '☐'],
     ['Fiches « Mon premier pas » (aussi dans le cahier)', '40', '☐'],
-    ['Annexes imprimées (03, 04, 07, 09, 10) ou code QR seulement : à décider', '40', '☐'],
+    ['Annexes : en ligne sur la page Ressources ; à imprimer seulement si on le souhaite (03, 04, 07, 09, 10)', '40', '☐'],
+    ['Les participants apportent leur ordinateur (rappel dans le courriel de confirmation)', '—', '☐'],
     ['Jetons de vote en 3 couleurs, en sachets par îlot', '3 par personne', '☐'],
-    ['Post-it de 4 couleurs (une couleur par profil) et marqueurs noirs', '1 paquet par îlot', '☐'],
-    ['Affiche du mur d’enjeux à l’entrée (le « mur » de la phase 3) et grand code QR', '1 de chaque', '☐'],
+    ['Post-it (une seule couleur suffit) et marqueurs noirs, sur une table près de la porte', '2 paquets par séance', '☐'],
+    ['Affiche du mur d’enjeux, format 11 × 17 po ou agrandie (fichier 05b), une par séance', '2', '☐'],
     ['Cartons de signaux vert, jaune et rouge', '2 jeux', '☐'],
     ['Présentation sur 2 clés USB et vidéo enregistrée localement', '2', '☐'],
     ['Adaptateurs HDMI, USB-C et VGA, rallonge', '1 de chaque', '☐'],
@@ -190,7 +200,7 @@ const kids = [
   ], [7280, 2200, 600]),
   H2('Aménagement'),
   B('Des îlots de 4 à 6 personnes. À chaque place : le cahier du participant et le sachet de jetons.'),
-  B('Le mur d’enjeux et le grand code QR à l’entrée.'),
+  B('Le mur d’enjeux à l’entrée, avec la table des post-it.'),
   B('Des îlots qui mêlent les quatre CSS et les profils, avec une direction ou une personne des services dans le plus d’îlots possible.'),
 
   H1('06', 'Après le colloque'),
@@ -202,7 +212,7 @@ const kids = [
   H1('07', 'À valider entre nous'),
   B('Des élèves de PPS peuvent-ils témoigner en personne ou en vidéo ? Les autorisations de diffusion sont-elles signées ?'),
   B('Quels outils de la démarche remettons-nous (gabarits, fiches, liens) ? Les déposons-nous dans l’équipe Teams du colloque ?'),
-  B('Les deux séances ont-elles lieu le matin et l’après-midi ? Le minutage est-il le même ?'),
+  B('Courriel de confirmation : demander aux participants d’apporter leur ordinateur pour Copilot.'),
   B('Qui fait la relance à six semaines, et à partir de quelle liste ?'),
 
   H1('08', 'Éthique des exemples concrets'),

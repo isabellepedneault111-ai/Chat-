@@ -1,0 +1,215 @@
+<div id="hub" class="hub" hidden>
+<style>
+/* Page « Ressources » : un carnet d'atelier sur téléphone. Bande mauve d'ouverture, puis feuilles crème posées sur le papier. */
+.hub{--h-ink:#1E1A22;--h-paper:#FBF8EF;--h-sheet:#FFFDF7;--h-mauve:#5B2A86;--h-mauve2:#7A45AB;--h-gold:#F2C230;--h-orange:#D9541E;--h-muted:#5E566A;--h-hair:#D8CFE3;
+  color:var(--h-ink);background:#E9E1D0;min-height:100%;font-family:var(--body);font-size:17px;line-height:1.5}
+.hubmode body,body.hubmode{overflow:auto!important;background:#E9E1D0}
+.hub *{box-sizing:border-box}
+.hub-wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hub-top{background:var(--h-mauve);color:var(--h-paper);background-image:radial-gradient(rgba(242,194,48,.22) 1.2px,transparent 1.4px);background-size:11px 11px;border-bottom:4px solid var(--h-ink)}
+.hub-top .hub-wrap{padding-block:clamp(24px,5vw,48px) clamp(22px,4vw,40px);display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(18px,4vw,40px);align-items:center}
+.hub-kick{font-family:var(--ui);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--h-gold);margin:0 0 10px}
+.hub h1{font-family:var(--display);font-weight:400;font-size:clamp(46px,9vw,92px);line-height:.95;margin:0;text-wrap:balance;letter-spacing:.005em}
+.hub h1 em{font-style:normal;color:var(--h-gold)}
+.hub-sub{font-family:var(--hand);font-size:clamp(24px,3.4vw,32px);color:var(--h-gold);margin:8px 0 14px;line-height:1.1}
+.hub-lede{max-width:46ch;margin:0 0 16px;color:#F3EDF9}
+.hub-times{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px;padding:0;list-style:none}
+.hub-times li{font-family:var(--display);font-size:17px;letter-spacing:.03em;background:var(--h-paper);color:var(--h-ink);border:3px solid var(--h-ink);padding:3px 10px;box-shadow:3px 3px 0 var(--h-gold)}
+.hub-logos{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hub-logos img{height:58px;width:auto;background:#fff;border:3px solid var(--h-ink);padding:5px 8px}
+.hub-photo{margin:0;border:4px solid var(--h-ink);box-shadow:10px 10px 0 var(--h-gold);background:#fff;transform:rotate(1.2deg)}
+.hub-photo img{display:block;width:100%;height:auto}
+.hub-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--h-ink);border-bottom:3px solid var(--h-gold)}
+.hub-nav .hub-wrap{display:flex;gap:6px;overflow-x:auto;padding-block:8px;scrollbar-width:none}
+.hub-nav a{flex:0 0 auto;font-family:var(--display);font-size:16px;letter-spacing:.04em;text-transform:uppercase;color:var(--h-paper);text-decoration:none;padding:6px 12px;border:2px solid transparent}
+.hub-nav a:hover,.hub-nav a:focus-visible{border-color:var(--h-gold);color:var(--h-gold);outline:none}
+.hub-sec{padding-block:clamp(28px,5vw,48px) 4px}
+.hub-sec>.hub-wrap>h2{font-family:var(--display);font-weight:400;font-size:clamp(32px,5.4vw,52px);line-height:1;margin:0 0 6px;text-wrap:balance}
+.hub-sec>.hub-wrap>h2 .tag{display:inline-block;background:var(--h-gold);border:3px solid var(--h-ink);padding:0 8px;margin-right:8px;transform:rotate(-2deg)}
+.hub-intro{max-width:62ch;color:var(--h-muted);margin:0 0 18px}
+.hub-card{background:var(--h-sheet);border:3px solid var(--h-ink);box-shadow:8px 8px 0 var(--h-ink);padding:clamp(16px,3vw,26px);min-width:0}
+.hub-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 18px;padding:0;list-style:none;counter-reset:st}
+.hub-steps li{counter-increment:st;background:var(--h-paper);border:2px solid var(--h-ink);padding:10px 12px;font-size:15px;line-height:1.35}
+.hub-steps li::before{content:counter(st);display:block;font-family:var(--display);font-size:30px;line-height:1;color:var(--h-mauve)}
+.hub-gen{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(14px,3vw,26px)}
+.hub-f{display:grid;gap:4px;margin:0 0 10px}
+.hub-f label{font-family:var(--display);font-size:16px;letter-spacing:.03em;color:var(--h-mauve);text-transform:uppercase}
+.hub-f input,.hub-f select,.hub-f textarea{width:100%;font:inherit;font-size:16px;color:var(--h-ink);background:#fff;border:3px solid var(--h-ink);padding:8px 10px;border-radius:0}
+.hub-f input:focus,.hub-f select:focus,.hub-f textarea:focus{outline:3px solid var(--h-gold);outline-offset:1px}
+.hub-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.hub-chips button{font:inherit;font-size:13.5px;background:var(--h-paper);color:var(--h-ink);border:2px solid var(--h-ink);padding:3px 8px;cursor:pointer}
+.hub-chips button:hover{background:var(--h-gold)}
+.hub-out{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0}
+.hub-out pre{margin:0;flex:1;white-space:pre-wrap;word-break:break-word;font-family:"IBM Plex Mono",Consolas,"Courier New",monospace;font-size:14px;line-height:1.5;background:var(--h-ink);color:#F4EEDF;border:3px solid var(--h-ink);padding:14px;min-height:240px}
+.hub-out pre b{color:var(--h-gold);font-weight:700}
+.hub-btn{font-family:var(--display);font-size:18px;letter-spacing:.04em;text-transform:uppercase;background:var(--h-gold);color:var(--h-ink);border:3px solid var(--h-ink);box-shadow:4px 4px 0 var(--h-ink);padding:9px 16px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.hub-btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--h-ink)}
+.hub-btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--h-ink)}
+.hub-btn.alt{background:var(--h-paper)}
+.hub-btn.sm{font-size:15px;padding:5px 10px;box-shadow:3px 3px 0 var(--h-ink)}
+.hub-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.hub-msg{font-family:var(--hand);font-size:22px;color:var(--h-mauve);min-height:1em}
+.hub-warn{font-size:14.5px;color:var(--h-muted);border-left:6px solid var(--h-orange);padding:4px 10px;margin:14px 0 0}
+.hub-prompts{display:grid;gap:12px}
+.hub-prompts details{background:var(--h-sheet);border:3px solid var(--h-ink)}
+.hub-prompts summary{cursor:pointer;list-style:none;display:flex;gap:12px;align-items:center;padding:12px 14px;font-family:var(--display);font-size:20px;letter-spacing:.02em}
+.hub-prompts summary::-webkit-details-marker{display:none}
+.hub-prompts summary i{font-style:normal;flex:0 0 auto;width:34px;height:34px;display:grid;place-items:center;background:var(--h-mauve);color:var(--h-gold);border:2px solid var(--h-ink)}
+.hub-prompts summary::after{content:"+";margin-left:auto;font-size:26px;line-height:1;color:var(--h-mauve)}
+.hub-prompts details[open] summary::after{content:"–"}
+.hub-prompts .body{padding:0 14px 14px;display:grid;gap:10px}
+.hub-prompts pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family:"IBM Plex Mono",Consolas,monospace;font-size:13.5px;background:var(--h-paper);border:2px dashed var(--h-ink);padding:12px}
+.hub-docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:16px}
+.hub-doc{background:var(--h-sheet);border:3px solid var(--h-ink);box-shadow:6px 6px 0 var(--h-ink);padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.hub-doc .k{font-family:var(--ui);font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--h-mauve)}
+.hub-doc h3{font-family:var(--display);font-weight:400;font-size:24px;line-height:1.05;margin:0}
+.hub-doc p{margin:0;font-size:15px;color:var(--h-muted);flex:1}
+.hub-doc.feat{background:var(--h-gold)}
+.hub-doc.feat p{color:var(--h-ink)}
+.hub-q{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:q}
+.hub-q li{counter-increment:q}
+.hub-q label{display:grid;grid-template-columns:auto auto 1fr;gap:10px;align-items:start;background:var(--h-paper);border:2px solid var(--h-ink);padding:10px 12px;cursor:pointer}
+.hub-q label::before{content:counter(q);font-family:var(--display);font-size:22px;line-height:1;color:var(--h-mauve);width:1ch}
+.hub-q input{width:22px;height:22px;accent-color:var(--h-mauve);margin-top:1px}
+.hub-q b{font-family:var(--display);font-weight:400;letter-spacing:.02em;font-size:17px;display:block}
+.hub-q span{font-size:15px}
+.hub-q .grp{font-family:var(--ui);font-size:11.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--h-muted);margin:8px 0 0}
+.hub-fond{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0 0 16px;padding:0;list-style:none}
+.hub-fond li{border:2px solid var(--h-ink);padding:8px 10px;font-size:14.5px;line-height:1.3;background:var(--h-sheet)}
+.hub-fond li b{display:block;font-family:var(--display);font-weight:400;font-size:17px}
+.hub-fond li.hot{background:var(--h-gold)}
+.hub-big{font-family:var(--display);font-size:clamp(26px,4.4vw,40px);line-height:1.05;margin:22px 0 0;text-wrap:balance}
+.hub-big mark{background:linear-gradient(transparent 55%,var(--h-gold) 55%);color:inherit}
+.hub-foot{margin-top:clamp(32px,6vw,56px);background:var(--h-ink);color:#D9D0E6;font-size:14px;border-top:4px solid var(--h-gold)}
+.hub-foot .hub-wrap{padding-block:26px 34px;display:grid;gap:10px}
+.hub-foot a{color:var(--h-gold)}
+.hub-foot b{color:#fff}
+.hub-foot .hub-logos img{height:46px}
+.hub a:focus-visible,.hub button:focus-visible,.hub summary:focus-visible{outline:3px solid var(--h-gold);outline-offset:2px}
+@media (max-width:760px){.hub-top .hub-wrap{grid-template-columns:1fr}.hub-photo{transform:none;box-shadow:6px 6px 0 var(--h-gold)}.hub-gen{grid-template-columns:1fr}.hub-steps{grid-template-columns:1fr}.hub-fond{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (prefers-reduced-motion:reduce){.hub-btn:hover,.hub-btn:active{transform:none}}
+</style>
+
+<header class="hub-top"><div class="hub-wrap">
+  <div>
+    <p class="hub-kick">Colloque régional FGA · 13 novembre 2026 · CFGA De Jonquière</p>
+    <h1>Rêver le monde de <em>demain</em></h1>
+    <p class="hub-sub">de l’idéation à l’action</p>
+    <p class="hub-lede">Engagement citoyen et autodétermination en FGA. Tout ce qu’il vous faut pour l’atelier, et pour lundi : votre invite Copilot, les documents à télécharger et les six questions avant votre premier pas.</p>
+    <ul class="hub-times" aria-label="Horaire des deux séances"><li>10 h 20 – 11 h 50</li><li>13 h 30 – 15 h</li></ul>
+    <div class="hub-logos"><img src="__LOGO_CFGA__" alt="CFGA De La Jonquière"><img src="__LOGO_CSI__" alt="Centre de solidarité internationale du Saguenay–Lac-Saint-Jean"></div>
+  </div>
+  <figure class="hub-photo"><img src="__IMG_RISO_MUR__" alt="Des jeunes adultes collent des post-it sur une carte du monde"></figure>
+</div></header>
+
+<nav class="hub-nav" aria-label="Sections"><div class="hub-wrap"><a href="#ressources" data-to="h-copilot">Mon invite Copilot</a><a href="#ressources" data-to="h-invites">5 invites prêtes</a><a href="#ressources" data-to="h-docs">Les documents</a><a href="#ressources" data-to="h-pas">Mon premier pas</a></div></nav>
+
+<section class="hub-sec" id="h-copilot"><div class="hub-wrap">
+  <h2><span class="tag">IA</span>Mon invite Copilot</h2>
+  <p class="hub-intro">La formule de l’atelier : rôle, contexte, tâche, contraintes. Remplissez les champs avec votre îlot ; l’invite se construit à droite, prête à copier.</p>
+  <ol class="hub-steps"><li>Remplissez les champs : votre groupe, votre sigle, votre enjeu.</li><li>Touchez « Copier l’invite ».</li><li>Ouvrez Copilot avec votre compte du centre de services et collez-la.</li></ol>
+  <div class="hub-card hub-gen">
+    <form id="hgForm" autocomplete="off">
+      <div class="hub-f"><label for="hgRole">Rôle</label><select id="hgRole"></select><input type="text" id="hgRoleX" placeholder="Écrivez votre rôle" hidden></div>
+      <div class="hub-f"><label for="hgGroupe">Mon groupe</label><input type="text" id="hgGroupe" placeholder="ex. un groupe d’Intégration sociale (IS)"></div>
+      <div class="hub-f"><label for="hgSigle">Le sigle ou le cours</label><input type="text" id="hgSigle" placeholder="ex. MAT-3051, ou le programme PPS"></div>
+      <div class="hub-f"><label for="hgEnjeu">Notre enjeu</label><input type="text" id="hgEnjeu" placeholder="ex. le coût de l’épicerie"></div>
+      <div class="hub-f"><label for="hgTache">Tâche</label><select id="hgTache"></select><input type="text" id="hgTacheX" placeholder="Écrivez votre tâche" hidden></div>
+      <div class="hub-f"><label for="hgContr">Contraintes</label><textarea id="hgContr" rows="2" placeholder="Écrivez vos contraintes, ou touchez une suggestion"></textarea><div class="hub-chips" id="hgChips"></div></div>
+    </form>
+    <div class="hub-out">
+      <pre id="hgOut" aria-live="polite"></pre>
+      <div class="hub-row"><button type="button" class="hub-btn" id="hgCopy">Copier l’invite</button><a class="hub-btn alt" href="https://m365.cloud.microsoft/chat" target="_blank" rel="noopener">Ouvrir Copilot ↗</a><span class="hub-msg" id="hgMsg"></span></div>
+      <p class="hub-warn">Jamais de nom d’élève, de diagnostic ni de résultat identifiable dans une invite. Copilot propose, vous disposez : vérifiez chaque lien avec le programme d’études.</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="hub-sec" id="h-invites"><div class="hub-wrap">
+  <h2><span class="tag">5</span>Invites prêtes à copier</h2>
+  <p class="hub-intro">Celles de l’aide-mémoire Copilot. Remplacez ce qui est entre crochets, puis dialoguez : « Simplifie le niveau 2 », « Ajoute un exemple pour l’individualisé ». La première réponse est un brouillon.</p>
+  <div class="hub-prompts" id="hgPrompts"></div>
+</div></section>
+
+<section class="hub-sec" id="h-docs"><div class="hub-wrap">
+  <h2><span class="tag">PDF</span>Les documents</h2>
+  <p class="hub-intro">Le PDF s’ouvre partout, même sur un téléphone. La version Word se modifie.</p>
+  <div class="hub-docs" id="hgDocs"></div>
+</div></section>
+
+<section class="hub-sec" id="h-pas"><div class="hub-wrap">
+  <h2><span class="tag">1</span>Mon premier pas</h2>
+  <p class="hub-intro">Un premier pas, c’est une petite innovation. Le cadre d’innovation du CFGA repose sur quatre fondations.</p>
+  <ul class="hub-fond"><li><b>Durabilité</b>Penser le changement sur la durée.</li><li><b>Le droit d’essayer</b>Se tromper sans se sentir évalué.</li><li class="hot"><b>Du temps protégé</b>Réservé à l’horaire, et tenu.</li><li><b>La réussite des adultes</b>Ce qui tranche quand on hésite.</li></ul>
+  <div class="hub-card">
+    <p style="margin:0 0 10px"><b>Avant de vous lancer, six questions.</b> Un « non » ne bloque rien : il signale qu’il reste à réfléchir.</p>
+    <ol class="hub-q" id="hgQ"></ol>
+    <p class="hub-big">La question qui tranche : « Qui l’a vue <mark>assez de fois pour la refaire sans moi</mark> ? »</p>
+  </div>
+  <p class="hub-intro" style="margin-top:18px">Dans six semaines, on vous écrit : avez-vous fait votre premier pas ?</p>
+</div></section>
+
+<footer class="hub-foot"><div class="hub-wrap">
+  <div class="hub-logos"><img src="__LOGO_CFGA__" alt="CFGA De La Jonquière"><img src="__LOGO_CSI__" alt="Centre de solidarité internationale du Saguenay–Lac-Saint-Jean"></div>
+  <p><b>Isabelle Pedneault</b>, conseillère pédagogique, CFGA De Jonquière · <b>Francis Laroche</b>, chargé de projet en éducation citoyenne mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean.</p>
+  <p>Sources : Deci et Ryan (2000) ; Wehmeyer (1999) ; Fredricks, Blumenfeld et Paris (2004) ; Gaudreau, Duchaine et Bernier, grille EN.1.1, « J’ai MON plan! », Université Laval ; cadre d’innovation des COP IA du CSSDLJ, Giroux, Munger et Pedneault (2026).</p>
+  <p>Les mêmes fichiers sont aussi dans le <a href="__DRIVE__" target="_blank" rel="noopener">dossier partagé de l’atelier</a>.</p>
+</div></footer>
+
+<script>
+(() => {
+  if (location.hash !== '#ressources') return;
+  const $ = s => document.querySelector(s);
+  const PROG = 'Appuie-toi sur le programme d’études officiel de la formation générale des adultes du ministère de l’Éducation du Québec pour SIGLE : nomme les compétences, les savoirs et la famille de situations de vie visés. Si tu n’es pas certain d’un élément du programme, dis-le plutôt que de l’inventer.';
+  const ROLES = ['Tu es enseignant·e en Participation sociale (PPS) en FGA.', 'Tu es enseignant·e en DHS en FGA.', 'Tu es enseignant·e en Intégration sociale (IS) en FGA.', 'Tu es enseignant·e en Insertion socioprofessionnelle (ISP) en FGA.', 'Tu es enseignant·e en adaptation scolaire.', 'Tu es enseignant·e de français en FGA, en enseignement individualisé.', 'Tu es enseignant·e de mathématiques et sciences en FGA, en enseignement individualisé.', 'Tu es enseignant·e d’anglais en FGA.', 'Tu es orthopédagogue en FGA.', 'Tu es conseiller·ère d’orientation en FGA.', 'Tu es intervenant·e scolaire en FGA.', 'Tu es conseiller·ère pédagogique en FGA au Québec.', 'Tu es direction d’un centre de formation générale des adultes.'];
+  const TACHES = ['Transforme notre résultat en 3 actions SMART, avec un verbe conjugué, un responsable et une date.', 'Génère une grille d’évaluation descriptive à 4 niveaux centrée sur la résolution de problèmes.', 'Propose 8 questions d’objectivation : 2 avant, 3 pendant, 3 après.', 'Propose une situation d’apprentissage de 3 périodes en 3 niveaux de complexité.'];
+  const CONTR = ['Langage simple, accessible aux élèves.', 'Présentation en tableau.', 'Aucune note chiffrée.', 'Liens avec les savoirs du sigle.', 'Liste du matériel.', 'Signale toute formulation qui est encore un résultat.'];
+  const fill = (sel, arr) => { arr.forEach((t, i) => sel.add(new Option(t, i))); sel.add(new Option('Autre : je l’écris moi-même', 'x')); };
+  fill($('#hgRole'), ROLES); fill($('#hgTache'), TACHES);
+  const v = id => $('#' + id).value.trim();
+  const pick = (id, arr) => $('#' + id).value === 'x' ? (v(id + 'X') || '…') : arr[+$('#' + id).value];
+  const esc = t => t.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  let plain = '';
+  function upd() {
+    $('#hgRoleX').hidden = $('#hgRole').value !== 'x'; $('#hgTacheX').hidden = $('#hgTache').value !== 'x';
+    const g = v('hgGroupe') || 'un groupe d’adultes en FGA', e = v('hgEnjeu') || 'un enjeu qui les touche', sg = v('hgSigle');
+    const L = [['Rôle', pick('hgRole', ROLES)], ['Contexte', g + ' réalise un projet citoyen sur ' + e + (sg ? ', dans le cadre de ' + sg : '') + '.'], ['Programme', PROG.replace('SIGLE', sg ? 'ce sigle' : 'le sigle visé')], ['Tâche', pick('hgTache', TACHES)], ['Contraintes', v('hgContr') || 'langage simple, présentation en tableau.']];
+    plain = L.map(([k, t]) => k + ' : ' + t).join('\n');
+    $('#hgOut').innerHTML = L.map(([k, t]) => '<b>' + k + ' :</b> ' + esc(t)).join('\n');
+  }
+  ['hgGroupe', 'hgSigle', 'hgEnjeu', 'hgContr', 'hgRoleX', 'hgTacheX'].forEach(id => $('#' + id).addEventListener('input', upd));
+  ['hgRole', 'hgTache'].forEach(id => $('#' + id).addEventListener('change', upd));
+  CONTR.forEach(t => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.onclick = () => { const a = $('#hgContr'); a.value = (a.value.trim() ? a.value.trim() + ' ' : '') + t; upd(); }; $('#hgChips').appendChild(b); });
+  $('#hgForm').addEventListener('submit', e => e.preventDefault());
+  const copy = (text, msgEl, selEl) => { const ok = () => { msgEl.textContent = 'Copiée !'; setTimeout(() => msgEl.textContent = '', 2500); };
+    const fallback = () => { const r = document.createRange(); r.selectNodeContents(selEl); const s = getSelection(); s.removeAllRanges(); s.addRange(r); msgEl.textContent = 'Sélectionnée : copiez-la'; };
+    try { navigator.clipboard.writeText(text).then(ok, fallback); } catch (e) { fallback(); } };
+  $('#hgCopy').addEventListener('click', () => copy(plain, $('#hgMsg'), $('#hgOut')));
+  upd();
+
+  const P = [
+    ['Une grille d’évaluation descriptive', 'Tu es conseiller pédagogique en formation générale des adultes au Québec.\nContexte : un groupe d’adultes du programme Participation sociale réalise un projet citoyen sur [l’enjeu].\nTâche : génère une grille d’évaluation descriptive à 4 niveaux pour le cours [sigle], centrée sur la résolution de problèmes dans un projet communautaire.\nProgramme : ' + PROG.replace('SIGLE', 'ce sigle') + '\nContraintes : langage simple que les élèves comprennent, verbes observables, présentation en tableau, aucune note chiffrée.'],
+    ['Des relances métacognitives', 'Tu es un coach pédagogique qui accompagne des adultes de 16 à 25 ans en FGA.\nTâche : propose 8 questions de relance pour aider un élève à évaluer son autonomie dans son projet citoyen : 2 avant, 3 pendant, 3 après.\nContraintes : phrases courtes, au « je », une question au moins pour chaque sphère de l’engagement (affective, cognitive, comportementale, citoyenne).'],
+    ['D’un résultat à des actions', 'Voici un résultat souhaité par mon groupe : « [résultat] ».\nTransforme-le en 3 actions SMART formulées avec un verbe conjugué au présent, un responsable et une date.\nSi une de mes formulations est encore un résultat plutôt qu’une action, dis-le-moi et explique pourquoi.'],
+    ['Un enjeu comme contexte de tâche', 'Tu es enseignant de mathématiques en FGA, en enseignement individualisé.\nContexte : un élève inscrit en [sigle] veut travailler sur l’enjeu [enjeu].\nProgramme : ' + PROG.replace('SIGLE', 'ce sigle') + '\nTâche : propose une situation d’apprentissage de 3 périodes où il réalise un petit sondage et en analyse les résultats, en 3 niveaux de complexité.\nContraintes : liens explicites avec les savoirs du sigle, liste du matériel, une question d’objectivation à la fin.'],
+    ['Du groupe du nom au groupe du verbe', 'Tu es enseignant de français en FGA.\nTâche : crée un court exercice où les élèves décrivent leur « monde idéal » avec des groupes du nom enrichis (noyau et expansions), puis transforment chaque GN en groupe du verbe avec un sujet qui agit et une date.\nContraintes : 6 items, corrigé à part, thème lié à leur centre ou à leur quartier.']];
+  P.forEach(([t, body], i) => { const d = document.createElement('details'); if (!i) d.open = true; d.innerHTML = '<summary><i>' + (i + 1) + '</i>' + esc(t) + '</summary><div class="body"><pre></pre><div class="hub-row"><button type="button" class="hub-btn sm">Copier</button><span class="hub-msg"></span></div></div>'; d.querySelector('pre').textContent = body; d.querySelector('button').onclick = () => copy(body, d.querySelector('.hub-msg'), d.querySelector('pre')); $('#hgPrompts').appendChild(d); });
+
+  const D = [
+    ['02_Cahier-du-participant', 'Pendant l’atelier', 'Le cahier du participant', 'Il suit l’atelier phase par phase, avec des espaces pour noter, la fiche « Mon premier pas » et les six questions.', 1],
+    ['03_Aide-memoire-Copilot', 'Pour lundi', 'Aide-mémoire Copilot', 'La formule, les 5 invites, le cadre d’innovation et les balises.'],
+    ['04_Annexe_Objectivation', 'Annexe', 'L’objectivation', 'La maison à trois étages, une banque de questions, 7 formats et un carnet de bord.'],
+    ['07_Annexe_Jai-mon-plan', 'Annexe', 'J’ai mon plan', 'Les capacités et la banque de moyens de « J’ai MON plan! », à cocher.'],
+    ['08_Fiche-eleve_De-l-idee-a-l-action', 'Pour vos élèves', 'De l’idée à l’action', 'La démarche en 5 marches, à photocopier et à remplir.'],
+    ['09_Aide-memoire_Engagement', 'Aide-mémoire', 'L’engagement, un écosystème vivant', 'Les 4 besoins, les 9 gestes et la CUA en une page.'],
+    ['10_Annexe_Autoevaluation-interventions-universelles', 'Annexe', 'Mes interventions universelles', 'Une autoévaluation de 16 énoncés reliés aux 4 besoins, d’après la grille EN.1.1.'],
+    ['10b_EN.1.1_Grille-reflexive_Jai-MON-plan', 'Outil officiel', 'La grille réflexive EN.1.1', 'La grille complète de « J’ai MON plan! », Université Laval.', 0, 1]];
+  D.forEach(([f, k, t, p, feat, pdfOnly]) => { const a = document.createElement('article'); a.className = 'hub-doc' + (feat ? ' feat' : ''); a.innerHTML = '<span class="k">' + k + '</span><h3>' + esc(t) + '</h3><p>' + esc(p) + '</p><div class="hub-row"><a class="hub-btn sm" target="_blank" rel="noopener" href="fichiers/' + f + '.pdf">PDF</a>' + (pdfOnly ? '' : '<a class="hub-btn sm alt" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1geh7bo1rCmPDMLFFgqq4FvKSjo9zBmc_" title="La version Word est dans le dossier Drive de l’atelier">Word ↗</a>') + '</div>'; $('#hgDocs').appendChild(a); });
+
+  const Q = [['Pertinence pédagogique', 'Mon projet a-t-il une pertinence pédagogique ?'], ['Éthique', 'Ai-je réfléchi aux principes éthiques en jeu ?'], ['Cadre légal', 'Mon initiative respecte-t-elle le cadre légal ?'], ['Soutien', 'Ai-je accès au soutien nécessaire pour la mettre en œuvre ?'], ['Validation par les pairs', 'Ai-je consulté mes pairs pour enrichir mon idée et en voir les angles morts ?'], ['Pérennité', 'Peut-elle être maintenue dans le temps et adaptée ailleurs ?']];
+  Q.forEach(([k, q], i) => { if (i === 0 || i === 3) { const g = document.createElement('li'); g.className = 'grp'; g.style.counterIncrement = 'none'; g.textContent = i ? 'Les trois ajouts des COP IA' : 'Le cadre ministériel'; $('#hgQ').appendChild(g); } const li = document.createElement('li'); li.innerHTML = '<label><input type="checkbox" id="hgq' + i + '"><span><b>' + k + '</b><span>' + q + '</span></span></label>'; $('#hgQ').appendChild(li); });
+
+  document.querySelectorAll('.hub-nav a').forEach(a => a.addEventListener('click', e => { e.preventDefault(); const t = document.getElementById(a.dataset.to); t && t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }));
+})();
+</script>
+</div>

@@ -1,7 +1,7 @@
 # Rêver le monde de demain… De l’idéation à l’action
 
 Atelier du colloque régional FGA, le 13 novembre 2026, au CFGA De Jonquière. Engagement citoyen et autodétermination en FGA.
-Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (éducateur en citoyenneté mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI)). Durée : 90 minutes, en 4 phases (30, 30, 20 et 10 minutes).
+Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (chargé de projet en éducation citoyenne mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean (CSI)). Durée : 90 minutes, en 4 phases (30, 30, 20 et 10 minutes). Deux séances : **10 h 20 à 11 h 50** et **13 h 30 à 15 h**.
 
 ## Les fichiers
 
@@ -11,6 +11,7 @@ Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (éd
 | `02_Cahier-du-participant.docx` | Chaque participant | Le cahier qui suit l’atelier, avec des espaces pour noter à chaque phase et la fiche « Mon premier pas » |
 | `03_Aide-memoire-Copilot.docx` | Chaque participant | La formule rôle, contexte, tâche, contraintes, 5 invites prêtes à copier, les balises |
 | `04_Annexe_Objectivation.docx` | Chaque participant | Définition, la maison à trois étages, la banque de questions, 7 formats, un gabarit de carnet de bord |
+| `05b_Affiche_Mur-d-enjeux_11x17.pdf` | Les animateurs | L’affiche du mur d’enjeux en 11 × 17 po, avec les trois cercles de la triade : à imprimer ou à faire agrandir, une par séance |
 | `05_Materiel-a-imprimer.docx` | Les animateurs | Affiche du mur d’enjeux, fiches « Mon premier pas », jetons, cartons de signaux |
 | `06_Presenter-au-TNI.docx` | Les animateurs | La marche à suivre pour présenter au TNI : la veille, le jour J, les gestes au doigt, le dépannage |
 | `07_Annexe_Jai-mon-plan.docx` | Chaque participant | Les capacités et la banque de moyens de « J’ai MON plan! » (Parcours FGA), à cocher, et le lien avec la démarche |
@@ -19,6 +20,17 @@ Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (éd
 | `10_Annexe_Autoevaluation-interventions-universelles.docx` | Chaque participant | L’autoévaluation de ses interventions universelles : 16 énoncés de la grille EN.1.1 reliés aux 4 besoins, et un bilan |
 | `10b_EN.1.1_Grille-reflexive_Jai-MON-plan.pdf` | Chaque participant | La grille réflexive complète de « J’ai MON plan! » (Gaudreau, Duchaine et Bernier, Université Laval) |
 | `presentation/index.html` | La salle | Présentation interactive de 20 diapos, en 3D, qui fonctionne sans Internet |
+
+## La page Ressources (pour les participants)
+
+Adresse : **https://claude.ai/artifact/SMB1bWSXHDzLNmfYQsGvwG#ressources**. Les codes QR des diapos 14 et 20 y mènent.
+
+Les participants l’ouvrent sur leur ordinateur. Ils y trouvent :
+
+- **Mon invite Copilot** : le même générateur que la diapo 14 (rôle, groupe, sigle, enjeu, tâche, contraintes), avec un bouton Copier. L’invite demande à Copilot de s’appuyer sur le programme d’études officiel de la FGA.
+- **5 invites prêtes à copier**, celles de l’aide-mémoire.
+- **Les documents en PDF** : cahier, aide-mémoire Copilot, objectivation, J’ai mon plan, fiche élève, engagement, interventions universelles, grille EN.1.1. Les boutons « Word » mènent au dossier Drive de l’atelier.
+- **Mon premier pas** : les quatre fondations et les six questions du cadre d’innovation.
 
 ## La présentation
 
@@ -36,7 +48,7 @@ La présentation est un voyage dans un seul monde 3D en cel-shading : un sol de 
 Ce qui est interactif :
 
 - **Diapo 2 :** les présentations d’Isabelle et de Francis (ma devise, mon outil préféré, si c’était à refaire, mon conseil numéro 1). On clique sur un champ pour l’écrire.
-- **Diapo 3 :** le globe 3D des enjeux. On tape un enjeu et il s’accroche au globe, en 4 couleurs.
+- **Diapo 3 :** le globe 3D des enjeux. On choisit le cercle (école, communauté, environnement ou les trois), on tape l’enjeu, et il s’accroche au globe dans la couleur du cercle. Un compteur montre où sont tombés les post-it ; il revient sous la triade, à la diapo 6.
 - **Diapo 7 :** l’engagement : vrai ou faux, puis les définitions (motivation, engagement, engagement citoyen).
 - **Diapo 8 :** les 4 sphères en 3D. On touche une planète ou son nom pour voir sa définition.
 - **Diapo 9 :** le détecteur « résultat ou action ? ».
