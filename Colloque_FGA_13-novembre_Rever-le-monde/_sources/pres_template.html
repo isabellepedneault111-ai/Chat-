@@ -10,6 +10,17 @@
   color-scheme:light;
 }
 [hidden]{display:none!important}
+.drop.slim{padding:10px 16px;flex-direction:row;justify-content:center;gap:14px}
+.pj-k{font-family:var(--ui);font-size:clamp(12px,min(1.05vw,1.9vh),15px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mauve);margin:12px 0 8px}
+.pjs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1.2vh,14px)}
+.pj{border:3px solid var(--ink);background:var(--paper);padding:clamp(8px,1.3vh,14px);display:flex;flex-direction:column;gap:3px;box-shadow:5px 5px 0 var(--gold)}
+.pj h3{font-family:var(--display);font-weight:400;font-size:clamp(18px,min(1.8vw,3.1vh),26px);line-height:1.05;margin:0}
+.pj .pj-for{font-family:var(--hand);font-size:clamp(17px,min(1.6vw,2.7vh),23px);color:var(--mauve);line-height:1.05;margin:0}
+.pj p{margin:0;font-size:clamp(13px,min(1.2vw,2.1vh),17px);line-height:1.3}
+.pj .chip{align-self:flex-start;margin-top:auto;font-family:var(--display);font-size:clamp(12px,1vw,15px);letter-spacing:.04em;background:var(--gold);color:var(--ink);padding:1px 8px;text-transform:uppercase;border:2px solid var(--ink)}
+@media (max-width:900px){.pjs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.notes p{white-space:pre-wrap}
+.tip{border-left:6px solid var(--mauve);padding:4px 10px;margin:8px 0 0;font-size:clamp(13px,min(1.15vw,2vh),16px);line-height:1.35}.tip b{font-family:var(--display);font-weight:400;color:var(--mauve);margin-right:6px;text-transform:uppercase;letter-spacing:.03em}
 .url{font-family:Consolas,"Courier New",monospace;font-size:clamp(11px,min(1vw,1.8vh),14px);word-break:break-all;margin:4px 0 0;display:block}
 .qrline{display:flex;gap:12px;align-items:center;margin-top:8px}.qrline p{margin:0;font-size:clamp(13px,min(1.15vw,2vh),16px);line-height:1.35}
 .qr.sm{flex:0 0 auto;padding:6px!important}.qr.sm img,.qr.sm canvas{width:clamp(84px,min(8vw,14vh),132px)!important;height:auto!important}
@@ -430,6 +441,13 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 .hub-foot .hub-logos img{height:46px}
 .hub a:focus-visible,.hub button:focus-visible,.hub summary:focus-visible{outline:3px solid var(--h-gold);outline-offset:2px}
 @media (max-width:760px){.hub-top .hub-wrap{grid-template-columns:1fr}.hub-photo{transform:none;box-shadow:6px 6px 0 var(--h-gold)}.hub-gen{grid-template-columns:1fr}.hub-steps{grid-template-columns:1fr}.hub-fond{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.hub-pjs{grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr))}
+.hub .pj{background:var(--h-sheet);border:3px solid var(--h-ink);box-shadow:5px 5px 0 var(--h-gold);padding:14px;display:flex;flex-direction:column;gap:4px}
+.hub .pj h3{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.05;margin:0}
+.hub .pj .pj-for{font-family:var(--hand);font-size:21px;color:var(--h-mauve);margin:0;line-height:1.05}
+.hub .pj p{margin:0;font-size:15px}
+.hub .pj .chip{align-self:flex-start;margin-top:6px;font-family:var(--display);font-size:13px;letter-spacing:.04em;background:var(--h-gold);border:2px solid var(--h-ink);padding:1px 8px;text-transform:uppercase}
+@media (max-width:760px){.hub-steps{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.hub-btn:hover,.hub-btn:active{transform:none}}
 </style>
 
@@ -445,7 +463,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <figure class="hub-photo"><img src="__IMG_RISO_MUR__" alt="Des jeunes adultes collent des post-it sur une carte du monde"></figure>
 </div></header>
 
-<nav class="hub-nav" aria-label="Sections"><div class="hub-wrap"><a href="#ressources" data-to="h-copilot">Mon invite Copilot</a><a href="#ressources" data-to="h-invites">5 invites prêtes</a><a href="#ressources" data-to="h-docs">Les documents</a><a href="#ressources" data-to="h-pas">Mon premier pas</a></div></nav>
+<nav class="hub-nav" aria-label="Sections"><div class="hub-wrap"><a href="#ressources" data-to="h-copilot">Mon invite Copilot</a><a href="#ressources" data-to="h-invites">5 invites prêtes</a><a href="#ressources" data-to="h-projets">Ils l’ont fait</a><a href="#ressources" data-to="h-docs">Les documents</a><a href="#ressources" data-to="h-pas">Mon premier pas</a></div></nav>
 
 <section class="hub-sec" id="h-copilot"><div class="hub-wrap">
   <h2><span class="tag">IA</span>Mon invite Copilot</h2>
@@ -456,13 +474,15 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
       <div class="hub-f"><label for="hgRole">Rôle</label><select id="hgRole"></select><input type="text" id="hgRoleX" placeholder="Écrivez votre rôle" hidden></div>
       <div class="hub-f"><label for="hgGroupe">Mon groupe</label><input type="text" id="hgGroupe" placeholder="ex. un groupe d’Intégration sociale (IS)"></div>
       <div class="hub-f"><label for="hgSigle">Le sigle ou le cours</label><input type="text" id="hgSigle" placeholder="ex. MAT-3051, ou le programme PPS"></div>
-      <div class="hub-f"><label for="hgEnjeu">Notre enjeu</label><input type="text" id="hgEnjeu" placeholder="ex. le coût de l’épicerie"></div>
+      <div class="hub-f"><label for="hgEnjeu">Notre enjeu ou notre projet</label><input type="text" id="hgEnjeu" placeholder="ex. le coût de l’épicerie"></div>
+      <div class="hub-f"><label for="hgExtrait">Extrait du programme</label><textarea id="hgExtrait" rows="3" placeholder="Collez les compétences, les savoirs et la famille de situations de vie du sigle. Ou laissez vide et joignez le PDF du programme dans Copilot."></textarea></div>
       <div class="hub-f"><label for="hgTache">Tâche</label><select id="hgTache"></select><input type="text" id="hgTacheX" placeholder="Écrivez votre tâche" hidden></div>
       <div class="hub-f"><label for="hgContr">Contraintes</label><textarea id="hgContr" rows="2" placeholder="Écrivez vos contraintes, ou touchez une suggestion"></textarea><div class="hub-chips" id="hgChips"></div></div>
     </form>
     <div class="hub-out">
       <pre id="hgOut" aria-live="polite"></pre>
       <div class="hub-row"><button type="button" class="hub-btn" id="hgCopy">Copier l’invite</button><a class="hub-btn alt" href="https://m365.cloud.microsoft/chat" target="_blank" rel="noopener">Ouvrir Copilot ↗</a><span class="hub-msg" id="hgMsg"></span></div>
+      <p class="hub-warn" style="border-left-color:var(--h-mauve)"><b>Le truc qui change tout.</b> Copilot ne va pas chercher le programme lui-même : collez l’extrait du programme (compétences, savoirs, famille de situations de vie) ou joignez le PDF du programme ou de la DDE avec le trombone. Il travaille alors avec le vrai contenu du sigle au lieu de le deviner.</p>
       <p class="hub-warn">Jamais de nom d’élève, de diagnostic ni de résultat identifiable dans une invite. Copilot propose, vous disposez : vérifiez chaque lien avec le programme d’études.</p>
     </div>
   </div>
@@ -472,6 +492,12 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <h2><span class="tag">5</span>Invites prêtes à copier</h2>
   <p class="hub-intro">Celles de l’aide-mémoire Copilot. Remplacez ce qui est entre crochets, puis dialoguez : « Simplifie le niveau 2 », « Ajoute un exemple pour l’individualisé ». La première réponse est un brouillon.</p>
   <div class="hub-prompts" id="hgPrompts"></div>
+</div></section>
+
+<section class="hub-sec" id="h-projets"><div class="hub-wrap">
+  <h2><span class="tag">6</span>Ils l’ont fait</h2>
+  <p class="hub-intro">Des projets réalisés par des élèves d’Isabelle, quand elle enseignait. Chacun est parti d’une envie de l’élève.</p>
+  <div class="pjs hub-pjs"><article class="pj"><h3>Un comptoir vestimentaire</h3><p class="pj-for">pour les élèves qui manquent de vêtements</p><p>Collecte, lavage, classement, une vraie boutique dans un local.</p><span class="chip">Sens</span></article><article class="pj"><h3>Du matériel pour un enfant</h3><p class="pj-for">qui a un trouble du langage</p><p>Des ateliers conçus avec l’orthophoniste, puis donnés régulièrement.</p><span class="chip">Compétence</span></article><article class="pj"><h3>Un journal étudiant</h3><p class="pj-for">pour toute l’école</p><p>Trois éditions. D’autres élèves se sont joints à l’équipe.</p><span class="chip">Appartenance</span></article><article class="pj"><h3>Des produits à l’effigie de l’école</h3><p class="pj-for">porte-clés, bouteilles, sacs, signets</p><p>Plus de 200 objets, tout vendu en une seule vente éclair.</p><span class="chip">Appartenance</span></article><article class="pj"><h3>Une grande murale</h3><p class="pj-for">pour perfectionner un talent en peinture</p><p>L’élève a ensuite obtenu un contrat dans un organisme communautaire.</p><span class="chip">Autonomie</span></article><article class="pj"><h3>Un programme d’entraînement</h3><p class="pj-for">de basketball, trois fois par semaine</p><p>Ceux qui ne faisaient pas partie de l’équipe ont été intégrés.</p><span class="chip">Appartenance</span></article></div>
 </div></section>
 
 <section class="hub-sec" id="h-docs"><div class="hub-wrap">
@@ -503,7 +529,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 (() => {
   if (location.hash !== '#ressources') return;
   const $ = s => document.querySelector(s);
-  const PROG = 'Appuie-toi sur le programme d’études officiel de la formation générale des adultes du ministère de l’Éducation du Québec pour SIGLE : nomme les compétences, les savoirs et la famille de situations de vie visés. Si tu n’es pas certain d’un élément du programme, dis-le plutôt que de l’inventer.';
+  const PROG = 'Appuie-toi uniquement sur l’extrait du programme d’études officiel de la FGA (ministère de l’Éducation du Québec) pour SIGLE, que je te fournis ci-dessous ou en pièce jointe. N’ajoute aucune compétence ni aucun savoir qui n’y figure pas ; si l’extrait ne suffit pas, dis-le-moi.', LIEN = 'Dans un tableau, relie chaque étape de notre projet (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin) aux savoirs et aux compétences du sigle qu’elle permet de travailler ou d’évaluer.';
   const ROLES = ['Tu es enseignant·e en Participation sociale (PPS) en FGA.', 'Tu es enseignant·e en DHS en FGA.', 'Tu es enseignant·e en Intégration sociale (IS) en FGA.', 'Tu es enseignant·e en Insertion socioprofessionnelle (ISP) en FGA.', 'Tu es enseignant·e en adaptation scolaire.', 'Tu es enseignant·e de français en FGA, en enseignement individualisé.', 'Tu es enseignant·e de mathématiques et sciences en FGA, en enseignement individualisé.', 'Tu es enseignant·e d’anglais en FGA.', 'Tu es orthopédagogue en FGA.', 'Tu es conseiller·ère d’orientation en FGA.', 'Tu es intervenant·e scolaire en FGA.', 'Tu es conseiller·ère pédagogique en FGA au Québec.', 'Tu es direction d’un centre de formation générale des adultes.'];
   const TACHES = ['Transforme notre résultat en 3 actions SMART, avec un verbe conjugué, un responsable et une date.', 'Génère une grille d’évaluation descriptive à 4 niveaux centrée sur la résolution de problèmes.', 'Propose 8 questions d’objectivation : 2 avant, 3 pendant, 3 après.', 'Propose une situation d’apprentissage de 3 périodes en 3 niveaux de complexité.'];
   const CONTR = ['Langage simple, accessible aux élèves.', 'Présentation en tableau.', 'Aucune note chiffrée.', 'Liens avec les savoirs du sigle.', 'Liste du matériel.', 'Signale toute formulation qui est encore un résultat.'];
@@ -516,11 +542,11 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   function upd() {
     $('#hgRoleX').hidden = $('#hgRole').value !== 'x'; $('#hgTacheX').hidden = $('#hgTache').value !== 'x';
     const g = v('hgGroupe') || 'un groupe d’adultes en FGA', e = v('hgEnjeu') || 'un enjeu qui les touche', sg = v('hgSigle');
-    const L = [['Rôle', pick('hgRole', ROLES)], ['Contexte', g + ' réalise un projet citoyen sur ' + e + (sg ? ', dans le cadre de ' + sg : '') + '.'], ['Programme', PROG.replace('SIGLE', sg ? 'ce sigle' : 'le sigle visé')], ['Tâche', pick('hgTache', TACHES)], ['Contraintes', v('hgContr') || 'langage simple, présentation en tableau.']];
+    const L = [['Rôle', pick('hgRole', ROLES)], ['Contexte', g + ' réalise un projet citoyen sur ' + e + (sg ? ', dans le cadre de ' + sg : '') + '.'], ['Étape 1 · Le programme', PROG.replace('SIGLE', sg || 'mon sigle')], ['Extrait du programme', v('hgExtrait') || '[collez ici les compétences, les savoirs et la famille de situations de vie du sigle, ou joignez le PDF du programme]'], ['Étape 2 · Le lien avec le projet', LIEN], ['Étape 3 · La tâche', pick('hgTache', TACHES)], ['Contraintes', v('hgContr') || 'langage simple, présentation en tableau.']];
     plain = L.map(([k, t]) => k + ' : ' + t).join('\n');
     $('#hgOut').innerHTML = L.map(([k, t]) => '<b>' + k + ' :</b> ' + esc(t)).join('\n');
   }
-  ['hgGroupe', 'hgSigle', 'hgEnjeu', 'hgContr', 'hgRoleX', 'hgTacheX'].forEach(id => $('#' + id).addEventListener('input', upd));
+  ['hgGroupe', 'hgSigle', 'hgEnjeu', 'hgExtrait', 'hgContr', 'hgRoleX', 'hgTacheX'].forEach(id => $('#' + id).addEventListener('input', upd));
   ['hgRole', 'hgTache'].forEach(id => $('#' + id).addEventListener('change', upd));
   CONTR.forEach(t => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.onclick = () => { const a = $('#hgContr'); a.value = (a.value.trim() ? a.value.trim() + ' ' : '') + t; upd(); }; $('#hgChips').appendChild(b); });
   $('#hgForm').addEventListener('submit', e => e.preventDefault());
@@ -531,10 +557,10 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   upd();
 
   const P = [
-    ['Une grille d’évaluation descriptive', 'Tu es conseiller pédagogique en formation générale des adultes au Québec.\nContexte : un groupe d’adultes du programme Participation sociale réalise un projet citoyen sur [l’enjeu].\nTâche : génère une grille d’évaluation descriptive à 4 niveaux pour le cours [sigle], centrée sur la résolution de problèmes dans un projet communautaire.\nProgramme : ' + PROG.replace('SIGLE', 'ce sigle') + '\nContraintes : langage simple que les élèves comprennent, verbes observables, présentation en tableau, aucune note chiffrée.'],
+    ['Une grille d’évaluation descriptive', 'Tu es conseiller pédagogique en formation générale des adultes au Québec.\nContexte : un groupe d’adultes du programme Participation sociale réalise un projet citoyen sur [l’enjeu].\nTâche : génère une grille d’évaluation descriptive à 4 niveaux pour le cours [sigle], centrée sur la résolution de problèmes dans un projet communautaire.\nÉtape 1 · Le programme : ' + PROG.replace('SIGLE', '[sigle]') + '\nExtrait du programme : [collez ici les compétences, les savoirs et la famille de situations de vie du sigle, ou joignez le PDF du programme]\nÉtape 2 · Le lien avec le projet : ' + LIEN + '\nContraintes : langage simple que les élèves comprennent, verbes observables, présentation en tableau, aucune note chiffrée.'],
     ['Des relances métacognitives', 'Tu es un coach pédagogique qui accompagne des adultes de 16 à 25 ans en FGA.\nTâche : propose 8 questions de relance pour aider un élève à évaluer son autonomie dans son projet citoyen : 2 avant, 3 pendant, 3 après.\nContraintes : phrases courtes, au « je », une question au moins pour chaque sphère de l’engagement (affective, cognitive, comportementale, citoyenne).'],
     ['D’un résultat à des actions', 'Voici un résultat souhaité par mon groupe : « [résultat] ».\nTransforme-le en 3 actions SMART formulées avec un verbe conjugué au présent, un responsable et une date.\nSi une de mes formulations est encore un résultat plutôt qu’une action, dis-le-moi et explique pourquoi.'],
-    ['Un enjeu comme contexte de tâche', 'Tu es enseignant de mathématiques en FGA, en enseignement individualisé.\nContexte : un élève inscrit en [sigle] veut travailler sur l’enjeu [enjeu].\nProgramme : ' + PROG.replace('SIGLE', 'ce sigle') + '\nTâche : propose une situation d’apprentissage de 3 périodes où il réalise un petit sondage et en analyse les résultats, en 3 niveaux de complexité.\nContraintes : liens explicites avec les savoirs du sigle, liste du matériel, une question d’objectivation à la fin.'],
+    ['Un enjeu comme contexte de tâche', 'Tu es enseignant de mathématiques en FGA, en enseignement individualisé.\nContexte : un élève inscrit en [sigle] veut travailler sur l’enjeu [enjeu].\nÉtape 1 · Le programme : ' + PROG.replace('SIGLE', '[sigle]') + '\nExtrait du programme : [collez ici les compétences, les savoirs et la famille de situations de vie du sigle, ou joignez le PDF du programme]\nÉtape 2 · Le lien avec le projet : ' + LIEN + '\nTâche : propose une situation d’apprentissage de 3 périodes où il réalise un petit sondage et en analyse les résultats, en 3 niveaux de complexité.\nContraintes : liens explicites avec les savoirs du sigle, liste du matériel, une question d’objectivation à la fin.'],
     ['Du groupe du nom au groupe du verbe', 'Tu es enseignant de français en FGA.\nTâche : crée un court exercice où les élèves décrivent leur « monde idéal » avec des groupes du nom enrichis (noyau et expansions), puis transforment chaque GN en groupe du verbe avec un sujet qui agit et une date.\nContraintes : 6 items, corrigé à part, thème lié à leur centre ou à leur quartier.']];
   P.forEach(([t, body], i) => { const d = document.createElement('details'); if (!i) d.open = true; d.innerHTML = '<summary><i>' + (i + 1) + '</i>' + esc(t) + '</summary><div class="body"><pre></pre><div class="hub-row"><button type="button" class="hub-btn sm">Copier</button><span class="hub-msg"></span></div></div>'; d.querySelector('pre').textContent = body; d.querySelector('button').onclick = () => copy(body, d.querySelector('.hub-msg'), d.querySelector('pre')); $('#hgPrompts').appendChild(d); });
 
@@ -708,16 +734,17 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <div class="scen" id="scen"></div>
 </section>
 
-<section class="slide" data-phase="2" data-who="Francis" data-notes="Glisser la vidéo des élèves (fichier local, fonctionne sans Internet). Vérifier les autorisations de diffusion. Sinon, témoignage en personne.">
+<section class="slide" data-phase="2" data-who="Francis" data-wide="1" data-notes="Glisser la vidéo des élèves (fichier local, fonctionne sans Internet). Vérifier les autorisations de diffusion. Puis les projets réalisés par des élèves d’Isabelle : chacun est parti d’une envie de l’élève. Pointer le besoin nourri. Les leçons tirées sont dans le guide : prévoir le temps (le comptoir vestimentaire), définir les destinataires avant d’écrire (le blogue).">
   <div class="kick">Phase 2 · la parole aux élèves</div>
   <h2>Ils l’ont fait</h2>
-  <div id="vidZone" class="drop">
+  <div id="vidZone" class="drop slim">
     <p class="hand">Glissez ici la vidéo des élèves, ou</p>
     <label class="btn" for="vidIn">Choisir une vidéo</label>
     <input type="file" id="vidIn" accept="video/*" hidden>
-    <p class="cap">La vidéo reste sur cet ordinateur. Elle n’est envoyée nulle part.</p>
   </div>
   <video id="vid" controls hidden></video>
+  <p class="pj-k">Des projets réalisés par des élèves d’Isabelle, quand elle enseignait. Chacun est parti d’une envie de l’élève.</p>
+  <div class="pjs"><article class="pj"><h3>Un comptoir vestimentaire</h3><p class="pj-for">pour les élèves qui manquent de vêtements</p><p>Collecte, lavage, classement, une vraie boutique dans un local.</p><span class="chip">Sens</span></article><article class="pj"><h3>Du matériel pour un enfant</h3><p class="pj-for">qui a un trouble du langage</p><p>Des ateliers conçus avec l’orthophoniste, puis donnés régulièrement.</p><span class="chip">Compétence</span></article><article class="pj"><h3>Un journal étudiant</h3><p class="pj-for">pour toute l’école</p><p>Trois éditions. D’autres élèves se sont joints à l’équipe.</p><span class="chip">Appartenance</span></article><article class="pj"><h3>Des produits à l’effigie de l’école</h3><p class="pj-for">porte-clés, bouteilles, sacs, signets</p><p>Plus de 200 objets, tout vendu en une seule vente éclair.</p><span class="chip">Appartenance</span></article><article class="pj"><h3>Une grande murale</h3><p class="pj-for">pour perfectionner un talent en peinture</p><p>L’élève a ensuite obtenu un contrat dans un organisme communautaire.</p><span class="chip">Autonomie</span></article><article class="pj"><h3>Un programme d’entraînement</h3><p class="pj-for">de basketball, trois fois par semaine</p><p>Ceux qui ne faisaient pas partie de l’équipe ont été intégrés.</p><span class="chip">Appartenance</span></article></div>
 </section>
 
 <section class="slide" data-phase="3" data-who="Duo" data-notes="Plan de match, phase 3 : co-construction en sous-groupes. En îlot, les 4 étapes dans l’ordre, avec le minuteur. Le mur, c’est l’affiche à l’entrée où chacun a collé son post-it en arrivant. Cahier, section « Notre projet d’îlot ».">
@@ -739,13 +766,15 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
       <label for="r1">Rôle</label><select id="r1"></select><input type="text" id="r1x" placeholder="ou écrivez votre rôle" hidden>
       <label for="g1">Contexte : mon groupe</label><input type="text" id="g1" placeholder="ex. un groupe de Participation sociale (PPS)">
       <label for="g3">Contexte : le sigle ou le cours</label><input type="text" id="g3" placeholder="ex. MAT-3051, ou le programme Intégration sociale">
-      <label for="g2">Contexte : notre enjeu</label><input type="text" id="g2" placeholder="ex. le gaspillage à la cafétéria">
+      <label for="g2">Contexte : notre enjeu ou notre projet</label><input type="text" id="g2" placeholder="ex. le gaspillage à la cafétéria">
+      <label for="g4">Extrait du programme</label><textarea id="g4" rows="1" placeholder="Collez l’extrait du programme, ou joignez le PDF dans Copilot"></textarea>
       <label for="r3">Tâche</label><select id="r3"></select><input type="text" id="r3x" placeholder="ou écrivez votre tâche" hidden>
       <label for="r4">Contraintes</label><textarea id="r4" rows="2" placeholder="Écrivez vos contraintes, ou touchez une suggestion"></textarea>
       <div class="chips" id="r4s"></div>
     </div>
     <div class="col"><div class="prompt-out" id="pOut"></div><p><button class="btn" id="pCopy">Copier l’invite</button> <span class="hand" id="pMsg" style="font-size:22px"></span></p>
       <div class="qrline"><div class="qr sm" id="qr2"></div><p>Sur votre ordinateur : la page <b>Ressources</b>, section « Mon invite Copilot ». Le même générateur, avec un bouton Copier.<span class="url">claude.ai/artifact/SMB1bWSXHDzLNmfYQsGvwG#ressources</span></p></div>
+      <p class="tip"><b>Le truc qui change tout</b> Copilot ne va pas chercher le programme lui-même : collez l’extrait du programme (compétences, savoirs, famille de situations de vie) ou joignez le PDF du programme ou de la DDE avec le trombone.</p>
       <p class="cap">Jamais de nom d’élève dans une invite.</p></div>
   </div>
 </section>
@@ -836,7 +865,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <button id="fBtn" title="Plein écran (F)">F</button>
   <button id="next" aria-label="Diapo suivante">›</button>
 </div>
-<div class="editbar" id="editbar" hidden><b>Mode modification</b> Touchez un texte pour le changer. Les changements restent sur cet ordinateur. <button class="btn" id="eDone">Terminer</button> <button class="btn alt" id="eReset">Tout remettre comme avant</button></div>
+<div class="editbar" id="editbar" hidden><b>Mode modification</b> Touchez un texte pour le changer. Vos changements restent dans ce navigateur, sur cet ordinateur seulement : pour les rendre permanents, copiez-les et envoyez-les à Claude. <button class="btn" id="eDone">Terminer</button> <button class="btn" id="eCopy">Copier mes modifications</button> <button class="btn alt" id="eReset">Tout remettre comme avant</button></div>
 <div class="plan" id="plan" hidden><h3>Aller où on veut</h3><ol id="planList"></ol></div>
 <aside class="notes" id="notes" hidden><h3 id="nTitle">Notes</h3><p id="nBody"></p></aside>
 <div class="timer" id="timer" hidden title="Cliquer pour arrêter">0:00</div>
@@ -905,12 +934,20 @@ $('#mBtn').onclick = () => { if ($('#plan').hidden) openPlan(); else $('#plan').
 $('#plan').addEventListener('click', e => { if (e.target.id === 'plan') $('#plan').hidden = true; });
 // ---------- mode modification ----------
 const EDSEL = '.sheet h1,.sheet h2,.sheet h3,.sheet p:not(.cap),.sheet li,.sheet blockquote,.s1-panel h1,.s1-panel p';
-const edEls = []; slides.forEach((sl, i) => sl.querySelectorAll(EDSEL).forEach((el, k) => { if (el.closest('form,.idc,.votes,.mur,.pool,.bin,.flip,.scen,.verdict')) return; el.dataset.ek = i + ':' + k; edEls.push(el); const v = store.get('edit:' + el.dataset.ek, null); if (v !== null) el.innerHTML = v; }));
+// Chaque texte est repéré par son contenu d'origine (et non par sa position) : une modification survit aux mises à jour de la présentation.
+const hashT = t => { let h = 5381; for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
+const plainT = h => { const d = document.createElement('div'); d.innerHTML = h; return d.textContent.replace(/\s+/g, ' ').trim(); };
+const edEls = []; slides.forEach((sl, i) => sl.querySelectorAll(EDSEL).forEach(el => { if (el.closest('form,.idc,.votes,.mur,.pool,.bin,.flip,.scen,.verdict,.zones,.tally,.when,.tip,.qrline')) return; const orig = el.innerHTML.trim(); el.dataset.ek = hashT(orig); el.dataset.slide = i + 1; el._orig = orig; edEls.push(el); const v = store.get('ed:' + el.dataset.ek, null); if (v && typeof v.n === 'string') el.innerHTML = v.n; }));
+function exportEdits() { const out = []; try { Object.keys(localStorage).forEach(k => { if (k.startsWith('rmd:ed:')) { const v = JSON.parse(localStorage.getItem(k)); if (v && v.n !== undefined && plainT(v.o) !== plainT(v.n)) out.push('Diapo ' + (v.s || '?') + '\nAVANT : ' + plainT(v.o) + '\nAPRÈS : ' + plainT(v.n)); } else if (k.startsWith('rmd:edit:')) { const v = JSON.parse(localStorage.getItem(k)); out.push('Ancienne modification (repère ' + k.slice(9) + ')\nTEXTE : ' + plainT(String(v))); } }); } catch (e) {}
+  return out.length ? 'Mes modifications à la présentation « Rêver le monde de demain » :\n\n' + out.join('\n\n') : ''; }
 function setEdit(on) { document.body.classList.toggle('editing', on); $('#editbar').hidden = !on; edEls.forEach(el => { if (on) el.setAttribute('contenteditable', 'true'); else el.removeAttribute('contenteditable'); }); }
-edEls.forEach(el => el.addEventListener('blur', () => { if (document.body.classList.contains('editing')) store.set('edit:' + el.dataset.ek, el.innerHTML); }));
+edEls.forEach(el => el.addEventListener('blur', () => { if (document.body.classList.contains('editing')) store.set('ed:' + el.dataset.ek, { o: el._orig, n: el.innerHTML, s: +el.dataset.slide }); }));
 $('#eBtn').onclick = () => setEdit(!document.body.classList.contains('editing'));
 $('#eDone').onclick = () => setEdit(false);
-$('#eReset').onclick = () => { try { Object.keys(localStorage).filter(k => k.startsWith('rmd:edit:')).forEach(k => localStorage.removeItem(k)); } catch (e) {} location.reload(); };
+$('#eReset').onclick = () => { try { Object.keys(localStorage).filter(k => k.startsWith('rmd:edit:') || k.startsWith('rmd:ed:')).forEach(k => localStorage.removeItem(k)); } catch (e) {} location.reload(); };
+$('#eCopy').onclick = () => { const t = exportEdits(); const show = msg => { $('#notes').hidden = false; $('#nTitle').textContent = 'Mes modifications'; $('#nBody').textContent = msg; };
+  if (!t) { show('Aucune modification enregistrée dans ce navigateur.'); return; }
+  try { navigator.clipboard.writeText(t).then(() => show('Copiées ! Collez-les dans la conversation avec Claude pour qu’elles deviennent permanentes.\n\n' + t), () => show('Sélectionnez ce texte et copiez-le, puis collez-le dans la conversation avec Claude.\n\n' + t)); } catch (e) { show(t); } };
 $('#pBtn').onclick = () => { let w = null; try { w = window.open(location.href.split('#')[0] + '#presenter', 'rmd-presenter', 'width=980,height=720'); } catch (e) {} if (!w) { $('#notes').hidden = false; $('#nTitle').textContent = 'Mode présentateur'; $('#nBody').textContent = 'La version en ligne ne peut pas ouvrir de 2e fenêtre. Le jour J, utilisez le fichier de la clé USB (presentation/index.html) : la touche P y ouvre toute seule la fenêtre présentateur, que vous glissez sur l’écran de votre portable. En attendant, ces notes s’affichent ici, et la salle les voit.'; } };
 $('#fBtn').onclick = () => { try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => {}); } catch (e) {} };
 document.addEventListener('keydown', e => {
@@ -1019,11 +1056,11 @@ function fillSel(id, arr) { const sel = $('#' + id); arr.forEach((t, i) => { con
   sel.onchange = () => { $('#' + id + 'x').hidden = sel.value !== 'x'; upd(); }; $('#' + id + 'x').oninput = upd; }
 fillSel('r1', ROLES); fillSel('r3', TACHES);
 CONTR.forEach(t => { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = t; b.onclick = () => { const a = $('#r4'); a.value = (a.value.trim() ? a.value.trim() + ' ' : '') + t; upd(); }; $('#r4s').appendChild(b); });
-['g1', 'g2', 'g3', 'r4'].forEach(id => $('#' + id).oninput = upd);
+['g1', 'g2', 'g3', 'g4', 'r4'].forEach(id => $('#' + id).oninput = upd);
 const pOut = $('#pOut');
 const val = id => { const s = $('#' + id); return s.value === 'x' ? ($('#' + id + 'x').value.trim() || '…') : (id === 'r1' ? ROLES : TACHES)[s.value]; };
 function upd() { const g = $('#g1').value.trim() || 'un groupe d’adultes en FGA', e = $('#g2').value.trim() || 'un enjeu qui les touche', sg = $('#g3').value.trim();
-  pOut.textContent = 'Rôle : ' + val('r1') + '\nContexte : ' + g + ' réalise un projet citoyen sur ' + e + (sg ? ', dans le cadre de ' + sg : '') + '.\nProgramme : Appuie-toi sur le programme d’études officiel de la formation générale des adultes du ministère de l’Éducation du Québec pour ' + (sg ? 'ce sigle' : 'le sigle visé') + ' : nomme les compétences, les savoirs et la famille de situations de vie visés. Si tu n’es pas certain d’un élément du programme, dis-le plutôt que de l’inventer.\nTâche : ' + val('r3') + '\nContraintes : ' + ($('#r4').value.trim() || 'langage simple, présentation en tableau.'); }
+  pOut.textContent = 'Rôle : ' + val('r1') + '\nContexte : ' + g + ' réalise un projet citoyen sur ' + e + (sg ? ', dans le cadre de ' + sg : '') + '.\nÉtape 1 · Le programme : ' + 'Appuie-toi uniquement sur l’extrait du programme d’études officiel de la FGA (ministère de l’Éducation du Québec) pour SIGLE, que je te fournis ci-dessous ou en pièce jointe. N’ajoute aucune compétence ni aucun savoir qui n’y figure pas ; si l’extrait ne suffit pas, dis-le-moi.'.replace('SIGLE', sg || 'mon sigle') + '\nExtrait du programme : ' + ($('#g4').value.trim() || '[collez ici les compétences, les savoirs et la famille de situations de vie du sigle, ou joignez le PDF du programme]') + '\nÉtape 2 · Le lien avec le projet : Dans un tableau, relie chaque étape de notre projet (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin) aux savoirs et aux compétences du sigle qu’elle permet de travailler ou d’évaluer.\nÉtape 3 · La tâche : ' + val('r3') + '\nContraintes : ' + ($('#r4').value.trim() || 'langage simple, présentation en tableau.'); }
 upd();
 $('#pCopy').onclick = () => { const t = pOut.textContent; navigator.clipboard?.writeText(t).then(() => $('#pMsg').textContent = 'Copiée !').catch(() => { const r = document.createRange(); r.selectNodeContents(pOut); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(r); $('#pMsg').textContent = 'Sélectionnée : faites Ctrl+C'; }); };
 

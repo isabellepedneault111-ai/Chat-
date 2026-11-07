@@ -87,6 +87,13 @@
 .hub-foot .hub-logos img{height:46px}
 .hub a:focus-visible,.hub button:focus-visible,.hub summary:focus-visible{outline:3px solid var(--h-gold);outline-offset:2px}
 @media (max-width:760px){.hub-top .hub-wrap{grid-template-columns:1fr}.hub-photo{transform:none;box-shadow:6px 6px 0 var(--h-gold)}.hub-gen{grid-template-columns:1fr}.hub-steps{grid-template-columns:1fr}.hub-fond{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.hub-pjs{grid-template-columns:repeat(auto-fill,minmax(min(260px,100%),1fr))}
+.hub .pj{background:var(--h-sheet);border:3px solid var(--h-ink);box-shadow:5px 5px 0 var(--h-gold);padding:14px;display:flex;flex-direction:column;gap:4px}
+.hub .pj h3{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.05;margin:0}
+.hub .pj .pj-for{font-family:var(--hand);font-size:21px;color:var(--h-mauve);margin:0;line-height:1.05}
+.hub .pj p{margin:0;font-size:15px}
+.hub .pj .chip{align-self:flex-start;margin-top:6px;font-family:var(--display);font-size:13px;letter-spacing:.04em;background:var(--h-gold);border:2px solid var(--h-ink);padding:1px 8px;text-transform:uppercase}
+@media (max-width:760px){.hub-steps{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.hub-btn:hover,.hub-btn:active{transform:none}}
 </style>
 
@@ -102,7 +109,7 @@
   <figure class="hub-photo"><img src="__IMG_RISO_MUR__" alt="Des jeunes adultes collent des post-it sur une carte du monde"></figure>
 </div></header>
 
-<nav class="hub-nav" aria-label="Sections"><div class="hub-wrap"><a href="#ressources" data-to="h-copilot">Mon invite Copilot</a><a href="#ressources" data-to="h-invites">5 invites prêtes</a><a href="#ressources" data-to="h-docs">Les documents</a><a href="#ressources" data-to="h-pas">Mon premier pas</a></div></nav>
+<nav class="hub-nav" aria-label="Sections"><div class="hub-wrap"><a href="#ressources" data-to="h-copilot">Mon invite Copilot</a><a href="#ressources" data-to="h-invites">5 invites prêtes</a><a href="#ressources" data-to="h-projets">Ils l’ont fait</a><a href="#ressources" data-to="h-docs">Les documents</a><a href="#ressources" data-to="h-pas">Mon premier pas</a></div></nav>
 
 <section class="hub-sec" id="h-copilot"><div class="hub-wrap">
   <h2><span class="tag">IA</span>Mon invite Copilot</h2>
@@ -113,13 +120,15 @@
       <div class="hub-f"><label for="hgRole">Rôle</label><select id="hgRole"></select><input type="text" id="hgRoleX" placeholder="Écrivez votre rôle" hidden></div>
       <div class="hub-f"><label for="hgGroupe">Mon groupe</label><input type="text" id="hgGroupe" placeholder="ex. un groupe d’Intégration sociale (IS)"></div>
       <div class="hub-f"><label for="hgSigle">Le sigle ou le cours</label><input type="text" id="hgSigle" placeholder="ex. MAT-3051, ou le programme PPS"></div>
-      <div class="hub-f"><label for="hgEnjeu">Notre enjeu</label><input type="text" id="hgEnjeu" placeholder="ex. le coût de l’épicerie"></div>
+      <div class="hub-f"><label for="hgEnjeu">Notre enjeu ou notre projet</label><input type="text" id="hgEnjeu" placeholder="ex. le coût de l’épicerie"></div>
+      <div class="hub-f"><label for="hgExtrait">Extrait du programme</label><textarea id="hgExtrait" rows="3" placeholder="Collez les compétences, les savoirs et la famille de situations de vie du sigle. Ou laissez vide et joignez le PDF du programme dans Copilot."></textarea></div>
       <div class="hub-f"><label for="hgTache">Tâche</label><select id="hgTache"></select><input type="text" id="hgTacheX" placeholder="Écrivez votre tâche" hidden></div>
       <div class="hub-f"><label for="hgContr">Contraintes</label><textarea id="hgContr" rows="2" placeholder="Écrivez vos contraintes, ou touchez une suggestion"></textarea><div class="hub-chips" id="hgChips"></div></div>
     </form>
     <div class="hub-out">
       <pre id="hgOut" aria-live="polite"></pre>
       <div class="hub-row"><button type="button" class="hub-btn" id="hgCopy">Copier l’invite</button><a class="hub-btn alt" href="https://m365.cloud.microsoft/chat" target="_blank" rel="noopener">Ouvrir Copilot ↗</a><span class="hub-msg" id="hgMsg"></span></div>
+      <p class="hub-warn" style="border-left-color:var(--h-mauve)"><b>Le truc qui change tout.</b> Copilot ne va pas chercher le programme lui-même : collez l’extrait du programme (compétences, savoirs, famille de situations de vie) ou joignez le PDF du programme ou de la DDE avec le trombone. Il travaille alors avec le vrai contenu du sigle au lieu de le deviner.</p>
       <p class="hub-warn">Jamais de nom d’élève, de diagnostic ni de résultat identifiable dans une invite. Copilot propose, vous disposez : vérifiez chaque lien avec le programme d’études.</p>
     </div>
   </div>
@@ -129,6 +138,12 @@
   <h2><span class="tag">5</span>Invites prêtes à copier</h2>
   <p class="hub-intro">Celles de l’aide-mémoire Copilot. Remplacez ce qui est entre crochets, puis dialoguez : « Simplifie le niveau 2 », « Ajoute un exemple pour l’individualisé ». La première réponse est un brouillon.</p>
   <div class="hub-prompts" id="hgPrompts"></div>
+</div></section>
+
+<section class="hub-sec" id="h-projets"><div class="hub-wrap">
+  <h2><span class="tag">6</span>Ils l’ont fait</h2>
+  <p class="hub-intro">Des projets réalisés par des élèves d’Isabelle, quand elle enseignait. Chacun est parti d’une envie de l’élève.</p>
+  <div class="pjs hub-pjs"><article class="pj"><h3>Un comptoir vestimentaire</h3><p class="pj-for">pour les élèves qui manquent de vêtements</p><p>Collecte, lavage, classement, une vraie boutique dans un local.</p><span class="chip">Sens</span></article><article class="pj"><h3>Du matériel pour un enfant</h3><p class="pj-for">qui a un trouble du langage</p><p>Des ateliers conçus avec l’orthophoniste, puis donnés régulièrement.</p><span class="chip">Compétence</span></article><article class="pj"><h3>Un journal étudiant</h3><p class="pj-for">pour toute l’école</p><p>Trois éditions. D’autres élèves se sont joints à l’équipe.</p><span class="chip">Appartenance</span></article><article class="pj"><h3>Des produits à l’effigie de l’école</h3><p class="pj-for">porte-clés, bouteilles, sacs, signets</p><p>Plus de 200 objets, tout vendu en une seule vente éclair.</p><span class="chip">Appartenance</span></article><article class="pj"><h3>Une grande murale</h3><p class="pj-for">pour perfectionner un talent en peinture</p><p>L’élève a ensuite obtenu un contrat dans un organisme communautaire.</p><span class="chip">Autonomie</span></article><article class="pj"><h3>Un programme d’entraînement</h3><p class="pj-for">de basketball, trois fois par semaine</p><p>Ceux qui ne faisaient pas partie de l’équipe ont été intégrés.</p><span class="chip">Appartenance</span></article></div>
 </div></section>
 
 <section class="hub-sec" id="h-docs"><div class="hub-wrap">
@@ -160,7 +175,7 @@
 (() => {
   if (location.hash !== '#ressources') return;
   const $ = s => document.querySelector(s);
-  const PROG = 'Appuie-toi sur le programme d’études officiel de la formation générale des adultes du ministère de l’Éducation du Québec pour SIGLE : nomme les compétences, les savoirs et la famille de situations de vie visés. Si tu n’es pas certain d’un élément du programme, dis-le plutôt que de l’inventer.';
+  const PROG = 'Appuie-toi uniquement sur l’extrait du programme d’études officiel de la FGA (ministère de l’Éducation du Québec) pour SIGLE, que je te fournis ci-dessous ou en pièce jointe. N’ajoute aucune compétence ni aucun savoir qui n’y figure pas ; si l’extrait ne suffit pas, dis-le-moi.', LIEN = 'Dans un tableau, relie chaque étape de notre projet (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin) aux savoirs et aux compétences du sigle qu’elle permet de travailler ou d’évaluer.';
   const ROLES = ['Tu es enseignant·e en Participation sociale (PPS) en FGA.', 'Tu es enseignant·e en DHS en FGA.', 'Tu es enseignant·e en Intégration sociale (IS) en FGA.', 'Tu es enseignant·e en Insertion socioprofessionnelle (ISP) en FGA.', 'Tu es enseignant·e en adaptation scolaire.', 'Tu es enseignant·e de français en FGA, en enseignement individualisé.', 'Tu es enseignant·e de mathématiques et sciences en FGA, en enseignement individualisé.', 'Tu es enseignant·e d’anglais en FGA.', 'Tu es orthopédagogue en FGA.', 'Tu es conseiller·ère d’orientation en FGA.', 'Tu es intervenant·e scolaire en FGA.', 'Tu es conseiller·ère pédagogique en FGA au Québec.', 'Tu es direction d’un centre de formation générale des adultes.'];
   const TACHES = ['Transforme notre résultat en 3 actions SMART, avec un verbe conjugué, un responsable et une date.', 'Génère une grille d’évaluation descriptive à 4 niveaux centrée sur la résolution de problèmes.', 'Propose 8 questions d’objectivation : 2 avant, 3 pendant, 3 après.', 'Propose une situation d’apprentissage de 3 périodes en 3 niveaux de complexité.'];
   const CONTR = ['Langage simple, accessible aux élèves.', 'Présentation en tableau.', 'Aucune note chiffrée.', 'Liens avec les savoirs du sigle.', 'Liste du matériel.', 'Signale toute formulation qui est encore un résultat.'];
@@ -173,11 +188,11 @@
   function upd() {
     $('#hgRoleX').hidden = $('#hgRole').value !== 'x'; $('#hgTacheX').hidden = $('#hgTache').value !== 'x';
     const g = v('hgGroupe') || 'un groupe d’adultes en FGA', e = v('hgEnjeu') || 'un enjeu qui les touche', sg = v('hgSigle');
-    const L = [['Rôle', pick('hgRole', ROLES)], ['Contexte', g + ' réalise un projet citoyen sur ' + e + (sg ? ', dans le cadre de ' + sg : '') + '.'], ['Programme', PROG.replace('SIGLE', sg ? 'ce sigle' : 'le sigle visé')], ['Tâche', pick('hgTache', TACHES)], ['Contraintes', v('hgContr') || 'langage simple, présentation en tableau.']];
+    const L = [['Rôle', pick('hgRole', ROLES)], ['Contexte', g + ' réalise un projet citoyen sur ' + e + (sg ? ', dans le cadre de ' + sg : '') + '.'], ['Étape 1 · Le programme', PROG.replace('SIGLE', sg || 'mon sigle')], ['Extrait du programme', v('hgExtrait') || '[collez ici les compétences, les savoirs et la famille de situations de vie du sigle, ou joignez le PDF du programme]'], ['Étape 2 · Le lien avec le projet', LIEN], ['Étape 3 · La tâche', pick('hgTache', TACHES)], ['Contraintes', v('hgContr') || 'langage simple, présentation en tableau.']];
     plain = L.map(([k, t]) => k + ' : ' + t).join('\n');
     $('#hgOut').innerHTML = L.map(([k, t]) => '<b>' + k + ' :</b> ' + esc(t)).join('\n');
   }
-  ['hgGroupe', 'hgSigle', 'hgEnjeu', 'hgContr', 'hgRoleX', 'hgTacheX'].forEach(id => $('#' + id).addEventListener('input', upd));
+  ['hgGroupe', 'hgSigle', 'hgEnjeu', 'hgExtrait', 'hgContr', 'hgRoleX', 'hgTacheX'].forEach(id => $('#' + id).addEventListener('input', upd));
   ['hgRole', 'hgTache'].forEach(id => $('#' + id).addEventListener('change', upd));
   CONTR.forEach(t => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.onclick = () => { const a = $('#hgContr'); a.value = (a.value.trim() ? a.value.trim() + ' ' : '') + t; upd(); }; $('#hgChips').appendChild(b); });
   $('#hgForm').addEventListener('submit', e => e.preventDefault());
@@ -188,10 +203,10 @@
   upd();
 
   const P = [
-    ['Une grille d’évaluation descriptive', 'Tu es conseiller pédagogique en formation générale des adultes au Québec.\nContexte : un groupe d’adultes du programme Participation sociale réalise un projet citoyen sur [l’enjeu].\nTâche : génère une grille d’évaluation descriptive à 4 niveaux pour le cours [sigle], centrée sur la résolution de problèmes dans un projet communautaire.\nProgramme : ' + PROG.replace('SIGLE', 'ce sigle') + '\nContraintes : langage simple que les élèves comprennent, verbes observables, présentation en tableau, aucune note chiffrée.'],
+    ['Une grille d’évaluation descriptive', 'Tu es conseiller pédagogique en formation générale des adultes au Québec.\nContexte : un groupe d’adultes du programme Participation sociale réalise un projet citoyen sur [l’enjeu].\nTâche : génère une grille d’évaluation descriptive à 4 niveaux pour le cours [sigle], centrée sur la résolution de problèmes dans un projet communautaire.\nÉtape 1 · Le programme : ' + PROG.replace('SIGLE', '[sigle]') + '\nExtrait du programme : [collez ici les compétences, les savoirs et la famille de situations de vie du sigle, ou joignez le PDF du programme]\nÉtape 2 · Le lien avec le projet : ' + LIEN + '\nContraintes : langage simple que les élèves comprennent, verbes observables, présentation en tableau, aucune note chiffrée.'],
     ['Des relances métacognitives', 'Tu es un coach pédagogique qui accompagne des adultes de 16 à 25 ans en FGA.\nTâche : propose 8 questions de relance pour aider un élève à évaluer son autonomie dans son projet citoyen : 2 avant, 3 pendant, 3 après.\nContraintes : phrases courtes, au « je », une question au moins pour chaque sphère de l’engagement (affective, cognitive, comportementale, citoyenne).'],
     ['D’un résultat à des actions', 'Voici un résultat souhaité par mon groupe : « [résultat] ».\nTransforme-le en 3 actions SMART formulées avec un verbe conjugué au présent, un responsable et une date.\nSi une de mes formulations est encore un résultat plutôt qu’une action, dis-le-moi et explique pourquoi.'],
-    ['Un enjeu comme contexte de tâche', 'Tu es enseignant de mathématiques en FGA, en enseignement individualisé.\nContexte : un élève inscrit en [sigle] veut travailler sur l’enjeu [enjeu].\nProgramme : ' + PROG.replace('SIGLE', 'ce sigle') + '\nTâche : propose une situation d’apprentissage de 3 périodes où il réalise un petit sondage et en analyse les résultats, en 3 niveaux de complexité.\nContraintes : liens explicites avec les savoirs du sigle, liste du matériel, une question d’objectivation à la fin.'],
+    ['Un enjeu comme contexte de tâche', 'Tu es enseignant de mathématiques en FGA, en enseignement individualisé.\nContexte : un élève inscrit en [sigle] veut travailler sur l’enjeu [enjeu].\nÉtape 1 · Le programme : ' + PROG.replace('SIGLE', '[sigle]') + '\nExtrait du programme : [collez ici les compétences, les savoirs et la famille de situations de vie du sigle, ou joignez le PDF du programme]\nÉtape 2 · Le lien avec le projet : ' + LIEN + '\nTâche : propose une situation d’apprentissage de 3 périodes où il réalise un petit sondage et en analyse les résultats, en 3 niveaux de complexité.\nContraintes : liens explicites avec les savoirs du sigle, liste du matériel, une question d’objectivation à la fin.'],
     ['Du groupe du nom au groupe du verbe', 'Tu es enseignant de français en FGA.\nTâche : crée un court exercice où les élèves décrivent leur « monde idéal » avec des groupes du nom enrichis (noyau et expansions), puis transforment chaque GN en groupe du verbe avec un sujet qui agit et une date.\nContraintes : 6 items, corrigé à part, thème lié à leur centre ou à leur quartier.']];
   P.forEach(([t, body], i) => { const d = document.createElement('details'); if (!i) d.open = true; d.innerHTML = '<summary><i>' + (i + 1) + '</i>' + esc(t) + '</summary><div class="body"><pre></pre><div class="hub-row"><button type="button" class="hub-btn sm">Copier</button><span class="hub-msg"></span></div></div>'; d.querySelector('pre').textContent = body; d.querySelector('button').onclick = () => copy(body, d.querySelector('.hub-msg'), d.querySelector('pre')); $('#hgPrompts').appendChild(d); });
 

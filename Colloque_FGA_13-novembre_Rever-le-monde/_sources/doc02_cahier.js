@@ -110,11 +110,12 @@ const kids = [
   ].map(r => [r]), [W]),
   SP(120),
   H2('4 · Notre invite Copilot · 4 min'),
-  P('Sur votre ordinateur, ouvrez la page Ressources (code QR à l’écran, ou claude.ai/artifact/SMB1bWSXHDzLNmfYQsGvwG#ressources), section « Mon invite Copilot ». Remplissez les champs, touchez Copier l’invite, puis collez-la dans Copilot avec votre compte du centre de services. Notez ici l’invite de votre îlot.', { run: { size: 19 } }),
+  P('Sur votre ordinateur, ouvrez la page Ressources (code QR à l’écran, ou claude.ai/artifact/SMB1bWSXHDzLNmfYQsGvwG#ressources), section « Mon invite Copilot ». Remplissez les champs, touchez Copier l’invite, puis collez-la dans Copilot avec votre compte du centre de services. Notez ici l’invite de votre îlot. Copilot ne va pas chercher le programme lui-même : collez l’extrait du programme (compétences, savoirs, famille de situations de vie) ou joignez le PDF du programme ou de la DDE avec le trombone.', { run: { size: 19 } }),
   tbl(['', 'Ce que l’îlot écrit'], [
     ['**Rôle**', 'Agis comme… (enseignant·e en PPS, DHS, IS, ISP, mathématiques et sciences, français ou anglais ; orthopédagogue, conseiller·ère d’orientation, direction, intervenant·e scolaire…)'],
-    ['**Contexte**', 'Notre groupe : … · Notre enjeu : … · Le sigle ou le cours : …'],
-    ['**Programme**', 'Appuie-toi sur le programme d’études officiel de la FGA (ministère de l’Éducation du Québec) pour ce sigle : nomme les compétences, les savoirs et la famille de situations de vie visés.'],
+    ['**Contexte**', 'Notre groupe : … · Notre enjeu ou notre projet : … · Le sigle ou le cours : …'],
+    ['**Étape 1 · Le programme**', 'Appuie-toi uniquement sur l’extrait du programme que je te fournis (collé ou en PDF). N’ajoute rien qui n’y figure pas.'],
+    ['**Étape 2 · Le lien**', 'Dans un tableau, relie chaque étape de notre projet aux savoirs et aux compétences du sigle.'],
     ['**Tâche**', 'Propose… (enrichir une action, créer une grille, des questions d’objectivation…)'],
     ['**Contraintes**', 'Niveau de lecture, durée, format, ce qu’on ne veut pas…']
   ].map(r => [r[0], P(r[1], { after: 520, run: { size: 18, color: C.grey, italics: true } })]), [1800, 8240], { firstAccent: true }),

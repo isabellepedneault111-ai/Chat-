@@ -18,10 +18,11 @@ const kids = [
   tbl(['Ingrédient', 'La question à se poser', 'Exemple'], [
     ['**Rôle**', 'Qui doit répondre ?', 'Tu es conseiller pédagogique en FGA au Québec.'],
     ['**Contexte**', 'Pour qui, dans quelle situation ?', 'Un groupe PPS réalise un projet sur le gaspillage alimentaire.'],
-    ['**Sigle et programme**', 'À quel cours et à quel programme officiel je me rattache ?', 'Pour le sigle MAT-3051, appuie-toi sur le programme d’études de la FGA du ministère de l’Éducation du Québec : nomme les savoirs et la famille de situations de vie visés.'],
+    ['**Programme et lien**', 'À quel cours je me rattache, et comment mon projet le travaille ?', 'Appuie-toi uniquement sur l’extrait du programme de MAT-3051 que je te joins. Puis relie chaque étape de notre projet aux savoirs du sigle, dans un tableau.'],
     ['**Tâche**', 'Qu’est-ce que je veux, exactement ?', 'Génère une grille descriptive à 4 niveaux.'],
     ['**Contraintes**', 'Quel format, quelle limite ?', 'Langage simple, tableau, verbes observables, pas de note chiffrée.']
   ], [1800, 3300, 4920], { firstAccent: true }),
+  ...note('Le truc qui change tout', ['Copilot ne va pas chercher le programme lui-même : collez l’extrait du programme (compétences, savoirs, famille de situations de vie) ou joignez le PDF du programme ou de la DDE avec le trombone. Il travaille alors avec le vrai contenu du sigle au lieu de le deviner. Sans source, il peut inventer un savoir ou une compétence : l’invite lui demande de le dire plutôt que d’inventer.'], { before: 120 }),
   P('Ensuite, **dialoguez** : « Simplifie le niveau 2 », « Ajoute un exemple pour un élève en individualisé », « Reformule au tutoiement ». La première réponse est un brouillon.', { before: 120 }),
 
   H1('02', 'Cinq invites pour l’atelier et pour lundi'),
@@ -29,7 +30,9 @@ const kids = [
     'Tu es conseiller pédagogique en formation générale des adultes au Québec.',
     'Contexte : un groupe d’adultes du programme Participation sociale réalise un projet citoyen sur [l’enjeu].',
     'Tâche : génère une grille d’évaluation descriptive à 4 niveaux pour le cours [sigle], centrée sur la résolution de problèmes dans un projet communautaire.',
-    'Programme : Appuie-toi sur le programme d’études officiel de la formation générale des adultes du ministère de l’Éducation du Québec pour ce sigle : nomme les compétences, les savoirs et la famille de situations de vie visés. Si tu n’es pas certain d’un élément du programme, dis-le plutôt que de l’inventer.',
+    'Étape 1 · Le programme : Appuie-toi uniquement sur l’extrait du programme d’études officiel de la FGA (ministère de l’Éducation du Québec) pour [sigle], que je te fournis ci-dessous ou en pièce jointe. N’ajoute aucune compétence ni aucun savoir qui n’y figure pas ; si l’extrait ne suffit pas, dis-le-moi.',
+    'Extrait du programme : [collez ici les compétences, les savoirs et la famille de situations de vie du sigle, ou joignez le PDF du programme]',
+    'Étape 2 · Le lien avec le projet : Dans un tableau, relie chaque étape de notre projet (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin) aux savoirs et aux compétences du sigle qu’elle permet de travailler ou d’évaluer.',
     'Contraintes : langage simple que les élèves comprennent, verbes observables, présentation en tableau, aucune note chiffrée.'
   ]),
   ...prompt('2 · Des relances métacognitives (objectivation)', [
@@ -45,7 +48,9 @@ const kids = [
   ...prompt('4 · Un enjeu comme contexte de tâche (scénario A)', [
     'Tu es enseignant de mathématiques en FGA, en enseignement individualisé.',
     'Contexte : un élève inscrit en [sigle] veut travailler sur l’enjeu [enjeu].',
-    'Programme : Appuie-toi sur le programme d’études officiel de la formation générale des adultes du ministère de l’Éducation du Québec pour ce sigle : nomme les compétences, les savoirs et la famille de situations de vie visés. Si tu n’es pas certain d’un élément du programme, dis-le plutôt que de l’inventer.',
+    'Étape 1 · Le programme : Appuie-toi uniquement sur l’extrait du programme d’études officiel de la FGA (ministère de l’Éducation du Québec) pour [sigle], que je te fournis ci-dessous ou en pièce jointe. N’ajoute aucune compétence ni aucun savoir qui n’y figure pas ; si l’extrait ne suffit pas, dis-le-moi.',
+    'Extrait du programme : [collez ici les compétences, les savoirs et la famille de situations de vie du sigle, ou joignez le PDF du programme]',
+    'Étape 2 · Le lien avec le projet : Dans un tableau, relie chaque étape de notre projet (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin) aux savoirs et aux compétences du sigle qu’elle permet de travailler ou d’évaluer.',
     'Tâche : propose une situation d’apprentissage de 3 périodes où il réalise un petit sondage et en analyse les résultats, en 3 niveaux de complexité.',
     'Contraintes : liens explicites avec les savoirs du sigle, liste du matériel, une question d’objectivation à la fin.'
   ]),
