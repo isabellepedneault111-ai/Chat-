@@ -10,6 +10,38 @@
   color-scheme:light;
 }
 [hidden]{display:none!important}
+.nourrit .mode{font-style:normal;display:inline-flex;align-items:center;gap:5px;font-family:var(--display);font-size:clamp(12px,min(1vw,1.8vh),15px);letter-spacing:.04em;text-transform:uppercase;padding:1px 8px;border:2px solid var(--ink);margin-right:8px}
+.nourrit .mode svg{width:22px;height:11px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.nourrit .mode.exp{background:var(--mauve);color:#fff}.nourrit .mode.res{background:var(--ink);color:var(--gold)}
+.sheet.dark .nourrit .mode.res{background:var(--paper);color:var(--ink)}
+.vcard{display:flex;flex-direction:column;gap:4px}
+.vph{display:flex;align-items:center;justify-content:center;min-height:54px;border:2px dashed var(--ink);background:var(--paper2);cursor:pointer;font-family:var(--display);font-size:clamp(11px,.85vw,14px);letter-spacing:.03em;text-align:center;overflow:hidden}
+.vph:hover{background:var(--gold)}
+.vthumb{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;cursor:zoom-in}
+.vrow{display:grid;grid-template-columns:1fr 3.4em;gap:4px;align-items:center}
+.vrow b{font-family:var(--display);font-weight:400;font-size:clamp(11px,.85vw,14px);letter-spacing:.03em;text-transform:uppercase;padding:2px 6px;border:2px solid var(--ink)}
+.vrow input{width:100%;font-family:var(--display);font-size:clamp(14px,1.1vw,18px);text-align:center;border:2px solid var(--ink);padding:1px 2px}
+.dp-photo{display:block;width:100%;max-height:22vh;object-fit:cover;border:3px solid var(--ink);margin-bottom:6px}
+@media (max-height:820px) and (min-width:900px){.sheet{zoom:.86;max-height:calc((100vh - 86px) / .86)}.sheet.wide{zoom:.84;max-height:calc((100vh - 86px) / .84)}}
+.sheet.wide .votes{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.votes div{padding:4px 6px}.votes input{font-size:clamp(13px,1vw,17px)!important;padding:3px 5px}
+.votes button{font-size:clamp(12px,.95vw,15px)!important;padding:1px 6px!important}
+.votes .cap{font-size:clamp(10px,.8vw,13px)!important;margin-top:3px;letter-spacing:.04em}
+.sheet.wide .crit{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.sheet.wide .crit li{flex-direction:column;align-items:flex-start;gap:2px}.sheet.wide .crit b{min-width:0}
+.sheet.wide .crit li{display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center}.sheet.wide .crit i{width:22px;height:22px;flex:none;transform:none;grid-row:1}.sheet.wide .crit b{grid-row:1}.sheet.wide .crit li>:not(i):not(b){grid-column:1 / -1}
+.entree{position:absolute;left:6%;top:7%;z-index:4;width:min(46%,330px);background:var(--gold);border:4px solid var(--ink);box-shadow:8px 8px 0 var(--ink);padding:12px 16px 14px;transform:rotate(-2.5deg);color:var(--ink);animation:papin .9s cubic-bezier(.2,.8,.2,1) .3s both}
+.entree b{display:inline-block;font-family:var(--display);font-weight:400;font-size:clamp(18px,min(1.8vw,3vh),26px);letter-spacing:.05em;text-transform:uppercase;background:var(--ink);color:var(--gold);padding:0 8px;margin-bottom:6px}
+.entree p{margin:4px 0 0;font-family:var(--hand);font-size:clamp(20px,min(2vw,3.4vh),30px);line-height:1.05}
+.entree mark{background:#fff;padding:0 4px}
+@media (max-width:800px){.entree{position:relative;left:auto;top:auto;width:auto;margin:10px}}
+@media (prefers-reduced-motion:reduce){.entree{animation:none}}
+.prog{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:6px 0 12px}
+.prog div{border:3px solid var(--ink);background:#fff;padding:12px 14px;position:relative;box-shadow:6px 6px 0 var(--gold)}
+.prog i{font-style:normal;font-family:var(--display);font-size:clamp(14px,1.2vw,17px);letter-spacing:.06em;text-transform:uppercase;color:var(--mauve)}
+.prog b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(26px,min(2.6vw,4.4vh),40px);line-height:1;margin:2px 0 6px}
+.prog p{margin:0;font-size:clamp(14px,min(1.3vw,2.3vh),18px);line-height:1.3}
+.surprise{font-family:var(--hand);font-size:clamp(22px,min(2.2vw,3.6vh),32px);color:var(--mauve);margin:4px 0 0}
+@media (max-width:900px){.prog{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .nourrit{display:flex;flex-wrap:wrap;gap:5px;align-items:center;justify-content:flex-end;margin:-8px -6px 2px 0}
 .nourrit .bz{display:inline-block;flex:0 0 auto;width:auto}
 .nourrit span{font-family:var(--ui);font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
@@ -47,7 +79,7 @@
 .dl{font-family:var(--ui);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:10px 0 4px}
 #dpChips .chip{font-size:13px;padding:2px 8px;opacity:.45}#dpChips .chip.on{opacity:1;background:var(--gold)}
 .dex{margin-top:10px;max-height:40vh;overflow:auto}
-.vecu{list-style:none;padding:0;margin:4px 0 10px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;counter-reset:v}
+.vecu{list-style:none;padding:0;margin:4px 0 10px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;counter-reset:v}
 .vecu li{counter-increment:v;border:3px solid var(--paper);padding:8px 10px;display:flex;flex-direction:column;gap:2px;opacity:.12;transform:translateY(6px);transition:opacity .35s,transform .35s}
 .vecu li.shown{opacity:1;transform:none}
 .vecu li b{font-family:var(--display);font-weight:400;font-size:clamp(16px,min(1.5vw,2.6vh),22px);line-height:1.05}
@@ -211,7 +243,7 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .s1-photo::before{display:none}
 @keyframes s1in{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.s1-photo{animation:none}}
-.sheet{width:min(820px,100%);margin-block:auto;max-height:calc(100vh - 86px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--mauve) transparent;background:#FFFDF7;border:3px solid var(--ink);box-shadow:10px 10px 0 var(--ink);padding:clamp(16px,2.2vw,30px);min-width:0}
+.sheet{width:min(max(820px,50vw),100%);margin-block:auto;max-height:calc(100vh - 86px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--mauve) transparent;background:#FFFDF7;border:3px solid var(--ink);box-shadow:10px 10px 0 var(--ink);padding:clamp(16px,2.2vw,30px);min-width:0}
 @media (min-width:821px){.sheet{width:min(820px,55vw)}}
 .pres{max-width:1100px;margin:0 auto;padding-block:24px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
 .pres-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -294,7 +326,7 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .lbls{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .lbl{position:absolute;left:0;top:0;white-space:nowrap;font-family:var(--display);letter-spacing:.04em;text-transform:uppercase;color:#FFFDF7;background:var(--ink);padding:3px 9px 2px;border-radius:2px;opacity:0;transition:opacity .4s;box-shadow:0 2px 0 rgba(0,0,0,.15)}
 .lbl.hand{font-family:var(--hand);text-transform:none;letter-spacing:0;background:transparent;color:var(--mauve);box-shadow:none;font-weight:700}
-.sheet.wide{width:min(1180px,100%)}
+.sheet.wide{width:min(max(1180px,72vw),100%)}
 .capts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(330px,100%),1fr));gap:16px;margin-top:8px}
 .capt img{cursor:zoom-in;transition:transform .2s}
 .capt img:hover{transform:scale(1.02)}
@@ -584,9 +616,9 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   if (location.hash !== '#ressources') return;
   const $ = s => document.querySelector(s);
   const PROG = 'Appuie-toi uniquement sur l’extrait du programme d’études officiel de la FGA (ministère de l’Éducation du Québec) pour SIGLE, que je te fournis ci-dessous ou en pièce jointe. N’ajoute aucune compétence ni aucun savoir qui n’y figure pas ; si l’extrait ne suffit pas, dis-le-moi.', LIEN = 'Dans un tableau, relie chaque étape de notre projet (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin) aux savoirs et aux compétences du sigle qu’elle permet de travailler ou d’évaluer.';
-  const ROLES = ['Tu es enseignant·e en Participation sociale (PPS) en FGA.', 'Tu es enseignant·e en DHS en FGA.', 'Tu es enseignant·e en Intégration sociale (IS) en FGA.', 'Tu es enseignant·e en Insertion socioprofessionnelle (ISP) en FGA.', 'Tu es enseignant·e en adaptation scolaire.', 'Tu es enseignant·e de français en FGA, en enseignement individualisé.', 'Tu es enseignant·e de mathématiques et sciences en FGA, en enseignement individualisé.', 'Tu es enseignant·e d’anglais en FGA.', 'Tu es orthopédagogue en FGA.', 'Tu es conseiller·ère d’orientation en FGA.', 'Tu es intervenant·e scolaire en FGA.', 'Tu es conseiller·ère pédagogique en FGA au Québec.', 'Tu es direction d’un centre de formation générale des adultes.'];
+  const ROLES = ['Tu es enseignant·e en Participation sociale (PPS) en FGA.', 'Tu es enseignant·e en DHS en FGA.', 'Tu es enseignant·e en Intégration sociale (IS) en FGA.', 'Tu es enseignant·e en Intégration socioprofessionnelle (ISP) en FGA.', 'Tu es enseignant·e en adaptation scolaire.', 'Tu es enseignant·e de français en FGA, en enseignement individualisé.', 'Tu es enseignant·e de mathématiques et sciences en FGA, en enseignement individualisé.', 'Tu es enseignant·e d’anglais en FGA.', 'Tu es orthopédagogue en FGA.', 'Tu es conseiller·ère d’orientation en FGA.', 'Tu es intervenant·e scolaire en FGA.', 'Tu es conseiller·ère pédagogique en FGA au Québec.', 'Tu es direction d’un centre de formation générale des adultes.'];
   const TACHES = ['Propose 5 micro-actions concrètes et SMART à partir de notre analyse de contexte : [collez vos leviers et vos « je remarque que »].', 'Transforme notre résultat en 3 actions SMART, avec un verbe conjugué, un responsable et une date.', 'Génère une grille d’évaluation descriptive à 4 niveaux centrée sur la résolution de problèmes.', 'Propose 8 questions d’objectivation : 2 avant, 3 pendant, 3 après.', 'Propose une situation d’apprentissage de 3 périodes en 3 niveaux de complexité.'];
-  const CONTR = ['Langage simple, accessible aux élèves.', 'Présentation en tableau.', 'Aucune note chiffrée.', 'Liens avec les savoirs du sigle.', 'Liste du matériel.', 'Signale toute formulation qui est encore un résultat.'];
+  const CONTR = ['Un document Word prêt à imprimer : titre court, sections numérotées, tableaux à fines bordures noires, en-têtes mauves (#5B2A86), mots-clés surlignés en jaune (#F2C230), aucune couleur pastel, police lisible (Cambria 12 pt).', 'Langage simple, accessible aux élèves.', 'Présentation en tableau.', 'Aucune note chiffrée.', 'Liens avec les savoirs du sigle.', 'Liste du matériel.', 'Signale toute formulation qui est encore un résultat.'];
   const fill = (sel, arr) => { arr.forEach((t, i) => sel.add(new Option(t, i))); sel.add(new Option('Autre : je l’écris moi-même', 'x')); };
   fill($('#hgRole'), ROLES); fill($('#hgTache'), TACHES);
   const v = id => $('#' + id).value.trim();
@@ -615,8 +647,8 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
     ['Des relances métacognitives', 'Tu es un coach pédagogique qui accompagne des adultes de 16 à 25 ans en FGA.\nTâche : propose 8 questions de relance pour aider un élève à évaluer son autonomie dans son projet citoyen : 2 avant, 3 pendant, 3 après.\nContraintes : phrases courtes, au « je », une question au moins pour chaque sphère de l’engagement (affective, cognitive, comportementale, citoyenne).'],
     ['D’un résultat à des actions', 'Voici un résultat souhaité par mon groupe : « [résultat] ».\nTransforme-le en 3 actions SMART formulées avec un verbe conjugué au présent, un responsable et une date.\nSi une de mes formulations est encore un résultat plutôt qu’une action, dis-le-moi et explique pourquoi.'],
     ['Un enjeu comme contexte de tâche', 'Tu es enseignant de mathématiques en FGA, en enseignement individualisé.\nContexte : un élève inscrit en [sigle] veut travailler sur l’enjeu [enjeu].\nÉtape 1 · Le programme : ' + PROG.replace('SIGLE', '[sigle]') + '\nExtrait du programme : [collez ici les compétences, les savoirs et la famille de situations de vie du sigle, ou joignez le PDF du programme]\nÉtape 2 · Le lien avec le projet : ' + LIEN + '\nTâche : propose une situation d’apprentissage de 3 périodes où il réalise un petit sondage et en analyse les résultats, en 3 niveaux de complexité.\nContraintes : liens explicites avec les savoirs du sigle, liste du matériel, une question d’objectivation à la fin.'],
-    ['Des micro-actions à partir de notre analyse de contexte', 'Tu es enseignant·e en formation générale des adultes au Québec.\nContexte : notre groupe veut agir sur ce résultat : « [notre résultat] ».\nNotre analyse de contexte : leviers (ce qui existe déjà) : [collez vos leviers]. Ce que nous remarquons : [collez vos « je remarque que »].\nTâche : propose 5 micro-actions concrètes, réalisables en quelques semaines par des adultes en formation, qui s’appuient sur nos leviers. Chacune est SMART : spécifique, mesurable, atteignable, représentative (pourquoi elle compte pour nous) et temporelle.\nContraintes : une phrase par action, avec un verbe conjugué, qui et quand ; présentation en tableau.'],
-    ['Un projet, toutes nos disciplines', 'Tu es conseiller·ère pédagogique en formation générale des adultes (FGA) au Québec.\nContexte : notre équipe a choisi ce projet d’engagement citoyen : « [titre] ». Résultat visé : [résultat]. Actions : [actions].\nLes personnes de notre équipe : [disciplines ou fonctions, ex. mathématiques, français, IS, orientation, direction].\nTâche : pour chaque discipline ou fonction, propose 2 contenus précis que ce projet permet de travailler avec les élèves, et une contribution concrète au projet. Pour une direction, l’orientation ou le conseil pédagogique, propose un rôle de soutien.\nProgramme : appuie-toi uniquement sur les extraits de programmes que je te joins ; sinon, écris « à valider dans le programme ».\nContraintes : un tableau (discipline · contenus · contribution · besoin de l’engagement nourri).'],
+    ['Des micro-actions à partir de notre analyse de contexte', 'Tu es enseignant·e en formation générale des adultes au Québec.\nContexte : notre groupe veut agir sur ce résultat : « [notre résultat] ».\nNotre analyse de contexte : leviers (ce qui existe déjà) : [collez vos leviers]. Ce que nous remarquons : [collez vos « je remarque que »].\nTâche : propose 5 micro-actions concrètes, réalisables en quelques semaines par des adultes en formation, qui s’appuient sur nos leviers. Chacune est SMART : spécifique, mesurable, atteignable, représentative (pourquoi elle compte pour nous) et temporelle.\nContraintes : une phrase par action, avec un verbe conjugué, qui et quand ; présentation en tableau.\nMise en forme : Un document Word prêt à imprimer : titre court, sections numérotées, tableaux à fines bordures noires, en-têtes mauves (#5B2A86), mots-clés surlignés en jaune (#F2C230), aucune couleur pastel, police lisible (Cambria 12 pt).'],
+    ['Un projet, toutes nos disciplines', 'Tu es conseiller·ère pédagogique en formation générale des adultes (FGA) au Québec.\nContexte : notre équipe a choisi ce projet d’engagement citoyen : « [titre] ». Résultat visé : [résultat]. Actions : [actions].\nLes personnes de notre équipe : [disciplines ou fonctions, ex. mathématiques, français, IS, orientation, direction].\nTâche : pour chaque discipline ou fonction, propose 2 contenus précis que ce projet permet de travailler avec les élèves, et une contribution concrète au projet. Pour une direction, l’orientation ou le conseil pédagogique, propose un rôle de soutien.\nProgramme : appuie-toi uniquement sur les extraits de programmes que je te joins ; sinon, écris « à valider dans le programme ».\nContraintes : un tableau (discipline · contenus · contribution · besoin de l’engagement nourri).\nMise en forme : Un document Word prêt à imprimer : titre court, sections numérotées, tableaux à fines bordures noires, en-têtes mauves (#5B2A86), mots-clés surlignés en jaune (#F2C230), aucune couleur pastel, police lisible (Cambria 12 pt).'],
     ['Du groupe du nom au groupe du verbe', 'Tu es enseignant de français en FGA.\nTâche : crée un court exercice où les élèves décrivent leur « monde idéal » avec des groupes du nom enrichis (noyau et expansions), puis transforment chaque GN en groupe du verbe avec un sujet qui agit et une date.\nContraintes : 6 items, corrigé à part, thème lié à leur centre ou à leur quartier.']];
   P.forEach(([t, body], i) => { const d = document.createElement('details'); if (!i) d.open = true; d.innerHTML = '<summary><i>' + (i + 1) + '</i>' + esc(t) + '</summary><div class="body"><pre></pre><div class="hub-row"><button type="button" class="hub-btn sm">Copier</button><span class="hub-msg"></span></div></div>'; d.querySelector('pre').textContent = body; d.querySelector('button').onclick = () => copy(body, d.querySelector('.hub-msg'), d.querySelector('pre')); $('#hgPrompts').appendChild(d); });
 
@@ -640,7 +672,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 </div>
 
 <div class="deck" id="deck">
-<section class="slide s1" data-phase="0" data-who="Isabelle et Francis" data-notes="Accueil. Pendant que les gens entrent : à la porte, chacun écrit sur un post-it ce qui le dérange dans le monde et le colle sur l’affiche « Mur d’enjeux ». Puis il s’assoit. Présenter le duo en 30 secondes.">
+<section class="slide s1" data-phase="0" data-who="Isabelle et Francis" data-notes="Accueil, pendant que les gens entrent. La consigne du post-it est à l’écran : à la porte, chacun écrit ce qui le préoccupe ou le dérange dans son milieu et le colle sur l’affiche du mur, dans son cercle. Puis il s’assoit. Diapo suivante : on tape quelques post-it dans le globe.">
   <div class="s1-panel">
     <div class="kick" style="color:var(--gold);line-height:1.5">Colloque régional FGA · 13 novembre 2026<br>CFGA De Jonquière</div>
     <h1 class="s1-title">Rêver<br>le monde<br>de <span>demain</span></h1>
@@ -654,8 +686,23 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   </div>
   <div class="s1-img s1-open">
     <figure class="s1-photo"><img src="__IMG_RISO_MUR__" alt="Des jeunes adultes collent des post-it sur une carte du monde, devant une fenêtre sur la rivière enneigée"></figure>
+    <div class="entree"><b>En entrant</b><p>Sur un post-it : ce qui vous <mark>préoccupe</mark> ou vous dérange dans votre milieu.</p><p>Collez-le au mur, dans son cercle : école, communauté ou nature.</p></div>
     <span class="pap done p6" aria-hidden="true">on l’a fait !</span>
   </div>
+</section>
+
+<section data-mode="exp" data-besoins="Sens" class="slide" data-phase="0" data-who="Francis" data-notes="Pendant l’accueil, taper quelques post-it du mur en choisissant leur cercle : ils s’accrochent au globe. Phrase clé : « Ce que vous venez de faire, nos élèves de PPS l’ont fait aussi : c’est la première marche de la démarche. »">
+  <div class="kick">Accueil · le mur d’enjeux</div>
+  <h2>Qu’est-ce qui vous <span class="hl">préoccupe</span> ou vous dérange dans votre milieu ?</h2>
+  <p class="when"><b>En entrant</b> Sur un post-it : une chose qui vous préoccupe, vous dérange ou vous manque dans votre milieu. Collez-le sur l’affiche, dans le cercle qui lui ressemble : école, communauté ou nature. On en tape quelques-uns ici : ils s’accrochent au globe.</p>
+  <div class="chips zones" id="zoneChips" role="group" aria-label="Zone de la triade"><button type="button" class="chip z-e on" data-z="e">École</button><button type="button" class="chip z-c" data-z="c">Communauté</button><button type="button" class="chip z-n" data-z="n">Nature</button><button type="button" class="chip z-x" data-z="x">Les trois</button></div>
+  <form class="checker" id="enjeuForm" style="margin-bottom:12px">
+    <input type="text" id="enjeuIn" maxlength="40" placeholder="ex. peu de liens avec les organismes du quartier" aria-label="Un enjeu">
+    <button class="btn" type="submit">Accrocher au globe</button>
+    <button class="btn alt" type="button" id="enjeuClear">Vider</button>
+  </form>
+  <div class="mur" id="mur" aria-live="polite"></div>
+  <p class="tally" id="tally"></p>
 </section>
 
 <section class="slide" data-phase="0" data-who="Isabelle et Francis" data-notes="Présentation éclair, 30 secondes chacun. Cliquer sur un champ pour l’écrire ou le corriger : ce qui est écrit reste sur cet ordinateur. Même format que la présentation « Motivation et engagement ». Enchaîner : « Et vous, qu’est-ce qui vous dérange ? »">
@@ -683,21 +730,19 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   </div>
 </section>
 
-<section data-besoins="Sens" class="slide" data-phase="0" data-who="Francis" data-notes="Pendant l’accueil, taper quelques post-it du mur en choisissant leur cercle : ils s’accrochent au globe. Phrase clé : « Ce que vous venez de faire, nos élèves de PPS l’ont fait aussi : c’est la première marche de la démarche. »">
-  <div class="kick">Accueil · le mur d’enjeux</div>
-  <h2>Qu’est-ce qui vous <span class="hl">préoccupe</span> ou vous dérange dans votre milieu ?</h2>
-  <p class="when"><b>En entrant</b> Sur un post-it : une chose qui vous préoccupe, vous dérange ou vous manque dans votre milieu. Collez-le sur l’affiche, dans le cercle qui lui ressemble : école, communauté ou nature. On en tape quelques-uns ici : ils s’accrochent au globe.</p>
-  <div class="chips zones" id="zoneChips" role="group" aria-label="Zone de la triade"><button type="button" class="chip z-e on" data-z="e">École</button><button type="button" class="chip z-c" data-z="c">Communauté</button><button type="button" class="chip z-n" data-z="n">Nature</button><button type="button" class="chip z-x" data-z="x">Les trois</button></div>
-  <form class="checker" id="enjeuForm" style="margin-bottom:12px">
-    <input type="text" id="enjeuIn" maxlength="40" placeholder="ex. peu de liens avec les organismes du quartier" aria-label="Un enjeu">
-    <button class="btn" type="submit">Accrocher au globe</button>
-    <button class="btn alt" type="button" id="enjeuClear">Vider</button>
-  </form>
-  <div class="mur" id="mur" aria-live="polite"></div>
-  <p class="tally" id="tally"></p>
+<section data-besoins="Sens" data-wide="1" class="slide" data-phase="0" data-who="Isabelle" data-notes="Ce qu’on va faire, en 90 minutes. On annonce les quatre temps sans nommer les pratiques pédagogiques : elles seront dévoilées à la fin. Annoncer aussi la surprise : on comparera avec ce que des élèves de PPS ont produit en vivant la même démarche.">
+  <div class="kick">Au programme · 90 minutes</div>
+  <h2>Aujourd’hui, vous allez vivre la démarche</h2>
+  <div class="prog">
+    <div><i>Phase 1</i><b>Rêver</b><p>Votre monde idéal, dans trois cercles : école, communauté, nature. Puis ce qui existe déjà.</p></div>
+    <div><i>Phase 2</i><b>Cibler</b><p>Du résultat aux actions, en îlot, avec un titre pour votre projet.</p></div>
+    <div><i>Phase 3</i><b>Choisir</b><p>La galerie et les votes. Un projet pour le groupe.</p></div>
+    <div><i>Phase 4</i><b>S’engager</b><p>Votre premier pas, de retour dans votre milieu.</p></div>
+  </div>
+  <p class="surprise">Et une surprise à la fin : on compare avec des élèves de PPS qui ont vécu la même démarche.</p>
 </section>
 
-<section data-besoins="Sens" class="slide" data-phase="1" data-who="Isabelle" data-notes="Le cœur de l’atelier. On fait le pari : si on a l’engagement, tout le reste en découle. Annoncer sans tout dévoiler : vous allez vivre une version accélérée de la démarche, celle que des élèves de PPS du CFGA ont déjà vécue. À la fin, on comparera. Ne pas nommer les pratiques pédagogiques maintenant : on les dévoile à la diapo 20.">
+<section data-besoins="Sens" class="slide" data-phase="1" data-who="Isabelle" data-notes="Le cœur de l’atelier. On fait le pari : si on a l’engagement, tout le reste en découle. Annoncer sans tout dévoiler : vous allez vivre une version accélérée de la démarche, celle que des élèves de PPS du CFGA ont déjà vécue. À la fin, on comparera. Ne pas nommer les pratiques pédagogiques maintenant : on les dévoile à la diapo 21.">
   <div class="kick">Phase 1 · notre pari</div>
   <h2>Et si le but ultime, c’était l’<span class="hl">engagement</span> ?</h2>
   <p class="pq">On fait le pari que si l’engagement est là, tout le reste en découle : la présence, la persévérance, les apprentissages.</p>
@@ -747,7 +792,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   </div>
 </section>
 
-<section data-besoins="Autonomie" data-wide="1" class="slide" data-phase="1" data-who="Francis" data-notes="Pense, parle, partage : ici, PENSE. Modéliser d’abord avec l’exemple de la boîte « Modèle ». Puis 3 minutes seul : des mots-clés dans un ou plusieurs cercles du cahier, sans limite de budget ni de ressources. Ensuite, 2 minutes pour les intersections. Rappeler : le droit à l’erreur et au « je ne sais pas ». Une case vide, c’est permis : l’îlot aidera.">
+<section data-mode="exp" data-besoins="Autonomie" data-wide="1" class="slide" data-phase="1" data-who="Francis" data-notes="Pense, parle, partage : ici, PENSE. Modéliser d’abord avec l’exemple de la boîte « Modèle ». Puis 3 minutes seul : des mots-clés dans un ou plusieurs cercles du cahier, sans limite de budget ni de ressources. Ensuite, 2 minutes pour les intersections. Rappeler : le droit à l’erreur et au « je ne sais pas ». Une case vide, c’est permis : l’îlot aidera.">
   <div class="kick">Phase 1 · mon monde idéal · pense</div>
   <h2>Sans limite de budget ni de ressources, votre monde idéal ?</h2>
   <div class="row">
@@ -768,7 +813,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   </div>
 </section>
 
-<section data-besoins="Appartenance,Compétence" data-wide="1" class="slide" data-phase="1" data-who="Isabelle" data-notes="PARLE puis PARTAGE, en classe collabo-réflexive : l’îlot travaille debout, au crayon effaçable, sur le plexiglas où l’affiche des trois cercles est collée derrière. Pour chaque cercle, l’îlot garde ce qui revient ; les membres aident ceux qui n’ont pas trouvé d’intersection. Puis chaque îlot nomme ce qu’il a gardé. Le compteur du bas reprend le mur d’enjeux du matin.">
+<section data-mode="res" data-besoins="Appartenance,Compétence" data-wide="1" class="slide" data-phase="1" data-who="Isabelle" data-notes="PARLE puis PARTAGE, en classe collabo-réflexive : l’îlot travaille debout, au crayon effaçable, sur le plexiglas où l’affiche des trois cercles est collée derrière. Pour chaque cercle, l’îlot garde ce qui revient ; les membres aident ceux qui n’ont pas trouvé d’intersection. Puis chaque îlot nomme ce qu’il a gardé. Le compteur du bas reprend le mur d’enjeux du matin.">
   <div class="kick">Phase 1 · parle · partage · classe collabo-réflexive</div>
   <h2>En îlot, sur la surface verticale</h2>
   <ol class="mini-steps row3"><li><b>Parle, 5 min</b> Chacun partage. Pour chaque cercle, l’îlot garde ce qui revient. On aide ceux qui n’ont pas trouvé d’intersection.</li><li><b>Au plexiglas</b> Au crayon effaçable, sur l’affiche des trois cercles.</li><li><b>Partage, 3 min</b> Chaque îlot nomme ce qu’il a gardé.</li></ol>
@@ -787,7 +832,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <p class="tally" id="vennTally"></p>
 </section>
 
-<section data-besoins="Compétence,Sens" class="slide" data-phase="1" data-who="Isabelle" data-notes="L’analyse de contexte. Modéliser une rangée avec l’exemple. Puis seul ou en îlot, 4 minutes : pour chaque cercle, ce qui existe déjà (un levier, une qualité, une personne, un lieu, un organisme) et ce qu’on remarque. Si rien n’existe : de quoi mon CFGA aurait-il besoin pour s’y rendre ? Cahier, section « Analyse de contexte ».">
+<section data-mode="exp" data-besoins="Compétence,Sens" class="slide" data-phase="1" data-who="Isabelle" data-notes="L’analyse de contexte. Modéliser une rangée avec l’exemple. Puis seul ou en îlot, 4 minutes : pour chaque cercle, ce qui existe déjà (un levier, une qualité, une personne, un lieu, un organisme) et ce qu’on remarque. Si rien n’existe : de quoi mon CFGA aurait-il besoin pour s’y rendre ? Cahier, section « Analyse de contexte ».">
   <div class="kick">Phase 1 · analyse de contexte</div>
   <h2>Qu’est-ce qui existe déjà ?</h2>
   <p class="lede">Pour ce que j’ai noté dans mon monde idéal : des leviers, des personnes, des lieux, des infrastructures qui m’aident ou qui y tendent.</p>
@@ -800,7 +845,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <p><button class="btn" data-timer="240">4 min</button></p>
 </section>
 
-<section data-besoins="Compétence" class="slide" data-phase="2" data-who="Isabelle" data-notes="Enseignement explicite. 1) Conflit cognitif : chacun écrit une « action » pour ce qui l’interpelle dans ses cercles ; en lire trois : la plupart sont des résultats. 2) Modelage : un résultat est un nom, une action est un verbe avec qui et quand. 3) Pratique guidée : tester des phrases de la salle. 4) Pratique autonome : dans le cahier, avec la grille SMART (spécifique, mesurable, atteignable, représentatif, temporel). Exemple en mathématiques : « une meilleure compréhension du budget familial » devient « Nous comparons le prix de 10 produits dans deux épiceries et calculons l’écart d’ici vendredi. »">
+<section data-mode="res" data-besoins="Compétence" class="slide" data-phase="2" data-who="Isabelle" data-notes="Enseignement explicite. 1) Conflit cognitif : chacun écrit une « action » pour ce qui l’interpelle dans ses cercles ; en lire trois : la plupart sont des résultats. 2) Modelage : un résultat est un nom, une action est un verbe avec qui et quand. 3) Pratique guidée : tester des phrases de la salle. 4) Pratique autonome : dans le cahier, avec la grille SMART (spécifique, mesurable, atteignable, représentatif, temporel). Exemple en mathématiques : « une meilleure compréhension du budget familial » devient « Nous comparons le prix de 10 produits dans deux épiceries et calculons l’écart d’ici vendredi. »">
   <div class="kick">Phase 2 · le pivot · enseignement explicite</div>
   <h2>Résultat ou action ?</h2>
   <p class="lede">Dans vos cercles, ce qui vous interpelle le plus devient votre <b>résultat</b>. Puis, une ou des <b>actions</b> concrètes qui y mènent, le plus SMART possible.</p>
@@ -813,7 +858,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <div class="verdict" id="raOut"></div>
 </section>
 
-<section data-besoins="Appartenance,Autonomie" class="slide" data-phase="2" data-who="Duo" data-notes="En îlot, comme d’habitude. Le résultat vient des cercles de l’îlot (il peut y en avoir plusieurs). Les actions sont détaillées et le plus SMART possible. Le titre est obligatoire : la galerie et le vote se font par titre. Tout se reporte au plexiglas, sur l’affiche « Notre projet », avec l’espace des trois votes.">
+<section data-mode="res" data-besoins="Appartenance,Autonomie" class="slide" data-phase="2" data-who="Duo" data-notes="En îlot, comme d’habitude. Le résultat vient des cercles de l’îlot (il peut y en avoir plusieurs). Les actions sont détaillées et le plus SMART possible. Le titre est obligatoire : la galerie et le vote se font par titre. Tout se reporte au plexiglas, sur l’affiche « Notre projet », avec l’espace des trois votes.">
   <div class="kick">Phase 2 · en îlot</div>
   <h2>Du résultat aux actions</h2>
   <ol class="etapes">
@@ -824,7 +869,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   </ol>
 </section>
 
-<section data-besoins="Compétence" class="slide" data-wide="1" data-phase="2" data-who="Isabelle" data-notes="Les participants travaillent sur leur ordinateur : ils ouvrent la page Ressources (code QR ou adresse), section « Mon invite Copilot ». On modélise avec un îlot : on écrit leur groupe, leur enjeu et leurs contraintes, puis on copie l’invite dans Copilot sur l’ordinateur du TNI. Les participants utilisent la même formule dans leur cahier (« Notre invite Copilot ») et l’aide-mémoire, sur leur propre appareil.">
+<section data-mode="exp" data-besoins="Compétence" class="slide" data-wide="1" data-phase="2" data-who="Isabelle" data-notes="Les participants travaillent sur leur ordinateur : ils ouvrent la page Ressources (code QR ou adresse), section « Mon invite Copilot ». On modélise avec un îlot : on écrit leur groupe, leur enjeu et leurs contraintes, puis on copie l’invite dans Copilot sur l’ordinateur du TNI. Les participants utilisent la même formule dans leur cahier (« Notre invite Copilot ») et l’aide-mémoire, sur leur propre appareil.">
   <div class="kick">Phase 3 · Copilot</div>
   <h2>Rôle · contexte · tâche · contraintes</h2>
   <div class="row">
@@ -859,13 +904,13 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <div class="scen" id="scen"></div>
 </section>
 
-<section data-besoins="Autonomie,Appartenance" class="slide" data-phase="3" data-who="Duo" data-notes="La galerie : une personne par îlot reste au plexiglas pour expliquer en 30 secondes ; les autres circulent. Chacun a 3 post-it : jaune = coup de cœur, orange = « Oui, et… » (on écrit la suggestion dessus), mauve = on est capables. On peut voter sur le résultat ou sur une action. À mi-temps, on change de présentateur. Puis chaque îlot compte ses points et on les saisit ici : les piles montent. Le projet qui a le plus de points devient le projet du groupe (diapo 18).">
+<section data-mode="res" data-besoins="Autonomie,Appartenance" data-wide="1" class="slide" data-phase="3" data-who="Duo" data-notes="La galerie : une personne par îlot reste au plexiglas pour expliquer en 30 secondes ; les autres circulent. Chacun a 3 post-it : jaune = coup de cœur, orange = « Oui, et… » (on écrit la suggestion dessus), mauve = on est capables. On peut voter sur le résultat ou sur une action. À mi-temps, on change de présentateur. Pendant la galerie, Francis photographie chaque plexiglas avec l’ordinateur ou reçoit les photos (Teams, courriel, câble) et les glisse ici avec « + Photo du plexiglas » ; une photo touchée s’affiche en grand. Puis chaque îlot compte ses post-it et on tape seulement les trois totaux : les piles montent. Le projet qui a le plus de points devient le projet du groupe (diapo 19).">
   <div class="kick">Phase 3 · la galerie et les votes</div>
   <h2>Coup de cœur · Oui, et… · On est capables</h2>
   <ul class="crit">
-    <li><i style="background:var(--gold)"></i><b>Coup de cœur</b> « Ce projet me touche, il a du sens. »</li>
-    <li><i style="background:#D9541E"></i><b>Oui, et…</b> « J’aime cette action, et je changerais ceci. » La suggestion s’écrit sur le post-it.</li>
-    <li><i style="background:var(--mauve)"></i><b>On est capables</b> « Avec nos forces, on peut le réaliser. »</li>
+    <li><i style="background:var(--gold)"></i><b>Coup de cœur</b><span>« Ce projet me touche, il a du sens. »</span></li>
+    <li><i style="background:#D9541E"></i><b>Oui, et…</b><span>« J’aime cette action, et je changerais ceci. » La suggestion s’écrit sur le post-it.</span></li>
+    <li><i style="background:var(--mauve)"></i><b>On est capables</b><span>« Avec nos forces, on peut le réaliser. »</span></li>
   </ul>
   <p class="cap">Une personne par îlot explique le projet ; les autres circulent avec 3 post-it, un de chaque couleur, à coller sur le résultat ou sur une action. 1 post-it = 1 point. On change de rôle à mi-temps. Écrivez le titre de chaque projet.</p>
   <div class="row" style="flex:1;align-items:stretch">
@@ -873,7 +918,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   </div>
 </section>
 
-<section data-besoins="Compétence,Autonomie" class="slide" data-phase="3" data-who="Isabelle" data-notes="Le pont vers les élèves. Voter « on est capables », c’est difficile pour un élève qui ne connaît pas ses forces. Avec mes élèves : l’empreinte d’apprentissage (J’ai MON plan), la liste des forces et capacités, puis un top 3 des forces et un top 3 des défis. Les forces restent bien en vue : ce sont des leviers. Les défis deviennent des objectifs SMART, avec des moyens efficaces choisis selon la catégorie du défi (annexe 07). Les études montrent l’effet des objectifs.">
+<section data-besoins="Compétence,Autonomie" data-wide="1" class="slide" data-phase="3" data-who="Isabelle" data-notes="Le pont vers les élèves. Voter « on est capables », c’est difficile pour un élève qui ne connaît pas ses forces. Avec mes élèves : l’empreinte d’apprentissage (J’ai MON plan), la liste des forces et capacités, puis un top 3 des forces et un top 3 des défis. Les forces restent bien en vue : ce sont des leviers. Les défis deviennent des objectifs SMART, avec des moyens efficaces choisis selon la catégorie du défi (annexe 07). Les études montrent l’effet des objectifs.">
   <div class="kick">Phase 3 · nos capacités</div>
   <h2>« On est capables » : encore faut-il connaître ses forces</h2>
   <div class="forces">
@@ -883,11 +928,12 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <p class="tools"><span>L’empreinte d’apprentissage · J’ai MON plan</span><span>Les forces et capacités · annexe 07</span><span>La banque de moyens · annexe 07</span><span>L’objectif SMART · cahier</span></p>
 </section>
 
-<section data-besoins="Sens" data-wide="1" class="slide" data-phase="3" data-who="Isabelle" data-notes="Le coup de théâtre. Le titre du projet le plus voté s’affiche tout seul. Compléter le résultat et les actions avec la salle, puis Copier l’invite, la coller dans Copilot sur l’ordinateur du TNI et lancer. Joindre les extraits de programme préparés d’avance, si possible. Message : si ce projet se réalise dans votre milieu, l’école, la communauté et la nature en bénéficient déjà ; l’engagement est le moteur de tout le reste, jusqu’à l’assiduité. Et en un clic, chaque discipline présente y trouve ses contenus. Si Copilot hésite : le bouton « Voir un exemple ».">
+<section data-mode="exp" data-besoins="Sens" data-wide="1" class="slide" data-phase="3" data-who="Isabelle" data-notes="Le coup de théâtre. Le titre du projet le plus voté s’affiche tout seul. Compléter le résultat et les actions avec la salle, puis Copier l’invite, la coller dans Copilot sur l’ordinateur du TNI et lancer. Joindre les extraits de programme préparés d’avance, si possible. Message : si ce projet se réalise dans votre milieu, l’école, la communauté et la nature en bénéficient déjà ; l’engagement est le moteur de tout le reste, jusqu’à l’assiduité. Et en un clic, chaque discipline présente y trouve ses contenus. Si Copilot hésite : le bouton « Voir un exemple ».">
   <div class="kick">Phase 3 · le projet du groupe</div>
   <h2>Un projet, toutes vos disciplines</h2>
   <div class="disc">
     <div class="dcol">
+      <img id="dpPhoto" class="dp-photo" alt="Le plexiglas du projet choisi" hidden>
       <label for="dpT">Le projet choisi</label><input type="text" id="dpT" placeholder="Le titre du projet le plus voté">
       <label for="dpR">Le résultat visé</label><input type="text" id="dpR" placeholder="ex. un centre plus vert et plus ouvert sur le quartier">
       <label for="dpA">Les actions</label><textarea id="dpA" rows="2" placeholder="ex. Nous aménageons un jardin avec un organisme du quartier d’ici juin."></textarea>
@@ -902,7 +948,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <div class="dex" id="dpExBox" hidden></div>
 </section>
 
-<section data-besoins="Autonomie" class="slide" data-phase="4" data-who="Duo" data-notes="Plan de match, phase 4 : engagement individuel, puis retour express en grand groupe. Chacun remplit sa fiche (cahier, section « Mon premier pas »). C’est le premier pas du participant, pas de l’élève. Faire le pont avec le cadre d’innovation du CFGA (COP IA, Giroux, Munger et Pedneault) : la date devient du temps protégé, l’allié valide l’idée, et la question de la pérennité se pose dès le départ. Les 6 questions sont dans le cahier. Ensuite, chaque îlot nomme une action prioritaire en 30 secondes.">
+<section data-mode="res" data-besoins="Autonomie" class="slide" data-phase="4" data-who="Duo" data-notes="Plan de match, phase 4 : engagement individuel, puis retour express en grand groupe. Chacun remplit sa fiche (cahier, section « Mon premier pas »). C’est le premier pas du participant, pas de l’élève. Faire le pont avec le cadre d’innovation du CFGA (COP IA, Giroux, Munger et Pedneault) : la date devient du temps protégé, l’allié valide l’idée, et la question de la pérennité se pose dès le départ. Les 6 questions sont dans le cahier. Ensuite, chaque îlot nomme une action prioritaire en 30 secondes.">
   <div class="kick">Phase 4 · bilan</div>
   <h2>Mon premier pas, de retour dans mon milieu</h2>
   <p>Une action (un verbe !), une date, un allié. Par exemple :</p>
@@ -918,10 +964,11 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <p><button class="btn" data-timer="180">3 min · ma fiche</button> <button class="btn alt" data-timer="120">2 min · retour express</button></p>
 </section>
 
-<section data-besoins="Compétence,Sens" data-wide="1" class="slide" data-phase="4" data-who="Isabelle" data-notes="Le dévoilement. On nomme ce que les participants ont vécu sans qu’on l’annonce. Toucher « Suivante » pour révéler une pratique à la fois, en demandant : « Où l’avez-vous vécue ? » Chaque pratique nourrit au moins un besoin de l’engagement.">
+<section data-besoins="Compétence,Sens" data-wide="1" class="slide" data-phase="4" data-who="Isabelle" data-notes="Le dévoilement. Avant de commencer : « Ouvrez votre cahier à la section 12. Pendant qu’on révèle, cochez les pratiques que vous voulez essayer. » Chacun repart avec son propre menu de pratiques, choisi par lui : l’autonomie vécue jusqu’à la dernière minute. On nomme ce que les participants ont vécu sans qu’on l’annonce. Toucher « Suivante » pour révéler une pratique à la fois, en demandant : « Où l’avez-vous vécue ? » Chaque pratique nourrit au moins un besoin de l’engagement.">
   <div class="kick">Phase 4 · ce que vous avez vécu</div>
   <h2>Vous l’avez vécu sans qu’on le nomme</h2>
-  <ol class="vecu" id="vecu"><li><b>Pense, parle, partage</b><span>Le monde idéal</span><em class="bz">Appartenance</em></li><li><b>La classe collabo-réflexive</b><span>Les surfaces verticales, en îlot</span><em class="bz">Appartenance</em></li><li><b>La méthode inductive</b><span>Le mur d’enjeux, le conflit résultat ou action</span><em class="bz">Compétence</em></li><li><b>L’enseignement explicite</b><span>Modelage, pratique guidée, pratique autonome</span><em class="bz">Compétence</em></li><li><b>Le droit à l’erreur et au « je ne sais pas »</b><span>Tout au long</span><em class="bz">Appartenance</em></li><li><b>L’analyse de contexte</b><span>Les leviers et les « je remarque que »</span><em class="bz">Sens</em></li><li><b>Les objectifs SMART</b><span>Du résultat aux actions</span><em class="bz">Compétence</em></li><li><b>Le choix et le vote</b><span>La galerie</span><em class="bz">Autonomie</em></li><li><b>La rétroaction par les pairs</b><span>Le vote « Oui, et… »</span><em class="bz">Compétence</em></li><li><b>Les forces comme leviers</b><span>On est capables</span><em class="bz">Autonomie</em></li><li><b>L’IA au service du sens</b><span>Un projet, toutes vos disciplines</span><em class="bz">Sens</em></li><li><b>L’objectivation</b><span>Le 3-2-1, tout à l’heure</span><em class="bz">Compétence</em></li></ol>
+  <p class="lede">Cahier ouvert à la section 12 : cochez celles que vous voulez essayer.</p>
+  <ol class="vecu" id="vecu"><li><b>Pense, parle, partage</b><span>Le monde idéal</span><em class="bz">Appartenance</em></li><li><b>La classe collabo-réflexive</b><span>Les surfaces verticales, en îlot</span><em class="bz">Appartenance</em></li><li><b>La méthode inductive</b><span>Le mur d’enjeux, le conflit résultat ou action</span><em class="bz">Compétence</em></li><li><b>L’enseignement explicite</b><span>Modelage, pratique guidée, pratique autonome</span><em class="bz">Compétence</em></li><li><b>Le droit à l’erreur et au « je ne sais pas »</b><span>Tout au long</span><em class="bz">Appartenance</em></li><li><b>L’analyse de contexte</b><span>Les leviers et les « je remarque que »</span><em class="bz">Sens</em></li><li><b>Les objectifs SMART</b><span>Du résultat aux actions</span><em class="bz">Compétence</em></li><li><b>Le choix et le vote</b><span>La galerie</span><em class="bz">Autonomie</em></li><li><b>La rétroaction par les pairs</b><span>Le vote « Oui, et… »</span><em class="bz">Compétence</em></li><li><b>Les forces comme leviers</b><span>On est capables</span><em class="bz">Autonomie</em></li><li><b>Expansion et restriction</b><span>Ouvrir pour chercher (l’IA, les autres, soi-même), puis resserrer pour choisir</span><em class="bz">Autonomie</em></li><li><b>L’IA au service du sens</b><span>Un projet, toutes vos disciplines</span><em class="bz">Sens</em></li><li><b>L’objectivation</b><span>Le 3-2-1, tout à l’heure</span><em class="bz">Compétence</em></li></ol>
   <p><button class="btn" id="vecuNext">Suivante</button> <button class="btn alt" id="vecuAll">Tout montrer</button></p>
 </section>
 
@@ -939,7 +986,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <div class="pjs"><article class="pj"><h3>Un comptoir vestimentaire</h3><p class="pj-for">pour les élèves qui manquent de vêtements</p><p>Collecte, lavage, classement, une vraie boutique dans un local.</p><span class="chip">Sens</span></article><article class="pj"><h3>Du matériel pour un enfant</h3><p class="pj-for">qui a un trouble du langage</p><p>Des ateliers conçus avec l’orthophoniste, puis donnés régulièrement.</p><span class="chip">Compétence</span></article><article class="pj"><h3>Un journal étudiant</h3><p class="pj-for">pour toute l’école</p><p>Trois éditions. D’autres élèves se sont joints à l’équipe.</p><span class="chip">Appartenance</span></article><article class="pj"><h3>Des produits à l’effigie de l’école</h3><p class="pj-for">porte-clés, bouteilles, sacs, signets</p><p>Plus de 200 objets, tout vendu en une seule vente éclair.</p><span class="chip">Appartenance</span></article><article class="pj"><h3>Une grande murale</h3><p class="pj-for">pour perfectionner un talent en peinture</p><p>L’élève a ensuite obtenu un contrat dans un organisme communautaire.</p><span class="chip">Autonomie</span></article><article class="pj"><h3>Un programme d’entraînement</h3><p class="pj-for">de basketball, trois fois par semaine</p><p>Ceux qui ne faisaient pas partie de l’équipe ont été intégrés.</p><span class="chip">Appartenance</span></article></div>
 </section>
 
-<section data-besoins="Sens,Appartenance" data-wide="1" class="slide" data-phase="4" data-who="Francis, puis Isabelle" data-notes="Décloisonner : la clé de la pratique d’Isabelle. Francis raconte l’histoire vraie de l’Halloween. Puis les pistes innovantes, à lancer comme des défis : « Et si, dans votre centre… ? » Rappeler le sens et l’autodétermination, le thème du colloque.">
+<section data-mode="exp" data-besoins="Sens,Appartenance" data-wide="1" class="slide" data-phase="4" data-who="Francis, puis Isabelle" data-notes="Décloisonner : la clé de la pratique d’Isabelle. Francis raconte l’histoire vraie de l’Halloween. Puis les pistes innovantes, à lancer comme des défis : « Et si, dans votre centre… ? » Rappeler le sens et l’autodétermination, le thème du colloque.">
   <div class="kick">Phase 4 · décloisonner</div>
   <h2>Ça ne coûte rien, et tout le monde y gagne</h2>
   <div class="decl">
@@ -966,7 +1013,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   </div>
 </section>
 
-<section data-besoins="Compétence" class="slide" data-phase="4" data-who="Isabelle" data-notes="On modélise l’objectivation : s’autoévaluer, une composante de l’autodétermination. Cahier, section 3-2-1. L’annexe sur l’objectivation propose d’autres formats.">
+<section data-mode="res" data-besoins="Compétence" class="slide" data-phase="4" data-who="Isabelle" data-notes="On modélise l’objectivation : s’autoévaluer, une composante de l’autodétermination. Cahier, section 3-2-1. L’annexe sur l’objectivation propose d’autres formats.">
   <div class="kick">Phase 4 · objectivation</div>
   <h2>3 · 2 · 1</h2>
   <div class="trois21">
@@ -1050,8 +1097,8 @@ if (location.hash === '#presenter') {
   draw(0); send({ hello: 1 }); return;
 }
 onMsg(m => { if (typeof m.go === 'number') go(m.go); else if (m.hello) send({ cur }); });
-const DARK = [3, 5, 10, 11, 16, 18, 19, 24, 25];
-slides.forEach((sl, i) => { if (sl.classList.contains('s1')) return; const sh = document.createElement('div'); sh.className = 'sheet' + (DARK.includes(i) ? ' dark' : '') + (sl.dataset.wide ? ' wide' : ''); if (sl.dataset.besoins) { const bz = document.createElement('div'); bz.className = 'nourrit'; bz.setAttribute('aria-label', 'Besoins de l’engagement nourris'); bz.innerHTML = '<span>Nourrit</span>' + sl.dataset.besoins.split(',').map(x => '<em class="bz">' + x + '</em>').join(''); sh.prepend(bz); } while (sl.firstChild) sh.appendChild(sl.firstChild); sl.appendChild(sh); });
+const DARK = [4, 6, 11, 12, 17, 19, 20, 25, 26];
+slides.forEach((sl, i) => { if (sl.classList.contains('s1')) return; const sh = document.createElement('div'); sh.className = 'sheet' + (DARK.includes(i) ? ' dark' : '') + (sl.dataset.wide ? ' wide' : ''); if (sl.dataset.besoins) { const bz = document.createElement('div'); bz.className = 'nourrit'; bz.setAttribute('aria-label', 'Besoins de l’engagement nourris'); bz.innerHTML = (sl.dataset.mode ? '<i class="mode ' + sl.dataset.mode + '" title="' + (sl.dataset.mode === 'exp' ? 'Expansion : on ouvre, on cherche des idées (avec l’IA, les autres, soi-même)' : 'Restriction : on resserre, on choisit, on précise') + '"><svg viewBox="0 0 24 12" aria-hidden="true">' + (sl.dataset.mode === 'exp' ? '<path d="M9 6H1M4 2 0.5 6 4 10M15 6h8M20 2l3.5 4-3.5 4"/>' : '<path d="M0 6h9M5.5 2 9.5 6 5.5 10M24 6h-9M18.5 2 14.5 6l4 4"/>') + '</svg>' + (sl.dataset.mode === 'exp' ? 'Expansion' : 'Restriction') + '</i>' : '') + '<span>Nourrit</span>' + sl.dataset.besoins.split(',').map(x => '<em class="bz">' + x + '</em>').join(''); sh.prepend(bz); } while (sl.firstChild) sh.appendChild(sl.firstChild); sl.appendChild(sh); });
 let cur = 0;
 const DEMO_ENJEUX = [{ t: 'le gaspillage alimentaire', z: 'n' }, { t: 'l’isolement', z: 'c' }, { t: 'le décrochage', z: 'e' }];
 const store = { get(k, d) { try { const v = localStorage.getItem('rmd:' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem('rmd:' + k, JSON.stringify(v)); } catch (e) {} } };
@@ -1191,34 +1238,39 @@ document.addEventListener('click', e => { const im = e.target.closest('.capt img
 addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.zoom').forEach(z => z.remove()); });
 
 // ---------- un projet, toutes vos disciplines ----------
-const DISC = ['Intégration sociale (IS)', 'Insertion socioprofessionnelle (ISP)', 'Participation sociale (PPS)', 'DHS', 'Mathématiques', 'Sciences', 'Français', 'Francisation', 'Anglais', 'Orthopédagogie', 'Orientation', 'Conseil pédagogique', 'Direction'];
+const DISC = ['Intégration sociale (IS)', 'Intégration socioprofessionnelle (ISP)', 'Participation sociale (PPS)', 'DHS', 'Mathématiques', 'Sciences', 'Français', 'Francisation', 'Anglais', 'Orthopédagogie', 'Orientation', 'Conseil pédagogique', 'Direction'];
+const EXT = {"Participation sociale (PPS)": "Programme Participation sociale (MEQ 2022), bâti autour d’un projet et de quatre domaines. Cours : Z101 Projection vers l’avenir (mon projet de participation sociale), Z107 Alimentation saine, Z113 Réseau social sain, Z127 Achat et consommation, Z123 Identité culturelle. Atelier Développement durable : récupération, compost, réduction du gaspillage, projets verts du centre.", "Intégration sociale (IS)": "Programme Participation sociale / Intégration sociale (MEQ) : des apprentissages concrets pour l’autonomie dans la vie de tous les jours (se nourrir, gérer son budget, se déplacer, être à l’aise avec les autres), autour d’un projet personnel.", "DHS": "Développement des habiletés (sociales), programme local du centre, sans sanction. Quatre cycles : habiletés relationnelles, psychomoteur, cognitif, habiletés d’expression. Chaque élève a un objectif personnalisé et, idéalement, un petit projet personnel lié à son cycle.", "Intégration socioprofessionnelle (ISP)": "Sigles du répertoire du MEQ : ISP-3018 Gestion de ses interactions, ISP-3019 Gestion de son temps au travail, ISP-3020 Initiative au travail, ISP-3021 Formation à un emploi non spécialisé. Contenu détaillé à valider dans le programme.", "Mathématiques": "MAT-1101 Arithmétique appliquée aux finances (classe de situations : Gestion des finances ; ex. projet de groupe impliquant des frais ; pourcentages, raisonnement proportionnel). MAT-1102 Étude statistique et probabiliste (ex. démarrage d’un service alimentaire au centre, prise de position sur un enjeu social ; collecte de données, biais, moyenne). MAT-3052 Collecte de données (famille Traitement de données). MAT-3053 Représentation géométrique (famille Mesure et représentation spatiale ; plans, mesures manquantes). Compétences : communiquer, raisonner avec logique, exercer son sens critique et éthique.", "Sciences": "Sigles du répertoire du MEQ : SCT-P101 Enjeux écologiques des déchets-ressources, SCT-2101 Vers une éthique de l’environnement, SCT-4064 Les matières résiduelles, SCT-4062 Les changements climatiques. Contenu détaillé à valider dans le programme.", "Français": "FRA-2101 Vers une communication citoyenne (classe de situations : communications langagières liées à la vie politique et démocratique ; enjeux publics, exercice de la citoyenneté). FRA-3104 Informer et exercer une influence (familles : informer en élaborant des descriptions et des explications ; appuyer ses propos par des justifications et des arguments ; genres : compte rendu, article d’information, lettre de sollicitation, message publicitaire). Compétences : lire, écrire, communiquer oralement.", "Francisation": "Français, langue seconde : FRE-4102 Présenter un projet et en discuter, FRE-3104 Comprendre et transmettre des directives (sigles du répertoire du MEQ ; contenu détaillé à valider).", "Anglais": "ANG-3101 Joining a Community (C1 interagir oralement, C2 réinvestir sa compréhension des textes). ANG-4104 An Issue Close to My Heart (cours intégrateur : défendre une cause qui tient à cœur, production multimédia et exposé oral ; C1, C2, C3). ANG-5101 Examining Issues (enjeux sociaux, défense de points de vue).", "Orthopédagogie": "Pas de programme : rôle de soutien (stratégies de lecture et d’écriture, adaptation des tâches du projet).", "Orientation": "Pas de programme : rôle de soutien (intérêts, métiers liés au projet, lien avec le projet de vie).", "Conseil pédagogique": "Pas de programme : rôle de soutien (planification, liens interdisciplinaires, accompagnement des enseignants).", "Direction": "Pas de programme : rôle de soutien (temps protégé, horaire, partenariats)."};
 const dOn = new Set(DISC);
 DISC.forEach(t => { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip on'; b.textContent = t; b.onclick = () => { dOn.has(t) ? dOn.delete(t) : dOn.add(t); b.classList.toggle('on', dOn.has(t)); drawDisc(); }; $('#dpChips').appendChild(b); });
 let dpPlain = '', dpAuto = true;
-function drawDisc() { const top = vData.map(p => ({ n: p.n.trim(), t: p.v[0] + p.v[1] + p.v[2] })).filter(p => p.n && p.t > 0).sort((a, b) => b.t - a.t)[0];
+function drawDisc() { const top = vData.map((p, i) => ({ i, n: p.n.trim(), t: p.v[0] + p.v[1] + p.v[2] })).filter(p => p.n && p.t > 0).sort((a, b) => b.t - a.t)[0];
   if (top && dpAuto) $('#dpT').value = top.n;
+  const ph = top ? photoOf(top.i) : null, pe = $('#dpPhoto'); if (pe) { pe.hidden = !ph; if (ph) pe.src = ph; }
   const T = $('#dpT').value.trim() || '[titre du projet]', R = $('#dpR').value.trim() || '[le résultat visé]', A = $('#dpA').value.trim() || '[les actions]';
   dpPlain = 'Rôle : Tu es conseiller·ère pédagogique en formation générale des adultes (FGA) au Québec.\n'
     + 'Contexte : Des enseignants et des professionnels de la FGA ont choisi ce projet d’engagement citoyen : « ' + T + ' ». Résultat visé : ' + R + '. Actions : ' + A + '\n'
     + 'Les personnes présentes : ' + [...dOn].join(', ') + '.\n'
     + 'Tâche : Pour chaque discipline ou fonction, propose 2 contenus précis que ce projet permet de travailler avec les élèves (savoirs, compétences ou situations de vie), et une contribution concrète que cette personne peut apporter au projet. Pour une direction, l’orientation ou le conseil pédagogique, propose plutôt un rôle de soutien.\n'
-    + 'Programme : Si je te joins des extraits de programmes, appuie-toi uniquement sur eux. Sinon, écris « à valider dans le programme » à côté de chaque contenu.\n'
-    + 'Contraintes : un tableau (discipline · contenus · contribution · besoin de l’engagement nourri : compétence, autonomie, sens ou appartenance), en langage simple. Termine par une phrase qui montre que l’engagement est le moteur de tout le reste.';
+    + 'Extraits de programmes (Boussole CP du CFGA De Jonquière, d’après les programmes d’études du ministère de l’Éducation du Québec) :\n' + [...dOn].map(k => '- ' + k + ' : ' + (EXT[k] || 'à valider dans le programme.')).join('\n') + '\n'
+    + 'Programme : appuie-toi uniquement sur ces extraits. Quand un extrait dit « à valider », propose des pistes et écris « à valider dans le programme ». N’invente aucun sigle.\n'
+    + 'Contraintes : un tableau (discipline · contenus · contribution · besoin de l’engagement nourri : compétence, autonomie, sens ou appartenance), en langage simple. Termine par une phrase qui montre que l’engagement est le moteur de tout le reste. Sois précis et concret : chaque contenu cite son sigle ; aucune généralité.\n'
+    + 'Mise en forme : Un document Word prêt à imprimer : titre court, sections numérotées, tableaux à fines bordures noires, en-têtes mauves (#5B2A86), mots-clés surlignés en jaune (#F2C230), aucune couleur pastel, police lisible (Cambria 12 pt).';
   $('#dpOut').textContent = dpPlain; }
 ['dpR', 'dpA'].forEach(id => $('#' + id).addEventListener('input', drawDisc));
 $('#dpT').addEventListener('input', () => { dpAuto = false; drawDisc(); });
 $('#dpCopy').onclick = () => { const ok = () => $('#dpMsg').textContent = 'Copiée !'; const fb = () => { const rg = document.createRange(); rg.selectNodeContents($('#dpOut')); const sl = getSelection(); sl.removeAllRanges(); sl.addRange(rg); $('#dpMsg').textContent = 'Sélectionnée : Ctrl+C'; }; try { navigator.clipboard.writeText(dpPlain).then(ok, fb); } catch (e) { fb(); } };
-const DEX = [['Intégration sociale · ISP', 'organiser une tâche en étapes ; communiquer avec un partenaire', 'contacter l’organisme, planifier les corvées', 'Autonomie'],
-  ['PPS · DHS', 'saines habitudes de vie ; participation à la vie collective', 'le groupe porte le projet du début à la fin', 'Appartenance'],
-  ['Mathématiques', 'mesure et aire ; budget, coûts, proportions', 'calculer la surface du jardin et le budget des semences', 'Compétence'],
-  ['Sciences', 'besoins des végétaux ; qualité du sol', 'choisir les plantes et suivre leur croissance', 'Sens'],
-  ['Français · francisation', 'lettre de demande ; affiche informative', 'écrire à la Ville et au propriétaire du terrain', 'Compétence'],
-  ['Anglais', 'consignes et vocabulaire de l’environnement', 'une affiche bilingue pour le quartier', 'Sens'],
+const DEX = [['PPS · IS', 'Z107 Alimentation saine ; Z101 mon projet de participation sociale ; atelier Développement durable', 'le groupe porte le jardin du début à la fin, jusqu’à la récolte', 'Appartenance'],
+  ['DHS', 'cycle psychomoteur (semer, arroser) ; habiletés relationnelles', 'un objectif personnalisé par élève : « je m’occupe des semis »', 'Autonomie'],
+  ['ISP', 'ISP-3020 Initiative au travail ; ISP-3019 Gestion de son temps au travail', 'planifier l’horaire d’entretien avec l’organisme partenaire', 'Compétence'],
+  ['Mathématiques', 'MAT-3053 Représentation géométrique : plan du jardin, mesures ; MAT-1101 Gestion des finances : projet de groupe impliquant des frais', 'calculer la surface et le budget des semences', 'Compétence'],
+  ['Sciences', 'SCT-2101 Vers une éthique de l’environnement ; SCT-4064 Les matières résiduelles (compost)', 'choisir les plantes et suivre le compost', 'Sens'],
+  ['Français · francisation', 'FRA-3104 : lettre de sollicitation, message publicitaire ; FRE-4102 Présenter un projet et en discuter', 'écrire à la Ville, présenter le projet au quartier', 'Compétence'],
+  ['Anglais', 'ANG-4104 An Issue Close to My Heart : défendre une cause, production multimédia', 'une capsule bilingue sur le jardin', 'Sens'],
   ['Orthopédagogie', 'stratégies de lecture de consignes', 'adapter les fiches de tâches', 'Compétence'],
   ['Orientation', 'intérêts et métiers liés à l’horticulture', 'relier le projet au projet de vie des élèves', 'Sens'],
   ['Direction · conseil pédagogique', 'conditions : temps protégé, horaire, partenariats', 'réserver une période commune, signer l’entente avec l’organisme', 'Autonomie']];
 $('#dpEx').onclick = () => { const bx = $('#dpExBox'); if (!bx.hidden) { bx.hidden = true; $('#dpEx').textContent = 'Voir un exemple'; return; }
-  bx.innerHTML = '<p class="cap">Exemple préparé d’avance, pour le projet « Un jardin collectif avec le quartier ». Les contenus sont à valider dans les programmes.</p><table class="ctx"><thead><tr><th>Discipline</th><th>Contenus</th><th>Contribution</th><th>Nourrit</th></tr></thead><tbody>' + DEX.map(r => '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td><td>' + r[2] + '</td><td><em class="bz">' + r[3] + '</em></td></tr>').join('') + '</tbody></table>';
+  bx.innerHTML = '<p class="cap">Exemple préparé d’avance, pour le projet « Un jardin collectif avec le quartier ». Les sigles viennent de la Boussole CP, d’après les programmes du MEQ ; les liens avec le projet sont des pistes à valider.</p><table class="ctx"><thead><tr><th>Discipline</th><th>Contenus</th><th>Contribution</th><th>Nourrit</th></tr></thead><tbody>' + DEX.map(r => '<tr><th>' + r[0] + '</th><td>' + r[1] + '</td><td>' + r[2] + '</td><td><em class="bz">' + r[3] + '</em></td></tr>').join('') + '</tbody></table>';
   bx.hidden = false; $('#dpEx').textContent = 'Masquer l’exemple'; };
 setTimeout(drawDisc, 0);
 
@@ -1235,9 +1287,9 @@ $('#vidIn').onchange = e => loadVid(e.target.files[0]);
 const vz = $('#vidZone'); vz.addEventListener('dragover', e => e.preventDefault()); vz.addEventListener('drop', e => { e.preventDefault(); loadVid(e.dataTransfer.files[0]); });
 
 // ---------- Copilot ----------
-const ROLES = ['Tu es enseignant·e en Participation sociale (PPS) en FGA.', 'Tu es enseignant·e en DHS en FGA.', 'Tu es enseignant·e en Intégration sociale (IS) en FGA.', 'Tu es enseignant·e en Insertion socioprofessionnelle (ISP) en FGA.', 'Tu es enseignant·e en adaptation scolaire.', 'Tu es intervenant·e scolaire en FGA.', 'Tu es enseignant·e de français en FGA, en enseignement individualisé.', 'Tu es enseignant·e de mathématiques et sciences en FGA, en enseignement individualisé.', 'Tu es orthopédagogue en FGA.', 'Tu es enseignant·e d’anglais en FGA.', 'Tu es conseiller·ère d’orientation en FGA.', 'Tu es direction d’un centre de formation générale des adultes.', 'Tu es conseiller·ère pédagogique en FGA au Québec.'];
+const ROLES = ['Tu es enseignant·e en Participation sociale (PPS) en FGA.', 'Tu es enseignant·e en DHS en FGA.', 'Tu es enseignant·e en Intégration sociale (IS) en FGA.', 'Tu es enseignant·e en Intégration socioprofessionnelle (ISP) en FGA.', 'Tu es enseignant·e en adaptation scolaire.', 'Tu es intervenant·e scolaire en FGA.', 'Tu es enseignant·e de français en FGA, en enseignement individualisé.', 'Tu es enseignant·e de mathématiques et sciences en FGA, en enseignement individualisé.', 'Tu es orthopédagogue en FGA.', 'Tu es enseignant·e d’anglais en FGA.', 'Tu es conseiller·ère d’orientation en FGA.', 'Tu es direction d’un centre de formation générale des adultes.', 'Tu es conseiller·ère pédagogique en FGA au Québec.'];
 const TACHES = ['Propose 5 micro-actions concrètes et SMART à partir de notre analyse de contexte : [collez vos leviers et vos « je remarque que »].', 'Transforme notre résultat en 3 actions SMART, avec un verbe conjugué, un responsable et une date.', 'Génère une grille d’évaluation descriptive à 4 niveaux centrée sur la résolution de problèmes.', 'Propose 8 questions d’objectivation : 2 avant, 3 pendant, 3 après.', 'Propose une situation d’apprentissage de 3 périodes en 3 niveaux de complexité.'];
-const CONTR = ['Langage simple, accessible aux élèves.', 'Présentation en tableau.', 'Aucune note chiffrée.', 'Liens avec les savoirs du sigle.', 'Liste du matériel.', 'Signale toute formulation qui est encore un résultat.'];
+const CONTR = ['Un document Word prêt à imprimer : titre court, sections numérotées, tableaux à fines bordures noires, en-têtes mauves (#5B2A86), mots-clés surlignés en jaune (#F2C230), aucune couleur pastel, police lisible (Cambria 12 pt).', 'Langage simple, accessible aux élèves.', 'Présentation en tableau.', 'Aucune note chiffrée.', 'Liens avec les savoirs du sigle.', 'Liste du matériel.', 'Signale toute formulation qui est encore un résultat.'];
 function fillSel(id, arr) { const sel = $('#' + id); arr.forEach((t, i) => { const o = document.createElement('option'); o.value = i; o.textContent = t; sel.appendChild(o); }); const o = document.createElement('option'); o.value = 'x'; o.textContent = 'Autre : je l’écris moi-même'; sel.appendChild(o);
   sel.onchange = () => { $('#' + id + 'x').hidden = sel.value !== 'x'; upd(); }; $('#' + id + 'x').oninput = upd; }
 fillSel('r1', ROLES); fillSel('r3', TACHES);
@@ -1256,7 +1308,7 @@ const RESSOURCES = 'https://claude.ai/artifact/SMB1bWSXHDzLNmfYQsGvwG#ressources
 
 // =================== MONDE 3D EN CEL-SHADING ===================
 // Un seul monde, 11 stations reliées par un sentier. La caméra vole d'une station à l'autre.
-const STATIONS = ['aerial', 'aerial', 'globe', 'aerial', 'aerial', 'spheres', 'spheres', 'triade', 'triade', 'village', 'nomverbe', 'aerial', 'aerial', 'escalier', 'portes', 'jetons', 'aerial', 'aerial', 'pas', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'aerial', 'aerial'];
+const STATIONS = ['aerial', 'globe', 'aerial', 'aerial', 'aerial', 'aerial', 'spheres', 'spheres', 'triade', 'triade', 'village', 'nomverbe', 'aerial', 'aerial', 'escalier', 'portes', 'jetons', 'aerial', 'aerial', 'pas', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'aerial', 'aerial'];
 const G3 = (() => {
   if (!window.THREE) return { activate() {}, st: {} };
   const T = THREE, V = T.Vector3;
@@ -1418,14 +1470,25 @@ drawMur();
 $('#pyrSwitch').onclick = () => { const s = G3.st.pyr; if (!s) return; s.mode = 1 - s.mode; $('#pyrQ').textContent = s.mode ? 'Où se situe l’atelier d’aujourd’hui ?' : 'Où se situait votre dernière formation ?'; $('#pyrSwitch').textContent = s.mode ? 'Revenir à la dernière formation' : 'Et l’atelier d’aujourd’hui ?'; };
 $('#pyrReset').onclick = () => { const s = G3.st.pyr; if (!s) return; s.votes = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]; store.set('pyr', s.votes); s.redraw(); };
 // votes
-const vData = store.get('votes2', [1, 2, 3, 4, 5].map(i => ({ n: '', v: [0, 0, 0] })));
+const NB_ILOTS = 4;
+const vData = store.get('votes4', Array.from({ length: NB_ILOTS }, () => ({ n: '', v: [0, 0, 0] })));
 const vEl = $('#votes');
-function drawVotes() { vEl.innerHTML = ''; vData.forEach((p, i) => { const d = document.createElement('div'); d.innerHTML = `<input type="text" id="vn${i}" aria-label="Titre du projet de l’îlot ${i + 1}" placeholder="Titre du projet, îlot ${i + 1}" value="${p.n.replace(/"/g, '&quot;')}"><div><button style="background:var(--gold)">+ Coup de cœur</button><button style="background:#D9541E;color:#fff">+ Oui, et…</button><button style="background:var(--mauve);color:var(--paper)">+ On est capables</button></div><div class="cap">Total ${p.v[0] + p.v[1] + p.v[2]} · cœur ${p.v[0]} · oui, et ${p.v[1]} · capables ${p.v[2]}</div>`;
-  d.querySelector('input').oninput = e => { p.n = e.target.value; store.set('votes2', vData); G3.st.jetons && G3.st.jetons.draw(vData); };
-  d.querySelectorAll('button').forEach((b, k) => b.onclick = () => { p.v[k]++; store.set('votes2', vData); drawVotes(); });
+const VLAB = [['Cœur', 'var(--gold)', 'var(--ink)'], ['Oui, et', '#D9541E', '#fff'], ['Capables', 'var(--mauve)', '#fff']];
+const photoOf = i => store.get('photo' + i, null);
+// Photo d'un îlot : réduite à 900 px pour rester légère dans le navigateur
+function loadPhoto(file, i, done) { if (!file || !file.type.startsWith('image')) return; const fr = new FileReader(); fr.onload = () => { const im = new Image(); im.onload = () => { const k = Math.min(1, 900 / Math.max(im.width, im.height)); const c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); store.set('photo' + i, c.toDataURL('image/jpeg', .72)); done(); }; im.src = fr.result; }; fr.readAsDataURL(file); }
+function drawVotes() { vEl.innerHTML = ''; vData.forEach((p, i) => { const d = document.createElement('div'); d.className = 'vcard'; const ph = photoOf(i);
+  d.innerHTML = `<input type="text" id="vn${i}" aria-label="Titre du projet de l’îlot ${i + 1}" placeholder="Îlot ${i + 1} : titre du projet" value="${p.n.replace(/"/g, '&quot;')}">`
+    + `<label class="vph">${ph ? `<img class="vthumb" src="${ph}" alt="Photo du projet de l’îlot ${i + 1}">` : '<span>+ Photo du plexiglas</span>'}<input type="file" accept="image/*" hidden></label>`
+    + VLAB.map(([l, bg, fg], k) => `<div class="vrow"><b style="background:${bg};color:${fg}">${l}</b><input type="number" min="0" inputmode="numeric" aria-label="${l}, îlot ${i + 1}" value="${p.v[k]}"></div>`).join('')
+    + `<div class="cap">Total ${p.v[0] + p.v[1] + p.v[2]}</div>`;
+  d.querySelector('input[type=text]').oninput = e => { p.n = e.target.value; store.set('votes4', vData); G3.st.jetons && G3.st.jetons.draw(vData); typeof drawDisc === 'function' && drawDisc(); };
+  d.querySelectorAll('input[type=number]').forEach((inp, k) => inp.onchange = () => { p.v[k] = Math.max(0, parseInt(inp.value, 10) || 0); store.set('votes4', vData); drawVotes(); });
+  const fi = d.querySelector('input[type=file]'); fi.onchange = () => loadPhoto(fi.files[0], i, drawVotes);
+  const th = d.querySelector('.vthumb'); if (th) th.addEventListener('click', e => { if (e.altKey) return; e.preventDefault(); const z = document.createElement('figure'); z.className = 'zoom'; z.innerHTML = '<img alt=""><figcaption></figcaption>'; z.querySelector('img').src = th.src; z.querySelector('figcaption').textContent = p.n || 'Îlot ' + (i + 1); z.onclick = () => z.remove(); document.body.appendChild(z); });
   vEl.appendChild(d); }); G3.st.jetons && G3.st.jetons.draw(vData); typeof drawDisc === 'function' && drawDisc(); }
 drawVotes();
-const rz = document.createElement('button'); rz.className = 'btn alt'; rz.textContent = 'Remettre à zéro'; rz.style.marginTop = '10px'; rz.onclick = () => { vData.forEach(p => p.v = [0, 0, 0]); store.set('votes2', vData); drawVotes(); }; vEl.after(rz);
+const rz = document.createElement('button'); rz.className = 'btn alt'; rz.textContent = 'Remettre à zéro (titres, votes, photos)'; rz.style.marginTop = '10px'; rz.onclick = () => { vData.forEach((p, i) => { p.v = [0, 0, 0]; p.n = ''; try { localStorage.removeItem('rmd:photo' + i); } catch (e) {} }); store.set('votes4', vData); drawVotes(); }; vEl.after(rz);
 
 const h = parseInt((location.hash.match(/^#s(\d+)$/) || [])[1] || '1', 10);
 go(h - 1);

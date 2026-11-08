@@ -13,7 +13,7 @@ function zone(lab, h = 1400, w = W) {
       children: [new d.Paragraph({ children: [new d.TextRun({ text: lab, font: SANS, size: 15, smallCaps: true, bold: true, characterSpacing: 30, color: C.accent })] })] })] })] });
 }
 // Étiquette « Nourrit » : les besoins de l'engagement que l'activité nourrit
-function nourrit(...bs) { return new d.Paragraph({ alignment: d.AlignmentType.RIGHT, spacing: { before: 0, after: 100 }, keepNext: true, children: [new d.TextRun({ text: 'NOURRIT  ', font: SANS, size: 14, bold: true, characterSpacing: 40, color: C.grey }), ...bs.flatMap((b, i) => [new d.TextRun({ text: ' ' + b.toUpperCase() + ' ', font: 'Anton', size: 18, shading: { type: d.ShadingType.CLEAR, color: 'auto', fill: C.yellow } }), new d.TextRun({ text: i < bs.length - 1 ? '  ' : '' })])] }); }
+function nourrit(...bs) { let mode = null; if (bs[0] === 'EXP' || bs[0] === 'RES') mode = bs.shift(); return new d.Paragraph({ alignment: d.AlignmentType.RIGHT, spacing: { before: 0, after: 100 }, keepNext: true, children: [...(mode ? [new d.TextRun({ text: mode === 'EXP' ? ' ↔ EXPANSION ' : ' → ← RESTRICTION ', font: 'Anton', size: 18, color: mode === 'EXP' ? 'FFFFFF' : C.yellow, shading: { type: d.ShadingType.CLEAR, color: 'auto', fill: mode === 'EXP' ? C.accent : C.ink } }), new d.TextRun({ text: '   ' })] : []), new d.TextRun({ text: 'NOURRIT  ', font: SANS, size: 14, bold: true, characterSpacing: 40, color: C.grey }), ...bs.flatMap((b, i) => [new d.TextRun({ text: ' ' + b.toUpperCase() + ' ', font: 'Anton', size: 18, shading: { type: d.ShadingType.CLEAR, color: 'auto', fill: C.yellow } }), new d.TextRun({ text: i < bs.length - 1 ? '  ' : '' })])] }); }
 // Grille de zones côte à côte
 function zones(labs, h = 1800) {
   const w = Math.floor(W / labs.length);
@@ -39,7 +39,7 @@ const kids = [
   P('Isabelle Pedneault, CP, CFGA De Jonquière · Francis Laroche, chargé de projet en éducation citoyenne mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean', { run: { size: 18, color: C.grey } }),
 
   H1('01', 'Ce qui me préoccupe dans mon milieu'),
-  nourrit('Sens'),
+  nourrit('EXP', 'Sens'),
   P('En entrant, notez sur un post-it une chose qui vous préoccupe, vous dérange ou vous manque dans votre milieu. Collez-le au mur, dans le cercle qui lui ressemble : école, communauté ou nature.'),
   zone('Ce qui me préoccupe, me dérange ou me manque dans mon milieu', 1000),
 
@@ -53,21 +53,21 @@ const kids = [
     ['**Sens**', 'Je comprends pourquoi c’est important pour moi.'],
     ['**Appartenance**', 'Je compte pour quelqu’un ici.']
   ], [2400, 7500], { firstAccent: true }),
-  P('Tout au long du cahier, l’étiquette **Nourrit** indique le besoin que l’activité nourrit chez vous… et chez vos élèves.', { before: 80, run: { size: 18, italics: true, color: C.grey } }),
+  P('Tout au long du cahier, l’étiquette **Nourrit** indique le besoin que l’activité nourrit chez vous… et chez vos élèves. L’étiquette **Expansion** signale un moment où l’on ouvre et cherche des idées (avec l’IA, les autres, soi-même) ; **Restriction**, un moment où l’on resserre, choisit et précise.', { before: 80, run: { size: 18, italics: true, color: C.grey } }),
 
   H1('03', 'Mon monde idéal · pense'),
-  nourrit('Autonomie'),
+  nourrit('EXP', 'Autonomie'),
   P('Sans limite de budget ni de ressources matérielles ou humaines, à quoi ressemblerait votre monde idéal ? **Seul, 3 minutes :** des mots-clés dans un ou plusieurs cercles. **Puis 2 minutes :** qu’est-ce qui relie deux cercles ? Écrivez-le dans l’intersection.'),
   img(I + 'venn_cahier.png', 600, 533),
   ...note('Modèle', ['École : *créativité*. Communauté : *collaboration*. Entre les deux : « La communauté entre dans nos murs et fait vivre aux élèves des moments de créativité. »', 'Une erreur, c’est la preuve qu’on est en action. Le « je ne sais pas » et les cases vides sont permis : votre îlot vous aidera.']),
 
   H1('04', 'Parle et partage, en îlot'),
-  nourrit('Appartenance', 'Compétence'),
+  nourrit('RES', 'Appartenance', 'Compétence'),
   P('**Parle, 5 minutes.** Chacun partage. Pour chaque cercle, l’îlot garde ce qui revient ; on aide ceux qui n’ont pas trouvé d’intersection. On l’écrit au crayon effaçable sur la surface verticale, sur l’affiche des trois cercles. **Partage, 3 minutes :** chaque îlot nomme ce qu’il a gardé.'),
   tbl(['', 'Ce que notre îlot garde'], [['**École**', P(' ', { after: 420 })], ['**Communauté**', P(' ', { after: 420 })], ['**Nature**', P(' ', { after: 420 })], ['**Les intersections**', P(' ', { after: 420 })]], [2400, 7500], { firstAccent: true }),
 
   H1('05', 'L’analyse de contexte'),
-  nourrit('Compétence', 'Sens'),
+  nourrit('EXP', 'Compétence', 'Sens'),
   P('Pour ce que j’ai noté dans mon monde idéal : qu’est-ce qui existe déjà ? Des leviers, des personnes, des lieux, des infrastructures, des organismes qui m’aident ou qui y tendent. Et qu’est-ce que je remarque ? Rien n’existe ? Notez de quoi votre centre aurait besoin pour s’y rendre.'),
   tbl(['', '+ Leviers : ce qui existe déjà (forces)', 'Je remarque que… (ce qui manque)'], [
     ['**École**', P(' ', { after: 760 }), P(' ', { after: 760 })],
@@ -77,7 +77,7 @@ const kids = [
   P('Modèle. Nature : + un boisé derrière le centre ; je remarque qu’il n’y a pas de verdure autour du stationnement. Communauté : + le Centre de solidarité internationale ; je remarque qu’on fait peu appel aux organismes communautaires.', { before: 80, run: { size: 18, italics: true, color: C.grey } }),
 
   H1('06', 'Résultat ou action ?'),
-  nourrit('Compétence'),
+  nourrit('RES', 'Compétence'),
   P('Le ==résultat== est ce qu’on souhaite : souvent un **nom**. L’==action== est ce qu’on fait lundi : un **verbe**, avec quelqu’un qui agit et une date. Dans vos cercles, ce qui vous interpelle le plus devient votre résultat. Puis, une ou des actions concrètes qui y mènent.'),
   img(I + 'il_gngv.png', 520, 225, { before: 60 }),
   zone('Mon résultat : ce qui m’interpelle le plus dans mes cercles', 800),
@@ -94,7 +94,7 @@ const kids = [
   P('D’après la fiche « Objectif SMART » d’Isabelle Pedneault.', { before: 60, run: { size: 17, italics: true, color: C.grey } }),
 
   H1('07', 'Notre projet d’îlot'),
-  nourrit('Appartenance', 'Autonomie'),
+  nourrit('RES', 'Appartenance', 'Autonomie'),
   P('En îlot : ce qui nous interpelle (3 min), des actions concrètes (6 min), un titre (1 min), puis tout au plexiglas, avec l’espace des votes (2 min).'),
   tbl(null, [
     [P('**Le titre de notre projet**', { after: 420 })],
@@ -106,7 +106,7 @@ const kids = [
   zone('Ce que Copilot a proposé, et ce qu’on garde', 1000),
 
   H1('08', 'La galerie et les votes'),
-  nourrit('Autonomie', 'Appartenance'),
+  nourrit('RES', 'Autonomie', 'Appartenance'),
   P('Une personne par îlot explique le projet ; les autres circulent. Chacun a 3 post-it, un de chaque couleur, à coller sur le résultat ou sur une action. 1 post-it = 1 point. À mi-temps, on change de rôle.'),
   tbl(['Vote', 'Couleur', 'Ce qu’il veut dire'], [
     ['**Coup de cœur**', 'jaune', '« Ce projet me touche, il a du sens. »'],
@@ -121,12 +121,12 @@ const kids = [
   zones(['Mon top 3 des forces', 'Mon top 3 des défis'], 1300),
 
   H1('10', 'Un projet, toutes nos disciplines'),
-  nourrit('Sens'),
+  nourrit('EXP', 'Sens'),
   P('Le projet le plus voté devient celui du groupe. En un clic, Copilot montre ce que chaque discipline présente peut y travailler. Et si ce projet se réalisait dans votre milieu ?'),
   zones(['Le projet du groupe', 'Ce que mon sigle ou ma fonction peut y apporter'], 1300),
 
   H1('11', 'Mon premier pas, de retour dans mon milieu'),
-  nourrit('Autonomie'),
+  nourrit('RES', 'Autonomie'),
   img(I + 'il_billet.png', 560, 214),
   P('Des idées : demander lundi à mon groupe « Qu’est-ce qui vous préoccupe ? » · transformer une tâche de mon sigle à partir d’un enjeu choisi par l’élève · terminer une période par un 3-2-1 · proposer un projet-pont à une ou un collègue de PPS, de DHS, d’IS ou d’ISP · direction ou services : protéger une période commune pour qu’une équipe essaie la démarche.', { run: { size: 19 } }),
   zone('1 · Mon action (un verbe !)', 900),
@@ -151,12 +151,13 @@ const kids = [
     ['Le choix et le vote', 'La galerie', 'Autonomie', '☐'],
     ['La rétroaction par les pairs', 'Le vote « Oui, et… »', 'Compétence', '☐'],
     ['Les forces comme leviers', 'On est capables', 'Autonomie', '☐'],
+    ['Expansion et restriction', 'Ouvrir pour chercher, puis resserrer pour choisir', 'Autonomie', '☐'],
     ['L’IA au service du sens', 'Un projet, toutes nos disciplines', 'Sens', '☐'],
     ['L’objectivation', 'Le 3-2-1', 'Compétence', '☐']
   ], [3300, 3500, 1900, 1200], { firstAccent: true }),
 
   H1('13', 'Décloisonner'),
-  nourrit('Sens', 'Appartenance'),
+  nourrit('EXP', 'Sens', 'Appartenance'),
   P('Une histoire vraie : des élèves étaient bons pour faire des décors. À l’Halloween, c’est le comité de vie étudiante qui s’en charge. Francis en parle avec l’enseignante d’arts plastiques, et les élèves ont participé. Ça n’a rien coûté, et tout le monde y a gagné : l’élève y a trouvé du sens.'),
   B('**Des ateliers par besoin :** trois classes de français au même moment ; l’élève va où il en a besoin.'),
   B('**Une heure sur trois** pour un projet d’engagement : le pari qu’elle se regagne par trois.'),
@@ -164,7 +165,7 @@ const kids = [
   zone('Et dans mon centre, je pourrais décloisonner…', 1100),
 
   H1('14', 'Objectivation 3-2-1'),
-  nourrit('Compétence'),
+  nourrit('RES', 'Compétence'),
   P('On termine comme on aimerait que nos élèves terminent : en regardant le chemin parcouru.'),
   zone('3 idées que je retiens', 1300),
   SP(60),

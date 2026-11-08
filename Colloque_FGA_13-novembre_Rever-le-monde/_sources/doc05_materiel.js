@@ -43,7 +43,7 @@ const kids = [
 
   // Affiches de l'îlot (surface verticale)
   H1('B', 'Les affiches de l’îlot · surface verticale'),
-  P('Une de chaque par îlot (prévoir 7 îlots), collées derrière le plexiglas. On écrit dessus au crayon effaçable. Fichiers 05c et 05d, en 11 × 17 po.', { run: { size: 19, color: C.grey } }),
+  P('Une de chaque par îlot (4 îlots), collées derrière le plexiglas. On écrit dessus au crayon effaçable. Fichiers 05c et 05d, en 11 × 17 po.', { run: { size: 19, color: C.grey } }),
   grid([[img(I + 'affiche_monde.jpg', 300, 463, { after: 40 }), P('05c · Notre monde idéal', { align: d.AlignmentType.CENTER, run: { size: 18 } })], [img(I + 'affiche_projet.jpg', 300, 463, { after: 40 }), P('05d · Notre projet', { align: d.AlignmentType.CENTER, run: { size: 18 } })]].map(c => c), 2, 7800),
   BR(),
 
