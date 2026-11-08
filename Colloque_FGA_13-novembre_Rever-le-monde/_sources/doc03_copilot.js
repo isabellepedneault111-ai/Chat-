@@ -25,7 +25,7 @@ const kids = [
   ...note('Le truc qui change tout', ['Copilot ne va pas chercher le programme lui-même : collez l’extrait du programme (compétences, savoirs, famille de situations de vie) ou joignez le PDF du programme ou de la DDE avec le trombone. Il travaille alors avec le vrai contenu du sigle au lieu de le deviner. Sans source, il peut inventer un savoir ou une compétence : l’invite lui demande de le dire plutôt que d’inventer.'], { before: 120 }),
   P('Ensuite, **dialoguez** : « Simplifie le niveau 2 », « Ajoute un exemple pour un élève en individualisé », « Reformule au tutoiement ». La première réponse est un brouillon.', { before: 120 }),
 
-  H1('02', 'Cinq invites pour l’atelier et pour lundi'),
+  H1('02', 'Sept invites pour l’atelier et pour lundi'),
   ...prompt('1 · Une grille d’évaluation descriptive', [
     'Tu es conseiller pédagogique en formation générale des adultes au Québec.',
     'Contexte : un groupe d’adultes du programme Participation sociale réalise un projet citoyen sur [l’enjeu].',
@@ -58,6 +58,21 @@ const kids = [
     'Tu es enseignant de français en FGA.',
     'Tâche : crée un court exercice où les élèves décrivent leur « monde idéal » avec des groupes du nom enrichis (noyau et expansions), puis transforment chaque GN en groupe du verbe avec un sujet qui agit et une date.',
     'Contraintes : 6 items, corrigé à part, thème lié à leur centre ou à leur quartier.'
+  ]),
+  ...prompt('6 · Des micro-actions à partir de notre analyse de contexte', [
+    'Tu es enseignant·e en formation générale des adultes au Québec.',
+    'Contexte : notre groupe veut agir sur ce résultat : « [notre résultat] ».',
+    'Notre analyse de contexte : leviers (ce qui existe déjà) : [collez vos leviers]. Ce que nous remarquons : [collez vos « je remarque que »].',
+    'Tâche : propose 5 micro-actions concrètes, réalisables en quelques semaines par des adultes en formation, qui s’appuient sur nos leviers. Chacune est SMART : spécifique, mesurable, atteignable, représentative (pourquoi elle compte pour nous) et temporelle.',
+    'Contraintes : une phrase par action, avec un verbe conjugué, qui et quand ; présentation en tableau.'
+  ]),
+  ...prompt('7 · Un projet, toutes nos disciplines', [
+    'Tu es conseiller·ère pédagogique en formation générale des adultes (FGA) au Québec.',
+    'Contexte : notre équipe a choisi ce projet d’engagement citoyen : « [titre] ». Résultat visé : [résultat]. Actions : [actions].',
+    'Les personnes de notre équipe : [disciplines ou fonctions].',
+    'Tâche : pour chaque discipline ou fonction, propose 2 contenus précis que ce projet permet de travailler avec les élèves, et une contribution concrète au projet. Pour une direction, l’orientation ou le conseil pédagogique, propose un rôle de soutien.',
+    'Programme : appuie-toi uniquement sur les extraits de programmes que je te joins ; sinon, écris « à valider dans le programme ».',
+    'Contraintes : un tableau (discipline · contenus · contribution · besoin de l’engagement nourri).'
   ]),
 
   H1('03', 'Innover au CFGA : six questions avant de se lancer'),

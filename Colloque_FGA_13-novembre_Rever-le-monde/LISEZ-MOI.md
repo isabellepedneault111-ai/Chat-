@@ -11,7 +11,9 @@ Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (cha
 | `02_Cahier-du-participant.docx` | Chaque participant | Le cahier qui suit l’atelier, avec des espaces pour noter à chaque phase et la fiche « Mon premier pas » |
 | `03_Aide-memoire-Copilot.docx` | Chaque participant | La formule rôle, contexte, tâche, contraintes, 5 invites prêtes à copier, les balises |
 | `04_Annexe_Objectivation.docx` | Chaque participant | Définition, la maison à trois étages, la banque de questions, 7 formats, un gabarit de carnet de bord |
-| `05b_Affiche_Mur-d-enjeux_11x17.pdf` | Les animateurs | L’affiche du mur d’enjeux en 11 × 17 po, avec les trois cercles de la triade : à imprimer ou à faire agrandir, une par séance |
+| `05b_Affiche_Mur-d-enjeux_11x17.pdf` | Les animateurs | L’affiche du mur d’enjeux en 11 × 17 po (« Qu’est-ce qui vous préoccupe ou vous dérange dans votre milieu ? »), avec les trois cercles école, communauté, nature : à imprimer ou à faire agrandir, une par séance |
+| `05c_Affiche_Ilot_Notre-monde-ideal_11x17.pdf` | Les animateurs | L’affiche de l’îlot pour la surface verticale : les trois cercles école, communauté, nature (7 par séance) |
+| `05d_Affiche_Ilot_Notre-projet_11x17.pdf` | Les animateurs | L’affiche de l’îlot « Notre projet » : titre, résultat, actions et l’espace des trois votes (7 par séance) |
 | `05_Materiel-a-imprimer.docx` | Les animateurs | Affiche du mur d’enjeux, fiches « Mon premier pas », jetons, cartons de signaux |
 | `06_Presenter-au-TNI.docx` | Les animateurs | La marche à suivre pour présenter au TNI : la veille, le jour J, les gestes au doigt, le dépannage |
 | `07_Annexe_Jai-mon-plan.docx` | Chaque participant | Les capacités et la banque de moyens de « J’ai MON plan! » (Parcours FGA), à cocher, et le lien avec la démarche |
@@ -19,7 +21,7 @@ Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (cha
 | `09_Aide-memoire_Engagement.docx` | Chaque participant | L’affiche « L’engagement, un écosystème vivant » en une page, et la CUA de la Boussole CP |
 | `10_Annexe_Autoevaluation-interventions-universelles.docx` | Chaque participant | L’autoévaluation de ses interventions universelles : 16 énoncés de la grille EN.1.1 reliés aux 4 besoins, et un bilan |
 | `10b_EN.1.1_Grille-reflexive_Jai-MON-plan.pdf` | Chaque participant | La grille réflexive complète de « J’ai MON plan! » (Gaudreau, Duchaine et Bernier, Université Laval) |
-| `presentation/index.html` | La salle | Présentation interactive de 20 diapos, en 3D, qui fonctionne sans Internet |
+| `presentation/index.html` | La salle | Présentation interactive de 26 diapos, en 3D, qui fonctionne sans Internet |
 
 ## La page Ressources (pour les participants)
 
@@ -45,23 +47,16 @@ La présentation est un voyage dans un seul monde 3D en cel-shading : un sol de 
 - **T** lance un minuteur de 5 minutes. Plusieurs diapos ont aussi leurs propres boutons de minuteur.
 - **F** passe en plein écran.
 
-Ce qui est interactif :
+Le déroulé, en 26 diapos. Chaque diapo d’activité porte l’étiquette **Nourrit** (le besoin de l’engagement qu’elle nourrit) et une boîte **Modèle** quand on modélise avant de faire.
 
-- **Diapo 2 :** les présentations d’Isabelle et de Francis (ma devise, mon outil préféré, si c’était à refaire, mon conseil numéro 1). On clique sur un champ pour l’écrire.
-- **Diapo 3 :** le globe 3D des enjeux. On choisit le cercle (école, communauté, environnement ou les trois), on tape l’enjeu, et il s’accroche au globe dans la couleur du cercle. Un compteur montre où sont tombés les post-it ; il revient sous la triade, à la diapo 6.
-- **Diapo 7 :** l’engagement : vrai ou faux, puis les définitions (motivation, engagement, engagement citoyen).
-- **Diapo 8 :** les 4 sphères en 3D. On touche une planète ou son nom pour voir sa définition.
-- **Diapo 9 :** le détecteur « résultat ou action ? ».
-- **Diapo 10 :** les 5 marches de la démarche, qu’on révèle une à une.
-- **Diapo 11 :** les trois portes d’entrée, avec des exemples pour la PPS, le DHS, l’IS et l’ISP, chaque matière, et les directions et services.
-- **Diapo 12 :** l’espace pour glisser la vidéo des élèves (fichier local).
-- **Diapo 13 :** en îlot, les 4 étapes obligatoires avec leur minuteur.
-- **Diapo 14 :** le générateur d’invites Copilot : on choisit le rôle et on écrit son groupe, son sigle, son enjeu et ses contraintes. L’invite demande à Copilot de s’appuyer sur le programme d’études officiel de la FGA (compétences, savoirs, famille de situations de vie) ; le bouton « Copier » la met dans le presse-papier.
-- **Diapo 15 :** les piles de jetons 3D du vote, sous le nom de l’enjeu de chaque îlot.
-- **Diapo 16 :** Mon premier pas, avec des exemples et le pont avec le cadre d’innovation du CFGA (temps protégé, validation par les pairs, pérennité).
-- **Diapo 17 :** la pyramide 3D, en retour sur l’atelier. On touche l’étage de sa dernière formation.
-- **Diapo 19 :** ce qui reste : de vrais mots d’élèves, reliés aux 4 besoins de l’engagement.
-- **Diapo 20 :** le code QR mène au dossier Drive partagé des ressources (à partager en lecture).
+- **1 à 3 · Accueil :** couverture, présentations, le mur d’enjeux (on choisit le cercle école, communauté ou nature, et le post-it s’accroche au globe).
+- **4 à 7 · Le pari :** et si le but ultime, c’était l’engagement ? Les intentions, l’engagement, les 4 sphères (optionnel).
+- **8 à 10 · Le monde idéal :** pense (les trois cercles), parle et partage au plexiglas, l’analyse de contexte.
+- **11 à 15 · Le pivot :** résultat ou action (enseignement explicite), en îlot du résultat aux actions, Copilot, les 5 marches, les trois portes.
+- **16 à 18 · Le vote :** la galerie et les trois votes (coup de cœur, oui et…, on est capables), nos forces, le coup de théâtre « un projet, toutes vos disciplines ».
+- **19 à 26 · Le bilan :** mon premier pas, ce que vous avez vécu (le dévoilement des pratiques), les élèves de PPS et les projets, décloisonner, la pyramide (optionnel), 3-2-1, ce qui reste, merci.
+
+Le minuteur lancé depuis une diapo disparaît quand on change de diapo. La touche T lance un minuteur de 5 minutes qui reste affiché.
 
 Ce que la salle saisit (enjeux, votes) reste sur l’ordinateur qui présente. Les boutons « Vider » et « Remettre à zéro » effacent ces données entre deux séances.
 
