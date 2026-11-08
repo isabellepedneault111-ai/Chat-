@@ -10,14 +10,14 @@ const kids = [
   H1('01', 'La veille'),
   N('Copiez le fichier **presentation/index.html** sur deux clés USB. Renommez-le, par exemple « Presentation_Rever-le-monde.html ».', 1),
   N('Sur l’ordinateur branché au TNI, ouvrez le fichier avec **Chrome** ou **Edge** (clic droit, Ouvrir avec). Pas avec Internet Explorer.', 1),
-  N('Vérifiez que la 3D bouge à la diapo 2 (le globe) et que la pyramide se construit à la diapo 24. Si l’écran reste blanc, l’ordinateur est trop ancien : prenez votre portable.', 1),
+  N('Vérifiez que la 3D bouge à la diapo 2 (le globe) et que la pyramide se construit à la diapo 25. Si l’écran reste blanc, l’ordinateur est trop ancien : prenez votre portable.', 1),
   N('Remplissez la fiche de Francis sur la diapo 3 : appuyez sur **E**, touchez un champ, écrivez, puis **Terminer**.', 1),
   N('Copiez la vidéo des élèves sur l’ordinateur (pas sur une clé, c’est plus fluide).', 1),
 
   H1('02', 'Le jour J, avant que la salle arrive'),
   N('Ouvrez le fichier. Touchez **F** (ou le bouton F en bas) pour le plein écran.', 2),
   N('Si vous voulez vos notes à l’abri des regards et que l’ordinateur a son propre écran : Windows + P, « Étendre », puis touchez **P**. La fenêtre présentateur s’ouvre : glissez-la sur l’écran de l’ordinateur. Sinon, oubliez cette étape : le guide imprimé contient les mêmes notes.', 2),
-  N('Entre les deux séances (11 h 50 à 13 h 30) : à la diapo 2, touchez **Vider** ; à la diapo 17 (votes), **Remettre à zéro** ; à la diapo 24 (pyramide), **Effacer**. Photographiez le mur d’enjeux avant de le défaire.', 2),
+  N('Entre les deux séances (11 h 50 à 13 h 30) : à la diapo 2, touchez **Vider** ; à la diapo 17 (votes), **Remettre à zéro**. Photographiez le mur d’enjeux avant de le défaire.', 2),
   N('Restez sur la diapo 1 pendant que les gens entrent.', 2),
 
   H1('03', 'Pendant l’atelier'),

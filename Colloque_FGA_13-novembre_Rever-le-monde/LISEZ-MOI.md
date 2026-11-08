@@ -39,7 +39,7 @@ Les participants l’ouvrent sur leur ordinateur. Ils y trouvent :
 
 Ouvrir `presentation/index.html` dans Chrome ou Edge.
 
-La présentation est un voyage dans un seul monde 3D en cel-shading : un sol de papier tramé, un sentier mauve et 11 stations (globe des enjeux, village 2036, triade, 4 sphères, pyramide, nom et verbe, escalier des 5 marches, trois portes, jetons, premier pas, maison à trois étages). À chaque diapo pertinente, la caméra s’envole vers la station suivante ; sur les autres, elle revient à une vue aérienne du parcours. Le contenu est posé sur des cartes papier à gauche.
+La présentation se lit sur un fond de papier calme. Sur les diapos où un objet porte le sens (les trois globes école, communauté, nature ; les 4 besoins ; l’analyse de contexte ; résultat ou action ; le premier pas ; la pyramide), un objet 3D en cel-shading arrive en douceur et flotte à côté de la carte. Sur les autres, la carte se centre sur le papier.
 
 - **Navigation :** flèches du clavier ou barre d’espace. Sur une tablette, glisser vers la gauche ou la droite.
 - **P** ouvre le mode présentateur dans une 2e fenêtre : notes, qui anime, diapo suivante, chrono, boutons pour avancer. Gardez-la sur l’écran du portable (Windows + P, « Étendre ») ; la salle ne voit que la projection.
@@ -55,7 +55,7 @@ Le déroulé, en 27 diapos. Chaque diapo d’activité porte l’étiquette **No
 - **9 à 11 · Le monde idéal :** pense (les trois cercles), parle et partage au plexiglas, l’analyse de contexte.
 - **12 à 16 · Le pivot :** résultat ou action (enseignement explicite), en îlot du résultat aux actions, Copilot, les 5 marches, les trois portes.
 - **17 à 19 · Le vote :** la galerie et les trois votes (coup de cœur, oui et…, on est capables), nos forces, le coup de théâtre « un projet, toutes vos disciplines ».
-- **20 à 27 · Le bilan :** mon premier pas, ce que vous avez vécu (le dévoilement, cahier ouvert à la section 12), les élèves de PPS et les projets, décloisonner, la pyramide (optionnel), 3-2-1, ce qui reste, merci.
+- **20 à 27 · Le bilan :** mon premier pas, ce que vous avez vécu (le dévoilement, cahier ouvert à la section 12), des élèves l’ont vécue (cette semaine au centre, les projets des élèves d’Isabelle, ce qu’ils en disent), décloisonner (des pistes à explorer), les incubateurs solidaires de Francis (Saguenay et Sénégal), la pyramide (optionnelle, en discussion), 3-2-1, merci.
 
 Le minuteur lancé depuis une diapo disparaît quand on change de diapo. La touche T lance un minuteur de 5 minutes qui reste affiché.
 

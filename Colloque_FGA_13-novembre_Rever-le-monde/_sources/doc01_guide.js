@@ -57,7 +57,7 @@ const kids = [
     ['**Orientation et CP**', 'Relier l’enjeu au projet de vie et à J’ai mon plan ; accompagner une équipe qui fait un premier essai.'],
     ['**Directions**', 'Les conditions qui rendent la démarche possible : du **temps protégé** à l’horaire (le cadre d’innovation du CFGA), l’horaire d’un projet-pont, les partenariats avec la communauté.']
   ], [2800, 7280], { firstAccent: true }),
-  ...note('Les 4 îlots, mêlés exprès', ['La composition est prête dans le document interne « Composition des îlots » (Drive d’Isabelle, non partagé : il contient des noms). Chaque îlot mêle les quatre centres de services, les programmes (IS, ISP, PPS, DHS), les matières et les fonctions. Les personnes en réserve y sont aussi placées, pour que chaque îlot reste mêlé aux deux séances. À l’entrée, on accueille chaque personne avec son numéro d’îlot ; un carton « Îlot 1 » à « Îlot 4 » est posé sur chaque table (matériel à imprimer).', 'Au dévoilement, on le nomme : « On entend souvent que l’hétérogénéité des élèves, leurs parcours uniques et leurs sigles particuliers freinent l’universel. Vos îlots étaient mêlés exprès. Regardez ce que vous avez produit ensemble. » C’est un principe de base de la classe collabo-réflexive.'], { before: 160 }),
+  ...note('Les 4 îlots, hétérogènes et formés exprès', ['La composition est prête dans le document interne « Composition des îlots » (Drive d’Isabelle, non partagé : il contient des noms). Chaque îlot réunit les quatre centres de services, les programmes (IS, ISP, PPS, DHS), les matières et les fonctions. Les personnes en réserve y sont aussi placées, pour que chaque îlot reste hétérogène aux deux séances. À l’entrée, on accueille chaque personne avec son numéro d’îlot ; un carton « Îlot 1 » à « Îlot 4 » est posé sur chaque table (matériel à imprimer).', 'Au dévoilement, on le nomme : « On entend souvent que l’hétérogénéité des élèves, leurs parcours uniques et leurs sigles particuliers freinent l’universel. Vos îlots étaient hétérogènes, formés exprès. Regardez ce que vous avez produit ensemble. » C’est un principe de base de la classe collabo-réflexive.'], { before: 160 }),
 
   H1('03', 'Déroulé minuté'),
   P('Quatre phases : 30, 30, 20 et 10 minutes. Chaque activité suit la même façon de faire : on **modélise** (la boîte « Modèle » de la diapo), puis **pratique guidée**, puis **pratique autonome**. Chaque diapo d’activité porte l’étiquette **Nourrit** (le besoin de l’engagement qu’elle nourrit) et l’étiquette **Expansion** ou **Restriction** : le va-et-vient décrit dans « Mon utilisation de l’IA ». En expansion, on ouvre et on cherche des idées, avec l’IA, les autres ou soi-même ; en restriction, on resserre, on choisit, on précise. On le nomme au dévoilement. La touche N affiche les notes ; la touche P ouvre le mode présentateur.'),
@@ -68,7 +68,7 @@ const kids = [
     ['**Phase 3 · Galerie, votes et projet du groupe** (20 min)', '11 h 20 à 11 h 40', '14 h 30 à 14 h 50', '17 à 19'],
     ['**Phase 4 · Bilan et dévoilement** (10 min)', '11 h 40 à 11 h 50', '14 h 50 à 15 h', '20 à 27']
   ], [3700, 2100, 2300, 1980], { firstAccent: true }),
-  P('**Entre les deux séances (11 h 50 à 13 h 30).** Photographier le mur d’enjeux et les surfaces verticales, puis effacer le plexiglas et changer les affiches. Dans la présentation : diapo 2, **Vider** ; diapo 17, **Remettre à zéro** ; diapo 24, **Effacer**.', { before: 100 }),
+  P('**Entre les deux séances (11 h 50 à 13 h 30).** Photographier le mur d’enjeux et les surfaces verticales, puis effacer le plexiglas et changer les affiches. Dans la présentation : diapo 2, **Vider** ; diapo 17, **Remettre à zéro**.', { before: 100 }),
   H3('Le fil de l’atelier'),
   tbl(['Min.', 'Diapo', 'Ce que vivent les participants', 'Pratique', 'Nourrit'], [
     ['0–5', '1–4', 'En entrant, un post-it au mur : ce qui me préoccupe dans mon milieu, dans le cercle école, communauté ou nature. Présentation éclair, puis « Aujourd’hui » : les quatre temps de l’atelier.', 'Méthode inductive', 'Sens'],
@@ -84,10 +84,11 @@ const kids = [
     ['73–80', '19', 'Le coup de théâtre : un projet, toutes vos disciplines, en un clic.', 'IA au service du sens', 'Sens'],
     ['80–83', '20', 'Mon premier pas, de retour dans mon milieu.', 'Objectif SMART', 'Autonomie'],
     ['83–85', '21', 'Le dévoilement : ce que vous avez vécu sans qu’on le nomme.', 'Objectivation', 'Compétence'],
-    ['85–88', '22–23', 'Les élèves de PPS ont fait la même chose. Décloisonner.', 'Raconter', 'Sens'],
-    ['88–90', '25–27', '3-2-1 (si le temps le permet, sinon dans le cahier), ce qui reste, merci.', 'Objectivation', 'Compétence']
+    ['85–87', '22–23', 'Des élèves l’ont vécue : cette semaine au centre, les projets des élèves d’Isabelle, ce qu’ils en disent. Décloisonner : des pistes à explorer.', 'Raconter', 'Sens'],
+    ['87–88', '24', 'Francis : les incubateurs solidaires, du Saguenay au Sénégal.', 'Raconter', 'Appartenance'],
+    ['88–90', '25–27', 'La pyramide (optionnelle, en discussion), 3-2-1 (si le temps le permet, sinon dans le cahier), merci.', 'Objectivation', 'Compétence']
   ], [900, 900, 4600, 2000, 1680], { firstAccent: true }),
-  P('Le minutage est serré : c’est un atelier qui fait vivre beaucoup. Les diapos 8 (les 4 besoins) et 23 (la pyramide) sont **optionnelles**.', { before: 80, run: { italics: true, color: C.grey } }),
+  P('Le minutage est serré : c’est un atelier qui fait vivre beaucoup. Les diapos 8 (les 4 besoins) et 25 (la pyramide) sont **optionnelles**.', { before: 80, run: { italics: true, color: C.grey } }),
 
   H2('Rôles et passages de relais'),
   tbl(['', 'Isabelle', 'Francis'], [
@@ -96,7 +97,7 @@ const kids = [
     ['**Signal discret**', 'Carton vert : on continue. Jaune : 5 minutes. Rouge : on conclut en une phrase.', 'Même code.']
   ], [2000, 4040, 4040]),
   H2('Plan B chrono · 10 minutes de retard'),
-  B('**Couper d’abord** les diapos 8 (les 4 besoins) et 23 (la pyramide).'),
+  B('**Couper d’abord** les diapos 8 (les 4 besoins) et 25 (la pyramide).'),
   B('**Raccourcir ensuite** les trois portes (diapo 16) : on renvoie au cahier.'),
   B('**Le 3-2-1** se fait dans le cahier, à la maison, si le temps manque.'),
   B('**Ne jamais couper** le coup de théâtre (18), le premier pas (19) et le dévoilement (20) : c’est là que l’atelier prend tout son sens.'),
@@ -163,11 +164,13 @@ const kids = [
   H2('Phase 4 · Bilan et dévoilement (80–90 min)'),
   N('**Mon premier pas (diapo 20, 3 min).** Une action, une date (mon temps protégé), un allié. Les six questions du cadre d’innovation sont sous la fiche, dans le cahier.', 9),
   N('**Le dévoilement (diapo 21, 2 min).** Avant de commencer : « Ouvrez votre cahier à la section 12 ; pendant qu’on révèle, cochez les pratiques que vous voulez essayer. » Chacun repart avec son propre menu de pratiques, choisi par lui. Puis : « Vous l’avez vécu sans qu’on le nomme. » On révèle une pratique à la fois en demandant : « Où l’avez-vous vécue ? »', 9),
-  N('**Les élèves de PPS (diapo 22).** Ils ont fait la même démarche. « Est-ce que ça ressemble à ce que vous avez produit ? » Ce qui est bon pour les élèves de PPS est bon pour tout le monde : si on se concentre sur ce qui nous rassemble plutôt que sur ce qui nous différencie, tout est possible. Puis les projets réalisés par des élèves d’Isabelle.', 9),
-  N('**Décloisonner (diapo 23).** Francis raconte l’histoire de l’Halloween ; Isabelle lance les pistes innovantes comme des défis. Le sens et l’autodétermination, le thème du colloque.', 9),
-  N('**3-2-1, ce qui reste, merci (diapos 25 à 27).** Le code QR mène à la page Ressources. Annonce de la relance à six semaines.', 9),
+  N('**Des élèves l’ont vécue (diapo 22), trois onglets.** 1. Francis : la démarche vécue cette semaine au centre par des élèves de PPS (vidéo ou photos). « Est-ce que ça ressemble à ce que vous avez produit ? » Ce qui est bon pour les élèves de PPS est bon pour tout le monde. 2. Isabelle : les projets de ses élèves, chacun parti d’une envie de l’élève. 3. Isabelle : ce qu’ils en disent, de vrais mots de parents et d’élèves ; toucher un mot pour l’agrandir, pointer le besoin nourri.', 9),
+  N('**Décloisonner (diapo 23).** Francis raconte l’histoire de l’Halloween ; Isabelle lance les pistes à explorer comme des défis : « Et si, dans votre centre… ? » Le sens et l’autodétermination, le thème du colloque.', 9),
+  N('**Ici et ailleurs (diapo 24).** Francis montre des projets d’incubateurs solidaires vécus ici, au Saguenay, et au Sénégal. Glisser les photos ou la vidéo dans la diapo avant l’atelier.', 9),
+  N('**La pyramide (diapo 25, optionnelle).** On en parle, sans vote à l’écran : où se situait votre dernière formation ? Et l’atelier d’aujourd’hui ?', 9),
+  N('**3-2-1 et merci (diapos 26 et 27).** Le code QR mène à la page Ressources. Annonce de la relance à six semaines.', 9),
   H3('Les projets réalisés par des élèves d’Isabelle (diapo 22)'),
-  P('Tirés de la liste « Projets d’apprentissage de mes élèves ». Chaque projet est parti d’une envie de l’élève. Les prénoms sont retirés.', { run: { size: 19, color: C.grey } }),
+  P('Tirés de la liste « Projets d’apprentissage de mes élèves ». Chaque projet est parti d’une envie de l’élève.', { run: { size: 19, color: C.grey } }),
   tbl(['Le projet', 'Ce que ça a donné', 'À retenir'], [
     ['Un comptoir vestimentaire pour les élèves qui manquent de vêtements', 'Une boutique dans un local.', 'Prévoir le temps : la collecte et le classement ont pris l’année.'],
     ['Du matériel pour un enfant qui a un trouble du langage', 'Des ateliers conçus avec l’orthophoniste.', 'Le mentorat d’un professionnel change tout.'],
@@ -180,21 +183,20 @@ const kids = [
   H1('05', 'Les pratiques pédagogiques vécues'),
   P('Ce qu’on dévoile à la diapo 21, et que les participants retrouvent dans leur cahier (section 12).'),
   tbl(['Pratique', 'Où on la fait vivre', 'Nourrit'], [
-    ['Pense, parle, partage', 'Le monde idéal (diapos 9 et 10)', 'Appartenance'],
-    ['Des îlots mêlés exprès', 'La composition des 4 îlots : centres, programmes, matières et fonctions mêlés, un principe de base de la classe collabo-réflexive', 'Appartenance'],
+    ['Pense, parle, partage', 'Le monde idéal (diapos 9 et 10), et un peu partout', 'Appartenance'],
+    ['Des îlots hétérogènes, formés exprès', 'La composition des 4 îlots : centres, programmes, matières et fonctions différents, un principe de base de la classe collabo-réflexive', 'Appartenance'],
     ['La classe collabo-réflexive', 'Les surfaces verticales, en îlot (10, 13)', 'Appartenance'],
-    ['La méthode inductive', 'Le mur d’enjeux ; le conflit résultat ou action (2, 12)', 'Compétence'],
-    ['L’enseignement explicite', 'Modelage, pratique guidée, pratique autonome (12)', 'Compétence'],
+    ['La démarche inductive', 'Vivre d’abord, nommer ensuite : partir d’exemples concrets pour que les participants dégagent eux-mêmes le principe ; les pratiques ne sont nommées qu’au dévoilement (21)', 'Compétence'],
+    ['L’enseignement explicite', 'Résultat ou action : modelage, pratique guidée, pratique autonome (12)', 'Compétence'],
     ['La modélisation avant chaque activité', 'La boîte « Modèle » des diapos', 'Compétence'],
     ['Le droit à l’erreur et au « je ne sais pas »', 'Tout au long', 'Appartenance'],
-    ['L’analyse de contexte', 'Les leviers et les « je remarque que » (11)', 'Sens'],
     ['Les objectifs SMART', 'Du résultat aux actions (12, 13)', 'Compétence'],
     ['Le choix et le vote', 'La galerie (17)', 'Autonomie'],
     ['La rétroaction par les pairs', 'Le vote « Oui, et… » (17)', 'Compétence'],
     ['Les forces comme leviers', 'On est capables (18)', 'Autonomie'],
     ['Expansion et restriction (d’après « Mon utilisation de l’IA »)', 'L’étiquette en haut de chaque diapo : on ouvre pour chercher des idées (l’IA, les autres, soi-même), puis on resserre pour choisir', 'Autonomie'],
-    ['L’IA au service du sens', 'Un projet, toutes vos disciplines (19)', 'Sens'],
-    ['L’objectivation', 'Le 3-2-1 (25)', 'Compétence']
+    ['L’IA au service du sens et de la créativité', 'Un projet, toutes vos disciplines (19) ; l’invite Copilot (14)', 'Sens'],
+    ['L’objectivation', 'Le 3-2-1 (26)', 'Compétence']
   ], [3500, 4700, 1880], { firstAccent: true }),
 
   H1('06', 'Matériel et logistique'),

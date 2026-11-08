@@ -141,29 +141,36 @@ const kids = [
   nourrit('Compétence', 'Sens'),
   P('Cochez celles que vous voulez essayer avec vos élèves.'),
   tbl(['Pratique', 'Où je l’ai vécue', 'Nourrit', 'J’essaie'], [
-    ['Pense, parle, partage', 'Le monde idéal', 'Appartenance', '☐'],
-    ['Des îlots mêlés exprès', 'Centres, programmes, matières et fonctions mêlés', 'Appartenance', '☐'],
+    ['Pense, parle, partage', 'Le monde idéal, et un peu partout', 'Appartenance', '☐'],
+    ['Des îlots hétérogènes, formés exprès', 'Centres, programmes, matières et fonctions différents', 'Appartenance', '☐'],
     ['La classe collabo-réflexive', 'Les surfaces verticales', 'Appartenance', '☐'],
-    ['La méthode inductive', 'Le mur d’enjeux ; résultat ou action', 'Compétence', '☐'],
-    ['L’enseignement explicite', 'Modelage, pratique guidée, pratique autonome', 'Compétence', '☐'],
+    ['La démarche inductive', 'Vivre d’abord, nommer ensuite', 'Compétence', '☐'],
+    ['L’enseignement explicite', 'Résultat ou action : modelage, pratique guidée, pratique autonome', 'Compétence', '☐'],
     ['Le droit à l’erreur et au « je ne sais pas »', 'Tout au long', 'Appartenance', '☐'],
-    ['L’analyse de contexte', 'Leviers et « je remarque que »', 'Sens', '☐'],
     ['Les objectifs SMART', 'Du résultat aux actions', 'Compétence', '☐'],
     ['Le choix et le vote', 'La galerie', 'Autonomie', '☐'],
     ['La rétroaction par les pairs', 'Le vote « Oui, et… »', 'Compétence', '☐'],
     ['Les forces comme leviers', 'On est capables', 'Autonomie', '☐'],
     ['Expansion et restriction', 'Ouvrir pour chercher, puis resserrer pour choisir', 'Autonomie', '☐'],
-    ['L’IA au service du sens', 'Un projet, toutes nos disciplines', 'Sens', '☐'],
+    ['L’IA au service du sens et de la créativité', 'L’invite Copilot ; un projet, toutes nos disciplines', 'Sens', '☐'],
     ['L’objectivation', 'Le 3-2-1', 'Compétence', '☐']
   ], [3300, 3500, 1900, 1200], { firstAccent: true }),
 
   H1('13', 'Décloisonner'),
   nourrit('EXP', 'Sens', 'Appartenance'),
   P('Une histoire vraie : des élèves étaient bons pour faire des décors. À l’Halloween, c’est le comité de vie étudiante qui s’en charge. Francis en parle avec l’enseignante d’arts plastiques, et les élèves ont participé. Ça n’a rien coûté, et tout le monde y a gagné : l’élève y a trouvé du sens.'),
-  B('**Des ateliers par besoin :** trois classes de français au même moment ; l’élève va où il en a besoin.'),
-  B('**Une heure sur trois** pour un projet d’engagement : le pari qu’elle se regagne par trois.'),
-  B('**Le babillard des forces**, **un projet, un partenaire**, **enseigner aux autres**.'),
-  zone('Et dans mon centre, je pourrais décloisonner…', 1100),
+  label('Des pistes à explorer'),
+  tbl(['Piste', 'L’idée', 'J’explore'], [
+    ['**Des ateliers par besoin**', 'Trois classes de français au même moment : terminaisons des verbes ici, syntaxe là. L’élève va où il en a besoin.', '☐'],
+    ['**Une heure sur trois**', 'Sur trois heures de français ou de maths, une heure pour un projet d’engagement. Le pari : elle se regagne par trois, par quatre.', '☐'],
+    ['**Le babillard des forces**', 'Chaque élève affiche son top 3 des forces ; les projets y recrutent leurs « experts ».', '☐'],
+    ['**Un projet, un partenaire**', 'Chaque projet jumelé à un organisme du quartier, avec l’aide du CSI.', '☐'],
+    ['**Enseigner aux autres**', 'Une fois par mois, un groupe présente son projet à un autre groupe.', '☐']
+  ], [2600, 6200, 1200], { firstAccent: true }),
+  SP(80),
+  zone('Ma piste à moi : dans mon centre, je pourrais décloisonner…', 1500),
+  SP(60),
+  zone('Les incubateurs solidaires, du Saguenay au Sénégal : ce que je retiens', 900),
 
   H1('14', 'Objectivation 3-2-1'),
   nourrit('RES', 'Compétence'),
@@ -175,7 +182,7 @@ const kids = [
   zone('1 question qui me reste', 700),
 
   H1('15', 'Ce qui reste'),
-  P('Quand les 4 besoins sont nourris, voici ce qui reste. De vrais mots d’élèves et de parents, sans nom.'),
+  P('Quand les 4 besoins sont nourris, voici ce qui reste. De vrais mots d’élèves et de parents.'),
   img(I + 'frag_ecole.jpg', 360, 53, { before: 80 }),
   caption('Écriture d’un élève, 2017'),
   ...quote('Il n’y a pas un matin qu’il n’a hâte de se rendre dans sa classe. Il se sent écouté, compris et surtout, accepté.', 'Un parent', { size: 24 }),
@@ -194,7 +201,11 @@ const kids = [
   P('Deci, E. L. et Ryan, R. M. (2000). The « what » and « why » of goal pursuits: Human needs and the self-determination of behavior. *Psychological Inquiry*, 11(4), 227-268.', { run: { size: 18 } }),
   P('Wehmeyer, M. L. (1999). A functional model of self-determination. *Focus on Autism and Other Developmental Disabilities*, 14(1), 53-61.', { run: { size: 18 } }),
   P('Fredricks, J. A., Blumenfeld, P. C. et Paris, A. H. (2004). School engagement: Potential of the concept, state of the evidence. *Review of Educational Research*, 74(1), 59-109.', { run: { size: 18 } }),
-  P('Organisation des Nations unies. Les 17 objectifs de développement durable. sdgs.un.org/fr/goals', { run: { size: 18 } })
+  P('Organisation des Nations unies. Les 17 objectifs de développement durable. sdgs.un.org/fr/goals', { run: { size: 18 } }),
+
+  H1('17', 'La démarche en un coup d’œil'),
+  P('Pour celles et ceux qui aiment voir les étapes dans l’ordre : la démarche en mots-clés, à garder sous la main.'),
+  img(I + 'infographie_demarche.png', 600, 643, { before: 60 })
 ];
 
 const doc = new d.Document({

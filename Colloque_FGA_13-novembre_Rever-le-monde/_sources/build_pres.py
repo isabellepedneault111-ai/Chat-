@@ -24,7 +24,7 @@ rep = {
  '__IMG_RISO_MUR__': uri(I + 'riso_mur.jpg', 1400, 80),
  '__IMG_CAP_ACCEPTE__': uri(I + 'cap_accepte.jpg', 700, 86), '__IMG_CAP_VALORISER__': uri(I + 'cap_valoriser.jpg', 700, 86), '__IMG_CAP_CONFIANCE__': uri(I + 'cap_confiance.jpg', 700, 86), '__IMG_FRAG_PROJETS__': uri(I + 'frag_projets.jpg', 700, 86), '__IMG_FRAG_ECOLE__': uri(I + 'frag_ecole.jpg', 700, 86),
  '__IMG_ESCALIER__': uri(I + 'il_escalier.png', 1000, png=True), '__IMG_GNGV__': uri(I + 'il_gngv.png', 1100, png=True),
- '__IMG_BILLET__': uri(I + 'il_billet.png', 1100, png=True),
+ '__IMG_BILLET__': uri(I + 'il_billet.png', 1100, png=True), '__IMG_M_ELOI__': uri(I + 'm_eloi.jpg', 1100, 84), '__IMG_M_ALBERT__': uri(I + 'm_albert.jpg', 1100, 84), '__IMG_M_TRANSMETTRE__': uri(I + 'm_transmettre.jpg', 1100, 84), '__IMG_M_LEADER__': uri(I + 'm_leader.jpg', 1100, 84), '__IMG_M_FILS__': uri(I + 'm_fils.jpg', 1100, 84), '__IMG_MOT_ELEVE_2017__': uri(I + 'mot_eleve_2017.jpg', 1100, 84), '__IMG_MOT_FAMILLE_ETINCELLES__': uri(I + 'mot_famille_etincelles.jpg', 1100, 84),
 }
 t = open(B + '/pres_template.html', encoding='utf-8').read()
 cg = open(B + '/copilot_gen_src.html', encoding='utf-8').read().replace('__SIG_DB__', open(B + '/sig_db.js', encoding='utf-8').read())

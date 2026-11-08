@@ -107,7 +107,20 @@
 .vecu li b::before{content:counter(v) " · ";color:var(--gold)}
 .vecu li span{font-size:clamp(12px,min(1.1vw,2vh),15px);color:#E6DEF0}
 .vecu li .bz{align-self:flex-start;margin-top:4px;font-size:12px}
-.decl{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(12px,2vw,24px)}
+.pistes-k{margin:0 0 6px;font-family:var(--ui);font-weight:700;font-size:clamp(13px,1vw,16px);letter-spacing:.08em;text-transform:uppercase;color:var(--mauve)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
+.tab{font-family:var(--display);font-size:clamp(16px,1.4vw,21px);letter-spacing:.02em;background:var(--paper);color:var(--ink);border:3px solid var(--ink);padding:6px 14px;cursor:pointer}
+.tab.on{background:var(--mauve);color:#fff;box-shadow:4px 4px 0 var(--gold)}
+.mots{grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr))}
+.mots .capt{border-color:var(--ink);box-shadow:4px 4px 0 var(--ink)}
+.inc{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.inc-col>b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(20px,1.9vw,28px);margin-bottom:6px}
+.inc-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:8px}
+.inc-g img,.inc-g video{width:100%;border:3px solid var(--ink);display:block;cursor:zoom-in}
+@media (max-width:760px){.inc{grid-template-columns:1fr}}
+.decl{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(12px,2vw,24px);align-items:start}
+.sheet.dark .drop p{color:#FBF8EF}
+.sheet.dark .drop{border-color:#FBF8EF}
 .histoire{border:3px solid var(--ink);background:var(--gold);padding:12px 16px;box-shadow:6px 6px 0 var(--ink)}
 .histoire b{font-family:var(--display);font-weight:400;font-size:clamp(20px,2vw,28px);text-transform:uppercase}
 .histoire p{margin:6px 0 0;font-size:clamp(15px,min(1.35vw,2.4vh),19px)}.histoire .hand{color:var(--mauve);font-size:clamp(20px,1.9vw,28px)}
@@ -990,26 +1003,31 @@ __COPILOT_GEN__
   <p><button class="btn" data-timer="180">3 min · ma fiche</button> <button class="btn alt" data-timer="120">2 min · retour express</button></p>
 </section>
 
-<section data-besoins="Compétence,Sens" data-wide="1" class="slide" data-phase="4" data-who="Isabelle" data-notes="Le dévoilement. Avant de commencer : « Ouvrez votre cahier à la section 12. Pendant qu’on révèle, cochez les pratiques que vous voulez essayer. » Chacun repart avec son propre menu de pratiques, choisi par lui : l’autonomie vécue jusqu’à la dernière minute. Sur « Des îlots mêlés exprès » : « On entend souvent que l’hétérogénéité des élèves, leurs parcours uniques et leurs sigles particuliers freinent l’universel. Vos îlots étaient mêlés exprès : quatre centres, des programmes, des matières et des fonctions différentes. Regardez ce que vous avez produit ensemble. » C’est un principe de base de la classe collabo-réflexive. On nomme ce que les participants ont vécu sans qu’on l’annonce. Toucher « Suivante » pour révéler une pratique à la fois, en demandant : « Où l’avez-vous vécue ? » Chaque pratique nourrit au moins un besoin de l’engagement.">
+<section data-besoins="Compétence,Sens" data-wide="1" class="slide" data-phase="4" data-who="Isabelle" data-notes="Le dévoilement. Avant de commencer : « Ouvrez votre cahier à la section 12. Pendant qu’on révèle, cochez les pratiques que vous voulez essayer. » Chacun repart avec son propre menu de pratiques, choisi par lui : l’autonomie vécue jusqu’à la dernière minute. Sur « Des îlots hétérogènes, formés exprès » : « On entend souvent que l’hétérogénéité des élèves, leurs parcours uniques et leurs sigles particuliers freinent l’universel. Vos îlots étaient hétérogènes, formés exprès : quatre centres, des programmes, des matières et des fonctions différentes. Regardez ce que vous avez produit ensemble. » C’est un principe de base de la classe collabo-réflexive. On nomme ce que les participants ont vécu sans qu’on l’annonce. Toucher « Suivante » pour révéler une pratique à la fois, en demandant : « Où l’avez-vous vécue ? » Chaque pratique nourrit au moins un besoin de l’engagement.">
   <div class="kick">Phase 4 · ce que vous avez vécu</div>
   <h2>Vous l’avez vécu sans qu’on le nomme</h2>
   <p class="lede">Cahier ouvert à la section 12 : cochez celles que vous voulez essayer.</p>
-  <ol class="vecu" id="vecu"><li><b>Pense, parle, partage</b><span>Le monde idéal</span><em class="bz">Appartenance</em></li><li><b>Des îlots mêlés exprès</b><span>Centres, programmes, matières, fonctions : l’hétérogénéité comme ressource</span><em class="bz">Appartenance</em></li><li><b>La classe collabo-réflexive</b><span>Les surfaces verticales, en îlot</span><em class="bz">Appartenance</em></li><li><b>La méthode inductive</b><span>Le mur d’enjeux, le conflit résultat ou action</span><em class="bz">Compétence</em></li><li><b>L’enseignement explicite</b><span>Modelage, pratique guidée, pratique autonome</span><em class="bz">Compétence</em></li><li><b>Le droit à l’erreur et au « je ne sais pas »</b><span>Tout au long</span><em class="bz">Appartenance</em></li><li><b>L’analyse de contexte</b><span>Les leviers et les « je remarque que »</span><em class="bz">Sens</em></li><li><b>Les objectifs SMART</b><span>Du résultat aux actions</span><em class="bz">Compétence</em></li><li><b>Le choix et le vote</b><span>La galerie</span><em class="bz">Autonomie</em></li><li><b>La rétroaction par les pairs</b><span>Le vote « Oui, et… »</span><em class="bz">Compétence</em></li><li><b>Les forces comme leviers</b><span>On est capables</span><em class="bz">Autonomie</em></li><li><b>Expansion et restriction</b><span>Ouvrir pour chercher (l’IA, les autres, soi-même), puis resserrer pour choisir</span><em class="bz">Autonomie</em></li><li><b>L’IA au service du sens</b><span>Un projet, toutes vos disciplines</span><em class="bz">Sens</em></li><li><b>L’objectivation</b><span>Le 3-2-1, tout à l’heure</span><em class="bz">Compétence</em></li></ol>
+  <ol class="vecu" id="vecu"><li><b>Pense, parle, partage</b><span>Le monde idéal, et un peu partout</span><em class="bz">Appartenance</em></li><li><b>Des îlots hétérogènes, formés exprès</b><span>Centres, programmes, matières, fonctions : la diversité comme ressource</span><em class="bz">Appartenance</em></li><li><b>La classe collabo-réflexive</b><span>Les surfaces verticales, en îlot</span><em class="bz">Appartenance</em></li><li><b>La démarche inductive</b><span>Vivre d’abord, nommer ensuite : partir du concret pour dégager soi-même le principe</span><em class="bz">Compétence</em></li><li><b>L’enseignement explicite</b><span>Résultat ou action : modelage, pratique guidée, pratique autonome</span><em class="bz">Compétence</em></li><li><b>Le droit à l’erreur et au « je ne sais pas »</b><span>Tout au long</span><em class="bz">Appartenance</em></li><li><b>Les objectifs SMART</b><span>Du résultat aux actions</span><em class="bz">Compétence</em></li><li><b>Le choix et le vote</b><span>La galerie</span><em class="bz">Autonomie</em></li><li><b>La rétroaction par les pairs</b><span>Le vote « Oui, et… »</span><em class="bz">Compétence</em></li><li><b>Les forces comme leviers</b><span>On est capables</span><em class="bz">Autonomie</em></li><li><b>Expansion et restriction</b><span>Ouvrir pour chercher (l’IA, les autres, soi-même), puis resserrer pour choisir</span><em class="bz">Autonomie</em></li><li><b>L’IA au service du sens et de la créativité</b><span>Un projet, toutes vos disciplines</span><em class="bz">Sens</em></li><li><b>L’objectivation</b><span>Le 3-2-1, tout à l’heure</span><em class="bz">Compétence</em></li></ol>
   <p><button class="btn" id="vecuNext">Suivante</button> <button class="btn alt" id="vecuAll">Tout montrer</button></p>
 </section>
 
-<section data-besoins="Sens,Appartenance" class="slide" data-phase="4" data-who="Francis, puis Isabelle" data-wide="1" data-notes="Le pari de l’atelier se vérifie ici. Montrer la démarche vécue cette semaine, ici au centre, par des élèves (PPS) : où en sont-ils ? (vidéo ou photos du plexiglas des élèves) et demander : « Est-ce que ça ressemble à ce que vous avez produit ? » Message : ce qui est bon pour les élèves de PPS est bon pour tout le monde. Puis les projets réalisés par des élèves d’Isabelle : chacun est parti d’une envie de l’élève.">
-  <div class="kick">Phase 4 · cette semaine, ici au centre</div>
-  <h2>Des élèves ont vécu la même démarche</h2>
-  <p class="lede">Ce qu’ils ont produit ressemble-t-il au vôtre ? Quand on se concentre sur ce qui nous rassemble plutôt que sur ce qui nous différencie, tout est possible.</p>
-  <div id="vidZone" class="drop slim">
-    <p class="hand">Glissez ici la vidéo des élèves, ou</p>
-    <label class="btn" for="vidIn">Choisir une vidéo</label>
-    <input type="file" id="vidIn" accept="video/*" hidden>
+<section data-besoins="Sens,Appartenance" class="slide" data-phase="4" data-who="Francis, puis Isabelle" data-wide="1" data-notes="Le pari de l’atelier se vérifie ici. Onglet 1, Francis : la démarche vécue cette semaine, ici au centre, par des élèves (PPS) : où en sont-ils ? Montrer la vidéo ou les photos du plexiglas des élèves et demander : « Est-ce que ça ressemble à ce que vous avez produit ? » Message : ce qui est bon pour les élèves de PPS est bon pour tout le monde. Onglet 2, Isabelle : les projets réalisés par ses élèves, chacun parti d’une envie de l’élève. Onglet 3, Isabelle : ce qu’ils en disent. Toucher un mot pour l’agrandir. On ne lit pas des compliments : on montre ce qui reste quand les 4 besoins sont nourris. Lire un ou deux extraits, pointer le besoin. Puis : « C’est ça qu’on souhaite à vos élèves. »">
+  <div class="kick">Phase 4 · la démarche en vrai</div>
+  <h2>Des élèves l’ont vécue</h2>
+  <div class="tabs" role="tablist"><button class="tab on" type="button" data-tab="0">Cette semaine, ici au centre</button><button class="tab" type="button" data-tab="1">Mes élèves, leurs projets</button><button class="tab" type="button" data-tab="2">Ce qu’ils en disent</button></div>
+  <div class="tabp" data-p="0">
+    <p class="lede">Ce qu’ils ont produit ressemble-t-il au vôtre ? Quand on se concentre sur ce qui nous rassemble plutôt que sur ce qui nous différencie, tout est possible.</p>
+    <div id="vidZone" class="drop slim"> <p class="hand">Glissez ici la vidéo des élèves, ou</p> <label class="btn" for="vidIn">Choisir une vidéo</label> <input type="file" id="vidIn" accept="video/*" hidden> </div>
+    <video id="vid" controls hidden></video>
   </div>
-  <video id="vid" controls hidden></video>
-  <p class="pj-k">Des projets réalisés par des élèves d’Isabelle, quand elle enseignait. Chacun est parti d’une envie de l’élève.</p>
-  <div class="pjs"><article class="pj"><h3>Un comptoir vestimentaire</h3><p class="pj-for">pour les élèves qui manquent de vêtements</p><p>Collecte, lavage, classement, une vraie boutique dans un local.</p><span class="chip">Sens</span></article><article class="pj"><h3>Du matériel pour un enfant</h3><p class="pj-for">qui a un trouble du langage</p><p>Des ateliers conçus avec l’orthophoniste, puis donnés régulièrement.</p><span class="chip">Compétence</span></article><article class="pj"><h3>Un journal étudiant</h3><p class="pj-for">pour toute l’école</p><p>Trois éditions. D’autres élèves se sont joints à l’équipe.</p><span class="chip">Appartenance</span></article><article class="pj"><h3>Des produits à l’effigie de l’école</h3><p class="pj-for">porte-clés, bouteilles, sacs, signets</p><p>Plus de 200 objets, tout vendu en une seule vente éclair.</p><span class="chip">Appartenance</span></article><article class="pj"><h3>Une grande murale</h3><p class="pj-for">pour perfectionner un talent en peinture</p><p>L’élève a ensuite obtenu un contrat dans un organisme communautaire.</p><span class="chip">Autonomie</span></article><article class="pj"><h3>Un programme d’entraînement</h3><p class="pj-for">de basketball, trois fois par semaine</p><p>Ceux qui ne faisaient pas partie de l’équipe ont été intégrés.</p><span class="chip">Appartenance</span></article></div>
+  <div class="tabp" data-p="1" hidden>
+    <p class="pj-k">Des projets réalisés par mes élèves, quand j’enseignais. Chacun est parti d’une envie de l’élève.</p>
+    <div class="pjs"><article class="pj"><h3>Un comptoir vestimentaire</h3><p class="pj-for">pour les élèves qui manquent de vêtements</p><p>Collecte, lavage, classement, une vraie boutique dans un local.</p><span class="chip">Sens</span></article><article class="pj"><h3>Du matériel pour un enfant</h3><p class="pj-for">qui a un trouble du langage</p><p>Des ateliers conçus avec l’orthophoniste, puis donnés régulièrement.</p><span class="chip">Compétence</span></article><article class="pj"><h3>Un journal étudiant</h3><p class="pj-for">pour toute l’école</p><p>Trois éditions. D’autres élèves se sont joints à l’équipe.</p><span class="chip">Appartenance</span></article><article class="pj"><h3>Des produits à l’effigie de l’école</h3><p class="pj-for">porte-clés, bouteilles, sacs, signets</p><p>Plus de 200 objets, tout vendu en une seule vente éclair.</p><span class="chip">Appartenance</span></article><article class="pj"><h3>Une grande murale</h3><p class="pj-for">pour perfectionner un talent en peinture</p><p>L’élève a ensuite obtenu un contrat dans un organisme communautaire.</p><span class="chip">Autonomie</span></article><article class="pj"><h3>Un programme d’entraînement</h3><p class="pj-for">de basketball, trois fois par semaine</p><p>Ceux qui ne faisaient pas partie de l’équipe ont été intégrés.</p><span class="chip">Appartenance</span></article></div>
+  </div>
+  <div class="tabp" data-p="2" hidden>
+    <p class="pj-k">Quand les besoins sont nourris, voici ce qui reste. De vrais mots reçus. Touchez un mot pour l’agrandir.</p>
+    <div class="capts mots"><figure class="capt"><img src="__IMG_M_ELOI__" alt="Mot reçu par Isabelle, extrait authentique"><figcaption><span class="chip">Compétence</span>Des parents</figcaption></figure><figure class="capt"><img src="__IMG_M_ALBERT__" alt="Mot reçu par Isabelle, extrait authentique"><figcaption><span class="chip">Appartenance</span>Des parents</figcaption></figure><figure class="capt"><img src="__IMG_M_TRANSMETTRE__" alt="Mot reçu par Isabelle, extrait authentique"><figcaption><span class="chip">Compétence</span>Des parents</figcaption></figure><figure class="capt"><img src="__IMG_M_LEADER__" alt="Mot reçu par Isabelle, extrait authentique"><figcaption><span class="chip">Autonomie</span>Des parents</figcaption></figure><figure class="capt"><img src="__IMG_M_FILS__" alt="Mot reçu par Isabelle, extrait authentique"><figcaption><span class="chip">Appartenance</span>Une mère</figcaption></figure><figure class="capt"><img src="__IMG_MOT_ELEVE_2017__" alt="Mot reçu par Isabelle, extrait authentique"><figcaption><span class="chip">Sens</span>Une élève, 2017</figcaption></figure><figure class="capt"><img src="__IMG_MOT_FAMILLE_ETINCELLES__" alt="Mot reçu par Isabelle, extrait authentique"><figcaption><span class="chip">Compétence</span>Une famille</figcaption></figure></div>
+  </div>
 </section>
 
 <section data-mode="exp" data-besoins="Sens,Appartenance" data-wide="1" class="slide" data-phase="4" data-who="Francis, puis Isabelle" data-notes="Décloisonner : la clé de la pratique d’Isabelle. Francis raconte l’histoire vraie de l’Halloween. Puis les pistes innovantes, à lancer comme des défis : « Et si, dans votre centre… ? » Rappeler le sens et l’autodétermination, le thème du colloque.">
@@ -1017,23 +1035,32 @@ __COPILOT_GEN__
   <h2>Ça ne coûte rien, et tout le monde y gagne</h2>
   <div class="decl">
     <div class="histoire"><b>Une histoire vraie</b><p>Des élèves étaient bons pour faire des décors. Francis en parle avec l’enseignante d’arts plastiques : à l’Halloween, c’est le comité de vie étudiante qui fait les décors. Et si les élèves y participaient ? Cette année, c’est ce qui s’est passé.</p><p class="hand">L’élève y trouve du sens. C’est ça, l’autodétermination.</p></div>
-    <ol class="pistes">
+    <div><p class="pistes-k">Des pistes à explorer</p><ol class="pistes">
       <li><b>Des ateliers par besoin</b>Trois classes de français au même moment : terminaisons des verbes ici, syntaxe là. L’élève va où il en a besoin.</li>
       <li><b>Une heure sur trois</b>Sur trois heures de français ou de maths, une heure pour un projet d’engagement. Le pari : elle se regagne par trois, par quatre.</li>
       <li><b>Le babillard des forces</b>Chaque élève affiche son top 3 des forces ; les projets y recrutent leurs « experts ».</li>
       <li><b>Un projet, un partenaire</b>Chaque projet jumelé à un organisme du quartier, avec l’aide du CSI.</li>
       <li><b>Enseigner aux autres</b>Une fois par mois, un groupe présente son projet à un autre groupe : le haut de la pyramide.</li>
-    </ol>
+    </ol></div>
   </div>
 </section>
 
-<section class="slide" data-phase="4" data-who="Isabelle" data-notes="Optionnel, 1 minute : où se situait votre dernière formation ? Et l’atelier d’aujourd’hui ? Les pourcentages qui circulent avec cette pyramide ne viennent d’aucune étude solide : on la présente comme un repère, du passif à l’actif.">
+<section data-besoins="Sens,Appartenance" class="slide" data-wide="1" data-phase="4" data-who="Francis" data-notes="Francis montre des projets d’incubateurs solidaires vécus ici, au Saguenay, et au Sénégal. Glisser les photos ou la vidéo avant l’atelier. Message : la même démarche, de « ça me dérange » à « on l’a fait ! », ici comme ailleurs dans le monde.">
+  <div class="kick">Phase 4 · ici et ailleurs</div>
+  <h2>Les incubateurs solidaires, du Saguenay au Sénégal</h2>
+  <p class="lede">La même démarche, ici comme ailleurs : de « ça me dérange » à « on l’a fait ! ».</p>
+  <div class="inc">
+    <div class="inc-col"><b>Ici, au Saguenay</b><div class="drop slim incz" data-inc="0"><p class="hand">Glissez ici les photos ou la vidéo, ou</p><label class="btn">Choisir<input type="file" accept="image/*,video/*" multiple hidden></label></div><div class="inc-g" data-incg="0"></div></div>
+    <div class="inc-col"><b>Au Sénégal</b><div class="drop slim incz" data-inc="1"><p class="hand">Glissez ici les photos ou la vidéo, ou</p><label class="btn">Choisir<input type="file" accept="image/*,video/*" multiple hidden></label></div><div class="inc-g" data-incg="1"></div></div>
+  </div>
+</section>
+
+<section class="slide" data-phase="4" data-who="Isabelle" data-notes="Optionnel, 1 minute, à main levée ou en discussion (pas de vote à l’écran) : où se situait votre dernière formation ? Et l’atelier d’aujourd’hui ? Les pourcentages qui circulent avec cette pyramide ne viennent d’aucune étude solide : on la présente comme un repère, du passif à l’actif.">
   <div class="kick">Phase 4 · retour sur l’atelier</div>
   <h2>La pyramide de rétention</h2>
   <div class="row" style="flex:1;align-items:stretch">
     <div class="col" style="flex:1 1 260px">
-      <div class="panel"><h3 id="pyrQ">Où se situait votre dernière formation ?</h3><p>Touchez l’étage : un jeton s’y pose.</p>
-      <p><button class="btn alt" id="pyrSwitch">Et l’atelier d’aujourd’hui ?</button> <button class="btn alt" id="pyrReset">Effacer</button></p></div>
+      <div class="panel"><h3>On en parle</h3><p class="pq">Où se situait votre dernière formation ?</p><p class="pq">Et l’atelier d’aujourd’hui ?</p></div>
       <p class="hand">plus on fait, plus on retient</p>
     </div>
   </div>
@@ -1049,13 +1076,6 @@ __COPILOT_GEN__
   </div>
   <p style="margin-top:16px"><button class="btn" data-timer="180">3 min</button></p>
   <p>S’arrêter pour regarder le chemin parcouru, c’est <mark>s’autoévaluer</mark> : une composante de l’autodétermination.</p>
-</section>
-
-<section data-besoins="Appartenance,Compétence" class="slide" data-wide="1" data-phase="4" data-who="Isabelle" data-notes="Avant le merci. Toucher une capture pour l’agrandir. Ce sont de vrais mots reçus, recadrés sur l’essentiel. On ne lit pas des compliments : on montre ce qui reste quand les 4 besoins sont nourris. Lire un ou deux extraits, pointer le besoin. Puis : « C’est ça qu’on souhaite à vos élèves. »">
-  <div class="kick">Phase 4 · ce qui reste</div>
-  <h2>Quand les besoins sont nourris, voici ce qui reste</h2>
-  <div class="capts"><figure class="capt"><img src="__IMG_CAP_ACCEPTE__" alt="Extrait authentique d’un mot reçu"><figcaption><span class="chip">Appartenance</span>Écrit par un parent</figcaption></figure><figure class="capt"><img src="__IMG_CAP_VALORISER__" alt="Extrait authentique d’un mot reçu"><figcaption><span class="chip">Compétence</span>Écrit par des parents</figcaption></figure><figure class="capt"><img src="__IMG_CAP_CONFIANCE__" alt="Extrait authentique d’un mot reçu"><figcaption><span class="chip">Compétence</span>Écrit par une famille</figcaption></figure><figure class="capt"><img src="__IMG_FRAG_PROJETS__" alt="Extrait authentique d’un mot reçu"><figcaption><span class="chip">Autonomie</span>Écrit par des parents</figcaption></figure><figure class="capt"><img src="__IMG_FRAG_ECOLE__" alt="Extrait authentique d’un mot reçu"><figcaption><span class="chip">Sens</span>Écrit par un élève, 2017</figcaption></figure></div>
-  <p class="cap">De vrais mots reçus, recadrés sur l’essentiel. Les noms ont été retirés.</p>
 </section>
 
 <section class="slide" data-phase="4" data-who="Isabelle et Francis" data-notes="Remercier. Le code QR mène à la page Ressources : invite Copilot, documents en PDF et en Word, les six questions. Annoncer : « Dans six semaines, on vous écrit : avez-vous fait votre premier pas ? »">
@@ -1123,7 +1143,7 @@ if (location.hash === '#presenter') {
   draw(0); send({ hello: 1 }); return;
 }
 onMsg(m => { if (typeof m.go === 'number') go(m.go); else if (m.hello) send({ cur }); });
-const DARK = [4, 6, 11, 12, 17, 19, 20, 25, 26];
+const DARK = [4, 6, 11, 12, 17, 19, 20, 23, 26];
 slides.forEach((sl, i) => { if (sl.classList.contains('s1')) return; const sh = document.createElement('div'); sh.className = 'sheet' + (DARK.includes(i) ? ' dark' : '') + (sl.dataset.wide ? ' wide' : ''); if (sl.dataset.besoins) { const bz = document.createElement('div'); bz.className = 'nourrit'; bz.setAttribute('aria-label', 'Besoins de l’engagement nourris'); bz.innerHTML = (sl.dataset.mode ? '<i class="mode ' + sl.dataset.mode + '" title="' + (sl.dataset.mode === 'exp' ? 'Expansion : on ouvre, on cherche des idées (avec l’IA, les autres, soi-même)' : 'Restriction : on resserre, on choisit, on précise') + '"><svg viewBox="0 0 24 12" aria-hidden="true">' + (sl.dataset.mode === 'exp' ? '<path d="M9 6H1M4 2 0.5 6 4 10M15 6h8M20 2l3.5 4-3.5 4"/>' : '<path d="M0 6h9M5.5 2 9.5 6 5.5 10M24 6h-9M18.5 2 14.5 6l4 4"/>') + '</svg>' + (sl.dataset.mode === 'exp' ? 'Expansion' : 'Restriction') + '</i>' : '') + '<span>Nourrit</span>' + sl.dataset.besoins.split(',').map(x => '<em class="bz">' + x + '</em>').join(''); sh.prepend(bz); } while (sl.firstChild) sh.appendChild(sl.firstChild); sl.appendChild(sh); });
 let cur = 0;
 const DEMO_ENJEUX = [{ t: 'le gaspillage alimentaire', z: 'en' }, { t: 'l’isolement', z: 'c' }, { t: 'le décrochage', z: 'e' }];
@@ -1261,8 +1281,16 @@ function drawScen(s) { scS = s; $('#scen').innerHTML = sc.map(([l, h, p], i) => 
 Object.keys(subj).forEach(s => { const c = document.createElement('button'); c.className = 'chip'; c.textContent = s; c.onclick = () => drawScen(scS === s ? null : s); $('#subj').appendChild(c); });
 drawScen(null);
 
+// ---------- onglets ----------
+$$('.tabs').forEach(tb => { const sec = tb.closest('section'); tb.addEventListener('click', e => { const b = e.target.closest('.tab'); if (!b) return; tb.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t === b)); sec.querySelectorAll('.tabp').forEach(p => { p.hidden = p.dataset.p !== b.dataset.tab; }); }); });
+
+// ---------- incubateurs : photos et vidéos glissées ----------
+$$('.incz').forEach(z => { const k = z.dataset.inc, g = $(`[data-incg="${k}"]`);
+  const addF = fs => [...fs].forEach(f => { const u = URL.createObjectURL(f); const el = document.createElement(f.type.startsWith('video') ? 'video' : 'img'); el.src = u; if (el.tagName === 'VIDEO') el.controls = true; else el.alt = 'Projet d’incubateur'; g.appendChild(el); });
+  z.querySelector('input').onchange = e => addF(e.target.files); z.addEventListener('dragover', e => e.preventDefault()); z.addEventListener('drop', e => { e.preventDefault(); addF(e.dataTransfer.files); }); });
+
 // ---------- captures agrandies ----------
-document.addEventListener('click', e => { const im = e.target.closest('.capt img'); if (!im) return; const fc = im.closest('.capt').querySelector('.chip'); const z = document.createElement('figure'); z.className = 'zoom'; z.innerHTML = '<img alt="">' + (fc ? '<figcaption>' + fc.textContent + '</figcaption>' : ''); z.querySelector('img').src = im.src; z.onclick = () => z.remove(); document.body.appendChild(z); });
+document.addEventListener('click', e => { const im = e.target.closest('.capt img,.inc-g img'); if (!im) return; const fc = im.closest('.capt') && im.closest('.capt').querySelector('.chip'); const z = document.createElement('figure'); z.className = 'zoom'; z.innerHTML = '<img alt="">' + (fc ? '<figcaption>' + fc.textContent + '</figcaption>' : ''); z.querySelector('img').src = im.src; z.onclick = () => z.remove(); document.body.appendChild(z); });
 addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.zoom').forEach(z => z.remove()); });
 
 // ---------- un projet, toutes vos disciplines ----------
@@ -1323,7 +1351,7 @@ const RESSOURCES = 'https://claude.ai/artifact/SMB1bWSXHDzLNmfYQsGvwG#ressources
 
 // =================== MONDE 3D EN CEL-SHADING ===================
 // Un seul monde, 11 stations reliées par un sentier. La caméra vole d'une station à l'autre.
-const STATIONS = ['aerial', 'globe', 'aerial', 'aerial', 'aerial', 'aerial', 'spheres', 'spheres', 'aerial', 'aerial', 'village', 'nomverbe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'pas', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'aerial', 'aerial'];
+const STATIONS = ['aerial', 'globe', 'aerial', 'aerial', 'aerial', 'aerial', 'spheres', 'spheres', 'aerial', 'aerial', 'village', 'nomverbe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'pas', 'aerial', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'aerial'];
 const G3 = (() => {
   if (!window.THREE) return { activate() {}, st: {} };
   const T = THREE, V = T.Vector3;
@@ -1411,9 +1439,9 @@ const G3 = (() => {
     const grp = new T.Group(); add('pyr', grp, 0, .35, 0); const layers = []; const tokens = new T.Group(); grp.add(tokens); const H = .62;
     LAY.forEach((n, i) => { const rTop = .3 + i * .55, rBot = .3 + (i + 1) * .55; const g = inked(new T.CylinderGeometry(rTop, rBot, H, 4, 1), LCOL[i], .03); g.children.forEach(c => c.rotation.y = Math.PI / 4); g.userData.target = (5 - i) * (H + .02) + H / 2; g.userData.delay = (5 - i) * .22; g.userData.body.userData.i = i; grp.add(g); layers.push(g); S.pyr.pick.push(g.userData.body);
       const l = lab(n.toUpperCase(), { w: 1024, size: 64, scale: 4.2, color: i === 5 ? '#FBF8EF' : '#1E1A22', stroke: i === 5 }); l.material.depthTest = false; l.renderOrder = 10; l.position.set(0, 0, (rTop + rBot) / 2 * .7071 + .12); g.add(l); });
-    const st = S.pyr; st.look = 2; st.dist = 13.5; st.mode = 0; st.votes = store.get('pyr', [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]);
+    const st = S.pyr; st.look = 2; st.dist = 13.5; st.mode = 0; st.votes = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
     st.redraw = () => { while (tokens.children.length) tokens.remove(tokens.children[0]); st.votes.forEach((arr, m) => arr.forEach((n, i) => { for (let k = 0; k < n; k++) { const t = inked(new T.CylinderGeometry(.2, .2, .08, 20), m ? MAUVE : GOLD, .1); t.rotation.x = Math.PI / 2; const rb = .3 + (i + 1) * .55; t.position.set((m ? 1 : -1) * (.75 + (k % 6) * .46), layers[i].userData.target - .05 + Math.floor(k / 6) * .3, rb * .7071 + .28); tokens.add(t); } })); };
-    st.redraw(); st.onPick = o => { st.votes[st.mode][o.userData.i]++; store.set('pyr', st.votes); st.redraw(); };
+    st.redraw();
     let t0 = -1e9; st.enter = () => { t0 = performance.now(); };
     st.tick = () => layers.forEach(L => { const p = Math.min(1, Math.max(0, ((performance.now() - t0) / 1000 - .9 - L.userData.delay) / .6)); const e = 1 - Math.pow(1 - p, 3); L.position.y = reduce ? L.userData.target : L.userData.target + (1 - e) * 7; }); }
 
@@ -1507,8 +1535,6 @@ $('#enjeuForm').addEventListener('submit', e => { e.preventDefault(); const v = 
 $('#enjeuClear').onclick = () => { if (G3.st.globe) G3.st.globe.clear(); else store.set('enjeux', []); drawMur(); };
 drawMur();
 // pyramide : bascule
-$('#pyrSwitch').onclick = () => { const s = G3.st.pyr; if (!s) return; s.mode = 1 - s.mode; $('#pyrQ').textContent = s.mode ? 'Où se situe l’atelier d’aujourd’hui ?' : 'Où se situait votre dernière formation ?'; $('#pyrSwitch').textContent = s.mode ? 'Revenir à la dernière formation' : 'Et l’atelier d’aujourd’hui ?'; };
-$('#pyrReset').onclick = () => { const s = G3.st.pyr; if (!s) return; s.votes = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]; store.set('pyr', s.votes); s.redraw(); };
 // votes
 const NB_ILOTS = 4;
 const vData = store.get('votes4', Array.from({ length: NB_ILOTS }, () => ({ n: '', v: [0, 0, 0] })));
