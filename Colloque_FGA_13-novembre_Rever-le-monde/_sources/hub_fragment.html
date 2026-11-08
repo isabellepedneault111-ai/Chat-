@@ -36,6 +36,10 @@
 .hub-f label{font-family:var(--display);font-size:16px;letter-spacing:.03em;color:var(--h-mauve);text-transform:uppercase}
 .hub-f input,.hub-f select,.hub-f textarea{width:100%;font:inherit;font-size:16px;color:var(--h-ink);background:#fff;border:3px solid var(--h-ink);padding:8px 10px;border-radius:0}
 .hub-f input:focus,.hub-f select:focus,.hub-f textarea:focus{outline:3px solid var(--h-gold);outline-offset:1px}
+.hub-links{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px}
+.hub-links a{display:block;height:100%;background:var(--h-sheet);border:3px solid var(--h-ink);padding:10px 12px;color:var(--h-ink);text-decoration:none;font-size:15.5px;line-height:1.3;box-shadow:4px 4px 0 var(--h-mauve)}
+.hub-links a:hover{background:var(--h-gold)}
+.hub-links b{color:var(--h-mauve)}
 .hub-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
 .hub-chips button{font:inherit;font-size:13.5px;background:var(--h-paper);color:var(--h-ink);border:2px solid var(--h-ink);padding:3px 8px;cursor:pointer}
 .hub-chips button:hover{background:var(--h-gold)}
@@ -111,29 +115,32 @@
   <figure class="hub-photo"><img src="__IMG_RISO_MUR__" alt="Des jeunes adultes collent des post-it sur une carte du monde"></figure>
 </div></header>
 
-<nav class="hub-nav" aria-label="Sections"><div class="hub-wrap"><a href="#ressources" data-to="h-copilot">Mon invite Copilot</a><a href="#ressources" data-to="h-invites">7 invites prêtes</a><a href="#ressources" data-to="h-projets">Ils l’ont fait</a><a href="#ressources" data-to="h-docs">Les documents</a><a href="#ressources" data-to="h-pas">Mon premier pas</a></div></nav>
+<nav class="hub-nav" aria-label="Sections"><div class="hub-wrap"><a href="#ressources" data-to="h-copilot">Mon invite Copilot</a><a href="#ressources" data-to="h-liens">Le programme de mon sigle</a><a href="#ressources" data-to="h-invites">7 invites prêtes</a><a href="#ressources" data-to="h-projets">Ils l’ont fait</a><a href="#ressources" data-to="h-docs">Les documents</a><a href="#ressources" data-to="h-pas">Mon premier pas</a></div></nav>
 
 <section class="hub-sec" id="h-copilot"><div class="hub-wrap">
   <h2><span class="tag">IA</span>Mon invite Copilot</h2>
-  <p class="hub-intro">La formule de l’atelier : rôle, contexte, tâche, contraintes. Remplissez les champs avec votre îlot ; l’invite se construit à droite, prête à copier.</p>
-  <ol class="hub-steps"><li>Remplissez les champs : votre groupe, votre sigle, votre enjeu.</li><li>Touchez « Copier l’invite ».</li><li>Ouvrez Copilot avec votre compte du centre de services et collez-la.</li></ol>
-  <div class="hub-card hub-gen">
-    <form id="hgForm" autocomplete="off">
-      <div class="hub-f"><label for="hgRole">Rôle</label><select id="hgRole"></select><input type="text" id="hgRoleX" placeholder="Écrivez votre rôle" hidden></div>
-      <div class="hub-f"><label for="hgGroupe">Mon groupe</label><input type="text" id="hgGroupe" placeholder="ex. un groupe d’Intégration sociale (IS)"></div>
-      <div class="hub-f"><label for="hgSigle">Le sigle ou le cours</label><input type="text" id="hgSigle" placeholder="ex. MAT-3051, ou le programme PPS"></div>
-      <div class="hub-f"><label for="hgEnjeu">Notre enjeu ou notre projet</label><input type="text" id="hgEnjeu" placeholder="ex. le coût de l’épicerie"></div>
-      <div class="hub-f"><label for="hgExtrait">Extrait du programme</label><textarea id="hgExtrait" rows="3" placeholder="Collez les compétences, les savoirs et la famille de situations de vie du sigle. Ou laissez vide et joignez le PDF du programme dans Copilot."></textarea></div>
-      <div class="hub-f"><label for="hgTache">Tâche</label><select id="hgTache"></select><input type="text" id="hgTacheX" placeholder="Écrivez votre tâche" hidden></div>
-      <div class="hub-f"><label for="hgContr">Contraintes</label><textarea id="hgContr" rows="2" placeholder="Écrivez vos contraintes, ou touchez une suggestion"></textarea><div class="hub-chips" id="hgChips"></div></div>
-    </form>
-    <div class="hub-out">
-      <pre id="hgOut" aria-live="polite"></pre>
-      <div class="hub-row"><button type="button" class="hub-btn" id="hgCopy">Copier l’invite</button><a class="hub-btn alt" href="https://m365.cloud.microsoft/chat" target="_blank" rel="noopener">Ouvrir Copilot ↗</a><span class="hub-msg" id="hgMsg"></span></div>
-      <p class="hub-warn" style="border-left-color:var(--h-mauve)"><b>Le truc qui change tout.</b> Copilot ne va pas chercher le programme lui-même : joignez le PDF « Extraits de programmes pour Copilot » (section Les documents) avec le trombone, ou collez l’extrait de votre sigle. Il travaille alors avec le vrai contenu du sigle au lieu de le deviner.</p>
-      <p class="hub-warn">Jamais de nom d’élève, de diagnostic ni de résultat identifiable dans une invite. Copilot propose, vous disposez : vérifiez chaque lien avec le programme d’études.</p>
-    </div>
-  </div>
+  <p class="hub-intro">Sept étapes, de haut en bas. L’invite se construit à droite, prête à copier. Le secret : un vrai contexte et le vrai programme de votre sigle.</p>
+  <div id="cgHub"></div>
+</div></section>
+
+<section class="hub-sec" id="h-liens"><div class="hub-wrap">
+  <h2><span class="tag">MEQ</span>Le programme de mon sigle</h2>
+  <p class="hub-intro">Tout est sur la page officielle de votre matière : <b>le programme d’études</b> (compétences, savoirs, situations de vie) et <b>la définition du domaine d’évaluation (DDE) de chaque sigle</b> (ce qui est évalué). Téléchargez les deux PDF et joignez-les à Copilot avec le trombone.</p>
+  <ul class="hub-links">
+    <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes" target="_blank" rel="noopener"><b>Tous les programmes de la FGA</b> · la page d’accueil du ministère ↗</a></li>
+    <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/francais-langue-enseignement" target="_blank" rel="noopener"><b>Français, langue d’enseignement</b> · programmes et DDE ↗</a></li>
+    <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/mathematique" target="_blank" rel="noopener"><b>Mathématique</b> · programmes et DDE ↗</a></li>
+    <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/anglais-langue-seconde" target="_blank" rel="noopener"><b>Anglais, langue seconde</b> · programmes et DDE ↗</a></li>
+    <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/francais-langue-seconde" target="_blank" rel="noopener"><b>Français, langue seconde</b> (francisation) ↗</a></li>
+    <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/science-technologie" target="_blank" rel="noopener"><b>Science et technologie</b> · programmes et DDE ↗</a></li>
+    <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/participation-sociale" target="_blank" rel="noopener"><b>Participation sociale</b> (intégration sociale) ↗</a></li>
+    <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/integration-socioprofessionnelle" target="_blank" rel="noopener"><b>Intégration socioprofessionnelle</b> ↗</a></li>
+    <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/engagement-vers-sa-reussite" target="_blank" rel="noopener"><b>Engagement vers sa réussite</b> ↗</a></li>
+    <li><a href="https://cdn-contenu.quebec.ca/cdn-contenu/education/formation-generale-adultes/Formation-base-commune-document-presentation.pdf" target="_blank" rel="noopener"><b>Formation de base commune</b> · présentation (PDF) ↗</a></li>
+    <li><a href="https://cdn-contenu.quebec.ca/cdn-contenu/education/formation-generale-adultes/Formation-base-diversifiee-introduction-generale-programmes-etudes.pdf" target="_blank" rel="noopener"><b>Formation de base diversifiée</b> · introduction générale, compétences polyvalentes et domaines généraux de formation (PDF) ↗</a></li>
+    <li><a href="https://www.legisquebec.gouv.qc.ca/fr/document/rc/i-13.3,%20r.%209" target="_blank" rel="noopener"><b>Régime pédagogique de la FGA</b> ↗</a></li>
+  </ul>
+  <p class="hub-intro" style="margin-top:14px">Les autres matières (univers social, développement de la personne, informatique…) sont sur la page d’accueil du ministère.</p>
 </div></section>
 
 <section class="hub-sec" id="h-invites"><div class="hub-wrap">
@@ -150,7 +157,7 @@
 
 <section class="hub-sec" id="h-docs"><div class="hub-wrap">
   <h2><span class="tag">PDF</span>Les documents</h2>
-  <p class="hub-intro">Le PDF s’ouvre partout, même sur un téléphone. La version Word se modifie.</p>
+  <p class="hub-intro">Le PDF s’ouvre directement. La version Word, à adapter à vos groupes, est dans le dossier Drive de l’atelier.</p>
   <div class="hub-docs" id="hgDocs"></div>
 </div></section>
 
@@ -170,42 +177,19 @@
   <div class="hub-logos"><img src="__LOGO_CFGA__" alt="CFGA De La Jonquière"><img src="__LOGO_CSI__" alt="Centre de solidarité internationale du Saguenay–Lac-Saint-Jean"></div>
   <p><b>Isabelle Pedneault</b>, conseillère pédagogique, CFGA De Jonquière · <b>Francis Laroche</b>, chargé de projet en éducation citoyenne mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean.</p>
   <p>Sources : Deci et Ryan (2000) ; Wehmeyer (1999) ; Fredricks, Blumenfeld et Paris (2004) ; Gaudreau, Duchaine et Bernier, grille EN.1.1, « J’ai MON plan! », Université Laval ; cadre d’innovation des COP IA du CSSDLJ, Giroux, Munger et Pedneault (2026).</p>
-  <p>Les mêmes fichiers sont aussi dans le <a href="__DRIVE__" target="_blank" rel="noopener">dossier partagé de l’atelier</a>.</p>
+  <p>Les mêmes fichiers sont aussi dans le <a href="https://drive.google.com/drive/folders/1geh7bo1rCmPDMLFFgqq4FvKSjo9zBmc_" target="_blank" rel="noopener">dossier partagé de l’atelier</a>.</p>
 </div></footer>
 
 <script>
 (() => {
   if (location.hash !== '#ressources') return;
   const $ = s => document.querySelector(s);
-  const PROG = 'Appuie-toi uniquement sur l’extrait du programme d’études officiel de la FGA (ministère de l’Éducation du Québec) pour SIGLE, que je te fournis ci-dessous ou en pièce jointe. N’ajoute aucune compétence ni aucun savoir qui n’y figure pas ; si l’extrait ne suffit pas, dis-le-moi.', LIEN = 'Dans un tableau, relie chaque étape de notre projet (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin) aux savoirs et aux compétences du sigle qu’elle permet de travailler ou d’évaluer.';
-  const ROLES = ['Tu es enseignant·e en Participation sociale (PPS) en FGA.', 'Tu es enseignant·e en DHS en FGA.', 'Tu es enseignant·e en Intégration sociale (IS) en FGA.', 'Tu es enseignant·e en Intégration socioprofessionnelle (ISP) en FGA.', 'Tu es enseignant·e en adaptation scolaire.', 'Tu es enseignant·e de français en FGA, en enseignement individualisé.', 'Tu es enseignant·e de mathématiques et sciences en FGA, en enseignement individualisé.', 'Tu es enseignant·e d’anglais en FGA.', 'Tu es orthopédagogue en FGA.', 'Tu es conseiller·ère d’orientation en FGA.', 'Tu es intervenant·e scolaire en FGA.', 'Tu es conseiller·ère pédagogique en FGA au Québec.', 'Tu es direction d’un centre de formation générale des adultes.'];
-  const TACHES = ['Transforme notre résultat en 3 actions SMART, avec un verbe conjugué, un responsable et une date.', 'Génère une grille d’évaluation descriptive à 4 niveaux centrée sur la résolution de problèmes.', 'Propose 8 questions d’objectivation : 2 avant, 3 pendant, 3 après.', 'Propose une situation d’apprentissage de 3 périodes en 3 niveaux de complexité.'];
-  const CONTR = ['Un document Word prêt à imprimer : en-tête avec [votre logo de centre], titre court, sections numérotées, tableaux à fines bordures noires, en-têtes mauves (#5B2A86), mots-clés surlignés en jaune (#F2C230), aucune couleur pastel, police lisible (Cambria 12 pt).', 'Langage simple, accessible aux élèves.', 'Présentation en tableau.', 'Aucune note chiffrée.', 'Liens avec les savoirs du sigle.', 'Liste du matériel.', 'Signale toute formulation qui est encore un résultat.'];
-  const fill = (sel, arr) => { arr.forEach((t, i) => sel.add(new Option(t, i))); sel.add(new Option('Autre : je l’écris moi-même', 'x')); };
-  fill($('#hgRole'), ROLES); fill($('#hgTache'), TACHES);
-  const v = id => $('#' + id).value.trim();
-  const pick = (id, arr) => $('#' + id).value === 'x' ? (v(id + 'X') || '…') : arr[+$('#' + id).value];
   const esc = t => t.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
-  let plain = '';
-  function upd(focus) {
-    $('#hgRoleX').hidden = $('#hgRole').value !== 'x'; $('#hgTacheX').hidden = $('#hgTache').value !== 'x';
-    const g = v('hgGroupe') || 'un groupe d’adultes en FGA', e = v('hgEnjeu') || 'un enjeu qui les touche', sg = v('hgSigle');
-    const contr = [v('hgContr'), ...(typeof hSel !== 'undefined' ? hSel : [])].filter(Boolean).join(' ') || 'Langage simple, accessible aux élèves ; présentation en tableau.';
-    const L = [['Rôle', pick('hgRole', ROLES) + ' Tu maîtrises la formation générale des adultes au Québec et la pédagogie par projet.'], ['Contexte', g + ' réalise un projet d’engagement citoyen sur ' + e + '.' + (sg ? ' Cours visé : ' + sg + '.' : '')], ['Source à respecter', 'Appuie-toi uniquement sur l’extrait du programme d’études officiel de la FGA (ministère de l’Éducation du Québec) fourni ci-dessous ou en pièce jointe. Cite le sigle et le nom exact des savoirs. N’ajoute aucune compétence ni aucun savoir absent de l’extrait ; s’il manque quelque chose, écris « à valider dans le programme ».'], ['Extrait du programme', v('hgExtrait') || '[collez ici l’extrait du programme : compétences, savoirs, famille de situations de vie ; ou joignez le PDF « Extraits de programmes pour Copilot »]'], ['Tâche', pick('hgTache', TACHES)], ['Démarche', '1. Repère dans l’extrait les savoirs et la situation de vie qui collent le mieux au projet. 2. Relie chaque marche du projet (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin) à ces savoirs. 3. Avant de répondre, vérifie : chaque élément cite un sigle ou un savoir de l’extrait, aucune généralité, tout est réalisable par des adultes en FGA en quelques semaines.'], ['Format de sortie', 'Un tableau (marche du projet · ce que l’élève fait · savoir ou compétence cité · trace d’apprentissage), puis la tâche demandée, puis 3 questions d’objectivation pour l’élève, au « je ».'], ['Mise en forme et contraintes', contr]];
-    plain = L.map(([k, t]) => k + ' : ' + t).join('\n\n');
-    $('#hgOut').innerHTML = L.map(([k, t]) => '<span class="pl' + (k === focus ? ' hot' : '') + '"><b>' + k + ' :</b> ' + esc(t) + '</span>').join('\n\n');
-    if (focus) { const h = $('#hgOut').querySelector('.hot'); if (h) { h.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); setTimeout(() => h.classList.remove('hot'), 1600); } }
-  }
-  ['hgGroupe', 'hgSigle', 'hgEnjeu', 'hgExtrait', 'hgContr', 'hgRoleX', 'hgTacheX'].forEach(id => $('#' + id).addEventListener('input', upd));
-  ['hgRole', 'hgTache'].forEach(id => $('#' + id).addEventListener('change', upd));
-  const hSel = new Set();
-  CONTR.forEach(t => { const b = document.createElement('button'); b.type = 'button'; b.textContent = t; b.setAttribute('aria-pressed', 'false'); b.onclick = () => { hSel.has(t) ? hSel.delete(t) : hSel.add(t); b.classList.toggle('on', hSel.has(t)); b.setAttribute('aria-pressed', String(hSel.has(t))); upd('Mise en forme et contraintes'); }; $('#hgChips').appendChild(b); });
-  $('#hgForm').addEventListener('submit', e => e.preventDefault());
+  if (window.CG) CG.mount($('#cgHub'));
+  const PROG = 'Appuie-toi uniquement sur l’extrait du programme d’études officiel de la FGA (ministère de l’Éducation du Québec) pour SIGLE, que je te fournis ci-dessous ou en pièce jointe. N’ajoute aucune compétence ni aucun savoir qui n’y figure pas ; si l’extrait ne suffit pas, dis-le-moi.', LIEN = 'Dans un tableau, relie chaque étape de notre projet (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin) aux savoirs et aux compétences du sigle qu’elle permet de travailler ou d’évaluer.';
   const copy = (text, msgEl, selEl) => { const ok = () => { msgEl.textContent = 'Copiée !'; setTimeout(() => msgEl.textContent = '', 2500); };
     const fallback = () => { const r = document.createRange(); r.selectNodeContents(selEl); const s = getSelection(); s.removeAllRanges(); s.addRange(r); msgEl.textContent = 'Sélectionnée : copiez-la'; };
     try { navigator.clipboard.writeText(text).then(ok, fallback); } catch (e) { fallback(); } };
-  $('#hgCopy').addEventListener('click', () => copy(plain, $('#hgMsg'), $('#hgOut')));
-  upd();
 
   const P = [
     ['Une grille d’évaluation descriptive', 'Tu es conseiller pédagogique en formation générale des adultes au Québec.\nContexte : un groupe d’adultes du programme Participation sociale réalise un projet citoyen sur [l’enjeu].\nTâche : génère une grille d’évaluation descriptive à 4 niveaux pour le cours [sigle], centrée sur la résolution de problèmes dans un projet communautaire.\nÉtape 1 · Le programme : ' + PROG.replace('SIGLE', '[sigle]') + '\nExtrait du programme : [collez ici les compétences, les savoirs et la famille de situations de vie du sigle, ou joignez le PDF du programme]\nÉtape 2 · Le lien avec le projet : ' + LIEN + '\nContraintes : langage simple que les élèves comprennent, verbes observables, présentation en tableau, aucune note chiffrée.'],
@@ -227,7 +211,9 @@
     ['10_Annexe_Autoevaluation-interventions-universelles', 'Annexe', 'Mes interventions universelles', 'Une autoévaluation de 16 énoncés reliés aux 4 besoins, d’après la grille EN.1.1.'],
     ['10b_EN.1.1_Grille-reflexive_Jai-MON-plan', 'Outil officiel', 'La grille réflexive EN.1.1', 'La grille complète de « J’ai MON plan! », Université Laval.', 0, 1],
     ['11_Extraits-programmes-MEQ_pour-Copilot', 'Pour Copilot', 'Extraits de programmes', 'Les pages officielles de 9 cours (PPS, mathématique, français, anglais) à joindre à Copilot avec le trombone.', 1, 1]];
+  const BX = [['objectivation', 'L’outil d’objectivation', 'Ce que c’est, sur quoi objectiver, la maison à trois étages et les questions avant, pendant, après.'], ['engagement', 'L’engagement, un écosystème vivant', 'Les 4 besoins, les 9 gestes qui les nourrissent et d’où ça vient.'], ['classe-collabo-reflexive', 'La classe collabo-réflexive', 'Les principes, les surfaces verticales, les îlots.']];
   D.forEach(([f, k, t, p, feat, pdfOnly]) => { const a = document.createElement('article'); a.className = 'hub-doc' + (feat ? ' feat' : ''); a.innerHTML = '<span class="k">' + k + '</span><h3>' + esc(t) + '</h3><p>' + esc(p) + '</p><div class="hub-row"><a class="hub-btn sm" target="_blank" rel="noopener" href="fichiers/' + f + '.pdf">PDF</a>' + (pdfOnly ? '' : '<a class="hub-btn sm alt" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1geh7bo1rCmPDMLFFgqq4FvKSjo9zBmc_" title="La version Word est dans le dossier Drive de l’atelier">Word ↗</a>') + '</div>'; $('#hgDocs').appendChild(a); });
+  BX.forEach(([f, t, p]) => { const a = document.createElement('article'); a.className = 'hub-doc'; a.innerHTML = '<span class="k">La Boussole d’Isabelle</span><h3>' + esc(t) + '</h3><p>' + esc(p) + '</p><div class="hub-row"><a class="hub-btn sm" target="_blank" rel="noopener" href="https://cfga.netlify.app/docs/' + f + '.pdf">PDF ↗</a></div>'; $('#hgDocs').appendChild(a); });
 
   const Q = [['Pertinence pédagogique', 'Mon projet a-t-il une pertinence pédagogique ?'], ['Éthique', 'Ai-je réfléchi aux principes éthiques en jeu ?'], ['Cadre légal', 'Mon initiative respecte-t-elle le cadre légal ?'], ['Soutien', 'Ai-je accès au soutien nécessaire pour la mettre en œuvre ?'], ['Validation par les pairs', 'Ai-je consulté mes pairs pour enrichir mon idée et en voir les angles morts ?'], ['Pérennité', 'Peut-elle être maintenue dans le temps et adaptée ailleurs ?']];
   Q.forEach(([k, q], i) => { if (i === 0 || i === 3) { const g = document.createElement('li'); g.className = 'grp'; g.style.counterIncrement = 'none'; g.textContent = i ? 'Les trois ajouts des COP IA' : 'Le cadre ministériel'; $('#hgQ').appendChild(g); } const li = document.createElement('li'); li.innerHTML = '<label><input type="checkbox" id="hgq' + i + '"><span><b>' + k + '</b><span>' + q + '</span></span></label>'; $('#hgQ').appendChild(li); });

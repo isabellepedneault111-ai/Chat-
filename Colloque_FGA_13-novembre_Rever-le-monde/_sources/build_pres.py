@@ -27,6 +27,8 @@ rep = {
  '__IMG_BILLET__': uri(I + 'il_billet.png', 1100, png=True),
 }
 t = open(B + '/pres_template.html', encoding='utf-8').read()
+cg = open(B + '/copilot_gen_src.html', encoding='utf-8').read().replace('__SIG_DB__', open(B + '/sig_db.js', encoding='utf-8').read())
+t = t.replace('__COPILOT_GEN__', cg)
 for k, v in rep.items(): t = t.replace(k, v)
 three = open(B + '/vendor/three.min.js').read(); qr = open(B + '/vendor/qrcode.min.js').read()
 web = t.replace('__THREE_SCRIPT__', '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>').replace('__QR_SCRIPT__', '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>')
