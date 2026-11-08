@@ -21,6 +21,7 @@ Coanimé par Isabelle Pedneault (CP, CFGA De Jonquière) et Francis Laroche (cha
 | `09_Aide-memoire_Engagement.docx` | Chaque participant | L’affiche « L’engagement, un écosystème vivant » en une page, et la CUA de la Boussole CP |
 | `10_Annexe_Autoevaluation-interventions-universelles.docx` | Chaque participant | L’autoévaluation de ses interventions universelles : 16 énoncés de la grille EN.1.1 reliés aux 4 besoins, et un bilan |
 | `10b_EN.1.1_Grille-reflexive_Jai-MON-plan.pdf` | Chaque participant | La grille réflexive complète de « J’ai MON plan! » (Gaudreau, Duchaine et Bernier, Université Laval) |
+| `11_Extraits-programmes-MEQ_pour-Copilot.pdf` | Les animateurs et les participants | Les vraies pages des programmes du Ministère pour 9 cours (PPS-Z101, PPS-Z107, MAT-1101, MAT-1102, MAT-3052, MAT-3053, FRA-2101, FRA-3104, ANG-4104), à joindre à Copilot avec le trombone |
 | `presentation/index.html` | La salle | Présentation interactive de 27 diapos, en 3D, qui fonctionne sans Internet |
 
 ## La page Ressources (pour les participants)
@@ -49,7 +50,7 @@ La présentation est un voyage dans un seul monde 3D en cel-shading : un sol de 
 
 Le déroulé, en 27 diapos. Chaque diapo d’activité porte l’étiquette **Nourrit** (le besoin de l’engagement qu’elle nourrit), l’étiquette **Expansion** ou **Restriction** (on ouvre pour chercher, ou on resserre pour choisir), et une boîte **Modèle** quand on modélise avant de faire. À la diapo 17, on ajoute la photo du plexiglas de chaque îlot et les totaux des post-it ; le projet gagnant et sa photo s’affichent au coup de théâtre (diapo 19), dont l’invite contient déjà les extraits de programmes.
 
-- **1 à 4 · Accueil :** la couverture avec la consigne du post-it, le mur d’enjeux (on choisit le cercle école, communauté ou nature, et le post-it s’accroche au globe), les présentations, « Aujourd’hui » (les quatre temps de l’atelier).
+- **1 à 4 · Accueil :** la couverture avec la consigne du post-it, le mur d’enjeux (on touche une des 7 zones : un cercle, une jonction entre deux cercles ou le centre ; le post-it s’accroche au globe, bicolore pour une jonction), les présentations, « Aujourd’hui » (les quatre temps de l’atelier, et « Faites-nous confiance » : la démarche inductive et les surprises annoncées).
 - **5 à 8 · Le pari :** et si le but ultime, c’était l’engagement ? Les intentions, l’engagement, les 4 sphères (optionnel).
 - **9 à 11 · Le monde idéal :** pense (les trois cercles), parle et partage au plexiglas, l’analyse de contexte.
 - **12 à 16 · Le pivot :** résultat ou action (enseignement explicite), en îlot du résultat aux actions, Copilot, les 5 marches, les trois portes.

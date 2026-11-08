@@ -55,6 +55,11 @@ const kids = [
   ]), 1, 3200),
   BR(),
 
+  // Cartons d'îlot
+  H1('E', 'Cartons d’îlot · un par table'),
+  grid(['1', '2', '3', '4'].map(n => [big('ÎLOT', 70, C.ink, { after: 0 }), big(n, 200, C.accent, { after: 0 })]), 2, 5200),
+  BR(),
+
   // Cartons signaux
   H1('D', 'Cartons de signaux · pour la coanimation'),
   grid([['VERT', 'on continue'], ['JAUNE', 'encore 5 minutes'], ['ROUGE', 'on conclut en une phrase']].map(([a, b]) => [

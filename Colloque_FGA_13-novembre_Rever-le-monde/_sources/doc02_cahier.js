@@ -40,12 +40,12 @@ const kids = [
 
   H1('01', 'Ce qui me préoccupe dans mon milieu'),
   nourrit('EXP', 'Sens'),
-  P('En entrant, notez sur un post-it une chose qui vous préoccupe, vous dérange ou vous manque dans votre milieu. Collez-le au mur, dans le cercle qui lui ressemble : école, communauté ou nature.'),
+  P('En entrant, notez sur un post-it une chose qui vous préoccupe, vous dérange ou vous manque dans votre milieu. Collez-le au mur, dans le cercle ou la jonction qui lui ressemble : école, communauté, nature, entre deux cercles, ou au centre si ça touche les trois.'),
   zone('Ce qui me préoccupe, me dérange ou me manque dans mon milieu', 1000),
 
   H1('02', 'Notre pari'),
   nourrit('Sens'),
-  P('**Et si le but ultime, c’était l’engagement ?** On fait le pari que si l’engagement est là, tout le reste en découle : la présence, la persévérance, les apprentissages. Aujourd’hui, vous vivez une version accélérée de la démarche que des élèves de PPS du CFGA ont déjà vécue. À la fin, on compare.'),
+  P('**Et si le but ultime, c’était l’engagement ?** On fait le pari que si l’engagement est là, tout le reste en découle : la présence, la persévérance, les apprentissages. Aujourd’hui, vous vivez une version accélérée d’une démarche qu’Isabelle a vécue à de nombreuses reprises avec ses élèves, que Francis fait vivre dans ses incubateurs solidaires, et que des élèves ont vécue cette semaine au centre. **Faites-nous confiance :** on a choisi exprès une démarche inductive. Par moments, le sens pourrait vous échapper ; on fait le pari qu’il apparaîtra à la fin, avec quelques surprises.'),
   P('**Motivation et engagement, pas pareil.** La motivation est la ==force== qui pousse à l’action. L’engagement est la ==décision== de prendre part activement à une activité, un projet, une mission.', { run: { size: 19 } }),
   tbl(['Besoin', 'Dans la tête de l’élève'], [
     ['**Compétence**', 'En faisant des efforts et des erreurs, j’apprends et je deviens meilleur.'],
@@ -142,6 +142,7 @@ const kids = [
   P('Cochez celles que vous voulez essayer avec vos élèves.'),
   tbl(['Pratique', 'Où je l’ai vécue', 'Nourrit', 'J’essaie'], [
     ['Pense, parle, partage', 'Le monde idéal', 'Appartenance', '☐'],
+    ['Des îlots mêlés exprès', 'Centres, programmes, matières et fonctions mêlés', 'Appartenance', '☐'],
     ['La classe collabo-réflexive', 'Les surfaces verticales', 'Appartenance', '☐'],
     ['La méthode inductive', 'Le mur d’enjeux ; résultat ou action', 'Compétence', '☐'],
     ['L’enseignement explicite', 'Modelage, pratique guidée, pratique autonome', 'Compétence', '☐'],
