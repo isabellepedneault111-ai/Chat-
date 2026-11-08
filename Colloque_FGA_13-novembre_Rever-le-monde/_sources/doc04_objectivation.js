@@ -28,13 +28,13 @@ const kids = [
   ], [3400, 6640], { firstAccent: true }),
 
   H1('03', 'Sur quoi objectiver ?'),
-  P('Cinq objets d’objectivation, reliés aux quatre sphères de l’engagement vues en atelier.'),
-  tbl(['Objet', 'Sphère', 'Une question pour commencer'], [
-    ['**Les attitudes**', 'Affective', 'Est-ce que je me crois capable de réaliser la tâche ?'],
-    ['**Les apprentissages réalisés**', 'Cognitive', 'Qu’est-ce que je retiens d’aujourd’hui ?'],
-    ['**Les comportements**', 'Comportementale', 'Est-ce que j’ai commencé à temps et utilisé tout mon temps ?'],
-    ['**Les stratégies**', 'Cognitive', 'Quelle stratégie m’a été utile ? Laquelle je change ?'],
-    ['**Les démarches**', 'Citoyenne (en projet)', 'Est-ce que notre action a vraiment changé quelque chose pour quelqu’un ?']
+  P('Cinq objets d’objectivation, reliés aux quatre besoins de l’engagement vus en atelier : autonomie, sens, compétence, appartenance.'),
+  tbl(['Objet', 'Besoin nourri', 'Une question pour commencer'], [
+    ['**Les attitudes**', 'Compétence', 'Est-ce que je me crois capable de réaliser la tâche ?'],
+    ['**Les apprentissages réalisés**', 'Sens', 'Qu’est-ce que je retiens d’aujourd’hui ?'],
+    ['**Les comportements**', 'Autonomie', 'Est-ce que j’ai commencé à temps et utilisé tout mon temps ?'],
+    ['**Les stratégies**', 'Autonomie et compétence', 'Quelle stratégie m’a été utile ? Laquelle je change ?'],
+    ['**Les démarches**', 'Sens et appartenance (en projet)', 'Est-ce que notre action a vraiment changé quelque chose pour quelqu’un ?']
   ], [2800, 2300, 4940], { firstAccent: true }),
 
   H1('04', 'La maison à trois étages'),

@@ -38,7 +38,7 @@ const kids = [
   ...prompt('2 · Des relances métacognitives (objectivation)', [
     'Tu es un coach pédagogique qui accompagne des adultes de 16 à 25 ans en FGA.',
     'Tâche : propose 8 questions de relance pour aider un élève à évaluer son autonomie dans son projet citoyen : 2 avant, 3 pendant, 3 après.',
-    'Contraintes : phrases courtes, au « je », une question au moins pour chaque sphère de l’engagement (affective, cognitive, comportementale, citoyenne).'
+    'Contraintes : phrases courtes, au « je », une question au moins pour chaque besoin de l’engagement (autonomie, sens, compétence, appartenance).'
   ]),
   ...prompt('3 · D’un résultat à des actions', [
     'Voici un résultat souhaité par mon groupe : « [résultat] ».',

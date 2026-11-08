@@ -87,7 +87,7 @@ const kids = [
     ['85–88', '22–23', 'Les élèves de PPS ont fait la même chose. Décloisonner.', 'Raconter', 'Sens'],
     ['88–90', '25–27', '3-2-1 (si le temps le permet, sinon dans le cahier), ce qui reste, merci.', 'Objectivation', 'Compétence']
   ], [900, 900, 4600, 2000, 1680], { firstAccent: true }),
-  P('Le minutage est serré : c’est un atelier qui fait vivre beaucoup. Les diapos 8 (les 4 sphères) et 23 (la pyramide) sont **optionnelles**.', { before: 80, run: { italics: true, color: C.grey } }),
+  P('Le minutage est serré : c’est un atelier qui fait vivre beaucoup. Les diapos 8 (les 4 besoins) et 23 (la pyramide) sont **optionnelles**.', { before: 80, run: { italics: true, color: C.grey } }),
 
   H2('Rôles et passages de relais'),
   tbl(['', 'Isabelle', 'Francis'], [
@@ -96,7 +96,7 @@ const kids = [
     ['**Signal discret**', 'Carton vert : on continue. Jaune : 5 minutes. Rouge : on conclut en une phrase.', 'Même code.']
   ], [2000, 4040, 4040]),
   H2('Plan B chrono · 10 minutes de retard'),
-  B('**Couper d’abord** les diapos 8 (les 4 sphères) et 23 (la pyramide).'),
+  B('**Couper d’abord** les diapos 8 (les 4 besoins) et 23 (la pyramide).'),
   B('**Raccourcir ensuite** les trois portes (diapo 16) : on renvoie au cahier.'),
   B('**Le 3-2-1** se fait dans le cahier, à la maison, si le temps manque.'),
   B('**Ne jamais couper** le coup de théâtre (18), le premier pas (19) et le dévoilement (20) : c’est là que l’atelier prend tout son sens.'),

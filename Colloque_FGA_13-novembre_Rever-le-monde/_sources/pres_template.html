@@ -6,18 +6,22 @@
 /* Carnet d'atelier en cel-shading : papier crème, encre noire en trait, mauve d'imprimerie, jaune or. Un seul univers visuel, assumé. */
 :root{
   --paper:#FBF8EF; --paper2:#F3EDDF; --ink:#1E1A22; --mauve:#5B2A86; --mauve2:#7A45AB; --gold:#F2C230; --muted:#45404D; --hair:#8F859A;
-  --display:"Anton","Impact","Arial Narrow Bold",sans-serif; --hand:"Caveat","Segoe Print","Comic Sans MS",cursive; --body:"Cambria","Georgia","Times New Roman",serif; --ui:"Arial","Helvetica",sans-serif;
+  --display:"Anton","Impact","Arial Narrow Bold",sans-serif; --hand:"Arial","Helvetica",sans-serif; --script:"Caveat","Segoe Print",cursive; --body:"Cambria","Georgia","Times New Roman",serif; --ui:"Arial","Helvetica",sans-serif;
   color-scheme:light;
 }
 [hidden]{display:none!important}
-.confiance{border:3px solid var(--ink);background:var(--ink);color:var(--paper);padding:12px 16px;margin-top:4px;box-shadow:6px 6px 0 var(--gold)}
+.confiance{border:3px solid var(--ink);background:var(--ink);color:var(--paper);padding:12px 18px;margin-top:4px;box-shadow:6px 6px 0 var(--gold);display:grid;grid-template-columns:1.1fr 1fr;gap:10px 28px}
+@media (max-width:760px){.confiance{grid-template-columns:1fr}}
+.confiance .pari1{font-family:var(--display);font-size:clamp(20px,min(2vw,3.4vh),30px);letter-spacing:.02em;color:var(--paper);line-height:1.15}
+.surp{margin:6px 0 0;padding:0;list-style:none;font-weight:700;font-size:clamp(17px,min(1.6vw,2.8vh),24px);line-height:1.35}
+.surp li::before{content:"★ ";color:var(--gold)}
 .confiance b{font-family:var(--display);font-weight:400;font-size:clamp(20px,min(2vw,3.4vh),30px);color:var(--gold);text-transform:uppercase;letter-spacing:.03em}
-.confiance p{margin:4px 0 0;font-size:clamp(14px,min(1.3vw,2.3vh),19px)}
+.confiance p{margin:6px 0 0;font-size:clamp(17px,min(1.6vw,2.8vh),24px);line-height:1.3}
 .confiance .surprise{color:var(--gold)}
 .zpick{display:flex;align-items:center;gap:14px;margin:0 0 8px}
-.zpick svg{width:clamp(150px,min(15vw,24vh),230px);height:auto;cursor:pointer;flex:0 0 auto}
-.zlab{margin:0;font-family:var(--ui);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.zlab b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(20px,min(2vw,3.4vh),30px);letter-spacing:.02em;text-transform:none;color:var(--ink);margin:2px 0}
+.zpick svg{width:clamp(170px,min(17vw,27vh),260px);height:auto;cursor:pointer;flex:0 0 auto}
+.zlab{margin:0;font-family:var(--ui);font-weight:700;font-size:clamp(13px,1vw,16px);letter-spacing:.08em;text-transform:uppercase;color:var(--mauve)}
+.zlab b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(26px,min(2.6vw,4.4vh),40px);letter-spacing:.02em;text-transform:none;color:var(--ink);margin:2px 0}
 .zlab small{display:block;font-size:11px;letter-spacing:.04em;text-transform:none}
 .z-ec,.pap.mini.zec{background:linear-gradient(135deg,var(--gold) 50%,var(--mauve) 50%)!important;color:var(--ink)!important}
 .z-en,.pap.mini.zen{background:linear-gradient(135deg,var(--gold) 50%,#FFFDF7 50%)!important;color:var(--ink)!important}
@@ -48,7 +52,7 @@
 .sheet.wide .crit li{display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center}.sheet.wide .crit i{width:22px;height:22px;flex:none;transform:none;grid-row:1}.sheet.wide .crit b{grid-row:1}.sheet.wide .crit li>:not(i):not(b){grid-column:1 / -1}
 .entree{position:absolute;left:6%;top:7%;z-index:4;width:min(46%,330px);background:var(--gold);border:4px solid var(--ink);box-shadow:8px 8px 0 var(--ink);padding:12px 16px 14px;transform:rotate(-2.5deg);color:var(--ink);animation:papin .9s cubic-bezier(.2,.8,.2,1) .3s both}
 .entree b{display:inline-block;font-family:var(--display);font-weight:400;font-size:clamp(18px,min(1.8vw,3vh),26px);letter-spacing:.05em;text-transform:uppercase;background:var(--ink);color:var(--gold);padding:0 8px;margin-bottom:6px}
-.entree p{margin:4px 0 0;font-family:var(--hand);font-size:clamp(20px,min(2vw,3.4vh),30px);line-height:1.05}
+.entree p{margin:6px 0 0;font-family:var(--body);font-weight:700;font-size:clamp(17px,min(1.55vw,2.7vh),24px);line-height:1.25}
 .entree mark{background:#fff;padding:0 4px}
 @media (max-width:800px){.entree{position:relative;left:auto;top:auto;width:auto;margin:10px}}
 @media (prefers-reduced-motion:reduce){.entree{animation:none}}
@@ -57,7 +61,7 @@
 .prog i{font-style:normal;font-family:var(--display);font-size:clamp(14px,1.2vw,17px);letter-spacing:.06em;text-transform:uppercase;color:var(--mauve)}
 .prog b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(26px,min(2.6vw,4.4vh),40px);line-height:1;margin:2px 0 6px}
 .prog p{margin:0;font-size:clamp(14px,min(1.3vw,2.3vh),18px);line-height:1.3}
-.surprise{font-family:var(--hand);font-size:clamp(22px,min(2.2vw,3.6vh),32px);color:var(--mauve);margin:4px 0 0}
+.surprise{font-family:var(--display);font-size:clamp(20px,min(2vw,3.4vh),30px);letter-spacing:.02em;color:var(--mauve);margin:4px 0 0}
 @media (max-width:900px){.prog{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .nourrit{display:flex;flex-wrap:wrap;gap:5px;align-items:center;justify-content:flex-end;margin:-8px -6px 2px 0}
 .nourrit .bz{display:inline-block;flex:0 0 auto;width:auto}
@@ -77,7 +81,7 @@
 .modele{border:3px dashed var(--mauve);padding:8px 12px;margin:6px 0 8px;background:#fff;font-size:clamp(14px,min(1.3vw,2.3vh),18px)}
 .modele b{font-family:var(--display);font-weight:400;color:#fff;background:var(--mauve);padding:0 8px;text-transform:uppercase;letter-spacing:.05em}
 .modele p{margin:4px 0 0}
-.droit{font-family:var(--hand);font-size:clamp(19px,min(1.8vw,3vh),26px);color:var(--mauve);margin:4px 0 8px;line-height:1.1}
+.droit{font-family:var(--body);font-weight:700;font-size:clamp(16px,min(1.45vw,2.5vh),21px);color:var(--mauve);margin:4px 0 8px;line-height:1.3}
 .venn3{width:100%;height:auto;max-height:44vh}
 .ctx{width:100%;border-collapse:collapse;font-size:clamp(14px,min(1.3vw,2.3vh),18px);margin:4px 0 6px}
 .ctx th,.ctx td{border:2px solid var(--ink);padding:6px 10px;text-align:left;vertical-align:top;background:#fff;color:var(--ink)}
@@ -131,7 +135,7 @@ html.hubmode,html.hubmode body{overflow:auto!important;height:auto!important}
 .zones{margin:0 0 8px}.zones .chip{border-width:3px;font-weight:700}
 .zones .chip.on{outline:3px solid var(--ink);outline-offset:2px}
 .z-e,.pap.mini.ze{background:var(--gold)!important;color:var(--ink)!important}.z-c,.pap.mini.zc{background:var(--mauve)!important;color:#fff!important}.z-n,.pap.mini.zn{background:#FFFDF7!important;color:var(--ink)!important}.z-x,.pap.mini.zx{background:#D9541E!important;color:#fff!important}
-.tally{font-family:var(--display);font-size:clamp(16px,min(1.5vw,2.6vh),22px);letter-spacing:.03em;margin:10px 0 0}
+.tally{font-family:var(--display);font-size:clamp(17px,min(1.6vw,2.8vh),24px);letter-spacing:.03em;margin:10px 0 0}
 .tally i{display:inline-block;width:.8em;height:.8em;border:2px solid var(--ink);margin:0 4px 0 12px;vertical-align:-1px}
 .tally i:first-child{margin-left:0}
 .when{border-left:8px solid var(--gold);background:var(--paper2);padding:6px 12px;margin:2px 0 12px;font-size:clamp(15px,min(1.35vw,2.4vh),19px)}
@@ -204,7 +208,7 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .s1-panel{background-color:var(--mauve);background-image:radial-gradient(rgba(30,26,34,.35) 1.4px,transparent 1.6px);background-size:11px 11px;color:var(--paper);display:flex;flex-direction:column;justify-content:center;gap:clamp(8px,2.2vh,24px);overflow-y:auto;padding-block:clamp(20px,4vh,48px);padding-left:max(16px,env(safe-area-inset-left,0px),4vw);padding-right:clamp(16px,3vw,48px);border-right:6px solid var(--ink);min-width:0}
 .s1-title{font-size:clamp(38px,min(5.8vw,9.6vh),104px);line-height:1.02;letter-spacing:.015em;margin:0;color:var(--paper);text-shadow:4px 4px 0 var(--ink)}
 .s1-title span{color:var(--gold)}
-.s1-hand{font-family:var(--hand);font-size:clamp(26px,min(3vw,5vh),48px);color:var(--gold);margin:0;transform:rotate(-2deg);transform-origin:left}
+.s1-hand{font-family:var(--script);font-size:clamp(26px,min(3vw,5vh),48px);color:var(--gold);margin:0;transform:rotate(-2deg);transform-origin:left}
 .s1-sub{color:var(--paper);margin:0;font-size:clamp(19px,min(1.8vw,3.2vh),28px)}
 .s1-who{display:flex;flex-direction:column;gap:clamp(8px,1.4vh,14px);margin-top:clamp(4px,1vh,12px)}
 .s1-who div{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
@@ -216,7 +220,7 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .n1{width:min(82%,780px);left:6%;top:12%;transform:rotate(-3deg);z-index:2}
 .n2{width:min(40%,330px);right:5%;bottom:9%;transform:rotate(5deg);z-index:3}
 .n2::before{transform:rotate(6deg);background:rgba(91,42,134,.55)}
-.s1-cap{position:absolute;left:7%;bottom:6%;font-family:var(--hand);font-size:clamp(24px,2.4vw,38px);color:var(--mauve);margin:0;transform:rotate(-3deg);z-index:4}
+.s1-cap{position:absolute;left:7%;bottom:6%;font-family:var(--script);font-size:clamp(24px,2.4vw,38px);color:var(--mauve);margin:0;transform:rotate(-3deg);z-index:4}
 @media (max-width:800px){.slide.s1{grid-template-columns:1fr;grid-template-rows:46vh auto;overflow-y:auto}.s1-img{order:-1;border-bottom:6px solid var(--ink)}.s1-cap{display:none}.s1-panel{border-right:0}}
 .frags{display:flex;flex-wrap:wrap;gap:clamp(16px,3vw,48px);align-items:center;margin:4px 0 clamp(14px,2vh,26px)}
 .frag{position:relative;margin:0;background:#fff;padding:8px;border:3px solid var(--ink);box-shadow:8px 8px 0 var(--ink);max-width:min(640px,100%);flex:1 1 380px}
@@ -666,7 +670,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 
   const P = [
     ['Une grille d’évaluation descriptive', 'Tu es conseiller pédagogique en formation générale des adultes au Québec.\nContexte : un groupe d’adultes du programme Participation sociale réalise un projet citoyen sur [l’enjeu].\nTâche : génère une grille d’évaluation descriptive à 4 niveaux pour le cours [sigle], centrée sur la résolution de problèmes dans un projet communautaire.\nÉtape 1 · Le programme : ' + PROG.replace('SIGLE', '[sigle]') + '\nExtrait du programme : [collez ici les compétences, les savoirs et la famille de situations de vie du sigle, ou joignez le PDF du programme]\nÉtape 2 · Le lien avec le projet : ' + LIEN + '\nContraintes : langage simple que les élèves comprennent, verbes observables, présentation en tableau, aucune note chiffrée.'],
-    ['Des relances métacognitives', 'Tu es un coach pédagogique qui accompagne des adultes de 16 à 25 ans en FGA.\nTâche : propose 8 questions de relance pour aider un élève à évaluer son autonomie dans son projet citoyen : 2 avant, 3 pendant, 3 après.\nContraintes : phrases courtes, au « je », une question au moins pour chaque sphère de l’engagement (affective, cognitive, comportementale, citoyenne).'],
+    ['Des relances métacognitives', 'Tu es un coach pédagogique qui accompagne des adultes de 16 à 25 ans en FGA.\nTâche : propose 8 questions de relance pour aider un élève à évaluer son autonomie dans son projet citoyen : 2 avant, 3 pendant, 3 après.\nContraintes : phrases courtes, au « je », une question au moins pour chaque besoin de l’engagement (autonomie, sens, compétence, appartenance).'],
     ['D’un résultat à des actions', 'Voici un résultat souhaité par mon groupe : « [résultat] ».\nTransforme-le en 3 actions SMART formulées avec un verbe conjugué au présent, un responsable et une date.\nSi une de mes formulations est encore un résultat plutôt qu’une action, dis-le-moi et explique pourquoi.'],
     ['Un enjeu comme contexte de tâche', 'Tu es enseignant de mathématiques en FGA, en enseignement individualisé.\nContexte : un élève inscrit en [sigle] veut travailler sur l’enjeu [enjeu].\nÉtape 1 · Le programme : ' + PROG.replace('SIGLE', '[sigle]') + '\nExtrait du programme : [collez ici les compétences, les savoirs et la famille de situations de vie du sigle, ou joignez le PDF du programme]\nÉtape 2 · Le lien avec le projet : ' + LIEN + '\nTâche : propose une situation d’apprentissage de 3 périodes où il réalise un petit sondage et en analyse les résultats, en 3 niveaux de complexité.\nContraintes : liens explicites avec les savoirs du sigle, liste du matériel, une question d’objectivation à la fin.'],
     ['Des micro-actions à partir de notre analyse de contexte', 'Tu es enseignant·e en formation générale des adultes au Québec.\nContexte : notre groupe veut agir sur ce résultat : « [notre résultat] ».\nNotre analyse de contexte : leviers (ce qui existe déjà) : [collez vos leviers]. Ce que nous remarquons : [collez vos « je remarque que »].\nTâche : propose 5 micro-actions concrètes, réalisables en quelques semaines par des adultes en formation, qui s’appuient sur nos leviers. Chacune est SMART : spécifique, mesurable, atteignable, représentative (pourquoi elle compte pour nous) et temporelle.\nContraintes : une phrase par action, avec un verbe conjugué, qui et quand ; présentation en tableau.\nMise en forme : Un document Word prêt à imprimer : en-tête avec [votre logo de centre], titre court, sections numérotées, tableaux à fines bordures noires, en-têtes mauves (#5B2A86), mots-clés surlignés en jaune (#F2C230), aucune couleur pastel, police lisible (Cambria 12 pt).'],
@@ -709,7 +713,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   </div>
   <div class="s1-img s1-open">
     <figure class="s1-photo"><img src="__IMG_RISO_MUR__" alt="Des jeunes adultes collent des post-it sur une carte du monde, devant une fenêtre sur la rivière enneigée"></figure>
-    <div class="entree"><b>En entrant</b><p>Sur un post-it : ce qui vous <mark>préoccupe</mark> ou vous dérange dans votre milieu.</p><p>Collez-le au mur, dans son cercle : école, communauté ou nature.</p></div>
+    <div class="entree"><b>En entrant</b><p>Sur un post-it : ce qui vous <mark>préoccupe</mark> dans votre milieu.</p><p>Collez-le au mur, dans son cercle.</p></div>
     <span class="pap done p6" aria-hidden="true">on l’a fait !</span>
   </div>
 </section>
@@ -717,7 +721,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
 <section data-mode="exp" data-besoins="Sens" class="slide" data-phase="0" data-who="Francis" data-notes="Pendant l’accueil, taper quelques post-it du mur en choisissant leur cercle : ils s’accrochent au globe. Phrase clé : « Ce que vous venez de faire, nos élèves de PPS l’ont fait aussi : c’est la première marche de la démarche. »">
   <div class="kick">Accueil · le mur d’enjeux</div>
   <h2>Qu’est-ce qui vous <span class="hl">préoccupe</span> ou vous dérange dans votre milieu ?</h2>
-  <p class="when"><b>En entrant</b> Sur un post-it : une chose qui vous préoccupe, vous dérange ou vous manque dans votre milieu. Collez-le sur l’affiche, dans le cercle ou la jonction qui lui ressemble : école, communauté, nature, entre deux cercles ou au centre. On en tape quelques-uns ici : ils s’accrochent au globe.</p>
+  <p class="when"><b>En entrant</b> Un post-it, collé dans son cercle, sa jonction ou au centre. On en tape quelques-uns ici.</p>
   <div class="zpick">
     <svg id="zSvg" viewBox="0 0 250 215" role="group" aria-label="Choisir la zone du post-it : touchez une partie des cercles">
       <defs>
@@ -727,9 +731,9 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
       <circle cx="90" cy="82" r="66" fill="#F2C230"/><circle cx="160" cy="82" r="66" fill="#5B2A86" fill-opacity=".85"/><circle cx="125" cy="140" r="66" fill="#FFFDF7" fill-opacity=".85"/>
       <rect width="250" height="215" fill="#1E1A22" fill-opacity=".55" mask="url(#zMask)" pointer-events="none"/>
       <g fill="none" stroke="#1E1A22" stroke-width="3"><circle cx="90" cy="82" r="66"/><circle cx="160" cy="82" r="66"/><circle cx="125" cy="140" r="66"/></g>
-      <g font-family="Anton,Impact,sans-serif" font-size="14" text-anchor="middle" pointer-events="none"><text x="62" y="62" fill="#1E1A22">ÉCOLE</text><text x="190" y="62" fill="#F2C230">COMMUNAUTÉ</text><text x="125" y="196" fill="#1E1A22">NATURE</text></g>
+      <g font-family="Anton,Impact,sans-serif" font-size="19" text-anchor="middle" pointer-events="none"><text x="60" y="64" fill="#1E1A22">ÉCOLE</text><text x="192" y="64" fill="#F2C230">COMMUN.</text><text x="125" y="198" fill="#1E1A22">NATURE</text></g>
     </svg>
-    <p class="zlab">Touchez une zone<br><b id="zName">École</b><small>3 cercles, 3 jonctions, le centre</small></p>
+    <p class="zlab">Zone choisie<b id="zName">École</b></p>
   </div>
   <form class="checker" id="enjeuForm" style="margin-bottom:12px">
     <input type="text" id="enjeuIn" maxlength="40" placeholder="ex. peu de liens avec les organismes du quartier" aria-label="Un enjeu">
@@ -747,25 +751,25 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
     <article class="idc">
       <header><span class="idc-name">Isabelle Pedneault</span><span class="idc-role">Conseillère pédagogique · CFGA De Jonquière</span></header>
       <dl>
-        <dt>Ma devise</dt><dd contenteditable="true" data-k="v2i1">« Si ton plan A ne fonctionne pas, il reste 25 autres lettres à l’alphabet. »</dd>
-        <dt>Mon outil préféré</dt><dd contenteditable="true" data-k="v2i2">L’humour.</dd>
-        <dt>Si c’était à refaire</dt><dd contenteditable="true" data-k="v2i3">Se rassembler chaque jour pour jouer, discuter, rire, planifier.</dd>
-        <dt>Mon conseil numéro 1</dt><dd contenteditable="true" data-k="v2i4">Ne jamais rester seul. Choisis tes combats…</dd>
+        <dt>Ma devise</dt><dd contenteditable="true" data-k="v3i1">« L’humain avant les contenus. Toujours. »</dd>
+        <dt>Mon outil préféré</dt><dd contenteditable="true" data-k="v3i2">L’humour.</dd>
+        <dt>Si c’était à refaire</dt><dd contenteditable="true" data-k="v3i3">Se rassembler chaque jour pour jouer, discuter, rire, planifier.</dd>
+        <dt>Mon conseil numéro 1</dt><dd contenteditable="true" data-k="v3i4">Ne jamais rester seul. Choisis tes combats…</dd>
       </dl>
     </article>
     <article class="idc">
       <header><span class="idc-name">Francis Laroche</span><span class="idc-role">Chargé de projet en éducation citoyenne mondiale · Centre de solidarité internationale du Saguenay–Lac-Saint-Jean</span></header>
       <dl>
-        <dt>Ma devise</dt><dd contenteditable="true" data-k="v2f1" class="todo">à compléter</dd>
-        <dt>Mon outil préféré</dt><dd contenteditable="true" data-k="v2f2" class="todo">à compléter</dd>
-        <dt>Si c’était à refaire</dt><dd contenteditable="true" data-k="v2f3" class="todo">à compléter</dd>
-        <dt>Mon conseil numéro 1</dt><dd contenteditable="true" data-k="v2f4" class="todo">à compléter</dd>
+        <dt>Ma devise</dt><dd contenteditable="true" data-k="v3f1">« On va le vivre ! »</dd>
+        <dt>Mon outil préféré</dt><dd contenteditable="true" data-k="v3f2">Le langage.</dd>
+        <dt>Si c’était à refaire</dt><dd contenteditable="true" data-k="v3f3">Faire confiance aux personnes, plus tôt et davantage.</dd>
+        <dt>Mon conseil numéro 1</dt><dd contenteditable="true" data-k="v3f4">Écouter vraiment ce que les personnes ont à dire.</dd>
       </dl>
     </article>
   </div>
 </section>
 
-<section data-besoins="Sens" data-wide="1" class="slide" data-phase="0" data-who="Isabelle" data-notes="Ce qu’on va faire, en 90 minutes. On annonce les quatre temps sans nommer les pratiques pédagogiques : elles seront dévoilées à la fin. Puis l’avertissement, comme un « trigger warning » : « Faites-nous confiance. On a choisi exprès une démarche inductive : par moments, le sens pourrait vous échapper. On fait le pari qu’il apparaîtra à la fin. » Annoncer les surprises sans les dévoiler : plus de cinq approches pédagogiques, la comparaison avec la démarche vécue cette semaine au centre par des élèves, et quelques autres (les îlots mêlés exprès, le projet de la salle relié à toutes les disciplines, les projets réalisés par des élèves).">
+<section data-besoins="Sens" data-wide="1" class="slide" data-phase="0" data-who="Isabelle" data-notes="Ce qu’on va faire, en 90 minutes. On annonce les quatre temps sans nommer les pratiques pédagogiques : elles seront dévoilées à la fin. Puis l’avertissement, comme un « trigger warning » : « Faites-nous confiance. On a choisi exprès une démarche inductive : par moments, le sens pourrait vous échapper. On fait le pari qu’il apparaîtra à la fin. » Le pari d’abord, puis les surprises en liste, sans les expliquer : plus de cinq approches pédagogiques ; les petits marqueurs à chaque étape (les besoins de l’engagement) ; le mouvement d’expansion et de restriction ; la comparaison avec la démarche vécue cette semaine au centre par des élèves ; et d’autres (les îlots mêlés exprès, le projet de la salle relié à toutes les disciplines, les projets réalisés par des élèves). Ne rien préciser : tout se dévoile à la fin.">
   <div class="kick">Au programme · 90 minutes</div>
   <h2>Aujourd’hui, vous allez vivre la démarche</h2>
   <div class="prog">
@@ -774,7 +778,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
     <div><i>Phase 3</i><b>Choisir</b><p>La galerie et les votes. Un projet pour le groupe.</p></div>
     <div><i>Phase 4</i><b>S’engager</b><p>Votre premier pas, de retour dans votre milieu.</p></div>
   </div>
-  <div class="confiance"><b>Faites-nous confiance</b><p>On a choisi exprès une démarche inductive : par moments, le sens pourrait vous échapper. C’est voulu. On fait le pari qu’il apparaîtra à la fin.</p><p class="surprise">Des surprises vous attendent : plus de cinq approches pédagogiques, la comparaison avec la démarche vécue cette semaine, ici au centre, par des élèves… et quelques autres.</p></div>
+  <div class="confiance"><div><b>⚠ Avertissement</b><p class="pari1">Notre pari : une démarche inductive, choisie exprès.</p><p>Par moments, le sens pourrait vous échapper. Faites-nous confiance : il apparaîtra à la fin.</p></div><div><b>Des surprises</b><ul class="surp"><li>Plus de cinq approches pédagogiques</li><li>De petits marqueurs, à chaque étape</li><li>Un mouvement qui ouvre, puis resserre</li><li>Une comparaison inattendue</li><li>… et d’autres</li></ul></div></div>
 </section>
 
 <section data-besoins="Sens" class="slide" data-phase="1" data-who="Isabelle" data-notes="Le cœur de l’atelier. On fait le pari : si on a l’engagement, tout le reste en découle. Annoncer sans tout dévoiler : vous allez vivre une version accélérée d’une démarche qu’Isabelle a vécue à de nombreuses reprises avec ses élèves, que Francis fait vivre dans ses incubateurs solidaires, et que des élèves ont vécue cette semaine, ici au centre. À la fin, on comparera. Ne pas nommer les pratiques pédagogiques maintenant : on les dévoile à la diapo 21.">
@@ -800,7 +804,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   </div>
 </section>
 
-<section data-besoins="Sens" class="slide" data-phase="1" data-who="Isabelle, puis Francis" data-notes="D’après l’affiche « L’engagement, un écosystème vivant ». Une idée par étape : 1) vrai ou faux à main levée ; 2) motivation et engagement ; 3) les 4 besoins ; 4) les gestes qui les nourrissent ; 5) Francis : l’engagement citoyen. Enchaîner sur les 4 sphères.">
+<section data-besoins="Sens" class="slide" data-phase="1" data-who="Isabelle, puis Francis" data-notes="D’après l’affiche « L’engagement, un écosystème vivant ». Une idée par étape : 1) vrai ou faux à main levée ; 2) motivation et engagement ; 3) les 4 besoins ; 4) les gestes qui les nourrissent ; 5) Francis : l’engagement citoyen. Enchaîner sur la diapo des 4 besoins (optionnelle).">
   <div class="kick">Phase 1 · l’engagement, un écosystème vivant</div>
   <h2 id="engH">Vrai ou faux ?</h2>
   <div id="eng1"><p class="big-q">La motivation et l’engagement, c’est la même chose.</p></div>
@@ -819,11 +823,11 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
   <button class="btn" id="engBtn" type="button" style="margin-top:18px">Révéler</button>
 </section>
 
-<section data-besoins="Sens" class="slide" data-phase="1" data-who="Isabelle" data-notes="Optionnel : à couper en cas de retard. Toucher chaque planète. Demander : « Laquelle de ces sphères est la plus souvent négligée chez vos élèves ? » Souvent : la citoyenne.">
-  <div class="kick">Phase 1 · les 4 sphères de l’engagement</div>
+<section data-besoins="Sens" class="slide" data-phase="1" data-who="Isabelle" data-notes="Optionnel : à couper en cas de retard. Toucher chaque planète : le besoin, ce qu’on observe chez l’élève, et un geste qui le nourrit. Demander : « Lequel de ces besoins est le plus souvent négligé chez vos élèves ? » Annoncer : à chaque étape de l’atelier, un petit marqueur indique le besoin nourri. Gardez l’œil ouvert.">
+  <div class="kick">Phase 1 · les 4 besoins de l’engagement</div>
   <h2>Ce qui gravite autour de l’élève</h2>
   <div class="row" style="flex:1;align-items:stretch">
-    <div class="panel col" id="sphereOut" style="flex:1 1 260px"><h3>Quatre sphères</h3><p>Touchez une sphère, ici ou sur la 3D.</p><div class="chips" id="sphChips"><button class="chip" data-i="0">Affective</button><button class="chip" data-i="1">Cognitive</button><button class="chip" data-i="2">Comportementale</button><button class="chip" data-i="3">Citoyenne</button></div></div>
+    <div class="panel col" id="sphereOut" style="flex:1 1 260px"><h3>Quatre besoins</h3><p>Touchez un besoin, ici ou sur la 3D.</p><div class="chips" id="sphChips"><button class="chip" data-i="0">Autonomie</button><button class="chip" data-i="1">Sens</button><button class="chip" data-i="2">Compétence</button><button class="chip" data-i="3">Appartenance</button></div></div>
   </div>
 </section>
 
@@ -837,7 +841,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
       <circle cx="300" cy="350" r="170" fill="#FFFDF7" fill-opacity=".88" stroke="#1E1A22" stroke-width="6"/>
       <g fill="none" stroke="#1E1A22" stroke-width="6"><circle cx="215" cy="200" r="170"/><circle cx="385" cy="200" r="170"/><circle cx="300" cy="350" r="170"/></g>
       <g font-family="Anton,Impact,sans-serif" text-anchor="middle" font-size="36"><text x="160" y="140" fill="#1E1A22">ÉCOLE</text><text x="445" y="140" fill="#F2C230">COMMUNAUTÉ</text><text x="300" y="480" fill="#1E1A22">NATURE</text></g>
-      <text x="160" y="176" text-anchor="middle" font-family="Caveat,cursive" font-size="26" fill="#1E1A22">mon centre</text>
+      <text x="160" y="176" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="22" fill="#1E1A22">mon centre</text>
     </svg></div>
     <div class="col">
       <ol class="mini-steps"><li><b>Seul, 3 min</b> Des mots-clés dans un ou plusieurs cercles de votre cahier.</li><li><b>Les intersections, 2 min</b> Qu’est-ce qui relie deux cercles ?</li></ol>
@@ -860,7 +864,7 @@ video{width:100%;max-height:58vh;background:var(--ink);border:3px solid var(--in
       <g font-family="Anton,Impact,sans-serif" font-size="34" fill="#1E1A22" pointer-events="none">
         <text x="120" y="160">ÉCOLE</text><text x="370" y="160">COMMUNAUTÉ</text><text x="245" y="460">NATURE</text>
       </g>
-      <text x="300" y="270" text-anchor="middle" font-family="Caveat,cursive" font-size="34" fill="#5B2A86" pointer-events="none">le projet</text>
+      <text x="300" y="270" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="28" fill="#5B2A86" pointer-events="none">le projet</text>
     </svg>
     <div class="col panel" id="vennOut"><h3>Touchez un cercle</h3><p>Chaque projet d’élève tire sa force des liens entre ces trois mondes.</p><p><button class="btn" data-timer="300">5 min · parle</button> <button class="btn alt" data-timer="180">3 min · partage</button></p></div>
   </div>
@@ -1372,7 +1376,7 @@ const G3 = (() => {
   function inked(geo, color, w = .05) { const g = new T.Group(); const m = new T.Mesh(geo, toon(color)); m.castShadow = true; m.receiveShadow = true; g.add(m); if (!geo.type.startsWith('Sphere')) g.add(new T.LineSegments(new T.EdgesGeometry(geo, 28), EDGE)); g.userData.body = m; return g; }
   const LBL = []; const lblBox = document.createElement('div'); lblBox.className = 'lbls'; lblBox.setAttribute('aria-hidden', 'true'); document.body.appendChild(lblBox);
   function lab(txt, o = {}) { const a = new T.Object3D(); a.material = {}; const el = document.createElement('span'); el.className = 'lbl' + ((o.font || '').includes('Caveat') ? ' hand' : '') + (o.color === '#FBF8EF' || o.color === '#F2C230' ? '' : ''); el.textContent = txt; el.style.fontSize = Math.round(12 + (o.scale || 3) * 3.4) + 'px'; lblBox.appendChild(el); LBL.push({ a, el }); return a; }
-  function noteTex(txt, bg = '#F2C230', fg = '#1E1A22', bg2 = null) { const c = document.createElement('canvas'); c.width = 256; c.height = 200; const x = c.getContext('2d'); x.fillStyle = bg; x.fillRect(0, 0, 256, 200); if (bg2) { x.fillStyle = bg2; x.beginPath(); x.moveTo(256, 0); x.lineTo(256, 200); x.lineTo(0, 200); x.closePath(); x.fill(); x.fillStyle = 'rgba(255,253,247,.9)'; x.fillRect(18, 52, 220, 96); } x.strokeStyle = '#1E1A22'; x.lineWidth = 10; x.strokeRect(5, 5, 246, 190); x.fillStyle = fg; x.font = '600 40px Caveat, cursive'; x.textAlign = 'center';
+  function noteTex(txt, bg = '#F2C230', fg = '#1E1A22', bg2 = null) { const c = document.createElement('canvas'); c.width = 256; c.height = 200; const x = c.getContext('2d'); x.fillStyle = bg; x.fillRect(0, 0, 256, 200); if (bg2) { x.fillStyle = bg2; x.beginPath(); x.moveTo(256, 0); x.lineTo(256, 200); x.lineTo(0, 200); x.closePath(); x.fill(); x.fillStyle = 'rgba(255,253,247,.9)'; x.fillRect(18, 52, 220, 96); } x.strokeStyle = '#1E1A22'; x.lineWidth = 10; x.strokeRect(5, 5, 246, 190); x.fillStyle = fg; x.font = '700 30px Arial, Helvetica, sans-serif'; x.textAlign = 'center';
     const words = txt.split(' '); let lines = [''], i = 0; words.forEach(w => { if ((lines[i] + ' ' + w).length > 13) lines[++i] = w; else lines[i] = (lines[i] + ' ' + w).trim(); }); lines = lines.slice(0, 4); lines.forEach((l, k) => x.fillText(l, 128, 100 - (lines.length - 1) * 21 + k * 42 + 12)); return new T.CanvasTexture(c); }
   function pawn(color, s = 1) { const g = new T.Group(); const b = inked(new T.CylinderGeometry(.5 * s, .78 * s, 1.5 * s, 24), color, .06); b.position.y = .75 * s; const h = inked(new T.SphereGeometry(.52 * s, 24, 16), color, .06); h.position.y = 2.05 * s; g.add(b, h); return g; }
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1391,37 +1395,50 @@ const G3 = (() => {
   for (let k = 0; k < 60; k++) { const p = curve.getPointAt(k / 60); const d = new T.Mesh(new T.CylinderGeometry(.22, .22, .08, 12), new T.MeshBasicMaterial({ color: GOLD })); d.position.copy(p).setY(.1); scene.add(d); }
   const add = (n, o, x = 0, y = 0, z = 0) => { o.position.set(x, y, z); S[n].g.add(o); return o; };
 
-  // ---------- globe ----------
-  { const globe = inked(new T.SphereGeometry(2.3, 48, 32), MAUVE, .05); add('globe', globe, 0, 3.1, 0);
-    globe.add(new T.LineSegments(new T.WireframeGeometry(new T.SphereGeometry(2.31, 12, 8)), new T.LineBasicMaterial({ color: GOLD, transparent: true, opacity: .55 })));
-    const notes = new T.Group(); globe.add(notes); let rotY = 0, vel = .004;
-    const st = S.globe; st.look = 3; st.dist = 13.5;
-    st.add = (item, save = true) => { const it = typeof item === 'string' ? { t: item } : item, txt = it.t; const n = notes.children.length / 2; const PAL = [['#F2C230', '#1E1A22'], ['#FBF8EF', '#1E1A22'], ['#D9541E', '#FFFFFF'], ['#5B2A86', '#FFFFFF']]; const ZI = { e: 0, c: 3, n: 1, x: 2 }, ZP = { ec: [0, 3], en: [0, 1], cn: [3, 1] }; const pair = ZP[it.z]; const pc = pair ? PAL[pair[0]] : PAL[it.z in ZI ? ZI[it.z] : n % 4]; const m = new T.Mesh(new T.PlaneGeometry(1.5, 1.17), new T.MeshBasicMaterial({ map: pair ? noteTex(txt, PAL[pair[0]][0], '#1E1A22', PAL[pair[1]][0]) : noteTex(txt, pc[0], pc[1]), side: T.DoubleSide }));
-      const N = 22, phi = Math.acos(1 - 2 * ((n % N) + .5) / N), th = n * 2.39996; const p = new V().setFromSphericalCoords(2.7, phi, th); m.position.copy(p); m.lookAt(p.clone().multiplyScalar(2)); m.rotateZ((Math.random() - .5) * .4);
-      const pin = new T.Mesh(new T.CylinderGeometry(.03, .03, .45), INK); pin.position.copy(p.clone().multiplyScalar(.93)); pin.lookAt(0, 0, 0); pin.rotateX(Math.PI / 2); notes.add(m, pin);
-      if (save) { const l = store.get('enjeux', []); l.push(it); store.set('enjeux', l); } };
-    st.clear = () => { while (notes.children.length) notes.remove(notes.children[0]); store.set('enjeux', []); };
-    st.drag = dx => { rotY += dx * .01; };
-    st.tick = () => { if (!reduce) rotY += vel; globe.rotation.y = rotY; globe.rotation.x = .2; };
+  // ---------- trois globes : école, communauté, nature ----------
+  { const sys = new T.Group(); add('globe', sys, 0, 3.6, 0);
+    const R = 1.45, C3 = [[-1.55, .9], [1.55, .9], [0, -1.75]], COLS = [GOLD, MAUVE, CREAM], NOMS = ['ÉCOLE', 'COMMUNAUTÉ', 'NATURE'];
+    const holders = [], balls = [];
+    C3.forEach(([x, y], k) => { const h = new T.Group(); h.position.set(x, y, 0); sys.add(h); holders.push(h);
+      const b = inked(new T.SphereGeometry(R, 40, 28), COLS[k], .05); b.add(new T.LineSegments(new T.WireframeGeometry(new T.SphereGeometry(R + .01, 10, 7)), new T.LineBasicMaterial({ color: k === 1 ? GOLD : MAUVE, transparent: true, opacity: .45 }))); h.add(b); balls.push(b);
+      const lb = lab(NOMS[k], { scale: 3 }); lb.position.set(0, k === 2 ? -R - .55 : R + .5, 0); h.add(lb); });
+    // les jonctions et le centre : des points d'ancrage entre les globes
+    const mid = (a, b) => { const h = new T.Group(); h.position.set((C3[a][0] + C3[b][0]) / 2, (C3[a][1] + C3[b][1]) / 2, 0); sys.add(h); holders.push(h); return h; };
+    const ANC = { e: holders[0], c: holders[1], n: holders[2], ec: mid(0, 1), en: mid(0, 2), cn: mid(1, 2) };
+    const ctr = new T.Group(); ctr.position.set(0, (C3[0][1] + C3[1][1] + C3[2][1]) / 3, 0); sys.add(ctr); holders.push(ctr); ANC.x = ctr;
+    const SLOTS = [[0, 0], [.62, .42], [-.62, .42], [.62, -.46], [-.62, -.46], [0, .78], [0, -.8], [1.05, 0], [-1.05, 0]];
+    const count = {}; let spin = 0, sway = 0;
+    const st = S.globe; st.look = 3.6; st.dist = 13.5;
+    st.add = (item, save = true) => { const it = typeof item === 'string' ? { t: item } : item, txt = it.t; const z = ANC[it.z] ? it.z : 'e'; const k = count[z] = (count[z] || 0) + 1;
+      const PAL = { e: ['#F2C230', '#1E1A22'], c: ['#5B2A86', '#FFFFFF'], n: ['#FBF8EF', '#1E1A22'], x: ['#D9541E', '#FFFFFF'] }, ZP = { ec: ['#F2C230', '#5B2A86'], en: ['#F2C230', '#FBF8EF'], cn: ['#5B2A86', '#FBF8EF'] };
+      const tex = ZP[z] ? noteTex(txt, ZP[z][0], '#1E1A22', ZP[z][1]) : noteTex(txt, PAL[z][0], PAL[z][1]);
+      const m = new T.Mesh(new T.PlaneGeometry(1.05, .82), new T.MeshBasicMaterial({ map: tex, side: T.DoubleSide }));
+      const [ox, oy] = SLOTS[(k - 1) % SLOTS.length]; const onBall = 'ecn'.includes(z) && z.length === 1;
+      m.position.set(ox * (onBall ? 1 : .75), oy * (onBall ? 1 : .75), (onBall ? R : .9) + .12 + (k - 1) * .004); m.rotation.z = ((k * 37) % 9 - 4) * .03;
+      ANC[z].add(m); if (save) { const l = store.get('enjeux', []); l.push(it); store.set('enjeux', l); } };
+    st.clear = () => { Object.values(ANC).forEach(h => h.children.filter(c => c.geometry && c.geometry.type === 'PlaneGeometry').forEach(c => h.remove(c))); Object.keys(count).forEach(k => delete count[k]); store.set('enjeux', []); };
+    st.drag = dx => { spin += dx * .01; };
+    // les globes tournent sur eux-mêmes et autour du centre ; les post-it restent droits et lisibles
+    st.tick = t => { if (!reduce) { spin += .0025; sway = Math.sin(t * .4) * .05; } sys.rotation.z = spin; holders.forEach(h => { h.rotation.z = -spin; }); balls.forEach((b, k) => { b.rotation.y = t * (.25 + k * .05); }); sys.rotation.x = -.12 + sway; };
     const l = store.get('enjeux', null); (l && l.length ? l : DEMO_ENJEUX).forEach(t => st.add(t, !(l && l.length))); }
 
-  // ---------- village 2036 ----------
+  // ---------- village ----------
   { const rnd = (a => () => (a = (a * 9301 + 49297) % 233280) / 233280)(7);
     for (let i = 0; i < 9; i++) { const a = i / 9 * Math.PI * 2, r = 1.6 + rnd() * 1.2; const h = new T.Group(); const b = inked(new T.BoxGeometry(.9, .8 + rnd() * .6, .9), CREAM, .05); b.position.y = b.userData.body.geometry.parameters.height / 2; const rf = inked(new T.ConeGeometry(.8, .7, 4), i % 3 ? GOLD : MAUVE, .05); rf.rotation.y = Math.PI / 4; rf.position.y = b.userData.body.geometry.parameters.height + .35; h.add(b, rf); h.rotation.y = rnd() * 3; add('village', h, Math.cos(a) * r, .35, Math.sin(a) * r); }
     const ch = new T.Group(); const cb = inked(new T.BoxGeometry(.9, 1.8, .9), CREAM, .05); cb.position.y = .9; const sp = inked(new T.ConeGeometry(.45, 1.6, 4), GOLD, .05); sp.rotation.y = Math.PI / 4; sp.position.y = 2.6; ch.add(cb, sp); add('village', ch, 0, .35, 0);
     for (let i = 0; i < 6; i++) { const tr = inked(new T.ConeGeometry(.35, 1.2, 6), MAUVE, .06); add('village', tr, Math.cos(i) * 3, .95, Math.sin(i) * 3); }
-    const yr = add('village', lab('2036', { size: 110, scale: 3.4 }), 0, 4.6, 0); S.village.look = 1.8; S.village.tick = null; }
+    S.village.look = 1.8; S.village.tick = null; }
 
   // ---------- triade ----------
   { const rings = [[GOLD, -1, 0, 'ÉCOLE'], [MAUVE, 1, 0, 'COMMUNAUTÉ'], [CREAM, 0, -1.6, 'NATURE']].map(([c, x, y, n]) => { const r = inked(new T.TorusGeometry(1.4, .22, 14, 60), c, .06); add('triade', r, x, 3.6 + y, 0); add('triade', lab(n, { scale: 2.2, color: c === MAUVE ? '#FBF8EF' : '#F2C230' }), x * 2.1, 3.6 + y * 1.9 + (y ? -.4 : 1.9), 0); return r; });
     S.triade.look = 3; S.triade.tick = t => rings.forEach((r, i) => { r.rotation.y = Math.sin(t * .25 + i) * .3; r.rotation.x = Math.cos(t * .2 + i) * .2; }); }
 
   // ---------- 4 sphères ----------
-  { const SPH = [['Affective', GOLD, 'Motivation, sentiment de compétence, plaisir d’apprendre.', 'Il arrive à l’heure, sourit, parle de son projet en dehors de la classe.'], ['Cognitive', MAUVE, 'Stratégies actives : faire des liens, questionner, planifier.', 'Elle pose des questions, explique sa démarche, fait des liens avec sa vie.'], ['Comportementale', CREAM, 'Persévérance, régularité, présence.', 'Il revient après un échec et termine ce qu’il commence.'], ['Citoyenne', GOLD, 'Agir concrètement dans son milieu, pour d’autres.', 'Elle propose, mobilise d’autres personnes, agit pour quelqu’un d’autre.']];
+  { const SPH = [['Autonomie', MAUVE, '« Je fais des choix selon mes valeurs et mes intérêts. »', 'il choisit, propose, prend une décision sans attendre la permission.', 'Laisser choisir. Différencier.'], ['Sens', CREAM, '« Je comprends pourquoi c’est important pour moi. »', 'elle fait des liens avec sa vie et parle de son projet en dehors de la classe.', 'Raconter. Faire réfléchir.'], ['Compétence', GOLD, '« En faisant des efforts et des erreurs, j’apprends. »', 'il revient après un échec et termine ce qu’il commence.', 'Donner un défi. Rétroagir.'], ['Appartenance', GOLD, '« Je compte pour quelqu’un ici. »', 'elle arrive à l’heure, aide les autres, dit « nous ».', 'Écouter. Coopérer. Questionner.']];
     const star = inked(new T.OctahedronGeometry(.8), GOLD, .06); add('spheres', star, 0, 2.8, 0);
     const pl = SPH.map((d, i) => { const g = inked(new T.SphereGeometry(.7, 32, 24), d[1], .05); g.userData.body.userData.i = i; S.spheres.g.add(g); S.spheres.pick.push(g.userData.body); const l = lab(d[0].toUpperCase(), { scale: 2, color: d[1] === MAUVE ? '#FBF8EF' : '#F2C230' }); g.add(l); l.position.y = 1.15; return g; });
     let sel = -1; S.spheres.look = 2.8;
-    S.spheres.onPick = o => { sel = o.userData.i; const d = SPH[sel]; const out = document.getElementById('sphereOut'); if (out) out.innerHTML = `<h3>${d[0]}</h3><p>${d[2]}</p><p class="hand">Je l’observe quand… ${d[3]}</p>`; };
+    S.spheres.onPick = o => { sel = o.userData.i; const d = SPH[sel]; const out = document.getElementById('sphereOut'); if (out) out.innerHTML = `<h3>${d[0]}</h3><p class="pq">${d[2]}</p><p><b>Je l’observe quand</b> ${d[3]}</p><p><b>Je le nourris :</b> ${d[4]}</p>`; };
     S.spheres.tick = t => { const a = reduce ? 0 : t * .12; pl.forEach((p, i) => { const th = a + i * Math.PI / 2; p.position.set(Math.cos(th) * 2.7, 2.8 + Math.sin(th * 2) * .35, Math.sin(th) * 2.7); p.scale.setScalar(i === sel ? 1.3 : 1); }); star.rotation.y = a * 2; }; }
 
   // ---------- pyramide ----------
