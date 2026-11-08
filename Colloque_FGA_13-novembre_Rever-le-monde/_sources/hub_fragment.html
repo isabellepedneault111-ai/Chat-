@@ -36,6 +36,14 @@
 .hub-f label{font-family:var(--display);font-size:16px;letter-spacing:.03em;color:var(--h-mauve);text-transform:uppercase}
 .hub-f input,.hub-f select,.hub-f textarea{width:100%;font:inherit;font-size:16px;color:var(--h-ink);background:#fff;border:3px solid var(--h-ink);padding:8px 10px;border-radius:0}
 .hub-f input:focus,.hub-f select:focus,.hub-f textarea:focus{outline:3px solid var(--h-gold);outline-offset:1px}
+.hub-tw{overflow-x:auto;border:3px solid var(--h-ink);background:var(--h-sheet)}
+.hub-mx{border-collapse:collapse;width:100%;min-width:680px;font-size:15px;line-height:1.35}
+.hub-mx th,.hub-mx td{border:1px solid var(--h-hair);padding:8px 10px;text-align:left;vertical-align:top}
+.hub-mx thead th{background:var(--h-mauve);color:#fff;font-family:var(--display);font-weight:400;font-size:16px;letter-spacing:.02em}
+.hub-mx tbody th{font-family:var(--display);font-weight:400;font-size:17px;background:var(--h-gold)}
+.hub-routine{margin-top:14px;border:3px solid var(--h-ink);background:var(--h-ink);color:var(--h-paper);padding:12px 16px}
+.hub-routine b{font-family:var(--display);font-weight:400;font-size:20px;color:var(--h-gold)}
+.hub-routine ol{margin:6px 0 0;padding-left:1.3em}
 .hub-links{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px}
 .hub-links a{display:block;height:100%;background:var(--h-sheet);border:3px solid var(--h-ink);padding:10px 12px;color:var(--h-ink);text-decoration:none;font-size:15.5px;line-height:1.3;box-shadow:4px 4px 0 var(--h-mauve)}
 .hub-links a:hover{background:var(--h-gold)}
@@ -115,7 +123,7 @@
   <figure class="hub-photo"><img src="__IMG_RISO_MUR__" alt="Des jeunes adultes collent des post-it sur une carte du monde"></figure>
 </div></header>
 
-<nav class="hub-nav" aria-label="Sections"><div class="hub-wrap"><a href="#ressources" data-to="h-copilot">Mon invite Copilot</a><a href="#ressources" data-to="h-liens">Le programme de mon sigle</a><a href="#ressources" data-to="h-invites">7 invites prêtes</a><a href="#ressources" data-to="h-projets">Ils l’ont fait</a><a href="#ressources" data-to="h-docs">Les documents</a><a href="#ressources" data-to="h-pas">Mon premier pas</a></div></nav>
+<nav class="hub-nav" aria-label="Sections"><div class="hub-wrap"><a href="#ressources" data-to="h-copilot">Mon invite Copilot</a><a href="#ressources" data-to="h-liens">Le programme de mon sigle</a><a href="#ressources" data-to="h-commun">Ce qui est commun</a><a href="#ressources" data-to="h-invites">7 invites prêtes</a><a href="#ressources" data-to="h-projets">Ils l’ont fait</a><a href="#ressources" data-to="h-docs">Les documents</a><a href="#ressources" data-to="h-pas">Mon premier pas</a></div></nav>
 
 <section class="hub-sec" id="h-copilot"><div class="hub-wrap">
   <h2><span class="tag">IA</span>Mon invite Copilot</h2>
@@ -131,16 +139,41 @@
     <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/francais-langue-enseignement" target="_blank" rel="noopener"><b>Français, langue d’enseignement</b> · programmes et DDE ↗</a></li>
     <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/mathematique" target="_blank" rel="noopener"><b>Mathématique</b> · programmes et DDE ↗</a></li>
     <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/anglais-langue-seconde" target="_blank" rel="noopener"><b>Anglais, langue seconde</b> · programmes et DDE ↗</a></li>
-    <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/francais-langue-seconde" target="_blank" rel="noopener"><b>Français, langue seconde</b> (francisation) ↗</a></li>
+    <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/francais-langue-seconde" target="_blank" rel="noopener"><b>Français, langue seconde</b> · programmes et DDE ↗</a></li>
+    <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/francisation" target="_blank" rel="noopener"><b>Francisation</b> · niveaux 1 à 8 (LAN) ↗</a></li>
     <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/science-technologie" target="_blank" rel="noopener"><b>Science et technologie</b> · programmes et DDE ↗</a></li>
     <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/participation-sociale" target="_blank" rel="noopener"><b>Participation sociale</b> (intégration sociale) ↗</a></li>
     <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/integration-socioprofessionnelle" target="_blank" rel="noopener"><b>Intégration socioprofessionnelle</b> ↗</a></li>
     <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/engagement-vers-sa-reussite" target="_blank" rel="noopener"><b>Engagement vers sa réussite</b> ↗</a></li>
     <li><a href="https://cdn-contenu.quebec.ca/cdn-contenu/education/formation-generale-adultes/Formation-base-commune-document-presentation.pdf" target="_blank" rel="noopener"><b>Formation de base commune</b> · présentation (PDF) ↗</a></li>
     <li><a href="https://cdn-contenu.quebec.ca/cdn-contenu/education/formation-generale-adultes/Formation-base-diversifiee-introduction-generale-programmes-etudes.pdf" target="_blank" rel="noopener"><b>Formation de base diversifiée</b> · introduction générale, compétences polyvalentes et domaines généraux de formation (PDF) ↗</a></li>
+    <li><a href="https://cdn-contenu.quebec.ca/cdn-contenu/education/formation-generale-adultes/Formation-generale-adultes-services-programmes-etudes.pdf" target="_blank" rel="noopener"><b>Services et programmes d’études 2026-2027</b> · le répertoire officiel de tous les sigles, dont le DHS (PDF) ↗</a></li>
     <li><a href="https://www.legisquebec.gouv.qc.ca/fr/document/rc/i-13.3,%20r.%209" target="_blank" rel="noopener"><b>Régime pédagogique de la FGA</b> ↗</a></li>
   </ul>
   <p class="hub-intro" style="margin-top:14px">Les autres matières (univers social, développement de la personne, informatique…) sont sur la page d’accueil du ministère.</p>
+</div></section>
+
+<section class="hub-sec" id="h-commun"><div class="hub-wrap">
+  <h2><span class="tag">∩</span>Ce qui est commun à toutes les matières</h2>
+  <p class="hub-intro">Pour planifier une séquence, décloisonner, co-enseigner ou relier un sigle à un projet d’engagement : tous les programmes de la FGA partagent la même architecture. C’est là qu’est l’universel, pas dans les savoirs.</p>
+  <div class="hub-tw"><table class="hub-mx">
+    <thead><tr><th></th><th>Dans les programmes FGA</th><th>CUA</th><th>Pratiques probantes</th><th>Fonctions exécutives</th></tr></thead>
+    <tbody>
+    <tr><th>Ancrage</th><td>Une classe ou une famille de situations de vie par cours</td><td><b>Engagement</b> : intérêts, pertinence, choix du contexte</td><td>Contexte authentique</td><td>Motivation, mise en action</td></tr>
+    <tr><th>Contenu</th><td>Des savoirs en spirale : repris, puis nouveaux</td><td><b>Représentation</b> : relier aux acquis, plusieurs supports</td><td>Enseignement explicite, tâches graduées</td><td>Mémoire de travail : alléger la charge</td></tr>
+    <tr><th>Action</th><td>Des compétences polyvalentes (FBC) ou transversales (FBD) : chaque cours en retient certaines</td><td><b>Action et expression</b> : plusieurs façons de démontrer</td><td>Tâches courtes, rétroaction immédiate</td><td>Contrôle inhibiteur, flexibilité</td></tr>
+    <tr><th>Évaluation</th><td>Les critères de la DDE de chaque sigle</td><td>Des options de démonstration</td><td>Monitorage, enseignement ciblé</td><td>Autorégulation, métacognition</td></tr>
+    </tbody></table></div>
+  <div class="hub-routine"><b>Une routine pour toutes les matières</b><ol><li>Une situation authentique, choisie (le projet d’engagement la fournit)</li><li>Le modelage explicite</li><li>La pratique guidée, graduée</li><li>La rétroaction sur les critères de la DDE</li><li>Le transfert dans un nouveau contexte</li></ol></div>
+  <p class="hub-intro" style="margin-top:12px"><b>Formation de base commune, 6 compétences polyvalentes :</b> communiquer, coopérer, agir avec méthode, raisonner avec logique, exercer sa créativité, exercer son sens critique et éthique.<br><b>Formation de base diversifiée, 9 compétences transversales :</b> exploiter l’information, résoudre des problèmes, exercer son jugement critique, mettre en œuvre sa pensée créatrice, se donner des méthodes de travail efficaces, exploiter les TIC, actualiser son potentiel, coopérer, communiquer de façon appropriée.</p>
+  <ul class="hub-links">
+    <li><a href="https://udlguidelines.cast.org/static/udlg3-graphicorganizer_french.pdf" target="_blank" rel="noopener"><b>CUA 3.0</b> · l’organisateur graphique du CAST, en français (PDF) ↗</a></li>
+    <li><a href="https://dca.learnquebec.ca/fr/conception-universelle-de-lapprentissage/" target="_blank" rel="noopener"><b>La CUA</b> · explications et exemples (DCA, LEARN) ↗</a></li>
+    <li><a href="https://cdn-contenu.quebec.ca/cdn-contenu/education/formation-generale-adultes/Lignes-directrices-besoins-particuliers-formation-generale-adultes.pdf" target="_blank" rel="noopener"><b>Adultes ayant des besoins particuliers</b> · lignes directrices du ministère pour la FGA (PDF) ↗</a></li>
+    <li><a href="https://www.ctreq.qc.ca/ressources/demystifier-les-fonctions-executives-pour-reflechir-a-ses-pratiques-pedagogiques/" target="_blank" rel="noopener"><b>Les fonctions exécutives</b> · démystifier pour mieux enseigner (CTREQ) ↗</a></li>
+    <li><a href="https://cdn-contenu.quebec.ca/cdn-contenu/education/integration-education-interculturelle/Midi-conference-aide-memoire-travail-surcharge.pdf" target="_blank" rel="noopener"><b>Mémoire de travail et surcharge</b> · aide-mémoire, Masson 2024 (PDF) ↗</a></li>
+    <li><a href="https://www.scientifique-en-chef.gouv.qc.ca/impact-recherche/adultes-en-formation-generale-de-base/" target="_blank" rel="noopener"><b>Adultes en formation générale de base</b> · ce que dit la recherche (Scientifique en chef) ↗</a></li>
+  </ul>
 </div></section>
 
 <section class="hub-sec" id="h-invites"><div class="hub-wrap">
