@@ -204,6 +204,31 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .notes h3{font-family:var(--display);font-weight:400;margin:0 0 6px;font-size:22px}
 .timer{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:58px;z-index:30;background:var(--ink);color:var(--gold);font-family:var(--display);font-size:clamp(34px,4vw,56px);padding:4px 16px;border:3px solid var(--gold);font-variant-numeric:tabular-nums;cursor:pointer}
 .timer.warn{background:var(--gold);color:var(--ink);border-color:var(--ink)}
+.timer.seg{font-size:16px;padding:10px 14px;width:min(380px,calc(100vw - 24px));cursor:default}
+.timer .tt{font-size:clamp(34px,3.6vw,52px);line-height:1;cursor:pointer}
+.timer .tt small{font-size:.42em;margin-left:8px;color:var(--paper)}
+.timer .ts{font-family:var(--ui);font-weight:700;font-size:14px;color:var(--paper);margin:4px 0 6px}
+.timer.warn .ts,.timer.warn .tt small{color:var(--ink)}
+.timer .tn{font-family:var(--display);font-size:16px;background:var(--gold);color:var(--ink);border:2px solid var(--paper);padding:3px 10px;margin-top:6px;cursor:pointer}
+.segbar{position:relative;display:flex;height:30px;border:3px solid var(--ink);background:var(--paper)}
+.segbar i{position:relative;display:flex;align-items:center;justify-content:center;font-style:normal;font-family:var(--ui);font-weight:700;font-size:12px;color:var(--ink);border-right:2px solid var(--ink);overflow:hidden;white-space:nowrap;background:var(--paper)}
+.segbar i:last-of-type{border-right:0}
+.segbar i.done{background:var(--mauve);color:#fff}
+.segbar i.cur{background:var(--gold)}
+.segbar i.late{background:repeating-linear-gradient(45deg,var(--gold) 0 6px,#E58A2B 6px 12px)}
+.segbar b{position:absolute;top:-6px;bottom:-6px;width:3px;background:var(--ink);box-shadow:0 0 0 2px var(--paper);transition:left 1s linear}
+.timer .segbar{height:22px;border-color:var(--paper)}
+.seg-act{margin-top:12px;border:3px solid currentColor;padding:10px 12px}
+.seg-act .segh{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.seg-act .segh b{font-family:var(--display);font-weight:400;font-size:clamp(18px,1.6vw,24px)}
+.seg-act .segl{display:flex;flex-wrap:wrap;gap:4px 14px;margin:6px 0 0;padding:0;list-style:none;font-family:var(--ui);font-size:14px}
+.seg-act .segl li{max-width:none}
+.seg-act .segl em{font-style:normal;font-weight:700;color:var(--mauve)}
+.sheet.dark .seg-act .segl em{color:var(--gold)}
+.etapes .approx{font-family:var(--ui);font-weight:700;font-size:clamp(15px,1.2vw,18px);color:var(--mauve);white-space:nowrap;grid-row:1 / span 2;grid-column:3;align-self:center}
+.sheet.dark .etapes .approx{color:var(--gold)}
+.segbar i{font-family:var(--display)!important;font-size:15px!important}
+
 /* éléments par diapo */
 .cover{position:absolute;inset:0;z-index:-1}
 .cover img{width:100%;height:100%;object-fit:cover;filter:saturate(.95)}
@@ -1384,7 +1409,7 @@ function go(n) {
   if (location.hash !== '#s' + (cur + 1)) history.replaceState(null, '', '#s' + (cur + 1));
   send({ cur });
   G3.activate(slides[cur]);
-  if (typeof tSlide !== 'undefined' && tSlide >= 0 && tSlide !== cur) { clearInterval(tInt); tEl.hidden = true; tSlide = -1; }
+  if (typeof tSlide !== 'undefined' && tSlide >= 0 && tSlide !== cur) { stopTimer(); tSlide = -1; }
 }
 $('#prev').onclick = () => go(cur - 1); $('#next').onclick = () => go(cur + 1);
 $('#nBtn').onclick = () => { $('#notes').hidden = !$('#notes').hidden; };
@@ -1430,11 +1455,38 @@ document.addEventListener('touchend', e => { if (tx === null) return; const dx =
 // ---------- minuteur ----------
 const tEl = $('#timer'); let tLeft = 0, tInt = null;
 let tSlide = -1;
-function startTimer(s, fromSlide) { clearInterval(tInt); tSlide = fromSlide ? cur : -1; tLeft = s; tEl.hidden = false; tick(); tInt = setInterval(() => { tLeft--; tick(); if (tLeft <= 0) { clearInterval(tInt); } }, 1000); }
-function tick() { const m = Math.floor(Math.max(0, tLeft) / 60), s = Math.max(0, tLeft) % 60; tEl.textContent = m + ':' + String(s).padStart(2, '0'); tEl.classList.toggle('warn', tLeft <= 30); }
-tEl.onclick = () => { clearInterval(tInt); tEl.hidden = true; };
-$('#tBtn').onclick = () => tEl.hidden ? startTimer(300) : tEl.onclick();
-$$('[data-timer]').forEach(b => b.onclick = () => startTimer(+b.dataset.timer, true));
+let SEG = null; // minuteur d'activité : { steps:[{l,s}], i, t0, st:[début de chaque étape], total, bars:[] }
+const fmt = v => { const a = Math.abs(v), m = Math.floor(a / 60), x = a % 60; return (v < 0 ? '+' : '') + m + ':' + String(x).padStart(2, '0'); };
+function startTimer(s, fromSlide) { clearInterval(tInt); SEG = null; tEl.classList.remove('seg'); tSlide = fromSlide ? cur : -1; tLeft = s; tEl.hidden = false; tick(); tInt = setInterval(() => { tLeft--; tick(); if (tLeft <= 0) { clearInterval(tInt); } }, 1000); }
+function tick() { if (SEG) return segTick(); const m = Math.floor(Math.max(0, tLeft) / 60), s = Math.max(0, tLeft) % 60; tEl.textContent = m + ':' + String(s).padStart(2, '0'); tEl.classList.toggle('warn', tLeft <= 30); }
+function segBar(steps) { const tot = steps.reduce((a, b) => a + b.s, 0); return '<div class="segbar">' + steps.map((x, k) => `<i style="flex:${x.s}">${k + 1}</i>`).join('') + '<b style="left:0"></b></div>'; }
+function startSeg(act) { clearInterval(tInt); const steps = act._steps; SEG = { act, steps, i: 0, st: [0], el: 0, total: steps.reduce((a, b) => a + b.s, 0) }; tSlide = cur; tEl.hidden = false; tEl.classList.add('seg');
+  tEl.innerHTML = '<div class="tt" title="Cliquer pour arrêter"></div><div class="ts"></div>' + segBar(steps) + '<button class="tn" type="button">Étape suivante →</button>';
+  tEl.querySelector('.tt').onclick = stopTimer; tEl.querySelector('.tn').onclick = e => { e.stopPropagation(); segNext(); };
+  act.querySelector('.seg-go').textContent = 'Recommencer'; act.querySelector('.seg-next').hidden = false;
+  segTick(); tInt = setInterval(() => { SEG.el++; segTick(); }, 1000); }
+function segNext() { if (!SEG) return; if (SEG.i < SEG.steps.length - 1) { SEG.i++; SEG.st[SEG.i] = SEG.el; } segTick(); }
+function segTick() { const S = SEG, n = S.steps.length, left = S.total - S.el, planEnd = S.steps.slice(0, S.i + 1).reduce((a, b) => a + b.s, 0), inStep = S.el - S.st[S.i];
+  const late = S.el > planEnd, restSteps = n - S.i - 1;
+  tEl.querySelector('.tt').innerHTML = fmt(left) + '<small>sur ' + Math.round(S.total / 60) + ' min</small>';
+  tEl.querySelector('.ts').textContent = 'Étape ' + (S.i + 1) + '/' + n + ' · ' + S.steps[S.i].l + ' · ≈ ' + Math.round(S.steps[S.i].s / 60) + ' min (' + fmt(inStep).replace('+', '') + ')' + (restSteps && left > 0 ? ' · il reste ' + fmt(left) + ' pour ' + (restSteps + 1) + ' étapes' : '');
+  tEl.classList.toggle('warn', left <= 30);
+  [tEl, S.act].forEach(root => { const is = root.querySelectorAll('.segbar i'); is.forEach((x, k) => { x.className = k < S.i ? 'done' : k === S.i ? (late ? 'late' : 'cur') : ''; }); const bb = root.querySelector('.segbar b'); if (bb) bb.style.left = Math.min(100, S.el / S.total * 100) + '%'; });
+  const sl = S.act.querySelectorAll('.segl li'); sl.forEach((x, k) => x.style.textDecoration = k < S.i ? 'line-through' : ''); }
+function stopTimer() { clearInterval(tInt); tEl.hidden = true; if (SEG) { SEG.act.querySelector('.seg-go').textContent = SEG.act.querySelector('.seg-go').dataset.l; SEG.act.querySelector('.seg-next').hidden = true; SEG.act.querySelectorAll('.segbar i').forEach(x => x.className = ''); } SEG = null; tEl.classList.remove('seg'); }
+tEl.onclick = e => { if (!SEG) stopTimer(); };
+$('#tBtn').onclick = () => tEl.hidden ? startTimer(300) : stopTimer();
+// Une diapo avec plusieurs minuteurs devient une seule activité, en secteurs
+slides.forEach(sl => { const bs = [...sl.querySelectorAll('[data-timer]')]; if (bs.length < 2) { bs.forEach(b => b.onclick = () => startTimer(+b.dataset.timer, true)); return; }
+  const steps = bs.map(b => { const li = b.closest('li'); let l = li && li.querySelector('b') ? li.querySelector('b').textContent : (b.textContent.split('·')[1] || b.textContent).trim(); l = l.replace(/,\s*\d+\s*min$/, '').trim(); return { l: l.charAt(0).toUpperCase() + l.slice(1), s: +b.dataset.timer }; });
+  const tot = steps.reduce((a, b) => a + b.s, 0);
+  const act = document.createElement('div'); act.className = 'seg-act'; act._steps = steps;
+  const lab = 'Démarrer l’activité · ' + Math.round(tot / 60) + ' min';
+  act.innerHTML = `<div class="segh"><b>L’activité · ${Math.round(tot / 60)} min en tout</b><span><button class="btn seg-go" type="button" data-l="${lab}">${lab}</button> <button class="btn alt seg-next" type="button" hidden>Étape suivante →</button></span></div>` + segBar(steps) + (bs[0].closest('li') ? '' : '<ul class="segl">' + steps.map((x, k) => `<li>${k + 1}. ${x.l} <em>≈ ${Math.round(x.s / 60)} min</em></li>`).join('') + '</ul>');
+  act.querySelector('.seg-go').onclick = () => startSeg(act); act.querySelector('.seg-next').onclick = segNext;
+  const inLi = bs[0].closest('li');
+  if (inLi) { const list = inLi.closest('ol,ul'); bs.forEach(b => { const sp = document.createElement('span'); sp.className = 'approx'; sp.textContent = '≈ ' + Math.round(+b.dataset.timer / 60) + ' min'; b.replaceWith(sp); }); list.after(act); }
+  else { const p = bs[0].parentElement; p.replaceWith(act); } });
 
 // ---------- fiches d'identité ----------
 $$('.idc dd').forEach(dd => { const k = 'id:' + dd.dataset.k; const v = store.get(k, null); if (v !== null) { dd.textContent = v; dd.classList.toggle('todo', v === 'à compléter'); }

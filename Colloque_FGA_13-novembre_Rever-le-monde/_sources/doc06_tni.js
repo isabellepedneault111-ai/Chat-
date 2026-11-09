@@ -23,7 +23,8 @@ const kids = [
   H1('03', 'Pendant l’atelier'),
   tbl(['Pour…', 'Au TNI (au doigt)', 'Au clavier'], [
     ['Avancer, reculer', 'Boutons ‹ › en bas, ou glisser le doigt vers la gauche ou la droite', 'Flèches, barre d’espace'],
-    ['Lancer un minuteur', 'Boutons jaunes « 3 min », « 4 min »… sur la diapo, ou T en bas', 'T'],
+    ['Lancer un minuteur', 'Bouton jaune sur la diapo (« 4 min », ou « Démarrer l’activité » quand il y a plusieurs étapes), ou T en bas', 'T'],
+    ['Passer à l’étape suivante', 'Bouton « Étape suivante → » sur la diapo ou dans le minuteur', '—'],
     ['Arrêter le minuteur', 'Toucher le minuteur', 'T'],
     ['Accrocher un enjeu au globe', 'Toucher la case, écrire, puis « Accrocher au globe »', 'Écrire, puis Entrée'],
     ['Faire tourner le globe', 'Glisser le doigt sur le globe', '—'],

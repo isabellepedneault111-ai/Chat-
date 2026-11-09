@@ -106,6 +106,7 @@ const kids = [
   B('La vidéo des élèves de PPS doit être enregistrée localement. On la glisse dans la diapo 22.'),
   B('Prévoir des adaptateurs HDMI, USB-C et VGA, et une rallonge.'),
   B('**Le minuteur suit la diapo :** lancé depuis un bouton de diapo, il disparaît quand on change de diapo. La touche T lance un minuteur de 5 minutes qui reste affiché.'),
+  B('**Les activités à plusieurs étapes (diapos 9, 10, 13 et 20) ont un seul minuteur global**, découpé en secteurs : chaque étape a son temps approximatif. On touche « Étape suivante » quand l’étape est terminée : on peut prendre plus ou moins de temps sur une étape, et le minuteur montre ce qui reste pour l’ensemble. Une étape qui déborde son temps prévu se hachure en orange.'),
 
   H1('04', 'Le script, phase par phase'),
   H2('Phase 1 · Diagnostic et monde idéal (0–30 min)'),
