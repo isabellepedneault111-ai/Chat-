@@ -29,6 +29,10 @@
 .cg-tag button{grid-row:1 / span 2;grid-column:2;border:2px solid var(--c-ink);background:#fff;font-size:15px;width:30px;height:30px;cursor:pointer}
 .cg-try{margin:10px 0 0;font-family:"Arial",sans-serif;font-size:14px}
 .cg-try a{color:var(--c-mauve);font-weight:700;margin-right:8px;white-space:nowrap;cursor:pointer;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.cg-browse{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;margin-top:8px;max-height:320px;overflow:auto}
+.cg-browse button{text-align:left;font-family:"Arial",sans-serif;font-size:13.5px;line-height:1.25;background:#fff;border:2px solid var(--c-hair);padding:6px 8px;cursor:pointer;color:var(--c-ink)}
+.cg-browse button:hover{border-color:var(--c-ink);background:#FFF6D6}
+.cg-browse button b{display:block;color:var(--c-mauve)}
 .cg details{margin-top:10px}
 .cg summary{cursor:pointer;font-family:"Arial",sans-serif;font-weight:700;font-size:14px;color:var(--c-mauve)}
 .cg-formats{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:8px;margin-bottom:8px}
@@ -86,6 +90,7 @@ window.CG = (() => {
     ['Va droit au but', 'Pas d’introduction, pas de conclusion générique.'],
     ['Des exemples de chez nous', 'Prends tes exemples au Saguenay–Lac-Saint-Jean, dans la vie réelle d’adultes en FGA.'],
     ['Propose la suite', 'Termine par 3 demandes de suivi que je pourrais te faire.']];
+  const GROUPS = [['FRA', 'Français, langue d’enseignement'], ['ANG', 'Anglais, langue seconde'], ['ENG', 'English Language Arts (anglais, langue d’enseignement)'], ['FRE', 'Français, langue seconde'], ['LAN', 'Francisation'], ['MAT', 'Mathématique'], ['SCT', 'Science et technologie'], ['SCG', 'Science générale'], ['BIO', 'Biologie'], ['CHI', 'Chimie'], ['PHY', 'Physique'], ['INF', 'Informatique'], ['SCH', 'Univers social (FBC)'], ['SCE', 'Éducation financière'], ['GEO', 'Géographie'], ['HIG', 'Histoire du Québec et du Canada'], ['HIS', 'Histoire'], ['PER', 'Développement de la personne'], ['PPS', 'Participation sociale (intégration sociale)'], ['DHS', 'Développement des habiletés spécifiques'], ['ISP', 'Intégration socioprofessionnelle'], ['EVR', 'Engagement vers sa réussite']];
   const TRY = ['MAT-P101', 'MAT-1101', 'MAT-1102', 'FRA-P102', 'FRA-2101', 'FRA-3104', 'ANG-3101', 'SCT-4061', 'PPS-Z125', 'LAN-4049', 'DHS'];
   const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const L = (lab, arr) => arr && arr.length ? lab + ' : ' + arr.join(' ; ') + '.' : '';
@@ -93,7 +98,7 @@ window.CG = (() => {
     const head = (k === 'PPS' || k === 'DHS' ? '' : k + ' · ') + e.n + (e.v ? ' (' + e.v + (e.f ? ', ' + e.f : '') + ')' : '');
     const src = (e.d ? '\nDDE officielle : ' + e.d : '') + (e.x ? '\n(Extrait à valider dans la DDE.)' : '');
     if (e.r) return head + '\nContenu détaillé : joignez le PDF du programme et la définition du domaine d’évaluation (DDE) de ce sigle.' + (e.d ? '' : ' Page officielle : ' + pageOf(k)) + src;
-    return [head, e.b ? 'But du cours : ' + e.b + '.' : '', e.cs ? 'Classe de situations : ' + e.cs + '.' : '', L('Familles de situations', e.fam), L('Situations de vie', e.sv), L('Compétences', e.c), L(e.f === 'FBD' ? 'Compétences transversales' : 'Compétences polyvalentes', e.p), L('Domaines généraux de formation', e.dgf), e.a ? 'Attentes de fin de cours : ' + e.a : '', L('Critères d’évaluation', e.cr), L('Savoirs', e.s), e.pv || e.nx ? 'Progression : ' + [e.pv ? 'avant, ' + e.pv + (SIG[e.pv] ? ' ' + SIG[e.pv].n : '') : '', e.nx ? 'après, ' + e.nx + (SIG[e.nx] ? ' ' + SIG[e.nx].n : '') : ''].filter(Boolean).join(' ; ') + '.' : ''].filter(Boolean).join('\n') + src; }
+    return [head, e.b ? 'But du cours : ' + e.b + '.' : '', e.cs ? 'Classe de situations : ' + e.cs + '.' : '', L('Familles de situations', e.fam), L('Situations de vie', e.sv), L('Compétences', e.c), L(e.f === 'FBD' ? 'Compétences transversales' : 'Compétences polyvalentes', e.p), L('Domaines généraux de formation', e.dgf), e.a ? 'Attentes de fin de cours : ' + e.a : '', L('Critères d’évaluation', e.cr), L('Savoirs', e.s), e.si ? 'Situations : ' + e.si + '.' : '', e.dd ? 'Éléments essentiels et critères d’évaluation (DDE officielle) : ' + e.dd : '', e.pv || e.nx ? 'Progression : ' + [e.pv ? 'avant, ' + e.pv + (SIG[e.pv] ? ' ' + SIG[e.pv].n : '') : '', e.nx ? 'après, ' + e.nx + (SIG[e.nx] ? ' ' + SIG[e.nx].n : '') : ''].filter(Boolean).join(' ; ') + '.' : ''].filter(Boolean).join('\n') + src; }
 
   function mount(root) {
     const st = { role: 0, roleX: '', el: -1, org: -1, tps: -1, enjeu: '', sig: [], ext: '', dirty: false, univ: new Set(), tache: 0, tacheX: '', fmt: 0, fmtTxt: FORMATS[0][2], trucs: new Set([2, 4]) };
@@ -114,6 +119,9 @@ window.CG = (() => {
         <div class="cg-row"><input type="text" id="${id}s" list="${id}dl" placeholder="ex. MAT-1101" autocomplete="off"><button type="button" class="cg-btn alt" id="${id}sa">Ajouter</button></div>
         <datalist id="${id}dl">${Object.keys(SIG).map(k => `<option value="${k}">${esc(SIG[k].n)}</option>`).join('')}</datalist>
         <p class="cg-try">Tester un extrait : ${TRY.map(k => `<a role="button" tabindex="0" data-try="${k}">${k}</a>`).join(' ')}</p>
+        <span class="cg-lab">Ou parcourir tous les sigles (${Object.keys(SIG).length}), par matière</span>
+        <select id="${id}g"><option value="">Choisir une matière…</option>${GROUPS.filter(([p]) => Object.keys(SIG).some(k => k.split('-')[0] === p)).map(([p, n]) => `<option value="${p}">${esc(n)} (${Object.keys(SIG).filter(k => k.split('-')[0] === p).length})</option>`).join('')}</select>
+        <div class="cg-browse" id="${id}b"></div>
         <div class="cg-tags" id="${id}t"></div>
         <details id="${id}d"><summary>Voir ou modifier l’extrait envoyé à Copilot</summary><textarea id="${id}x" rows="7" placeholder="Collez ici l’extrait du programme si votre sigle n’est pas dans la banque."></textarea></details>
         <p class="cg-warn">Où trouver tout le programme de mon sigle ? <a href="${MEQ}" target="_blank" rel="noopener">Les programmes d’études de la FGA (ministère) ↗</a>. Sur la page de votre matière : le programme et la DDE de chaque sigle.</p></fieldset>
@@ -166,6 +174,8 @@ window.CG = (() => {
       const g = b.parentNode.dataset && b.parentNode.dataset.g; if (g) { const i = +b.dataset[g]; if (g === 'univ' || g === 'trucs') { st[g].has(i) ? st[g].delete(i) : st[g].add(i); } else st[g] = st[g] === i ? -1 : i; sync(); upd({ el: 'Contexte', org: 'Contexte', tps: 'Contexte', univ: 'L’universel', trucs: 'Les petits plus' }[g]); } });
     root.addEventListener('keydown', e => { if (e.target.dataset && e.target.dataset.try && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); addSig(e.target.dataset.try); } if (e.target === $id('s') && e.key === 'Enter') { e.preventDefault(); addSig($id('s').value); $id('s').value = ''; } });
     $id('sa').onclick = () => { addSig($id('s').value); $id('s').value = ''; };
+    $id('g').onchange = () => { const p = $id('g').value; const ks = Object.keys(SIG).filter(k => k.split('-')[0] === p).sort((a, b) => a.localeCompare(b, 'fr', { numeric: true }));
+      $id('b').innerHTML = ks.map(k => `<button type="button" data-try="${k}"><b>${k}</b> ${esc(SIG[k].n)}</button>`).join(''); };
     $id('s').addEventListener('change', () => { if (SIG[$id('s').value.trim().toUpperCase()]) { addSig($id('s').value); $id('s').value = ''; } });
     $id('r').onchange = () => { $id('rx').hidden = $id('r').value !== 'x'; upd('Rôle'); }; $id('rx').oninput = () => upd('Rôle');
     $id('k').onchange = () => { $id('kx').hidden = $id('k').value !== 'x'; upd('Tâche'); }; $id('kx').oninput = () => upd('Tâche');

@@ -49,3 +49,12 @@ Quand les sources divergent, **la source officielle l'emporte**.
 - L'étape « L'universel » enrichie : situations de vie, compétences polyvalentes ou transversales, fonctions exécutives, pratiques probantes.
 - Trois nouvelles tâches : planifier une séquence progressive, planifier un co-enseignement, relier la planification au projet d'engagement.
 - Dans la page Ressources, la nouvelle section « Ce qui est commun à toutes les matières » : la matrice FGA, CUA, pratiques probantes et fonctions exécutives, avec des liens vérifiés.
+
+## Mise à jour du 9 novembre : un extrait pour chaque sigle
+
+- Les **199 définitions du domaine d'évaluation (DDE)** officielles ont été téléchargées et lues. Pour chaque sigle qui n'avait pas d'extrait (français langue seconde, English Language Arts, intégration socioprofessionnelle, Engagement vers sa réussite, développement de la personne, informatique…), le générateur ajoute maintenant les **éléments essentiels et les critères d'évaluation tirés de la DDE**.
+- Les extraits du rapport Perplexity qui avaient une DDE ont été remplacés par la DDE officielle ; il reste 32 extraits du rapport, sans DDE publiée (surtout en formation de base commune), marqués « à valider ».
+- **MAT-4261 à 4263** : même cours que MAT-4161 à 4163 (le programme et la DDE n'utilisent pas le même code).
+- **PER-2101 et PER-2102** : pas de DDE ; extrait tiré du programme d'études officiel. Le programme affiche encore l'ancien code SAN-2102 pour Santé et sexualité ; le répertoire 2026-2027 utilise PER-2102.
+- La Boussole classait les FRE en « Francisation » : ce sont des cours de **français, langue seconde**, un programme distinct de la francisation (LAN).
+- Résultat : **256 sigles, tous avec un extrait**, et un menu « Parcourir par matière » qui les affiche tous.

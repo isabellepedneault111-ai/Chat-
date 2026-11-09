@@ -63,6 +63,28 @@ for k,t in T.items():
 for s in d['sigles']:
     k=s['sigle']
     if k.startswith('ANG') and k in T and s['nom']!=T[k]['n']: DB[k]['n']=T[k]['n']+' ('+s['nom']+')'
+# DDE officielles : extraits pour les sigles sans contenu, minces ou tirés du rapport
+DDE=json.load(open('dde_db.json'))
+for k,x in DDE.items():
+    if k not in DB or not x.get('el'): continue
+    e=DB[k]
+    thin=not e.get('a') and not (e.get('s') and len(e['s'])>2)
+    if e.get('r') or thin or e.get('x'):
+        e['dd']=x['el']
+        if x.get('sit') and not e.get('cs') and not e.get('fam'): e['si']=x['sit']
+        if e.get('x'):
+            for f in ('c','s'): e.pop(f,None)
+            e.pop('x',None)
+        e.pop('r',None)
+for k2,k1 in [('MAT-4261','MAT-4161'),('MAT-4262','MAT-4162'),('MAT-4263','MAT-4163')]:
+    if k2 in DB and k1 in DB and DB[k2].get('r'):
+        src=DB[k1]; DB[k2].update({f:src[f] for f in ('dd','si','d','u','c','s','a','fam','cs') if f in src}); DB[k2].pop('r',None); DB[k2]['b']='Même cours que '+k1+' : le programme d’études utilise le code '+k2+', la DDE officielle le code '+k1
+PROGX={'PER-2101':{'a':'Pour traiter les situations de la classe Maintien de saines relations interpersonnelles, l’adulte collabore à une interaction. Il peut s’agir d’une discussion, d’une tâche, d’une activité ou d’un projet avec un pair ou avec une équipe. Il réfléchit sur la qualité de son engagement personnel et sélectionne des moyens pour s’ajuster à l’évolution de la relation. Il envisage aussi des améliorations qui favorisent le maintien de saines relations interpersonnelles. L’adulte qui collabore à une interaction poursuit un objectif commun et clairement identifié.','u':'https://cdn-contenu.quebec.ca/cdn-contenu/education/formation-generale-adultes/programmes/FGA-DomDevPerso-presecondaire-vie-personnelle.pdf','cs':'Maintien de saines relations interpersonnelles','b':'Programme Vie personnelle et relationnelle (PER-2101-2 ; le répertoire 2026-2027 utilise aussi PER-2101-1 pour Santé psychologique)'},
+ 'PER-2102':{'a':'Pour traiter les situations de la classe Maintien de la santé sexuelle, l’adulte sélectionne judicieusement des moyens et des méthodes de planification des naissances ainsi que de prévention des ITS et du VIH /Sida. Il exprime des choix personnels relativement à des besoins et à un contexte de vie particulier. Il utilise de manière appropriée des ressources particulières d’information, d’aide et de soutien.','u':'https://cdn-contenu.quebec.ca/cdn-contenu/education/formation-generale-adultes/programmes/FGA-DomDevPerso-presecondaire-sante.pdf','cs':'Maintien de la santé sexuelle','b':'Programme Santé (le programme d’études affiche l’ancien code SAN-2102)'}}
+for k,v in PROGX.items():
+    if k in DB: DB[k].update(v); DB[k].pop('r',None)
+for k,e in DB.items():
+    if k.startswith('FRE') and e.get('v','').lower().startswith('francisation'): e['v']='Français, langue seconde'
 # progression : précédent et suivant dans le même programme
 grp=lambda k: k.split('-')[0]
 seq={}
