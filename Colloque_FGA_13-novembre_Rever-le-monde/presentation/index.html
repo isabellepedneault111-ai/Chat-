@@ -215,6 +215,49 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .notes h3{font-family:var(--display);font-weight:400;margin:0 0 6px;font-size:22px}
 .timer{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:58px;z-index:30;background:var(--ink);color:var(--gold);font-family:var(--display);font-size:clamp(34px,4vw,56px);padding:4px 16px;border:3px solid var(--gold);font-variant-numeric:tabular-nums;cursor:pointer}
 .timer.warn{background:var(--gold);color:var(--ink);border-color:var(--ink)}
+
+.sheet .seg-act{margin-top:10px;border:0;border-top:2px dashed currentColor;padding:8px 0 0;opacity:.9}
+.seg-act .seg-x{font-family:var(--ui);font-size:12px;font-weight:700;background:transparent;color:inherit;border:0;opacity:.6;cursor:pointer;text-decoration:underline}
+.sheet .seg-act.off .segbar,.sheet .seg-act.off .segl,.sheet .seg-act.off .seg-go,.sheet .seg-act.off .seg-next{display:none}
+.sheet .seg-act.off{opacity:.55}
+.seg-act .segh{margin-bottom:6px}
+.seg-act .segh b{font-family:var(--ui)!important;font-weight:700;font-size:13px!important;letter-spacing:.06em;text-transform:uppercase;opacity:.8}
+.seg-act .btn{font-size:15px;padding:4px 12px;min-height:0;box-shadow:2px 2px 0 var(--ink)}
+.seg-act .segbar{height:16px;border-width:2px}
+.seg-act .segbar i{font-size:11px!important}
+.seg-act .segl{font-size:13px;opacity:.85}
+.timer .tmin{position:absolute;top:2px;right:4px;font-family:var(--ui);font-weight:700;font-size:16px;line-height:1;background:transparent;color:var(--paper);border:0;cursor:pointer;padding:2px 6px}
+.timer.warn .tmin{color:var(--ink)}
+.timer.seg{position:fixed}
+.timer.seg.mini{width:auto;padding:4px 30px 4px 12px}
+.timer.seg.mini .ts,.timer.seg.mini .segbar,.timer.seg.mini .tn{display:none}
+.timer.seg.mini .tt{font-size:28px}
+.atel .acomp{display:none}
+.atel:not(.open) .acut,.atel:not(.open) .abar,.atel:not(.open) .anote{display:none}
+.atel:not(.open){padding:4px 10px}
+.atel:not(.open) b{font-size:18px}
+.atel .warnico{color:var(--gold);font-weight:700;margin-left:4px}
+/* qui anime : un cadre autour de l'écran */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:40;border:9px solid transparent;transition:border-color .5s}
+body[data-who=f]::after{border-color:var(--gold)}
+body[data-who=i]::after{border-color:var(--mauve)}
+body[data-who=d]::after{border-color:#fff;box-shadow:inset 0 0 0 2px var(--ink),0 0 0 2px var(--ink) inset}
+body[data-who=fi]::after{border-image:linear-gradient(90deg,var(--gold) 0 50%,var(--mauve) 50% 100%) 1}
+body[data-who=if]::after{border-image:linear-gradient(90deg,var(--mauve) 0 50%,var(--gold) 50% 100%) 1}
+body.hubmode::after{display:none}
+/* minuteur de l'atelier */
+.atel{position:fixed;top:14px;right:16px;z-index:35;background:var(--ink);color:var(--paper);border:3px solid var(--paper);box-shadow:4px 4px 0 var(--mauve);padding:6px 10px;font-family:var(--ui);font-size:13px;line-height:1.3;max-width:340px;cursor:pointer}
+.atel b{font-family:var(--display);font-weight:400;font-size:22px;letter-spacing:.02em;margin-right:6px}
+.atel .ad{font-weight:700}
+.atel.ok .ad{color:#9FE3A8}.atel.early .ad{color:#C9B2E8}.atel.late .ad{color:var(--gold)}.atel.vlate{border-color:var(--gold)}.atel.vlate .ad{color:#FF9E6B}
+.atel .acut{display:block;margin-top:4px;color:var(--gold);font-weight:700}
+.atel .abar{position:relative;height:6px;background:#3a3440;margin-top:5px}
+.atel .abar i{position:absolute;left:0;top:0;bottom:0;background:var(--gold)}
+.atel .abar u{position:absolute;top:-3px;bottom:-3px;width:2px;background:#fff}
+.atel .actl{display:none;gap:6px;margin-top:6px}
+.atel.open .actl{display:flex}
+.atel .actl button{font-family:var(--ui);font-size:12px;font-weight:700;background:var(--paper);color:var(--ink);border:2px solid var(--paper);padding:2px 8px;cursor:pointer}
+
 .timer.seg{font-size:16px;padding:10px 14px;width:min(380px,calc(100vw - 24px));cursor:default}
 .timer .tt{font-size:clamp(34px,3.6vw,52px);line-height:1;cursor:pointer}
 .timer .tt small{font-size:.42em;margin-left:8px;color:var(--paper)}
@@ -1364,6 +1407,7 @@ window.CG = (() => {
   <div class="phases" id="phases" aria-hidden="true"></div>
   <span class="who" id="who" hidden></span>
   <button id="mBtn" title="Plan : aller à n’importe quelle diapo (M)">Plan</button>
+  <button id="aBtn" title="Minuteur de l’atelier, 90 minutes (A)">A</button>
   <button id="tBtn" title="Minuteur (T)">T</button>
   <button id="eBtn" title="Modifier les textes (E)">E</button>
   <button id="pBtn" title="Mode présentateur, dans une 2e fenêtre (P)">P</button>
@@ -1436,7 +1480,7 @@ function go(n) {
   $('#nBody').textContent = slides[cur].dataset.notes;
   if (location.hash !== '#s' + (cur + 1)) history.replaceState(null, '', '#s' + (cur + 1));
   send({ cur });
-  G3.activate(slides[cur]);
+  G3.activate(slides[cur]); if (typeof whoMark === 'function') whoMark();
   if (typeof tSlide !== 'undefined' && tSlide >= 0 && tSlide !== cur) { stopTimer(); tSlide = -1; }
 }
 $('#prev').onclick = () => go(cur - 1); $('#next').onclick = () => go(cur + 1);
@@ -1473,6 +1517,7 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'm' || e.key === 'M') $('#mBtn').click();
   else if (e.key === 'Escape') { $('#plan').hidden = true; }
   else if (e.key === 't' || e.key === 'T') $('#tBtn').click();
+  else if (e.key === 'a' || e.key === 'A') $('#aBtn').click();
   else if (e.key === 'f' || e.key === 'F') $('#fBtn').click();
   else if (e.key === 'Home') go(0); else if (e.key === 'End') go(slides.length - 1);
 });
@@ -1489,7 +1534,8 @@ function startTimer(s, fromSlide) { clearInterval(tInt); SEG = null; tEl.classLi
 function tick() { if (SEG) return segTick(); const m = Math.floor(Math.max(0, tLeft) / 60), s = Math.max(0, tLeft) % 60; tEl.textContent = m + ':' + String(s).padStart(2, '0'); tEl.classList.toggle('warn', tLeft <= 30); }
 function segBar(steps) { const tot = steps.reduce((a, b) => a + b.s, 0); return '<div class="segbar">' + steps.map((x, k) => `<i style="flex:${x.s}">${k + 1}</i>`).join('') + '<b style="left:0"></b></div>'; }
 function startSeg(act) { clearInterval(tInt); const steps = act._steps; SEG = { act, steps, i: 0, st: [0], el: 0, total: steps.reduce((a, b) => a + b.s, 0) }; tSlide = cur; tEl.hidden = false; tEl.classList.add('seg');
-  tEl.innerHTML = '<div class="tt" title="Cliquer pour arrêter"></div><div class="ts"></div>' + segBar(steps) + '<button class="tn" type="button">Étape suivante →</button>';
+  tEl.innerHTML = '<button class="tmin" type="button" title="Réduire ou agrandir">–</button><div class="tt" title="Cliquer pour arrêter"></div><div class="ts"></div>' + segBar(steps) + '<button class="tn" type="button">Étape suivante →</button>';
+  tEl.querySelector('.tmin').onclick = e => { e.stopPropagation(); tEl.classList.toggle('mini'); e.target.textContent = tEl.classList.contains('mini') ? '+' : '–'; };
   tEl.querySelector('.tt').onclick = stopTimer; tEl.querySelector('.tn').onclick = e => { e.stopPropagation(); segNext(); };
   act.querySelector('.seg-go').textContent = 'Recommencer'; act.querySelector('.seg-next').hidden = false;
   segTick(); tInt = setInterval(() => { SEG.el++; segTick(); }, 1000); }
@@ -1501,7 +1547,7 @@ function segTick() { const S = SEG, n = S.steps.length, left = S.total - S.el, p
   tEl.classList.toggle('warn', left <= 30);
   [tEl, S.act].forEach(root => { const is = root.querySelectorAll('.segbar i'); is.forEach((x, k) => { x.className = k < S.i ? 'done' : k === S.i ? (late ? 'late' : 'cur') : ''; }); const bb = root.querySelector('.segbar b'); if (bb) bb.style.left = Math.min(100, S.el / S.total * 100) + '%'; });
   const sl = S.act.querySelectorAll('.segl li'); sl.forEach((x, k) => x.style.textDecoration = k < S.i ? 'line-through' : ''); }
-function stopTimer() { clearInterval(tInt); tEl.hidden = true; if (SEG) { SEG.act.querySelector('.seg-go').textContent = SEG.act.querySelector('.seg-go').dataset.l; SEG.act.querySelector('.seg-next').hidden = true; SEG.act.querySelectorAll('.segbar i').forEach(x => x.className = ''); } SEG = null; tEl.classList.remove('seg'); }
+function stopTimer() { clearInterval(tInt); tEl.hidden = true; tEl.classList.remove('mini'); if (SEG) { SEG.act.querySelector('.seg-go').textContent = SEG.act.querySelector('.seg-go').dataset.l; SEG.act.querySelector('.seg-next').hidden = true; SEG.act.querySelectorAll('.segbar i').forEach(x => x.className = ''); } SEG = null; tEl.classList.remove('seg'); }
 tEl.onclick = e => { if (!SEG) stopTimer(); };
 $('#tBtn').onclick = () => tEl.hidden ? startTimer(300) : stopTimer();
 // Une diapo avec plusieurs minuteurs devient une seule activité, en secteurs
@@ -1510,11 +1556,38 @@ slides.forEach(sl => { const bs = [...sl.querySelectorAll('[data-timer]')]; if (
   const tot = steps.reduce((a, b) => a + b.s, 0);
   const act = document.createElement('div'); act.className = 'seg-act'; act._steps = steps;
   const lab = 'Démarrer l’activité · ' + Math.round(tot / 60) + ' min';
-  act.innerHTML = `<div class="segh"><b>L’activité · ${Math.round(tot / 60)} min en tout</b><span><button class="btn seg-go" type="button" data-l="${lab}">${lab}</button> <button class="btn alt seg-next" type="button" hidden>Étape suivante →</button></span></div>` + segBar(steps) + (bs[0].closest('li') ? '' : '<ul class="segl">' + steps.map((x, k) => `<li>${k + 1}. ${x.l} <em>≈ ${Math.round(x.s / 60)} min</em></li>`).join('') + '</ul>');
+  act.innerHTML = `<div class="segh"><b>L’activité · ${Math.round(tot / 60)} min en tout</b><span><button class="btn seg-go" type="button" data-l="${lab}">${lab}</button> <button class="btn alt seg-next" type="button" hidden>Étape suivante →</button> <button class="seg-x" type="button">masquer</button></span></div>` + segBar(steps) + (bs[0].closest('li') ? '' : '<ul class="segl">' + steps.map((x, k) => `<li>${k + 1}. ${x.l} <em>≈ ${Math.round(x.s / 60)} min</em></li>`).join('') + '</ul>');
   act.querySelector('.seg-go').onclick = () => startSeg(act); act.querySelector('.seg-next').onclick = segNext;
+  act.querySelector('.seg-x').onclick = () => { const off = act.classList.toggle('off'); act.querySelector('.seg-x').textContent = off ? 'minuteur' : 'masquer'; };
   const inLi = bs[0].closest('li');
   if (inLi) { const list = inLi.closest('ol,ul'); bs.forEach(b => { const sp = document.createElement('span'); sp.className = 'approx'; sp.textContent = '≈ ' + Math.round(+b.dataset.timer / 60) + ' min'; b.replaceWith(sp); }); list.after(act); }
   else { const p = bs[0].parentElement; p.replaceWith(act); } });
+
+
+// ---------- minuteur de l'atelier (90 min) et cadre de la personne qui anime ----------
+// Début prévu de chaque diapo (minutes), d'après le déroulé du guide ; o = optionnelle (à couper d'abord), r = à raccourcir
+const PLAN = [0, 0, 1, 3, 5, 6, 7, 9, 10, 17, 25, 30, 40, 47, 52, 56, 60, 70, 73, 80, 83, 85, 86, 87, 88, 88, 89];
+const CUT = [{ i: 7, t: 'diapo 8 (les 4 besoins)', m: 1 }, { i: 24, t: 'diapo 25 (la pyramide)', m: 1 }, { i: 15, t: 'raccourcir la diapo 16 (les portes : renvoyer au cahier)', m: 3 }, { i: 6, t: 'raccourcir la diapo 7 (étapes 4 et 5)', m: 1 }, { i: 25, t: 'diapo 26 (3-2-1 dans le cahier)', m: 2 }, { i: 23, t: 'raccourcir la diapo 24 (un seul projet)', m: 1 }];
+const whoCode = w => { w = (w || '').toLowerCase(); if (/duo|et francis|isabelle et/.test(w)) return 'd'; if (/^francis, puis isabelle/.test(w)) return 'fi'; if (/^isabelle, puis francis/.test(w)) return 'if'; if (/francis/.test(w)) return 'f'; if (/isabelle/.test(w)) return 'i'; return ''; };
+const atel = document.createElement('div'); atel.className = 'atel'; atel.hidden = true; document.body.appendChild(atel);
+let aT0 = store.get('atelT0', null), aPause = store.get('atelPause', null), aInt = null;
+const aNow = () => aPause || Date.now();
+function aDraw() { if (aT0 === null) { atel.hidden = true; return; } atel.hidden = false;
+  const el = (aNow() - aT0) / 60000, plan = PLAN[cur] || 0, nextPlan = PLAN[cur + 1] !== undefined ? PLAN[cur + 1] : 90, d = el - plan;
+  // retard réel : si on est encore sur la diapo alors que la suivante devait commencer
+  const late = Math.max(d, el - nextPlan > 0 ? el - nextPlan : -99), m = Math.floor(el), ss = Math.floor((el - m) * 60);
+  const stat = late > 5 ? 'vlate' : late > 1.5 ? 'late' : d < -2 ? 'early' : 'ok';
+  const msg = stat === 'early' ? 'en avance de ' + Math.round(-d) + ' min : on peut prendre le temps' : stat === 'ok' ? 'dans les temps' : 'en retard de ' + Math.round(late) + ' min';
+  let cut = ''; if (late > 1.5) { let need = late, list = []; CUT.filter(c => c.i > cur).forEach(c => { if (need > 0) { list.push(c.t); need -= c.m; } }); cut = list.length ? '<span class="acut">À couper : ' + list.join(' · ') + '</span>' : '<span class="acut">Ne pas couper 19, 20, 21 : raccourcir les échanges.</span>'; }
+  atel.className = 'atel ' + stat + (atel.classList.contains('open') ? ' open' : '');
+  atel.innerHTML = `<b>${m}:${String(ss).padStart(2, '0')}</b><span class="ad">${stat === 'ok' ? '✓' : stat === 'early' ? '−' + Math.round(-d) + ' min' : '+' + Math.round(late) + ' min'}</span>${late > 1.5 ? '<span class="warnico" title="Toucher pour voir quoi couper">⚠</span>' : ''}${aPause ? ' · pause' : ''}<span class="anote"><br>sur 90 min · prévu ici : ${plan} min · ${msg}</span>${cut}<div class="abar"><i style="width:${Math.min(100, el / 90 * 100)}%"></i><u style="left:${plan / 90 * 100}%"></u></div><div class="actl"><button type="button" data-a="p">${aPause ? 'Reprendre' : 'Pause'}</button><button type="button" data-a="r">Arrêter</button></div>`; }
+function aStart() { aT0 = Date.now() - (PLAN[cur] || 0) * 60000; aPause = null; store.set('atelT0', aT0); store.set('atelPause', null); clearInterval(aInt); aInt = setInterval(aDraw, 1000); aDraw(); }
+atel.addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (!b) { atel.classList.toggle('open'); return; }
+  if (b.dataset.a === 'p') { if (aPause) { aT0 += Date.now() - aPause; aPause = null; } else aPause = Date.now(); store.set('atelT0', aT0); store.set('atelPause', aPause); }
+  else { aT0 = null; store.set('atelT0', null); clearInterval(aInt); } aDraw(); });
+$('#aBtn').onclick = () => { if (aT0 === null) aStart(); else atel.classList.toggle('open'); };
+if (aT0 !== null) { aInt = setInterval(aDraw, 1000); }
+function whoMark() { document.body.dataset.who = whoCode(slides[cur] && slides[cur].dataset.who); aDraw(); }
 
 // ---------- fiches d'identité ----------
 $$('.idc dd').forEach(dd => { const k = 'id:' + dd.dataset.k; const v = store.get(k, null); if (v !== null) { dd.textContent = v; dd.classList.toggle('todo', v === 'à compléter'); }

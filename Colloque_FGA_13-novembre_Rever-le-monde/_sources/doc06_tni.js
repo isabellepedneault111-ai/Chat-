@@ -25,6 +25,8 @@ const kids = [
     ['Avancer, reculer', 'Boutons ‹ › en bas, ou glisser le doigt vers la gauche ou la droite', 'Flèches, barre d’espace'],
     ['Lancer un minuteur', 'Bouton jaune sur la diapo (« 4 min », ou « Démarrer l’activité » quand il y a plusieurs étapes), ou T en bas', 'T'],
     ['Passer à l’étape suivante', 'Bouton « Étape suivante → » sur la diapo ou dans le minuteur', '—'],
+    ['Réduire un minuteur', '« – » dans le minuteur ; « masquer » sur la diapo', '—'],
+    ['Minuteur de l’atelier (90 min)', 'Bouton A en bas ; toucher le minuteur en haut à droite pour voir quoi couper', 'A'],
     ['Arrêter le minuteur', 'Toucher le minuteur', 'T'],
     ['Accrocher un enjeu au globe', 'Toucher la case, écrire, puis « Accrocher au globe »', 'Écrire, puis Entrée'],
     ['Faire tourner le globe', 'Glisser le doigt sur le globe', '—'],
