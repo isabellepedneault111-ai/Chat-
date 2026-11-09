@@ -214,7 +214,9 @@ const kids = [
 
   H1('17', 'La démarche en un coup d’œil'),
   P('Pour celles et ceux qui aiment voir les étapes dans l’ordre : la démarche en mots-clés, à garder sous la main.'),
-  img(I + 'infographie_demarche.png', 600, 643, { before: 60 })
+  img(I + 'infographie_demarche.png', 600, 643, { before: 60 }),
+  new d.Paragraph({ pageBreakBefore: true, children: [] }),
+  zone('Mes notes', 8200)
 ];
 
 const doc = new d.Document({
