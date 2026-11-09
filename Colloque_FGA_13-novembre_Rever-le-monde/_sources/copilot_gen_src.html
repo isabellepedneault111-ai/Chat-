@@ -63,17 +63,20 @@ window.CG = (() => {
   const ROLES = ['Tu es enseignant·e en Participation sociale (PPS) en FGA.', 'Tu es enseignant·e en DHS en FGA.', 'Tu es enseignant·e en Intégration sociale (IS) en FGA.', 'Tu es enseignant·e en Intégration socioprofessionnelle (ISP) en FGA.', 'Tu es enseignant·e de français en FGA, en enseignement individualisé.', 'Tu es enseignant·e de mathématiques et de sciences en FGA, en enseignement individualisé.', 'Tu es enseignant·e d’anglais en FGA.', 'Tu es enseignant·e en francisation.', 'Tu es enseignant·e en adaptation scolaire.', 'Tu es orthopédagogue en FGA.', 'Tu es conseiller·ère d’orientation en FGA.', 'Tu es intervenant·e scolaire en FGA.', 'Tu es conseiller·ère pédagogique en FGA au Québec.', 'Tu es direction d’un centre de formation générale des adultes.'];
   const ELEVES = ['des jeunes adultes de 16 à 24 ans', 'des adultes de tous âges', 'des adultes en francisation', 'des adultes avec des besoins particuliers (IS, PPS, DHS)'];
   const ORGA = ['en enseignement individualisé : chacun avance dans son propre sigle', 'en groupe-classe : tous dans le même cours', 'en petit groupe, en adaptation', 'hors classe : intervention, orientation, soutien'];
-  const TEMPS = ['1 période', '3 périodes', '2 semaines', 'une étape complète'];
-  const UNIV = [['Compétences polyvalentes ou transversales', 'les compétences retenues dans chacun de ces sigles : en formation de base commune, les six compétences polyvalentes (communiquer, coopérer, agir avec méthode, raisonner avec logique, exercer sa créativité, exercer son sens critique et éthique) ; en formation de base diversifiée, les neuf compétences transversales (exploiter l’information, résoudre des problèmes, exercer son jugement critique, mettre en œuvre sa pensée créatrice, se donner des méthodes de travail efficaces, exploiter les TIC, actualiser son potentiel, coopérer, communiquer de façon appropriée). Chaque cours n’en retient que certaines : repère celles que mes sigles partagent'],
-    ['Situations de vie', 'les classes ou familles de situations de vie : chaque cours est ancré dans une situation de vie ; trouve celle où mes sigles se rejoignent'],
-    ['Stratégies (enseignement explicite)', 'l’enseignement explicite d’une stratégie utile à tous (lecture, résolution de problèmes, méthodes de travail) : modelage, pratique guidée, pratique autonome'],
-    ['Interventions universelles', 'des interventions universelles qui servent tout le groupe dès le départ (conception universelle de l’apprentissage)'],
-    ['Objectivation', 'l’objectivation en trois moments, avant (se mettre en projet), pendant (se réguler) et après (intégrer et se projeter), sur les attitudes, les apprentissages, les comportements, les stratégies et les démarches'],
-    ['Les 4 besoins de l’engagement', 'les quatre besoins de l’engagement : compétence (défi optimal, rétroaction de qualité, progression visible), autonomie (choix, voix, contrôle sur la tâche), sens (utilité, but personnel, transfert), appartenance (relations positives, climat sécurisant)'],
-    ['Domaines généraux de formation', 'un domaine général de formation commun, par exemple Vivre-ensemble et citoyenneté ou Environnement et consommation'],
-    ['Fonctions exécutives', 'les fonctions exécutives sollicitées (mémoire de travail, contrôle inhibiteur, flexibilité cognitive) : fragmenter la tâche, fournir un exemple résolu, mettre en saillance les pièges, comparer plusieurs stratégies'],
-    ['Pratiques probantes', 'les pratiques fondées sur les données probantes : tâches courtes et graduées, du concret à l’abstrait, rétroaction immédiate sur les critères d’évaluation de la DDE, transfert dans un nouveau contexte']];
-  const TACHES = ['Propose 5 micro-actions concrètes et SMART pour notre projet, à partir de notre analyse de contexte : [collez vos leviers et vos « je remarque que »].', 'Transforme notre résultat en 3 actions SMART, avec un verbe conjugué, un responsable et une date.', 'Pour chaque manque de notre analyse de contexte [collez vos « je remarque que »], dis quel besoin de l’engagement il touche (compétence, autonomie, sens, appartenance) et propose une action SMART qui nourrit ce besoin.', 'Crée une tâche commune à tous mes sigles, liée à notre projet, puis décline-la en une version courte pour chaque sigle.', 'Crée une situation d’apprentissage de 3 périodes liée à notre projet, en 3 niveaux de complexité.', 'Planifie une séquence d’apprentissage progressive pour mon groupe : du concret à l’abstrait, avec ce qui vient avant et après chaque sigle (repris, nouveau), liée à notre projet.', 'Planifie un co-enseignement entre mes sigles (ou avec un·e collègue) autour de notre projet : qui enseigne quoi, quand, et la trace commune.', 'Relie ma planification à notre projet d’engagement : pour chaque marche (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin), une tâche évaluable du sigle.', 'Génère une grille d’évaluation descriptive à 4 niveaux pour la production finale du projet.', 'Propose 8 questions d’objectivation pour l’élève : 2 avant, 3 pendant, 3 après.', 'Rédige une rétroaction de qualité sur la production d’élève que je colle ci-dessous : précise, sur le processus, avec la prochaine étape. [collez la production, sans nom]'];
+  const TEMPS = [['1 période par semaine', 'Rythme en classe : 1 période par semaine.'], ['1 période par jour', 'Rythme en classe : 1 période par jour.'], ['Quelques périodes sur 2 semaines', 'Rythme en classe : quelques périodes réparties sur 2 semaines.'], ['Une étape complète', 'Rythme en classe : une étape complète.'], ['Je ne sais pas encore', 'Rythme en classe : à déterminer. Propose deux versions : une courte (1 ou 2 périodes) et une longue (quelques semaines).'], ['Le temps n’est pas un problème', 'Le temps n’est pas une contrainte.']];
+  const ANCRAGE = 'Applique d’office ce qui est reconnu efficace : modelage, pratique guidée puis autonome ; tâches courtes et graduées, du concret à l’abstrait ; rétroaction précise sur les critères de la DDE ; des choix offerts aux élèves (conception universelle de l’apprentissage) ; et nourris les 4 besoins de l’engagement (compétence, autonomie, sens, appartenance).';
+  const COMMUN = 'Mes élèves sont inscrits dans des sigles différents. Ne cherche pas le commun dans les savoirs (les mêmes intitulés ne disent pas la même chose d’un sigle à l’autre) : cherche-le dans les situations de vie et dans les compétences polyvalentes (formation de base commune) ou transversales (formation de base diversifiée) que mes sigles partagent. Propose d’abord la partie commune à tout le groupe, puis une déclinaison courte pour chaque sigle.';
+  const TACHES = [['Des micro-actions SMART', 'Propose 5 micro-actions concrètes et SMART pour notre projet, à partir de nos notes (nos leviers et nos « je remarque que »).', 1],
+    ['Du résultat à 3 actions SMART', 'Transforme notre résultat en 3 actions SMART : un verbe conjugué, un responsable, une date.', 1],
+    ['Un manque, un besoin, une action', 'Pour chaque manque de nos notes (nos « je remarque que »), nomme le besoin de l’engagement qu’il touche (compétence, autonomie, sens, appartenance) et propose une action SMART qui le nourrit.', 1],
+    ['Une tâche commune à mes sigles', 'Crée une tâche commune à tous mes sigles, liée à notre projet, puis décline-la en une version courte pour chaque sigle.'],
+    ['Une situation d’apprentissage', 'Crée une situation d’apprentissage liée à notre projet, sur le rythme indiqué, avec un continuum de complexité (sans étiquette de niveau).'],
+    ['Une séquence progressive', 'Planifie une séquence d’apprentissage progressive : du concret à l’abstrait, avec ce qui est repris et ce qui est nouveau, liée à notre projet.'],
+    ['Un co-enseignement', 'Planifie un co-enseignement entre mes sigles ou avec un·e collègue, autour de notre projet : qui enseigne quoi, quand, et la trace commune.'],
+    ['Relier au projet d’engagement', 'Pour chaque marche de notre projet (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin), propose une tâche évaluable du sigle.'],
+    ['Une grille d’évaluation', 'Génère une grille d’évaluation descriptive à 4 niveaux pour la production finale du projet, à partir des critères de la DDE.'],
+    ['Des questions d’objectivation', 'Propose 8 questions d’objectivation pour l’élève : 2 avant, 3 pendant, 3 après.'],
+    ['Une rétroaction sur une production', 'Rédige une rétroaction de qualité sur la production d’élève jointe à nos notes : précise, sur le processus, avec la prochaine étape.', 1]];
   const FORMATS = [['Word prêt à imprimer', '📄', 'Un document Word prêt à imprimer : en-tête avec [votre logo de centre], titre court, sections numérotées, tableaux à fines bordures noires, en-têtes mauves (#5B2A86), mots-clés surlignés en jaune (#F2C230), aucune couleur pastel, police Cambria 12 pt.'],
     ['Fiche élève, 1 page', '🧾', 'Une fiche d’une page pour l’élève : consigne en 3 étapes numérotées, phrases courtes, un espace pour répondre, et à la fin une case « Ce dont je suis fier·ère ».'],
     ['Tableau', '▦', 'Un seul tableau clair aux colonnes nommées. Rien avant, rien après.'],
@@ -82,14 +85,18 @@ window.CG = (() => {
     ['Liste à cocher', '☐', 'Une liste à cocher de 8 à 12 étapes, chacune commençant par un verbe d’action.'],
     ['Courriel', '✉', 'Un courriel court et chaleureux à un partenaire de la communauté : objet, 3 paragraphes de 2 phrases au plus, signature.'],
     ['Texte simple', '¶', 'Un texte en langage simple : phrases courtes, mots courants, intertitres, facile à lire.']];
-  const TRUCS = [['Pose-moi 3 questions d’abord', 'Avant de répondre, pose-moi 3 questions pour préciser ce qui te manque, puis attends mes réponses.'],
-    ['Donne 3 versions', 'Propose 3 versions vraiment différentes ; je choisirai.'],
-    ['Vérifie-toi', 'Avant de me répondre, relis-toi : chaque élément cite-t-il un savoir ou une compétence de l’extrait ? Corrige ce qui ne le fait pas.'],
-    ['Joue l’élève', 'Ensuite, joue un élève de 19 ans peu motivé : critique ta proposition en 3 lignes, puis améliore-la.'],
-    ['Dis ce que tu ne sais pas', 'Écris « à valider » devant tout ce dont tu n’es pas certain.'],
-    ['Va droit au but', 'Pas d’introduction, pas de conclusion générique.'],
-    ['Des exemples de chez nous', 'Prends tes exemples au Saguenay–Lac-Saint-Jean, dans la vie réelle d’adultes en FGA.'],
-    ['Propose la suite', 'Termine par 3 demandes de suivi que je pourrais te faire.']];
+  const TRUCS = [['Un panel d’experts', 'Réunis un panel de trois experts (une enseignante en FGA, une conseillère pédagogique, un élève adulte de 19 ans) : chacun propose sa solution, ils débattent, puis tu fais la synthèse.', 'e'],
+    ['Mes angles morts', 'Nomme les angles morts de ma demande (ce que je n’ai pas considéré) et propose une solution pour chacun.', 'e'],
+    ['Trois versions différentes', 'Propose 3 versions vraiment différentes ; je choisirai.', 'e'],
+    ['Une idée audacieuse', 'Ajoute une idée audacieuse, hors des sentiers battus, mais réaliste en FGA.', 'e'],
+    ['Pose-moi 3 questions d’abord', 'Avant de répondre, pose-moi 3 questions pour préciser ce qui te manque, puis attends mes réponses.', 'e'],
+    ['Des exemples de chez nous', 'Prends tes exemples au Saguenay–Lac-Saint-Jean, dans la vie réelle d’adultes en FGA.', 'e'],
+    ['Garde les 3 meilleures', 'Classe tes propositions selon leur impact et leur faisabilité, puis ne garde que les 3 meilleures.', 'r'],
+    ['Une version suffisante', 'Donne la version la plus simple qui fonctionne, sans ajout superflu.', 'r'],
+    ['Vérifie-toi', 'Avant de répondre, relis-toi : chaque élément cite-t-il un savoir ou un critère de l’extrait ? Corrige ce qui ne le fait pas.', 'r'],
+    ['Critique de l’élève', 'Joue un élève de 19 ans peu motivé : critique ta proposition en 3 lignes, puis améliore-la.', 'r'],
+    ['Dis ce que tu ne sais pas', 'Écris « à valider » devant tout ce dont tu n’es pas certain.', 'r'],
+    ['Va droit au but', 'Pas d’introduction, pas de conclusion générique.', 'r']];
   const GROUPS = [['FRA', 'Français, langue d’enseignement'], ['ANG', 'Anglais, langue seconde'], ['ENG', 'English Language Arts (anglais, langue d’enseignement)'], ['FRE', 'Français, langue seconde'], ['LAN', 'Francisation'], ['MAT', 'Mathématique'], ['SCT', 'Science et technologie'], ['SCG', 'Science générale'], ['BIO', 'Biologie'], ['CHI', 'Chimie'], ['PHY', 'Physique'], ['INF', 'Informatique'], ['SCH', 'Univers social (FBC)'], ['SCE', 'Éducation financière'], ['GEO', 'Géographie'], ['HIG', 'Histoire du Québec et du Canada'], ['HIS', 'Histoire'], ['PER', 'Développement de la personne'], ['PPS', 'Participation sociale (intégration sociale)'], ['DHS', 'Développement des habiletés spécifiques'], ['ISP', 'Intégration socioprofessionnelle'], ['EVR', 'Engagement vers sa réussite']];
   const TRY = ['MAT-P101', 'MAT-1101', 'MAT-1102', 'FRA-P102', 'FRA-2101', 'FRA-3104', 'ANG-3101', 'SCT-4061', 'PPS-Z125', 'LAN-4049', 'DHS'];
   const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -101,7 +108,7 @@ window.CG = (() => {
     return [head, e.b ? 'But du cours : ' + e.b + '.' : '', e.cs ? 'Classe de situations : ' + e.cs + '.' : '', L('Familles de situations', e.fam), L('Situations de vie', e.sv), L('Compétences', e.c), L(e.f === 'FBD' ? 'Compétences transversales' : 'Compétences polyvalentes', e.p), L('Domaines généraux de formation', e.dgf), e.a ? 'Attentes de fin de cours : ' + e.a : '', L('Critères d’évaluation', e.cr), L('Savoirs', e.s), e.si ? 'Situations : ' + e.si + '.' : '', L('Compétences évaluées (DDE)', e.dc), L('Catégories de savoirs (DDE)', e.ds), L('Critères d’évaluation (DDE)', e.dk), e.dd ? 'Éléments essentiels et critères d’évaluation (DDE officielle) : ' + e.dd : '', e.pv || e.nx ? 'Progression : ' + [e.pv ? 'avant, ' + e.pv + (SIG[e.pv] ? ' ' + SIG[e.pv].n : '') : '', e.nx ? 'après, ' + e.nx + (SIG[e.nx] ? ' ' + SIG[e.nx].n : '') : ''].filter(Boolean).join(' ; ') + '.' : ''].filter(Boolean).join('\n') + src; }
 
   function mount(root) {
-    const st = { role: 0, roleX: '', el: -1, org: -1, tps: -1, enjeu: '', sig: [], ext: '', dirty: false, univ: new Set(), tache: 0, tacheX: '', fmt: 0, fmtTxt: FORMATS[0][2], trucs: new Set([2, 4]) };
+    const st = { role: 0, roleX: '', el: -1, org: -1, tps: -1, enjeu: '', sig: [], ext: '', dirty: false, tache: 0, tacheX: '', fmt: 0, fmtTxt: FORMATS[0][2], trucs: new Set([8, 10]) };
     const id = 'cg' + Math.random().toString(36).slice(2, 7);
     const chips = (arr, name) => arr.map((t, i) => `<button type="button" data-${name}="${i}" aria-pressed="false">${esc(Array.isArray(t) ? t[0] : t)}</button>`).join('');
     root.innerHTML = `<div class="cg"><div class="cg-form">
@@ -113,7 +120,7 @@ window.CG = (() => {
         <span class="cg-lab">Mes élèves</span><div class="cg-chips" data-g="el">${chips(ELEVES, 'el')}</div>
         <span class="cg-lab">Comment ça fonctionne</span><div class="cg-chips" data-g="org">${chips(ORGA, 'org')}</div>
         <span class="cg-lab">Notre enjeu ou notre projet</span><input type="text" id="${id}e" placeholder="ex. le gaspillage à la cafétéria">
-        <span class="cg-lab">Le temps qu’on a</span><div class="cg-chips" data-g="tps">${chips(TEMPS, 'tps')}</div></fieldset>
+        <span class="cg-lab">Le temps qu’on a, en classe</span><div class="cg-chips" data-g="tps">${chips(TEMPS, 'tps')}</div></fieldset>
       <fieldset class="cg-step"><legend><b>3</b>Mes sigles</legend>
         <p class="cg-help"><strong>Le sigle seul ne suffit pas :</strong> Copilot devine alors son contenu. C’est l’extrait du programme qui compte. Ajoutez un ou plusieurs sigles : l’extrait officiel s’ajoute tout seul.</p>
         <div class="cg-row"><input type="text" id="${id}s" list="${id}dl" placeholder="ex. MAT-1101" autocomplete="off"><button type="button" class="cg-btn alt" id="${id}sa">Ajouter</button></div>
@@ -125,18 +132,20 @@ window.CG = (() => {
         <div class="cg-tags" id="${id}t"></div>
         <details id="${id}d"><summary>Voir ou modifier l’extrait envoyé à Copilot</summary><textarea id="${id}x" rows="7" placeholder="Collez ici l’extrait du programme si votre sigle n’est pas dans la banque."></textarea></details>
         <p class="cg-warn">Où trouver tout le programme de mon sigle ? <a href="${MEQ}" target="_blank" rel="noopener">Les programmes d’études de la FGA (ministère) ↗</a>. Sur la page de votre matière : le programme et la DDE de chaque sigle.</p></fieldset>
-      <fieldset class="cg-step"><legend><b>4</b>L’universel</legend>
-        <p class="cg-help">Plusieurs sigles dans la même classe ? <strong>Le commun n’est pas dans les savoirs</strong> : ils portent les mêmes intitulés sans dire la même chose. Il est dans ce qui traverse tout.</p>
-        <div class="cg-chips" data-g="univ">${chips(UNIV, 'univ')}</div></fieldset>
+      <fieldset class="cg-step"><legend><b>4</b>Ce qu’on a déjà</legend>
+        <p class="cg-help"><strong>Copilot ne sait que ce que vous lui donnez.</strong> Collez vos notes : vos « je remarque que » (les manques), vos leviers, votre résultat, vos actions, ou la production d’un élève, sans nom.</p>
+        <textarea id="${id}n" rows="4" placeholder="ex. Je remarque que les projets restent dans une seule classe. Levier : le CSI, la maison des jeunes. Notre résultat : un centre plus ouvert sur le quartier."></textarea></fieldset>
       <fieldset class="cg-step"><legend><b>5</b>La tâche</legend>
-        <select id="${id}k">${TACHES.map((t, i) => `<option value="${i}">${esc(t.replace(/ \[.*\]/, ''))}</option>`).join('')}<option value="x">Autre : je l’écris</option></select>
-        <input type="text" id="${id}kx" placeholder="Écrivez votre tâche" hidden></fieldset>
+        <select id="${id}k">${TACHES.map((t, i) => `<option value="${i}">${esc(t[0])}</option>`).join('')}<option value="x">Autre : je l’écris</option></select>
+        <input type="text" id="${id}kx" placeholder="Écrivez votre tâche" hidden>
+        <p class="cg-warn">Inclus d’office dans l’invite : les pratiques reconnues efficaces (modelage, pratique guidée, rétroaction sur les critères, choix offerts) et les 4 besoins de l’engagement.${''} Avec plusieurs sigles, l’invite cherche aussi le commun entre eux.</p></fieldset>
       <fieldset class="cg-step"><legend><b>6</b>Cliquez le format attendu</legend>
         <div class="cg-formats">${FORMATS.map(([n, ic], i) => `<button type="button" data-fmt="${i}" aria-pressed="${i === 0}"><i aria-hidden="true">${ic}</i>${esc(n)}</button>`).join('')}</div>
         <span class="cg-lab">La mise en forme demandée (modifiable)</span><textarea id="${id}f" rows="3"></textarea></fieldset>
-      <fieldset class="cg-step"><legend><b>7</b>Les petits plus</legend>
-        <p class="cg-help">Des trucs de pro qui changent la réponse. Touchez pour ajouter.</p>
-        <div class="cg-chips" data-g="trucs">${chips(TRUCS, 'trucs')}</div></fieldset>
+      <fieldset class="cg-step"><legend><b>7</b>Ce qu’on demande en plus à Copilot</legend>
+        <p class="cg-help">Ces consignes s’adressent à l’IA. <strong>Ouvrir</strong> pour chercher plus large, <strong>resserrer</strong> pour choisir et vérifier. Un bon échange fait les deux, dans cet ordre.</p>
+        <span class="cg-lab">↔ Ouvrir (expansion)</span><div class="cg-chips" data-g="trucs">${TRUCS.map((t, i) => t[2] === 'e' ? `<button type="button" data-trucs="${i}" aria-pressed="false">${esc(t[0])}</button>` : '').join('')}</div>
+        <span class="cg-lab">→← Resserrer (restriction)</span><div class="cg-chips" data-g="trucs">${TRUCS.map((t, i) => t[2] === 'r' ? `<button type="button" data-trucs="${i}" aria-pressed="false">${esc(t[0])}</button>` : '').join('')}</div></fieldset>
     </div>
     <div class="cg-out"><pre class="cg-pre" id="${id}o" aria-live="polite"></pre>
       <div class="cg-acts"><button type="button" class="cg-btn" id="${id}c">Copier l’invite</button><a class="cg-btn alt" href="https://m365.cloud.microsoft/chat" target="_blank" rel="noopener">Ouvrir Copilot ↗</a><span class="cg-msg" id="${id}m"></span></div>
@@ -145,7 +154,7 @@ window.CG = (() => {
     const q = s => root.querySelector(s), $id = s => q('#' + id + s);
     let plain = '';
     $id('f').value = st.fmtTxt;
-    const sync = () => { root.querySelectorAll('[data-g] button').forEach(b => { const g = b.parentNode.dataset.g, i = +b.dataset[g]; const on = g === 'univ' || g === 'trucs' ? st[g].has(i) : st[g] === i; b.setAttribute('aria-pressed', String(on)); });
+    const sync = () => { root.querySelectorAll('[data-g] button').forEach(b => { const g = b.parentNode.dataset.g, i = +b.dataset[g]; const on = g === 'trucs' ? st[g].has(i) : st[g] === i; b.setAttribute('aria-pressed', String(on)); });
       root.querySelectorAll('[data-fmt]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.fmt === st.fmt))); };
     function drawTags() { $id('t').innerHTML = st.sig.map(k => { const e = SIG[k]; return `<div class="cg-tag"><b>${esc(k === 'PPS' || k === 'DHS' ? e.n : k + ' · ' + (e ? e.n : 'hors banque'))}</b><small>${e && e.r ? 'Contenu à joindre · ' : ''}${e && e.x ? 'Extrait à valider · ' : ''}${e && e.u ? `<a href="${esc(e.u)}" target="_blank" rel="noopener">programme ↗</a> · ` : ''}${e && e.d ? `<a href="${esc(e.d)}" target="_blank" rel="noopener">DDE ↗</a>` : `<a href="${esc(pageOf(k))}" target="_blank" rel="noopener">page officielle ↗</a>`}${e && (e.pv || e.nx) ? `<br>${e.pv ? `avant : <a role="button" tabindex="0" data-try="${e.pv}">${e.pv}</a> ` : ''}${e.nx ? `après : <a role="button" tabindex="0" data-try="${e.nx}">${e.nx}</a>` : ''}` : ''}</small><button type="button" data-rm="${k}" aria-label="Retirer ${k}">×</button></div>`; }).join(''); }
     function addSig(raw) { const k = raw.trim().toUpperCase().replace(/\s+/g, '').replace(/^([A-Z]{3})(\w{4})$/, '$1-$2').replace(/-(\w{4})-\d$/, '-$1'); if (!k || st.sig.includes(k)) return; st.sig.push(k);
@@ -153,17 +162,18 @@ window.CG = (() => {
     function rmSig(k) { st.sig = st.sig.filter(s => s !== k); if (!st.dirty) $id('x').value = st.sig.map(extract).join('\n\n'); drawTags(); upd('Extrait du programme'); }
     function upd(focus) {
       const role = $id('r').value === 'x' ? ($id('rx').value.trim() || '…') : ROLES[+$id('r').value];
-      const ctx = ['Mes élèves : ' + (st.el >= 0 ? ELEVES[st.el] : 'des adultes en formation générale des adultes (FGA)') + '.', st.org >= 0 ? 'Organisation : ' + ORGA[st.org] + '.' : '', 'Notre enjeu ou notre projet : ' + ($id('e').value.trim() || '[notre enjeu]') + '.', st.tps >= 0 ? 'Temps disponible : ' + TEMPS[st.tps] + '.' : ''].filter(Boolean).join(' ');
+      const ctx = ['Mes élèves : ' + (st.el >= 0 ? ELEVES[st.el] : 'des adultes en formation générale des adultes (FGA)') + '.', st.org >= 0 ? 'Organisation : ' + ORGA[st.org] + '.' : '', 'Notre enjeu ou notre projet : ' + ($id('e').value.trim() || '[notre enjeu]') + '.', st.tps >= 0 ? TEMPS[st.tps][1] : ''].filter(Boolean).join(' ');
       const sigs = st.sig.map(k => (k === 'PPS' || k === 'DHS') ? SIG[k].n : k + (SIG[k] ? ' ' + SIG[k].n : '')).join(' ; ');
-      const U = [...st.univ].sort().map(i => UNIV[i][1]);
-      const regroup = st.sig.length > 1 ? 'Mes élèves sont inscrits dans des sigles différents. Ne cherche pas le commun dans les savoirs : les mêmes intitulés ne disent pas la même chose d’un sigle à l’autre. Cherche-le dans ' + (U.length ? U.join(' ; ') : 'les compétences polyvalentes communes et les situations de vie') + '. Propose d’abord la partie commune à tout le groupe, puis une déclinaison courte pour chaque sigle.' : (U.length ? 'Appuie-toi aussi sur ' + U.join(' ; ') + '.' : '');
-      const tache = $id('k').value === 'x' ? ($id('kx').value.trim() || '…') : TACHES[+$id('k').value];
-      const T = [...st.trucs].sort().map(i => TRUCS[i][1]).join(' ');
+      const regroup = st.sig.length > 1 ? COMMUN : '';
+      const notes = $id('n').value.trim();
+      const tk = TACHES[+$id('k').value]; const tache = $id('k').value === 'x' ? ($id('kx').value.trim() || '…') : tk[1] + (tk[2] && !notes ? ' [collez vos notes à l’étape 4]' : '');
+      const TE = [...st.trucs].filter(i => TRUCS[i][2] === 'e').sort((a, b) => a - b).map(i => '• ' + TRUCS[i][1]), TR = [...st.trucs].filter(i => TRUCS[i][2] === 'r').sort((a, b) => a - b).map(i => '• ' + TRUCS[i][1]);
+      const T = [TE.length ? 'D’abord, ouvre :\n' + TE.join('\n') : '', TR.length ? (TE.length ? 'Puis resserre :\n' : 'Resserre :\n') + TR.join('\n') : ''].filter(Boolean).join('\n');
       const Lx = [['Rôle', role + ' Tu maîtrises la formation générale des adultes au Québec et la pédagogie par projet.'], ['Contexte', ctx], sigs ? ['Sigles visés', sigs] : null,
         ['Source à respecter', 'Appuie-toi uniquement sur l’extrait du programme d’études officiel de la FGA (ministère de l’Éducation du Québec) fourni ci-dessous ou en pièce jointe. Cite le sigle et le nom exact des savoirs. N’ajoute aucune compétence ni aucun savoir absent de l’extrait ; s’il manque quelque chose, écris « à valider dans le programme ».'],
-        ['Extrait du programme', $id('x').value.trim() || '[collez ici l’extrait du programme ou joignez le PDF du programme et la DDE de votre sigle]'], regroup ? ['L’universel', regroup] : null, ['Tâche', tache],
+        ['Extrait du programme', $id('x').value.trim() || '[collez ici l’extrait du programme ou joignez le PDF du programme et la DDE de votre sigle]'], notes ? ['Nos notes', notes] : null, regroup ? ['Plusieurs sigles', regroup] : null, ['Tâche', tache], ['Ancrage pédagogique', ANCRAGE],
         ['Démarche', '1. Repère dans l’extrait les savoirs et les situations de vie qui collent le mieux au projet. 2. Relie chaque marche du projet (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin) à ces savoirs. 3. Vérifie que tout est réalisable par des adultes en FGA dans le temps disponible.'],
-        ['Format attendu', $id('f').value.trim() || 'Un tableau clair.'], T ? ['Les petits plus', T] : null].filter(Boolean);
+        ['Format attendu', $id('f').value.trim() || 'Un tableau clair.'], T ? ['Consignes', T] : null].filter(Boolean);
       plain = Lx.map(([k, t]) => k + ' :\n' + t).join('\n\n');
       $id('o').innerHTML = Lx.map(([k, t]) => `<span class="pl${k === focus ? ' hot' : ''}"><b>${esc(k)} :</b>\n${esc(t)}</span>`).join('');
       if (focus) { const h = $id('o').querySelector('.hot'); if (h) { $id('o').scrollTop = h.offsetTop - 8; setTimeout(() => h.classList.remove('hot'), 1500); } } }
@@ -171,7 +181,7 @@ window.CG = (() => {
       if (b.dataset.try) { addSig(b.dataset.try); return; }
       if (b.dataset.rm) { rmSig(b.dataset.rm); return; }
       if (b.dataset.fmt !== undefined) { st.fmt = +b.dataset.fmt; $id('f').value = FORMATS[st.fmt][2]; sync(); upd('Format attendu'); return; }
-      const g = b.parentNode.dataset && b.parentNode.dataset.g; if (g) { const i = +b.dataset[g]; if (g === 'univ' || g === 'trucs') { st[g].has(i) ? st[g].delete(i) : st[g].add(i); } else st[g] = st[g] === i ? -1 : i; sync(); upd({ el: 'Contexte', org: 'Contexte', tps: 'Contexte', univ: 'L’universel', trucs: 'Les petits plus' }[g]); } });
+      const g = b.parentNode.dataset && b.parentNode.dataset.g; if (g) { const i = +b.dataset[g]; if (g === 'trucs') { st[g].has(i) ? st[g].delete(i) : st[g].add(i); } else st[g] = st[g] === i ? -1 : i; sync(); upd({ el: 'Contexte', org: 'Contexte', tps: 'Contexte', trucs: 'Consignes' }[g]); } });
     root.addEventListener('keydown', e => { if (e.target.dataset && e.target.dataset.try && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); addSig(e.target.dataset.try); } if (e.target === $id('s') && e.key === 'Enter') { e.preventDefault(); addSig($id('s').value); $id('s').value = ''; } });
     $id('sa').onclick = () => { addSig($id('s').value); $id('s').value = ''; };
     $id('g').onchange = () => { const p = $id('g').value; const ks = Object.keys(SIG).filter(k => k.split('-')[0] === p).sort((a, b) => a.localeCompare(b, 'fr', { numeric: true }));
@@ -180,6 +190,7 @@ window.CG = (() => {
     $id('r').onchange = () => { $id('rx').hidden = $id('r').value !== 'x'; upd('Rôle'); }; $id('rx').oninput = () => upd('Rôle');
     $id('k').onchange = () => { $id('kx').hidden = $id('k').value !== 'x'; upd('Tâche'); }; $id('kx').oninput = () => upd('Tâche');
     $id('e').oninput = () => upd('Contexte');
+    $id('n').oninput = () => upd('Nos notes');
     $id('x').oninput = () => { st.dirty = true; upd('Extrait du programme'); };
     $id('f').oninput = () => upd('Format attendu');
     $id('c').onclick = () => { const msg = $id('m'); const ok = () => { msg.textContent = 'Copiée !'; setTimeout(() => msg.textContent = '', 2500); };
