@@ -118,6 +118,17 @@
 .inc-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:8px}
 .inc-g img,.inc-g video{width:100%;border:3px solid var(--ink);display:block;cursor:zoom-in}
 @media (max-width:760px){.inc{grid-template-columns:1fr}}
+.pont4{margin:10px 0 0;border-left:6px solid var(--gold);padding:6px 12px;background:var(--paper2);font-size:clamp(15px,min(1.3vw,2.3vh),19px)}
+.c13{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:clamp(12px,2vw,24px);align-items:start}
+@media (max-width:900px){.c13{grid-template-columns:1fr}}
+.pouce4{border:3px solid var(--gold);padding:12px 14px;background:rgba(242,194,48,.08)}
+.pouce4>b{font-family:var(--display);font-weight:400;font-size:clamp(19px,min(1.7vw,2.9vh),26px);color:var(--gold);display:block}
+.pouce4 p{margin:6px 0;font-size:clamp(15px,min(1.25vw,2.2vh),18px)}
+.pouce4 dl{margin:8px 0;display:grid;gap:6px}
+.pouce4 dl div{border:2px solid currentColor;padding:6px 10px}
+.pouce4 dt{font-family:var(--display);font-size:clamp(16px,min(1.4vw,2.4vh),21px);color:var(--gold);text-transform:uppercase}
+.pouce4 dd{margin:0;font-size:clamp(15px,min(1.25vw,2.2vh),18px)}
+.pouce4 .pouce-ex{font-size:clamp(14px,min(1.1vw,2vh),16px);opacity:.9}
 .decl{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(12px,2vw,24px);align-items:start}
 .sheet.dark .drop p{color:#FBF8EF}
 .sheet.dark .drop{border-color:#FBF8EF}
@@ -584,7 +595,7 @@ window.CG = (() => {
     ['Domaines généraux de formation', 'un domaine général de formation commun, par exemple Vivre-ensemble et citoyenneté ou Environnement et consommation'],
     ['Fonctions exécutives', 'les fonctions exécutives sollicitées (mémoire de travail, contrôle inhibiteur, flexibilité cognitive) : fragmenter la tâche, fournir un exemple résolu, mettre en saillance les pièges, comparer plusieurs stratégies'],
     ['Pratiques probantes', 'les pratiques fondées sur les données probantes : tâches courtes et graduées, du concret à l’abstrait, rétroaction immédiate sur les critères d’évaluation de la DDE, transfert dans un nouveau contexte']];
-  const TACHES = ['Propose 5 micro-actions concrètes et SMART pour notre projet, à partir de notre analyse de contexte : [collez vos leviers et vos « je remarque que »].', 'Transforme notre résultat en 3 actions SMART, avec un verbe conjugué, un responsable et une date.', 'Crée une tâche commune à tous mes sigles, liée à notre projet, puis décline-la en une version courte pour chaque sigle.', 'Crée une situation d’apprentissage de 3 périodes liée à notre projet, en 3 niveaux de complexité.', 'Planifie une séquence d’apprentissage progressive pour mon groupe : du concret à l’abstrait, avec ce qui vient avant et après chaque sigle (repris, nouveau), liée à notre projet.', 'Planifie un co-enseignement entre mes sigles (ou avec un·e collègue) autour de notre projet : qui enseigne quoi, quand, et la trace commune.', 'Relie ma planification à notre projet d’engagement : pour chaque marche (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin), une tâche évaluable du sigle.', 'Génère une grille d’évaluation descriptive à 4 niveaux pour la production finale du projet.', 'Propose 8 questions d’objectivation pour l’élève : 2 avant, 3 pendant, 3 après.', 'Rédige une rétroaction de qualité sur la production d’élève que je colle ci-dessous : précise, sur le processus, avec la prochaine étape. [collez la production, sans nom]'];
+  const TACHES = ['Propose 5 micro-actions concrètes et SMART pour notre projet, à partir de notre analyse de contexte : [collez vos leviers et vos « je remarque que »].', 'Transforme notre résultat en 3 actions SMART, avec un verbe conjugué, un responsable et une date.', 'Pour chaque manque de notre analyse de contexte [collez vos « je remarque que »], dis quel besoin de l’engagement il touche (compétence, autonomie, sens, appartenance) et propose une action SMART qui nourrit ce besoin.', 'Crée une tâche commune à tous mes sigles, liée à notre projet, puis décline-la en une version courte pour chaque sigle.', 'Crée une situation d’apprentissage de 3 périodes liée à notre projet, en 3 niveaux de complexité.', 'Planifie une séquence d’apprentissage progressive pour mon groupe : du concret à l’abstrait, avec ce qui vient avant et après chaque sigle (repris, nouveau), liée à notre projet.', 'Planifie un co-enseignement entre mes sigles (ou avec un·e collègue) autour de notre projet : qui enseigne quoi, quand, et la trace commune.', 'Relie ma planification à notre projet d’engagement : pour chaque marche (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin), une tâche évaluable du sigle.', 'Génère une grille d’évaluation descriptive à 4 niveaux pour la production finale du projet.', 'Propose 8 questions d’objectivation pour l’élève : 2 avant, 3 pendant, 3 après.', 'Rédige une rétroaction de qualité sur la production d’élève que je colle ci-dessous : précise, sur le processus, avec la prochaine étape. [collez la production, sans nom]'];
   const FORMATS = [['Word prêt à imprimer', '📄', 'Un document Word prêt à imprimer : en-tête avec [votre logo de centre], titre court, sections numérotées, tableaux à fines bordures noires, en-têtes mauves (#5B2A86), mots-clés surlignés en jaune (#F2C230), aucune couleur pastel, police Cambria 12 pt.'],
     ['Fiche élève, 1 page', '🧾', 'Une fiche d’une page pour l’élève : consigne en 3 étapes numérotées, phrases courtes, un espace pour répondre, et à la fin une case « Ce dont je suis fier·ère ».'],
     ['Tableau', '▦', 'Un seul tableau clair aux colonnes nommées. Rien avant, rien après.'],
@@ -894,7 +905,7 @@ window.CG = (() => {
 
 <section class="hub-sec" id="h-docs"><div class="hub-wrap">
   <h2><span class="tag">PDF</span>Les documents</h2>
-  <p class="hub-intro">Le PDF s’ouvre directement. La version Word, à adapter à vos groupes, est dans le dossier Drive de l’atelier.</p>
+  <p class="hub-intro">Le PDF s’ouvre directement. Le bouton Word télécharge la version la plus récente, à adapter à vos groupes.</p>
   <div class="hub-docs" id="hgDocs"></div>
 </div></section>
 
@@ -949,7 +960,7 @@ window.CG = (() => {
     ['10b_EN.1.1_Grille-reflexive_Jai-MON-plan', 'Outil officiel', 'La grille réflexive EN.1.1', 'La grille complète de « J’ai MON plan! », Université Laval.', 0, 1],
     ['11_Extraits-programmes-MEQ_pour-Copilot', 'Pour Copilot', 'Extraits de programmes', 'Les pages officielles de 9 cours (PPS, mathématique, français, anglais) à joindre à Copilot avec le trombone.', 1, 1]];
   const BX = [['objectivation', 'L’outil d’objectivation', 'Ce que c’est, sur quoi objectiver, la maison à trois étages et les questions avant, pendant, après.'], ['engagement', 'L’engagement, un écosystème vivant', 'Les 4 besoins, les 9 gestes qui les nourrissent et d’où ça vient.'], ['classe-collabo-reflexive', 'La classe collabo-réflexive', 'Les principes, les surfaces verticales, les îlots.']];
-  D.forEach(([f, k, t, p, feat, pdfOnly]) => { const a = document.createElement('article'); a.className = 'hub-doc' + (feat ? ' feat' : ''); a.innerHTML = '<span class="k">' + k + '</span><h3>' + esc(t) + '</h3><p>' + esc(p) + '</p><div class="hub-row"><a class="hub-btn sm" target="_blank" rel="noopener" href="fichiers/' + f + '.pdf">PDF</a>' + (pdfOnly ? '' : '<a class="hub-btn sm alt" target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/17yo-Dyv4aUrBiIHa_YFIUx204Y0rYqA9" title="La version Word est dans le dossier Drive de l’atelier (sous-dossier 4, ou 3 pour le cahier)">Word ↗</a>') + '</div>'; $('#hgDocs').appendChild(a); });
+  D.forEach(([f, k, t, p, feat, pdfOnly]) => { const a = document.createElement('article'); a.className = 'hub-doc' + (feat ? ' feat' : ''); a.innerHTML = '<span class="k">' + k + '</span><h3>' + esc(t) + '</h3><p>' + esc(p) + '</p><div class="hub-row"><a class="hub-btn sm" target="_blank" rel="noopener" href="fichiers/' + f + '.pdf">PDF</a>' + (pdfOnly ? '' : '<a class="hub-btn sm alt" href="https://github.com/isabellepedneault111-ai/Chat-/raw/claude/friendly-hawking-lwif5a/Colloque_FGA_13-novembre_Rever-le-monde/' + f + '.docx" title="Télécharge la version Word la plus récente, à adapter à vos groupes">Word ↓</a>') + '</div>'; $('#hgDocs').appendChild(a); });
   BX.forEach(([f, t, p]) => { const a = document.createElement('article'); a.className = 'hub-doc'; a.innerHTML = '<span class="k">La Boussole d’Isabelle</span><h3>' + esc(t) + '</h3><p>' + esc(p) + '</p><div class="hub-row"><a class="hub-btn sm" target="_blank" rel="noopener" href="https://cfga.netlify.app/docs/' + f + '.pdf">PDF ↗</a></div>'; $('#hgDocs').appendChild(a); });
 
   const Q = [['Pertinence pédagogique', 'Mon projet a-t-il une pertinence pédagogique ?'], ['Éthique', 'Ai-je réfléchi aux principes éthiques en jeu ?'], ['Cadre légal', 'Mon initiative respecte-t-elle le cadre légal ?'], ['Soutien', 'Ai-je accès au soutien nécessaire pour la mettre en œuvre ?'], ['Validation par les pairs', 'Ai-je consulté mes pairs pour enrichir mon idée et en voir les angles morts ?'], ['Pérennité', 'Peut-elle être maintenue dans le temps et adaptée ailleurs ?']];
@@ -1143,6 +1154,7 @@ window.CG = (() => {
     <tr><th><i class="z-n"></i>Nature</th><td>un boisé derrière le centre</td><td>il n’y a pas de verdure autour du stationnement</td></tr>
   </tbody></table>
   <p class="cap">Modèle. Rien n’existe ? Notez de quoi votre centre aurait besoin pour s’y rendre.</p>
+  <p class="pont4"><b>Gardez vos « je remarque que »</b> : chaque manque touche un des 4 besoins. On s’en sert pour agir, deux diapos plus loin.</p>
   <p><button class="btn" data-timer="240">4 min</button></p>
 </section>
 
@@ -1159,15 +1171,21 @@ window.CG = (() => {
   <div class="verdict" id="raOut"></div>
 </section>
 
-<section data-mode="res" data-besoins="Appartenance,Autonomie" class="slide" data-phase="2" data-who="Duo" data-notes="En îlot, comme d’habitude. Le résultat vient des cercles de l’îlot (il peut y en avoir plusieurs). Les actions sont détaillées et le plus SMART possible. Le titre est obligatoire : la galerie et le vote se font par titre. Tout se reporte au plexiglas, sur l’affiche « Notre projet », avec l’espace des trois votes.">
+<section data-mode="res" data-besoins="Appartenance,Autonomie" data-wide="1" class="slide" data-phase="2" data-who="Duo" data-notes="Coup de pouce pour l’étape 2 : devant chaque manque relevé dans l’analyse de contexte (les « je remarque que »), l’îlot se demande quel besoin il touche, puis choisit une action qui le nourrit. Une bonne action en nourrit souvent plus d’un. Le même outil sert avec les élèves. En îlot, comme d’habitude. Le résultat vient des cercles de l’îlot (il peut y en avoir plusieurs). Les actions sont détaillées et le plus SMART possible. Le titre est obligatoire : la galerie et le vote se font par titre. Tout se reporte au plexiglas, sur l’affiche « Notre projet », avec l’espace des trois votes.">
   <div class="kick">Phase 2 · en îlot</div>
   <h2>Du résultat aux actions</h2>
+  <div class="c13"><div>
   <ol class="etapes">
     <li><b>Ce qui nous interpelle</b><span>dans nos cercles : notre résultat (un ou plusieurs)</span><button class="btn alt" data-timer="180">3 min</button></li>
     <li><b>Des actions concrètes</b><span>un verbe, qui, quand ; le plus SMART possible. Copilot peut aider (diapo suivante)</span><button class="btn alt" data-timer="360">6 min</button></li>
     <li><b>Un titre au projet</b><span>court, qui donne envie</span><button class="btn alt" data-timer="60">1 min</button></li>
     <li><b>Au plexiglas</b><span>le titre, le résultat, les actions, et l’espace des votes</span><button class="btn alt" data-timer="120">2 min</button></li>
   </ol>
+  </div>
+  <aside class="pouce4"><b>Coup de pouce · les 4 besoins pour agir</b><p>Un manque relevé dans votre analyse de contexte ? Quel besoin touche-t-il ? Choisissez une action qui le nourrit.</p>
+    <dl><div class="bz-c"><dt>Compétence</dt><dd>« Qu’est-ce qu’on peut réussir, à notre mesure ? »</dd></div><div class="bz-a"><dt>Autonomie</dt><dd>« Qu’est-ce qu’on laisse choisir ? »</dd></div><div class="bz-s"><dt>Sens</dt><dd>« À qui ça sert, vraiment ? »</dd></div><div class="bz-p"><dt>Appartenance</dt><dd>« Avec qui le fait-on ? »</dd></div></dl>
+    <p class="pouce-ex"><b>Exemple</b> « Les projets restent dans une seule classe » touche l’appartenance : « Notre groupe invite la classe voisine à notre présentation, le 12 décembre. »</p></aside>
+  </div>
 </section>
 
 <section data-mode="exp" data-besoins="Compétence" class="slide" data-wide="1" data-phase="2" data-who="Isabelle" data-notes="Les participants travaillent sur leur ordinateur : ils ouvrent la page Ressources (code QR ou adresse), section « Mon invite Copilot ». On modélise avec un îlot : on écrit leur groupe, leur enjeu et leurs contraintes, puis on copie l’invite dans Copilot sur l’ordinateur du TNI. Les participants utilisent la même formule dans leur cahier (« Notre invite Copilot ») et l’aide-mémoire, sur leur propre appareil.">

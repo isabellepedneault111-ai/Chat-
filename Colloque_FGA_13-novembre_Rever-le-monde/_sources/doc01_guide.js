@@ -139,6 +139,7 @@ const kids = [
   ], [4600, 5480]),
   H3('En îlot : du résultat aux actions · Duo (diapos 13 et 14)'),
   P('Ce qui interpelle l’îlot dans ses cercles devient le résultat (un ou plusieurs) ; des actions détaillées, le plus SMART possible ; **un titre au projet** (obligatoire : la galerie se fait par titre) ; tout au plexiglas, sur l’affiche 05d « Notre projet », avec l’espace des trois votes. **Copilot (diapo 14) :** la tâche « micro-actions » à partir de l’analyse de contexte. Sur leur ordinateur, les participants ouvrent la page Ressources (code QR) et copient la même invite.'),
+  P('**Coup de pouce des 4 besoins (encadré de la diapo 13).** Devant chaque manque relevé dans l’analyse de contexte (les « je remarque que »), l’îlot se demande quel besoin il touche, puis choisit une action qui le nourrit : compétence (« Qu’est-ce qu’on peut réussir, à notre mesure ? »), autonomie (« Qu’est-ce qu’on laisse choisir ? »), sens (« À qui ça sert, vraiment ? »), appartenance (« Avec qui le fait-on ? »). On l’annonce dès la diapo 11. Le même outil sert avec les élèves.'),
   H3('Les 5 marches et les trois portes · Francis, puis Isabelle (diapos 15 et 16)'),
   P('« Vous venez de vivre les trois premières marches. » Les projets vécus au CFGA. Puis les trois portes pour l’individualisé : A, l’enjeu comme contexte de tâche ; B, le micro-projet ; C, le projet-pont.'),
 

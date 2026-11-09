@@ -101,6 +101,15 @@ const kids = [
     [P('**Notre résultat** (ce qui nous interpelle dans nos cercles)', { after: 560 })],
     [P('**Nos actions** (un verbe, qui, quand ; le plus SMART possible)', { after: 1100 })]
   ].map(r => [r]), [W]),
+  H2('Coup de pouce · les 4 besoins pour agir'),
+  P('Un manque relevé dans votre analyse de contexte (vos « je remarque que ») ? Quel besoin touche-t-il ? Choisissez une action qui le nourrit. Une bonne action en nourrit souvent plus d’un.'),
+  tbl(['Besoin', 'La question pour agir', 'Notre action'], [
+    ['**Compétence**', '« Qu’est-ce qu’on peut réussir, à notre mesure ? »', P('', { after: 560 })],
+    ['**Autonomie**', '« Qu’est-ce qu’on laisse choisir ? »', P('', { after: 560 })],
+    ['**Sens**', '« À qui ça sert, vraiment ? »', P('', { after: 560 })],
+    ['**Appartenance**', '« Avec qui le fait-on ? »', P('', { after: 560 })]
+  ], [2000, 3600, 4300], { firstAccent: true }),
+  P('*Exemple : « Les projets restent dans une seule classe » touche l’appartenance. Action : « Notre groupe invite la classe voisine à notre présentation, le 12 décembre. »*', { before: 60, run: { size: 19 } }),
   H2('Notre invite Copilot'),
   P('Sur votre ordinateur, ouvrez la page Ressources (claude.ai/artifact/SMB1bWSXHDzLNmfYQsGvwG#ressources), section « Mon invite Copilot ». Choisissez la tâche « micro-actions » et collez vos leviers et vos « je remarque que ». Copilot ne va pas chercher le programme lui-même : collez l’extrait du programme du sigle, ou joignez le PDF avec le trombone.', { run: { size: 19 } }),
   zone('Ce que Copilot a proposé, et ce qu’on garde', 1000),
