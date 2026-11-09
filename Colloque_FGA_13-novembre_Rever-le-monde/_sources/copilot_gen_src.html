@@ -33,6 +33,9 @@
 .cg-browse button{text-align:left;font-family:"Arial",sans-serif;font-size:13.5px;line-height:1.25;background:#fff;border:2px solid var(--c-hair);padding:6px 8px;cursor:pointer;color:var(--c-ink)}
 .cg-browse button:hover{border-color:var(--c-ink);background:#FFF6D6}
 .cg-browse button b{display:block;color:var(--c-mauve)}
+.cg-tf{margin-top:8px;border-left:4px solid var(--c-gold);padding:4px 0 6px 12px;background:#FFFBEA}
+.cg-tfh{margin:4px 0 2px;font-family:"Arial",sans-serif;font-weight:700;font-size:13.5px;color:var(--c-mauve)}
+.cg-tf:empty{display:none}
 .cg details{margin-top:10px}
 .cg summary{cursor:pointer;font-family:"Arial",sans-serif;font-weight:700;font-size:14px;color:var(--c-mauve)}
 .cg-formats{display:grid;grid-template-columns:repeat(auto-fill,minmax(122px,1fr));gap:8px;margin-bottom:8px}
@@ -66,17 +69,19 @@ window.CG = (() => {
   const TEMPS = [['1 période par semaine', 'Rythme en classe : 1 période par semaine.'], ['1 période par jour', 'Rythme en classe : 1 période par jour.'], ['Quelques périodes sur 2 semaines', 'Rythme en classe : quelques périodes réparties sur 2 semaines.'], ['Une étape complète', 'Rythme en classe : une étape complète.'], ['Je ne sais pas encore', 'Rythme en classe : à déterminer. Propose deux versions : une courte (1 ou 2 périodes) et une longue (quelques semaines).'], ['Le temps n’est pas un problème', 'Le temps n’est pas une contrainte.']];
   const ANCRAGE = 'Applique d’office ce qui est reconnu efficace : modelage, pratique guidée puis autonome ; tâches courtes et graduées, du concret à l’abstrait ; rétroaction précise sur les critères de la DDE ; des choix offerts aux élèves (conception universelle de l’apprentissage) ; et nourris les 4 besoins de l’engagement (compétence, autonomie, sens, appartenance).';
   const COMMUN = 'Mes élèves sont inscrits dans des sigles différents. Ne cherche pas le commun dans les savoirs (les mêmes intitulés ne disent pas la même chose d’un sigle à l’autre) : cherche-le dans les situations de vie et dans les compétences polyvalentes (formation de base commune) ou transversales (formation de base diversifiée) que mes sigles partagent. Propose d’abord la partie commune à tout le groupe, puis une déclinaison courte pour chaque sigle.';
-  const TACHES = [['Des micro-actions SMART', 'Propose 5 micro-actions concrètes et SMART pour notre projet, à partir de nos notes (nos leviers et nos « je remarque que »).', 1],
-    ['Du résultat à 3 actions SMART', 'Transforme notre résultat en 3 actions SMART : un verbe conjugué, un responsable, une date.', 1],
-    ['Un manque, un besoin, une action', 'Pour chaque manque de nos notes (nos « je remarque que »), nomme le besoin de l’engagement qu’il touche (compétence, autonomie, sens, appartenance) et propose une action SMART qui le nourrit.', 1],
-    ['Une tâche commune à mes sigles', 'Crée une tâche commune à tous mes sigles, liée à notre projet, puis décline-la en une version courte pour chaque sigle.'],
-    ['Une situation d’apprentissage', 'Crée une situation d’apprentissage liée à notre projet, sur le rythme indiqué, avec un continuum de complexité (sans étiquette de niveau).'],
-    ['Une séquence progressive', 'Planifie une séquence d’apprentissage progressive : du concret à l’abstrait, avec ce qui est repris et ce qui est nouveau, liée à notre projet.'],
-    ['Un co-enseignement', 'Planifie un co-enseignement entre mes sigles ou avec un·e collègue, autour de notre projet : qui enseigne quoi, quand, et la trace commune.'],
-    ['Relier au projet d’engagement', 'Pour chaque marche de notre projet (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin), propose une tâche évaluable du sigle.'],
-    ['Une grille d’évaluation', 'Génère une grille d’évaluation descriptive à 4 niveaux pour la production finale du projet, à partir des critères de la DDE.'],
-    ['Des questions d’objectivation', 'Propose 8 questions d’objectivation pour l’élève : 2 avant, 3 pendant, 3 après.'],
-    ['Une rétroaction sur une production', 'Rédige une rétroaction de qualité sur la production d’élève jointe à nos notes : précise, sur le processus, avec la prochaine étape.', 1]];
+  // Chaque tâche fait apparaître les champs dont Copilot a besoin (même clé = même valeur, d'une tâche à l'autre)
+  const F = { manques: ['Nos « je remarque que » (les manques), un par ligne', 'ex. Les projets restent dans une seule classe.', 1], leviers: ['Nos leviers (ce qui existe déjà)', 'ex. le CSI, la maison des jeunes, un local libre le vendredi', 1], resultat: ['Notre résultat visé', 'ex. un centre plus ouvert sur le quartier'], actions: ['Nos actions (s’il y en a déjà)', 'ex. Nous invitons la classe voisine le 12 décembre.', 1], titre: ['Le titre de notre projet', 'ex. Le centre s’ouvre'], marche: ['Où on en est', '', 0, ['Ça me dérange', 'Je rêve', 'Je cible', 'J’agis', 'Je regarde le chemin']], depart: ['Ce que les élèves savent déjà', 'ex. les pourcentages simples', 1], arrivee: ['Où on veut les amener', 'ex. comparer des offres et justifier un choix', 1], avec: ['Avec qui (sigle ou collègue)', 'ex. la collègue de français, FRA-2101'], moments: ['Nos moments communs possibles', 'ex. le jeudi, 2e période', 0], production: ['La production à évaluer ou à commenter (sans nom)', 'Collez la production ou décrivez-la', 1], activite: ['L’activité visée', 'ex. la présentation du projet au groupe'], critere: ['Le critère visé (facultatif)', 'ex. clarté du message'] };
+  const TACHES = [['Des micro-actions SMART', 'Propose 5 micro-actions concrètes et SMART pour notre projet, à partir de nos leviers et de nos « je remarque que ».', ['leviers', 'manques']],
+    ['Du résultat à 3 actions SMART', 'Transforme notre résultat en 3 actions SMART : un verbe conjugué, un responsable, une date.', ['resultat']],
+    ['Un manque, un besoin, une action', 'Pour chaque manque ci-dessus, nomme le besoin de l’engagement qu’il touche (compétence, autonomie, sens, appartenance) et propose une action SMART qui le nourrit.', ['manques']],
+    ['Une tâche commune à mes sigles', 'Crée une tâche commune à tous mes sigles, liée à notre projet, puis décline-la en une version courte pour chaque sigle.', ['titre']],
+    ['Une situation d’apprentissage', 'Crée une situation d’apprentissage liée à notre projet, sur le rythme indiqué, avec un continuum de complexité (sans étiquette de niveau).', ['titre', 'resultat']],
+    ['Une séquence progressive', 'Planifie une séquence d’apprentissage progressive, du point de départ au point d’arrivée ci-dessus : du concret à l’abstrait, avec ce qui est repris et ce qui est nouveau, liée à notre projet.', ['depart', 'arrivee']],
+    ['Un co-enseignement', 'Planifie un co-enseignement autour de notre projet : qui enseigne quoi, à quels moments, et la trace commune.', ['avec', 'moments', 'titre']],
+    ['Relier au projet d’engagement', 'Relie notre projet aux savoirs du sigle : pour la marche où nous en sommes et pour les suivantes (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin), propose une tâche évaluable du sigle et la trace à garder.', ['titre', 'resultat', 'actions', 'marche']],
+    ['Une grille d’évaluation', 'Génère une grille d’évaluation descriptive à 4 niveaux pour la production ci-dessus, à partir des critères de la DDE.', ['production']],
+    ['Des questions d’objectivation', 'Propose 8 questions d’objectivation pour l’élève sur l’activité ci-dessus : 2 avant, 3 pendant, 3 après.', ['activite']],
+    ['Une rétroaction sur une production', 'Rédige une rétroaction de qualité sur la production ci-dessus : précise, sur le processus, avec la prochaine étape.', ['production', 'critere']]];
   const FORMATS = [['Word prêt à imprimer', '📄', 'Un document Word prêt à imprimer : en-tête avec [votre logo de centre], titre court, sections numérotées, tableaux à fines bordures noires, en-têtes mauves (#5B2A86), mots-clés surlignés en jaune (#F2C230), aucune couleur pastel, police Cambria 12 pt.'],
     ['Fiche élève, 1 page', '🧾', 'Une fiche d’une page pour l’élève : consigne en 3 étapes numérotées, phrases courtes, un espace pour répondre, et à la fin une case « Ce dont je suis fier·ère ».'],
     ['Tableau', '▦', 'Un seul tableau clair aux colonnes nommées. Rien avant, rien après.'],
@@ -108,7 +113,7 @@ window.CG = (() => {
     return [head, e.b ? 'But du cours : ' + e.b + '.' : '', e.cs ? 'Classe de situations : ' + e.cs + '.' : '', L('Familles de situations', e.fam), L('Situations de vie', e.sv), L('Compétences', e.c), L(e.f === 'FBD' ? 'Compétences transversales' : 'Compétences polyvalentes', e.p), L('Domaines généraux de formation', e.dgf), e.a ? 'Attentes de fin de cours : ' + e.a : '', L('Critères d’évaluation', e.cr), L('Savoirs', e.s), e.si ? 'Situations : ' + e.si + '.' : '', L('Compétences évaluées (DDE)', e.dc), L('Catégories de savoirs (DDE)', e.ds), L('Critères d’évaluation (DDE)', e.dk), e.dd ? 'Éléments essentiels et critères d’évaluation (DDE officielle) : ' + e.dd : '', e.pv || e.nx ? 'Progression : ' + [e.pv ? 'avant, ' + e.pv + (SIG[e.pv] ? ' ' + SIG[e.pv].n : '') : '', e.nx ? 'après, ' + e.nx + (SIG[e.nx] ? ' ' + SIG[e.nx].n : '') : ''].filter(Boolean).join(' ; ') + '.' : ''].filter(Boolean).join('\n') + src; }
 
   function mount(root) {
-    const st = { role: 0, roleX: '', el: -1, org: -1, tps: -1, enjeu: '', sig: [], ext: '', dirty: false, tache: 0, tacheX: '', fmt: 0, fmtTxt: FORMATS[0][2], trucs: new Set([8, 10]) };
+    const st = { role: 0, roleX: '', el: -1, org: -1, tps: -1, enjeu: '', sig: [], ext: '', dirty: false, tache: 0, tacheX: '', tf: {}, fmt: 0, fmtTxt: FORMATS[0][2], trucs: new Set([8, 10]) };
     const id = 'cg' + Math.random().toString(36).slice(2, 7);
     const chips = (arr, name) => arr.map((t, i) => `<button type="button" data-${name}="${i}" aria-pressed="false">${esc(Array.isArray(t) ? t[0] : t)}</button>`).join('');
     root.innerHTML = `<div class="cg"><div class="cg-form">
@@ -132,17 +137,16 @@ window.CG = (() => {
         <div class="cg-tags" id="${id}t"></div>
         <details id="${id}d"><summary>Voir ou modifier l’extrait envoyé à Copilot</summary><textarea id="${id}x" rows="7" placeholder="Collez ici l’extrait du programme si votre sigle n’est pas dans la banque."></textarea></details>
         <p class="cg-warn">Où trouver tout le programme de mon sigle ? <a href="${MEQ}" target="_blank" rel="noopener">Les programmes d’études de la FGA (ministère) ↗</a>. Sur la page de votre matière : le programme et la DDE de chaque sigle.</p></fieldset>
-      <fieldset class="cg-step"><legend><b>4</b>Ce qu’on a déjà</legend>
-        <p class="cg-help"><strong>Copilot ne sait que ce que vous lui donnez.</strong> Collez vos notes : vos « je remarque que » (les manques), vos leviers, votre résultat, vos actions, ou la production d’un élève, sans nom.</p>
-        <textarea id="${id}n" rows="4" placeholder="ex. Je remarque que les projets restent dans une seule classe. Levier : le CSI, la maison des jeunes. Notre résultat : un centre plus ouvert sur le quartier."></textarea></fieldset>
-      <fieldset class="cg-step"><legend><b>5</b>La tâche</legend>
+      <fieldset class="cg-step"><legend><b>4</b>La tâche</legend>
         <select id="${id}k">${TACHES.map((t, i) => `<option value="${i}">${esc(t[0])}</option>`).join('')}<option value="x">Autre : je l’écris</option></select>
         <input type="text" id="${id}kx" placeholder="Écrivez votre tâche" hidden>
-        <p class="cg-warn">Inclus d’office dans l’invite : les pratiques reconnues efficaces (modelage, pratique guidée, rétroaction sur les critères, choix offerts) et les 4 besoins de l’engagement.${''} Avec plusieurs sigles, l’invite cherche aussi le commun entre eux.</p></fieldset>
-      <fieldset class="cg-step"><legend><b>6</b>Cliquez le format attendu</legend>
+        <div class="cg-tf" id="${id}tf"></div>
+        <span class="cg-lab">Autre chose à savoir (facultatif)</span><textarea id="${id}n" rows="2" placeholder="ex. Deux élèves lisent difficilement ; le local a un TNI."></textarea>
+        <p class="cg-warn">Inclus d’office dans l’invite : les pratiques reconnues efficaces (modelage, pratique guidée, rétroaction sur les critères, choix offerts) et les 4 besoins de l’engagement. Avec plusieurs sigles, l’invite cherche aussi le commun entre eux.</p></fieldset>
+      <fieldset class="cg-step"><legend><b>5</b>Cliquez le format attendu</legend>
         <div class="cg-formats">${FORMATS.map(([n, ic], i) => `<button type="button" data-fmt="${i}" aria-pressed="${i === 0}"><i aria-hidden="true">${ic}</i>${esc(n)}</button>`).join('')}</div>
         <span class="cg-lab">La mise en forme demandée (modifiable)</span><textarea id="${id}f" rows="3"></textarea></fieldset>
-      <fieldset class="cg-step"><legend><b>7</b>Ce qu’on demande en plus à Copilot</legend>
+      <fieldset class="cg-step"><legend><b>6</b>Ce qu’on demande en plus à Copilot</legend>
         <p class="cg-help">Ces consignes s’adressent à l’IA. <strong>Ouvrir</strong> pour chercher plus large, <strong>resserrer</strong> pour choisir et vérifier. Un bon échange fait les deux, dans cet ordre.</p>
         <span class="cg-lab">↔ Ouvrir (expansion)</span><div class="cg-chips" data-g="trucs">${TRUCS.map((t, i) => t[2] === 'e' ? `<button type="button" data-trucs="${i}" aria-pressed="false">${esc(t[0])}</button>` : '').join('')}</div>
         <span class="cg-lab">→← Resserrer (restriction)</span><div class="cg-chips" data-g="trucs">${TRUCS.map((t, i) => t[2] === 'r' ? `<button type="button" data-trucs="${i}" aria-pressed="false">${esc(t[0])}</button>` : '').join('')}</div></fieldset>
@@ -160,18 +164,23 @@ window.CG = (() => {
     function addSig(raw) { const k = raw.trim().toUpperCase().replace(/\s+/g, '').replace(/^([A-Z]{3})(\w{4})$/, '$1-$2').replace(/-(\w{4})-\d$/, '-$1'); if (!k || st.sig.includes(k)) return; st.sig.push(k);
       if (st.dirty) $id('x').value += '\n\n' + extract(k); else $id('x').value = st.sig.map(extract).join('\n\n'); drawTags(); upd('Extrait du programme'); }
     function rmSig(k) { st.sig = st.sig.filter(s => s !== k); if (!st.dirty) $id('x').value = st.sig.map(extract).join('\n\n'); drawTags(); upd('Extrait du programme'); }
+    function drawTF() { const v = $id('k').value, box = $id('tf'); if (v === 'x') { box.innerHTML = ''; return; }
+      const ks = TACHES[+v][2] || []; box.innerHTML = ks.length ? '<p class="cg-tfh">Pour cette tâche, Copilot a besoin de :</p>' + ks.map(k => { const [l, ph, area, opts] = F[k];
+        if (opts) return `<span class="cg-lab">${esc(l)}</span><div class="cg-chips" data-tf="${k}">${opts.map(o => `<button type="button" data-tfv="${esc(o)}" aria-pressed="${st.tf[k] === o}">${esc(o)}</button>`).join('')}</div>`;
+        return `<span class="cg-lab">${esc(l)}</span>` + (area ? `<textarea data-tf="${k}" rows="2" placeholder="${esc(ph)}">${esc(st.tf[k] || '')}</textarea>` : `<input type="text" data-tf="${k}" placeholder="${esc(ph)}" value="${esc(st.tf[k] || '')}">`); }).join('') : ''; }
     function upd(focus) {
       const role = $id('r').value === 'x' ? ($id('rx').value.trim() || '…') : ROLES[+$id('r').value];
       const ctx = ['Mes élèves : ' + (st.el >= 0 ? ELEVES[st.el] : 'des adultes en formation générale des adultes (FGA)') + '.', st.org >= 0 ? 'Organisation : ' + ORGA[st.org] + '.' : '', 'Notre enjeu ou notre projet : ' + ($id('e').value.trim() || '[notre enjeu]') + '.', st.tps >= 0 ? TEMPS[st.tps][1] : ''].filter(Boolean).join(' ');
       const sigs = st.sig.map(k => (k === 'PPS' || k === 'DHS') ? SIG[k].n : k + (SIG[k] ? ' ' + SIG[k].n : '')).join(' ; ');
       const regroup = st.sig.length > 1 ? COMMUN : '';
-      const notes = $id('n').value.trim();
-      const tk = TACHES[+$id('k').value]; const tache = $id('k').value === 'x' ? ($id('kx').value.trim() || '…') : tk[1] + (tk[2] && !notes ? ' [collez vos notes à l’étape 4]' : '');
+      const notes = $id('n').value.trim(); const kv = $id('k').value; const need = kv === 'x' ? [] : (TACHES[+kv][2] || []);
+      const besoin = need.map(k => F[k][0] + ' : ' + ((st.tf[k] || '').trim() || '[à préciser]')).join('\n');
+      const tache = kv === 'x' ? ($id('kx').value.trim() || '…') : TACHES[+kv][1];
       const TE = [...st.trucs].filter(i => TRUCS[i][2] === 'e').sort((a, b) => a - b).map(i => '• ' + TRUCS[i][1]), TR = [...st.trucs].filter(i => TRUCS[i][2] === 'r').sort((a, b) => a - b).map(i => '• ' + TRUCS[i][1]);
       const T = [TE.length ? 'D’abord, ouvre :\n' + TE.join('\n') : '', TR.length ? (TE.length ? 'Puis resserre :\n' : 'Resserre :\n') + TR.join('\n') : ''].filter(Boolean).join('\n');
       const Lx = [['Rôle', role + ' Tu maîtrises la formation générale des adultes au Québec et la pédagogie par projet.'], ['Contexte', ctx], sigs ? ['Sigles visés', sigs] : null,
         ['Source à respecter', 'Appuie-toi uniquement sur l’extrait du programme d’études officiel de la FGA (ministère de l’Éducation du Québec) fourni ci-dessous ou en pièce jointe. Cite le sigle et le nom exact des savoirs. N’ajoute aucune compétence ni aucun savoir absent de l’extrait ; s’il manque quelque chose, écris « à valider dans le programme ».'],
-        ['Extrait du programme', $id('x').value.trim() || '[collez ici l’extrait du programme ou joignez le PDF du programme et la DDE de votre sigle]'], notes ? ['Nos notes', notes] : null, regroup ? ['Plusieurs sigles', regroup] : null, ['Tâche', tache], ['Ancrage pédagogique', ANCRAGE],
+        ['Extrait du programme', $id('x').value.trim() || '[collez ici l’extrait du programme ou joignez le PDF du programme et la DDE de votre sigle]'], besoin ? ['Ce que tu dois savoir pour cette tâche', besoin] : null, notes ? ['Autre chose à savoir', notes] : null, regroup ? ['Plusieurs sigles', regroup] : null, ['Tâche', tache], ['Ancrage pédagogique', ANCRAGE],
         ['Démarche', '1. Repère dans l’extrait les savoirs et les situations de vie qui collent le mieux au projet. 2. Relie chaque marche du projet (ça me dérange, je rêve, je cible, j’agis, je regarde le chemin) à ces savoirs. 3. Vérifie que tout est réalisable par des adultes en FGA dans le temps disponible.'],
         ['Format attendu', $id('f').value.trim() || 'Un tableau clair.'], T ? ['Consignes', T] : null].filter(Boolean);
       plain = Lx.map(([k, t]) => k + ' :\n' + t).join('\n\n');
@@ -188,15 +197,17 @@ window.CG = (() => {
       $id('b').innerHTML = ks.map(k => `<button type="button" data-try="${k}"><b>${k}</b> ${esc(SIG[k].n)}</button>`).join(''); };
     $id('s').addEventListener('change', () => { if (SIG[$id('s').value.trim().toUpperCase()]) { addSig($id('s').value); $id('s').value = ''; } });
     $id('r').onchange = () => { $id('rx').hidden = $id('r').value !== 'x'; upd('Rôle'); }; $id('rx').oninput = () => upd('Rôle');
-    $id('k').onchange = () => { $id('kx').hidden = $id('k').value !== 'x'; upd('Tâche'); }; $id('kx').oninput = () => upd('Tâche');
+    $id('k').onchange = () => { $id('kx').hidden = $id('k').value !== 'x'; drawTF(); upd('Ce que tu dois savoir pour cette tâche'); };
+    $id('tf').addEventListener('input', e => { const k = e.target.dataset.tf; if (!k) return; st.tf[k] = e.target.value; upd('Ce que tu dois savoir pour cette tâche'); });
+    $id('tf').addEventListener('click', e => { const b = e.target.closest('[data-tfv]'); if (!b) return; const k = b.parentNode.dataset.tf; st.tf[k] = st.tf[k] === b.dataset.tfv ? '' : b.dataset.tfv; b.parentNode.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b && st.tf[k] === b.dataset.tfv))); upd('Ce que tu dois savoir pour cette tâche'); }); $id('kx').oninput = () => upd('Tâche');
     $id('e').oninput = () => upd('Contexte');
-    $id('n').oninput = () => upd('Nos notes');
+    $id('n').oninput = () => upd('Autre chose à savoir');
     $id('x').oninput = () => { st.dirty = true; upd('Extrait du programme'); };
     $id('f').oninput = () => upd('Format attendu');
     $id('c').onclick = () => { const msg = $id('m'); const ok = () => { msg.textContent = 'Copiée !'; setTimeout(() => msg.textContent = '', 2500); };
       const fb = () => { const r = document.createRange(); r.selectNodeContents($id('o')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); msg.textContent = 'Sélectionnée : faites Ctrl+C'; };
       try { navigator.clipboard.writeText(plain).then(ok, fb); } catch (err) { fb(); } };
-    sync(); upd();
+    sync(); drawTF(); upd();
   }
   return { mount };
 })();
