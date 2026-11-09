@@ -76,6 +76,17 @@ for k,x in DDE.items():
             for f in ('c','s'): e.pop(f,None)
             e.pop('x',None)
         e.pop('r',None)
+STR=json.load(open('dde_struct.json'))
+import unicodedata
+nz=lambda t: re.sub(r'[^a-z0-9]','',unicodedata.normalize('NFKD',t.lower()).encode('ascii','ignore').decode())
+for k,x in STR.items():
+    e=DB.get(k)
+    if not e or 'dd' not in e: continue
+    t=nz(e['n'].split(' (')[0])
+    f=lambda L: [i for i in L if nz(i)!=t and not re.match(r'^Niveau \d',i)]
+    dc,ds,dk=f(x['dc']),f(x['ds']),f(x['dk'])
+    if dk and (dc or ds):
+        e['dc'],e['ds'],e['dk']=dc,ds,dk; e.pop('dd',None)
 for k2,k1 in [('MAT-4261','MAT-4161'),('MAT-4262','MAT-4162'),('MAT-4263','MAT-4163')]:
     if k2 in DB and k1 in DB and DB[k2].get('r'):
         src=DB[k1]; DB[k2].update({f:src[f] for f in ('dd','si','d','u','c','s','a','fam','cs') if f in src}); DB[k2].pop('r',None); DB[k2]['b']='Même cours que '+k1+' : le programme d’études utilise le code '+k2+', la DDE officielle le code '+k1
