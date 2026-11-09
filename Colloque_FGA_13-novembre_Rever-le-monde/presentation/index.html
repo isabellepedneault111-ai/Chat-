@@ -237,6 +237,39 @@ input[type=text],textarea,select{font-family:var(--hand);font-size:clamp(20px,2v
 .atel:not(.open){padding:4px 10px}
 .atel:not(.open) b{font-size:18px}
 .atel .warnico{color:var(--gold);font-weight:700;margin-left:4px}
+
+/* minuteurs : une ligne, ou un sablier */
+.timer{font-size:clamp(20px,1.7vw,26px)!important;padding:3px 12px!important;border-width:2px!important;box-shadow:3px 3px 0 var(--mauve)}
+.timer.seg{display:flex!important;align-items:center;gap:8px;width:auto!important;max-width:min(560px,calc(100vw - 24px));padding:4px 6px 7px 10px!important}
+.timer.seg .tt{font-size:22px!important;white-space:nowrap}
+.timer.seg .tt small{display:none}
+.timer.seg .ts{margin:0!important;font-size:13px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:330px}
+.timer.seg .segbar{position:absolute;left:0;right:0;bottom:0;height:4px!important;border:0!important;background:#3a3440}
+.timer.seg .segbar i{font-size:0!important;border-right:1px solid var(--ink)!important}
+.timer.seg .segbar b{top:-2px;bottom:-2px;width:2px}
+.timer.seg .tn,.timer.seg .tmin{position:static!important;margin:0!important;font-family:var(--ui);font-weight:700;font-size:14px!important;padding:2px 8px!important;background:var(--gold);color:var(--ink);border:0!important;cursor:pointer}
+.timer.seg .tmin{background:transparent;color:var(--paper)}
+.timer.seg.mini{padding:3px 6px 3px 10px!important}
+.timer.seg.mini .tt{font-size:17px!important}
+.timer.seg.mini .tt::before{content:"⏳ "}
+
+/* mode sablier : aucun chiffre, seulement la barre qui se remplit */
+.timer .sbar{display:none}
+.timer:not(.seg){display:flex;align-items:center;gap:8px}
+.timer:not(.seg) .tmin{font-family:var(--ui);font-size:14px;background:transparent;color:inherit;border:0;cursor:pointer;padding:0 2px}
+.timer.mini .tt{display:none!important}
+.timer.mini .sbar{display:block;width:150px;height:10px;background:#3a3440;border:1px solid var(--paper);position:relative}
+.timer.mini .sbar i{position:absolute;left:0;top:0;bottom:0;background:var(--gold)}
+.timer.warn.mini .sbar i{background:#E58A2B}
+.timer.seg.mini .ts,.timer.seg.mini .tn{display:none}
+.timer.seg.mini .segbar{display:flex!important;position:relative!important;width:170px;height:10px!important;border:1px solid var(--paper)!important}
+.timer:not(.seg) .tt{font-size:inherit!important;line-height:1.1}
+.timer:not(.seg) .tmin{position:static!important}
+.timer.seg.mini .tt::before{content:none}
+.atel.mini b,.atel.mini .ad{display:none}
+.atel .adot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:middle;background:#9FE3A8}
+.atel.early .adot{background:#C9B2E8}.atel.late .adot{background:var(--gold)}.atel.vlate .adot{background:#FF9E6B}
+.atel:not(.mini) .adot{display:none}
 /* qui anime : un cadre autour de l'écran */
 body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:40;border:9px solid transparent;transition:border-color .5s}
 body[data-who=f]::after{border-color:var(--gold)}
@@ -1476,7 +1509,7 @@ function go(n) {
   $('#count').textContent = (cur + 1) + ' / ' + slides.length;
   [...phases.children].forEach((b, i) => { b.className = i < cur ? 'done' : i === cur ? 'cur' : ''; });
   $('#who').textContent = 'anime : ' + slides[cur].dataset.who;
-  $('#nTitle').textContent = 'Diapo ' + (cur + 1) + ' · ' + slides[cur].dataset.who;
+  $('#nTitle').textContent = 'Diapo ' + (cur + 1) + ' · ' + slides[cur].dataset.who + (typeof PLAN !== 'undefined' ? ' · vers ' + hhmm(620 + PLAN[cur]) + ' ou ' + hhmm(810 + PLAN[cur]) : '');
   $('#nBody').textContent = slides[cur].dataset.notes;
   if (location.hash !== '#s' + (cur + 1)) history.replaceState(null, '', '#s' + (cur + 1));
   send({ cur });
@@ -1530,12 +1563,14 @@ const tEl = $('#timer'); let tLeft = 0, tInt = null;
 let tSlide = -1;
 let SEG = null; // minuteur d'activité : { steps:[{l,s}], i, t0, st:[début de chaque étape], total, bars:[] }
 const fmt = v => { const a = Math.abs(v), m = Math.floor(a / 60), x = a % 60; return (v < 0 ? '+' : '') + m + ':' + String(x).padStart(2, '0'); };
-function startTimer(s, fromSlide) { clearInterval(tInt); SEG = null; tEl.classList.remove('seg'); tSlide = fromSlide ? cur : -1; tLeft = s; tEl.hidden = false; tick(); tInt = setInterval(() => { tLeft--; tick(); if (tLeft <= 0) { clearInterval(tInt); } }, 1000); }
-function tick() { if (SEG) return segTick(); const m = Math.floor(Math.max(0, tLeft) / 60), s = Math.max(0, tLeft) % 60; tEl.textContent = m + ':' + String(s).padStart(2, '0'); tEl.classList.toggle('warn', tLeft <= 30); }
+let tTot = 1; const tMini = () => store.get('timerMini', false);
+function startTimer(s, fromSlide) { clearInterval(tInt); SEG = null; tEl.classList.remove('seg'); tEl.classList.toggle('mini', tMini()); tSlide = fromSlide ? cur : -1; tLeft = s; tTot = s; tEl.hidden = false;
+  tEl.innerHTML = '<span class="tt" title="Cliquer pour arrêter"></span><span class="sbar" title="Cliquer pour arrêter"><i></i></span><button class="tmin" type="button" title="Avec ou sans chiffres">⏳</button>'; tick(); tInt = setInterval(() => { tLeft--; tick(); if (tLeft <= 0) { clearInterval(tInt); } }, 1000); }
+function tick() { if (SEG) return segTick(); const m = Math.floor(Math.max(0, tLeft) / 60), s = Math.max(0, tLeft) % 60; const tt = tEl.querySelector('.tt'); if (!tt) return; tt.textContent = m + ':' + String(s).padStart(2, '0'); tEl.querySelector('.sbar i').style.width = Math.min(100, (tTot - tLeft) / tTot * 100) + '%'; tEl.classList.toggle('warn', tLeft <= 30); }
 function segBar(steps) { const tot = steps.reduce((a, b) => a + b.s, 0); return '<div class="segbar">' + steps.map((x, k) => `<i style="flex:${x.s}">${k + 1}</i>`).join('') + '<b style="left:0"></b></div>'; }
 function startSeg(act) { clearInterval(tInt); const steps = act._steps; SEG = { act, steps, i: 0, st: [0], el: 0, total: steps.reduce((a, b) => a + b.s, 0) }; tSlide = cur; tEl.hidden = false; tEl.classList.add('seg');
-  tEl.innerHTML = '<button class="tmin" type="button" title="Réduire ou agrandir">–</button><div class="tt" title="Cliquer pour arrêter"></div><div class="ts"></div>' + segBar(steps) + '<button class="tn" type="button">Étape suivante →</button>';
-  tEl.querySelector('.tmin').onclick = e => { e.stopPropagation(); tEl.classList.toggle('mini'); e.target.textContent = tEl.classList.contains('mini') ? '+' : '–'; };
+  tEl.innerHTML = '<span class="tt" title="Cliquer pour arrêter"></span><span class="ts"></span><button class="tn" type="button" title="Étape suivante">→</button><button class="tmin" type="button" title="Réduire en sablier">⏳</button>' + segBar(steps);
+  tEl.classList.toggle('mini', tMini());
   tEl.querySelector('.tt').onclick = stopTimer; tEl.querySelector('.tn').onclick = e => { e.stopPropagation(); segNext(); };
   act.querySelector('.seg-go').textContent = 'Recommencer'; act.querySelector('.seg-next').hidden = false;
   segTick(); tInt = setInterval(() => { SEG.el++; segTick(); }, 1000); }
@@ -1543,12 +1578,12 @@ function segNext() { if (!SEG) return; if (SEG.i < SEG.steps.length - 1) { SEG.i
 function segTick() { const S = SEG, n = S.steps.length, left = S.total - S.el, planEnd = S.steps.slice(0, S.i + 1).reduce((a, b) => a + b.s, 0), inStep = S.el - S.st[S.i];
   const late = S.el > planEnd, restSteps = n - S.i - 1;
   tEl.querySelector('.tt').innerHTML = fmt(left) + '<small>sur ' + Math.round(S.total / 60) + ' min</small>';
-  tEl.querySelector('.ts').textContent = 'Étape ' + (S.i + 1) + '/' + n + ' · ' + S.steps[S.i].l + ' · ≈ ' + Math.round(S.steps[S.i].s / 60) + ' min (' + fmt(inStep).replace('+', '') + ')' + (restSteps && left > 0 ? ' · il reste ' + fmt(left) + ' pour ' + (restSteps + 1) + ' étapes' : '');
+  tEl.querySelector('.ts').textContent = (S.i + 1) + '/' + n + ' · ' + S.steps[S.i].l + ' · ≈ ' + Math.round(S.steps[S.i].s / 60) + ' min';
   tEl.classList.toggle('warn', left <= 30);
   [tEl, S.act].forEach(root => { const is = root.querySelectorAll('.segbar i'); is.forEach((x, k) => { x.className = k < S.i ? 'done' : k === S.i ? (late ? 'late' : 'cur') : ''; }); const bb = root.querySelector('.segbar b'); if (bb) bb.style.left = Math.min(100, S.el / S.total * 100) + '%'; });
   const sl = S.act.querySelectorAll('.segl li'); sl.forEach((x, k) => x.style.textDecoration = k < S.i ? 'line-through' : ''); }
-function stopTimer() { clearInterval(tInt); tEl.hidden = true; tEl.classList.remove('mini'); if (SEG) { SEG.act.querySelector('.seg-go').textContent = SEG.act.querySelector('.seg-go').dataset.l; SEG.act.querySelector('.seg-next').hidden = true; SEG.act.querySelectorAll('.segbar i').forEach(x => x.className = ''); } SEG = null; tEl.classList.remove('seg'); }
-tEl.onclick = e => { if (!SEG) stopTimer(); };
+function stopTimer() { clearInterval(tInt); tEl.hidden = true; if (SEG) { SEG.act.querySelector('.seg-go').textContent = SEG.act.querySelector('.seg-go').dataset.l; SEG.act.querySelector('.seg-next').hidden = true; SEG.act.querySelectorAll('.segbar i').forEach(x => x.className = ''); } SEG = null; tEl.classList.remove('seg'); }
+tEl.onclick = e => { if (e.target.closest('.tmin')) { e.stopPropagation(); const m = !tEl.classList.contains('mini'); tEl.classList.toggle('mini', m); store.set('timerMini', m); return; } if (e.target.closest('.tn')) return; if (!SEG) stopTimer(); };
 $('#tBtn').onclick = () => tEl.hidden ? startTimer(300) : stopTimer();
 // Une diapo avec plusieurs minuteurs devient une seule activité, en secteurs
 slides.forEach(sl => { const bs = [...sl.querySelectorAll('[data-timer]')]; if (bs.length < 2) { bs.forEach(b => b.onclick = () => startTimer(+b.dataset.timer, true)); return; }
@@ -1568,6 +1603,8 @@ slides.forEach(sl => { const bs = [...sl.querySelectorAll('[data-timer]')]; if (
 // Début prévu de chaque diapo (minutes), d'après le déroulé du guide ; o = optionnelle (à couper d'abord), r = à raccourcir
 const PLAN = [0, 0, 1, 3, 5, 6, 7, 9, 10, 17, 25, 30, 40, 47, 52, 56, 60, 70, 73, 80, 83, 85, 86, 87, 88, 88, 89];
 const CUT = [{ i: 7, t: 'diapo 8 (les 4 besoins)', m: 1 }, { i: 24, t: 'diapo 25 (la pyramide)', m: 1 }, { i: 15, t: 'raccourcir la diapo 16 (les portes : renvoyer au cahier)', m: 3 }, { i: 6, t: 'raccourcir la diapo 7 (étapes 4 et 5)', m: 1 }, { i: 25, t: 'diapo 26 (3-2-1 dans le cahier)', m: 2 }, { i: 23, t: 'raccourcir la diapo 24 (un seul projet)', m: 1 }];
+const hhmm = m => Math.floor(m / 60) + ' h ' + String(Math.round(m % 60)).padStart(2, '0');
+const SEANCE = () => new Date().getHours() < 12 ? 620 : 810;
 const whoCode = w => { w = (w || '').toLowerCase(); if (/duo|et francis|isabelle et/.test(w)) return 'd'; if (/^francis, puis isabelle/.test(w)) return 'fi'; if (/^isabelle, puis francis/.test(w)) return 'if'; if (/francis/.test(w)) return 'f'; if (/isabelle/.test(w)) return 'i'; return ''; };
 const atel = document.createElement('div'); atel.className = 'atel'; atel.hidden = true; document.body.appendChild(atel);
 let aT0 = store.get('atelT0', null), aPause = store.get('atelPause', null), aInt = null;
@@ -1580,9 +1617,10 @@ function aDraw() { if (aT0 === null) { atel.hidden = true; return; } atel.hidden
   const msg = stat === 'early' ? 'en avance de ' + Math.round(-d) + ' min : on peut prendre le temps' : stat === 'ok' ? 'dans les temps' : 'en retard de ' + Math.round(late) + ' min';
   let cut = ''; if (late > 1.5) { let need = late, list = []; CUT.filter(c => c.i > cur).forEach(c => { if (need > 0) { list.push(c.t); need -= c.m; } }); cut = list.length ? '<span class="acut">À couper : ' + list.join(' · ') + '</span>' : '<span class="acut">Ne pas couper 19, 20, 21 : raccourcir les échanges.</span>'; }
   atel.className = 'atel ' + stat + (atel.classList.contains('open') ? ' open' : '');
-  atel.innerHTML = `<b>${m}:${String(ss).padStart(2, '0')}</b><span class="ad">${stat === 'ok' ? '✓' : stat === 'early' ? '−' + Math.round(-d) + ' min' : '+' + Math.round(late) + ' min'}</span>${late > 1.5 ? '<span class="warnico" title="Toucher pour voir quoi couper">⚠</span>' : ''}${aPause ? ' · pause' : ''}<span class="anote"><br>sur 90 min · prévu ici : ${plan} min · ${msg}</span>${cut}<div class="abar"><i style="width:${Math.min(100, el / 90 * 100)}%"></i><u style="left:${plan / 90 * 100}%"></u></div><div class="actl"><button type="button" data-a="p">${aPause ? 'Reprendre' : 'Pause'}</button><button type="button" data-a="r">Arrêter</button></div>`; }
+  atel.innerHTML = `<span class="adot" title="vert : dans les temps · jaune : en retard · orange : couper"></span><b>${m}:${String(ss).padStart(2, '0')}</b><span class="ad">${stat === 'ok' ? '✓' : stat === 'early' ? '−' + Math.round(-d) + ' min' : '+' + Math.round(late) + ' min'}</span>${late > 1.5 ? '<span class="warnico" title="Toucher pour voir quoi couper">⚠</span>' : ''}${aPause ? ' · pause' : ''}<span class="anote"><br>sur 90 min · prévu ici : ${hhmm(SEANCE() + plan)} (minute ${plan}) · ${msg}</span>${cut}<div class="abar"><i style="width:${Math.min(100, el / 90 * 100)}%"></i><u style="left:${plan / 90 * 100}%"></u></div><div class="actl"><button type="button" data-a="p">${aPause ? 'Reprendre' : 'Pause'}</button><button type="button" data-a="s">${store.get('atelMini', false) ? 'Avec chiffres' : 'Sans chiffres'}</button><button type="button" data-a="r">Arrêter</button></div>`; if (store.get('atelMini', false)) atel.classList.add('mini'); }
 function aStart() { aT0 = Date.now() - (PLAN[cur] || 0) * 60000; aPause = null; store.set('atelT0', aT0); store.set('atelPause', null); clearInterval(aInt); aInt = setInterval(aDraw, 1000); aDraw(); }
 atel.addEventListener('click', e => { const b = e.target.closest('[data-a]'); if (!b) { atel.classList.toggle('open'); return; }
+  if (b.dataset.a === 's') { store.set('atelMini', !store.get('atelMini', false)); aDraw(); return; }
   if (b.dataset.a === 'p') { if (aPause) { aT0 += Date.now() - aPause; aPause = null; } else aPause = Date.now(); store.set('atelT0', aT0); store.set('atelPause', aPause); }
   else { aT0 = null; store.set('atelT0', null); clearInterval(aInt); } aDraw(); });
 $('#aBtn').onclick = () => { if (aT0 === null) aStart(); else atel.classList.toggle('open'); };
