@@ -17,7 +17,7 @@ const kids = [
   H1('01', 'La formule'),
   tbl(['Ingrédient', 'La question à se poser', 'Exemple'], [
     ['**Rôle**', 'Qui doit répondre ?', 'Tu es conseiller pédagogique en FGA au Québec.'],
-    ['**Contexte**', 'Pour qui, dans quelle situation ?', 'Un groupe PPS réalise un projet sur le gaspillage alimentaire.'],
+    ['**Contexte**', 'Pour qui, dans quelle situation ?', 'Un groupe PPS réalise un projet pour créer des liens avec les organismes du quartier.'],
     ['**Programme et lien**', 'À quel cours je me rattache, et comment mon projet le travaille ?', 'Appuie-toi uniquement sur l’extrait du programme de MAT-3051 que je te joins. Puis relie chaque étape de notre projet aux savoirs du sigle, dans un tableau.'],
     ['**Tâche**', 'Qu’est-ce que je veux, exactement ?', 'Génère une grille descriptive à 4 niveaux.'],
     ['**Contraintes**', 'Quel format, quelle limite ?', 'Langage simple, tableau, verbes observables, pas de note chiffrée.']

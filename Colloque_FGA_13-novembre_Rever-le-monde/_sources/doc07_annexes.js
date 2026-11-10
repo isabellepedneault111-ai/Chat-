@@ -145,7 +145,7 @@ const docOf = (title, kids, foot) => new d.Document({ creator: 'Isabelle Pedneau
     N('Prenez 10 minutes, seul·e ou avec un·e collègue. Cochez une case par énoncé, sans vous juger.', 5),
     N('Repérez **2 forces** (++) : ce sont vos appuis.', 5),
     N('Choisissez **1 levier** (– ou +) qui nourrirait un besoin peu servi dans votre groupe.', 5),
-    N('Transformez ce levier en premier pas : une action (un verbe !), une date, un allié.', 5),
+    N('Transformez ce levier en élan : une action, une date, un allié.', 5),
     N('Refaites la grille dans 6 semaines, au moment de la relance de l’atelier.', 5),
     BR(),
     H1('03', 'Ma grille express : 16 énoncés, 4 besoins'),

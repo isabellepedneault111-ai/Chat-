@@ -133,7 +133,7 @@ const kids = [
   N('**Pratique guidée.** On teste des phrases de la salle dans le détecteur de la diapo.', 6),
   N('**Pratique autonome.** Dans le cahier : mon résultat, mes actions, puis la grille SMART d’Isabelle (spécifique, mesurable, atteignable, représentatif, temporel).', 6),
   tbl(['Résultat · un nom', 'Action · un verbe'], [
-    ['la réduction des déchets à la cafétéria', '==installer== trois bacs de compost vendredi avec le concierge'],
+    ['un coin de verdure dans la cour', '==mesurer== le soleil dans la cour et ==proposer== trois emplacements à la direction d’ici le 15 décembre'],
     ['un centre plus vert', '==aménager== un jardin avec un organisme du quartier d’ici juin'],
     ['plus de liens avec la communauté', '==inviter== un organisme à présenter un besoin à notre groupe le 12 décembre'],
     ['une meilleure compréhension du budget familial (mathématiques)', '==comparer== le prix de 10 produits dans deux épiceries et ==calculer== l’écart d’ici vendredi']
