@@ -40,7 +40,7 @@
 .vph:hover{background:var(--gold)}
 .vthumb{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;cursor:zoom-in}
 .vrow{display:grid;grid-template-columns:1fr 3.4em;gap:4px;align-items:center}
-.vrow b{font-family:var(--display);font-weight:400;font-size:clamp(11px,.85vw,14px);letter-spacing:.03em;text-transform:uppercase;padding:2px 6px;border:2px solid var(--ink)}
+.vrow b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:var(--display);font-weight:400;font-size:clamp(11px,.85vw,14px);letter-spacing:.03em;text-transform:uppercase;padding:2px 6px;border:2px solid var(--ink)}
 .vrow input{width:100%;font-family:var(--display);font-size:clamp(14px,1.1vw,18px);text-align:center;border:2px solid var(--ink);padding:1px 2px}
 .dp-photo{display:block;width:100%;max-height:22vh;object-fit:cover;border:3px solid var(--ink);margin-bottom:6px}
 @media (max-height:820px) and (min-width:900px){.sheet{zoom:.86;max-height:calc((100vh - 118px) / .86)}.sheet.wide{zoom:.84;max-height:calc((100vh - 118px) / .84)}}
@@ -1399,13 +1399,13 @@ window.CG = (() => {
   <div class="chips" id="subj" role="group" aria-label="Rôle"></div>
 </section>
 
-<section data-mode="res" data-besoins="Autonomie,Appartenance" data-wide="1" class="slide" data-phase="3" data-who="Duo" data-notes="La galerie : une personne par îlot reste au plexiglas pour expliquer en 30 secondes ; les autres circulent. Chacun a 3 post-it : vert = coup de cœur, jaune-beige = « Oui, et… » (on écrit la suggestion dessus), rose = on est capables. On peut voter sur le résultat ou sur une action. À mi-temps, on change de présentateur. Pendant la galerie, Francis photographie chaque plexiglas avec l’ordinateur ou reçoit les photos (Teams, courriel, câble) et les glisse ici avec « + Photo du plexiglas » ; une photo touchée s’affiche en grand. Puis chaque îlot compte ses post-it et on tape seulement les trois totaux : les piles montent. Le projet qui a le plus de points devient le projet du groupe (diapo 19). · Détails retirés de l’écran : Coup de cœur (vert) : « Ce projet me touche, il a du sens. » Oui, et… (jaune-beige) : « J’aime cette action, et je changerais ceci », la suggestion s’écrit sur le post-it. On est capables (rose) : « Avec nos forces, on peut le réaliser. » Une personne par îlot explique le projet ; les autres circulent avec 3 post-it, à coller sur le résultat ou sur une action. On change de rôle à mi-temps. Écrire le titre de chaque projet dans l’outil de votes.">
+<section data-mode="res" data-besoins="Autonomie,Appartenance" data-wide="1" class="slide" data-phase="3" data-who="Duo" data-notes="La galerie : une personne par îlot reste au plexiglas pour expliquer en 30 secondes ; les autres circulent. Chacun a 3 post-it : vert = coup de cœur, jaune-beige = « Oui, et… » (on écrit la suggestion dessus), rose = je suis capable. On peut voter sur le résultat ou sur une action. À mi-temps, on change de présentateur. Pendant la galerie, Francis photographie chaque plexiglas avec l’ordinateur ou reçoit les photos (Teams, courriel, câble) et les glisse ici avec « + Photo du plexiglas » ; une photo touchée s’affiche en grand. Puis chaque îlot compte ses post-it et on tape seulement les trois totaux : les piles montent. Le projet qui a le plus de points devient le projet du groupe (diapo 19). · Détails retirés de l’écran : Coup de cœur (vert) : « Ce projet me touche, il a du sens. » Oui, et… (jaune-beige) : « J’aime cette action, et je changerais ceci », la suggestion s’écrit sur le post-it. Je suis capable (rose) : « Avec mes forces, je peux y contribuer. » Une personne par îlot explique le projet ; les autres circulent avec 3 post-it, à coller sur le résultat ou sur une action. On change de rôle à mi-temps. Écrire le titre de chaque projet dans l’outil de votes.">
   <div class="kick">Choisir · la galerie et les votes</div>
-  <h2>Coup de cœur · Oui, et… · On est capables</h2>
+  <h2>Coup de cœur · Oui, et… · Je suis capable</h2>
   <ul class="crit">
     <li><i style="background:#9ED9A8"></i><b>Coup de cœur</b><span>« Ça me touche. »</span></li>
     <li><i style="background:#EBDDB0"></i><b>Oui, et…</b><span>« J’aime, et je changerais… »</span></li>
-    <li><i style="background:#F7B5CB"></i><b>On est capables</b><span>« On peut le réaliser. »</span></li>
+    <li><i style="background:#F7B5CB"></i><b>Je suis capable</b><span>« Je peux y contribuer. »</span></li>
   </ul>
   <p class="cap">3 post-it · 1 de chaque couleur · 1 post-it = 1 point</p>
   <div class="row" style="flex:1;align-items:stretch">
@@ -1413,9 +1413,9 @@ window.CG = (() => {
   </div>
 </section>
 
-<section data-besoins="Compétence,Autonomie" data-wide="1" class="slide" data-phase="3" data-who="Isabelle" data-notes="Le pont vers les élèves. Voter « on est capables », c’est difficile pour un élève qui ne connaît pas ses forces. Avec mes élèves : l’empreinte d’apprentissage (J’ai MON plan), la liste des forces et capacités, puis un top 3 des forces et un top 3 des défis. Les forces restent bien en vue : ce sont des leviers. Les défis deviennent des objectifs SMART, avec des moyens efficaces choisis selon la catégorie du défi (annexe 07). Les études montrent l’effet des objectifs. · Détails retirés de l’écran : Encore faut-il connaître ses forces. Top 3 des forces, bien en vue : une force est un levier, je l’utilise pour faire ce qui me demande un effort. Top 3 des défis : chaque défi devient un objectif SMART, avec des moyens efficaces choisis selon sa catégorie. Outils : l’empreinte d’apprentissage (J’ai MON plan), la liste des forces et capacités (cahier, page 23, et annexe 07), la banque de moyens (annexe 07).">
+<section data-besoins="Compétence,Autonomie" data-wide="1" class="slide" data-phase="3" data-who="Isabelle" data-notes="Le pont vers les élèves. Voter « je suis capable », c’est difficile pour un élève qui ne connaît pas ses forces. Avec mes élèves : l’empreinte d’apprentissage (J’ai MON plan), la liste des forces et capacités, puis un top 3 des forces et un top 3 des défis. Les forces restent bien en vue : ce sont des leviers. Les défis deviennent des objectifs SMART, avec des moyens efficaces choisis selon la catégorie du défi (annexe 07). Les études montrent l’effet des objectifs. · Détails retirés de l’écran : Encore faut-il connaître ses forces. Top 3 des forces, bien en vue : une force est un levier, je l’utilise pour faire ce qui me demande un effort. Top 3 des défis : chaque défi devient un objectif SMART, avec des moyens efficaces choisis selon sa catégorie. Outils : l’empreinte d’apprentissage (J’ai MON plan), la liste des forces et capacités (cahier, page 23, et annexe 07), la banque de moyens (annexe 07).">
   <div class="kick">Choisir · nos capacités</div>
-  <h2>« On est capables » : <span class="hl">mes forces</span></h2>
+  <h2>« Je suis capable » : <span class="hl">mes forces</span></h2>
   <div class="forces">
     <div class="fcol"><b>Top 3 de mes forces</b><p>un levier</p><ol><li></li><li></li><li></li></ol></div>
     <div class="fcol"><b>Top 3 de mes défis</b><p>un objectif SMART</p><ol><li></li><li></li><li></li></ol></div>
@@ -2092,7 +2092,7 @@ drawMur();
 const NB_ILOTS = 4;
 const vData = store.get('votes4', Array.from({ length: NB_ILOTS }, () => ({ n: '', v: [0, 0, 0] })));
 const vEl = $('#votes');
-const VLAB = [['Cœur', '#9ED9A8', 'var(--ink)'], ['Oui, et', '#EBDDB0', 'var(--ink)'], ['Capables', '#F7B5CB', 'var(--ink)']];
+const VLAB = [['Coup de cœur', '#9ED9A8', 'var(--ink)'], ['Oui, et', '#EBDDB0', 'var(--ink)'], ['Je suis capable', '#F7B5CB', 'var(--ink)']];
 const photoOf = i => store.get('photo' + i, null);
 // Photo d'un îlot : réduite à 900 px pour rester légère dans le navigateur
 function loadPhoto(file, i, done) { if (!file || !file.type.startsWith('image')) return; const fr = new FileReader(); fr.onload = () => { const im = new Image(); im.onload = () => { const k = Math.min(1, 900 / Math.max(im.width, im.height)); const c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); store.set('photo' + i, c.toDataURL('image/jpeg', .72)); done(); }; im.src = fr.result; }; fr.readAsDataURL(file); }

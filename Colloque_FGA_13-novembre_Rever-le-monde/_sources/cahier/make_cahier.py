@@ -222,7 +222,7 @@ page(f'''
 <div class="votes">
   <div class="pv" style="--c:#9ED9A8;--r:-3deg"><b>Coup de cœur</b><p class="hand">« Ce projet me touche.<br>Il a du sens. »</p></div>
   <div class="pv" style="--c:#EBDDB0;--r:2deg"><b>Oui, et…</b><p class="hand">« J’aime cette action,<br>et je changerais ceci. »</p><small>La suggestion s’écrit sur le post-it.</small></div>
-  <div class="pv" style="--c:#F7B5CB;--r:-1.5deg"><b>On est capables</b><p class="hand">« Avec nos forces,<br>on peut le réaliser. »</p></div>
+  <div class="pv" style="--c:#F7B5CB;--r:-1.5deg"><b>Je suis capable</b><p class="hand">« Avec mes forces,<br>je peux y contribuer. »</p></div>
 </div>
 {coche(['Je circule d’un projet à l’autre.', 'Je colle mes 3 post-it : un de chaque couleur.', '1 post-it = 1 point.', 'À mi-temps, on change de rôle.'], 'grand')}
 {zone('Ce que je remarque en circulant', '2.9in')}
@@ -231,7 +231,7 @@ page(f'''
 # --- 11 · 09 forces + 10 projet du groupe -----------------------------------
 page(f'''
 {h('09', 'Mes forces, mes défis', None, 'Compétence', 'Autonomie')}
-<p class="lead">Voter « on est capables », c’est connaître ses forces.<br>Les forces sont des leviers.<br>Les défis deviennent des objectifs SMART.</p>
+<p class="lead">Voter « je suis capable », c’est connaître ses forces.<br>Les forces sont des leviers.<br>Les défis deviennent des objectifs SMART.</p>
 <div class="forces">
   <img src="img/outils/forces1_t.png" alt="Liste de mes capacités et de mes forces">
   <div>{zone('Mes forces', '1.35in')}{zone('Un défi', '0.95in')}</div>
@@ -283,7 +283,7 @@ page(f'''
 ''', verbe=3)
 
 # --- 17 · ce qui a été vécu --------------------------------------------------
-vecu = [('Pense, parle, partage', 'le monde idéal, et un peu partout'), ('Des îlots hétérogènes, formés exprès', 'centres, programmes, fonctions'), ('La classe collabo-réflexive', 'les surfaces verticales'), ('La démarche inductive', 'vivre d’abord, nommer ensuite'), ('L’enseignement explicite', 'résultat ou action'), ('Le droit à l’erreur', 'et à la case vide'), ('Les objectifs SMART', 'du résultat aux actions'), ('Le choix et le vote', 'la galerie'), ('La rétroaction par les pairs', '« Oui, et… »'), ('Les forces comme leviers', 'on est capables'), ('Expansion et restriction', 'ouvrir, puis resserrer'), ('L’IA au service du sens', 'l’invite Copilot'), ('L’objectivation', 'le 3-2-1')]
+vecu = [('Pense, parle, partage', 'le monde idéal, et un peu partout'), ('Des îlots hétérogènes, formés exprès', 'centres, programmes, fonctions'), ('La classe collabo-réflexive', 'les surfaces verticales'), ('La démarche inductive', 'vivre d’abord, nommer ensuite'), ('L’enseignement explicite', 'résultat ou action'), ('Le droit à l’erreur', 'et à la case vide'), ('Les objectifs SMART', 'du résultat aux actions'), ('Le choix et le vote', 'la galerie'), ('La rétroaction par les pairs', '« Oui, et… »'), ('Les forces comme leviers', 'je suis capable'), ('Expansion et restriction', 'ouvrir, puis resserrer'), ('L’IA au service du sens', 'l’invite Copilot'), ('L’objectivation', 'le 3-2-1')]
 page(f'''
 <header class="sec">{tags(None, 'Compétence', 'Sens')}<h2>Ce qui a été vécu dans cet atelier</h2></header>
 <p class="lead">Cochez celles que vous aimeriez essayer avec vos élèves.</p>

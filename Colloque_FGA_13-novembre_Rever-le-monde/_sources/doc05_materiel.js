@@ -45,7 +45,7 @@ const kids = [
   // Les votes
   H1('B', 'Les trois votes · des post-it de couleur'),
   P('Trois post-it par personne, un de chaque couleur. 1 post-it = 1 point. On les colle sur le résultat ou sur une action de l’affiche « Notre projet ».', { run: { size: 19, color: C.grey } }),
-  grid([['VERT', 'Coup de cœur', 'Ce projet me touche, il a du sens.'], ['JAUNE-BEIGE', 'Oui, et…', 'J’aime cette action, et je changerais ceci. On écrit la suggestion sur le post-it.'], ['ROSE', 'On est capables', 'Avec nos forces, on peut le réaliser.']].map(([a, b, c]) => [
+  grid([['VERT', 'Coup de cœur', 'Ce projet me touche, il a du sens.'], ['JAUNE-BEIGE', 'Oui, et…', 'J’aime cette action, et je changerais ceci. On écrit la suggestion sur le post-it.'], ['ROSE', 'Je suis capable', 'Avec mes forces, je peux y contribuer.']].map(([a, b, c]) => [
     big(a, 60, C.ink, { after: 0 }), big(b, 90, C.accent, { after: 0 }), new d.Paragraph({ alignment: d.AlignmentType.CENTER, children: [new d.TextRun({ text: c, font: 'Cambria', italics: true, size: 26, color: C.grey })] })
   ]), 1, 3200),
   BR(),

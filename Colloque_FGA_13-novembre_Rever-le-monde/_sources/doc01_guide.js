@@ -80,7 +80,7 @@ const kids = [
     ['11 h 00', '14 h 10', '13–14', 'En îlot : du résultat aux actions, un titre au projet, tout au plexiglas. Copilot pour des micro-actions.', 'Collabo-réflexive, IA', 'Appartenance'],
     ['11 h 12', '14 h 22', '15–16', 'Les 5 marches : « vous venez de vivre les trois premières ». Les trois portes pour l’individualisé.', 'Raconter', 'Sens'],
     ['11 h 20', '14 h 30', '17', 'La galerie et les trois votes.', 'Choix, rétroaction par les pairs', 'Autonomie'],
-    ['11 h 30', '14 h 40', '18', 'Nos forces : voter « on est capables », c’est se connaître.', 'Forces comme leviers', 'Compétence'],
+    ['11 h 30', '14 h 40', '18', 'Nos forces : voter « je suis capable », c’est se connaître.', 'Forces comme leviers', 'Compétence'],
     ['11 h 33', '14 h 43', '19', 'Le coup de théâtre : un projet, toutes vos disciplines, en un clic.', 'IA au service du sens', 'Sens'],
     ['11 h 40', '14 h 50', '20', 'Mon élan, de retour dans mon milieu.', 'Objectif SMART', 'Autonomie'],
     ['11 h 43', '14 h 53', '21', 'Le dévoilement : ce que vous avez vécu sans qu’on le nomme.', 'Objectivation', 'Compétence'],
@@ -149,14 +149,14 @@ const kids = [
   tbl(['Vote', 'Post-it', 'Ce qu’il veut dire'], [
     ['**Coup de cœur**', 'vert', '« Ce projet me touche, il a du sens. »'],
     ['**Oui, et…**', 'jaune-beige', '« J’aime cette action, et je changerais ceci. » La suggestion s’écrit sur le post-it : l’îlot repart avec une bonification.'],
-    ['**On est capables**', 'rose', '« Avec nos forces, on peut le réaliser. »']
+    ['**Je suis capable**', 'rose', '« Avec mes forces, je peux y contribuer. »']
   ], [2400, 1400, 6280], { firstAccent: true }),
   N('Une personne par îlot reste au plexiglas et explique en 30 secondes ; les autres circulent. À mi-temps, on change de présentateur.', 7),
   N('Chacun a 3 post-it, un de chaque couleur, à coller sur le résultat ou sur une action. 1 post-it = 1 point.', 7),
   N('**Les photos.** Pendant la galerie, Francis photographie chaque plexiglas (ou reçoit les photos par Teams, courriel ou câble) et les glisse dans la carte de l’îlot avec « + Photo du plexiglas ». Une photo touchée s’affiche en grand.', 7),
   N('**Les points.** Les votes se font sur papier. Chaque îlot compte ses post-it et on tape seulement les trois totaux dans la diapo. Les piles 3D montent, et surtout le projet qui a le plus de points s’affiche tout seul, avec sa photo, au coup de théâtre (diapo 19).', 7),
   H3('Nos forces · Isabelle (diapo 18)'),
-  P('Le pont vers les élèves : voter « on est capables », c’est difficile pour un élève qui ne connaît pas ses forces. Avec ses élèves, Isabelle utilisait **l’empreinte d’apprentissage** (« J’ai MON plan! ») et **la liste des forces et capacités**, puis un **top 3 des forces** (bien en vue : ce sont des leviers pour faire ce qui demande un effort) et un **top 3 des défis** (qui deviennent des objectifs SMART, avec des moyens efficaces choisis selon la catégorie du défi, annexe 07).'),
+  P('Le pont vers les élèves : voter « je suis capable », c’est difficile pour un élève qui ne connaît pas ses forces. Avec ses élèves, Isabelle utilisait **l’empreinte d’apprentissage** (« J’ai MON plan! ») et **la liste des forces et capacités**, puis un **top 3 des forces** (bien en vue : ce sont des leviers pour faire ce qui demande un effort) et un **top 3 des défis** (qui deviennent des objectifs SMART, avec des moyens efficaces choisis selon la catégorie du défi, annexe 07).'),
   H3('Le coup de théâtre : un projet, toutes vos disciplines · Isabelle (diapo 19)'),
   N('Le titre du projet le plus voté s’affiche tout seul. On complète le résultat et les actions avec la salle.', 8),
   N('Les disciplines présentes sont déjà cochées, d’après le portrait des inscriptions (sans aucun nom) : IS, ISP, PPS, DHS, mathématiques, sciences, français, francisation, anglais, orthopédagogie, orientation, conseil pédagogique, direction. On décoche celles qui sont absentes.', 8),
@@ -196,7 +196,7 @@ const kids = [
     ['Les objectifs SMART', 'Du résultat aux actions (12, 13)', 'Compétence'],
     ['Le choix et le vote', 'La galerie (17)', 'Autonomie'],
     ['La rétroaction par les pairs', 'Le vote « Oui, et… » (17)', 'Compétence'],
-    ['Les forces comme leviers', 'On est capables (18)', 'Autonomie'],
+    ['Les forces comme leviers', 'Je suis capable (18)', 'Autonomie'],
     ['Expansion et restriction (d’après « Mon utilisation de l’IA »)', 'L’étiquette en haut de chaque diapo : on ouvre pour chercher des idées (l’IA, les autres, soi-même), puis on resserre pour choisir', 'Autonomie'],
     ['L’IA au service du sens et de la créativité', 'Un projet, toutes vos disciplines (19) ; l’invite Copilot (14)', 'Sens'],
     ['L’objectivation', 'Le 3-2-1 (26)', 'Compétence']
@@ -208,7 +208,7 @@ const kids = [
     
     ['Annexes : en ligne sur la page Ressources ; à imprimer seulement si on le souhaite (03, 04, 07, 09, 10)', '40', '☐'],
     ['Les participants apportent leur ordinateur (rappel dans le courriel de confirmation)', '—', '☐'],
-    ['Post-it de vote vert, jaune-beige et rose (coup de cœur, oui et…, on est capables)', '3 par personne', '☐'],
+    ['Post-it de vote vert, jaune-beige et rose (coup de cœur, oui et…, je suis capable)', '3 par personne', '☐'],
     ['Post-it et marqueurs pour le mur d’enjeux, sur une table près de la porte', '2 paquets par séance', '☐'],
     ['Affiches de l’îlot : « Notre monde idéal » (05c) et « Notre projet » (05d), derrière le plexiglas', '4 de chaque par séance', '☐'],
     ['Crayons effaçables pour les surfaces verticales, et linges', '2 par îlot', '☐'],
