@@ -17,7 +17,7 @@ def tags(mode=None, *besoins):
     if mode == 'E':
         out.append(f'<div class="tag exp">{ICO_EXP}<b>Expansion</b> on ouvre</div>')
     if mode == 'R':
-        out.append(f'<div class="tag res">{ICO_RES}<b>Restriction</b> on resserre</div>')
+        out.append(f'<div class="tag res">{ICO_RES}<b>Restriction</b> on restreint</div>')
     if besoins:
         out.append('<div class="tag nour"><b>Nourrit :</b> ' + ', '.join(besoins) + '</div>')
     return '<div class="tags">' + ''.join(out) + '</div>'
@@ -90,7 +90,7 @@ page(f'''
 <h3 class="leg-t">Les repères du cahier</h3>
 <div class="leg">
   <div class="leg-r"><div class="tag exp">{ICO_EXP}<b>Expansion</b></div><p>On ouvre.<br>On cherche des idées : seul, avec les autres, avec l’IA.</p></div>
-  <div class="leg-r"><div class="tag res">{ICO_RES}<b>Restriction</b></div><p>On resserre.<br>On choisit, on précise.</p></div>
+  <div class="leg-r"><div class="tag res">{ICO_RES}<b>Restriction</b></div><p>On restreint.<br>On choisit, on précise.</p></div>
   <div class="leg-r"><div class="tag nour"><b>Nourrit :</b> Sens</div><p>Le besoin que l’activité nourrit.<br>Chez vous… et chez vos élèves.</p></div>
   <div class="leg-r"><div class="leg-tabs">{''.join(f'<span style="background:{bg};color:{fg}">{v}</span>' for v, bg, fg in VERBES)}</div><p>Les 4 verbes de l’atelier.<br>Ils sont aussi sur le bord des pages.</p></div>
   <div class="leg-r"><p class="renvoi solo">{ICO_OUTIL}<span>Boîte à outils</span></p><p>Un coup de pouce, si vous en avez envie.<br>Les outils sont à la fin du cahier.</p></div>
@@ -283,7 +283,7 @@ page(f'''
 ''', verbe=3)
 
 # --- 17 · ce qui a été vécu --------------------------------------------------
-vecu = [('Pense, parle, partage', 'le monde idéal, et un peu partout'), ('Des îlots hétérogènes, formés exprès', 'centres, programmes, fonctions'), ('La classe collabo-réflexive', 'les surfaces verticales'), ('La démarche inductive', 'vivre d’abord, nommer ensuite'), ('L’enseignement explicite', 'résultat ou action'), ('Le droit à l’erreur', 'et à la case vide'), ('Les objectifs SMART', 'du résultat aux actions'), ('Le choix et le vote', 'la galerie'), ('La rétroaction par les pairs', '« Oui, et… »'), ('Les forces comme leviers', 'je suis capable'), ('Expansion et restriction', 'ouvrir, puis resserrer'), ('L’IA au service du sens', 'l’invite Copilot'), ('L’objectivation', 'le 3-2-1')]
+vecu = [('Pense, parle, partage', 'le monde idéal, et un peu partout'), ('Des îlots hétérogènes, formés exprès', 'centres, programmes, fonctions'), ('La classe collabo-réflexive', 'les surfaces verticales'), ('La démarche inductive', 'vivre d’abord, nommer ensuite'), ('L’enseignement explicite', 'résultat ou action'), ('Le droit à l’erreur', 'et à la case vide'), ('Les objectifs SMART', 'du résultat aux actions'), ('Le choix et le vote', 'la galerie'), ('La rétroaction par les pairs', '« Oui, et… »'), ('Les forces comme leviers', 'je suis capable'), ('Expansion et restriction', 'ouvrir et restreindre'), ('L’IA au service du sens', 'l’invite Copilot'), ('L’objectivation', 'le 3-2-1')]
 page(f'''
 <header class="sec">{tags(None, 'Compétence', 'Sens')}<h2>Ce qui a été vécu dans cet atelier</h2></header>
 <p class="lead">Cochez celles que vous aimeriez essayer avec vos élèves.</p>

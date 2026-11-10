@@ -60,7 +60,7 @@ const kids = [
   ...note('Les 4 îlots, hétérogènes et formés exprès', ['La composition est prête dans le document interne « Composition des îlots » (Drive d’Isabelle, non partagé : il contient des noms). Chaque îlot réunit les quatre centres de services, les programmes (IS, ISP, PPS, DHS), les matières et les fonctions. Les personnes en réserve y sont aussi placées, pour que chaque îlot reste hétérogène aux deux séances. À l’entrée, on accueille chaque personne avec son numéro d’îlot ; un carton « Îlot 1 » à « Îlot 4 » est posé sur chaque table (matériel à imprimer).', 'Au dévoilement, on le nomme : « On entend souvent que l’hétérogénéité des élèves, leurs parcours uniques et leurs sigles particuliers freinent l’universel. Vos îlots étaient hétérogènes, formés exprès. Regardez ce que vous avez produit ensemble. » C’est un principe de base de la classe collabo-réflexive.'], { before: 160 }),
 
   H1('03', 'Déroulé minuté'),
-  P('Quatre phases : 30, 30, 20 et 10 minutes. Chaque activité suit la même façon de faire : on **modélise** (la boîte « Modèle » de la diapo), puis **pratique guidée**, puis **pratique autonome**. Chaque diapo d’activité porte l’étiquette **Nourrit** (le besoin de l’engagement qu’elle nourrit) et l’étiquette **Expansion** ou **Restriction** : le va-et-vient décrit dans « Mon utilisation de l’IA ». En expansion, on ouvre et on cherche des idées, avec l’IA, les autres ou soi-même ; en restriction, on resserre, on choisit, on précise. On le nomme au dévoilement. La touche N affiche les notes ; la touche P ouvre le mode présentateur.'),
+  P('Quatre phases : 30, 30, 20 et 10 minutes. Chaque activité suit la même façon de faire : on **modélise** (la boîte « Modèle » de la diapo), puis **pratique guidée**, puis **pratique autonome**. Chaque diapo d’activité porte l’étiquette **Nourrit** (le besoin de l’engagement qu’elle nourrit) et l’étiquette **Expansion** ou **Restriction** : le va-et-vient décrit dans « Mon utilisation de l’IA ». En expansion, on ouvre et on cherche des idées, avec l’IA, les autres ou soi-même ; en restriction, on restreint, on choisit, on précise. On le nomme au dévoilement. La touche N affiche les notes ; la touche P ouvre le mode présentateur.'),
   H3('Deux séances, le même atelier'),
   tbl(['Phase', 'Séance du matin', 'Séance de l’après-midi', 'Diapos'], [
     ['**Phase 1 · Diagnostic et monde idéal** (30 min)', '10 h 20 à 10 h 50', '13 h 30 à 14 h', '1 à 11'],
@@ -197,7 +197,7 @@ const kids = [
     ['Le choix et le vote', 'La galerie (17)', 'Autonomie'],
     ['La rétroaction par les pairs', 'Le vote « Oui, et… » (17)', 'Compétence'],
     ['Les forces comme leviers', 'Je suis capable (18)', 'Autonomie'],
-    ['Expansion et restriction (d’après « Mon utilisation de l’IA »)', 'L’étiquette en haut de chaque diapo : on ouvre pour chercher des idées (l’IA, les autres, soi-même), puis on resserre pour choisir', 'Autonomie'],
+    ['Expansion et restriction (d’après « Mon utilisation de l’IA »)', 'L’étiquette en haut de chaque diapo : on ouvre pour chercher des idées (l’IA, les autres, soi-même), puis on restreint pour choisir', 'Autonomie'],
     ['L’IA au service du sens et de la créativité', 'Un projet, toutes vos disciplines (19) ; l’invite Copilot (14)', 'Sens'],
     ['L’objectivation', 'Le 3-2-1 (26)', 'Compétence']
   ], [3500, 4700, 1880], { firstAccent: true }),

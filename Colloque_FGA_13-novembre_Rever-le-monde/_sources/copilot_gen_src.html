@@ -153,9 +153,9 @@ window.CG = (() => {
         <div class="cg-formats">${FORMATS.map(([n, ic], i) => `<button type="button" data-fmt="${i}" aria-pressed="${i === 0}"><i aria-hidden="true">${ic}</i>${esc(n)}</button>`).join('')}</div>
         <span class="cg-lab">La mise en forme demandée (modifiable)</span><textarea id="${id}f" rows="3"></textarea></fieldset>
       <fieldset class="cg-step"><legend><b>6</b>Ce qu’on demande en plus à Copilot</legend>
-        <p class="cg-help">Ces consignes s’adressent à l’IA. <strong>Ouvrir</strong> pour chercher plus large, <strong>resserrer</strong> pour choisir et vérifier. Un bon échange fait les deux, dans cet ordre.</p>
+        <p class="cg-help">Ces consignes s’adressent à l’IA. <strong>Ouvrir</strong> pour chercher plus large, <strong>restreindre</strong> pour choisir et vérifier. Un bon échange fait les deux, dans cet ordre.</p>
         <span class="cg-lab">↔ Ouvrir (expansion)</span><div class="cg-chips" data-g="trucs">${TRUCS.map((t, i) => t[2] === 'e' ? `<button type="button" data-trucs="${i}" aria-pressed="false">${esc(t[0])}</button>` : '').join('')}</div>
-        <span class="cg-lab">→← Resserrer (restriction)</span><div class="cg-chips" data-g="trucs">${TRUCS.map((t, i) => t[2] === 'r' ? `<button type="button" data-trucs="${i}" aria-pressed="false">${esc(t[0])}</button>` : '').join('')}</div></fieldset>
+        <span class="cg-lab">→← Restreindre (restriction)</span><div class="cg-chips" data-g="trucs">${TRUCS.map((t, i) => t[2] === 'r' ? `<button type="button" data-trucs="${i}" aria-pressed="false">${esc(t[0])}</button>` : '').join('')}</div></fieldset>
     </div>
     <div class="cg-out"><pre class="cg-pre" id="${id}o" aria-live="polite"></pre>
       <div class="cg-acts"><button type="button" class="cg-btn" id="${id}c">Copier l’invite</button><a class="cg-btn alt" href="https://m365.cloud.microsoft/chat" target="_blank" rel="noopener">Ouvrir Copilot ↗</a><span class="cg-msg" id="${id}m"></span></div>
@@ -183,7 +183,7 @@ window.CG = (() => {
       const besoin = need.map(k => F[k][0] + ' : ' + ((st.tf[k] || '').trim() || '[à préciser]')).join('\n');
       const tache = kv === 'x' ? ($id('kx').value.trim() || '…') : TACHES[+kv][1];
       const TE = [...st.trucs].filter(i => TRUCS[i][2] === 'e').sort((a, b) => a - b).map(i => '• ' + TRUCS[i][1]), TR = [...st.trucs].filter(i => TRUCS[i][2] === 'r').sort((a, b) => a - b).map(i => '• ' + TRUCS[i][1]);
-      const T = [TE.length ? 'D’abord, ouvre :\n' + TE.join('\n') : '', TR.length ? (TE.length ? 'Puis resserre :\n' : 'Resserre :\n') + TR.join('\n') : ''].filter(Boolean).join('\n');
+      const T = [TE.length ? 'D’abord, ouvre :\n' + TE.join('\n') : '', TR.length ? (TE.length ? 'Puis restreins :\n' : 'Restreins :\n') + TR.join('\n') : ''].filter(Boolean).join('\n');
       const Lx = [['Rôle', role + ' Tu maîtrises la formation générale des adultes au Québec et la pédagogie par projet.'], ['Contexte', ctx], sigs ? ['Sigles visés', sigs] : null,
         ['Source à respecter', 'Appuie-toi uniquement sur l’extrait du programme d’études officiel de la FGA (ministère de l’Éducation du Québec) fourni ci-dessous ou en pièce jointe. Cite le sigle et le nom exact des savoirs. N’ajoute aucune compétence ni aucun savoir absent de l’extrait ; s’il manque quelque chose, écris « à valider dans le programme ».'],
         ['Extrait du programme', $id('x').value.trim() || '[collez ici l’extrait du programme ou joignez le PDF du programme et la DDE de votre sigle]'], besoin ? ['Ce que tu dois savoir pour cette tâche', besoin] : null, notes ? ['Autre chose à savoir', notes] : null, regroup ? ['Plusieurs sigles', regroup] : null, ['Tâche', tache], ['Ancrage pédagogique', ANCRAGE],
