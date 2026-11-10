@@ -64,16 +64,17 @@ page(f'''
   <div class="cv-who">
     <p class="cv-lead">Ce cahier vous suit pendant tout l’atelier.</p>
     <p class="hand cv-hand">Écrivez, raturez, collez des post-it.</p>
+    <p class="cv-site">rever-le-monde.netlify.app</p>
     <div class="cv-moi"><span>Ce cahier appartient à</span></div>
   </div>
-  <div class="cv-qr">{QR}<p>rever-le-monde.netlify.app</p></div>
+  <div class="cv-qr">{QR}</div>
 </div>
 <div class="cv-foot">
-  <div class="cv-names"><p><b>Isabelle Pedneault</b><br>Conseillère pédagogique, CFGA De Jonquière</p><p><b>Francis Laroche</b><br>Chargé de projet en éducation citoyenne mondiale<br>Centre de solidarité internationale du Saguenay–Lac-Saint-Jean</p></div>
+  <div class="cv-names"><p><b>Isabelle Pedneault</b><br>Conseillère pédagogique, CFGA De Jonquière</p><p><b>Francis Laroche</b><br><span class="nw">Chargé de projet en éducation citoyenne mondiale</span><br><span class="nw">Centre de solidarité internationale du Saguenay–Lac-Saint-Jean</span></p></div>
   <div class="cv-logos"><img src="img/logo_cfga.png" alt="CFGA"><img src="img/logo_csi.png" alt="CSI"></div>
 </div>
 <p class="cv-note">Atelier conçu par Isabelle Pedneault et Francis Laroche.</p>
-<p class="cv-note">Présentation amplifiée avec l’aide de Nano Banana (images) et de Claude (textes et outils interactifs).</p>
+<p class="cv-note cv-iag"><img src="img/iag_limitee.png" alt="IAg · Assistance limitée (pictogramme de l’UQAC)"></p>
 ''', cls='cover')
 
 # --- 2 · avertissement + légende -------------------------------------------
@@ -91,9 +92,9 @@ page(f'''
 <div class="leg">
   <div class="leg-r"><div class="tag exp">{ICO_EXP}<b>Expansion</b></div><p>On ouvre.<br>On cherche des idées : seul, avec les autres, avec l’IA.</p></div>
   <div class="leg-r"><div class="tag res">{ICO_RES}<b>Restriction</b></div><p>On restreint.<br>On choisit, on précise.</p></div>
-  <div class="leg-r"><div class="tag nour"><b>Nourrit :</b> Sens</div><p>Le besoin que l’activité nourrit.<br>Chez vous… et chez vos élèves.</p></div>
+  <div class="leg-r"><div class="leg-n"><div class="tag nour"><b>Nourrit :</b> Sens</div><div class="tag nour"><b>Nourrit :</b> Autonomie</div><div class="tag nour"><b>Nourrit :</b> Appartenance</div><div class="tag nour"><b>Nourrit :</b> Compétence</div></div><p>Le besoin que l’activité nourrit.<br>Chez vous… et chez vos élèves.</p></div>
   <div class="leg-r"><div class="leg-tabs">{''.join(f'<span style="background:{bg};color:{fg}">{v}</span>' for v, bg, fg in VERBES)}</div><p>Les 4 verbes de l’atelier.<br>Ils sont aussi sur le bord des pages.</p></div>
-  <div class="leg-r"><p class="renvoi solo">{ICO_OUTIL}<span>Boîte à outils</span></p><p>Un coup de pouce, si vous en avez envie.<br>Les outils sont à la fin du cahier.</p></div>
+  <div class="leg-r"><p class="renvoi solo">{ICO_OUTIL}<span>Boîte à outils</span></p><p>Un coup de pouce, ou pour aller plus loin.<br>La liste des outils : page 17.</p></div>
 </div>
 ''', verbe=0)
 
@@ -103,7 +104,7 @@ page(f'''
 {h('01', 'Ce qui me préoccupe dans mon milieu', 'E', 'Sens')}
 <div class="p01">
   <div class="postit">
-    <svg class="mini3" viewBox="0 0 130 112" aria-hidden="true"><g fill="none" stroke="var(--ink)" stroke-width="2.6"><circle cx="44" cy="40" r="36"/><circle cx="86" cy="40" r="36"/><circle cx="65" cy="72" r="36"/></g><g font-family="Inter" font-weight="800" font-size="9.5" text-anchor="middle" fill="var(--ink)"><text x="30" y="30">ÉCOLE</text><text x="100" y="30">COMMUNAUTÉ</text><text x="65" y="98">NATURE</text></g></svg>
+    <svg class="mini3" viewBox="-6 0 146 112" aria-hidden="true"><g fill="none" stroke="var(--ink)" stroke-width="2.6"><circle cx="44" cy="40" r="36"/><circle cx="86" cy="40" r="36"/><circle cx="65" cy="72" r="36"/></g><g font-family="Inter" font-weight="800" font-size="8.6" text-anchor="middle" fill="var(--ink)"><text x="30" y="30">ÉCOLE</text><text x="98" y="31">COMMUNAUTÉ</text><text x="65" y="98">NATURE</text></g></svg>
     <p class="hand pi">ex. Nos élèves ne se connaissent pas d’un groupe à l’autre.</p>
     <p class="hand pi">ex. Il n’y a aucun arbre dans la cour.</p>
   </div>
@@ -128,7 +129,7 @@ page(f'''
   <figure><svg viewBox="30 10 240 210" aria-hidden="true"><path d="M150 18 C96 80 104 140 150 160 C196 140 204 80 150 18Z" fill="#F2C230" stroke="#1E1A22" stroke-width="4"/><path d="M150 70 C126 106 130 138 150 150 C170 138 174 106 150 70Z" fill="#D9541E"/><g stroke="#1E1A22" stroke-width="4"><rect x="40" y="160" width="150" height="22" rx="11" fill="#1F4E8C" transform="rotate(16 115 171)"/><rect x="110" y="160" width="150" height="22" rx="11" fill="#0F766E" transform="rotate(-16 185 171)"/><rect x="40" y="186" width="150" height="22" rx="11" fill="#A33A32" transform="rotate(-7 115 197)"/><rect x="110" y="186" width="150" height="22" rx="11" fill="#C27F2B" transform="rotate(7 185 197)"/></g></svg>
     <figcaption><b>Engagement</b>Le feu qu’on décide de nourrir.<br>Ses 4 bûches : les 4 besoins.</figcaption></figure>
 </div>
-{renvoi('Motivation ≠ engagement : l’outil <b>L’engagement</b>, page 20.')}
+{renvoi('Motivation ≠ engagement : l’outil <b>L’engagement</b>, page 18.')}
 ''', verbe=0)
 
 # --- 5 · 03 Mon monde idéal (paysage) --------------------------------------
@@ -190,7 +191,7 @@ page(f'''
 <div class="aide">
   <p><b>Besoin d’idées ?</b> Mon invite Copilot, sur <b>rever-le-monde.netlify.app</b>.<br>Copilot propose. Vous choisissez.</p>
 </div>
-{renvoi('<b>Les quatre besoins</b>, page 21 · <b>Se fixer des objectifs</b>, sur le site.')}
+{renvoi('<b>Les quatre besoins</b>, page 19 · <b>Se fixer des objectifs</b>, sur le site.')}
 ''', verbe=1)
 
 # --- 9 · 07 projet d'îlot ---------------------------------------------------
@@ -236,83 +237,60 @@ page(f'''
   <img src="img/outils/forces1_t.png" alt="Liste de mes capacités et de mes forces">
   <div>{zone('Mes forces', '1.35in')}{zone('Un défi', '0.95in')}</div>
 </div>
-{renvoi('<b>Liste de mes capacités et de mes forces</b> (J’ai MON plan!), page 23.')}
+{renvoi('<b>Liste de mes capacités et de mes forces</b> (J’ai MON plan!) : sur le site <b>rever-le-monde.netlify.app</b>')}
 {h('10', 'Un projet, toutes nos disciplines', 'E', 'Sens')}
 <p class="lead">Le projet le plus voté devient celui du groupe.<br>Et s’il se réalisait dans votre milieu ?</p>
 {zone('Si ça me tente : ce que mon sigle ou ma fonction pourrait y apporter', '1.9in')}
 ''', verbe=2)
 
-# --- 12 · 11 Mon élan ---------------------------------------------------------
+# --- 11 · des idées (S'engager) ------------------------------------------------
 page(f'''
 {verbe_ban(3)}
-{h('11', 'Mon élan', 'R', 'Autonomie')}
-<p class="lead">De retour dans mon milieu, lundi matin. Une idée qui me donne envie :</p>
-{coche(['Demander à mon groupe : « Qu’est-ce qui vous préoccupe ? »', 'Afficher les trois cercles dans ma classe.', 'Terminer une période par un 3-2-1.', 'Laisser mes élèves voter pour un projet.', 'Faire un « Oui, et… » entre élèves.', 'Inviter quelqu’un du quartier en classe.', 'Transformer une tâche de mon sigle à partir d’un enjeu choisi par l’élève.', 'Proposer un projet-pont à une ou un collègue d’un autre programme.', 'Commencer un babillard des forces.', 'Appeler le CSI pour un premier café.', 'Direction ou services : protéger une période commune pour une équipe.'], 'idees')}
-{zone('Mon idée', '1.0in')}
-<div class="trio">{zone('Quand', '0.95in')}{zone('Avec qui', '0.95in')}{zone('Mon allié', '0.95in')}</div>
-{renvoi('Avant de me lancer : <b>Innover au CFGA</b> et <b>les six questions</b>, pages 12 et 13.')}
-''', verbe=3)
-
-# --- 13-14 · cadre d'innovation (pleine page) --------------------------------
-page('<img class="full" src="img/outils/cadre1_t.png" alt="Innover au CFGA : le cadre d’innovation">', verbe=3, cls='outil')
-page('<img class="full" src="img/outils/cadre2_t.png" alt="Six questions avant de se lancer">', verbe=3, cls='outil')
-
-# --- 15 · des idées ---------------------------------------------------------
-page(f'''
-{h('12', 'Des idées', 'E', 'Sens', 'Appartenance')}
+{h('11', 'Des idées', 'E', 'Sens', 'Appartenance')}
 <h3 class="h3">Pour décloisonner</h3>
 <div class="idees">
-  <div><b>Des ateliers par besoin</b>Trois classes au même moment. Les verbes ici, la syntaxe là. L’élève va où il en a besoin.</div>
+  <div><b>Des ateliers par besoin</b>Trois classes au même moment. L’élève va où il en a besoin.<i>Par exemple : les verbes ici, la syntaxe là.</i></div>
   <div><b>Une heure sur trois</b>Sur trois heures de cours, une heure pour un projet d’engagement.</div>
-  <div><b>Le babillard des forces</b>Chacun affiche son top 3. Les projets y recrutent leurs « experts ».</div>
+  <div><b>Des experts dans d’autres sigles</b>Le budget du projet ? Un élève en maths.<br>Un texte à réviser ? Un élève en français.</div>
+  <div><b>Le babillard des forces</b>Chacun affiche son top 3. On y trouve ses experts.</div>
   <div><b>Un projet, un partenaire</b>Chaque projet jumelé à un organisme du quartier, avec le CSI.</div>
   <div><b>Enseigner aux autres</b>Une fois par mois, un groupe présente son projet à un autre groupe.</div>
-  <div><b>La question de la semaine</b>Le lundi, une question au tableau. Le vendredi, on en parle.</div>
 </div>
-{zone('Les incubateurs solidaires, du Saguenay au Sénégal : ce que je retiens', '1.5in')}
-{zone('Mon idée à moi', '1.5in')}
+{zone('Les incubateurs solidaires, du Saguenay au Sénégal : ce que je retiens', '1.45in')}
+{zone('Mon idée à moi', '1.45in')}
 ''', verbe=3)
 
-# --- 16 · 3-2-1 -------------------------------------------------------------
+# --- 12 · 3-2-1 -------------------------------------------------------------
 page(f'''
-{h('13', 'Objectivation 3-2-1', 'R', 'Compétence')}
+{h('12', 'Objectivation 3-2-1', 'R', 'Compétence')}
 <p class="lead">On termine comme on aimerait que nos élèves terminent :<br>en regardant le chemin parcouru.</p>
 <div class="o321"><b>3</b>{zone('idées que je retiens', '2.65in')}</div>
 <div class="o321"><b>2</b>{zone('choses que j’essaie', '2.1in')}</div>
 <div class="o321"><b>1</b>{zone('question qui me reste', '1.5in')}</div>
 ''', verbe=3)
 
-# --- 17 · ce qui a été vécu --------------------------------------------------
-vecu = [('Pense, parle, partage', 'le monde idéal, et un peu partout'), ('Des îlots hétérogènes, formés exprès', 'centres, programmes, fonctions'), ('La classe collabo-réflexive', 'les surfaces verticales'), ('La démarche inductive', 'vivre d’abord, nommer ensuite'), ('L’enseignement explicite', 'résultat ou action'), ('Le droit à l’erreur', 'et à la case vide'), ('Les objectifs SMART', 'du résultat aux actions'), ('Le choix et le vote', 'la galerie'), ('La rétroaction par les pairs', '« Oui, et… »'), ('Les forces comme leviers', 'je suis capable'), ('Expansion et restriction', 'ouvrir et restreindre'), ('L’IA au service du sens', 'l’invite Copilot'), ('L’objectivation', 'le 3-2-1')]
+# --- 13 · ce qui a été vécu --------------------------------------------------
+vecu = [('Pense, parle, partage', 'le monde idéal, en îlot'), ('Des îlots hétérogènes, formés exprès', 'centres, programmes, fonctions'), ('La classe collabo-réflexive', 'les surfaces verticales'), ('La démarche inductive', 'vivre d’abord, nommer ensuite'), ('L’enseignement explicite', 'résultat ou action'), ('Le droit à l’erreur', 'et à la case vide'), ('Les objectifs SMART', 'du résultat aux actions'), ('Le choix et le vote', 'la galerie'), ('La rétroaction par les pairs', '« Oui, et… »'), ('Les forces comme leviers', 'je suis capable'), ('Expansion et restriction', 'ouvrir et restreindre'), ('L’IA au service du sens', 'l’invite Copilot'), ('L’objectivation', 'le 3-2-1')]
 page(f'''
 <header class="sec">{tags(None, 'Compétence', 'Sens')}<h2>Ce qui a été vécu dans cet atelier</h2></header>
 <p class="lead">Cochez celles que vous aimeriez essayer avec vos élèves.</p>
 <ul class="coche vecu">{''.join(f'<li><b>{a}</b><small>{b}</small></li>' for a, b in vecu)}</ul>
 ''', verbe=3)
 
-# --- 18 · pour aller plus loin ---------------------------------------------
+# --- 14 · 13 Mon élan (à la fin) -----------------------------------------------
 page(f'''
-<header class="sec"><h2>Pour aller plus loin</h2></header>
-<figure class="bull"><img src="img/nb_bulletin.jpg" alt=""><figcaption>La rencontre de suivi animée par l’élève : c’est lui qui mène.</figcaption></figure>
-<ul class="loin">
-  <li><b>J’ai MON plan!</b>L’adulte s’approprie son parcours : ses cours, ses échéances, ses buts.</li>
-  <li><b>La rencontre animée par l’élève</b>20 minutes. L’adulte présente son plan. On passe de juge à coach.</li>
-  <li><b>L’objectivation</b>La maison à trois étages et des questions avant, pendant, après (page 22).</li>
-  <li><b>Le CSI</b>Il accompagne les groupes qui veulent se lancer, dans les quatre CSS de la région.</li>
-</ul>
-<p class="refs">Deci et Ryan (2000), <i>Psychological Inquiry</i>, 11(4) · Wehmeyer (1999), <i>Focus on Autism and Other Developmental Disabilities</i>, 14(1) · Fredricks, Blumenfeld et Paris (2004), <i>Review of Educational Research</i>, 74(1) · ONU, les 17 objectifs de développement durable.</p>
+{h('13', 'Mon élan', 'R', 'Autonomie')}
+<p class="lead">De retour dans mon milieu, lundi matin. Une idée qui me donne envie :</p>
+{coche(['Demander à mon groupe : « Qu’est-ce qui vous préoccupe ? »', 'Afficher les trois cercles dans ma classe.', 'Terminer une période par un 3-2-1.', 'Laisser mes élèves voter pour un projet.', 'Faire un « Oui, et… » entre élèves.', 'Inviter quelqu’un du quartier en classe.', 'Transformer une tâche de mon sigle à partir d’un enjeu choisi par l’élève.', 'Proposer un projet-pont à une ou un collègue d’un autre programme.', 'Commencer un babillard des forces.', 'Appeler le CSI pour un premier café.', 'Direction ou services : protéger une période commune pour une équipe.'], 'idees')}
+{zone('Mon idée', '1.0in')}
+<div class="trio">{zone('Quand', '0.95in')}{zone('Avec qui', '0.95in')}{zone('Mon allié', '0.95in')}</div>
+{renvoi('Avant de me lancer : <b>Innover au CFGA</b> et <b>les six questions</b>, pages 23 et 24.')}
 ''', verbe=3)
 
-# --- 19 · la démarche --------------------------------------------------------
-page('<img class="full" src="img/infographie_demarche.png" alt="La démarche en un coup d’œil">', verbe=3, cls='outil')
-
-# --- 20 · ce qui reste, dans un an -----------------------------------------
+# --- 15 · ce qui reste, dans un an -----------------------------------------
 page(f'''
 <header class="sec"><h2>Ce qui reste</h2></header>
-<div class="reste">
-  <img src="img/frag_ecole.jpg" alt="Écriture d’un élève : « j’ai le goût de venir à l’école »">
-  <p class="cit">« Il n’y a pas un matin qu’il n’a hâte de se rendre dans sa classe. Il se sent écouté, compris et surtout, accepté. »<small>Un parent</small></p>
-</div>
+<img class="carnet" src="img/mot_eleve_2017.jpg" alt="Mot d’un élève : « Chère Mme Isabelle, vous avez été pour moi un immense soutien et de même un exemple. Aussi vous m’avez redonné envie d’aller à l’école. Merci »">
 <div class="an">
   <p class="an-k">Dans un an</p>
   <p class="an-q">Le 13 novembre 2027,<br>qu’est-ce qui sera resté de cette journée ?</p>
@@ -321,11 +299,79 @@ page(f'''
 </div>
 ''', verbe=3)
 
-# --- 21-24 · boîte à outils --------------------------------------------------
-for f, alt in [('engagement-1_t', 'L’engagement'), ('engagement-2_t', 'Les quatre besoins'), ('obj1_t', 'L’objectivation'), ('forces1_t', 'Liste de mes capacités et de mes forces')]:
-    page(f'<p class="bao">{ICO_OUTIL}<span>Boîte à outils</span></p><img class="full" src="img/outils/{f}.png" alt="{alt}">', cls='outil')
+# --- 16 · la démarche en un coup d'œil ----------------------------------------
+DEM = [('Rêver', 'var(--v1)', 'var(--ink)', ['ça me dérange', 'post-it', '3 cercles', 'monde idéal', 'pense · parle · partage'], 'se fixer un but'),
+       ('Cibler', 'var(--v2)', '#fff', ['analyse de contexte', 'leviers', '« je remarque que »', 'résultat → actions', 'SMART'], 'prendre des décisions'),
+       ('Choisir', 'var(--v3)', 'var(--ink)', ['galerie', '3 votes', '« Oui, et… »', 'mes forces', 'projet du groupe'], 'faire des choix'),
+       ('S’engager', 'var(--v4)', '#fff', ['des idées', '3-2-1', 'mon élan', 'un verbe · une date · un allié'], 'agir et s’autoévaluer')]
+page(f'''
+<header class="sec"><h2>La démarche en un coup d’œil</h2></header>
+<div class="dem">{''.join(f'<div class="dm"><div class="dn" style="background:{bg};color:{fg}"><b>{i + 1}</b><span>{v}</span></div><div class="dk">{"".join(f"<span>{k}</span>" for k in ks)}</div><div class="da"><small>L’élève apprend à</small><b>{a}</b></div></div>' for i, (v, bg, fg, ks, a) in enumerate(DEM))}</div>
+<div class="fil"><b>Tout au long</b><p>Ouvrir et restreindre : <strong>expansion et restriction</strong>.</p><p>Modelage → pratique guidée → pratique autonome.</p><p>Nourrir les 4 besoins : <strong>compétence · autonomie · sens · appartenance</strong>.</p></div>
+''', verbe=3)
 
-page(f'''<header class="sec"><h2>Mes notes</h2></header><div class="notes"></div>''')
+# --- 17 · pour aller plus loin : la liste des outils ----------------------------
+DANS = [('L’engagement', 'motivation ≠ engagement, les 4 besoins', '18'), ('Les quatre besoins', 'et les 9 gestes qui les nourrissent', '19'), ('L’objectivation', 'la maison à trois étages', '20'), ('Les questions avant, pendant, après', 'à piger, pas à poser toutes', '21-22'), ('Innover au CFGA', 'le cadre et les six questions', '23-24')]
+SUR = [('Mon invite Copilot', 'étape par étape, avec l’extrait officiel de votre sigle'), ('Se fixer des objectifs', 'les objectifs SMART, avec des exemples'), ('J’ai MON plan!', 'l’adulte s’approprie son parcours, avec son tuteur ; la liste des forces et capacités'), ('L’aide-mémoire Copilot', 'la formule et 7 invites prêtes'), ('La fiche élève', 'De l’idée à l’action, à photocopier'), ('Mes interventions universelles', 'une autoévaluation et la grille EN.1.1'), ('Les extraits de programmes', 'les pages officielles, à joindre à Copilot')]
+page(f'''
+<header class="sec"><h2>Pour aller plus loin</h2></header>
+<p class="lead">Des outils pour un coup de pouce, ou pour aller plus loin.</p>
+<h3 class="h3">{ICO_OUTIL} Dans ce cahier</h3>
+<ul class="outils">{''.join(f'<li><b>{a}</b><span>{b}</span><i>p. {p}</i></li>' for a, b, p in DANS)}</ul>
+<h3 class="h3">Sur le site</h3>
+<p class="site-big">rever-le-monde.netlify.app</p>
+<ul class="outils">{''.join(f'<li><b>{a}</b><span>{b}</span></li>' for a, b in SUR)}</ul>
+<p class="lead"><b>Le CSI</b> accompagne les groupes qui veulent se lancer, dans les quatre centres de services de la région.</p>
+<p class="refs">Deci et Ryan (2000), <i>Psychological Inquiry</i>, 11(4) · Wehmeyer (1999), <i>Focus on Autism and Other Developmental Disabilities</i>, 14(1) · Fredricks, Blumenfeld et Paris (2004), <i>Review of Educational Research</i>, 74(1).</p>
+''', verbe=3)
+
+# --- 18-22 · boîte à outils, en gros caractères ---------------------------------
+CRED = '<p class="tcred">D’après les outils d’Isabelle Pedneault · CC BY-NC-SA 4.0</p>'
+def outil(kick, titre, sous, corps):
+    page(f'<p class="bao">{ICO_OUTIL}<span>Boîte à outils</span></p><div class="tool"><p class="tk">{kick}</p><h2 class="tt">{titre}</h2><p class="ts">{sous}</p>{corps}</div>{CRED}', cls='tpage')
+
+B4 = [('Compétence', '#1F4E8C', ['Défi optimal', 'Rétroaction de qualité', 'Progression visible']), ('Autonomie', '#0F766E', ['Choix', 'Voix et participation', 'Contrôle sur la tâche']), ('Sens', '#A33A32', ['Utilité', 'But personnel', 'Transfert']), ('Appartenance', '#C27F2B', ['Relations positives', 'Climat sécurisant', 'Temps de qualité'])]
+outil('Un moteur invisible qui fait grandir', 'L’engagement', 'Un écosystème vivant : construire une vie riche de sens', f'''
+<p class="band" style="background:#0F766E">Motivation ≠ engagement</p>
+<div class="me"><div style="background:#8FA0B8"><b>Motivation</b>La force qui pousse à l’action : valeurs, objectifs, désirs.<br>Ce n’est pas une question de « j’ai envie » ou « ça me tente ».</div><div style="background:#20375F"><b>Engagement</b>La décision de prendre part activement à une activité, un projet, une mission.<br>C’est un choix, pas une humeur.</div></div>
+<p class="band" style="background:#E89A2B">Quatre besoins à nourrir</p>
+<div class="b4t">{''.join(f'<div style="background:{c}"><b>{n}</b><ul>{"".join(f"<li>{x}</li>" for x in xs)}</ul></div>' for n, c, xs in B4)}</div>
+<p class="band" style="background:#7A9A3A">Pourquoi ça compte</p>
+<ul class="two"><li>Il donne une direction à notre énergie.</li><li>Il transforme l’intention en action.</li><li>Il nourrit notre bien-être.</li><li>Il favorise le dépassement de soi.</li><li>Il permet de contribuer à plus grand que soi.</li><li>Il crée une spirale positive.</li><li>Persévérer malgré les obstacles.</li><li>Créer des liens significatifs.</li><li>Ressentir de la fierté.</li><li>Contribuer au bien commun.</li></ul>
+''')
+B4D = [('Compétence', '#1F4E8C', '« En faisant des efforts et des erreurs, j’apprends et je deviens meilleur. »', ['Défi optimal', 'Mentalité de croissance', 'Rétroaction de qualité', 'Progression visible']),
+       ('Autonomie', '#0F766E', '« Je fais des choix en accord avec mes valeurs et mes intérêts. »', ['Choix', 'Voix et participation', 'Contrôle sur la tâche', 'Utiliser sa créativité']),
+       ('Sens', '#A33A32', '« Je comprends pourquoi c’est important pour moi. »', ['Utilité', 'Pertinence', 'But personnel', 'Transfert']),
+       ('Appartenance', '#C27F2B', '« Je compte pour quelqu’un ici. »', ['Relations positives', 'Prendre des nouvelles', 'Temps de qualité', 'Climat sécurisant'])]
+G9 = [('Questionner', 'susciter la curiosité'), ('Écouter', 'comprendre'), ('Faire réfléchir', 'activer la pensée'), ('Rétroagir', 'faire progresser'), ('Coopérer', 'apprendre ensemble'), ('Donner un défi', 'ni trop facile, ni trop difficile'), ('Raconter', 'donner du sens'), ('Différencier', 'soutenir chacun'), ('Laisser choisir', 'offrir des options')]
+outil('Ce qu’il faut nourrir, et comment', 'Les quatre besoins', 'Et les neuf gestes pédagogiques qui les nourrissent', f'''
+<div class="b4d">{''.join(f'<div style="--b:{c}"><b>{n}</b><q>{q}</q><ul>{"".join(f"<li>{x}</li>" for x in xs)}</ul></div>' for n, c, q, xs in B4D)}</div>
+<p class="band" style="background:#E89A2B">Une rétroaction de qualité</p>
+<div class="r4"><div><b>Précise</b>on sait quoi regarder</div><div><b>Sur le processus</b>pas sur la personne</div><div><b>La prochaine étape</b>pas seulement l’erreur</div><div><b>Des critères connus</b>établis d’avance</div></div>
+<p class="band" style="background:#7A9A3A">Les neuf gestes qui nourrissent</p>
+<div class="g9">{''.join(f'<div><b>{a}</b>{b}</div>' for a, b in G9)}</div>
+''')
+outil('Un temps d’arrêt, pas une perte de temps', 'L’objectivation', 'Regarder l’activité à venir, celle en cours, ou celle déjà faite', '''
+<p class="band" style="background:#20375F">Ce que c’est</p>
+<p class="tp">Un temps d’arrêt pris avec les élèves pour observer comment ils pensent, faire le ménage dans leur tête, prendre conscience des réussites et des difficultés.</p>
+<p class="tp"><b>Le temps consacré à l’objectivation n’est pas perdu : il est gagné.</b></p>
+<p class="band" style="background:#E89A2B">Sur quoi objectiver</p>
+<ul class="obj5"><li><b>Les attitudes</b>Une attitude positive prépare à apprendre.</li><li><b>Les apprentissages</b>Prendre conscience de ce qu’on a appris : ça reste mieux.</li><li><b>Les comportements</b>Un retour chaque jour, pas une seule fois.</li><li><b>Les stratégies</b>Y revenir aide à les comprendre et à les garder.</li><li><b>Les démarches</b>Vérifier comment on les comprend et les utilise.</li></ul>
+<p class="band" style="background:#7A9A3A">La maison à trois étages · à raconter aux élèves</p>
+<div class="maison"><div class="toit"></div><div class="et e3"><b>3</b><span><strong>Les apprentissages</strong>Ici, je classe ce que j’apprends, comme dans des tiroirs.</span></div><div class="et e2"><b>2</b><span><strong>Les émotions</strong>Si je me sens bien avec les autres et fier de moi, la porte s’ouvre.</span></div><div class="et e1"><b>1</b><span><strong>Les besoins primaires</strong>Si j’ai bien mangé, assez dormi, si je suis en santé, la porte s’ouvre.</span></div></div>
+<p class="tp c">On n’arrive pas au troisième étage sans passer par le premier et le deuxième.</p>
+''')
+AV = ['Suis-je en projet de vivre l’activité de façon positive ?', 'Ai-je le goût de réaliser la tâche ?', 'Est-ce que je connais les objectifs de ce travail ?', 'Est-ce que je connais l’intention de la tâche ?', 'Est-ce que je comprends les consignes ?', 'Est-ce que je comprends bien la tâche demandée ?', 'Est-ce que je peux expliquer à quelqu’un ce que je dois faire ?', 'Ai-je tout le matériel nécessaire ?', 'Qu’est-ce qui m’empêche de me mettre au travail ?', 'Que puis-je faire pour me mettre à la tâche ?', 'Qu’est-ce que je pense apprendre en faisant cette activité ?', 'Ai-je pris conscience de ce que je connais sur le sujet ?', 'Y a-t-il des étapes que je ne comprends pas ?', 'Est-ce que je peux dire quelles informations me manquent ?', 'Ai-je les moyens de chercher les informations qui me manquent ?', 'Ai-je déjà réalisé une tâche semblable ?', 'Ai-je bien exploré la situation ? Ai-je bien observé ?', 'Ai-je pris le temps de bien écouter toutes les explications ?', 'Ai-je confiance en moi ? Est-ce que je me crois capable de réaliser la tâche ?']
+PE = ['Est-ce que je commence à temps ?', 'Suis-je à mon affaire ?', 'Ai-je besoin d’aide ? Est-ce que je sais qui peut m’aider ?', 'Est-ce que je prends le temps de penser à la tâche dans son ensemble ?', 'Est-ce que je pense à consulter mes outils de référence ?', 'Suis-je capable de réaliser cette tâche ?', 'Est-ce que j’ai compris ?', 'Suis-je motivé ou motivée à faire le travail ?', 'Ai-je pris le temps de me vérifier ?', 'Est-ce que je sais m’arrêter pour vérifier si j’ai compris ?', 'Mon comportement est-il correct ?', 'Est-ce que j’accorde de l’importance aux bonnes choses ?', 'Est-ce que je peux enlever des éléments inutiles ?', 'Y a-t-il assez de précisions dans mon travail ?', 'Est-ce que je m’exprime bien ?', 'Est-ce que je prends le temps de bien observer ?', 'Ai-je utilisé les bonnes techniques ? Est-ce que je m’y prends de la bonne façon ?', 'Ai-je pensé à plusieurs solutions possibles ?', 'Est-ce que je connais bien les étapes pour réaliser la tâche ?', 'Est-ce que je prends le temps d’aller chercher dans ma tête les connaissances apprises ?', 'Ai-je peur de me tromper ? Suis-je nerveux ou nerveuse ? Ai-je confiance en moi ?']
+AP = ['Qu’est-ce que j’ai appris ? Ai-je fait de nouveaux apprentissages ?', 'Qu’est-ce que j’ai compris ? Qu’est-ce que j’ai découvert ?', 'Qu’est-ce que je retiens ?', 'Ai-je atteint l’objectif ?', 'Comment m’y suis-je pris pour réussir ?', 'Ai-je utilisé les bonnes stratégies ? Lesquelles m’ont été utiles ?', 'Ai-je pris le temps de bien lire les démarches ?', 'Comment ai-je vérifié mon travail ?', 'Ai-je utilisé les outils nécessaires ?', 'Ai-je utilisé tout mon temps ?', 'Ai-je réalisé la tâche de mon mieux ?', 'Suis-je content ou contente de mon travail ?', 'Étais-je motivé ou motivée ? Est-ce que je désirais réussir ?', 'Ai-je montré de bonnes attitudes ?', 'Y a-t-il quelque chose qui m’a empêché de bien travailler ?', 'Ai-je eu besoin d’aide ? Ai-je aidé les autres ?', 'Si j’avais à revivre cette activité, qu’est-ce que je ferais de différent ?', 'Quand vais-je me servir de cette nouvelle notion ?', 'Ai-je le goût d’aller plus loin ? Ai-je aimé cette activité ?', 'Y a-t-il des points à retravailler ?', 'Quelle opinion ai-je de moi-même ?', 'Je félicite… · Je remercie… · Je suis fier ou fière de…']
+ol = lambda L: '<ol class="qq">' + ''.join(f'<li>{x}</li>' for x in L) + '</ol>'
+outil('Les questions : à piger, pas à poser toutes', 'Avant et pendant', 'Se mettre en projet, puis se réguler en cours de route', f'<div class="qcols"><div><p class="band" style="background:#20375F">Avant · se mettre en projet</p>{ol(AV)}</div><div><p class="band" style="background:#0F766E">Pendant · se réguler</p>{ol(PE)}</div></div>')
+outil('Les questions : à piger, pas à poser toutes', 'Après', 'Intégrer ce qu’on vient de vivre, et se projeter', f'<p class="band" style="background:#E89A2B">Après · intégrer et se projeter</p><div class="qafter">{ol(AP)}</div>')
+
+# --- 23-24 · cadre d'innovation (pleine page) --------------------------------
+page(f'<p class="bao">{ICO_OUTIL}<span>Boîte à outils</span></p><img class="full" src="img/outils/cadre1_t.png" alt="Innover au CFGA : le cadre d’innovation">', cls='outil')
+page(f'<p class="bao">{ICO_OUTIL}<span>Boîte à outils</span></p><img class="full" src="img/outils/cadre2_t.png" alt="Six questions avant de se lancer">', cls='outil')
+
 assert len(pages) % 4 == 0, len(pages)
 
 # --- assemblage --------------------------------------------------------------

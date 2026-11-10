@@ -207,3 +207,91 @@ mark{background:var(--gold);color:inherit;padding:0 .08em}
 .sec h2{flex:1}
 .land-in.flat{position:relative;left:0;top:0;transform:none;padding:.05in}
 .land-img{max-height:100%}
+/* v64 */
+.cv-site{font-family:Anton;font-size:20pt;color:var(--mauve);margin-top:.06in;letter-spacing:.01em}
+.cv-names{font-size:10pt}.nw{white-space:nowrap}
+.cv-iag img{height:.42in;display:block}
+.cv-note.cv-iag{border:0;padding:0;margin-top:0}
+.leg-n{display:flex;flex-direction:column;gap:.04in;align-items:flex-start}
+.idees i{display:block;font-style:italic;margin-top:.03in}
+.carnet{width:100%;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--gold)}
+/* la démarche */
+.dem{display:flex;flex-direction:column;gap:.16in;flex:1}
+.dm{flex:1;display:grid;grid-template-columns:1.35in 1fr 1.7in;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink)}
+.dn{display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:3px solid var(--ink)}
+.dn b{font-family:Anton;font-weight:400;font-size:40pt;line-height:1}
+.dn span{font-family:Anton;font-size:17pt;text-transform:uppercase}
+.dk{display:flex;flex-wrap:wrap;gap:.07in;align-content:center;padding:.12in}
+.dk span{font-weight:700;font-size:13pt;border:2px solid var(--ink);padding:.02in .1in;background:#FFFDF7}
+.da{border-left:3px dashed var(--ink);padding:.12in;display:flex;flex-direction:column;justify-content:center}
+.da small{font-size:10.5pt;font-weight:700;color:var(--mauve);text-transform:uppercase;letter-spacing:.05em}
+.da b{font-family:Anton;font-weight:400;font-size:18pt;line-height:1.05}
+.fil{background:var(--ink);color:#fff;padding:.14in .18in;border:3px solid var(--ink)}
+.fil b{font-family:Anton;font-weight:400;font-size:17pt;color:var(--gold);display:block}
+.fil p{font-size:13pt;margin:.03in 0}
+/* la liste des outils */
+.outils{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.05in}
+.outils li{display:grid;grid-template-columns:2.6in 1fr auto;gap:.12in;align-items:baseline;border-bottom:1.5px solid var(--hair);padding:.04in 0;font-size:12.5pt}
+.outils b{font-size:13.5pt}
+.outils i{font-style:normal;font-family:Anton;font-size:14pt;color:var(--mauve)}
+.h3 svg{width:.28in;height:.28in;vertical-align:-.05in}
+.site-big{font-family:Anton;font-size:26pt;color:var(--mauve);line-height:1;border:3px solid var(--mauve);padding:.06in .14in;align-self:flex-start}
+/* outils refaits en gros caractères */
+.pg.tpage .in{gap:.08in}
+.tool{display:flex;flex-direction:column;gap:.1in;flex:1;min-height:0}
+.tk{font-weight:800;font-size:10.5pt;letter-spacing:.12em;text-transform:uppercase;color:#E89A2B}
+.tt{margin:0;font-family:Anton;font-weight:400;font-size:30pt;line-height:1;color:#20375F}
+.ts{font-size:13pt;font-style:italic;margin-top:-.04in}
+.band{color:#fff;font-weight:800;font-size:12.5pt;letter-spacing:.08em;text-transform:uppercase;text-align:center;padding:.05in}
+.me{display:grid;grid-template-columns:1fr 1fr;gap:.12in}
+.me div{color:#fff;padding:.12in .14in;font-size:12.5pt;line-height:1.3}
+.me b{display:block;font-size:15pt;text-transform:uppercase;margin-bottom:.04in}
+.b4t{display:grid;grid-template-columns:repeat(4,1fr);gap:.08in}
+.b4t div{color:#fff;padding:.1in .12in}
+.b4t b{font-size:14pt;display:block;margin-bottom:.04in}
+.b4t ul{margin:0;padding-left:.18in;font-size:12pt;line-height:1.35}
+.two{columns:2;margin:0;padding-left:.22in;font-size:12.5pt;line-height:1.4}
+.b4d{display:grid;grid-template-columns:1fr 1fr;gap:.1in}
+.b4d div{border:3px solid var(--b);border-left-width:.16in;padding:.08in .12in}
+.b4d b{display:block;font-family:Anton;font-weight:400;font-size:16pt;color:var(--b);text-transform:uppercase}
+.b4d q{display:block;font-style:italic;font-size:12pt;margin:.02in 0 .04in}
+.b4d q::before,.b4d q::after{content:none}
+.b4d ul{margin:0;padding-left:.18in;font-size:12pt;line-height:1.3}
+.r4{display:grid;grid-template-columns:repeat(4,1fr);gap:.08in}
+.r4 div{border:2px solid var(--ink);padding:.06in .08in;font-size:11.5pt;text-align:center}
+.r4 b{display:block;font-size:12.5pt}
+.g9{display:grid;grid-template-columns:repeat(3,1fr);gap:.08in}
+.g9 div{border:2px solid var(--ink);padding:.06in .1in;font-size:11.5pt}
+.g9 b{display:block;font-size:13.5pt;color:#20375F}
+.tp{font-size:13.5pt;line-height:1.35}.tp.c{text-align:center;font-style:italic}
+.obj5{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.05in}
+.obj5 li{border-left:6px solid #E89A2B;padding-left:.12in;font-size:12.5pt}
+.obj5 b{display:block;font-size:13.5pt}
+.maison{display:flex;flex-direction:column;align-items:center;gap:0}
+.toit{width:0;height:0;border-left:3.1in solid transparent;border-right:3.1in solid transparent;border-bottom:.6in solid #20375F}
+.et{width:5.6in;display:grid;grid-template-columns:.6in 1fr;border:3px solid #20375F;border-top:0;min-height:.72in}
+.et b{display:grid;place-items:center;color:#fff;font-family:Anton;font-weight:400;font-size:24pt}
+.e3 b{background:#20375F}.e2 b{background:#0F766E}.e1 b{background:#E89A2B}
+.et span{padding:.06in .12in;font-size:12pt}
+.et strong{display:block;font-size:13.5pt}
+.qcols{display:grid;grid-template-columns:1fr 1fr;gap:.16in;flex:1}
+.qq{margin:.08in 0 0;padding-left:.32in;font-size:11.5pt;line-height:1.28}
+.qq li{margin-bottom:.045in}
+.qq li::marker{font-weight:800;color:#20375F}
+.qafter .qq{font-size:13.5pt;line-height:1.3;columns:1}
+.qafter .qq li{margin-bottom:.07in}
+.tcred{font-size:9pt;text-align:right;margin-top:auto}
+/* v64b ajustements */
+.cv-iag img{height:.6in}
+.me div{font-size:13.5pt}.b4t ul{font-size:13pt}.b4t b{font-size:15pt}.two{font-size:13.5pt;line-height:1.5}
+.b4d ul{font-size:11.5pt;line-height:1.25}.b4d q{font-size:11.5pt}.b4d div{padding:.06in .1in}
+.g9 div{padding:.04in .08in}.r4 div{padding:.04in .06in}
+.toit{border-bottom-width:.42in}.et{min-height:.6in}.et span{padding:.04in .12in}
+.pg.tpage .tool{gap:.08in}
+.qq{font-size:11pt;line-height:1.2}.qq li{margin-bottom:.03in}
+.qafter .qq{font-size:15pt;line-height:1.3}.qafter .qq li{margin-bottom:.1in}
+.cv-img img{height:1.92in}
+.outils li{padding:.02in 0;font-size:12pt}.site-big{font-size:22pt}
+.qafter .qq{font-size:14pt;line-height:1.25}.qafter .qq li{margin-bottom:.07in}
+.cv-iag img{height:.75in}
+.cv-iag img{height:.62in}
