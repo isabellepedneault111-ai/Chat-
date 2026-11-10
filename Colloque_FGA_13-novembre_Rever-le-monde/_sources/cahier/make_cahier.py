@@ -85,7 +85,7 @@ page(f'''
   <p>On fait le pari qu’il apparaîtra à la fin.</p>
   <hr>
   <p class="w2">Une erreur, c’est la preuve qu’on est en action.</p>
-  <p class="w2">Une case vide, c’est une réponse valide.</p>
+  <p class="w2">Écrire « je ne sais pas » ou laisser une case vide : ce n’est pas une erreur.</p>
 </div>
 <h3 class="leg-t">Les repères du cahier</h3>
 <div class="leg">
