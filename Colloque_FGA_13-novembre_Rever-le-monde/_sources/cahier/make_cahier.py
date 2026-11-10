@@ -74,7 +74,7 @@ page(f'''
   <div class="cv-logos"><img src="img/logo_cfga.png" alt="CFGA"><img src="img/logo_csi.png" alt="CSI"></div>
 </div>
 <p class="cv-note">Atelier conçu par Isabelle Pedneault et Francis Laroche.</p>
-<p class="cv-note cv-iag"><img src="img/iag_limitee.png" alt="IAg · Assistance limitée (pictogramme de l’UQAC)"></p>
+<p class="cv-note cv-iag"><img src="img/iag_partagee.png" alt="IAg · Assistance partagée (pictogramme de l’UQAC)"></p>
 ''', cls='cover')
 
 # --- 2 · avertissement + légende -------------------------------------------
@@ -312,7 +312,7 @@ page(f'''
 
 # --- 17 · pour aller plus loin : la liste des outils ----------------------------
 DANS = [('L’engagement', 'motivation ≠ engagement, les 4 besoins', '18'), ('Les quatre besoins', 'et les 9 gestes qui les nourrissent', '19'), ('L’objectivation', 'la maison à trois étages', '20'), ('Les questions avant, pendant, après', 'à piger, pas à poser toutes', '21-22'), ('Innover au CFGA', 'le cadre et les six questions', '23-24')]
-SUR = [('Mon invite Copilot', 'étape par étape, avec l’extrait officiel de votre sigle'), ('Se fixer des objectifs', 'les objectifs SMART, avec des exemples'), ('J’ai MON plan!', 'l’adulte s’approprie son parcours, avec son tuteur ; la liste des forces et capacités'), ('L’aide-mémoire Copilot', 'la formule et 7 invites prêtes'), ('La fiche élève', 'De l’idée à l’action, à photocopier'), ('Mes interventions universelles', 'une autoévaluation et la grille EN.1.1'), ('Les extraits de programmes', 'les pages officielles, à joindre à Copilot')]
+SUR = [('Mon invite Copilot', 'étape par étape, avec l’extrait officiel de votre sigle'), ('Se fixer des objectifs', 'les objectifs SMART, avec des exemples'), ('J’ai MON plan! · version FGA', 'mes forces, la banque de moyens (« je le garde en tête »), le suivi de mes moyens ; avec son tuteur'), ('L’aide-mémoire Copilot', 'la formule et 7 invites prêtes'), ('La fiche élève', 'De l’idée à l’action, à photocopier'), ('Mes interventions universelles', 'une autoévaluation et la grille EN.1.1'), ('Les extraits de programmes', 'les pages officielles, à joindre à Copilot')]
 page(f'''
 <header class="sec"><h2>Pour aller plus loin</h2></header>
 <p class="lead">Des outils pour un coup de pouce, ou pour aller plus loin.</p>
@@ -326,9 +326,11 @@ page(f'''
 ''', verbe=3)
 
 # --- 18-22 · boîte à outils, en gros caractères ---------------------------------
-CRED = '<p class="tcred">D’après les outils d’Isabelle Pedneault · CC BY-NC-SA 4.0</p>'
-def outil(kick, titre, sous, corps):
-    page(f'<p class="bao">{ICO_OUTIL}<span>Boîte à outils</span></p><div class="tool"><p class="tk">{kick}</p><h2 class="tt">{titre}</h2><p class="ts">{sous}</p>{corps}</div>{CRED}', cls='tpage')
+CR_ENG = 'D’après l’affiche manuscrite d’Isabelle Pedneault · L’engagement'
+CR_OBJ = 'Document d’objectivation d’Isabelle Pedneault · L’objectivation'
+CR_CADRE = 'Adapté du cadre des COP IA : Giroux, Munger et Pedneault (2026) · Cadre d’innovation CFGA'
+def outil(kick, titre, sous, corps, cred):
+    page(f'<p class="bao">{ICO_OUTIL}<span>Boîte à outils</span></p><div class="tool"><p class="tk">{kick}</p><h2 class="tt">{titre}</h2><p class="ts">{sous}</p>{corps}</div><p class="tcred">{cred} · CC BY-NC-SA 4.0</p>', cls='tpage')
 
 B4 = [('Compétence', '#1F4E8C', ['Défi optimal', 'Rétroaction de qualité', 'Progression visible']), ('Autonomie', '#0F766E', ['Choix', 'Voix et participation', 'Contrôle sur la tâche']), ('Sens', '#A33A32', ['Utilité', 'But personnel', 'Transfert']), ('Appartenance', '#C27F2B', ['Relations positives', 'Climat sécurisant', 'Temps de qualité'])]
 outil('Un moteur invisible qui fait grandir', 'L’engagement', 'Un écosystème vivant : construire une vie riche de sens', f'''
@@ -338,7 +340,7 @@ outil('Un moteur invisible qui fait grandir', 'L’engagement', 'Un écosystème
 <div class="b4t">{''.join(f'<div style="background:{c}"><b>{n}</b><ul>{"".join(f"<li>{x}</li>" for x in xs)}</ul></div>' for n, c, xs in B4)}</div>
 <p class="band" style="background:#7A9A3A">Pourquoi ça compte</p>
 <ul class="two"><li>Il donne une direction à notre énergie.</li><li>Il transforme l’intention en action.</li><li>Il nourrit notre bien-être.</li><li>Il favorise le dépassement de soi.</li><li>Il permet de contribuer à plus grand que soi.</li><li>Il crée une spirale positive.</li><li>Persévérer malgré les obstacles.</li><li>Créer des liens significatifs.</li><li>Ressentir de la fierté.</li><li>Contribuer au bien commun.</li></ul>
-''')
+''', CR_ENG)
 B4D = [('Compétence', '#1F4E8C', '« En faisant des efforts et des erreurs, j’apprends et je deviens meilleur. »', ['Défi optimal', 'Mentalité de croissance', 'Rétroaction de qualité', 'Progression visible']),
        ('Autonomie', '#0F766E', '« Je fais des choix en accord avec mes valeurs et mes intérêts. »', ['Choix', 'Voix et participation', 'Contrôle sur la tâche', 'Utiliser sa créativité']),
        ('Sens', '#A33A32', '« Je comprends pourquoi c’est important pour moi. »', ['Utilité', 'Pertinence', 'But personnel', 'Transfert']),
@@ -350,7 +352,7 @@ outil('Ce qu’il faut nourrir, et comment', 'Les quatre besoins', 'Et les neuf 
 <div class="r4"><div><b>Précise</b>on sait quoi regarder</div><div><b>Sur le processus</b>pas sur la personne</div><div><b>La prochaine étape</b>pas seulement l’erreur</div><div><b>Des critères connus</b>établis d’avance</div></div>
 <p class="band" style="background:#7A9A3A">Les neuf gestes qui nourrissent</p>
 <div class="g9">{''.join(f'<div><b>{a}</b>{b}</div>' for a, b in G9)}</div>
-''')
+''', CR_ENG)
 outil('Un temps d’arrêt, pas une perte de temps', 'L’objectivation', 'Regarder l’activité à venir, celle en cours, ou celle déjà faite', '''
 <p class="band" style="background:#20375F">Ce que c’est</p>
 <p class="tp">Un temps d’arrêt pris avec les élèves pour observer comment ils pensent, faire le ménage dans leur tête, prendre conscience des réussites et des difficultés.</p>
@@ -360,17 +362,34 @@ outil('Un temps d’arrêt, pas une perte de temps', 'L’objectivation', 'Regar
 <p class="band" style="background:#7A9A3A">La maison à trois étages · à raconter aux élèves</p>
 <div class="maison"><div class="toit"></div><div class="et e3"><b>3</b><span><strong>Les apprentissages</strong>Ici, je classe ce que j’apprends, comme dans des tiroirs.</span></div><div class="et e2"><b>2</b><span><strong>Les émotions</strong>Si je me sens bien avec les autres et fier de moi, la porte s’ouvre.</span></div><div class="et e1"><b>1</b><span><strong>Les besoins primaires</strong>Si j’ai bien mangé, assez dormi, si je suis en santé, la porte s’ouvre.</span></div></div>
 <p class="tp c">On n’arrive pas au troisième étage sans passer par le premier et le deuxième.</p>
-''')
+''', CR_OBJ)
 AV = ['Suis-je en projet de vivre l’activité de façon positive ?', 'Ai-je le goût de réaliser la tâche ?', 'Est-ce que je connais les objectifs de ce travail ?', 'Est-ce que je connais l’intention de la tâche ?', 'Est-ce que je comprends les consignes ?', 'Est-ce que je comprends bien la tâche demandée ?', 'Est-ce que je peux expliquer à quelqu’un ce que je dois faire ?', 'Ai-je tout le matériel nécessaire ?', 'Qu’est-ce qui m’empêche de me mettre au travail ?', 'Que puis-je faire pour me mettre à la tâche ?', 'Qu’est-ce que je pense apprendre en faisant cette activité ?', 'Ai-je pris conscience de ce que je connais sur le sujet ?', 'Y a-t-il des étapes que je ne comprends pas ?', 'Est-ce que je peux dire quelles informations me manquent ?', 'Ai-je les moyens de chercher les informations qui me manquent ?', 'Ai-je déjà réalisé une tâche semblable ?', 'Ai-je bien exploré la situation ? Ai-je bien observé ?', 'Ai-je pris le temps de bien écouter toutes les explications ?', 'Ai-je confiance en moi ? Est-ce que je me crois capable de réaliser la tâche ?']
 PE = ['Est-ce que je commence à temps ?', 'Suis-je à mon affaire ?', 'Ai-je besoin d’aide ? Est-ce que je sais qui peut m’aider ?', 'Est-ce que je prends le temps de penser à la tâche dans son ensemble ?', 'Est-ce que je pense à consulter mes outils de référence ?', 'Suis-je capable de réaliser cette tâche ?', 'Est-ce que j’ai compris ?', 'Suis-je motivé ou motivée à faire le travail ?', 'Ai-je pris le temps de me vérifier ?', 'Est-ce que je sais m’arrêter pour vérifier si j’ai compris ?', 'Mon comportement est-il correct ?', 'Est-ce que j’accorde de l’importance aux bonnes choses ?', 'Est-ce que je peux enlever des éléments inutiles ?', 'Y a-t-il assez de précisions dans mon travail ?', 'Est-ce que je m’exprime bien ?', 'Est-ce que je prends le temps de bien observer ?', 'Ai-je utilisé les bonnes techniques ? Est-ce que je m’y prends de la bonne façon ?', 'Ai-je pensé à plusieurs solutions possibles ?', 'Est-ce que je connais bien les étapes pour réaliser la tâche ?', 'Est-ce que je prends le temps d’aller chercher dans ma tête les connaissances apprises ?', 'Ai-je peur de me tromper ? Suis-je nerveux ou nerveuse ? Ai-je confiance en moi ?']
 AP = ['Qu’est-ce que j’ai appris ? Ai-je fait de nouveaux apprentissages ?', 'Qu’est-ce que j’ai compris ? Qu’est-ce que j’ai découvert ?', 'Qu’est-ce que je retiens ?', 'Ai-je atteint l’objectif ?', 'Comment m’y suis-je pris pour réussir ?', 'Ai-je utilisé les bonnes stratégies ? Lesquelles m’ont été utiles ?', 'Ai-je pris le temps de bien lire les démarches ?', 'Comment ai-je vérifié mon travail ?', 'Ai-je utilisé les outils nécessaires ?', 'Ai-je utilisé tout mon temps ?', 'Ai-je réalisé la tâche de mon mieux ?', 'Suis-je content ou contente de mon travail ?', 'Étais-je motivé ou motivée ? Est-ce que je désirais réussir ?', 'Ai-je montré de bonnes attitudes ?', 'Y a-t-il quelque chose qui m’a empêché de bien travailler ?', 'Ai-je eu besoin d’aide ? Ai-je aidé les autres ?', 'Si j’avais à revivre cette activité, qu’est-ce que je ferais de différent ?', 'Quand vais-je me servir de cette nouvelle notion ?', 'Ai-je le goût d’aller plus loin ? Ai-je aimé cette activité ?', 'Y a-t-il des points à retravailler ?', 'Quelle opinion ai-je de moi-même ?', 'Je félicite… · Je remercie… · Je suis fier ou fière de…']
 ol = lambda L: '<ol class="qq">' + ''.join(f'<li>{x}</li>' for x in L) + '</ol>'
-outil('Les questions : à piger, pas à poser toutes', 'Avant et pendant', 'Se mettre en projet, puis se réguler en cours de route', f'<div class="qcols"><div><p class="band" style="background:#20375F">Avant · se mettre en projet</p>{ol(AV)}</div><div><p class="band" style="background:#0F766E">Pendant · se réguler</p>{ol(PE)}</div></div>')
-outil('Les questions : à piger, pas à poser toutes', 'Après', 'Intégrer ce qu’on vient de vivre, et se projeter', f'<p class="band" style="background:#E89A2B">Après · intégrer et se projeter</p><div class="qafter">{ol(AP)}</div>')
+outil('Les questions : à piger, pas à poser toutes', 'Avant et pendant', 'Se mettre en projet, puis se réguler en cours de route', f'<div class="qcols"><div><p class="band" style="background:#20375F">Avant · se mettre en projet</p>{ol(AV)}</div><div><p class="band" style="background:#0F766E">Pendant · se réguler</p>{ol(PE)}</div></div>', CR_OBJ)
+outil('Les questions : à piger, pas à poser toutes', 'Après', 'Intégrer ce qu’on vient de vivre, et se projeter', f'<p class="band" style="background:#E89A2B">Après · intégrer et se projeter</p><div class="qafter">{ol(AP)}</div>', CR_OBJ)
 
-# --- 23-24 · cadre d'innovation (pleine page) --------------------------------
-page(f'<p class="bao">{ICO_OUTIL}<span>Boîte à outils</span></p><img class="full" src="img/outils/cadre1_t.png" alt="Innover au CFGA : le cadre d’innovation">', cls='outil')
-page(f'<p class="bao">{ICO_OUTIL}<span>Boîte à outils</span></p><img class="full" src="img/outils/cadre2_t.png" alt="Six questions avant de se lancer">', cls='outil')
+# --- 23-24 · cadre d'innovation, en gros caractères --------------------------
+outil('Formation générale des adultes', 'Innover au CFGA', 'Un cadre pour essayer sans se mettre en danger', '''
+<p class="band" style="background:#0F766E">Ce sur quoi ça repose · les quatre fondations</p>
+<div class="f4"><div><b>Durabilité et flexibilité</b>Penser le changement sur la durée, sans viser le coup d’éclat.</div><div><b>Le droit d’essayer</b>Un bac à sable où se tromper sans se sentir évalué.</div><div class="hot"><b>Du temps protégé</b>Le temps de planification existe. L’enjeu : le réserver et le tenir.</div><div><b>La réussite des adultes</b>La seule finalité qui tranche quand on hésite.</div></div>
+<p class="band" style="background:#E89A2B">Ce qu’on examine · avant, pendant, après</p>
+<div class="r4 r3"><div><b>Pédagogique</b>Est-ce que ça sert l’apprentissage ?</div><div><b>Éthique</b>À qui ça profite, à qui ça nuit ?</div><div><b>Légal</b>Vie privée, droits d’auteur, encadrements</div></div>
+<p class="band" style="background:#7A9A3A">Les trois ajouts des COP IA du CSSDLJ</p>
+<div class="r4 r3"><div><b>Soutien</b>Qui m’accompagne, avec quel temps.</div><div><b>Validation par les pairs</b>Qui peut enrichir mon idée et en voir les angles morts.</div><div><b>Pérennité</b>Qui l’a vue assez de fois pour la refaire sans moi.</div></div>
+<p class="band" style="background:#20375F">Ce que ça change en FGA</p>
+<ul class="obj5"><li><b>Enseignement individualisé</b>Chacun avance à son rythme : une pratique de groupe ne « tombe » pas toute seule.</li><li><b>Entrées continues</b>Le groupe change chaque semaine : l’innovation doit tenir sans cohorte stable.</li><li><b>Groupes multiniveaux</b>Plusieurs sigles dans la même classe, donc plusieurs programmes.</li><li><b>Une présence volontaire</b>Personne n’est obligé d’être là. Une pratique qui exige tout le monde ne tient pas.</li></ul>
+<p class="tranche"><b>La question qui tranche</b>« Qui l’a vue assez de fois pour la refaire sans moi ? » Sinon, ça meurt avec la personne qui l’a portée.</p>
+''', CR_CADRE)
+SIXQ = [('Le cadre ministériel', [('Pertinence pédagogique', 'Mon projet a-t-il une pertinence pédagogique ?'), ('Éthique', 'Ai-je réfléchi aux principes éthiques en jeu ?'), ('Cadre légal', 'Mon initiative respecte-t-elle le cadre légal ?')]),
+        ('Les trois ajouts des COP IA', [('Soutien', 'Ai-je accès au soutien nécessaire pour la mettre en œuvre ?'), ('Validation par les pairs', 'Ai-je consulté mes pairs pour enrichir mon idée et en voir les angles morts ?'), ('Pérennité', 'Peut-elle être maintenue dans le temps et adaptée ailleurs ?')])]
+_n = iter(range(1, 7))
+outil('À remplir avant de se lancer', 'Six questions', 'Un « non » ne bloque rien : il signale qu’il reste à réfléchir', ''.join(f'<p class="band" style="background:{c}">{g}</p><div class="sixq">' + ''.join(f'<div><i>{next(_n)}</i><span><b>{a}</b>{q}</span><em>oui</em><em>non</em></div>' for a, q in L) + '</div>' for (g, L), c in zip(SIXQ, ['#0F766E', '#7A9A3A'])) + '''
+<p class="band" style="background:#E89A2B">Comment s’en servir</p>
+<ul class="obj5"><li><b>Avant</b>Poser les six questions à voix haute, avec quelqu’un d’autre. Seul, on se répond trop vite.</li><li><b>Pendant</b>Y revenir une fois. Ce qui était « oui » en septembre ne l’est pas forcément en novembre.</li><li><b>Après</b>La question 6 se répond seulement à la fin. C’est elle qui décide si ça reste.</li></ul>
+<p class="tranche"><b>En FGA, la question 4 est la plus souvent oubliée</b>Le soutien, ce n’est pas seulement quelqu’un de disponible : c’est du temps réservé à l’horaire, et tenu.</p>
+''', CR_CADRE)
 
 assert len(pages) % 4 == 0, len(pages)
 
