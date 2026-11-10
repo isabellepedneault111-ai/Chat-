@@ -16,9 +16,9 @@ const kids = [
 
   label('En un coup d’œil'),
   P('**Le pari.** Et si le but ultime, c’était l’engagement ? Si l’engagement est là, tout le reste en découle : la présence, la persévérance, les apprentissages.'),
-  P('**Le fil rouge.** Les participants vivent en accéléré la démarche que des élèves de PPS du CFGA ont déjà vécue : ce qui me préoccupe, mon monde idéal, l’analyse de contexte, du résultat aux actions, le vote, le premier pas.'),
+  P('**Le fil rouge.** Les participants vivent en accéléré la démarche que des élèves de PPS du CFGA ont déjà vécue : ce qui me préoccupe, mon monde idéal, l’analyse de contexte, du résultat aux actions, le vote, mon élan.'),
   P('**L’effet de la fin.** On montre ce que les élèves de PPS ont produit : ça ressemble à ce que les participants ont fait. Puis on nomme les pratiques gagnantes qu’ils ont vécues sans qu’on les annonce.'),
-  P('**Ce que chacun emporte.** Le cahier du participant, la page Ressources (invite Copilot, documents en PDF) et son premier pas.'),
+  P('**Ce que chacun emporte.** Le cahier du participant, la page Ressources (invite Copilot, documents en PDF) et son élan.'),
 
   H1('01', 'Intentions et objectifs'),
   ...note('Intention générale', ['Faire découvrir comment une démarche d’engagement citoyen (la démarche « de l’idée à l’action ») donne du sens aux apprentissages et soutient l’autodétermination des adultes en formation, puis outiller les participants pour en transposer une partie dans leur contexte, en groupe comme en enseignement individualisé.']),
@@ -26,7 +26,7 @@ const kids = [
     ['1', '**décrire** les étapes de la démarche « de l’idée à l’action », de l’enjeu qui touche les élèves jusqu’au projet réalisé ;', 'Ils reconnaissent les marches qu’ils viennent de vivre (diapo 15).'],
     ['2', '**reconnaître** les composantes de l’autodétermination mobilisées (choisir, se fixer un but, décider, résoudre, s’autoévaluer) ;', 'Ils nomment les pratiques vécues et les besoins nourris (diapo 21).'],
     ['3', '**analyser** les conditions qui facilitent ou freinent le transfert selon leur contexte ;', 'L’analyse de contexte et les trois portes (diapos 11 et 16).'],
-    ['4', '**esquisser** un premier pas réaliste à mettre à l’essai avec leurs élèves.', 'Chacun remplit sa fiche « Mon premier pas » : une action, une date, un allié.']
+    ['4', '**esquisser** une première action réaliste à mettre à l’essai avec leurs élèves.', 'Chacun remplit la page « Mon élan » du cahier (page 11) : une action, une date, un allié.']
   ], [500, 5500, 4080], { firstAccent: true }),
   P('Les verbes suivent une progression : décrire, reconnaître, analyser, esquisser. On passe de comprendre la démarche à se l’approprier.', { before: 100, run: { italics: true, color: C.grey } }),
 
@@ -82,7 +82,7 @@ const kids = [
     ['11 h 20', '14 h 30', '17', 'La galerie et les trois votes.', 'Choix, rétroaction par les pairs', 'Autonomie'],
     ['11 h 30', '14 h 40', '18', 'Nos forces : voter « on est capables », c’est se connaître.', 'Forces comme leviers', 'Compétence'],
     ['11 h 33', '14 h 43', '19', 'Le coup de théâtre : un projet, toutes vos disciplines, en un clic.', 'IA au service du sens', 'Sens'],
-    ['11 h 40', '14 h 50', '20', 'Mon premier pas, de retour dans mon milieu.', 'Objectif SMART', 'Autonomie'],
+    ['11 h 40', '14 h 50', '20', 'Mon élan, de retour dans mon milieu.', 'Objectif SMART', 'Autonomie'],
     ['11 h 43', '14 h 53', '21', 'Le dévoilement : ce que vous avez vécu sans qu’on le nomme.', 'Objectivation', 'Compétence'],
     ['11 h 45', '14 h 55', '22–23', 'Des élèves l’ont vécue : cette semaine au centre, les projets des élèves d’Isabelle, ce qu’ils en disent. Décloisonner : des pistes à explorer.', 'Raconter', 'Sens'],
     ['11 h 47', '14 h 57', '24', 'Francis : les incubateurs solidaires, du Saguenay au Sénégal.', 'Raconter', 'Appartenance'],
@@ -100,7 +100,7 @@ const kids = [
   H2('Plan B chrono · 10 minutes de retard'),
   B('**Le minuteur d’atelier (touche A)** compte les 90 minutes et compare au déroulé : en haut à droite, « ✓ » si on est dans les temps, « +4 min ⚠ » si on est en retard. Un clic affiche quoi couper, dans l’ordre, selon le retard. Il se lance à la diapo où on est, se met en pause et survit à un rechargement de la page.'),
   B('**Ordre des coupes :** 1) la diapo 8 (les 4 besoins) ; 2) la diapo 25 (la pyramide) ; 3) raccourcir la diapo 16 (les portes : on renvoie au cahier) ; 4) raccourcir la diapo 7 (étapes 4 et 5) ; 5) le 3-2-1 de la diapo 26 se fait dans le cahier ; 6) un seul projet d’incubateur à la diapo 24.'),
-  B('**Ne jamais couper** le coup de théâtre (19), le premier pas (20) et le dévoilement (21) : c’est là que l’atelier prend tout son sens.'),
+  B('**Ne jamais couper** le coup de théâtre (19), mon élan (20) et le dévoilement (21) : c’est là que l’atelier prend tout son sens.'),
   B('**Qui anime ?** Un cadre de couleur entoure l’écran : jaune quand Francis anime, mauve quand Isabelle anime, blanc quand c’est le duo ; moitié-moitié quand l’un passe la parole à l’autre.'),
   H2('Plan B technique'),
   B('La présentation fonctionne sans Internet (fichier sur 2 clés USB). Le coup de théâtre de la diapo 19 demande Internet pour Copilot ; sinon, le bouton « Voir un exemple ».'),
@@ -147,9 +147,9 @@ const kids = [
   H2('Phase 3 · Galerie, votes et projet du groupe (60–80 min)'),
   H3('La galerie et les trois votes · Duo (diapo 17)'),
   tbl(['Vote', 'Post-it', 'Ce qu’il veut dire'], [
-    ['**Coup de cœur**', 'jaune', '« Ce projet me touche, il a du sens. »'],
-    ['**Oui, et…**', 'orange', '« J’aime cette action, et je changerais ceci. » La suggestion s’écrit sur le post-it : l’îlot repart avec une bonification.'],
-    ['**On est capables**', 'mauve', '« Avec nos forces, on peut le réaliser. »']
+    ['**Coup de cœur**', 'vert', '« Ce projet me touche, il a du sens. »'],
+    ['**Oui, et…**', 'jaune-beige', '« J’aime cette action, et je changerais ceci. » La suggestion s’écrit sur le post-it : l’îlot repart avec une bonification.'],
+    ['**On est capables**', 'rose', '« Avec nos forces, on peut le réaliser. »']
   ], [2400, 1400, 6280], { firstAccent: true }),
   N('Une personne par îlot reste au plexiglas et explique en 30 secondes ; les autres circulent. À mi-temps, on change de présentateur.', 7),
   N('Chacun a 3 post-it, un de chaque couleur, à coller sur le résultat ou sur une action. 1 post-it = 1 point.', 7),
@@ -165,13 +165,13 @@ const kids = [
   N('Si Copilot hésite ou si Internet manque : le bouton **« Voir un exemple »** affiche un tableau préparé d’avance (un jardin collectif avec le quartier).', 8),
 
   H2('Phase 4 · Bilan et dévoilement (80–90 min)'),
-  N('**Mon premier pas (diapo 20, 3 min).** Une action, une date (mon temps protégé), un allié. Les six questions du cadre d’innovation sont sous la fiche, dans le cahier.', 9),
-  N('**Le dévoilement (diapo 21, 2 min).** Avant de commencer : « Ouvrez votre cahier à la section 12 ; pendant qu’on révèle, cochez les pratiques que vous voulez essayer. » Chacun repart avec son propre menu de pratiques, choisi par lui. Puis : « Vous l’avez vécu sans qu’on le nomme. » On révèle une pratique à la fois en demandant : « Où l’avez-vous vécue ? »', 9),
+  N('**Mon élan (diapo 20, 3 min).** Une action, une date (mon temps protégé), un allié : cahier, page 11. Le cadre d’innovation et les six questions sont en pleine page, pages 12 et 13.', 9),
+  N('**Le dévoilement (diapo 21, 2 min).** Avant de commencer : « Ouvrez votre cahier à la page 16 ; pendant qu’on révèle, cochez les pratiques que vous voulez essayer. » Chacun repart avec son propre menu de pratiques, choisi par lui. Puis : « Vous l’avez vécu sans qu’on le nomme. » On révèle une pratique à la fois en demandant : « Où l’avez-vous vécue ? »', 9),
   N('**Des élèves l’ont vécue (diapo 22), trois onglets.** 1. Francis : la démarche vécue cette semaine au centre par des élèves de PPS (vidéo ou photos). « Est-ce que ça ressemble à ce que vous avez produit ? » Ce qui est bon pour les élèves de PPS est bon pour tout le monde. 2. Isabelle : les projets de ses élèves, chacun parti d’une envie de l’élève. 3. Isabelle : ce qu’ils en disent, de vrais mots de parents et d’élèves ; toucher un mot pour l’agrandir, pointer le besoin nourri.', 9),
   N('**Décloisonner (diapo 23).** Francis raconte l’histoire de l’Halloween ; Isabelle lance les pistes à explorer comme des défis : « Et si, dans votre centre… ? » Le sens et l’autodétermination, le thème du colloque.', 9),
   N('**Ici et ailleurs (diapo 24).** Francis montre des projets d’incubateurs solidaires vécus ici, au Saguenay, et au Sénégal. Glisser les photos ou la vidéo dans la diapo avant l’atelier.', 9),
   N('**La pyramide (diapo 25, optionnelle).** On en parle, sans vote à l’écran : où se situait votre dernière formation ? Et l’atelier d’aujourd’hui ?', 9),
-  N('**3-2-1 et merci (diapos 26 et 27).** Le code QR mène à la page Ressources. Annonce de la relance à six semaines.', 9),
+  N('**3-2-1 et merci (diapos 26 et 27).** Le code QR mène à la page Ressources. Annonce : « Gardez votre cahier. La dernière page, on la relit dans un an. »', 9),
   H3('Les projets réalisés par des élèves d’Isabelle (diapo 22)'),
   P('Tirés de la liste « Projets d’apprentissage de mes élèves ». Chaque projet est parti d’une envie de l’élève.', { run: { size: 19, color: C.grey } }),
   tbl(['Le projet', 'Ce que ça a donné', 'À retenir'], [
@@ -184,7 +184,7 @@ const kids = [
   ], [3500, 3000, 3580], { firstAccent: true }),
 
   H1('05', 'Les pratiques pédagogiques vécues'),
-  P('Ce qu’on dévoile à la diapo 21, et que les participants retrouvent dans leur cahier (section 12).'),
+  P('Ce qu’on dévoile à la diapo 21, et que les participants retrouvent dans leur cahier (page 16).'),
   tbl(['Pratique', 'Où on la fait vivre', 'Nourrit'], [
     ['Pense, parle, partage', 'Le monde idéal (diapos 9 et 10), et un peu partout', 'Appartenance'],
     ['Des îlots hétérogènes, formés exprès', 'La composition des 4 îlots : centres, programmes, matières et fonctions différents, un principe de base de la classe collabo-réflexive', 'Appartenance'],
@@ -205,10 +205,10 @@ const kids = [
   H1('06', 'Matériel et logistique'),
   tbl(['Quoi', 'Quantité', ''], [
     ['Cahier du participant imprimé (34 inscrits, plus une marge)', '40', '☐'],
-    ['Fiches « Mon premier pas » (aussi dans le cahier)', '40', '☐'],
+    
     ['Annexes : en ligne sur la page Ressources ; à imprimer seulement si on le souhaite (03, 04, 07, 09, 10)', '40', '☐'],
     ['Les participants apportent leur ordinateur (rappel dans le courriel de confirmation)', '—', '☐'],
-    ['Post-it de vote jaune, orange et mauve (coup de cœur, oui et…, on est capables)', '3 par personne', '☐'],
+    ['Post-it de vote vert, jaune-beige et rose (coup de cœur, oui et…, on est capables)', '3 par personne', '☐'],
     ['Post-it et marqueurs pour le mur d’enjeux, sur une table près de la porte', '2 paquets par séance', '☐'],
     ['Affiches de l’îlot : « Notre monde idéal » (05c) et « Notre projet » (05d), derrière le plexiglas', '4 de chaque par séance', '☐'],
     ['Crayons effaçables pour les surfaces verticales, et linges', '2 par îlot', '☐'],
@@ -225,7 +225,7 @@ const kids = [
 
   H1('07', 'Après le colloque'),
   B('**Le mur d’enjeux régional.** Les post-it des quatre CSS deviennent une « carte des préoccupations » du Saguenay–Lac-Saint-Jean, rapportée en classe comme banque d’enjeux.'),
-  B('**La relance à six semaines.** Un courriel aux participants (« Avez-vous fait votre premier pas ? ») transforme l’atelier en petite communauté de pratique. On y joint la question 6 du cadre d’innovation : « Qui l’a vue assez de fois pour la refaire sans moi ? »'),
+  B('**La relance dans un an.** La dernière page du cahier pose la question « Qu’est-ce qui sera resté ? ». Une relance aux participants transforme l’atelier en petite communauté de pratique. On y joint la question 6 du cadre d’innovation : « Qui l’a vue assez de fois pour la refaire sans moi ? »'),
   B('**Le jumelage interprogrammes.** Un groupe PPS ou DHS avec une enseignante matières (scénario C), prêt à démarrer en janvier.'),
   B('**L’accompagnement du CSI.** Un ou deux enseignants qui démarrent une démarche semblable, y compris dans les autres CSS.'),
 
@@ -234,7 +234,7 @@ const kids = [
   B('Les extraits de programmes à joindre à l’invite du coup de théâtre (diapo 19) : qui les prépare ?'),
   B('Quels outils de la démarche remettons-nous (gabarits, fiches, liens) ? Les déposons-nous dans l’équipe Teams du colloque ?'),
   B('Courriel de confirmation : demander aux participants d’apporter leur ordinateur pour Copilot.'),
-  B('Qui fait la relance à six semaines, et à partir de quelle liste ?'),
+  B('La page « dans un an » : chacun la photographie, ou on la photographie à la sortie ?'),
 
   H1('09', 'Éthique des exemples concrets'),
   P('Les mots d’élèves et de parents de l’accroche proviennent de la classe d’Isabelle, du temps où elle enseignait. Ils ont été **recadrés et anonymisés** : aucun prénom, aucun nom, aucune signature. On précise à la salle qu’il s’agit de mots reçus, pas de témoignages sollicités.'),
