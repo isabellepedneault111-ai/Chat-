@@ -57,11 +57,11 @@ mark{background:var(--gold);color:inherit;padding:0 .08em}
 /* couverture */
 .kick{font-family:Inter;font-weight:800;font-size:11pt;letter-spacing:.12em;text-transform:uppercase;color:var(--mauve)}
 .cv-t1{margin:0;font-family:Anton;font-weight:400;font-size:24pt;letter-spacing:.06em;text-transform:uppercase;border-bottom:4px solid var(--ink);padding-bottom:.04in}
-.cv-t2{margin:0;font-family:Anton;font-weight:400;font-size:50pt;line-height:1}
-.cv-t2 span{background:var(--gold);padding:0 .08in}
+.cv-t2{margin:.1in 0 0;font-family:Anton;font-weight:400;font-size:48pt;line-height:1.15}
+.cv-t2 span{display:inline-block;background:var(--gold);padding:.02in .1in .04in;line-height:1.05;margin-top:.06in}
 .cv-sub{font-family:Caveat;font-weight:600;font-size:28pt;color:var(--mauve);line-height:1}
 .cv-img{margin:0;border:4px solid var(--ink);box-shadow:8px 8px 0 var(--gold)}
-.cv-img img{display:block;width:100%;height:2.3in;object-fit:cover}
+.cv-img img{display:block;width:100%;height:2.05in;object-fit:cover}
 .cv-img figcaption{background:var(--ink);color:#fff;font-family:Anton;font-size:15pt;letter-spacing:.03em;padding:.05in .14in}
 .cv-row{display:grid;grid-template-columns:1fr 1.45in;gap:.25in;align-items:start;margin-top:.06in}
 .cv-lead{font-size:15pt;font-weight:600}
@@ -69,7 +69,7 @@ mark{background:var(--gold);color:inherit;padding:0 .08em}
 .cv-moi{margin-top:.12in;border-bottom:2.5px solid var(--ink);height:.5in;position:relative}
 .cv-moi span{font-family:Anton;font-size:12.5pt;letter-spacing:.04em;text-transform:uppercase;color:var(--mauve)}
 .cv-qr svg{width:1.45in;height:1.45in;display:block}
-.cv-qr p{font-size:9.5pt;font-weight:700;text-align:center;margin-top:.04in}
+.cv-qr p{font-size:8pt;font-weight:700;text-align:center;margin-top:.04in;white-space:nowrap;margin-left:-.1in;margin-right:-.1in}
 .cv-foot{display:grid;grid-template-columns:1fr auto;gap:.2in;align-items:end;margin-top:auto}
 .cv-names{display:flex;flex-direction:column;gap:.08in;font-size:11pt;line-height:1.25}
 .cv-names b{font-size:12.5pt}
