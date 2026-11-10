@@ -1,0 +1,209 @@
+@font-face{font-family:Anton;src:url(fonts/Anton-Regular.ttf)}
+@font-face{font-family:Caveat;src:url(fonts/Caveat-SemiBold.ttf)}
+@page{size:8.5in 11in;margin:0}
+:root{--ink:#1E1A22;--mauve:#5B2A86;--gold:#F2C230;--paper:#FFFDF7;--hair:#B9AEC6;--ex:#6E6676;
+  --v1:#F2C230;--v2:#5B2A86;--v3:#9ED9A8;--v4:#7A45AB}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--ink);font-family:Inter,Arial,sans-serif;font-size:13.5pt;line-height:1.32;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+p{margin:0}
+mark{background:var(--gold);color:inherit;padding:0 .08em}
+.hand{font-family:Caveat,cursive;font-weight:600}
+.pg{width:8.5in;height:11in;position:relative;overflow:hidden;page-break-after:always;break-after:page;background:#fff}
+.pg .in{position:absolute;inset:.55in .78in .78in .78in;display:flex;flex-direction:column;gap:.13in}
+.pg.even .in{left:.95in;right:.62in}.pg.odd .in{left:.62in;right:.95in}
+.pg.cover .in{inset:.6in .7in .55in .7in}
+/* folio */
+.folio{position:absolute;bottom:.32in;width:.5in;height:.5in;border-radius:50%;background:var(--ink);color:#fff;font-family:Anton;font-size:17pt;display:grid;place-items:center}
+.odd .folio{right:.42in}.even .folio{left:.42in}
+/* onglets des 4 verbes, sur le bord extérieur */
+.tabs{position:absolute;top:0;bottom:0;width:.4in}
+.tabs.r{right:.17in}.tabs.l{left:.17in}
+.tb{position:absolute;left:.06in;width:.3in;height:1.85in;border:1.5px solid var(--ink);background:#fff;color:var(--ink);font-family:Anton;font-size:11pt;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;justify-content:center}
+.tb>span{transform:rotate(90deg);white-space:nowrap}
+.tabs.l .tb>span{transform:rotate(-90deg)}
+.tb.on{left:0;width:.42in;background:var(--bg);color:var(--fg);font-size:13.5pt;border:2.5px solid var(--ink)}
+/* bannière du verbe */
+.vban{align-self:flex-start;font-family:Anton;font-size:17pt;letter-spacing:.05em;text-transform:uppercase;padding:.02in .16in .02in .06in;border:3px solid var(--ink);display:flex;align-items:center;gap:.1in;box-shadow:4px 4px 0 var(--ink)}
+.vban i{font-style:normal;width:.34in;height:.34in;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:13pt}
+/* titres de section */
+.sec{display:flex;flex-direction:row;align-items:flex-end;justify-content:space-between;gap:.15in;border-bottom:3px solid var(--ink);padding-bottom:.05in;margin-top:.04in}
+.sec h2{margin:0;font-family:Anton;font-weight:400;font-size:27pt;line-height:1.02;display:flex;align-items:baseline;gap:.14in}
+.sec .num{background:var(--gold);color:var(--mauve);font-size:24pt;padding:0 .08in;border:2px solid var(--ink)}
+.tags{display:flex;flex-direction:column;align-items:flex-end;gap:.04in;order:2;flex:none}
+.tag{display:inline-flex;align-items:center;gap:.08in;font-size:12.5pt;line-height:1;padding:.05in .12in;border:2px solid var(--ink)}
+.tag svg{width:.26in;height:.26in}
+.tag b{font-family:Anton;font-weight:400;font-size:14pt;letter-spacing:.04em;text-transform:uppercase}
+.tag.exp{background:var(--mauve);color:#fff}
+.tag.res{background:var(--ink);color:var(--gold)}
+.tag.nour{background:#fff;color:var(--ink)}
+.tag.nour b{color:var(--mauve)}
+/* cases à cocher carrées */
+.coche{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.06in}
+.coche li{position:relative;padding-left:.38in;font-size:14pt;line-height:1.25}
+.coche li::before{content:"";position:absolute;left:0;top:.02in;width:.22in;height:.22in;border:2.5px solid var(--ink);background:#fff}
+.coche.grand li{font-size:14.5pt}
+.coche.idees{gap:.05in}.coche.idees li{font-size:13.5pt}
+/* zones d'écriture : quadrillé pointé */
+.zone{position:relative;border:2.5px solid var(--ink);background-color:#fff;background-image:radial-gradient(var(--hair) 1.1px,transparent 1.3px);background-size:.25in .25in;background-position:.1in .38in;flex:none}
+.zl{position:absolute;top:0;left:0;background:var(--ink);color:#fff;font-family:Anton;font-size:12.5pt;letter-spacing:.04em;text-transform:uppercase;padding:.02in .1in}
+.ex{color:var(--ex);font-family:Caveat,cursive;font-weight:600;font-size:17pt;line-height:1.1}
+.zone .ex{position:absolute;left:.15in;top:.42in;right:.15in}
+.lead{font-size:14pt;line-height:1.35}
+.big{font-family:Anton;font-size:18pt;letter-spacing:.02em}
+.h3{margin:.06in 0 0;font-family:Anton;font-weight:400;font-size:19pt;color:var(--mauve)}
+.renvoi{display:flex;align-items:center;gap:.1in;font-size:12.5pt;border:2px dashed var(--mauve);padding:.06in .12in;align-self:flex-start;color:var(--ink)}
+.renvoi svg{width:.3in;height:.3in;color:var(--mauve);flex:none}
+.renvoi.solo{border:2px solid var(--mauve);font-family:Anton;font-size:14pt;text-transform:uppercase;letter-spacing:.04em}
+/* couverture */
+.kick{font-family:Inter;font-weight:800;font-size:11pt;letter-spacing:.12em;text-transform:uppercase;color:var(--mauve)}
+.cv-t1{margin:0;font-family:Anton;font-weight:400;font-size:24pt;letter-spacing:.06em;text-transform:uppercase;border-bottom:4px solid var(--ink);padding-bottom:.04in}
+.cv-t2{margin:0;font-family:Anton;font-weight:400;font-size:50pt;line-height:1}
+.cv-t2 span{background:var(--gold);padding:0 .08in}
+.cv-sub{font-family:Caveat;font-weight:600;font-size:28pt;color:var(--mauve);line-height:1}
+.cv-img{margin:0;border:4px solid var(--ink);box-shadow:8px 8px 0 var(--gold)}
+.cv-img img{display:block;width:100%;height:2.3in;object-fit:cover}
+.cv-img figcaption{background:var(--ink);color:#fff;font-family:Anton;font-size:15pt;letter-spacing:.03em;padding:.05in .14in}
+.cv-row{display:grid;grid-template-columns:1fr 1.45in;gap:.25in;align-items:start;margin-top:.06in}
+.cv-lead{font-size:15pt;font-weight:600}
+.cv-hand{font-size:25pt;color:var(--mauve);line-height:1.05;margin-top:.03in}
+.cv-moi{margin-top:.12in;border-bottom:2.5px solid var(--ink);height:.5in;position:relative}
+.cv-moi span{font-family:Anton;font-size:12.5pt;letter-spacing:.04em;text-transform:uppercase;color:var(--mauve)}
+.cv-qr svg{width:1.45in;height:1.45in;display:block}
+.cv-qr p{font-size:9.5pt;font-weight:700;text-align:center;margin-top:.04in}
+.cv-foot{display:grid;grid-template-columns:1fr auto;gap:.2in;align-items:end;margin-top:auto}
+.cv-names{display:flex;flex-direction:column;gap:.08in;font-size:11pt;line-height:1.25}
+.cv-names b{font-size:12.5pt}
+.cv-logos{display:flex;gap:.15in;align-items:center}
+.cv-logos img:first-child{height:.75in}.cv-logos img:last-child{height:.5in}
+.cv-note{font-size:9.5pt;color:var(--ink);border-top:1px solid var(--hair);padding-top:.04in}
+.cv-note+.cv-note{border:0;padding:0;margin-top:-.08in}
+/* avertissement */
+.warn{border:5px solid var(--ink);background:repeating-linear-gradient(-45deg,var(--gold) 0 .16in,var(--ink) .16in .32in);padding:.2in;margin-top:.1in}
+.warn>*{background:#fff}
+.warn{display:flex;flex-direction:column;gap:0}
+.warn-h{display:flex;align-items:center;gap:.16in;padding:.14in .2in .04in;font-family:Anton;font-size:30pt;text-transform:uppercase;letter-spacing:.04em}
+.warn-h svg{width:.7in;height:.62in}
+.warn p{padding:.03in .24in;font-size:17pt;line-height:1.3}
+.warn .w1{font-family:Anton;font-size:26pt;color:var(--mauve)}
+.warn hr{margin:0;border:0;height:.16in;background:#fff;border-bottom:3px dotted var(--ink);margin-bottom:.1in}
+.warn .w2{font-weight:700}
+.warn p:last-child{padding-bottom:.2in}
+.leg-t{margin:.12in 0 0;font-family:Anton;font-weight:400;font-size:22pt}
+.leg{display:flex;flex-direction:column;gap:.1in}
+.leg-r{display:grid;grid-template-columns:2.4in 1fr;gap:.2in;align-items:center;border-top:1.5px solid var(--hair);padding-top:.1in}
+.leg-r p{font-size:13pt}
+.leg-r .tag{justify-self:start}
+.leg-tabs{display:flex;flex-wrap:wrap;gap:3px}
+.leg-tabs span{font-family:Anton;font-size:11pt;text-transform:uppercase;border:2px solid var(--ink);padding:.01in .06in}
+/* 01 post-it */
+.p01{display:grid;grid-template-columns:2.75in 1fr;gap:.3in;align-items:center;margin:.02in 0}
+.postit{background:#FFE27A;width:2.6in;height:2.45in;padding:.16in .18in;transform:rotate(-2.5deg);box-shadow:3px 6px 0 rgba(30,26,34,.25);border:1px solid #d8b93a;position:relative}
+.postit::before{content:"";position:absolute;top:-.12in;left:50%;width:1in;height:.26in;margin-left:-.5in;background:rgba(255,255,255,.65);transform:rotate(3deg);border:1px solid #ddd}
+.mini3{width:1.35in;display:block;margin:0 auto .06in}
+.postit .pi{font-size:15.5pt;line-height:1.05;color:var(--ex);margin-top:.04in}
+.p01-c p{font-size:15pt;line-height:1.3}
+.pari-q{font-family:Anton;font-size:25pt;line-height:1.08;color:var(--mauve)}
+.pari2{display:grid;grid-template-columns:1fr 1fr;gap:.25in}
+.pari p{font-size:14pt}
+.pari ul{margin:.04in 0 0;padding-left:.3in;font-size:15pt;font-weight:700;line-height:1.35}
+.pas-ca{border-left:5px solid var(--gold);padding-left:.16in}
+.pas-ca p{font-size:14pt}
+.pas-ca .hand{font-size:21pt;color:var(--mauve);line-height:1.05;margin-top:.04in}
+.feu{display:grid;grid-template-columns:1fr 1fr;gap:.2in}
+.feu figure{margin:0;display:grid;grid-template-columns:1in 1fr;gap:.12in;align-items:center;background:var(--ink);color:#fff;padding:.12in .16in;border:3px solid var(--ink)}
+.feu svg{width:1in;height:1in}
+.feu figcaption{font-size:12.5pt;line-height:1.3}
+.feu b{display:block;font-family:Anton;font-weight:400;font-size:20pt;color:var(--gold);text-transform:uppercase;margin-bottom:.03in}
+/* page paysage : on tourne le cahier */
+.pg.nopad .in{inset:.38in .62in .7in .38in}
+.pg.nopad.even .in{left:.68in;right:.32in}
+.land{position:relative;width:100%;height:100%}
+.land-in{position:absolute;width:9.85in;height:7.4in;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-90deg);display:grid;grid-template-columns:2.35in 1fr;gap:.3in;align-items:stretch}
+.land-h{display:flex;flex-direction:column;gap:.12in}
+.land-h .sec{flex-direction:column;align-items:flex-start}.land-h .tags{order:-1;align-items:flex-start}.land-h .sec h2{font-size:25pt}
+.land-c p{font-size:13pt;line-height:1.28}
+.land-c .q{font-family:Anton;font-size:17pt;color:var(--mauve);margin-top:.1in}
+.land-c .lex{margin-top:.18in;font-size:14.5pt;border-top:2px dotted var(--ink);padding-top:.1in}
+.venn{width:100%;height:100%}
+/* 04-05 */
+.ac{display:grid;grid-template-columns:2.25in 1fr;gap:.2in;align-items:start}
+.qs{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.07in}
+.qs li{font-size:13.5pt;font-weight:700;border-left:5px solid var(--mauve);padding-left:.1in;line-height:1.2}
+.qs small{font-weight:400;font-size:11.5pt}
+.ac-z{display:flex;flex-direction:column;gap:.12in}
+/* 06 */
+.ra{display:grid;grid-template-columns:1fr .4in 1fr;align-items:stretch;gap:.06in}
+.ra-c{border:3px solid var(--ink);padding:.12in .16in;display:flex;flex-direction:column;gap:.05in}
+.ra-c b{font-family:Anton;font-weight:400;font-size:24pt;text-transform:uppercase;line-height:1}
+.ra-c p{font-size:13pt}
+.ra-c .hand{font-size:18pt;line-height:1.08;color:var(--mauve);margin-top:auto}
+.ra-c.r{background:#FFF6D6}.ra-c.a{background:#F1E9F8}
+.ra-arrow{display:grid;place-items:center;font-family:Anton;font-size:30pt}
+/* SMART */
+.smart{display:flex;flex-direction:column;gap:.07in}
+.sm{display:grid;grid-template-columns:.62in 1fr;border:2.5px solid var(--ink);min-height:.76in}
+.sm>b{background:var(--mauve);color:var(--gold);font-family:Anton;font-weight:400;font-size:28pt;display:grid;place-items:center}
+.sm>div{padding:.06in .12in;background-image:linear-gradient(transparent calc(100% - 2px),var(--hair) 2px);background-size:100% .3in;background-position:0 .1in}
+.sm span{display:block;font-family:Anton;font-size:13pt;text-transform:uppercase;letter-spacing:.03em;color:var(--mauve);background:#fff}
+.sm p{font-size:12.5pt;background:#fff;display:inline}
+.b4{display:grid;grid-template-columns:1fr 1fr;gap:.1in}
+.b4 div{border:3px solid var(--b);border-left-width:.16in;padding:.08in .12in;font-size:12.5pt;line-height:1.25}
+.b4 b{display:block;font-family:Anton;font-weight:400;font-size:15pt;color:var(--b);text-transform:uppercase}
+.aide{border:2.5px solid var(--ink);background:#FFF6D6;padding:.1in .14in}
+.aide p{font-size:13pt}
+/* 07 */
+.ilot{display:grid;grid-template-columns:3.05in 1fr;gap:.22in;align-items:center}
+.plexi{width:3.05in}
+/* 08 votes */
+.votes{display:grid;grid-template-columns:repeat(3,1fr);gap:.18in;margin:.12in 0 .08in}
+.pv{background:var(--c);aspect-ratio:1;padding:.14in;transform:rotate(var(--r));box-shadow:3px 6px 0 rgba(30,26,34,.25);display:flex;flex-direction:column;gap:.06in;border:1px solid rgba(30,26,34,.2)}
+.pv b{font-family:Anton;font-weight:400;font-size:19pt;line-height:1;text-transform:uppercase}
+.pv .hand{font-size:18.5pt;line-height:1.05}
+.pv small{font-size:10.5pt;margin-top:auto}
+/* 09 */
+.forces{display:grid;grid-template-columns:2.3in 1fr;gap:.2in;align-items:start}
+.forces img{width:2.3in;border:2px solid var(--ink);box-shadow:4px 4px 0 var(--mauve)}
+.forces>div{display:flex;flex-direction:column;gap:.12in}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:.12in}
+/* idées */
+.idees{display:grid;grid-template-columns:1fr 1fr;gap:.1in}
+.idees div{border:2.5px solid var(--ink);padding:.09in .12in .09in .48in;font-size:12.5pt;line-height:1.25;position:relative}
+.idees div::before{content:"";position:absolute;left:.12in;top:.12in;width:.22in;height:.22in;border:2.5px solid var(--ink)}
+.idees b{display:block;font-family:Anton;font-weight:400;font-size:14.5pt;text-transform:uppercase;color:var(--mauve)}
+/* 3-2-1 */
+.o321{display:grid;grid-template-columns:1.25in 1fr;gap:.12in;align-items:start}
+.o321>b{font-family:Anton;font-weight:400;font-size:118pt;line-height:.85;color:var(--mauve);text-align:center;-webkit-text-stroke:3px var(--ink);paint-order:stroke fill}
+.o321:nth-of-type(2)>b{color:var(--gold)}
+/* vécu */
+.coche.vecu{gap:.075in}
+.coche.vecu li{font-size:14pt;border-bottom:1.5px solid var(--hair);padding-bottom:.06in}
+.coche.vecu b{display:block}
+.coche.vecu small{font-size:12pt;color:var(--ink)}
+/* plus loin */
+.bull{margin:0;border:4px solid var(--ink)}
+.bull img{display:block;width:100%;height:4.5in;object-fit:cover}
+.bull figcaption{background:var(--ink);color:#fff;font-family:Anton;font-size:14pt;padding:.05in .14in}
+.loin{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:.12in}
+.loin li{border-top:4px solid var(--gold);padding-top:.06in;font-size:12.5pt;line-height:1.3}
+.loin b{display:block;font-family:Anton;font-weight:400;font-size:15pt;text-transform:uppercase}
+.refs{font-size:9.5pt;line-height:1.35;margin-top:auto;border-top:1.5px solid var(--hair);padding-top:.06in}
+/* reste */
+.reste{display:flex;flex-direction:column;gap:.1in}
+.reste img{width:5.4in;border:2px solid var(--ink)}
+.cit{font-size:15pt;font-style:italic;border-left:5px solid var(--mauve);padding-left:.15in;font-family:Caladea,Georgia,serif}
+.cit small{display:block;font-style:normal;font-family:Inter;font-weight:700;font-size:11pt;color:var(--mauve);margin-top:.04in}
+.an{flex:1;display:flex;flex-direction:column;border:4px solid var(--ink);background:var(--ink);color:#fff;padding:.18in .2in .2in;margin-top:.06in}
+.an-k{font-family:Anton;font-size:15pt;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+.an-q{font-family:Anton;font-size:26pt;line-height:1.08}
+.an-h{font-size:21pt;color:var(--gold);margin-top:.04in}
+.an-z{flex:1;margin-top:.12in;background-color:#fff;background-image:linear-gradient(transparent calc(100% - 1.5px),var(--hair) 1.5px);background-size:100% .34in}
+/* pages outil pleine page */
+.pg.outil .in{inset:.32in .5in .72in .5in;align-items:center;justify-content:center;gap:.04in}
+.pg.outil.odd .in{right:.72in}.pg.outil.even .in{left:.72in}
+.full{max-width:100%;max-height:100%;min-height:0;flex:1;object-fit:contain}
+.bao{display:flex;align-items:center;gap:.1in;font-family:Anton;font-size:14pt;text-transform:uppercase;letter-spacing:.05em;color:var(--mauve);align-self:flex-start}
+.bao svg{width:.3in;height:.3in}
+.notes{flex:1;border:2.5px solid var(--ink);background-image:radial-gradient(var(--hair) 1.1px,transparent 1.3px);background-size:.25in .25in}
+.sec h2{flex:1}
+.land-in.flat{position:relative;left:0;top:0;transform:none;padding:.05in}
+.land-img{max-height:100%}

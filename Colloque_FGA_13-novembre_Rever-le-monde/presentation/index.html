@@ -1122,7 +1122,7 @@ window.CG = (() => {
   P.forEach(([t, body], i) => { const d = document.createElement('details'); if (!i) d.open = true; d.innerHTML = '<summary><i>' + (i + 1) + '</i>' + esc(t) + '</summary><div class="body"><pre></pre><div class="hub-row"><button type="button" class="hub-btn sm">Copier</button><span class="hub-msg"></span></div></div>'; d.querySelector('pre').textContent = body; d.querySelector('button').onclick = () => copy(body, d.querySelector('.hub-msg'), d.querySelector('pre')); $('#hgPrompts').appendChild(d); });
 
   const D = [
-    ['02_Cahier-du-participant', 'Pendant l’atelier', 'Le cahier du participant', 'Il suit l’atelier phase par phase, avec des espaces pour noter, la page « Mon élan » et les six questions.', 1],
+    ['02_Cahier-du-participant', 'Pendant l’atelier', 'Le cahier du participant', 'Le livret de l’atelier : les 4 verbes, des espaces pour noter, « Mon élan » et la boîte à outils.', 1, 1],
     ['03_Aide-memoire-Copilot', 'Pour lundi', 'Aide-mémoire Copilot', 'La formule, les 5 invites, le cadre d’innovation et les balises.'],
     ['04_Annexe_Objectivation', 'Annexe', 'L’objectivation', 'La maison à trois étages, une banque de questions, 7 formats et un carnet de bord.'],
     ['07_Annexe_Jai-mon-plan', 'Annexe', 'J’ai mon plan', 'Les capacités et la banque de moyens de « J’ai MON plan! », à cocher.'],
@@ -1398,13 +1398,13 @@ window.CG = (() => {
   <div class="chips" id="subj" role="group" aria-label="Rôle"></div>
 </section>
 
-<section data-mode="res" data-besoins="Autonomie,Appartenance" data-wide="1" class="slide" data-phase="3" data-who="Duo" data-notes="La galerie : une personne par îlot reste au plexiglas pour expliquer en 30 secondes ; les autres circulent. Chacun a 3 post-it : jaune = coup de cœur, orange = « Oui, et… » (on écrit la suggestion dessus), mauve = on est capables. On peut voter sur le résultat ou sur une action. À mi-temps, on change de présentateur. Pendant la galerie, Francis photographie chaque plexiglas avec l’ordinateur ou reçoit les photos (Teams, courriel, câble) et les glisse ici avec « + Photo du plexiglas » ; une photo touchée s’affiche en grand. Puis chaque îlot compte ses post-it et on tape seulement les trois totaux : les piles montent. Le projet qui a le plus de points devient le projet du groupe (diapo 19).">
+<section data-mode="res" data-besoins="Autonomie,Appartenance" data-wide="1" class="slide" data-phase="3" data-who="Duo" data-notes="La galerie : une personne par îlot reste au plexiglas pour expliquer en 30 secondes ; les autres circulent. Chacun a 3 post-it : vert = coup de cœur, jaune-beige = « Oui, et… » (on écrit la suggestion dessus), rose = on est capables. On peut voter sur le résultat ou sur une action. À mi-temps, on change de présentateur. Pendant la galerie, Francis photographie chaque plexiglas avec l’ordinateur ou reçoit les photos (Teams, courriel, câble) et les glisse ici avec « + Photo du plexiglas » ; une photo touchée s’affiche en grand. Puis chaque îlot compte ses post-it et on tape seulement les trois totaux : les piles montent. Le projet qui a le plus de points devient le projet du groupe (diapo 19).">
   <div class="kick">Choisir · la galerie et les votes</div>
   <h2>Coup de cœur · Oui, et… · On est capables</h2>
   <ul class="crit">
-    <li><i style="background:var(--gold)"></i><b>Coup de cœur</b><span>« Ce projet me touche, il a du sens. »</span></li>
-    <li><i style="background:#D9541E"></i><b>Oui, et…</b><span>« J’aime cette action, et je changerais ceci. » La suggestion s’écrit sur le post-it.</span></li>
-    <li><i style="background:var(--mauve)"></i><b>On est capables</b><span>« Avec nos forces, on peut le réaliser. »</span></li>
+    <li><i style="background:#9ED9A8"></i><b>Coup de cœur</b><span>« Ce projet me touche, il a du sens. »</span></li>
+    <li><i style="background:#EBDDB0"></i><b>Oui, et…</b><span>« J’aime cette action, et je changerais ceci. » La suggestion s’écrit sur le post-it.</span></li>
+    <li><i style="background:#F7B5CB"></i><b>On est capables</b><span>« Avec nos forces, on peut le réaliser. »</span></li>
   </ul>
   <p class="cap">Une personne par îlot explique le projet ; les autres circulent avec 3 post-it, un de chaque couleur, à coller sur le résultat ou sur une action. 1 post-it = 1 point. On change de rôle à mi-temps. Écrivez le titre de chaque projet.</p>
   <div class="row" style="flex:1;align-items:stretch">
@@ -2091,7 +2091,7 @@ drawMur();
 const NB_ILOTS = 4;
 const vData = store.get('votes4', Array.from({ length: NB_ILOTS }, () => ({ n: '', v: [0, 0, 0] })));
 const vEl = $('#votes');
-const VLAB = [['Cœur', 'var(--gold)', 'var(--ink)'], ['Oui, et', '#D9541E', '#fff'], ['Capables', 'var(--mauve)', '#fff']];
+const VLAB = [['Cœur', '#9ED9A8', 'var(--ink)'], ['Oui, et', '#EBDDB0', 'var(--ink)'], ['Capables', '#F7B5CB', 'var(--ink)']];
 const photoOf = i => store.get('photo' + i, null);
 // Photo d'un îlot : réduite à 900 px pour rester légère dans le navigateur
 function loadPhoto(file, i, done) { if (!file || !file.type.startsWith('image')) return; const fr = new FileReader(); fr.onload = () => { const im = new Image(); im.onload = () => { const k = Math.min(1, 900 / Math.max(im.width, im.height)); const c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); store.set('photo' + i, c.toDataURL('image/jpeg', .72)); done(); }; im.src = fr.result; }; fr.readAsDataURL(file); }
