@@ -1092,7 +1092,7 @@ __COPILOT_GEN__
   <h2>Une invite qui fait mouche</h2>
   <p class="lede" style="margin:0 0 10px">Rôle, contexte, le vrai programme, la tâche, le format. On modélise avec un îlot ; vous refaites la même chose sur la page Ressources.</p>
   <div id="cgSlide"></div>
-  <div class="qrline" style="margin-top:14px"><div class="qr sm" id="qr2"></div><p>Sur votre ordinateur : la page <b>Ressources</b>, section « Mon invite Copilot ». Le même générateur.<span class="url">claude.ai/artifact/SMB1bWSXHDzLNmfYQsGvwG#ressources</span></p></div>
+  <div class="qrline" style="margin-top:14px"><div class="qr sm" id="qr2"></div><p>Sur votre ordinateur : la page <b>Ressources</b>, section « Mon invite Copilot ». Le même générateur.<span class="url">rever-le-monde.netlify.app</span></p></div>
 </section>
 
 <section data-besoins="Sens" class="slide" data-phase="2" data-who="Francis" data-notes="Francis : « Ce que vous venez de faire, ce sont les 3 premières marches. » Les projets vécus au CFGA. Toucher une marche pour révéler la composante de l’autodétermination.">
@@ -1249,7 +1249,7 @@ __COPILOT_GEN__
   <div class="kick">Merci</div>
   <h2>Dans six semaines, on vous écrit :<br><span class="hl">avez-vous fait votre premier pas ?</span></h2>
   <div class="row">
-    <div class="col"><div class="qr" id="qr"></div><p class="cap">Toutes les ressources de l’atelier</p><p class="url">claude.ai/artifact/SMB1bWSXHDzLNmfYQsGvwG#ressources</p>
+    <div class="col"><div class="qr" id="qr"></div><p class="cap">Toutes les ressources de l’atelier</p><p class="url">rever-le-monde.netlify.app</p>
       <div class="logos"><img class="lg-cfga" src="__LOGO_CFGA__" alt="CFGA De Jonquière"><img src="__LOGO_CSI__" alt="Centre de solidarité internationale du Saguenay–Lac-Saint-Jean"></div></div>
     <div class="col"><p>Un premier pas, c’est petit et concret :</p><ul class="exemples"><li>une question posée à mon groupe</li><li>une tâche transformée par un enjeu</li><li>un 3-2-1 en fin de période</li><li>un projet-pont avec un·e collègue</li></ul></div>
   </div>
@@ -1579,7 +1579,7 @@ const vz = $('#vidZone'); vz.addEventListener('dragover', e => e.preventDefault(
 if (window.CG && $('#cgSlide')) CG.mount($('#cgSlide'));
 
 // ---------- QR ----------
-const RESSOURCES = 'https://claude.ai/artifact/SMB1bWSXHDzLNmfYQsGvwG#ressources';
+const RESSOURCES = 'https://rever-le-monde.netlify.app';
 (function drawQR() { [['#qr', 200], ['#qr2', 132]].forEach(([id, sz]) => { const box = $(id); if (!box) return; box.innerHTML = ''; if (window.QRCode) new QRCode(box, { text: RESSOURCES, width: sz, height: sz, colorDark: '#1E1A22', colorLight: '#ffffff' }); else box.textContent = RESSOURCES; }); })();
 
 // =================== MONDE 3D EN CEL-SHADING ===================
