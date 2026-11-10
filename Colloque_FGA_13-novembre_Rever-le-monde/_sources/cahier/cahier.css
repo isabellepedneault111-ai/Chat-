@@ -2,7 +2,7 @@
 @font-face{font-family:Caveat;src:url(fonts/Caveat-SemiBold.ttf)}
 @page{size:8.5in 11in;margin:0}
 :root{--ink:#1E1A22;--mauve:#5B2A86;--gold:#F2C230;--paper:#FFFDF7;--hair:#B9AEC6;--ex:#6E6676;
-  --v1:#F2C230;--v2:#5B2A86;--v3:#9ED9A8;--v4:#7A45AB}
+  --v1:#F2C230;--v2:#5B2A86;--v3:#9ED9A8;--v4:#D9541E}
 *{box-sizing:border-box}
 html,body{margin:0;background:#fff;color:var(--ink);font-family:Inter,Arial,sans-serif;font-size:13.5pt;line-height:1.32;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 p{margin:0}

@@ -85,8 +85,8 @@ page(f'''
   <p>Par moments, le sens pourrait vous échapper.</p>
   <p>On fait le pari qu’il apparaîtra à la fin.</p>
   <hr>
-  <p class="w2">Une erreur, c’est la preuve qu’on est en action.</p>
-  <p class="w2">Écrire « je ne sais pas » ou laisser une case vide : ce n’est pas une erreur.</p>
+  <p class="w2">Vous avez le droit de laisser une case vide.</p>
+  <p class="w2">Vous avez le droit d’écrire « je ne sais pas ».</p>
 </div>
 <h3 class="leg-t">Les repères du cahier</h3>
 <div class="leg">
@@ -270,7 +270,7 @@ page(f'''
 ''', verbe=3)
 
 # --- 13 · ce qui a été vécu --------------------------------------------------
-vecu = [('Pense, parle, partage', 'le monde idéal, en îlot'), ('Des îlots hétérogènes, formés exprès', 'centres, programmes, fonctions'), ('La classe collabo-réflexive', 'les surfaces verticales'), ('La démarche inductive', 'vivre d’abord, nommer ensuite'), ('L’enseignement explicite', 'résultat ou action'), ('Le droit à l’erreur', 'et à la case vide'), ('Les objectifs SMART', 'du résultat aux actions'), ('Le choix et le vote', 'la galerie'), ('La rétroaction par les pairs', '« Oui, et… »'), ('Les forces comme leviers', 'je suis capable'), ('Expansion et restriction', 'ouvrir et restreindre'), ('L’IA au service du sens', 'l’invite Copilot'), ('L’objectivation', 'le 3-2-1')]
+vecu = [('Pense, parle, partage', 'le monde idéal, en îlot'), ('Des îlots hétérogènes, formés exprès', 'centres, programmes, fonctions'), ('La classe collabo-réflexive', 'les surfaces verticales'), ('La démarche inductive', 'vivre d’abord, nommer ensuite'), ('L’enseignement explicite', 'résultat ou action'), ('Le droit à la case vide', 'et au « je ne sais pas »'), ('Les objectifs SMART', 'du résultat aux actions'), ('Le choix et le vote', 'la galerie'), ('La rétroaction par les pairs', '« Oui, et… »'), ('Les forces comme leviers', 'je suis capable'), ('Expansion et restriction', 'ouvrir et restreindre'), ('L’IA au service du sens', 'l’invite Copilot'), ('L’objectivation', 'le 3-2-1')]
 page(f'''
 <header class="sec">{tags(None, 'Compétence', 'Sens')}<h2>Ce qui a été vécu dans cet atelier</h2></header>
 <p class="lead">Cochez celles que vous aimeriez essayer avec vos élèves.</p>
