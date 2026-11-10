@@ -127,7 +127,7 @@ const kids = [
   P('Pour chaque cercle : **les leviers** (ce qui existe déjà : une qualité du CFGA, une personne, un lieu, un organisme) et **« je remarque que »** (ce qui manque : « je remarque qu’il n’y a pas de verdure autour », « je remarque qu’on fait peu appel aux organismes communautaires »). Rien n’existe ? De quoi le centre aurait-il besoin pour s’y rendre ? On modélise une rangée, puis 4 minutes dans le cahier.'),
 
   H2('Phase 2 · Le pivot : du résultat aux actions (30–60 min)'),
-  H3('Résultat ou action : l’enseignement explicite · Isabelle (diapo 12)'),
+  H3('Résultat ou action : l’enseignement explicite · Francis (diapo 12)'),
   N('**Conflit cognitif.** Chacun écrit une « action » pour ce qui l’interpelle le plus dans ses cercles. Isabelle en lit trois : la plupart sont des résultats.', 6),
   N('**Modelage.** Le résultat est un nom ; l’action est un verbe, avec qui et quand.', 6),
   N('**Pratique guidée.** On teste des phrases de la salle dans le détecteur de la diapo.', 6),
