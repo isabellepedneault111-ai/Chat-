@@ -5,7 +5,13 @@ shutil.rmtree(OUT, ignore_errors=True); os.makedirs(OUT + '/img'); os.makedirs(O
 shutil.copy(B + '/fonts/Anton-Regular.ttf', OUT + '/fonts/')
 for f in ['riso_mur.jpg', 'logo_cfga.png', 'logo_csi.png']: shutil.copy(B + '/img/' + f, OUT + '/img/')
 for f in os.listdir(R + '/presentation/fichiers'): shutil.copy(R + '/presentation/fichiers/' + f, OUT + '/fichiers/')
-hub = open(B + '/hub_fragment.html', encoding='utf8').read()
+t = open(B + '/pres_template.html', encoding='utf8').read()
+a = t.index('<div id="hub" class="hub" hidden>'); z = t.index('<div class="deck" id="deck">', a)
+hub = t[a:z].rstrip()
+for f in os.listdir(R):
+    if f.endswith('.docx') and not f[:2] in ('01', '05', '06'): shutil.copy(R + '/' + f, OUT + '/fichiers/')
+if os.path.exists(B + '/annexes_site'):
+    for f in os.listdir(B + '/annexes_site'): shutil.copy(B + '/annexes_site/' + f, OUT + '/fichiers/')
 hub = hub.replace('__IMG_RISO_MUR__', 'img/riso_mur.jpg').replace('__LOGO_CFGA__', 'img/logo_cfga.png').replace('__LOGO_CSI__', 'img/logo_csi.png')
 hub = hub.replace('<div id="hub" class="hub" hidden>', '<div id="hub" class="hub">')
 hub = hub.replace("  if (location.hash !== '#ressources') return;\n", '')

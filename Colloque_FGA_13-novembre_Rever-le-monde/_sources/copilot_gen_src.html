@@ -43,6 +43,17 @@
 .cg-formats button i{font-style:normal;font-size:24px;line-height:1}
 .cg-formats button[aria-pressed=true]{background:var(--c-gold);border:3px solid var(--c-ink);box-shadow:3px 3px 0 var(--c-ink)}
 .cg-out{position:sticky;top:12px}
+.cg-prog{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 12px;padding:0;list-style:none}
+.cg-prog button{font-family:"Arial",sans-serif;font-weight:700;font-size:13.5px;background:#fff;border:2px solid var(--c-ink);padding:5px 9px;cursor:pointer;color:var(--c-ink)}
+.cg-prog button.done{background:var(--c-gold)}
+.cg-prog button[aria-current=step]{background:var(--c-mauve);color:#fff;box-shadow:3px 3px 0 var(--c-ink)}
+.cg-form .cg-step{display:none}.cg-form .cg-step.on{display:block}
+.cg-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 0}
+.cg-nav span{font-family:"Arial",sans-serif;font-weight:700;font-size:14px;color:var(--c-mauve)}
+.cg-blab{margin:10px 0 4px;font-family:"Arial",sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase}
+.cg-pdf{margin-top:12px;border:2px dashed var(--c-ink);padding:8px 10px;background:#FFF6D6}
+.cg-pdf ol{margin:8px 0 0;padding-left:1.3em;font-size:15px;line-height:1.4}
+.cg-out.flash .cg-pre{outline:4px solid var(--c-gold)}
 .cg-pre{margin:0;white-space:pre-wrap;word-break:break-word;font-family:"Consolas","Courier New",monospace;font-size:14px;line-height:1.45;background:#fff;border:3px solid var(--c-ink);padding:12px 14px;max-height:min(68vh,640px);overflow:auto;box-shadow:6px 6px 0 var(--c-mauve)}
 .cg-pre .pl{display:block;white-space:pre-wrap;margin-bottom:10px;border-left:4px solid transparent;padding-left:6px;transition:background .6s,border-color .6s}
 .cg-pre .pl b{color:var(--c-mauve)}
@@ -88,7 +99,6 @@ window.CG = (() => {
     ['Grille d’évaluation', '✓', 'Une grille descriptive à 4 niveaux : critères en lignes, niveaux en colonnes, formulés au « je » pour que l’élève puisse s’autoévaluer.'],
     ['Diaporama', '▭', 'Le plan de 6 diapositives PowerPoint : pour chacune, un titre, 3 puces au plus et une idée d’image.'],
     ['Liste à cocher', '☐', 'Une liste à cocher de 8 à 12 étapes, chacune commençant par un verbe d’action.'],
-    ['Courriel', '✉', 'Un courriel court et chaleureux à un partenaire de la communauté : objet, 3 paragraphes de 2 phrases au plus, signature.'],
     ['Texte simple', '¶', 'Un texte en langage simple : phrases courtes, mots courants, intertitres, facile à lire.']];
   const TRUCS = [['Un panel d’experts', 'Réunis un panel de trois experts (une enseignante en FGA, une conseillère pédagogique, un élève adulte de 19 ans) : chacun propose sa solution, ils débattent, puis tu fais la synthèse.', 'e'],
     ['Mes angles morts', 'Nomme les angles morts de ma demande (ce que je n’ai pas considéré) et propose une solution pour chacun.', 'e'],
@@ -127,16 +137,12 @@ window.CG = (() => {
         <span class="cg-lab">Notre enjeu ou notre projet</span><input type="text" id="${id}e" placeholder="ex. le gaspillage à la cafétéria">
         <span class="cg-lab">Le temps qu’on a, en classe</span><div class="cg-chips" data-g="tps">${chips(TEMPS, 'tps')}</div></fieldset>
       <fieldset class="cg-step"><legend><b>3</b>Mes sigles</legend>
-        <p class="cg-help"><strong>Le sigle seul ne suffit pas :</strong> Copilot devine alors son contenu. C’est l’extrait du programme qui compte. Ajoutez un ou plusieurs sigles : l’extrait officiel s’ajoute tout seul.</p>
-        <div class="cg-row"><input type="text" id="${id}s" list="${id}dl" placeholder="ex. MAT-1101" autocomplete="off"><button type="button" class="cg-btn alt" id="${id}sa">Ajouter</button></div>
-        <datalist id="${id}dl">${Object.keys(SIG).map(k => `<option value="${k}">${esc(SIG[k].n)}</option>`).join('')}</datalist>
-        <p class="cg-try">Tester un extrait : ${TRY.map(k => `<a role="button" tabindex="0" data-try="${k}">${k}</a>`).join(' ')}</p>
-        <span class="cg-lab">Ou parcourir tous les sigles (${Object.keys(SIG).length}), par matière</span>
-        <select id="${id}g"><option value="">Choisir une matière…</option>${GROUPS.filter(([p]) => Object.keys(SIG).some(k => k.split('-')[0] === p)).map(([p, n]) => `<option value="${p}">${esc(n)} (${Object.keys(SIG).filter(k => k.split('-')[0] === p).length})</option>`).join('')}</select>
-        <div class="cg-browse" id="${id}b"></div>
+        <p class="cg-help"><strong>Tapez votre sigle ou votre matière, puis touchez-le.</strong> L’extrait officiel du programme s’ajoute tout seul : rien à télécharger. Un ou plusieurs sigles.</p>
+        <input type="text" id="${id}s" placeholder="ex. MAT-1101, français, PPS, anglais…" autocomplete="off" aria-label="Chercher un sigle ou une matière">
+        <p class="cg-blab" id="${id}bl"></p><div class="cg-browse" id="${id}b"></div>
         <div class="cg-tags" id="${id}t"></div>
         <details id="${id}d"><summary>Voir ou modifier l’extrait envoyé à Copilot</summary><textarea id="${id}x" rows="7" placeholder="Collez ici l’extrait du programme si votre sigle n’est pas dans la banque."></textarea></details>
-        <p class="cg-warn">Où trouver tout le programme de mon sigle ? <a href="${MEQ}" target="_blank" rel="noopener">Les programmes d’études de la FGA (ministère) ↗</a>. Sur la page de votre matière : le programme et la DDE de chaque sigle.</p></fieldset>
+        <details class="cg-pdf"><summary>Mon sigle dit « Contenu à joindre » : comment joindre le PDF ?</summary><ol><li>Sur l’étiquette du sigle, touchez « page officielle ↗ ». Ex. : FRA-2101 ouvre la page du français.</li><li>Téléchargez le programme d’études et la DDE de votre sigle.</li><li>Dans Copilot, touchez le trombone (ou le +), puis « Charger » : choisissez les deux PDF.</li><li>Collez votre invite, puis envoyez.</li></ol></details></fieldset>
       <fieldset class="cg-step"><legend><b>4</b>La tâche</legend>
         <select id="${id}k">${TACHES.map((t, i) => `<option value="${i}">${esc(t[0])}</option>`).join('')}<option value="x">Autre : je l’écris</option></select>
         <input type="text" id="${id}kx" placeholder="Écrivez votre tâche" hidden>
@@ -186,16 +192,32 @@ window.CG = (() => {
       plain = Lx.map(([k, t]) => k + ' :\n' + t).join('\n\n');
       $id('o').innerHTML = Lx.map(([k, t]) => `<span class="pl${k === focus ? ' hot' : ''}"><b>${esc(k)} :</b>\n${esc(t)}</span>`).join('');
       if (focus) { const h = $id('o').querySelector('.hot'); if (h) { $id('o').scrollTop = h.offsetTop - 8; setTimeout(() => h.classList.remove('hot'), 1500); } } }
+    const form = q('.cg-form'), steps = [...form.querySelectorAll('.cg-step')];
+    const prog = document.createElement('ol'); prog.className = 'cg-prog'; prog.setAttribute('aria-label', 'Les étapes');
+    prog.innerHTML = steps.map((s, i) => `<li><button type="button" data-step="${i}">${i + 1}. ${['Qui je suis', 'Contexte', 'Sigles', 'Tâche', 'Format', 'Consignes'][i] || ''}</button></li>`).join(''); form.prepend(prog);
+    const nav = document.createElement('div'); nav.className = 'cg-nav'; nav.innerHTML = '<button type="button" class="cg-btn alt" data-nav="-1">← Retour</button><span></span><button type="button" class="cg-btn" data-nav="1">Suivant →</button>'; form.appendChild(nav);
+    let cur = 0;
+    function go(n) { cur = Math.max(0, Math.min(steps.length - 1, n)); steps.forEach((s, i) => s.classList.toggle('on', i === cur));
+      prog.querySelectorAll('button').forEach((b, i) => { b.setAttribute('aria-current', i === cur ? 'step' : 'false'); b.classList.toggle('done', i < cur); });
+      nav.querySelector('span').textContent = 'Étape ' + (cur + 1) + ' sur ' + steps.length; nav.children[0].style.visibility = cur ? 'visible' : 'hidden';
+      nav.children[2].textContent = cur === steps.length - 1 ? '✓ Copier mon invite' : 'Suivant →'; }
     root.addEventListener('click', e => { const b = e.target.closest('button,[data-try]'); if (!b || !root.contains(b)) return;
+      if (b.dataset.step !== undefined) { go(+b.dataset.step); return; }
+      if (b.dataset.nav) { if (+b.dataset.nav > 0 && cur === steps.length - 1) { $id('c').click(); const o = q('.cg-out'); o.classList.add('flash'); setTimeout(() => o.classList.remove('flash'), 1600); if (o.getBoundingClientRect().top > innerHeight - 80) o.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+        else { go(cur + +b.dataset.nav); if (form.getBoundingClientRect().top < 0) form.scrollIntoView({ block: 'start' }); } return; }
       if (b.dataset.try) { addSig(b.dataset.try); return; }
       if (b.dataset.rm) { rmSig(b.dataset.rm); return; }
       if (b.dataset.fmt !== undefined) { st.fmt = +b.dataset.fmt; $id('f').value = FORMATS[st.fmt][2]; sync(); upd('Format attendu'); return; }
       const g = b.parentNode.dataset && b.parentNode.dataset.g; if (g) { const i = +b.dataset[g]; if (g === 'trucs') { st[g].has(i) ? st[g].delete(i) : st[g].add(i); } else st[g] = st[g] === i ? -1 : i; sync(); upd({ el: 'Contexte', org: 'Contexte', tps: 'Contexte', trucs: 'Consignes' }[g]); } });
-    root.addEventListener('keydown', e => { if (e.target.dataset && e.target.dataset.try && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); addSig(e.target.dataset.try); } if (e.target === $id('s') && e.key === 'Enter') { e.preventDefault(); addSig($id('s').value); $id('s').value = ''; } });
-    $id('sa').onclick = () => { addSig($id('s').value); $id('s').value = ''; };
-    $id('g').onchange = () => { const p = $id('g').value; const ks = Object.keys(SIG).filter(k => k.split('-')[0] === p).sort((a, b) => a.localeCompare(b, 'fr', { numeric: true }));
-      $id('b').innerHTML = ks.map(k => `<button type="button" data-try="${k}"><b>${k}</b> ${esc(SIG[k].n)}</button>`).join(''); };
-    $id('s').addEventListener('change', () => { if (SIG[$id('s').value.trim().toUpperCase()]) { addSig($id('s').value); $id('s').value = ''; } });
+    root.addEventListener('keydown', e => { if (e.target.dataset && e.target.dataset.try && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); addSig(e.target.dataset.try); } if (e.target === $id('s') && e.key === 'Enter') { e.preventDefault(); if (hits.length && $id('s').value.trim()) { addSig(hits[0]); $id('s').value = ''; search(); } } });
+    const norm = t => String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(), GN = Object.fromEntries(GROUPS);
+    let hits = [];
+    function search() { const raw = $id('s').value.trim(), n = norm(raw), nc = n.replace(/[\s-]/g, '');
+      if (!n) hits = TRY.filter(k => SIG[k]);
+      else hits = Object.keys(SIG).filter(k => { const kk = norm(k).replace(/-/g, ''); return kk.startsWith(nc) || norm(SIG[k].n).includes(n) || norm(GN[k.split('-')[0]] || '').includes(n); }).sort((a, b) => a.localeCompare(b, 'fr', { numeric: true }));
+      $id('bl').textContent = !n ? 'Les plus utilisés' : hits.length ? hits.length + (hits.length > 1 ? ' sigles trouvés' : ' sigle trouvé') + (hits.length > 16 ? ' : précisez, ex. « MAT-2 »' : '') : 'Aucun sigle trouvé : collez son extrait plus bas.';
+      $id('b').innerHTML = hits.slice(0, 16).map(k => `<button type="button" data-try="${k}"><b>${k === 'PPS' || k === 'DHS' ? k : k}</b> ${esc(SIG[k].n)}</button>`).join(''); }
+    $id('s').addEventListener('input', search);
     $id('r').onchange = () => { $id('rx').hidden = $id('r').value !== 'x'; upd('Rôle'); }; $id('rx').oninput = () => upd('Rôle');
     $id('k').onchange = () => { $id('kx').hidden = $id('k').value !== 'x'; drawTF(); upd('Ce que tu dois savoir pour cette tâche'); };
     $id('tf').addEventListener('input', e => { const k = e.target.dataset.tf; if (!k) return; st.tf[k] = e.target.value; upd('Ce que tu dois savoir pour cette tâche'); });
@@ -207,7 +229,7 @@ window.CG = (() => {
     $id('c').onclick = () => { const msg = $id('m'); const ok = () => { msg.textContent = 'Copiée !'; setTimeout(() => msg.textContent = '', 2500); };
       const fb = () => { const r = document.createRange(); r.selectNodeContents($id('o')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); msg.textContent = 'Sélectionnée : faites Ctrl+C'; };
       try { navigator.clipboard.writeText(plain).then(ok, fb); } catch (err) { fb(); } };
-    sync(); drawTF(); upd();
+    sync(); drawTF(); upd(); search(); go(0);
   }
   return { mount };
 })();

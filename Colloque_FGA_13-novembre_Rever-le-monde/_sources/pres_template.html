@@ -503,6 +503,18 @@ body.flat .slide:not(.s1) .sheet{margin-inline:auto}
 .capt figcaption{display:flex;gap:8px;align-items:center;font-family:var(--ui);font-size:15px;color:var(--ink);padding-top:6px}
 .capt .chip{font-family:var(--display);font-size:16px;letter-spacing:.04em;background:var(--gold);color:var(--ink);padding:1px 8px;text-transform:uppercase}
 .big-q{font-family:var(--display);font-size:clamp(34px,4.4vw,66px);line-height:1.05;margin:.2em 0;max-width:20ch}
+.feu{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:18px}
+.feu figure{margin:0;display:flex;flex-direction:column;gap:6px;border:3px solid currentColor;padding:12px 16px}
+.feu svg{width:100%;height:auto;max-height:24vh}
+.feu b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(32px,3.4vw,52px);text-transform:uppercase;color:var(--gold)}
+.sheet:not(.dark) .feu b{color:var(--mauve)}
+.feu p{font-size:clamp(20px,2vw,30px);line-height:1.25;margin:6px 0}
+.feu small{font-size:clamp(15px,1.3vw,20px)}
+.feu .fl1{transform-origin:150px 122px;animation:fl1 1.2s ease-in-out infinite alternate}
+.feu .fl2{transform-origin:150px 160px;animation:fl2 2.4s ease-in-out infinite alternate}
+@keyframes fl1{to{transform:scale(.82) rotate(-4deg)}}
+@keyframes fl2{to{transform:scale(1.05,1.08)}}
+@media (prefers-reduced-motion:reduce){.feu .fl1,.feu .fl2{animation:none}}
 .duo2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px}
 .duo2>div{border:3px solid currentColor;padding:16px 18px}
 .duo2 b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(32px,3.4vw,52px);text-transform:uppercase;color:var(--gold)}
@@ -638,6 +650,21 @@ __COPILOT_GEN__
 .hub-nav a{flex:0 0 auto;font-family:var(--display);font-size:16px;letter-spacing:.04em;text-transform:uppercase;color:var(--h-paper);text-decoration:none;padding:6px 12px;border:2px solid transparent}
 .hub-nav a:hover,.hub-nav a:focus-visible{border-color:var(--h-gold);color:var(--h-gold);outline:none}
 .hub-sec{padding-block:clamp(28px,5vw,48px) 4px}
+.hub-nav a[aria-current=page]{background:var(--h-gold);color:var(--h-ink);border-color:var(--h-ink)}
+.hub-sec[hidden]{display:none}
+.hub-sec{min-height:60vh}
+.hub-suiv{display:flex;justify-content:flex-end;margin:28px 0 0}
+.hub-ex{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:12px;margin:16px 0 0}
+.hub-ex article{background:var(--h-sheet);border:3px solid var(--h-ink);box-shadow:5px 5px 0 var(--h-gold);padding:14px}
+.hub-ex h3{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.1;margin:0 0 6px}
+.hub-ex p{margin:4px 0;font-size:15.5px}
+.hub-ex b{color:var(--h-mauve)}
+.hub-pdf{list-style:none;counter-reset:pd;margin:0 0 16px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(210px,100%),1fr));gap:10px}
+.hub-pdf li{counter-increment:pd;background:var(--h-sheet);border:3px solid var(--h-ink);padding:12px;font-size:15.5px;line-height:1.35}
+.hub-pdf li::before{content:counter(pd);display:block;font-family:var(--display);font-size:34px;line-height:1;color:var(--h-mauve)}
+.hub-pdf li b{display:block;font-family:var(--display);font-weight:400;font-size:19px;margin-bottom:2px}
+.hub-mx td.exf{background:#FFF6D6}
+
 .hub-sec>.hub-wrap>h2{font-family:var(--display);font-weight:400;font-size:clamp(32px,5.4vw,52px);line-height:1;margin:0 0 6px;text-wrap:balance}
 .hub-sec>.hub-wrap>h2 .tag{display:inline-block;background:var(--h-gold);border:3px solid var(--h-ink);padding:0 8px;margin-right:8px;transform:rotate(-2deg)}
 .hub-intro{max-width:62ch;color:var(--h-muted);margin:0 0 18px}
@@ -730,24 +757,31 @@ __COPILOT_GEN__
     <p class="hub-kick">Colloque régional FGA · 13 novembre 2026 · CFGA De Jonquière</p>
     <h1>Rêver le monde de <em>demain</em></h1>
     <p class="hub-sub">de l’idéation à l’action</p>
-    <p class="hub-lede">Engagement citoyen et autodétermination en FGA. Tout ce qu’il vous faut pour l’atelier, et pour lundi : votre invite Copilot, les documents à télécharger et les six questions avant votre premier pas.</p>
+    <p class="hub-lede">Engagement citoyen et autodétermination en FGA. Tout ce qu’il vous faut pour l’atelier, et pour lundi : votre invite Copilot, les documents à télécharger et les six questions avant de vous lancer.</p>
     <ul class="hub-times" aria-label="Horaire des deux séances"><li>10 h 20 – 11 h 50</li><li>13 h 30 – 15 h</li></ul>
     <div class="hub-logos"><img src="__LOGO_CFGA__" alt="CFGA De La Jonquière"><img src="__LOGO_CSI__" alt="Centre de solidarité internationale du Saguenay–Lac-Saint-Jean"></div>
   </div>
   <figure class="hub-photo"><img src="__IMG_RISO_MUR__" alt="Des jeunes adultes collent des post-it sur une carte du monde"></figure>
 </div></header>
 
-<nav class="hub-nav" aria-label="Sections"><div class="hub-wrap"><a href="#ressources" data-to="h-copilot">Mon invite Copilot</a><a href="#ressources" data-to="h-liens">Le programme de mon sigle</a><a href="#ressources" data-to="h-commun">Ce qui est commun</a><a href="#ressources" data-to="h-invites">7 invites prêtes</a><a href="#ressources" data-to="h-projets">Ils l’ont fait</a><a href="#ressources" data-to="h-docs">Les documents</a><a href="#ressources" data-to="h-pas">Mon premier pas</a></div></nav>
+<nav class="hub-nav" aria-label="Sections"><div class="hub-wrap"><a href="#ressources" data-to="h-copilot">Mon invite Copilot</a><a href="#ressources" data-to="h-liens">Le programme de mon sigle</a><a href="#ressources" data-to="h-commun">Ce qui est commun</a><a href="#ressources" data-to="h-invites">7 invites prêtes</a><a href="#ressources" data-to="h-projets">Ils l’ont fait</a><a href="#ressources" data-to="h-docs">Les documents</a><a href="#ressources" data-to="h-pas">Mon élan</a></div></nav>
 
 <section class="hub-sec" id="h-copilot"><div class="hub-wrap">
   <h2><span class="tag">IA</span>Mon invite Copilot</h2>
-  <p class="hub-intro">Sept étapes, de haut en bas. L’invite se construit à droite, prête à copier. Le secret : un vrai contexte et le vrai programme de votre sigle.</p>
+  <p class="hub-intro">Six étapes, une à la fois. L’invite se construit à côté, prête à copier. Le secret : un vrai contexte et le vrai programme de votre sigle.</p>
   <div id="cgHub"></div>
 </div></section>
 
 <section class="hub-sec" id="h-liens"><div class="hub-wrap">
   <h2><span class="tag">MEQ</span>Le programme de mon sigle</h2>
-  <p class="hub-intro">Tout est sur la page officielle de votre matière : <b>le programme d’études</b> (compétences, savoirs, situations de vie) et <b>la définition du domaine d’évaluation (DDE) de chaque sigle</b> (ce qui est évalué). Téléchargez les deux PDF et joignez-les à Copilot avec le trombone.</p>
+  <p class="hub-intro"><b>Bonne nouvelle :</b> pour la plupart des sigles, l’invite Copilot ajoute déjà l’extrait officiel. Vous n’avez rien à télécharger. Le PDF sert seulement quand l’étiquette du sigle dit « Contenu à joindre », ou si vous voulez que Copilot lise le programme en entier.</p>
+  <p class="hub-intro" style="margin-bottom:8px"><b>Exemple :</b> Julie enseigne le français en individualisé. Son élève est en FRA-2101.</p>
+  <ol class="hub-pdf">
+    <li><b>La page de la matière</b>Julie ouvre « Français, langue d’enseignement » ci-dessous.</li>
+    <li><b>Deux PDF</b>Elle télécharge le programme d’études du français et la DDE du sigle FRA-2101.</li>
+    <li><b>Le trombone</b>Dans Copilot, elle touche le trombone (ou le +), puis « Charger » : elle choisit les deux PDF.</li>
+    <li><b>L’invite</b>Elle colle son invite et l’envoie. Copilot lit les PDF avant de répondre.</li>
+  </ol>
   <ul class="hub-links">
     <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes" target="_blank" rel="noopener"><b>Tous les programmes de la FGA</b> · la page d’accueil du ministère ↗</a></li>
     <li><a href="https://www.quebec.ca/education/formation-professionnelle-education-adultes/formation-generale-adultes/programmes-formation-generale-adultes/francais-langue-enseignement" target="_blank" rel="noopener"><b>Français, langue d’enseignement</b> · programmes et DDE ↗</a></li>
@@ -771,13 +805,18 @@ __COPILOT_GEN__
   <h2><span class="tag">∩</span>Ce qui est commun à toutes les matières</h2>
   <p class="hub-intro">Pour planifier une séquence, décloisonner, co-enseigner ou relier un sigle à un projet d’engagement : tous les programmes de la FGA partagent la même architecture. C’est là qu’est l’universel, pas dans les savoirs.</p>
   <div class="hub-tw"><table class="hub-mx">
-    <thead><tr><th></th><th>Dans les programmes FGA</th><th>CUA</th><th>Pratiques probantes</th><th>Fonctions exécutives</th></tr></thead>
+    <thead><tr><th></th><th>Dans les programmes FGA</th><th>Exemple en FGA</th><th>CUA</th><th>Pratiques probantes</th><th>Fonctions exécutives</th></tr></thead>
     <tbody>
-    <tr><th>Ancrage</th><td>Une classe ou une famille de situations de vie par cours</td><td><b>Engagement</b> : intérêts, pertinence, choix du contexte</td><td>Contexte authentique</td><td>Motivation, mise en action</td></tr>
-    <tr><th>Contenu</th><td>Des savoirs en spirale : repris, puis nouveaux</td><td><b>Représentation</b> : relier aux acquis, plusieurs supports</td><td>Enseignement explicite, tâches graduées</td><td>Mémoire de travail : alléger la charge</td></tr>
-    <tr><th>Action</th><td>Des compétences polyvalentes (FBC) ou transversales (FBD) : chaque cours en retient certaines</td><td><b>Action et expression</b> : plusieurs façons de démontrer</td><td>Tâches courtes, rétroaction immédiate</td><td>Contrôle inhibiteur, flexibilité</td></tr>
-    <tr><th>Évaluation</th><td>Les critères de la DDE de chaque sigle</td><td>Des options de démonstration</td><td>Monitorage, enseignement ciblé</td><td>Autorégulation, métacognition</td></tr>
+    <tr><th>Ancrage</th><td>Une classe ou une famille de situations de vie par cours</td><td class="exf">Tout le groupe part du même enjeu : « Le centre est vide le vendredi après-midi. »</td><td><b>Engagement</b> : intérêts, pertinence, choix du contexte</td><td>Contexte authentique</td><td>Motivation, mise en action</td></tr>
+    <tr><th>Contenu</th><td>Des savoirs en spirale : repris, puis nouveaux</td><td class="exf">En maths, les pourcentages déjà vus servent au sondage. Le nouveau : le diagramme circulaire.</td><td><b>Représentation</b> : relier aux acquis, plusieurs supports</td><td>Enseignement explicite, tâches graduées</td><td>Mémoire de travail : alléger la charge</td></tr>
+    <tr><th>Action</th><td>Des compétences polyvalentes (FBC) ou transversales (FBD) : chaque cours en retient certaines</td><td class="exf">Communiquer : chacun présente son résultat à la direction, à l’oral ou en affiche. Au choix.</td><td><b>Action et expression</b> : plusieurs façons de démontrer</td><td>Tâches courtes, rétroaction immédiate</td><td>Contrôle inhibiteur, flexibilité</td></tr>
+    <tr><th>Évaluation</th><td>Les critères de la DDE de chaque sigle</td><td class="exf">La tâche est commune, mais chacun est évalué sur les critères de la DDE de son propre sigle.</td><td>Des options de démonstration</td><td>Monitorage, enseignement ciblé</td><td>Autorégulation, métacognition</td></tr>
     </tbody></table></div>
+  <div class="hub-ex">
+    <article><h3>Un projet, trois sigles</h3><p>Projet : <b>un frigo partagé au centre</b>.</p><p>Tous ensemble : planifier, coopérer, agir avec méthode.</p><p>Français : la lettre à la direction.<br>Maths : le budget et le sondage.<br>Anglais : l’affiche bilingue.</p></article>
+    <article><h3>En individualisé</h3><p>12 élèves, 9 sigles.</p><p>Le commun : <b>une stratégie</b>, modelée une fois pour tous. Ex. : « Je lis la consigne, je souligne le verbe, je dis ce que je dois produire. »</p><p>Puis chacun l’applique dans son propre sigle.</p></article>
+    <article><h3>Un co-enseignement</h3><p>IS et orientation : <b>« Mes forces au travail »</b>.</p><p>L’enseignante fait lire et écrire. La conseillère fait explorer les métiers. Une seule trace : le top 3 des forces de l’élève.</p></article>
+  </div>
   <div class="hub-routine"><b>Une routine pour toutes les matières</b><ol><li>Une situation authentique, choisie (le projet d’engagement la fournit)</li><li>Le modelage explicite</li><li>La pratique guidée, graduée</li><li>La rétroaction sur les critères de la DDE</li><li>Le transfert dans un nouveau contexte</li></ol></div>
   <p class="hub-intro" style="margin-top:12px"><b>Formation de base commune, 6 compétences polyvalentes :</b> communiquer, coopérer, agir avec méthode, raisonner avec logique, exercer sa créativité, exercer son sens critique et éthique.<br><b>Formation de base diversifiée, 9 compétences transversales :</b> exploiter l’information, résoudre des problèmes, exercer son jugement critique, mettre en œuvre sa pensée créatrice, se donner des méthodes de travail efficaces, exploiter les TIC, actualiser son potentiel, coopérer, communiquer de façon appropriée.</p>
   <ul class="hub-links">
@@ -809,23 +848,21 @@ __COPILOT_GEN__
 </div></section>
 
 <section class="hub-sec" id="h-pas"><div class="hub-wrap">
-  <h2><span class="tag">1</span>Mon premier pas</h2>
-  <p class="hub-intro">Un premier pas, c’est une petite innovation. Le cadre d’innovation du CFGA repose sur quatre fondations.</p>
+  <h2><span class="tag">→</span>Mon élan</h2>
+  <p class="hub-intro">Mon élan, c’est une petite innovation. Le cadre d’innovation du CFGA repose sur quatre fondations.</p>
   <ul class="hub-fond"><li><b>Durabilité</b>Penser le changement sur la durée.</li><li><b>Le droit d’essayer</b>Se tromper sans se sentir évalué.</li><li class="hot"><b>Du temps protégé</b>Réservé à l’horaire, et tenu.</li><li><b>La réussite des adultes</b>Ce qui tranche quand on hésite.</li></ul>
   <div class="hub-card">
     <p style="margin:0 0 10px"><b>Avant de vous lancer, six questions.</b> Un « non » ne bloque rien : il signale qu’il reste à réfléchir.</p>
     <ol class="hub-q" id="hgQ"></ol>
     <p class="hub-big">La question qui tranche : « Qui l’a vue <mark>assez de fois pour la refaire sans moi</mark> ? »</p>
   </div>
-  <p class="hub-intro" style="margin-top:18px">Dans six semaines, on vous écrit : avez-vous fait votre premier pas ?</p>
 </div></section>
 
 <footer class="hub-foot"><div class="hub-wrap">
   <div class="hub-logos"><img src="__LOGO_CFGA__" alt="CFGA De La Jonquière"><img src="__LOGO_CSI__" alt="Centre de solidarité internationale du Saguenay–Lac-Saint-Jean"></div>
   <p><b>Isabelle Pedneault</b>, conseillère pédagogique, CFGA De Jonquière · <b>Francis Laroche</b>, chargé de projet en éducation citoyenne mondiale, Centre de solidarité internationale du Saguenay–Lac-Saint-Jean.</p>
   <p>Sources : Deci et Ryan (2000) ; Wehmeyer (1999) ; Fredricks, Blumenfeld et Paris (2004) ; Gaudreau, Duchaine et Bernier, grille EN.1.1, « J’ai MON plan! », Université Laval ; cadre d’innovation des COP IA du CSSDLJ, Giroux, Munger et Pedneault (2026).</p>
-  <p>Les mêmes fichiers sont aussi dans le <a href="https://drive.google.com/drive/folders/17yo-Dyv4aUrBiIHa_YFIUx204Y0rYqA9" target="_blank" rel="noopener">dossier partagé de l’atelier</a>.</p>
-</div></footer>
+  </div></footer>
 
 <script>
 (() => {
@@ -849,7 +886,7 @@ __COPILOT_GEN__
   P.forEach(([t, body], i) => { const d = document.createElement('details'); if (!i) d.open = true; d.innerHTML = '<summary><i>' + (i + 1) + '</i>' + esc(t) + '</summary><div class="body"><pre></pre><div class="hub-row"><button type="button" class="hub-btn sm">Copier</button><span class="hub-msg"></span></div></div>'; d.querySelector('pre').textContent = body; d.querySelector('button').onclick = () => copy(body, d.querySelector('.hub-msg'), d.querySelector('pre')); $('#hgPrompts').appendChild(d); });
 
   const D = [
-    ['02_Cahier-du-participant', 'Pendant l’atelier', 'Le cahier du participant', 'Il suit l’atelier phase par phase, avec des espaces pour noter, la fiche « Mon premier pas » et les six questions.', 1],
+    ['02_Cahier-du-participant', 'Pendant l’atelier', 'Le cahier du participant', 'Il suit l’atelier phase par phase, avec des espaces pour noter, la page « Mon élan » et les six questions.', 1],
     ['03_Aide-memoire-Copilot', 'Pour lundi', 'Aide-mémoire Copilot', 'La formule, les 5 invites, le cadre d’innovation et les balises.'],
     ['04_Annexe_Objectivation', 'Annexe', 'L’objectivation', 'La maison à trois étages, une banque de questions, 7 formats et un carnet de bord.'],
     ['07_Annexe_Jai-mon-plan', 'Annexe', 'J’ai mon plan', 'Les capacités et la banque de moyens de « J’ai MON plan! », à cocher.'],
@@ -859,13 +896,21 @@ __COPILOT_GEN__
     ['10b_EN.1.1_Grille-reflexive_Jai-MON-plan', 'Outil officiel', 'La grille réflexive EN.1.1', 'La grille complète de « J’ai MON plan! », Université Laval.', 0, 1],
     ['11_Extraits-programmes-MEQ_pour-Copilot', 'Pour Copilot', 'Extraits de programmes', 'Les pages officielles de 9 cours (PPS, mathématique, français, anglais) à joindre à Copilot avec le trombone.', 1, 1]];
   const BX = [['objectivation', 'L’outil d’objectivation', 'Ce que c’est, sur quoi objectiver, la maison à trois étages et les questions avant, pendant, après.'], ['engagement', 'L’engagement, un écosystème vivant', 'Les 4 besoins, les 9 gestes qui les nourrissent et d’où ça vient.'], ['classe-collabo-reflexive', 'La classe collabo-réflexive', 'Les principes, les surfaces verticales, les îlots.']];
-  D.forEach(([f, k, t, p, feat, pdfOnly]) => { const a = document.createElement('article'); a.className = 'hub-doc' + (feat ? ' feat' : ''); a.innerHTML = '<span class="k">' + k + '</span><h3>' + esc(t) + '</h3><p>' + esc(p) + '</p><div class="hub-row"><a class="hub-btn sm" target="_blank" rel="noopener" href="fichiers/' + f + '.pdf">PDF</a>' + (pdfOnly ? '' : '<a class="hub-btn sm alt" href="https://github.com/isabellepedneault111-ai/Chat-/raw/claude/friendly-hawking-lwif5a/Colloque_FGA_13-novembre_Rever-le-monde/' + f + '.docx" title="Télécharge la version Word la plus récente, à adapter à vos groupes">Word ↓</a>') + '</div>'; $('#hgDocs').appendChild(a); });
+  D.forEach(([f, k, t, p, feat, pdfOnly]) => { const a = document.createElement('article'); a.className = 'hub-doc' + (feat ? ' feat' : ''); a.innerHTML = '<span class="k">' + k + '</span><h3>' + esc(t) + '</h3><p>' + esc(p) + '</p><div class="hub-row"><a class="hub-btn sm" target="_blank" rel="noopener" href="fichiers/' + f + '.pdf">PDF</a>' + (pdfOnly ? '' : '<a class="hub-btn sm alt" download href="https://rever-le-monde.netlify.app/fichiers/' + f + '.docx" title="Télécharge la version Word la plus récente, à adapter à vos groupes">Word ↓</a>') + '</div>'; $('#hgDocs').appendChild(a); });
   BX.forEach(([f, t, p]) => { const a = document.createElement('article'); a.className = 'hub-doc'; a.innerHTML = '<span class="k">La Boussole d’Isabelle</span><h3>' + esc(t) + '</h3><p>' + esc(p) + '</p><div class="hub-row"><a class="hub-btn sm" target="_blank" rel="noopener" href="https://cfga.netlify.app/docs/' + f + '.pdf">PDF ↗</a></div>'; $('#hgDocs').appendChild(a); });
 
   const Q = [['Pertinence pédagogique', 'Mon projet a-t-il une pertinence pédagogique ?'], ['Éthique', 'Ai-je réfléchi aux principes éthiques en jeu ?'], ['Cadre légal', 'Mon initiative respecte-t-elle le cadre légal ?'], ['Soutien', 'Ai-je accès au soutien nécessaire pour la mettre en œuvre ?'], ['Validation par les pairs', 'Ai-je consulté mes pairs pour enrichir mon idée et en voir les angles morts ?'], ['Pérennité', 'Peut-elle être maintenue dans le temps et adaptée ailleurs ?']];
   Q.forEach(([k, q], i) => { if (i === 0 || i === 3) { const g = document.createElement('li'); g.className = 'grp'; g.style.counterIncrement = 'none'; g.textContent = i ? 'Les trois ajouts des COP IA' : 'Le cadre ministériel'; $('#hgQ').appendChild(g); } const li = document.createElement('li'); li.innerHTML = '<label><input type="checkbox" id="hgq' + i + '"><span><b>' + k + '</b><span>' + q + '</span></span></label>'; $('#hgQ').appendChild(li); });
 
-  document.querySelectorAll('.hub-nav a').forEach(a => a.addEventListener('click', e => { e.preventDefault(); const t = document.getElementById(a.dataset.to); t && t.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }));
+  const tabs = [...document.querySelectorAll('.hub-nav a')], secs = [...document.querySelectorAll('.hub-sec')];
+  secs.forEach((s, i) => { const nx = secs[i + 1]; if (!nx) return; const t = tabs.find(a => a.dataset.to === nx.id); if (!t) return; const d = document.createElement('div'); d.className = 'hub-suiv'; d.innerHTML = '<button type="button" class="hub-btn alt">' + esc(t.textContent) + ' →</button>'; d.firstChild.onclick = () => show(nx.id, true); s.querySelector('.hub-wrap').appendChild(d); });
+  function show(id, scroll) { if (!secs.some(s => s.id === id)) id = secs[0].id; secs.forEach(s => s.hidden = s.id !== id); tabs.forEach(a => a.setAttribute('aria-current', a.dataset.to === id ? 'page' : 'false'));
+    const at = tabs.find(a => a.dataset.to === id); if (at) at.scrollIntoView({ block: 'nearest', inline: 'center' });
+    if (location.hash !== '#ressources') history.replaceState(null, '', '#' + id);
+    if (scroll) { const n = document.querySelector('.hub-nav'), s = document.getElementById(id); window.scrollTo({ top: s.getBoundingClientRect().top + scrollY - n.offsetHeight, behavior: 'auto' }); } }
+  tabs.forEach(a => a.addEventListener('click', e => { e.preventDefault(); show(a.dataset.to, true); }));
+  window.addEventListener('hashchange', () => { const id = location.hash.slice(1); if (secs.some(s => s.id === id)) show(id, true); });
+  show(location.hash.slice(1), false);
 })();
 </script>
 </div>
@@ -948,7 +993,7 @@ __COPILOT_GEN__
     <div><i>Phase 1</i><b>Rêver</b><p>Votre monde idéal, dans trois cercles : école, communauté, nature. Puis ce qui existe déjà.</p></div>
     <div><i>Phase 2</i><b>Cibler</b><p>Du résultat aux actions, en îlot, avec un titre pour votre projet.</p></div>
     <div><i>Phase 3</i><b>Choisir</b><p>La galerie et les votes. Un projet pour le groupe.</p></div>
-    <div><i>Phase 4</i><b>S’engager</b><p>Votre premier pas, de retour dans votre milieu.</p></div>
+    <div><i>Phase 4</i><b>S’engager</b><p>Votre élan, de retour dans votre milieu.</p></div>
   </div>
   <div class="confiance"><div><b>⚠ Avertissement</b><p class="pari1">Notre pari : une démarche inductive, choisie exprès.</p><p>Par moments, le sens pourrait vous échapper. Faites-nous confiance : il apparaîtra à la fin.</p></div><div><b>Des surprises</b><ul class="surp"><li>Plus de cinq approches pédagogiques</li><li>De petits marqueurs, à chaque étape</li><li>Un mouvement qui ouvre, puis resserre</li><li>Une comparaison inattendue</li><li>… et d’autres</li></ul></div></div>
 </section>
@@ -964,7 +1009,7 @@ __COPILOT_GEN__
   </div>
 </section>
 
-<section data-besoins="Sens" class="slide" data-phase="1" data-who="Francis" data-notes="Les 4 intentions, d’après le descriptif : décrire, reconnaître, analyser, esquisser. Une phrase du descriptif : « Et si les enjeux qui dérangent vos élèves devenaient le moteur de leurs apprentissages ? » Promesse : chacun repart avec un premier pas.">
+<section data-besoins="Sens" class="slide" data-phase="1" data-who="Francis" data-notes="Les 4 intentions, d’après le descriptif : décrire, reconnaître, analyser, esquisser. Une phrase du descriptif : « Et si les enjeux qui dérangent vos élèves devenaient le moteur de leurs apprentissages ? » Promesse : chacun repart avec un élan concret.">
   <div class="kick">Rêver · nos intentions</div>
   <h2>À la fin, vous pourrez…</h2>
   <p class="lede">Et si les enjeux qui dérangent vos élèves devenaient le moteur de leurs apprentissages ?</p>
@@ -972,7 +1017,7 @@ __COPILOT_GEN__
     <div><b>décrire</b>les 5 marches de la démarche « de l’idée à l’action », de l’enjeu au projet réalisé.</div>
     <div><b>reconnaître</b>les composantes de l’autodétermination qu’il mobilise.</div>
     <div><b>analyser</b>ce qui facilite ou freine le transfert dans votre milieu.</div>
-    <div><b>esquisser</b>un premier pas réaliste avec vos élèves.</div>
+    <div><b>esquisser</b>une première action réaliste avec vos élèves.</div>
   </div>
 </section>
 
@@ -980,9 +1025,16 @@ __COPILOT_GEN__
   <div class="kick">Rêver · l’engagement, un écosystème vivant</div>
   <h2 id="engH">Vrai ou faux ?</h2>
   <div id="eng1"><p class="big-q">La motivation et l’engagement, c’est la même chose.</p></div>
-  <div id="eng2" hidden><div class="duo2">
-    <div><b>Motivation</b><p>La <mark>force</mark> qui pousse à l’action.</p><small>Ce n’est pas une question de « j’ai envie » ou « ça me tente ».</small></div>
-    <div><b>Engagement</b><p>La <mark>décision</mark> de prendre part activement.</p><small>À une activité, un projet, une mission.</small></div>
+  <div id="eng2" hidden><div class="feu">
+    <figure><svg viewBox="0 0 300 230" aria-hidden="true">
+      <g class="fl1"><path d="M150 40 C120 80 128 110 150 122 C172 110 180 80 150 40Z" fill="#F2C230" stroke="#1E1A22" stroke-width="4"/><path d="M150 72 C138 92 142 108 150 114 C158 108 162 92 150 72Z" fill="#D9541E"/></g>
+      <rect x="143" y="122" width="14" height="100" rx="3" fill="#E8C99A" stroke="#1E1A22" stroke-width="4"/>
+      <ellipse cx="150" cy="128" rx="13" ry="15" fill="#B3261E" stroke="#1E1A22" stroke-width="4"/>
+    </svg><figcaption><b>Motivation</b><p>L’<mark>allumette</mark>.<br>Une force qui pousse à l’action.</p><small>Ça s’allume vite. Ça s’éteint vite.</small></figcaption></figure>
+    <figure><svg viewBox="0 0 300 230" aria-hidden="true">
+      <g class="fl2"><path d="M150 18 C96 80 104 140 150 160 C196 140 204 80 150 18Z" fill="#F2C230" stroke="#1E1A22" stroke-width="4"/><path d="M150 70 C126 106 130 138 150 150 C170 138 174 106 150 70Z" fill="#D9541E"/><path d="M118 70 C104 96 110 118 122 126" fill="none" stroke="#1E1A22" stroke-width="4" stroke-linecap="round"/></g>
+      <g stroke="#1E1A22" stroke-width="4"><rect x="40" y="160" width="150" height="22" rx="11" fill="#1F4E8C" transform="rotate(16 115 171)"/><rect x="110" y="160" width="150" height="22" rx="11" fill="#0F766E" transform="rotate(-16 185 171)"/><rect x="40" y="186" width="150" height="22" rx="11" fill="#A33A32" transform="rotate(-7 115 197)"/><rect x="110" y="186" width="150" height="22" rx="11" fill="#C27F2B" transform="rotate(7 185 197)"/></g>
+    </svg><figcaption><b>Engagement</b><p>Le <mark>feu</mark> qu’on décide de nourrir.</p><small>Ses 4 bûches : compétence, autonomie, sens, appartenance.</small></figcaption></figure>
   </div></div>
   <div id="eng3" hidden><div class="quatre">
     <div><b>Compétence</b><p>« En faisant des efforts et des erreurs, j’apprends. »</p></div>
@@ -1154,9 +1206,9 @@ __COPILOT_GEN__
   <div class="dex" id="dpExBox" hidden></div>
 </section>
 
-<section data-mode="res" data-besoins="Autonomie" class="slide" data-phase="4" data-who="Duo" data-notes="Plan de match, phase 4 : engagement individuel, puis retour express en grand groupe. Chacun remplit sa fiche (cahier, section « Mon premier pas »). C’est le premier pas du participant, pas de l’élève. Faire le pont avec le cadre d’innovation du CFGA (COP IA, Giroux, Munger et Pedneault) : la date devient du temps protégé, l’allié valide l’idée, et la question de la pérennité se pose dès le départ. Les 6 questions sont dans le cahier. Ensuite, chaque îlot nomme une action prioritaire en 30 secondes.">
+<section data-mode="res" data-besoins="Autonomie" class="slide" data-phase="4" data-who="Duo" data-notes="Plan de match, phase 4 : engagement individuel, puis retour express en grand groupe. Chacun remplit sa fiche (cahier, section « Mon élan »). C’est l’élan du participant, pas de l’élève. Faire le pont avec le cadre d’innovation du CFGA (COP IA, Giroux, Munger et Pedneault) : la date devient du temps protégé, l’allié valide l’idée, et la question de la pérennité se pose dès le départ. Les 6 questions sont dans le cahier. Ensuite, chaque îlot nomme une action prioritaire en 30 secondes.">
   <div class="kick">S’engager · bilan</div>
-  <h2>Mon premier pas, de retour dans mon milieu</h2>
+  <h2>Mon élan, de retour dans mon milieu</h2>
   <p>Une action (un verbe !), une date, un allié. Par exemple :</p>
   <ul class="exemples">
     <li>Demander lundi à mon groupe : « Qu’est-ce qui vous dérange ? »</li>
@@ -1245,13 +1297,13 @@ __COPILOT_GEN__
   <p>S’arrêter pour regarder le chemin parcouru, c’est <mark>s’autoévaluer</mark> : une composante de l’autodétermination.</p>
 </section>
 
-<section class="slide" data-phase="4" data-who="Isabelle et Francis" data-notes="Remercier. Le code QR mène à la page Ressources : invite Copilot, documents en PDF et en Word, les six questions. Annoncer : « Dans six semaines, on vous écrit : avez-vous fait votre premier pas ? »">
+<section class="slide" data-phase="4" data-who="Isabelle et Francis" data-notes="Remercier. Le code QR mène à la page Ressources : invite Copilot, documents en PDF et en Word, les six questions. Annoncer : « Gardez votre cahier. La dernière page, on la relit dans un an. »">
   <div class="kick">Merci</div>
-  <h2>Dans six semaines, on vous écrit :<br><span class="hl">avez-vous fait votre premier pas ?</span></h2>
+  <h2>Dans un an,<br><span class="hl">qu’est-ce qui sera resté ?</span></h2>
   <div class="row">
     <div class="col"><div class="qr" id="qr"></div><p class="cap">Toutes les ressources de l’atelier</p><p class="url">rever-le-monde.netlify.app</p>
       <div class="logos"><img class="lg-cfga" src="__LOGO_CFGA__" alt="CFGA De Jonquière"><img src="__LOGO_CSI__" alt="Centre de solidarité internationale du Saguenay–Lac-Saint-Jean"></div></div>
-    <div class="col"><p>Un premier pas, c’est petit et concret :</p><ul class="exemples"><li>une question posée à mon groupe</li><li>une tâche transformée par un enjeu</li><li>un 3-2-1 en fin de période</li><li>un projet-pont avec un·e collègue</li></ul></div>
+    <div class="col"><p>Lundi matin, c’est petit et concret :</p><ul class="exemples"><li>une question posée à mon groupe</li><li>une tâche transformée par un enjeu</li><li>un 3-2-1 en fin de période</li><li>un projet-pont avec un·e collègue</li></ul></div>
   </div>
 </section>
 
