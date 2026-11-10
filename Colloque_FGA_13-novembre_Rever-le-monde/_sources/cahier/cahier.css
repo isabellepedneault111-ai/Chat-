@@ -316,3 +316,21 @@ mark{background:var(--gold);color:inherit;padding:0 .08em}
 .sixq{gap:.05in}.sixq div{padding:.04in .1in}.sixq i{width:.32in;height:.32in;font-size:12pt}
 .sixq span{font-size:12pt}.sixq b{font-size:13pt}.sixq em::after{width:.26in;height:.26in}
 .tool:has(.sixq) .obj5{gap:.03in}
+/* v66 miroir des gestes */
+.mir{display:flex;flex-direction:column;gap:.05in;flex:1}
+.mh,.mr{display:grid;grid-template-columns:1.35in 1fr 1fr;gap:.06in}
+.mh span{font-weight:800;font-size:11pt;text-transform:uppercase;letter-spacing:.06em;color:#fff;background:#20375F;padding:.04in .08in;text-align:center}
+.mh span:first-child{background:none}.mh span:last-child{background:#0F766E}
+.mr{flex:1}
+.mr>b{display:flex;align-items:center;background:#E89A2B;color:#fff;font-size:13pt;padding:.04in .1in;line-height:1.1}
+.mr>div{border:2px solid #20375F;padding:.04in .1in;display:flex;flex-direction:column;justify-content:center}
+.mr>div.me2{border-color:#0F766E;background:#EEF6F4}
+.mr p{font-size:11.5pt;line-height:1.2}
+.mr q{font-family:Caveat,cursive;font-weight:600;font-size:15pt;line-height:1.05;color:var(--mauve)}
+.mr q::before{content:"« "}.mr q::after{content:" »"}
+.two{font-size:12.5pt;line-height:1.35}
+.mir{gap:.035in}.mh,.mr{grid-template-columns:1.2in 1fr 1fr;gap:.05in}
+.mr p{font-size:11pt;line-height:1.15}.mr q{font-size:13.5pt;line-height:1}.mr>div{padding:.03in .09in}
+.mh span{font-size:10pt;padding:.03in .06in}
+.outils li{font-size:11.5pt}
+.site-big{font-size:19pt;padding:.03in .12in}.outils li{padding:.01in 0}

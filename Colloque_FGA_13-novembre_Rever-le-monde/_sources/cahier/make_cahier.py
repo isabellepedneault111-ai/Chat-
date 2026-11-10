@@ -191,7 +191,7 @@ page(f'''
 <div class="aide">
   <p><b>Besoin d’idées ?</b> Mon invite Copilot, sur <b>rever-le-monde.netlify.app</b>.<br>Copilot propose. Vous choisissez.</p>
 </div>
-{renvoi('<b>Les quatre besoins</b>, page 19 · <b>Se fixer des objectifs</b>, sur le site.')}
+{renvoi('<b>L’engagement</b>, page 18 · <b>Formuler des objectifs SMART</b>, sur le site.')}
 ''', verbe=1)
 
 # --- 9 · 07 projet d'îlot ---------------------------------------------------
@@ -311,8 +311,8 @@ page(f'''
 ''', verbe=3)
 
 # --- 17 · pour aller plus loin : la liste des outils ----------------------------
-DANS = [('L’engagement', 'motivation ≠ engagement, les 4 besoins', '18'), ('Les quatre besoins', 'et les 9 gestes qui les nourrissent', '19'), ('L’objectivation', 'la maison à trois étages', '20'), ('Les questions avant, pendant, après', 'à piger, pas à poser toutes', '21-22'), ('Innover au CFGA', 'le cadre et les six questions', '23-24')]
-SUR = [('Mon invite Copilot', 'étape par étape, avec l’extrait officiel de votre sigle'), ('Se fixer des objectifs', 'les objectifs SMART, avec des exemples'), ('J’ai MON plan! · version FGA', 'mes forces, la banque de moyens (« je le garde en tête »), le suivi de mes moyens ; avec son tuteur'), ('L’aide-mémoire Copilot', 'la formule et 7 invites prêtes'), ('La fiche élève', 'De l’idée à l’action, à photocopier'), ('Mes interventions universelles', 'une autoévaluation et la grille EN.1.1'), ('Les extraits de programmes', 'les pages officielles, à joindre à Copilot')]
+DANS = [('L’engagement', 'motivation ≠ engagement, les 4 besoins, la rétroaction', '18'), ('Les neuf gestes, et leur miroir', 'ce que je fais, ce que je dis, et le geste de l’élève', '19'), ('L’objectivation', 'la maison à trois étages', '20'), ('Les questions avant, pendant, après', 'à piger, pas à poser toutes', '21-22'), ('Innover au CFGA', 'le cadre et les six questions', '23-24')]
+SUR = [('Mon invite Copilot', 'étape par étape, avec l’extrait officiel de votre sigle'), ('Formuler des objectifs SMART', 'la fiche complète, et « Se fixer des objectifs »'), ('J’ai MON plan! · version FGA', 'mes forces, la banque de moyens (« je le garde en tête »), le suivi de mes moyens ; avec son tuteur'), ('L’aide-mémoire Copilot', 'la formule et 7 invites prêtes'), ('La fiche élève', 'De l’idée à l’action, à photocopier'), ('Mes interventions universelles', 'une autoévaluation, la grille EN.1.1'), ('Les extraits de programmes', 'les pages officielles, à joindre à Copilot')]
 page(f'''
 <header class="sec"><h2>Pour aller plus loin</h2></header>
 <p class="lead">Des outils pour un coup de pouce, ou pour aller plus loin.</p>
@@ -338,21 +338,25 @@ outil('Un moteur invisible qui fait grandir', 'L’engagement', 'Un écosystème
 <div class="me"><div style="background:#8FA0B8"><b>Motivation</b>La force qui pousse à l’action : valeurs, objectifs, désirs.<br>Ce n’est pas une question de « j’ai envie » ou « ça me tente ».</div><div style="background:#20375F"><b>Engagement</b>La décision de prendre part activement à une activité, un projet, une mission.<br>C’est un choix, pas une humeur.</div></div>
 <p class="band" style="background:#E89A2B">Quatre besoins à nourrir</p>
 <div class="b4t">{''.join(f'<div style="background:{c}"><b>{n}</b><ul>{"".join(f"<li>{x}</li>" for x in xs)}</ul></div>' for n, c, xs in B4)}</div>
+<p class="band" style="background:#20375F">Une rétroaction de qualité</p>
+<div class="r4"><div><b>Précise</b>on sait quoi regarder</div><div><b>Sur le processus</b>pas sur la personne</div><div><b>La prochaine étape</b>pas seulement l’erreur</div><div><b>Des critères connus</b>établis d’avance</div></div>
 <p class="band" style="background:#7A9A3A">Pourquoi ça compte</p>
 <ul class="two"><li>Il donne une direction à notre énergie.</li><li>Il transforme l’intention en action.</li><li>Il nourrit notre bien-être.</li><li>Il favorise le dépassement de soi.</li><li>Il permet de contribuer à plus grand que soi.</li><li>Il crée une spirale positive.</li><li>Persévérer malgré les obstacles.</li><li>Créer des liens significatifs.</li><li>Ressentir de la fierté.</li><li>Contribuer au bien commun.</li></ul>
 ''', CR_ENG)
-B4D = [('Compétence', '#1F4E8C', '« En faisant des efforts et des erreurs, j’apprends et je deviens meilleur. »', ['Défi optimal', 'Mentalité de croissance', 'Rétroaction de qualité', 'Progression visible']),
-       ('Autonomie', '#0F766E', '« Je fais des choix en accord avec mes valeurs et mes intérêts. »', ['Choix', 'Voix et participation', 'Contrôle sur la tâche', 'Utiliser sa créativité']),
-       ('Sens', '#A33A32', '« Je comprends pourquoi c’est important pour moi. »', ['Utilité', 'Pertinence', 'But personnel', 'Transfert']),
-       ('Appartenance', '#C27F2B', '« Je compte pour quelqu’un ici. »', ['Relations positives', 'Prendre des nouvelles', 'Temps de qualité', 'Climat sécurisant'])]
-G9 = [('Questionner', 'susciter la curiosité'), ('Écouter', 'comprendre'), ('Faire réfléchir', 'activer la pensée'), ('Rétroagir', 'faire progresser'), ('Coopérer', 'apprendre ensemble'), ('Donner un défi', 'ni trop facile, ni trop difficile'), ('Raconter', 'donner du sens'), ('Différencier', 'soutenir chacun'), ('Laisser choisir', 'offrir des options')]
-outil('Ce qu’il faut nourrir, et comment', 'Les quatre besoins', 'Et les neuf gestes pédagogiques qui les nourrissent', f'''
-<div class="b4d">{''.join(f'<div style="--b:{c}"><b>{n}</b><q>{q}</q><ul>{"".join(f"<li>{x}</li>" for x in xs)}</ul></div>' for n, c, q, xs in B4D)}</div>
-<p class="band" style="background:#E89A2B">Une rétroaction de qualité</p>
-<div class="r4"><div><b>Précise</b>on sait quoi regarder</div><div><b>Sur le processus</b>pas sur la personne</div><div><b>La prochaine étape</b>pas seulement l’erreur</div><div><b>Des critères connus</b>établis d’avance</div></div>
-<p class="band" style="background:#7A9A3A">Les neuf gestes qui nourrissent</p>
-<div class="g9">{''.join(f'<div><b>{a}</b>{b}</div>' for a, b in G9)}</div>
-''', CR_ENG)
+GESTES = [('Questionner', 'Je pose une question avant d’expliquer.', 'Qu’est-ce que tu remarques ?', 'Je me pose une question avant de commencer.', 'Qu’est-ce qu’on me demande, au juste ?'),
+    ('Écouter', 'Je laisse finir, puis je reformule.', 'Si je comprends bien, tu…', 'J’écoute la consigne jusqu’au bout.', 'Je la redis dans mes mots.'),
+    ('Faire réfléchir', 'J’attends avant de donner la réponse.', 'Comment tu le sais ?', 'Je vérifie mon raisonnement.', 'Comment je sais que c’est juste ?'),
+    ('Rétroagir', 'Je nomme ce qui marche, puis la prochaine étape.', 'Ça, c’est réussi. Maintenant…', 'Je regarde mon erreur comme une donnée.', 'Qu’est-ce que je change la prochaine fois ?'),
+    ('Coopérer', 'Je jumelle deux élèves sur une tâche.', 'Montre-lui comment tu as fait.', 'J’aide un pair, ou je lui demande.', 'Comment tu as fait, toi ?'),
+    ('Donner un défi', 'Je propose une tâche un cran plus haut.', 'Je pense que tu es capable d’essayer celle-là.', 'Je choisis le bon défi.', 'Pas trop facile, pas trop difficile.'),
+    ('Raconter', 'Je relie la notion à une situation de vie.', 'Ça sert quand tu…', 'Je relie ce que j’apprends à ma vie.', 'À quoi ça me sert, à moi ?'),
+    ('Différencier', 'J’offre un autre chemin, un autre support.', 'Veux-tu essayer avec un exemple ?', 'Je cherche ce qui m’aide à apprendre.', 'J’apprends mieux avec…'),
+    ('Laisser choisir', 'J’offre deux ou trois options.', 'Tu commences par laquelle ?', 'Je décide de l’ordre, du moyen.', 'Je commence par…')]
+outil('Qui tient la manette ?', 'Les neuf gestes, et leur miroir', 'Ce que je fais et ce que je dis, puis le même geste chez l’élève', f'''
+<div class="mir"><div class="mh"><span></span><span>Le geste de l’enseignant·e</span><span>Le miroir : le geste de l’élève</span></div>
+{''.join(f'<div class="mr"><b>{g}</b><div class="me1"><p>{a}</p><q>{p}</q></div><div class="me2"><p>{e}</p><q>{ep}</q></div></div>' for g, a, p, e, ep in GESTES)}</div>
+<p class="tp c">Mon geste de la semaine : je le choisis, je le coche, je le partage.</p>
+''', 'D’après « Qui tient la manette ? » et la Boussole d’Isabelle Pedneault')
 outil('Un temps d’arrêt, pas une perte de temps', 'L’objectivation', 'Regarder l’activité à venir, celle en cours, ou celle déjà faite', '''
 <p class="band" style="background:#20375F">Ce que c’est</p>
 <p class="tp">Un temps d’arrêt pris avec les élèves pour observer comment ils pensent, faire le ménage dans leur tête, prendre conscience des réussites et des difficultés.</p>
