@@ -90,6 +90,7 @@
 .ctx tbody th i{display:inline-block;width:.85em;height:.85em;border:2px solid var(--ink);margin-right:6px;vertical-align:-1px}
 .trio{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}.trio span{font-family:var(--display);font-size:clamp(14px,1.3vw,18px);letter-spacing:.04em;text-transform:uppercase;border:2px solid currentColor;padding:1px 10px}
 .trio span+span::before{content:"→ ";color:var(--gold)}
+.trio.inc-pj span+span::before{content:none}
 .forces{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .fcol{border:3px solid var(--paper);padding:10px 14px}.fcol b{font-family:var(--display);font-weight:400;font-size:clamp(20px,2vw,30px);color:var(--gold);display:block}
 .fcol p{margin:4px 0;font-size:clamp(14px,min(1.3vw,2.3vh),18px)}.fcol ol{margin:6px 0 0;padding-left:1.4em}.fcol li{border-bottom:2px dashed rgba(251,248,239,.5);min-height:1.7em}
@@ -1279,7 +1280,7 @@ window.CG = (() => {
     <div><b>Appartenance</b><p>« Je compte pour quelqu’un ici. »</p></div>
   </div></div>
   <div id="eng4" hidden><ul class="neuf"><li>Questionner</li><li>Écouter</li><li>Faire réfléchir</li><li>Rétroagir</li><li>Coopérer</li><li>Donner un défi</li><li>Raconter</li><li>Différencier</li><li>Laisser choisir</li></ul></div>
-  <div id="eng5" hidden><blockquote class="cit">« Un acte conscient, délibéré, de bravoure et de courage, qui nous permet de nous aligner dans une <mark>trajectoire commune</mark>. Avancer ensemble. »<cite>Centre de solidarité internationale du Saguenay–Lac-Saint-Jean</cite></blockquote></div>
+  <div id="eng5" hidden><blockquote class="cit">« S’engager, c’est <mark>arrêter d’être spectateur</mark> : mettre son art au service d’une cause. C’est l’acte de l’humain libre qui cherche aussi à libérer les autres. »<cite>Centre de solidarité internationale du Saguenay–Lac-Saint-Jean</cite></blockquote></div>
   <button class="btn" id="engBtn" type="button" style="margin-top:18px">Révéler</button>
 </section>
 
@@ -1383,7 +1384,7 @@ window.CG = (() => {
   <div class="qrline" style="margin-top:14px"><div class="qr sm" id="qr2"></div><p>Sur votre ordinateur : la page <b>Ressources</b>, section « Mon invite Copilot ». Le même générateur.<span class="url">rever-le-monde.netlify.app</span></p></div>
 </section>
 
-<section data-besoins="Sens" class="slide" data-phase="2" data-who="Francis" data-notes="Francis : « Ce que vous venez de faire, ce sont les 3 premières marches. » Les projets vécus au CFGA. Toucher une marche pour révéler la composante de l’autodétermination.">
+<section data-besoins="Sens" class="slide" data-phase="2" data-who="Isabelle" data-notes="Francis : « Ce que vous venez de faire, ce sont les 3 premières marches. » Les projets vécus au CFGA. Toucher une marche pour révéler la composante de l’autodétermination.">
   <div class="kick">Cibler · la démarche en vrai</div>
   <h2>De « ça me dérange » à « on l’a fait ! »</h2>
   <div class="marches" id="steps"></div>
@@ -1485,11 +1486,11 @@ window.CG = (() => {
   </div>
 </section>
 
-<section data-mode="exp" data-besoins="Sens,Appartenance" data-wide="1" class="slide" data-phase="4" data-who="Francis, puis Isabelle" data-notes="Décloisonner : la clé de la pratique d’Isabelle. Francis raconte l’histoire vraie de l’Halloween. Puis les pistes innovantes, à lancer comme des défis : « Et si, dans votre centre… ? » Rappeler le sens et l’autodétermination, le thème du colloque. · Détails retirés de l’écran : L’histoire : des élèves étaient bons pour faire des décors. Francis en parle avec l’enseignante d’arts plastiques : à l’Halloween, c’est le comité de vie étudiante qui fait les décors. Et si les élèves y participaient ? Cette année, c’est ce qui s’est passé. L’élève y trouve du sens : c’est ça, l’autodétermination. Les pistes (détaillées en page 14 du cahier) : ateliers par besoin (trois classes au même moment, l’élève va où il en a besoin) ; une heure sur trois pour un projet d’engagement (elle se regagne par trois, par quatre) ; le babillard des forces (les projets y recrutent leurs « experts ») ; un projet, un partenaire (avec le CSI) ; enseigner aux autres (une fois par mois, le haut de la pyramide).">
+<section data-mode="exp" data-besoins="Sens,Appartenance" data-wide="1" class="slide" data-phase="4" data-who="Francis, puis Isabelle" data-notes="Décloisonner : la clé de la pratique d’Isabelle. Francis raconte l’idée en discussion : mélanger les élèves d’arts en PPS avec les élèves qui font les décors de l’école. Puis les pistes innovantes, à lancer comme des défis : « Et si, dans votre centre… ? » Rappeler le sens et l’autodétermination, le thème du colloque. · Détails retirés de l’écran : L’idée : mélanger les élèves d’arts en PPS avec les élèves qui font les décors de l’école (à valider par Francis). L’élève y trouve du sens : c’est ça, l’autodétermination. Les pistes (détaillées en page 14 du cahier) : ateliers par besoin (trois classes au même moment, l’élève va où il en a besoin) ; une heure sur trois pour un projet d’engagement (elle se regagne par trois, par quatre) ; le babillard des forces (les projets y recrutent leurs « experts ») ; un projet, un partenaire (avec le CSI) ; enseigner aux autres (une fois par mois, le haut de la pyramide).">
   <div class="kick">S’engager · décloisonner</div>
   <h2>Ça ne coûte rien, et tout le monde y gagne</h2>
   <div class="decl">
-    <div class="histoire"><b>Une histoire vraie</b><p>Des décors, un comité, une enseignante.</p><p class="hand">L’élève y trouve du sens.</p></div>
+    <div class="histoire"><b>Une idée en discussion</b><p>Les élèves d’arts en PPS + ceux qui font les décors de l’école.</p><p class="hand">Ensemble.</p></div>
     <div><p class="pistes-k">Des pistes à explorer</p><ol class="pistes">
       <li><b>Des ateliers par besoin</b></li>
       <li><b>Une heure sur trois</b></li>
@@ -1503,7 +1504,7 @@ window.CG = (() => {
 <section data-besoins="Sens,Appartenance" class="slide" data-wide="1" data-phase="4" data-who="Francis" data-notes="Francis montre des projets d’incubateurs solidaires vécus ici, au Saguenay, et au Sénégal. Glisser les photos ou la vidéo avant l’atelier. Message : la même démarche, de « ça me dérange » à « on l’a fait ! », ici comme ailleurs dans le monde.">
   <div class="kick">S’engager · ici et ailleurs</div>
   <h2>Les incubateurs solidaires, du Saguenay au Sénégal</h2>
-  <p class="lede">La même démarche, ici comme ailleurs : de « ça me dérange » à « on l’a fait ! ».</p>
+  <p class="trio inc-pj"><span>La forêt des Lions</span><span>Le podcast</span><span>La coopérative agricole</span><span>Le camp hivernal</span><span>Le projet de lecture</span></p>
   <div class="inc">
     <div class="inc-col"><b>Ici, au Saguenay</b><div class="drop slim incz" data-inc="0"><p class="hand">Glissez ici les photos ou la vidéo, ou</p><label class="btn">Choisir<input type="file" accept="image/*,video/*" multiple hidden></label></div><div class="inc-g" data-incg="0"></div></div>
     <div class="inc-col"><b>Au Sénégal</b><div class="drop slim incz" data-inc="1"><p class="hand">Glissez ici les photos ou la vidéo, ou</p><label class="btn">Choisir<input type="file" accept="image/*,video/*" multiple hidden></label></div><div class="inc-g" data-incg="1"></div></div>
