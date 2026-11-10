@@ -72,7 +72,7 @@ const kids = [
   H3('Le plan de match, heure par heure'),
   tbl(['Matin', 'Après-midi', 'Diapo', 'Ce que vivent les participants', 'Pratique', 'Nourrit'], [
     ['10 h 20', '13 h 30', '1–4', 'En entrant, un post-it au mur : ce qui me préoccupe dans mon milieu, dans le cercle école, communauté ou nature. Présentation éclair, puis « Aujourd’hui » : les quatre temps de l’atelier.', 'Méthode inductive', 'Sens'],
-    ['10 h 25', '13 h 35', '5–7', 'Le pari : et si le but ultime, c’était l’engagement ? Les intentions. Vrai ou faux : motivation et engagement.', 'Questionner', 'Sens'],
+    ['10 h 25', '13 h 35', '5–7', 'Le pari : et si le but ultime, c’était l’engagement ? Les intentions. La motivation, brièvement ; puis l’engagement, le cœur.', 'Questionner', 'Sens'],
     ['10 h 30', '13 h 40', '9', '**Pense**, seul : mon monde idéal dans les trois cercles, puis les intersections.', 'Pense, parle, partage', 'Autonomie'],
     ['10 h 37', '13 h 47', '10', '**Parle** en îlot, au plexiglas ; **partage** : chaque îlot nomme ce qu’il a gardé.', 'Classe collabo-réflexive', 'Appartenance'],
     ['10 h 45', '13 h 55', '11', 'L’analyse de contexte : les leviers et les « je remarque que ».', 'Analyse de contexte', 'Sens'],

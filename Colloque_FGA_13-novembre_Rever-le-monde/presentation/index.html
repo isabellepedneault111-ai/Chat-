@@ -511,6 +511,7 @@ body.flat .slide:not(.s1) .sheet{margin-inline:auto}
 .sheet:not(.dark) .feu b{color:var(--mauve)}
 .feu p{font-size:clamp(20px,2vw,30px);line-height:1.25;margin:6px 0}
 .feu small{font-size:clamp(15px,1.3vw,20px)}
+.feu1{grid-template-columns:1fr}.feu1 figure{display:grid;grid-template-columns:minmax(160px,34%) 1fr;align-items:center;gap:20px;border:0;padding:0}.feu1 p{font-size:clamp(24px,2.4vw,36px)!important}.feu1 svg{max-height:30vh}
 .feu .fl1{transform-origin:150px 122px;animation:fl1 1.2s ease-in-out infinite alternate}
 .feu .fl2{transform-origin:150px 160px;animation:fl2 2.4s ease-in-out infinite alternate}
 @keyframes fl1{to{transform:scale(.82) rotate(-4deg)}}
@@ -1268,20 +1269,15 @@ window.CG = (() => {
   </div>
 </section>
 
-<section data-besoins="Sens" class="slide" data-phase="1" data-who="Isabelle, puis Francis" data-notes="D’après l’affiche « L’engagement, un écosystème vivant ». Une idée par étape : 1) vrai ou faux à main levée ; 2) motivation et engagement ; 3) les 4 besoins ; 4) les gestes qui les nourrissent ; 5) Francis : l’engagement citoyen. Enchaîner sur la diapo des 4 besoins (optionnelle).">
+<section data-besoins="Sens" class="slide" data-phase="1" data-who="Isabelle, puis Francis" data-notes="D’après l’affiche « L’engagement, un écosystème vivant ». Une idée par étape : 1) la motivation, brièvement : la force qui pousse à agir ; pas besoin d’avoir hâte ni envie (ex. on cuisine sans aimer cuisiner, parce que la santé compte) ; 2) l’engagement, le cœur : décider de prendre part, un feu qu’on nourrit ; 3) les 4 besoins ; 4) les gestes qui les nourrissent ; 5) Francis : l’engagement citoyen. Enchaîner sur la diapo des 4 besoins (optionnelle).">
   <div class="kick">Rêver · l’engagement, un écosystème vivant</div>
-  <h2 id="engH">Vrai ou faux ?</h2>
-  <div id="eng1"><p class="big-q">La motivation et l’engagement, c’est la même chose.</p></div>
-  <div id="eng2" hidden><div class="feu">
-    <figure><svg viewBox="0 0 300 230" aria-hidden="true">
-      <g class="fl1"><path d="M150 40 C120 80 128 110 150 122 C172 110 180 80 150 40Z" fill="#F2C230" stroke="#1E1A22" stroke-width="4"/><path d="M150 72 C138 92 142 108 150 114 C158 108 162 92 150 72Z" fill="#D9541E"/></g>
-      <rect x="143" y="122" width="14" height="100" rx="3" fill="#E8C99A" stroke="#1E1A22" stroke-width="4"/>
-      <ellipse cx="150" cy="128" rx="13" ry="15" fill="#B3261E" stroke="#1E1A22" stroke-width="4"/>
-    </svg><figcaption><b>Motivation</b><p>L’<mark>allumette</mark>.<br>Une force qui pousse à l’action.</p><small>Ça s’allume vite. Ça s’éteint vite.</small></figcaption></figure>
+  <h2 id="engH">La motivation</h2>
+  <div id="eng1"><p class="big-q">La force qui me pousse à agir.</p><p class="lede">Pas besoin d’avoir hâte. Pas besoin d’avoir envie.</p></div>
+  <div id="eng2" hidden><div class="feu feu1">
     <figure><svg viewBox="0 0 300 230" aria-hidden="true">
       <g class="fl2"><path d="M150 18 C96 80 104 140 150 160 C196 140 204 80 150 18Z" fill="#F2C230" stroke="#1E1A22" stroke-width="4"/><path d="M150 70 C126 106 130 138 150 150 C170 138 174 106 150 70Z" fill="#D9541E"/><path d="M118 70 C104 96 110 118 122 126" fill="none" stroke="#1E1A22" stroke-width="4" stroke-linecap="round"/></g>
       <g stroke="#1E1A22" stroke-width="4"><rect x="40" y="160" width="150" height="22" rx="11" fill="#1F4E8C" transform="rotate(16 115 171)"/><rect x="110" y="160" width="150" height="22" rx="11" fill="#0F766E" transform="rotate(-16 185 171)"/><rect x="40" y="186" width="150" height="22" rx="11" fill="#A33A32" transform="rotate(-7 115 197)"/><rect x="110" y="186" width="150" height="22" rx="11" fill="#C27F2B" transform="rotate(7 185 197)"/></g>
-    </svg><figcaption><b>Engagement</b><p>Le <mark>feu</mark> qu’on décide de nourrir.</p><small>Ses 4 bûches : compétence, autonomie, sens, appartenance.</small></figcaption></figure>
+    </svg><figcaption><p>La <mark>décision</mark> de prendre part, activement.</p><small>Un feu qu’on nourrit. Ses 4 bûches : compétence, autonomie, sens, appartenance.</small></figcaption></figure>
   </div></div>
   <div id="eng3" hidden><div class="quatre">
     <div><b>Compétence</b><p>« En faisant des efforts et des erreurs, j’apprends. »</p></div>
@@ -1291,7 +1287,7 @@ window.CG = (() => {
   </div></div>
   <div id="eng4" hidden><p class="mir-h"><span>L’enseignant·e dit</span><span>→ le miroir : l’élève se dit</span></p><div class="mir9"><div><b>Questionner</b><span>« Qu’est-ce que tu remarques ? »</span><em>« Qu’est-ce qu’on me demande ? »</em></div><div><b>Écouter</b><span>« Si je comprends bien… »</span><em>« Je le redis dans mes mots. »</em></div><div><b>Faire réfléchir</b><span>« Comment tu le sais ? »</span><em>« Comment je sais que c’est juste ? »</em></div><div><b>Rétroagir</b><span>« Ça, c’est réussi. Maintenant… »</span><em>« Qu’est-ce que je change ? »</em></div><div><b>Coopérer</b><span>« Montre-lui comment tu as fait. »</span><em>« Comment tu as fait, toi ? »</em></div><div><b>Donner un défi</b><span>« Essaie celle-là. »</span><em>« Le bon défi pour moi. »</em></div><div><b>Raconter</b><span>« Ça sert quand tu… »</span><em>« À quoi ça me sert ? »</em></div><div><b>Différencier</b><span>« Avec un exemple ? »</span><em>« J’apprends mieux avec… »</em></div><div><b>Laisser choisir</b><span>« Tu commences par laquelle ? »</span><em>« Je commence par… »</em></div></div></div>
   <div id="eng5" hidden><blockquote class="cit">« S’engager, c’est <mark>arrêter d’être spectateur</mark> : mettre son art au service d’une cause. C’est l’acte de l’humain libre qui cherche aussi à libérer les autres. »<cite>Centre de solidarité internationale du Saguenay–Lac-Saint-Jean</cite></blockquote></div>
-  <button class="btn" id="engBtn" type="button" style="margin-top:18px">Révéler</button>
+  <button class="btn" id="engBtn" type="button" style="margin-top:18px">Et l’engagement ? →</button>
 </section>
 
 <section data-besoins="Sens" class="slide" data-phase="1" data-who="Isabelle" data-notes="Optionnel : à couper en cas de retard. La 3D montre les relations : au centre, l’engagement ; compétence, sens et autonomie forment le triangle de la motivation (les trois questions de l’élève) ; l’appartenance est le socle, comme le 2e étage de la maison (« si je me sens bien avec les autres, la porte s’ouvre »). Toucher chaque besoin : la caméra va le voir et ses liens s’allument. Demander : « Lequel de ces besoins est le plus souvent négligé chez vos élèves ? » Annoncer : à chaque étape de l’atelier, un petit marqueur indique le besoin nourri. Gardez l’œil ouvert.">
@@ -1760,7 +1756,7 @@ $$('.idc dd').forEach(dd => { const k = 'id:' + dd.dataset.k; const v = store.ge
   dd.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); dd.blur(); } }); });
 
 // ---------- engagement ----------
-let engStep = 1; const ENG = [null, ['Vrai ou faux ?', 'Révéler'], ['Motivation et engagement : pas pareil', 'Les 4 besoins →'], ['Les 4 besoins de l’engagement', 'Les gestes →'], ['Des gestes qui nourrissent l’engagement', 'L’engagement citoyen →'], ['Et l’engagement citoyen ?', 'Recommencer']];
+let engStep = 1; const ENG = [null, ['La motivation', 'Et l’engagement ? →'], ['L’engagement', 'Les 4 besoins →'], ['Les 4 besoins de l’engagement', 'Les gestes →'], ['Des gestes qui nourrissent l’engagement', 'L’engagement citoyen →'], ['Et l’engagement citoyen ?', 'Recommencer']];
 $('#engBtn').onclick = () => { engStep = engStep % 5 + 1; [1, 2, 3, 4, 5].forEach(k => { $('#eng' + k).hidden = k !== engStep; }); $('#engH').textContent = ENG[engStep][0]; $('#engBtn').textContent = ENG[engStep][1]; };
 
 // ---------- les mots qui reviennent ----------

@@ -119,17 +119,12 @@ page(f'''
 </div>
 {h('02', 'Notre pari', None, 'Sens')}
 <p class="pari-q">Et si le but ultime, c’était l’engagement ?</p>
-<div class="pari2">
-  <div class="pari"><p>On fait le pari que si l’engagement est là, tout le reste en découle :</p><ul><li>la présence,</li><li>la persévérance,</li><li>les apprentissages.</li></ul></div>
-  <div class="pas-ca"><p>S’engager,</p><p>ce n’est pas avoir hâte de.</p><p>Ce n’est pas avoir envie de.</p><p class="hand">C’est décider d’y prendre part.</p></div>
+<div class="pari"><p>On fait le pari que si l’engagement est là, tout le reste en découle :</p><ul><li>la présence,</li><li>la persévérance,</li><li>les apprentissages.</li></ul></div>
+<div class="defs">
+  <p><b>La motivation</b>La force qui me pousse à agir.<br>Pas besoin d’avoir hâte, ni d’avoir envie.</p>
+  <p class="eng"><svg viewBox="30 10 240 210" aria-hidden="true"><path d="M150 18 C96 80 104 140 150 160 C196 140 204 80 150 18Z" fill="#F2C230" stroke="#1E1A22" stroke-width="5"/><path d="M150 70 C126 106 130 138 150 150 C170 138 174 106 150 70Z" fill="#D9541E"/><g stroke="#1E1A22" stroke-width="5"><rect x="40" y="160" width="150" height="22" rx="11" fill="#1F4E8C" transform="rotate(16 115 171)"/><rect x="110" y="160" width="150" height="22" rx="11" fill="#0F766E" transform="rotate(-16 185 171)"/><rect x="40" y="186" width="150" height="22" rx="11" fill="#A33A32" transform="rotate(-7 115 197)"/><rect x="110" y="186" width="150" height="22" rx="11" fill="#C27F2B" transform="rotate(7 185 197)"/></g></svg><span><b>L’engagement</b>Décider de prendre part, activement.<br>Un feu qu’on nourrit : ses 4 bûches, ce sont les 4 besoins.</span></p>
 </div>
-<div class="feu">
-  <figure><svg viewBox="40 10 220 220" aria-hidden="true"><path d="M150 40 C120 80 128 110 150 122 C172 110 180 80 150 40Z" fill="#F2C230" stroke="#1E1A22" stroke-width="4"/><path d="M150 72 C138 92 142 108 150 114 C158 108 162 92 150 72Z" fill="#D9541E"/><rect x="143" y="122" width="14" height="100" rx="3" fill="#E8C99A" stroke="#1E1A22" stroke-width="4"/><ellipse cx="150" cy="128" rx="13" ry="15" fill="#B3261E" stroke="#1E1A22" stroke-width="4"/></svg>
-    <figcaption><b>Motivation</b>L’allumette.<br>Ça s’allume vite.<br>Ça s’éteint vite.</figcaption></figure>
-  <figure><svg viewBox="30 10 240 210" aria-hidden="true"><path d="M150 18 C96 80 104 140 150 160 C196 140 204 80 150 18Z" fill="#F2C230" stroke="#1E1A22" stroke-width="4"/><path d="M150 70 C126 106 130 138 150 150 C170 138 174 106 150 70Z" fill="#D9541E"/><g stroke="#1E1A22" stroke-width="4"><rect x="40" y="160" width="150" height="22" rx="11" fill="#1F4E8C" transform="rotate(16 115 171)"/><rect x="110" y="160" width="150" height="22" rx="11" fill="#0F766E" transform="rotate(-16 185 171)"/><rect x="40" y="186" width="150" height="22" rx="11" fill="#A33A32" transform="rotate(-7 115 197)"/><rect x="110" y="186" width="150" height="22" rx="11" fill="#C27F2B" transform="rotate(7 185 197)"/></g></svg>
-    <figcaption><b>Engagement</b>Le feu qu’on décide de nourrir.<br>Ses 4 bûches : les 4 besoins.</figcaption></figure>
-</div>
-{renvoi('Motivation ≠ engagement : l’outil <b>L’engagement</b>, page 18.')}
+{renvoi('L’engagement et ses 4 besoins : page 18.')}
 ''', verbe=0)
 
 # --- 5 · 03 Mon monde idéal (paysage) --------------------------------------
