@@ -232,7 +232,8 @@ page(f'''
   <div class="pv" style="--c:#F7B5CB;--r:-1.5deg"><b>Je suis capable</b><p class="hand">« Avec mes forces,<br>je peux y contribuer. »</p></div>
 </div>
 {coche(['Je circule d’un projet à l’autre.', 'Je colle mes 3 post-it : un de chaque couleur.', '1 post-it = 1 point.', 'À mi-temps, on change de rôle.'], 'grand')}
-{zone('Ce que je remarque en circulant', '2.9in')}
+{renvoi('« Je suis capable » : <b>Mes forces</b>, la liste de mes capacités (J’ai MON plan!), sur le site.')}
+{zone('Ce que je remarque en circulant', '2.4in')}
 ''', verbe=2)
 
 # --- 11 · 09 forces + 10 projet du groupe -----------------------------------
@@ -266,6 +267,14 @@ page(f'''
 {zone('Mon idée à moi', '1.45in')}
 ''', verbe=3)
 
+# --- 13 · ce qui a été vécu --------------------------------------------------
+vecu = [('Pense, parle, partage', 'le monde idéal, en îlot'), ('Des îlots hétérogènes, formés exprès', 'centres, programmes, fonctions'), ('La classe collabo-réflexive', 'les surfaces verticales'), ('La démarche inductive', 'vivre d’abord, nommer ensuite'), ('L’enseignement explicite', 'résultat ou action'), ('Le droit à la case vide', 'et au « je ne sais pas »'), ('Les objectifs SMART', 'du résultat aux actions'), ('Le choix et le vote', 'la galerie'), ('La rétroaction par les pairs', '« Oui, et… »'), ('Les forces comme leviers', 'je suis capable'), ('Expansion et restriction', 'ouvrir et restreindre'), ('L’IA au service du sens', 'l’invite Copilot'), ('L’objectivation', 'le 3-2-1')]
+page(f'''
+<header class="sec">{tags(None, 'Compétence', 'Sens')}<h2>Ce qui a été vécu dans cet atelier</h2></header>
+<p class="lead">Cochez celles que vous aimeriez essayer avec vos élèves.</p>
+<ul class="coche vecu">{''.join(f'<li><b>{a}</b><small>{b}</small></li>' for a, b in vecu)}</ul>
+''', verbe=3)
+
 # --- 12 · 3-2-1 -------------------------------------------------------------
 page(f'''
 {h('12', 'Objectivation 3-2-1', 'R', 'Compétence')}
@@ -273,14 +282,6 @@ page(f'''
 <div class="o321"><b>3</b>{zone('idées que je retiens', '2.65in')}</div>
 <div class="o321"><b>2</b>{zone('choses que j’essaie', '2.1in')}</div>
 <div class="o321"><b>1</b>{zone('question qui me reste', '1.5in')}</div>
-''', verbe=3)
-
-# --- 13 · ce qui a été vécu --------------------------------------------------
-vecu = [('Pense, parle, partage', 'le monde idéal, en îlot'), ('Des îlots hétérogènes, formés exprès', 'centres, programmes, fonctions'), ('La classe collabo-réflexive', 'les surfaces verticales'), ('La démarche inductive', 'vivre d’abord, nommer ensuite'), ('L’enseignement explicite', 'résultat ou action'), ('Le droit à la case vide', 'et au « je ne sais pas »'), ('Les objectifs SMART', 'du résultat aux actions'), ('Le choix et le vote', 'la galerie'), ('La rétroaction par les pairs', '« Oui, et… »'), ('Les forces comme leviers', 'je suis capable'), ('Expansion et restriction', 'ouvrir et restreindre'), ('L’IA au service du sens', 'l’invite Copilot'), ('L’objectivation', 'le 3-2-1')]
-page(f'''
-<header class="sec">{tags(None, 'Compétence', 'Sens')}<h2>Ce qui a été vécu dans cet atelier</h2></header>
-<p class="lead">Cochez celles que vous aimeriez essayer avec vos élèves.</p>
-<ul class="coche vecu">{''.join(f'<li><b>{a}</b><small>{b}</small></li>' for a, b in vecu)}</ul>
 ''', verbe=3)
 
 # --- 14 · 13 Mon élan (à la fin) -----------------------------------------------

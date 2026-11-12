@@ -13,7 +13,7 @@ def font(p): return 'data:font/ttf;base64,' + base64.b64encode(open(p, 'rb').rea
 I = B + '/img/'
 rep = {
  '__FONT_ANTON__': font(B + '/fonts/Anton-Regular.ttf'), '__FONT_CAVEAT__': font(B + '/fonts/Caveat-SemiBold.ttf'),
- '__IMG_MUR__': uri(I + 'nb_mur.jpg', 1600, 78), '__IMG_COMPOST__': uri(I + 'nb_compost.jpg', 1100, 78),
+ '__IMG_MUR__': uri(I + 'nb_mur.jpg', 1600, 78), '__IMG_IAG__': uri(I + 'iag_crop.png', 500, png=True), '__IMG_MONDE_ELEVES__': uri(I + 'monde_ideal_eleves.jpg', 1254, 84), '__IMG_COMPOST__': uri(I + 'nb_compost.jpg', 1100, 78),
  '__IMG_BULLETIN__': uri(I + 'nb_bulletin.jpg', 1000, 78), '__IMG_MAISON__': uri(I + 'nb_maison.jpg', 900, 78),
  '__IMG_Q1__': uri(I + 'mot_eleve_2017.jpg', 900, 82), '__IMG_Q2__': uri(I + 'mot_parent_hate.jpg', 700, 82),
  '__IMG_Q3__': uri(I + 'mot_parent_forces.jpg', 700, 82), '__IMG_Q4__': uri(I + 'mot_parent_confiance.jpg', 700, 82),

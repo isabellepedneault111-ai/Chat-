@@ -86,7 +86,8 @@ const kids = [
     ['11 h 42', '14 h 52', '21–22', 'Des élèves l’ont vécue : cette semaine au centre, les projets des élèves d’Isabelle, ce qu’ils en disent. Décloisonner : des pistes à explorer.', 'Raconter', 'Sens'],
     ['11 h 44', '14 h 54', '23', 'Francis : les incubateurs solidaires, du Saguenay au Sénégal.', 'Raconter', 'Appartenance'],
     ['11 h 45', '14 h 55', '24–25', 'La pyramide (optionnelle, en discussion), puis le 3-2-1 (sinon dans le cahier).', 'Objectivation', 'Compétence'],
-    ['11 h 46', '14 h 56', '26–27', 'Mon élan, de retour dans mon milieu, puis merci.', 'Objectif SMART', 'Autonomie']
+    ['11 h 46', '14 h 56', '26', 'La boîte à outils : l’objectivation, le cadre d’innovation, l’engagement, les gestes.', 'Outils', 'Compétence'],
+    ['11 h 47', '14 h 57', '27–28', 'Mon élan, de retour dans mon milieu, puis merci.', 'Objectif SMART', 'Autonomie']
   ], [950, 1150, 800, 4000, 1550, 1450], { firstAccent: true }),
   P('Heure approximative du début de chaque diapo : séance du matin de 10 h 20 à 11 h 50, séance de l’après-midi de 13 h 30 à 15 h. Le minuteur d’atelier (touche A) suit ce plan de match et affiche l’heure prévue de la diapo.', { before: 60, run: { italics: true, color: C.grey } }),
   P('Le minutage est serré : c’est un atelier qui fait vivre beaucoup. Les diapos 8 (les 4 besoins) et 25 (la pyramide) sont **optionnelles**.', { before: 80, run: { italics: true, color: C.grey } }),
@@ -100,7 +101,7 @@ const kids = [
   H2('Plan B chrono · 10 minutes de retard'),
   B('**Le minuteur d’atelier (touche A)** compte les 90 minutes et compare au déroulé : en haut à droite, « ✓ » si on est dans les temps, « +4 min ⚠ » si on est en retard. Un clic affiche quoi couper, dans l’ordre, selon le retard. Il se lance à la diapo où on est, se met en pause et survit à un rechargement de la page.'),
   B('**Ordre des coupes :** 1) la diapo 8 (les 4 besoins) ; 2) la diapo 24 (la pyramide) ; 3) raccourcir la diapo 16 (les portes : on renvoie au cahier) ; 4) raccourcir la diapo 7 (garder la motivation en une phrase) ; 5) le 3-2-1 de la diapo 25 se fait dans le cahier ; 6) un seul projet d’incubateur à la diapo 23.'),
-  B('**Ne jamais couper** le coup de théâtre (19), le dévoilement (20) et mon élan (26) : c’est là que l’atelier prend tout son sens.'),
+  B('**Ne jamais couper** le coup de théâtre (19), le dévoilement (20) et mon élan (27) : c’est là que l’atelier prend tout son sens.'),
   B('**Qui anime ?** Un cadre de couleur entoure l’écran : jaune quand Francis anime, mauve quand Isabelle anime, blanc quand c’est le duo ; moitié-moitié quand l’un passe la parole à l’autre.'),
   H2('Plan B technique'),
   B('La présentation fonctionne sans Internet (fichier sur 2 clés USB). Le coup de théâtre de la diapo 19 demande Internet pour Copilot ; sinon, le bouton « Voir un exemple ».'),
@@ -165,13 +166,14 @@ const kids = [
   N('Si Copilot hésite ou si Internet manque : le bouton **« Voir un exemple »** affiche un tableau préparé d’avance (un jardin collectif avec le quartier).', 8),
 
   H2('Phase 4 · Bilan et dévoilement (80–90 min)'),
-  N('**Le dévoilement (diapo 20, 2 min).** Avant de commencer : « Ouvrez votre cahier à la page 13 ; pendant qu’on révèle, cochez les pratiques que vous voulez essayer. » Chacun repart avec son propre menu de pratiques, choisi par lui. Puis : « Vous l’avez vécu sans qu’on le nomme. » On révèle une pratique à la fois en demandant : « Où l’avez-vous vécue ? »', 9),
+  N('**Le dévoilement (diapo 20, 2 min).** Avant de commencer : « Ouvrez votre cahier à la page 12 ; pendant qu’on révèle, cochez les pratiques que vous voulez essayer. » Chacun repart avec son propre menu de pratiques, choisi par lui. Puis : « Vous l’avez vécu sans qu’on le nomme. » On révèle une pratique à la fois en demandant : « Où l’avez-vous vécue ? »', 9),
   N('**Des élèves l’ont vécue (diapo 21), trois onglets.** 1. Francis : la démarche vécue cette semaine au centre par des élèves de PPS (vidéo ou photos). « Est-ce que ça ressemble à ce que vous avez produit ? » Ce qui est bon pour les élèves de PPS est bon pour tout le monde. 2. Isabelle : les projets de ses élèves, chacun parti d’une envie de l’élève. 3. Isabelle : ce qu’ils en disent, de vrais mots de parents et d’élèves ; toucher un mot pour l’agrandir, pointer le besoin nourri.', 9),
   N('**Décloisonner (diapo 22).** Francis raconte l’idée en discussion : mélanger les élèves d’arts en PPS avec ceux qui font les décors de l’école (à valider). Isabelle lance les pistes à explorer comme des défis : « Et si, dans votre centre… ? » (cahier, page 11). Le sens et l’autodétermination, le thème du colloque.', 9),
   N('**Ici et ailleurs (diapo 23).** Francis montre ses projets d’incubateurs solidaires : la forêt des Lions, le podcast, la coopérative agricole, le camp hivernal, le projet de lecture. Glisser les photos ou la vidéo dans la diapo avant l’atelier.', 9),
   N('**La pyramide (diapo 24, optionnelle).** On en parle, sans vote à l’écran : où se situait votre dernière formation ? Et l’atelier d’aujourd’hui ?', 9),
-  N('**3-2-1 (diapo 25).** Cahier, page 12. S’arrêter pour regarder le chemin parcouru, c’est s’autoévaluer.', 9),
-  N('**Mon élan, puis merci (diapos 26 et 27, 3 min).** Une action, une date (mon temps protégé), un allié : cahier, page 14. Pas un devoir : une direction. Le cadre d’innovation et les six questions sont en pleine page, pages 23 et 24. Le code QR mène au site. Annonce : « Gardez votre cahier. La page « Ce qui reste », on la relit dans un an. »', 9),
+  N('**3-2-1 (diapo 25).** Cahier, page 13. S’arrêter pour regarder le chemin parcouru, c’est s’autoévaluer.', 9),
+  N('**La boîte à outils (diapo 26, Isabelle, 1 min).** Pour que ça ne tombe pas dans l’oubli : l’objectivation (la maison à trois étages, les questions avant, pendant, après), le cadre d’innovation et ses six questions, l’engagement, les gestes et leur miroir. Cahier, pages 18 à 24, et le site.', 9),
+  N('**Mon élan, puis merci (diapos 27 et 28, 3 min).** Une action, une date (mon temps protégé), un allié : cahier, page 14. Pas un devoir : une direction. Le cadre d’innovation et les six questions sont en pleine page, pages 23 et 24. Le code QR mène au site. Annonce : « Gardez votre cahier. La page « Ce qui reste », on la relit dans un an. »', 9),
   H3('Les projets réalisés par des élèves d’Isabelle (diapo 21)'),
   P('Tirés de la liste « Projets d’apprentissage de mes élèves ». Chaque projet est parti d’une envie de l’élève.', { run: { size: 19, color: C.grey } }),
   tbl(['Le projet', 'Ce que ça a donné', 'À retenir'], [
@@ -184,7 +186,7 @@ const kids = [
   ], [3500, 3000, 3580], { firstAccent: true }),
 
   H1('05', 'Les pratiques pédagogiques vécues'),
-  P('Ce qu’on dévoile à la diapo 20, et que les participants retrouvent dans leur cahier (page 13).'),
+  P('Ce qu’on dévoile à la diapo 20, et que les participants retrouvent dans leur cahier (page 12).'),
   tbl(['Pratique', 'Où on la fait vivre', 'Nourrit'], [
     ['Pense, parle, partage', 'Le monde idéal (diapos 9 et 10), et un peu partout', 'Appartenance'],
     ['Des îlots hétérogènes, formés exprès', 'La composition des 4 îlots : centres, programmes, matières et fonctions différents, un principe de base de la classe collabo-réflexive', 'Appartenance'],

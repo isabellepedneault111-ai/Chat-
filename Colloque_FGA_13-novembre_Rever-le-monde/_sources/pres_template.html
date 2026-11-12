@@ -146,6 +146,7 @@
 .pj-k{font-family:var(--ui);font-size:clamp(12px,min(1.05vw,1.9vh),15px);font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mauve);margin:12px 0 8px}
 .pjs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1.2vh,14px)}
 .pj{border:3px solid var(--ink);background:var(--paper);padding:clamp(8px,1.3vh,14px);display:flex;flex-direction:column;gap:3px;box-shadow:5px 5px 0 var(--gold)}
+.slide .pj,.slide .pj h3,.slide .pj p{color:var(--ink)}.slide .pj .pj-for{color:var(--mauve)}.dark .pj-k,.sheet.dark .pj-k{color:var(--gold)}
 .pj h3{font-family:var(--display);font-weight:400;font-size:clamp(18px,min(1.8vw,3.1vh),26px);line-height:1.05;margin:0}
 .pj .pj-for{font-family:var(--hand);font-size:clamp(17px,min(1.6vw,2.7vh),23px);color:var(--mauve);line-height:1.05;margin:0}
 .pj p{margin:0;font-size:clamp(13px,min(1.2vw,2.1vh),17px);line-height:1.3}
@@ -527,6 +528,13 @@ body.flat .slide:not(.s1) .sheet{margin-inline:auto}
 .mir9 span{font-size:clamp(13px,1.05vw,16px)}.mir9 em{font-family:var(--script);font-size:clamp(17px,1.4vw,22px);line-height:1.05}
 .mi-t{font-size:clamp(48px,6vw,100px)!important;line-height:1}.mi-s{font-family:var(--display);font-size:clamp(40px,5vw,84px);color:var(--mauve);margin:4px 0 18px;line-height:1}.dark .mi-s,.sheet.dark .mi-s{color:var(--gold)}.mi-l{display:flex;flex-wrap:wrap;gap:10px}.mi-l span{font-family:var(--display);font-size:clamp(18px,1.7vw,28px);text-transform:uppercase;border:2px solid currentColor;padding:4px 14px}
 .slide [data-timer],.slide .seg-act,.slide .timer.seg,.slide .approx{display:none!important}
+.chemin{display:inline-flex;gap:10px;align-items:center;margin:4px 0 10px;border:2px solid currentColor;padding:6px 14px;font-size:clamp(16px,1.4vw,22px)}.chemin b{font-family:var(--display);font-weight:400;text-transform:uppercase;color:var(--mauve)}.chemin span{font-style:italic}
+.piste{all:unset;cursor:pointer;display:block;width:100%}.piste.on b{background:var(--gold);color:var(--ink)}.piste-ex{margin:12px 0 0;border-left:6px solid var(--gold);padding:8px 12px;font-size:clamp(16px,1.45vw,22px);min-height:2.6em;opacity:.75}.piste-ex.on{opacity:1}
+.mod{display:inline-flex;align-items:center;gap:6px;margin-left:12px;padding:2px 10px 2px 6px;border:2px solid currentColor;border-radius:999px;font-family:var(--ui);font-weight:800;font-size:.95em;letter-spacing:.06em;vertical-align:middle}.mod svg{width:1.5em;height:1.5em;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.bao-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:6px}.bao-g div{border:3px solid currentColor;padding:12px 14px;display:flex;flex-direction:column;gap:4px}.bao-g div.star{background:var(--gold);color:var(--ink);border-color:var(--ink)}.bao-g b{font-family:var(--display);font-weight:400;font-size:clamp(20px,1.8vw,30px);text-transform:uppercase;line-height:1.05}.bao-g p{font-size:clamp(14px,1.2vw,19px);margin:0;flex:1}.bao-g span{font-family:var(--ui);font-weight:800;font-size:clamp(11px,.9vw,14px);letter-spacing:.08em;text-transform:uppercase;color:var(--mauve)}.bao-url{font-family:var(--display);font-size:clamp(22px,2vw,32px);color:var(--mauve);margin:14px 0 0}
+.drop .hand{color:var(--ink)!important}
+.slide img.s1-iag{position:absolute!important;top:auto!important;right:2.2%!important;left:auto!important;bottom:calc(var(--navh,46px) + 8px)!important;height:clamp(30px,5vh,46px)!important;width:auto!important;max-width:none!important;z-index:5;background:#fff;padding:4px 7px;box-sizing:border-box;border:2px solid var(--ink)}
+.me-row{display:grid;grid-template-columns:minmax(0,46%) 1fr;gap:20px;align-items:center}.me-fig{margin:0;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--gold);cursor:zoom-in}.me-fig img{display:block;width:100%;height:auto;max-height:52vh;object-fit:contain;background:#1E1A22}.me-fig.big{position:fixed;inset:3vh 10vw;z-index:60;cursor:zoom-out;display:grid;place-items:center;background:#1E1A22}.me-fig.big img{max-height:94vh}.me-q{font-family:var(--display);font-size:clamp(24px,2.4vw,38px);color:var(--gold);line-height:1.1;margin:10px 0}
 .duo2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px}
 .duo2>div{border:3px solid currentColor;padding:16px 18px}
 .duo2 b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(32px,3.4vw,52px);text-transform:uppercase;color:var(--gold)}
@@ -943,6 +951,7 @@ __COPILOT_GEN__
     </div>
     <div class="logos"><img class="lg-cfga" src="__LOGO_CFGA__" alt="CFGA De Jonquière"><img src="__LOGO_CSI__" alt="Centre de solidarité internationale du Saguenay–Lac-Saint-Jean"></div>
   </div>
+  <img class="s1-iag" src="__IMG_IAG__" alt="IAg · Assistance partagée (pictogramme de l’UQAC)">
   <div class="s1-img s1-open">
     <figure class="s1-photo"><img src="__IMG_RISO_MUR__" alt="Des jeunes adultes collent des post-it sur une carte du monde, devant une fenêtre sur la rivière enneigée"></figure>
     <div class="entree"><b>En entrant</b><p>Sur un post-it : ce qui vous <mark>préoccupe</mark> dans votre milieu.</p><p>Collez-le au mur, dans son cercle.</p></div>
@@ -1058,7 +1067,7 @@ __COPILOT_GEN__
 </section>
 
 <section data-mode="exp" data-besoins="Autonomie" data-wide="1" class="slide" data-phase="1" data-who="Francis" data-notes="PENSE, seul. Votre monde idéal, sans limite : ni de territoire, ni de ressources humaines, ni de ressources matérielles. Pas de cercles ni d’exemple ici, à la demande de Francis : on laisse libre cours. Chacun écrit dans son cahier (page 4) ou sur un post-it pour le mur « Mon monde idéal », à côté de la banderole des enjeux. Environ 3 minutes. Une case vide, « je ne sais pas » : c’est permis.">
-  <div class="kick">Rêver · mon monde idéal</div>
+  <div class="kick">Rêver · mon monde idéal<span class="mod"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.5"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>Seul</span></div>
   <h2 class="mi-t">Votre monde idéal</h2>
   <p class="mi-s">Sans limite.</p>
   <p class="mi-l"><span>de territoire</span><span>de ressources humaines</span><span>de ressources matérielles</span></p>
@@ -1066,7 +1075,7 @@ __COPILOT_GEN__
 </section>
 
 <section data-mode="res" data-besoins="Appartenance,Compétence" data-wide="1" class="slide" data-phase="1" data-who="Francis" data-notes="Francis présente les trois cercles : école (mon centre), communauté, nature. On relie ce qu’on a écrit à un ou deux cercles. Exemple : école, créativité ; communauté, collaboration ; entre les deux : « Le quartier vient créer avec nous. » Puis en îlot, au plexiglas (affiche « Notre monde idéal ») : PARLE, on repère ce qui revient ; PARTAGE, chaque îlot nomme ce qu’il a gardé. Environ 5 minutes, puis 3 minutes.">
-  <div class="kick">Rêver · trois cercles · classe collabo-réflexive</div>
+  <div class="kick">Rêver · trois cercles · classe collabo-réflexive<span class="mod"><svg viewBox="0 0 24 24"><circle cx="7" cy="8" r="2.6"/><circle cx="17" cy="8" r="2.6"/><circle cx="12" cy="5" r="2.6"/><path d="M2 19a5 5 0 0 1 10 0M12 19a5 5 0 0 1 10 0"/></svg>En îlot</span></div>
   <h2>École · communauté · nature</h2>
   <ol class="mini-steps row3"><li><b>Relie</b> deux cercles</li><li><b>Parle</b> on repère ce qui revient</li><li><b>Partage</b> au groupe</li></ol>
   <div class="row">
@@ -1084,7 +1093,7 @@ __COPILOT_GEN__
 </section>
 
 <section data-mode="exp" data-besoins="Compétence,Sens" class="slide" data-phase="1" data-who="Isabelle" data-notes="L’analyse de contexte. Modéliser une rangée avec l’exemple. Puis seul ou en îlot, 4 minutes : pour chaque cercle, ce qui existe déjà (un levier, une qualité, une personne, un lieu, un organisme) et ce qu’on remarque. Si rien n’existe : de quoi mon CFGA aurait-il besoin pour s’y rendre ? Cahier, section « Analyse de contexte ». · Détails retirés de l’écran : Pour ce que j’ai noté dans mon monde idéal : des leviers, des personnes, des lieux, des infrastructures, des organismes qui m’aident ou qui y tendent. Rien n’existe ? Notez de quoi votre centre aurait besoin pour s’y rendre. Gardez vos « je remarque que » : chaque manque touche un des 4 besoins ; on s’en sert pour agir, deux diapos plus loin. · Suggérer d’ouvrir le cahier aux pages 5 et 6 : l’analyse de contexte et le résultat ou l’action se suivent.">
-  <div class="kick">Rêver · analyse de contexte</div>
+  <div class="kick">Rêver · analyse de contexte<span class="mod"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.5"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>Seul</span></div>
   <h2>Qu’est-ce qui existe déjà ?</h2>
   <p class="lede">Des leviers · des personnes · des lieux</p>
   <table class="ctx"><thead><tr><th></th><th>+ Leviers : ce qui existe déjà</th><th>Je remarque que…</th></tr></thead><tbody>
@@ -1098,7 +1107,7 @@ __COPILOT_GEN__
 </section>
 
 <section data-mode="res" data-besoins="Compétence" class="slide" data-phase="2" data-who="Francis" data-notes="Enseignement explicite. 1) Conflit cognitif : chacun écrit une « action » pour ce qui l’interpelle dans ses cercles ; en lire trois : la plupart sont des résultats. 2) Modelage : un résultat est un nom, une action est un verbe avec qui et quand. 3) Pratique guidée : tester des phrases de la salle. 4) Pratique autonome : dans le cahier, avec la grille SMART (spécifique, mesurable, atteignable, représentatif, temporel). Exemple en mathématiques : « une meilleure compréhension du budget familial » devient « Nous comparons le prix de 10 produits dans deux épiceries et calculons l’écart d’ici vendredi. » · Détails retirés de l’écran : Dans vos cercles, ce qui vous interpelle le plus devient votre résultat. Puis, une ou des actions concrètes qui y mènent, le plus SMART possible. Le résultat est souvent un nom ; l’action, un verbe, avec qui et quand.">
-  <div class="kick">Cibler · le pivot · enseignement explicite</div>
+  <div class="kick">Cibler · le pivot · enseignement explicite<span class="mod"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.5"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>Seul, puis en îlot</span></div>
   <h2>Résultat ou action ?</h2>
   
   <p class="trio"><span>Modelage</span><span>Pratique guidée</span><span>Pratique autonome</span></p>
@@ -1111,7 +1120,7 @@ __COPILOT_GEN__
 </section>
 
 <section data-mode="res" data-besoins="Appartenance,Autonomie" data-wide="1" class="slide" data-phase="2" data-who="Duo" data-notes="Coup de pouce pour l’étape 2 : devant chaque manque relevé dans l’analyse de contexte (les « je remarque que »), l’îlot se demande quel besoin il touche, puis choisit une action qui le nourrit. Une bonne action en nourrit souvent plus d’un. Le même outil sert avec les élèves. En îlot, comme d’habitude. Le résultat vient des cercles de l’îlot (il peut y en avoir plusieurs). Les actions sont détaillées et le plus SMART possible. Le titre est obligatoire : la galerie et le vote se font par titre. Tout se reporte au plexiglas, sur l’affiche « Notre projet », avec l’espace des trois votes. · Détails retirés de l’écran : Ce qui nous interpelle dans nos cercles : notre résultat (un ou plusieurs), 3 min. Des actions concrètes : un verbe, qui, quand, le plus SMART possible ; Copilot peut aider (diapo suivante), 6 min. Un titre court qui donne envie, 1 min. Au plexiglas : le titre, le résultat, les actions et l’espace des votes, 2 min. Coup de pouce : un manque relevé dans l’analyse de contexte touche un besoin ; choisir une action qui le nourrit. Exemple : « Les projets restent dans une seule classe » touche l’appartenance : « Notre groupe invite la classe voisine à notre présentation, le 12 décembre. »">
-  <div class="kick">Cibler · en îlot</div>
+  <div class="kick">Cibler · en îlot<span class="mod"><svg viewBox="0 0 24 24"><circle cx="7" cy="8" r="2.6"/><circle cx="17" cy="8" r="2.6"/><circle cx="12" cy="5" r="2.6"/><path d="M2 19a5 5 0 0 1 10 0M12 19a5 5 0 0 1 10 0"/></svg>En îlot</span></div>
   <h2>Du résultat aux actions</h2>
   <div class="c13"><div>
   <ol class="etapes">
@@ -1128,9 +1137,9 @@ __COPILOT_GEN__
 </section>
 
 <section data-mode="exp" data-besoins="Compétence" class="slide" data-wide="1" data-phase="2" data-who="Isabelle" data-notes="Les participants travaillent sur leur ordinateur : ils ouvrent la page Ressources (code QR ou adresse), section « Mon invite Copilot ». On modélise avec un îlot : on écrit leur groupe, leur enjeu et leurs contraintes, puis on copie l’invite dans Copilot sur l’ordinateur du TNI. Les participants utilisent la même formule dans leur cahier (« Notre invite Copilot ») et l’aide-mémoire, sur leur propre appareil.">
-  <div class="kick">Cibler · Copilot</div>
+  <div class="kick">Cibler · Copilot<span class="mod"><svg viewBox="0 0 24 24"><circle cx="7" cy="8" r="2.6"/><circle cx="17" cy="8" r="2.6"/><circle cx="12" cy="5" r="2.6"/><path d="M2 19a5 5 0 0 1 10 0M12 19a5 5 0 0 1 10 0"/></svg>En îlot</span></div>
   <h2>Une invite qui fait mouche</h2>
-  <p class="lede" style="margin:0 0 10px">Rôle, contexte, le vrai programme, la tâche, le format. On modélise avec un îlot ; vous refaites la même chose sur la page Ressources.</p>
+  <p class="lede" style="margin:0 0 10px">Rôle, contexte, le vrai programme, la tâche, le format. On le fait ensemble avec un îlot. Puis à vous : <b>rever-le-monde.netlify.app</b>, onglet « Mon invite Copilot ».</p>
   <div id="cgSlide"></div>
   <div class="qrline" style="margin-top:14px"><div class="qr sm" id="qr2"></div><p>Sur votre ordinateur : la page <b>Ressources</b>, section « Mon invite Copilot ». Le même générateur.<span class="url">rever-le-monde.netlify.app</span></p></div>
 </section>
@@ -1138,8 +1147,9 @@ __COPILOT_GEN__
 <section data-besoins="Sens" class="slide" data-phase="2" data-who="Isabelle" data-notes="Francis : « Ce que vous venez de faire, ce sont les 3 premières marches. » Les projets vécus au CFGA. Toucher une marche pour révéler la composante de l’autodétermination.">
   <div class="kick">Cibler · la démarche en vrai</div>
   <h2>De « ça me dérange » à « on l’a fait ! »</h2>
+  <p class="chemin"><b>Tout au long</b> je regarde le chemin · <span>s’autoévaluer</span></p>
   <div class="marches" id="steps"></div>
-  <p class="cap" style="margin-top:12px">Touchez une marche : la composante de l’autodétermination apparaît.</p>
+  <p class="cap" style="margin-top:8px">Touchez une marche : la composante de l’autodétermination apparaît.</p>
 </section>
 
 <section data-besoins="Sens" data-wide="1" class="slide" data-phase="2" data-who="Isabelle" data-notes="La question des enseignants matières : « Et moi, en individualisé ? » Présenter d’abord les trois portes, du plus simple (A) au plus collectif (C). Ensuite seulement, toucher un rôle : chaque porte montre alors un exemple concret pour ce rôle. Commencer par la matière la plus représentée dans la salle. Toucher le rôle de nouveau pour revenir aux portes générales.">
@@ -1151,7 +1161,7 @@ __COPILOT_GEN__
 </section>
 
 <section data-mode="res" data-besoins="Autonomie,Appartenance" data-wide="1" class="slide" data-phase="3" data-who="Duo" data-notes="La galerie : une personne par îlot reste au plexiglas pour expliquer en 30 secondes ; les autres circulent. Chacun a 3 post-it : vert = coup de cœur, jaune-beige = « Oui, et… » (on écrit la suggestion dessus), rose = je suis capable. On peut voter sur le résultat ou sur une action. À mi-temps, on change de présentateur. Pendant la galerie, Francis photographie chaque plexiglas avec l’ordinateur ou reçoit les photos (Teams, courriel, câble) et les glisse ici avec « + Photo du plexiglas » ; une photo touchée s’affiche en grand. Puis chaque îlot compte ses post-it et on tape seulement les trois totaux : les piles montent. Le projet qui a le plus de points devient le projet du groupe (diapo 19). · Détails retirés de l’écran : Coup de cœur (vert) : « Ce projet me touche, il a du sens. » Oui, et… (jaune-beige) : « J’aime cette action, et je changerais ceci », la suggestion s’écrit sur le post-it. Je suis capable (rose) : « Avec mes forces, je peux y contribuer. » Une personne par îlot explique le projet ; les autres circulent avec 3 post-it, à coller sur le résultat ou sur une action. On change de rôle à mi-temps. Écrire le titre de chaque projet dans l’outil de votes.">
-  <div class="kick">Choisir · la galerie et les votes</div>
+  <div class="kick">Choisir · la galerie et les votes<span class="mod"><svg viewBox="0 0 24 24"><circle cx="5" cy="9" r="2.2"/><circle cx="12" cy="7" r="2.2"/><circle cx="19" cy="9" r="2.2"/><path d="M1.5 19a3.5 3.5 0 0 1 7 0M8.5 17a3.5 3.5 0 0 1 7 0M15.5 19a3.5 3.5 0 0 1 7 0"/></svg>Tous</span></div>
   <h2>Coup de cœur · Oui, et… · Je suis capable</h2>
   <ul class="crit">
     <li><i style="background:#9ED9A8"></i><b>Coup de cœur</b><span>« Ça me touche. »</span></li>
@@ -1165,7 +1175,7 @@ __COPILOT_GEN__
 </section>
 
 <section data-besoins="Compétence,Autonomie" data-wide="1" class="slide" data-phase="3" data-who="Isabelle" data-notes="Le pont vers les élèves. Voter « je suis capable », c’est difficile pour un élève qui ne connaît pas ses forces. Avec mes élèves : l’empreinte d’apprentissage (J’ai MON plan), la liste des forces et capacités, puis un top 3 des forces et un top 3 des défis. Les forces restent bien en vue : ce sont des leviers. Les défis deviennent des objectifs SMART, avec des moyens efficaces choisis selon la catégorie du défi (annexe 07). Les études montrent l’effet des objectifs. · Détails retirés de l’écran : Encore faut-il connaître ses forces. Top 3 des forces, bien en vue : une force est un levier, je l’utilise pour faire ce qui me demande un effort. Top 3 des défis : chaque défi devient un objectif SMART, avec des moyens efficaces choisis selon sa catégorie. Outils : l’empreinte d’apprentissage (J’ai MON plan), la liste des forces et capacités (cahier, page 23, et annexe 07), la banque de moyens (annexe 07).">
-  <div class="kick">Choisir · nos capacités</div>
+  <div class="kick">Choisir · nos capacités<span class="mod"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.5"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>Seul</span></div>
   <h2>« Je suis capable » : <span class="hl">mes forces</span></h2>
   <div class="forces">
     <div class="fcol"><b>Top 3 de mes forces</b><p>un levier</p><ol><li></li><li></li><li></li></ol></div>
@@ -1175,7 +1185,7 @@ __COPILOT_GEN__
 </section>
 
 <section data-mode="exp" data-besoins="Sens" data-wide="1" class="slide" data-phase="3" data-who="Isabelle" data-notes="Le coup de théâtre. Le titre du projet le plus voté s’affiche tout seul. Compléter le résultat et les actions avec la salle, puis Copier l’invite, la coller dans Copilot sur l’ordinateur du TNI, joindre le PDF « 11 · Extraits de programmes pour Copilot » (et, au besoin, la photo du plexiglas), puis lancer. Message : si ce projet se réalise dans votre milieu, l’école, la communauté et la nature en bénéficient déjà ; l’engagement est le moteur de tout le reste, jusqu’à l’assiduité. Et en un clic, chaque discipline présente y trouve ses contenus. Si Copilot hésite : le bouton « Voir un exemple ».">
-  <div class="kick">Choisir · le projet du groupe</div>
+  <div class="kick">Choisir · le projet du groupe<span class="mod"><svg viewBox="0 0 24 24"><circle cx="5" cy="9" r="2.2"/><circle cx="12" cy="7" r="2.2"/><circle cx="19" cy="9" r="2.2"/><path d="M1.5 19a3.5 3.5 0 0 1 7 0M8.5 17a3.5 3.5 0 0 1 7 0M15.5 19a3.5 3.5 0 0 1 7 0"/></svg>Tous</span></div>
   <h2>Un projet, toutes vos disciplines</h2>
   <div class="disc">
     <div class="dcol">
@@ -1194,10 +1204,10 @@ __COPILOT_GEN__
   <div class="dex" id="dpExBox" hidden></div>
 </section>
 
-<section data-besoins="Compétence,Sens" data-wide="1" class="slide" data-phase="4" data-who="Isabelle et Francis" data-notes="Le dévoilement. Avant de commencer : « Ouvrez votre cahier à la page 13. Pendant qu’on révèle, cochez les pratiques que vous voulez essayer. » Chacun repart avec son propre menu de pratiques, choisi par lui : l’autonomie vécue jusqu’à la dernière minute. Sur « Des îlots hétérogènes, formés exprès » : « On entend souvent que l’hétérogénéité des élèves, leurs parcours uniques et leurs sigles particuliers freinent l’universel. Vos îlots étaient hétérogènes, formés exprès : quatre centres, des programmes, des matières et des fonctions différentes. Regardez ce que vous avez produit ensemble. » C’est un principe de base de la classe collabo-réflexive. On nomme ce que les participants ont vécu sans qu’on l’annonce. Toucher « Suivante » pour révéler une pratique à la fois, en demandant : « Où l’avez-vous vécue ? » Chaque pratique nourrit au moins un besoin de l’engagement. · Détails retirés de l’écran : Cahier ouvert à la page 13, « Ce qui a été vécu dans cet atelier » : cochez celles que vous aimeriez essayer avec vos élèves.">
-  <div class="kick">S’engager · ce que vous avez vécu</div>
+<section data-besoins="Compétence,Sens" data-wide="1" class="slide" data-phase="4" data-who="Isabelle et Francis" data-notes="Le dévoilement. Avant de commencer : « Ouvrez votre cahier à la page 12. Pendant qu’on révèle, cochez les pratiques que vous voulez essayer. » Chacun repart avec son propre menu de pratiques, choisi par lui : l’autonomie vécue jusqu’à la dernière minute. Sur « Des îlots hétérogènes, formés exprès » : « On entend souvent que l’hétérogénéité des élèves, leurs parcours uniques et leurs sigles particuliers freinent l’universel. Vos îlots étaient hétérogènes, formés exprès : quatre centres, des programmes, des matières et des fonctions différentes. Regardez ce que vous avez produit ensemble. » C’est un principe de base de la classe collabo-réflexive. On nomme ce que les participants ont vécu sans qu’on l’annonce. Toucher « Suivante » pour révéler une pratique à la fois, en demandant : « Où l’avez-vous vécue ? » Chaque pratique nourrit au moins un besoin de l’engagement. · Détails retirés de l’écran : Cahier ouvert à la page 12, « Ce qui a été vécu dans cet atelier » : cochez celles que vous aimeriez essayer avec vos élèves.">
+  <div class="kick">S’engager · ce que vous avez vécu<span class="mod"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.5"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>Seul</span></div>
   <h2>Vous l’avez vécu sans qu’on le nomme</h2>
-  <p class="lede">Cahier, page 13 : cochez.</p>
+  <p class="lede">Cahier, page 12 : cochez.</p>
   <ol class="vecu" id="vecu"><li><b>Pense, parle, partage</b><em class="bz">Appartenance</em></li><li><b>Des îlots hétérogènes, formés exprès</b><em class="bz">Appartenance</em></li><li><b>La classe collabo-réflexive</b><em class="bz">Appartenance</em></li><li><b>La démarche inductive</b><em class="bz">Compétence</em></li><li><b>L’enseignement explicite</b><em class="bz">Compétence</em></li><li><b>Le droit à la case vide et au « je ne sais pas »</b><em class="bz">Appartenance</em></li><li><b>Les objectifs SMART</b><em class="bz">Compétence</em></li><li><b>Le choix et le vote</b><em class="bz">Autonomie</em></li><li><b>La rétroaction par les pairs</b><em class="bz">Compétence</em></li><li><b>Les forces comme leviers</b><em class="bz">Autonomie</em></li><li><b>Expansion et restriction</b><em class="bz">Autonomie</em></li><li><b>L’IA au service du sens et de la créativité</b><em class="bz">Sens</em></li><li><b>L’objectivation</b><em class="bz">Compétence</em></li></ol>
   <p><button class="btn" id="vecuNext">Suivante</button> <button class="btn alt" id="vecuAll">Tout montrer</button></p>
 </section>
@@ -1207,8 +1217,9 @@ __COPILOT_GEN__
   <h2>Des élèves l’ont vécue</h2>
   <div class="tabs" role="tablist"><button class="tab on" type="button" data-tab="0">Cette semaine, ici au centre</button><button class="tab" type="button" data-tab="1">Mes élèves, leurs projets</button><button class="tab" type="button" data-tab="2">Ce qu’ils en disent</button></div>
   <div class="tabp" data-p="0">
-    <p class="lede">Ce qu’ils ont produit ressemble-t-il au vôtre ? Quand on se concentre sur ce qui nous rassemble plutôt que sur ce qui nous différencie, tout est possible.</p>
-    <div id="vidZone" class="drop slim"> <p class="hand">Glissez ici la vidéo des élèves, ou</p> <label class="btn" for="vidIn">Choisir une vidéo</label> <input type="file" id="vidIn" accept="video/*" hidden> </div>
+    <div class="me-row"><figure class="me-fig"><img src="__IMG_MONDE_ELEVES__" alt="Affiche « Mon monde idéal » réalisée cette semaine par des élèves de PPS du CFGA : une communauté solidaire, une nature préservée, une alimentation locale (le festival de la poutine), des événements inspirants, et leurs talents au service du projet."></figure>
+    <div><p class="lede">Ce qu’ils ont produit ressemble-t-il au vôtre ?</p><p class="me-q">« Nos talents au service du projet ! »</p><p class="hand">Quand on se concentre sur ce qui nous rassemble, tout est possible.</p></div></div>
+    <div id="vidZone" class="drop slim" style="margin-top:10px"> <p class="hand">Glissez ici la vidéo des élèves, ou</p> <label class="btn" for="vidIn">Choisir une vidéo</label> <input type="file" id="vidIn" accept="video/*" hidden> </div>
     <video id="vid" controls hidden></video>
   </div>
   <div class="tabp" data-p="1" hidden>
@@ -1227,12 +1238,13 @@ __COPILOT_GEN__
   <div class="decl">
     <div class="histoire"><b>Une idée en discussion</b><p>Les élèves d’arts en PPS + ceux qui font les décors de l’école.</p><p class="hand">Ensemble.</p></div>
     <div><p class="pistes-k">Des pistes à explorer</p><ol class="pistes">
-      <li><b>Des ateliers par besoin</b></li>
-      <li><b>Une heure sur trois</b></li>
-      <li><b>Le babillard des forces</b></li>
-      <li><b>Un projet, un partenaire</b></li>
-      <li><b>Enseigner aux autres</b></li>
-    </ol></div>
+      <li><button type="button" class="piste" data-ex="Trois classes de français au même moment : les verbes ici, la syntaxe là. L’élève va où il en a besoin."><b>Des ateliers par besoin</b></button></li>
+      <li><button type="button" class="piste" data-ex="Sur trois périodes de maths, une sert au projet : le budget du frigo partagé, les pourcentages du sondage."><b>Une heure sur trois</b></button></li>
+      <li><button type="button" class="piste" data-ex="Le budget du projet ? Un élève en maths. Un texte à réviser ? Un élève en français."><b>Des experts dans d’autres sigles</b></button></li>
+      <li><button type="button" class="piste" data-ex="Chacun affiche son top 3. Le projet cherche quelqu’un qui dessine ? On regarde le babillard."><b>Le babillard des forces</b></button></li>
+      <li><button type="button" class="piste" data-ex="Le projet de lecture, jumelé à la bibliothèque du quartier, avec l’aide du CSI."><b>Un projet, un partenaire</b></button></li>
+      <li><button type="button" class="piste" data-ex="Une fois par mois, un groupe présente son projet à un autre groupe : le haut de la pyramide."><b>Enseigner aux autres</b></button></li>
+    </ol><p class="piste-ex" id="pisteEx">Touchez une piste : un exemple apparaît.</p></div>
   </div>
 </section>
 
@@ -1257,8 +1269,8 @@ __COPILOT_GEN__
   </div>
 </section>
 
-<section data-mode="res" data-besoins="Compétence" class="slide" data-phase="4" data-who="Isabelle" data-notes="On modélise l’objectivation : s’autoévaluer, une composante de l’autodétermination. Cahier, section 3-2-1. L’annexe sur l’objectivation propose d’autres formats. · Détails retirés de l’écran : S’arrêter pour regarder le chemin parcouru, c’est s’autoévaluer : une composante de l’autodétermination. Cahier, page 12.">
-  <div class="kick">S’engager · objectivation</div>
+<section data-mode="res" data-besoins="Compétence" class="slide" data-phase="4" data-who="Isabelle" data-notes="On modélise l’objectivation : s’autoévaluer, une composante de l’autodétermination. Cahier, section 3-2-1. L’annexe sur l’objectivation propose d’autres formats. · Détails retirés de l’écran : S’arrêter pour regarder le chemin parcouru, c’est s’autoévaluer : une composante de l’autodétermination. Cahier, page 13.">
+  <div class="kick">S’engager · objectivation<span class="mod"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.5"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>Seul</span></div>
   <h2>3 · 2 · 1</h2>
   <div class="trois21">
     <div><b>3</b><span>idées que je retiens</span></div>
@@ -1269,8 +1281,22 @@ __COPILOT_GEN__
   <p>Regarder le chemin = <mark>s’autoévaluer</mark></p>
 </section>
 
+<section data-besoins="Compétence,Autonomie" data-wide="1" class="slide" data-phase="4" data-who="Isabelle" data-notes="La boîte à outils : pour que ça ne tombe pas dans l’oubli. Isabelle présente les outils qu’elle utilisait constamment avec ses élèves : l’objectivation (la maison à trois étages et les questions avant, pendant, après, à piger), le cadre d’innovation et ses six questions, l’engagement et ses 4 besoins, les gestes et leur miroir. Tout est dans le cahier (pages 18 à 24) et sur le site.">
+  <div class="kick">S’engager · la boîte à outils</div>
+  <h2>Pour que ça ne tombe pas dans l’oubli</h2>
+  <div class="bao-g">
+    <div class="star"><b>L’objectivation</b><p>La maison à trois étages. Des questions avant, pendant, après : à piger, pas à poser toutes.</p><span>cahier p. 20 à 22</span></div>
+    <div class="star"><b>Innover au CFGA</b><p>Quatre fondations. Six questions avant de se lancer.</p><span>cahier p. 23 et 24</span></div>
+    <div><b>L’engagement</b><p>Les 4 besoins. La rétroaction de qualité.</p><span>cahier p. 18</span></div>
+    <div><b>Les gestes et leur miroir</b><p>Ce que je dis, ce que l’élève se dit.</p><span>cahier p. 19</span></div>
+    <div><b>Mes forces · J’ai MON plan!</b><p>La liste des capacités, la banque de moyens.</p><span>sur le site</span></div>
+    <div><b>Mon invite Copilot</b><p>Étape par étape, avec le vrai programme.</p><span>sur le site</span></div>
+  </div>
+  <p class="bao-url">rever-le-monde.netlify.app</p>
+</section>
+
 <section data-mode="res" data-besoins="Autonomie" class="slide" data-phase="4" data-who="Duo" data-notes="Plan de match, phase 4 : engagement individuel, puis retour express en grand groupe. Chacun remplit sa fiche (cahier, section « Mon élan »). C’est l’élan du participant, pas de l’élève. Faire le pont avec le cadre d’innovation du CFGA (COP IA, Giroux, Munger et Pedneault) : la date devient du temps protégé, l’allié valide l’idée, et la question de la pérennité se pose dès le départ. Les 6 questions sont dans le cahier. Ensuite, chaque îlot nomme une action prioritaire en 30 secondes. · Détails retirés de l’écran : Une action (un verbe !), une date, un allié. Exemples : demander lundi à mon groupe « Qu’est-ce qui vous dérange ? » ; transformer une tâche de mon sigle à partir d’un enjeu choisi par l’élève ; terminer une période par un 3-2-1 ; proposer un projet-pont à une ou un collègue de PPS, de DHS, d’IS ou d’ISP ; direction ou services : protéger une période commune à l’horaire ; tester une invite Copilot pour bâtir une grille. Plus d’idées en page 14 du cahier. Cadre d’innovation : une date, c’est du temps protégé, réservé à l’horaire et tenu ; un allié, c’est la validation par les pairs.">
-  <div class="kick">S’engager · bilan</div>
+  <div class="kick">S’engager · bilan<span class="mod"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.5"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>Seul</span></div>
   <h2>Mon élan, de retour dans mon milieu</h2>
   <p class="trio"><span>une action</span><span>une date</span><span>un allié</span></p>
   <ul class="exemples">
@@ -1459,7 +1485,7 @@ slides.forEach(sl => { const bs = [...sl.querySelectorAll('[data-timer]')]; if (
 
 // ---------- minuteur de l'atelier (90 min) et cadre de la personne qui anime ----------
 // Début prévu de chaque diapo (minutes), d'après le déroulé du guide ; o = optionnelle (à couper d'abord), r = à raccourcir
-const PLAN = [0, 0, 1, 3, 5, 6, 7, 9, 10, 17, 25, 30, 40, 47, 52, 56, 60, 70, 73, 80, 82, 83, 84, 85, 85, 86, 89];
+const PLAN = [0, 0, 1, 3, 5, 6, 7, 9, 10, 17, 25, 30, 40, 47, 52, 56, 60, 70, 73, 80, 82, 83, 84, 85, 85, 86, 87, 89];
 const CUT = [{ i: 7, t: 'diapo 8 (les 4 besoins)', m: 1 }, { i: 23, t: 'diapo 24 (la pyramide)', m: 1 }, { i: 15, t: 'raccourcir la diapo 16 (les portes : renvoyer au cahier)', m: 3 }, { i: 6, t: 'raccourcir la diapo 7 (étapes 4 et 5)', m: 1 }, { i: 24, t: 'diapo 25 (3-2-1 dans le cahier)', m: 2 }, { i: 22, t: 'raccourcir la diapo 23 (un seul projet)', m: 1 }];
 const hhmm = m => Math.floor(m / 60) + ' h ' + String(Math.round(m % 60)).padStart(2, '0');
 const SEANCE = () => new Date().getHours() < 12 ? 620 : 810;
@@ -1540,7 +1566,7 @@ const pairs = [['une meilleure compréhension du budget familial', 'Nous comparo
 if ($('#flip')) pairs.forEach(([a, b]) => { const bt = document.createElement('button'); bt.innerHTML = `<small>Résultat · touchez pour l’action</small>${a}`; bt.onclick = () => { const back = bt.classList.toggle('back'); bt.innerHTML = back ? `<small>Action</small>${b}` : `<small>Résultat · touchez pour l’action</small>${a}`; }; $('#flip').appendChild(bt); });
 
 // ---------- marches ----------
-const st = [['Ça me dérange', 'Faire des choix'], ['Je rêve', 'Se fixer un but'], ['Je cible', 'Prendre des décisions'], ['J’agis', 'Résoudre des problèmes'], ['Je regarde le chemin', 'S’autoévaluer']];
+const st = [['Ça me dérange', 'S’affirmer'], ['Je rêve', 'Se fixer un but'], ['Je cible', 'Résoudre des problèmes'], ['Je choisis', 'Faire des choix'], ['Je m’engage', 'Prendre des décisions et agir']];
 st.forEach(([t, c], i) => { const col = document.createElement('button'); col.className = 'marche'; col.type = 'button';
   col.style.height = (34 + i * 16) + '%'; col.style.background = i % 2 ? 'var(--mauve)' : 'var(--gold)'; col.style.color = i % 2 ? 'var(--paper)' : 'var(--ink)';
   col.innerHTML = `<span class="n">${i + 1}</span>${i === 4 ? '<span class="flag">On l’a fait !</span>' : ''}<span class="t">${t}</span><span class="c">${c}</span>`;
@@ -1624,7 +1650,7 @@ const RESSOURCES = 'https://rever-le-monde.netlify.app';
 
 // =================== MONDE 3D EN CEL-SHADING ===================
 // Un seul monde, 11 stations reliées par un sentier. La caméra vole d'une station à l'autre.
-const STATIONS = ['aerial', 'globe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'spheres', 'aerial', 'aerial', 'aerial', 'nomverbe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'pas', 'aerial'];
+const STATIONS = ['aerial', 'globe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'spheres', 'aerial', 'aerial', 'aerial', 'nomverbe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'aerial', 'pas', 'aerial'];
 const G3 = (() => {
   if (!window.THREE) return { activate() {}, st: {} };
   const T = THREE, V = T.Vector3;
