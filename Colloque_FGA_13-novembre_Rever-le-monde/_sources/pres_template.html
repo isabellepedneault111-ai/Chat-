@@ -490,6 +490,7 @@ body.flat .slide:not(.s1) .sheet{margin-inline:auto}
 .crit i{flex:0 0 22px;height:22px;border:3px solid var(--ink);border-radius:50%;transform:translateY(4px)}
 .crit b{font-family:var(--display);font-weight:400;font-size:clamp(20px,1.8vw,26px);min-width:6.5em}
 .lbls{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.lbl svg{width:1.15em;height:1.15em;vertical-align:-.18em;margin-right:.35em;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .lbl{position:absolute;left:0;top:0;white-space:nowrap;font-family:var(--display);letter-spacing:.04em;text-transform:uppercase;color:#FFFDF7;background:var(--ink);padding:3px 9px 2px;border-radius:2px;opacity:0;transition:opacity .4s;box-shadow:0 2px 0 rgba(0,0,0,.15)}
 .lbl.hand{font-family:var(--hand);text-transform:none;letter-spacing:0;background:transparent;color:var(--mauve);box-shadow:none;font-weight:700}
 .sheet.wide{width:min(max(1180px,72vw),100%)}
@@ -511,7 +512,7 @@ body.flat .slide:not(.s1) .sheet{margin-inline:auto}
 .sheet:not(.dark) .feu b{color:var(--mauve)}
 .feu p{font-size:clamp(20px,2vw,30px);line-height:1.25;margin:6px 0}
 .feu small{font-size:clamp(15px,1.3vw,20px)}
-.feu1{grid-template-columns:1fr}.feu1 figure{display:grid;grid-template-columns:minmax(160px,34%) 1fr;align-items:center;gap:20px;border:0;padding:0}.feu1 p{font-size:clamp(24px,2.4vw,36px)!important}.feu1 svg{max-height:30vh}
+.feu1{grid-template-columns:1fr}.eng-cit{margin-top:22px;font-size:clamp(20px,1.9vw,30px)!important}#eng1 .big-q{font-size:clamp(40px,4.4vw,72px)}#eng1 .lede{font-size:clamp(22px,2.2vw,34px);margin-top:18px}.feu1 figure{display:grid;grid-template-columns:minmax(160px,34%) 1fr;align-items:center;gap:20px;border:0;padding:0}.feu1 p{font-size:clamp(28px,2.9vw,46px)!important}.feu1 small{font-size:clamp(18px,1.6vw,26px)!important}.feu1 svg{max-height:34vh!important}.feu1 svg{max-height:30vh}
 .feu .fl1{transform-origin:150px 122px;animation:fl1 1.2s ease-in-out infinite alternate}
 .feu .fl2{transform-origin:150px 160px;animation:fl2 2.4s ease-in-out infinite alternate}
 @keyframes fl1{to{transform:scale(.82) rotate(-4deg)}}
@@ -524,6 +525,8 @@ body.flat .slide:not(.s1) .sheet{margin-inline:auto}
 .mir9 b{font-family:var(--display);font-weight:400;font-size:clamp(17px,1.5vw,24px);text-transform:uppercase;color:var(--gold)}
 .sheet:not(.dark) .mir9 b{color:var(--mauve)}
 .mir9 span{font-size:clamp(13px,1.05vw,16px)}.mir9 em{font-family:var(--script);font-size:clamp(17px,1.4vw,22px);line-height:1.05}
+.mi-t{font-size:clamp(48px,6vw,100px)!important;line-height:1}.mi-s{font-family:var(--display);font-size:clamp(40px,5vw,84px);color:var(--mauve);margin:4px 0 18px;line-height:1}.dark .mi-s,.sheet.dark .mi-s{color:var(--gold)}.mi-l{display:flex;flex-wrap:wrap;gap:10px}.mi-l span{font-family:var(--display);font-size:clamp(18px,1.7vw,28px);text-transform:uppercase;border:2px solid currentColor;padding:4px 14px}
+.slide [data-timer],.slide .seg-act,.slide .timer.seg,.slide .approx{display:none!important}
 .duo2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px}
 .duo2>div{border:3px solid currentColor;padding:16px 18px}
 .duo2 b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(32px,3.4vw,52px);text-transform:uppercase;color:var(--gold)}
@@ -1033,7 +1036,7 @@ __COPILOT_GEN__
   </div>
 </section>
 
-<section data-besoins="Sens" class="slide" data-phase="1" data-who="Isabelle, puis Francis" data-notes="D’après l’affiche « L’engagement, un écosystème vivant ». Une idée par étape : 1) la motivation, brièvement : la force qui pousse à agir ; pas besoin d’avoir hâte ni envie (ex. on cuisine sans aimer cuisiner, parce que la santé compte) ; 2) l’engagement, le cœur : décider de prendre part, un feu qu’on nourrit ; 3) les 4 besoins ; 4) les gestes qui les nourrissent ; 5) Francis : l’engagement citoyen. Enchaîner sur la diapo des 4 besoins (optionnelle).">
+<section data-wide="1" data-besoins="Sens" class="slide" data-phase="1" data-who="Isabelle, puis Francis" data-notes="D’après l’affiche « L’engagement, un écosystème vivant ». Deux étapes seulement (les 4 besoins et les gestes sont des outils sur le site et dans le cahier). 1) la motivation, brièvement : la force qui pousse à agir ; pas besoin d’avoir hâte ni envie (ex. on cuisine sans aimer cuisiner, parce que la santé compte) ; 2) l’engagement, le cœur : décider de prendre part, un feu qu’on nourrit ; 3) les 4 besoins ; 4) les gestes qui les nourrissent ; 5) Francis : l’engagement citoyen. Enchaîner sur la diapo des 4 besoins (optionnelle).">
   <div class="kick">Rêver · l’engagement, un écosystème vivant</div>
   <h2 id="engH">La motivation</h2>
   <div id="eng1"><p class="big-q">La force qui me pousse à agir.</p><p class="lede">Pas besoin d’avoir hâte. Pas besoin d’avoir envie.</p></div>
@@ -1042,15 +1045,7 @@ __COPILOT_GEN__
       <g class="fl2"><path d="M150 18 C96 80 104 140 150 160 C196 140 204 80 150 18Z" fill="#F2C230" stroke="#1E1A22" stroke-width="4"/><path d="M150 70 C126 106 130 138 150 150 C170 138 174 106 150 70Z" fill="#D9541E"/><path d="M118 70 C104 96 110 118 122 126" fill="none" stroke="#1E1A22" stroke-width="4" stroke-linecap="round"/></g>
       <g stroke="#1E1A22" stroke-width="4"><rect x="40" y="160" width="150" height="22" rx="11" fill="#1F4E8C" transform="rotate(16 115 171)"/><rect x="110" y="160" width="150" height="22" rx="11" fill="#0F766E" transform="rotate(-16 185 171)"/><rect x="40" y="186" width="150" height="22" rx="11" fill="#A33A32" transform="rotate(-7 115 197)"/><rect x="110" y="186" width="150" height="22" rx="11" fill="#C27F2B" transform="rotate(7 185 197)"/></g>
     </svg><figcaption><p>La <mark>décision</mark> de prendre part, activement.</p><small>Un feu qu’on nourrit. Ses 4 bûches : compétence, autonomie, sens, appartenance.</small></figcaption></figure>
-  </div></div>
-  <div id="eng3" hidden><div class="quatre">
-    <div><b>Compétence</b><p>« En faisant des efforts et des erreurs, j’apprends. »</p></div>
-    <div><b>Autonomie</b><p>« Je fais des choix selon mes valeurs et mes intérêts. »</p></div>
-    <div><b>Sens</b><p>« Je comprends pourquoi c’est important pour moi. »</p></div>
-    <div><b>Appartenance</b><p>« Je compte pour quelqu’un ici. »</p></div>
-  </div></div>
-  <div id="eng4" hidden><p class="mir-h"><span>L’enseignant·e dit</span><span>→ le miroir : l’élève se dit</span></p><div class="mir9"><div><b>Questionner</b><span>« Qu’est-ce que tu remarques ? »</span><em>« Qu’est-ce qu’on me demande ? »</em></div><div><b>Écouter</b><span>« Si je comprends bien… »</span><em>« Je le redis dans mes mots. »</em></div><div><b>Faire réfléchir</b><span>« Comment tu le sais ? »</span><em>« Comment je sais que c’est juste ? »</em></div><div><b>Rétroagir</b><span>« Ça, c’est réussi. Maintenant… »</span><em>« Qu’est-ce que je change ? »</em></div><div><b>Coopérer</b><span>« Montre-lui comment tu as fait. »</span><em>« Comment tu as fait, toi ? »</em></div><div><b>Donner un défi</b><span>« Essaie celle-là. »</span><em>« Le bon défi pour moi. »</em></div><div><b>Raconter</b><span>« Ça sert quand tu… »</span><em>« À quoi ça me sert ? »</em></div><div><b>Différencier</b><span>« Avec un exemple ? »</span><em>« J’apprends mieux avec… »</em></div><div><b>Laisser choisir</b><span>« Tu commences par laquelle ? »</span><em>« Je commence par… »</em></div></div></div>
-  <div id="eng5" hidden><blockquote class="cit">« S’engager, c’est <mark>arrêter d’être spectateur</mark> : mettre son art au service d’une cause. C’est l’acte de l’humain libre qui cherche aussi à libérer les autres. »<cite>Centre de solidarité internationale du Saguenay–Lac-Saint-Jean</cite></blockquote></div>
+  </div><blockquote class="cit eng-cit">« S’engager, c’est <mark>arrêter d’être spectateur</mark> : mettre son art au service d’une cause. C’est l’acte de l’humain libre qui cherche aussi à libérer les autres. »<cite>Centre de solidarité internationale du Saguenay–Lac-Saint-Jean</cite></blockquote></div>
   <button class="btn" id="engBtn" type="button" style="margin-top:18px">Et l’engagement ? →</button>
 </section>
 
@@ -1062,47 +1057,33 @@ __COPILOT_GEN__
   </div>
 </section>
 
-<section data-mode="exp" data-besoins="Autonomie" data-wide="1" class="slide" data-phase="1" data-who="Francis" data-notes="Pense, parle, partage : ici, PENSE. Modéliser d’abord avec l’exemple de la boîte « Modèle ». Puis 3 minutes seul : des mots-clés dans un ou plusieurs cercles du cahier, sans limite de budget ni de ressources. Ensuite, 2 minutes pour les intersections. Rappeler : on a le droit de laisser une case vide et d’écrire « je ne sais pas » ; l’îlot aidera. · Détails retirés de l’écran : Sans limite de budget ni de ressources matérielles ou humaines. Seul, 3 min : des mots-clés dans un ou plusieurs cercles du cahier (page 4, on tourne le cahier). Puis 2 min : qu’est-ce qui relie deux cercles ? Exemple : école, créativité ; communauté, collaboration ; entre les deux, « le quartier vient créer avec nous ». La case vide et le « je ne sais pas » sont permis.">
-  <div class="kick">Rêver · mon monde idéal · pense</div>
-  <h2>Votre monde idéal, <span class="hl">sans limite</span></h2>
-  <div class="row">
-    <div class="col" style="flex:0 1 380px"><svg class="venn3" viewBox="0 0 600 540" role="img" aria-label="Trois cercles qui se chevauchent : école, communauté, nature">
-      <circle cx="215" cy="200" r="170" fill="#F2C230" stroke="#1E1A22" stroke-width="6"/>
-      <circle cx="385" cy="200" r="170" fill="#5B2A86" fill-opacity=".85" stroke="#1E1A22" stroke-width="6"/>
-      <circle cx="300" cy="350" r="170" fill="#FFFDF7" fill-opacity=".88" stroke="#1E1A22" stroke-width="6"/>
-      <g fill="none" stroke="#1E1A22" stroke-width="6"><circle cx="215" cy="200" r="170"/><circle cx="385" cy="200" r="170"/><circle cx="300" cy="350" r="170"/></g>
-      <g font-family="Anton,Impact,sans-serif" text-anchor="middle" font-size="36"><text x="160" y="140" fill="#1E1A22">ÉCOLE</text><text x="445" y="140" fill="#F2C230">COMMUNAUTÉ</text><text x="300" y="480" fill="#1E1A22">NATURE</text></g>
-      <text x="160" y="176" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="22" fill="#1E1A22">mon centre</text>
-    </svg></div>
-    <div class="col">
-      <ol class="mini-steps"><li><b>Pense</b> des mots-clés</li><li><b>Relie</b> deux cercles</li></ol>
-      <div class="modele"><b>Par exemple</b><p>créativité + collaboration</p><p>« Le quartier vient créer avec nous. »</p></div>
-      <p class="droit">Une case vide, « je ne sais pas » : c’est permis.</p>
-      <p><button class="btn" data-timer="180">3 min · pense</button> <button class="btn alt" data-timer="120">2 min · intersections</button></p>
-    </div>
-  </div>
+<section data-mode="exp" data-besoins="Autonomie" data-wide="1" class="slide" data-phase="1" data-who="Francis" data-notes="PENSE, seul. Votre monde idéal, sans limite : ni de territoire, ni de ressources humaines, ni de ressources matérielles. Pas de cercles ni d’exemple ici, à la demande de Francis : on laisse libre cours. Chacun écrit dans son cahier (page 4) ou sur un post-it pour le mur « Mon monde idéal », à côté de la banderole des enjeux. Environ 3 minutes. Une case vide, « je ne sais pas » : c’est permis.">
+  <div class="kick">Rêver · mon monde idéal</div>
+  <h2 class="mi-t">Votre monde idéal</h2>
+  <p class="mi-s">Sans limite.</p>
+  <p class="mi-l"><span>de territoire</span><span>de ressources humaines</span><span>de ressources matérielles</span></p>
+  <p class="droit">Une case vide, « je ne sais pas » : c’est permis.</p>
 </section>
 
-<section data-mode="res" data-besoins="Appartenance,Compétence" data-wide="1" class="slide" data-phase="1" data-who="Isabelle" data-notes="PARLE puis PARTAGE, en classe collabo-réflexive : l’îlot travaille debout, au crayon effaçable, sur le plexiglas où l’affiche des trois cercles est collée derrière. Pour chaque cercle, l’îlot garde ce qui revient ; les membres aident ceux qui n’ont pas trouvé d’intersection. Puis chaque îlot nomme ce qu’il a gardé. Le compteur du bas reprend le mur d’enjeux du matin. · Détails retirés de l’écran : Parle, 5 min : chacun partage ; on repère ce qui revient dans chaque cercle ; on aide ceux qui n’ont pas trouvé de lien. Au crayon effaçable, sur l’affiche des trois cercles. Partage, 3 min : chaque îlot nomme ce qu’il a gardé. Chaque projet d’élève tire sa force des liens entre ces trois mondes.">
-  <div class="kick">Rêver · parle · partage · classe collabo-réflexive</div>
-  <h2>En îlot, sur la surface verticale</h2>
-  <ol class="mini-steps row3"><li><b>Parle</b> ce qui revient</li><li><b>Écris</b> au plexiglas</li><li><b>Partage</b> au groupe</li></ol>
+<section data-mode="res" data-besoins="Appartenance,Compétence" data-wide="1" class="slide" data-phase="1" data-who="Francis" data-notes="Francis présente les trois cercles : école (mon centre), communauté, nature. On relie ce qu’on a écrit à un ou deux cercles. Exemple : école, créativité ; communauté, collaboration ; entre les deux : « Le quartier vient créer avec nous. » Puis en îlot, au plexiglas (affiche « Notre monde idéal ») : PARLE, on repère ce qui revient ; PARTAGE, chaque îlot nomme ce qu’il a gardé. Environ 5 minutes, puis 3 minutes.">
+  <div class="kick">Rêver · trois cercles · classe collabo-réflexive</div>
+  <h2>École · communauté · nature</h2>
+  <ol class="mini-steps row3"><li><b>Relie</b> deux cercles</li><li><b>Parle</b> on repère ce qui revient</li><li><b>Partage</b> au groupe</li></ol>
   <div class="row">
     <svg class="venn col" viewBox="0 0 600 520" role="img" aria-label="Trois cercles qui se chevauchent : école, communauté, nature">
       <circle data-z="e" cx="220" cy="200" r="160" fill="#F2C230"/>
       <circle data-z="c" cx="380" cy="200" r="160" fill="#B88BD6"/>
       <circle data-z="n" cx="300" cy="340" r="160" fill="#FBF8EF"/>
       <g font-family="Anton,Impact,sans-serif" font-size="34" fill="#1E1A22" pointer-events="none">
-        <text x="120" y="160">ÉCOLE</text><text x="370" y="160">COMMUNAUTÉ</text><text x="245" y="460">NATURE</text>
+        <text x="175" y="150" text-anchor="middle">ÉCOLE</text><text x="452" y="150" text-anchor="middle" font-size="24">COMMUNAUTÉ</text><text x="300" y="465" text-anchor="middle">NATURE</text>
       </g>
       <text x="300" y="270" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="28" fill="#5B2A86" pointer-events="none">le projet</text>
     </svg>
-    <div class="col panel" id="vennOut"><h3>Touchez un cercle</h3><p>La force est dans les liens.</p><p><button class="btn" data-timer="300">5 min · parle</button> <button class="btn alt" data-timer="180">3 min · partage</button></p></div>
+    <div class="col panel" id="vennOut"><h3>Par exemple</h3><p>École : créativité · Communauté : collaboration</p><p class="hand">« Le quartier vient créer avec nous. »</p><p><button class="btn" data-timer="300">5 min · parle</button> <button class="btn alt" data-timer="180">3 min · partage</button></p></div>
   </div>
-  <p class="tally" id="vennTally"></p>
 </section>
 
-<section data-mode="exp" data-besoins="Compétence,Sens" class="slide" data-phase="1" data-who="Isabelle" data-notes="L’analyse de contexte. Modéliser une rangée avec l’exemple. Puis seul ou en îlot, 4 minutes : pour chaque cercle, ce qui existe déjà (un levier, une qualité, une personne, un lieu, un organisme) et ce qu’on remarque. Si rien n’existe : de quoi mon CFGA aurait-il besoin pour s’y rendre ? Cahier, section « Analyse de contexte ». · Détails retirés de l’écran : Pour ce que j’ai noté dans mon monde idéal : des leviers, des personnes, des lieux, des infrastructures, des organismes qui m’aident ou qui y tendent. Rien n’existe ? Notez de quoi votre centre aurait besoin pour s’y rendre. Gardez vos « je remarque que » : chaque manque touche un des 4 besoins ; on s’en sert pour agir, deux diapos plus loin.">
+<section data-mode="exp" data-besoins="Compétence,Sens" class="slide" data-phase="1" data-who="Isabelle" data-notes="L’analyse de contexte. Modéliser une rangée avec l’exemple. Puis seul ou en îlot, 4 minutes : pour chaque cercle, ce qui existe déjà (un levier, une qualité, une personne, un lieu, un organisme) et ce qu’on remarque. Si rien n’existe : de quoi mon CFGA aurait-il besoin pour s’y rendre ? Cahier, section « Analyse de contexte ». · Détails retirés de l’écran : Pour ce que j’ai noté dans mon monde idéal : des leviers, des personnes, des lieux, des infrastructures, des organismes qui m’aident ou qui y tendent. Rien n’existe ? Notez de quoi votre centre aurait besoin pour s’y rendre. Gardez vos « je remarque que » : chaque manque touche un des 4 besoins ; on s’en sert pour agir, deux diapos plus loin. · Suggérer d’ouvrir le cahier aux pages 5 et 6 : l’analyse de contexte et le résultat ou l’action se suivent.">
   <div class="kick">Rêver · analyse de contexte</div>
   <h2>Qu’est-ce qui existe déjà ?</h2>
   <p class="lede">Des leviers · des personnes · des lieux</p>
@@ -1122,8 +1103,8 @@ __COPILOT_GEN__
   
   <p class="trio"><span>Modelage</span><span>Pratique guidée</span><span>Pratique autonome</span></p>
   <div class="duo2">
-    <div><b>Résultat</b><p>Ce qu’on <mark>souhaite</mark>.</p><small>« Un coin de verdure où on a envie d’apprendre dehors. »</small></div>
-    <div><b>Action</b><p>Ce qu’on <mark>fait</mark> : qui, quoi, quand.</p><small>« D’ici le 15 décembre, mon groupe mesure le soleil dans la cour et propose trois emplacements. »</small></div>
+    <div><b>Résultat</b><p>Ce qu’on <mark>souhaite</mark>.</p><small>« Le quartier vient créer avec nous. »</small></div>
+    <div><b>Action</b><p>Ce qu’on <mark>fait</mark> : qui, quoi, quand.</p><small>« Lundi, j’appelle la bibliothèque du quartier pour inviter une artiste à créer avec mes élèves. »</small></div>
   </div>
   <form class="checker" id="raForm" style="margin-top:18px"><input type="text" id="raIn" placeholder="écrivez votre « action »" aria-label="Phrase à tester"><button class="btn" type="submit">Tester</button></form>
   <div class="verdict" id="raOut"></div>
@@ -1386,7 +1367,7 @@ function go(n) {
   $('#count').textContent = (cur + 1) + ' / ' + slides.length;
   [...phases.children].forEach((b, i) => { b.className = i < cur ? 'done' : i === cur ? 'cur' : ''; });
   $('#who').textContent = 'anime : ' + slides[cur].dataset.who;
-  $('#nTitle').textContent = 'Diapo ' + (cur + 1) + ' · ' + slides[cur].dataset.who + (typeof PLAN !== 'undefined' ? ' · vers ' + hhmm(620 + PLAN[cur]) + ' ou ' + hhmm(810 + PLAN[cur]) : '');
+  $('#nTitle').textContent = 'Diapo ' + (cur + 1) + ' · ' + slides[cur].dataset.who + (typeof PLAN !== 'undefined' ? ' · matin ' + hhmm(620 + PLAN[cur]) + '–' + hhmm(620 + (PLAN[cur + 1] !== undefined ? PLAN[cur + 1] : 90)) + ' · après-midi ' + hhmm(810 + PLAN[cur]) + '–' + hhmm(810 + (PLAN[cur + 1] !== undefined ? PLAN[cur + 1] : 90)) : '');
   $('#nBody').textContent = slides[cur].dataset.notes;
   if (location.hash !== '#s' + (cur + 1)) history.replaceState(null, '', '#s' + (cur + 1));
   send({ cur });
@@ -1514,8 +1495,8 @@ $$('.idc dd').forEach(dd => { const k = 'id:' + dd.dataset.k; const v = store.ge
   dd.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); dd.blur(); } }); });
 
 // ---------- engagement ----------
-let engStep = 1; const ENG = [null, ['La motivation', 'Et l’engagement ? →'], ['L’engagement', 'Les 4 besoins →'], ['Les 4 besoins de l’engagement', 'Les gestes →'], ['Des gestes qui nourrissent l’engagement', 'L’engagement citoyen →'], ['Et l’engagement citoyen ?', 'Recommencer']];
-$('#engBtn').onclick = () => { engStep = engStep % 5 + 1; [1, 2, 3, 4, 5].forEach(k => { $('#eng' + k).hidden = k !== engStep; }); $('#engH').textContent = ENG[engStep][0]; $('#engBtn').textContent = ENG[engStep][1]; };
+let engStep = 1; const ENG = [null, ['La motivation', 'Et l’engagement ? →'], ['L’engagement', '← La motivation']];
+$('#engBtn').onclick = () => { engStep = engStep % 2 + 1; [1, 2].forEach(k => { $('#eng' + k).hidden = k !== engStep; }); $('#engH').textContent = ENG[engStep][0]; $('#engBtn').textContent = ENG[engStep][1]; };
 
 // ---------- les mots qui reviennent ----------
 const QB = [['Il se sent écouté, compris et surtout, <mark>accepté</mark>.', 'Un parent'], ['<mark>Donner envie de faire des projets</mark> !', 'Des parents'], ['De la <mark>confiance en eux</mark> et une meilleure connaissance de <mark>leurs forces</mark>.', 'Des parents'], ['Valoriser leurs forces… et ça <mark>sans jugement</mark>.', 'Des parents'], ['<mark>Construire leur confiance</mark> jour après jour.', 'Une famille'], ['Redonné <mark>envie d’aller à l’école</mark>.', 'Un élève, 2017']];
@@ -1643,7 +1624,7 @@ const RESSOURCES = 'https://rever-le-monde.netlify.app';
 
 // =================== MONDE 3D EN CEL-SHADING ===================
 // Un seul monde, 11 stations reliées par un sentier. La caméra vole d'une station à l'autre.
-const STATIONS = ['aerial', 'globe', 'aerial', 'aerial', 'aerial', 'aerial', 'spheres', 'spheres', 'aerial', 'aerial', 'village', 'nomverbe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'pas', 'aerial'];
+const STATIONS = ['aerial', 'globe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'spheres', 'aerial', 'aerial', 'aerial', 'nomverbe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'pas', 'aerial'];
 const G3 = (() => {
   if (!window.THREE) return { activate() {}, st: {} };
   const T = THREE, V = T.Vector3;
@@ -1660,7 +1641,7 @@ const G3 = (() => {
   const GOLD = 0xE6B52A, MAUVE = 0x5B2A86, CREAM = 0xF4EEE2, PAPER2 = 0xF3EDDF;
   function inked(geo, color, w = .05) { const g = new T.Group(); const m = new T.Mesh(geo, toon(color)); m.castShadow = true; m.receiveShadow = true; g.add(m); if (!geo.type.startsWith('Sphere')) g.add(new T.LineSegments(new T.EdgesGeometry(geo, 28), EDGE)); g.userData.body = m; return g; }
   const LBL = []; const lblBox = document.createElement('div'); lblBox.className = 'lbls'; lblBox.setAttribute('aria-hidden', 'true'); document.body.appendChild(lblBox);
-  function lab(txt, o = {}) { const a = new T.Object3D(); a.material = {}; const el = document.createElement('span'); el.className = 'lbl' + ((o.font || '').includes('Caveat') ? ' hand' : '') + (o.color === '#FBF8EF' || o.color === '#F2C230' ? '' : ''); el.textContent = txt; el.style.fontSize = Math.round(12 + (o.scale || 3) * 3.4) + 'px'; lblBox.appendChild(el); LBL.push({ a, el }); return a; }
+  function lab(txt, o = {}) { const a = new T.Object3D(); a.material = {}; const el = document.createElement('span'); el.className = 'lbl' + ((o.font || '').includes('Caveat') ? ' hand' : '') + (o.color === '#FBF8EF' || o.color === '#F2C230' ? '' : ''); if (o.icon) el.innerHTML = o.icon + '<span>' + txt + '</span>'; else el.textContent = txt; el.style.fontSize = Math.round(12 + (o.scale || 3) * 3.4) + 'px'; lblBox.appendChild(el); LBL.push({ a, el }); return a; }
   function noteTex(txt, bg = '#F2C230', fg = '#1E1A22', bg2 = null) { const c = document.createElement('canvas'); c.width = 256; c.height = 200; const x = c.getContext('2d'); x.fillStyle = bg; x.fillRect(0, 0, 256, 200); if (bg2) { x.fillStyle = bg2; x.beginPath(); x.moveTo(256, 0); x.lineTo(256, 200); x.lineTo(0, 200); x.closePath(); x.fill(); x.fillStyle = 'rgba(255,253,247,.9)'; x.fillRect(18, 52, 220, 96); } x.strokeStyle = '#1E1A22'; x.lineWidth = 10; x.strokeRect(5, 5, 246, 190); x.fillStyle = fg; x.font = '700 30px Arial, Helvetica, sans-serif'; x.textAlign = 'center';
     const words = txt.split(' '); let lines = [''], i = 0; words.forEach(w => { if ((lines[i] + ' ' + w).length > 13) lines[++i] = w; else lines[i] = (lines[i] + ' ' + w).trim(); }); lines = lines.slice(0, 4); lines.forEach((l, k) => x.fillText(l, 128, 100 - (lines.length - 1) * 21 + k * 42 + 12)); return new T.CanvasTexture(c); }
   function pawn(color, s = 1) { const g = new T.Group(); const b = inked(new T.CylinderGeometry(.5 * s, .78 * s, 1.5 * s, 24), color, .06); b.position.y = .75 * s; const h = inked(new T.SphereGeometry(.52 * s, 24, 16), color, .06); h.position.y = 2.05 * s; g.add(b, h); return g; }
@@ -1719,11 +1700,12 @@ const G3 = (() => {
     S.triade.look = 3; S.triade.tick = t => rings.forEach((r, i) => { r.rotation.y = Math.sin(t * .25 + i) * .3; r.rotation.x = Math.cos(t * .2 + i) * .2; }); }
 
   // ---------- 4 besoins : le triangle de la motivation sur le socle de l'appartenance ----------
+const ICO = { 'Autonomie': '<svg viewBox="0 0 24 24"><path d="M6 8h12a4 4 0 0 1 4 4v1a4 4 0 0 1-7 2.6L14 15h-4l-1 .6A4 4 0 0 1 2 13v-1a4 4 0 0 1 4-4z"/><path d="M7 11v3M5.5 12.5h3"/><circle cx="16.5" cy="11.5" r=".6"/><circle cx="18" cy="13.5" r=".6"/></svg>', 'Sens': '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/><path d="M21 3l-7.5 7.5M17 3h4v4"/></svg>', 'Compétence': '<svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M5 20v-4h4v4M10 20v-8h4v8M15 20V6h4v14"/></svg>', 'Appartenance': '<svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="8" r="3"/><path d="M2.5 20a5.5 5.5 0 0 1 11 0M10.5 20a5.5 5.5 0 0 1 11 0"/></svg>', 'Engagement': '<svg viewBox="0 0 24 24"><path d="M12 2c-3 4-5 6.5-5 10a5 5 0 0 0 10 0c0-3.5-2-6-5-10z"/><path d="M12 11c-1.3 1.8-2 3-2 4.3a2 2 0 0 0 4 0c0-1.3-.7-2.5-2-4.3z"/></svg>' };
   { const SPH = [['Autonomie', MAUVE, '« Je fais des choix en accord avec mes valeurs et mes intérêts. »', 'Est-ce que j’ai le contrôle sur certains éléments de la tâche ?', 'Le choix. La voix et la participation. Le contrôle sur la tâche.'], ['Sens', CREAM, '« Je comprends pourquoi cela est important et en quoi cela a du sens pour moi. »', 'Est-ce que je comprends l’utilité de la tâche ?', 'L’utilité. Le but personnel. Le transfert.'], ['Compétence', GOLD, '« En faisant des efforts et des erreurs, j’apprends et je deviens meilleur. »', 'Est-ce que je me sens compétent pour accomplir la tâche ?', 'Le défi optimal. La rétroaction de qualité. La progression visible.'], ['Appartenance', MAUVE, '« Je compte pour quelqu’un ici. »', 'Est-ce que je compte pour quelqu’un ici ?', 'Les relations positives. Le climat sécurisant. Le temps de qualité.']];
     const SP = S.spheres, CY = 3.1;
-    const star = inked(new T.OctahedronGeometry(.75), GOLD, .06); add('spheres', star, 0, CY, 0); const sl = lab('ENGAGEMENT', { scale: 2.2 }); sl.position.y = 1.05; star.add(sl);
+    const star = inked(new T.OctahedronGeometry(.75), GOLD, .06); add('spheres', star, 0, CY, 0); const sl = lab('ENGAGEMENT', { scale: 2.2, icon: ICO['Engagement'] }); sl.position.y = 1.05; star.add(sl);
     const socle = new T.Mesh(new T.CylinderGeometry(3.4, 3.4, .12, 64), new T.MeshStandardMaterial({ color: MAUVE, transparent: true, opacity: .18 })); add('spheres', socle, 0, .9, 0);
-    const pl = SPH.map((d, i) => { const g = inked(new T.SphereGeometry(i === 3 ? .85 : .62, 32, 24), d[1], .05); g.userData.body.userData.i = i; SP.g.add(g); SP.pick.push(g.userData.body); const l = lab(d[0].toUpperCase(), { scale: 2 }); g.add(l); l.position.y = i === 3 ? 1.25 : 1.05; return g; });
+    const pl = SPH.map((d, i) => { const g = inked(new T.SphereGeometry(i === 3 ? .85 : .62, 32, 24), d[1], .05); g.userData.body.userData.i = i; SP.g.add(g); SP.pick.push(g.userData.body); const l = lab(d[0].toUpperCase(), { scale: 2, icon: ICO[d[0]] }); g.add(l); l.position.y = i === 3 ? 1.25 : 1.05; return g; });
     // liens : engagement ↔ chaque besoin ; triangle A-S-C ; socle ↔ A, S, C
     const LK = [[-1, 0, 'c'], [-1, 1, 'c'], [-1, 2, 'c'], [-1, 3, 'c'], [0, 1, 't'], [1, 2, 't'], [2, 0, 't'], [3, 0, 's'], [3, 1, 's'], [3, 2, 's']];
     const COLK = { c: 0x1E1A22, t: GOLD, s: MAUVE };

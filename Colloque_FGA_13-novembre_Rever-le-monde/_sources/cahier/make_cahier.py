@@ -193,22 +193,33 @@ page(f'''
 page(f'''
 {h('07', 'Notre projet d’îlot', 'R', 'Appartenance', 'Autonomie')}
 <div class="ilot">
-  <svg class="plexi" viewBox="0 0 420 300" aria-hidden="true">
-    <rect x="20" y="14" width="380" height="250" fill="#EEF6F8" stroke="var(--ink)" stroke-width="5"/>
-    <rect x="34" y="28" width="352" height="44" fill="var(--v1)" stroke="var(--ink)" stroke-width="3"/><text x="210" y="59" text-anchor="middle" font-family="Anton" font-size="26" fill="var(--ink)">NOTRE PROJET</text>
-    <g font-family="Caveat" font-size="22" fill="var(--ink)">
-      <g transform="rotate(-3 90 130)"><rect x="44" y="92" width="96" height="78" fill="#FFE27A" stroke="var(--ink)" stroke-width="2.5"/><text x="56" y="124">résultat</text></g>
-      <g transform="rotate(2 210 130)"><rect x="160" y="96" width="96" height="78" fill="#FFB3C7" stroke="var(--ink)" stroke-width="2.5"/><text x="172" y="128">action 1</text></g>
-      <g transform="rotate(-2 330 130)"><rect x="276" y="92" width="96" height="78" fill="#BFE6C6" stroke="var(--ink)" stroke-width="2.5"/><text x="288" y="124">action 2</text></g>
+  <svg class="plexi" viewBox="0 0 440 300" aria-hidden="true">
+    <g>
+      <rect x="10" y="12" width="200" height="226" rx="4" fill="#EEF6F8" stroke="var(--ink)" stroke-width="4"/>
+      <text x="110" y="40" text-anchor="middle" font-family="Anton" font-size="17" fill="var(--ink)">NOTRE MONDE IDÉAL</text>
+      <g stroke="var(--ink)" stroke-width="2.5"><circle cx="85" cy="105" r="42" fill="#F2C230" fill-opacity=".55"/><circle cx="135" cy="105" r="42" fill="#5B2A86" fill-opacity=".35"/><circle cx="110" cy="150" r="42" fill="#fff" fill-opacity=".6"/></g>
+      <g font-family="Inter" font-weight="800" font-size="9" text-anchor="middle" fill="var(--ink)"><text x="72" y="92">ÉCOLE</text><text x="152" y="92">COMMUNAUTÉ</text><text x="110" y="178">NATURE</text></g>
+      <rect x="40" y="200" width="44" height="26" fill="#FFE27A" stroke="var(--ink)" stroke-width="1.5" transform="rotate(-4 62 213)"/><rect x="130" y="198" width="44" height="26" fill="#FFE27A" stroke="var(--ink)" stroke-width="1.5" transform="rotate(3 152 211)"/>
+      <path d="M40 238 26 292M180 238 194 292" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
     </g>
-    <rect x="44" y="190" width="328" height="60" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-dasharray="8 6"/><text x="208" y="228" text-anchor="middle" font-family="Inter" font-weight="800" font-size="16" fill="var(--ink)">L’ESPACE DES VOTES</text>
-    <path d="M60 264 40 296M360 264 380 296" stroke="var(--ink)" stroke-width="5"/>
+    <g transform="translate(228 0)">
+      <rect x="0" y="12" width="200" height="226" rx="4" fill="#EEF6F8" stroke="var(--ink)" stroke-width="4"/>
+      <rect x="12" y="24" width="176" height="30" fill="var(--v1)" stroke="var(--ink)" stroke-width="2.5"/><text x="100" y="45" text-anchor="middle" font-family="Anton" font-size="17" fill="var(--ink)">NOTRE PROJET</text>
+      <g font-family="Caveat" font-size="15" fill="var(--ink)">
+        <rect x="14" y="66" width="80" height="54" fill="#FFE27A" stroke="var(--ink)" stroke-width="2" transform="rotate(-3 54 93)"/><text x="22" y="96">résultat</text>
+        <rect x="106" y="66" width="80" height="54" fill="#fff" stroke="var(--ink)" stroke-width="2" transform="rotate(2 146 93)"/><text x="114" y="96">actions</text>
+      </g>
+      <rect x="14" y="138" width="172" height="86" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="7 5"/>
+      <rect x="24" y="152" width="30" height="24" fill="#9ED9A8" stroke="var(--ink)" stroke-width="1.5"/><rect x="62" y="156" width="30" height="24" fill="#EBDDB0" stroke="var(--ink)" stroke-width="1.5"/><rect x="100" y="150" width="30" height="24" fill="#F7B5CB" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="100" y="212" text-anchor="middle" font-family="Inter" font-weight="800" font-size="11" fill="var(--ink)">L’ESPACE DES VOTES</text>
+      <path d="M30 238 16 292M170 238 184 292" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+    </g>
   </svg>
   {coche(['Je pointe ce qui m’interpelle dans un cercle.', 'On choisit ensemble un résultat.', 'On trouve des actions concrètes.', 'On donne un titre au projet.', 'On affiche tout au plexiglas, avec l’espace des votes.'], 'grand')}
 </div>
-{zone('Qu’est-ce que je remarque ?', '1.25in')}
-{zone('Comment avons-nous fait pour choisir ?', '1.25in')}
-{zone('Mes notes', '1.1in')}
+{zone('Qu’est-ce que je remarque ?', '1.0in')}
+{zone('Comment avons-nous fait pour choisir ?', '1.0in')}
+{zone('Mes notes', '0.9in')}
 ''', verbe=1)
 
 # --- 10 · 08 votes ----------------------------------------------------------

@@ -341,3 +341,5 @@ mark{background:var(--gold);color:inherit;padding:0 .08em}
 .defs .eng{display:grid;grid-template-columns:1.15in 1fr;gap:.15in;align-items:center}
 .defs .eng svg{width:1.15in;height:1.05in}
 .defs .eng b{font-size:24pt;color:var(--ink)}
+.ilot{grid-template-columns:1fr;gap:.1in}.plexi{width:5.2in;justify-self:center}
+.plexi{width:4.8in}
