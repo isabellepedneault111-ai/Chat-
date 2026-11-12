@@ -233,7 +233,7 @@ const kids = [
     ['**Étiquettes de provenance** (fichier 05f) et crayon permanent', '1 feuille par séance', '☐']
   ], [7280, 2200, 600]),
   H2('Installation et rangement : savoir d’où vient chaque objet'),
-  P('Tout ce qui est emprunté (chaises, tables, plexiglas, rallonges, haut-parleur) reçoit une **étiquette de provenance** avant d’être déplacé : d’où il vient, à qui le remettre, et une case à cocher au retour. Fichier 05f : 30 étiquettes par feuille, format compatible avec les feuilles d’étiquettes 2 ⅝ × 1 po (ou du papier ordinaire et du ruban).'),
+  P('Tout ce qui est emprunté (chaises, tables, plexiglas, rallonges, haut-parleur) reçoit une **étiquette de provenance** avant d’être déplacé : d’où il vient, à qui le remettre, et une case à cocher au retour. Fichier 05f : 41 étiquettes déjà préremplies (objet, quantité, îlot ou table de destination) et 19 vierges, plus 8 grandes étiquettes pour les plexiglas et les tables du réseautage ; il reste seulement à écrire « Vient de ». Format compatible avec les feuilles d’étiquettes 2 ⅝ × 1 po (ou du papier ordinaire et du ruban).'),
   B('**Avant de déplacer quoi que ce soit, une photo du local** tel qu’il est. Au rangement, la photo dit où remettre chaque table et chaque chaise.'),
   B('**Une couleur par local d’origine.** Une gommette ou un trait de surligneur de la même couleur sur toutes les étiquettes d’un même local : au rangement, on regroupe par couleur.'),
   B('**Les chaises voyagent en piles de 5**, une seule étiquette sur la chaise du dessus : « Local 214, 5 chaises ».'),
