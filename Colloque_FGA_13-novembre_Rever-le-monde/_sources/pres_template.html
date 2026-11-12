@@ -1397,7 +1397,7 @@ function go(n) {
   $('#nBody').textContent = slides[cur].dataset.notes;
   if (location.hash !== '#s' + (cur + 1)) history.replaceState(null, '', '#s' + (cur + 1));
   send({ cur });
-  G3.activate(slides[cur]); if (typeof whoMark === 'function') whoMark();
+  G3.activate(slides[cur]); if (typeof whoMark === 'function') whoMark(); if (typeof fitSlide === 'function') fitSlide();
   if (typeof tSlide !== 'undefined' && tSlide >= 0 && tSlide !== cur) { stopTimer(); tSlide = -1; }
 }
 $('#prev').onclick = () => go(cur - 1); $('#next').onclick = () => go(cur + 1);
@@ -1884,5 +1884,37 @@ const rz = document.createElement('button'); rz.className = 'btn alt'; rz.textCo
 const h = parseInt((location.hash.match(/^#s(\d+)$/) || [])[1] || '1', 10);
 go(h - 1);
 addEventListener('hashchange', () => { if (location.hash === '#ressources') { location.reload(); return; } const m = location.hash.match(/^#s(\d+)$/); if (m && +m[1] - 1 !== cur) go(+m[1] - 1); });
+})();
+</script>
+<script>
+/* Ajuste chaque carte à l'écran : jamais de défilement (les longues invites gardent leur propre ascenseur) */
+(function(){
+  const BOX='.cg-pre,.prompt-out';
+  function over(el){return el.scrollHeight-el.clientHeight;}
+  function fitBox(sh){
+    const kids=[...sh.children];
+    kids.forEach(k=>k.style.zoom='');
+    sh.querySelectorAll(BOX).forEach(b=>b.style.maxHeight='');
+    let o=over(sh); if(o<=1) return;
+    let z=1; const step=()=>{ z=Math.round((z-0.03)*100)/100; kids.forEach(k=>k.style.zoom=z); o=over(sh); };
+    const boxes=[...sh.querySelectorAll(BOX)].filter(b=>b.offsetParent);
+    if(boxes.length){ while(o>1&&z>0.83) step();
+      boxes.forEach(b=>{ if(o<=1) return; const h=b.getBoundingClientRect().height/z; const nh=Math.max(200,h-o/z-4); if(nh<h){b.style.maxHeight=nh+'px'; o=over(sh);} }); }
+    while(o>1&&z>0.56) step();
+  }
+  let busy=false;
+  function fit(){ const s=document.querySelector('#deck > section.slide.on'); if(!s) return; busy=true;
+    s.querySelectorAll('.sheet,.s1-panel').forEach(fitBox); setTimeout(()=>busy=false,0); }
+  let t; function later(){ clearTimeout(t); t=setTimeout(fit,60); }
+  window.fitSlide=later;
+  addEventListener('resize',later);
+  const mo=new MutationObserver(()=>{ if(!busy) later(); });
+  document.querySelectorAll('#deck > section.slide').forEach(s=>mo.observe(s,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden','open']}));
+  document.addEventListener('click',()=>setTimeout(later,40),true);
+  /* diapo 14 : le code QR va sous le formulaire, la prévisualisation garde toute la hauteur */
+  function moveQr(){ const f=document.querySelector('#cgSlide .cg-form'), q=document.querySelector('#cgSlide ~ .qrline'); if(f&&q){ q.style.marginTop='18px'; f.appendChild(q); } else setTimeout(moveQr,300); }
+  moveQr();
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(later);
+  later();
 })();
 </script>
