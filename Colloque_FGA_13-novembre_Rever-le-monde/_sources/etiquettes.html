@@ -1,0 +1,27 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><style>
+@font-face{font-family:Anton;src:url(fonts/Anton-Regular.ttf)}
+@page{size:8.5in 11in;margin:0}*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;color:#1E1A22;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pg{width:8.5in;height:11in;page-break-after:always;position:relative;overflow:hidden}
+.g30{position:absolute;top:.5in;left:.1875in;display:grid;grid-template-columns:repeat(3,2.625in);grid-auto-rows:1in;column-gap:.125in}
+.l{border:1px dashed #C3BACB;padding:.06in .1in;display:flex;flex-direction:column;justify-content:space-between;font-size:8.5pt;position:relative}
+.l .t{font-family:Anton;font-size:10pt;letter-spacing:.04em;color:#5B2A86;display:flex;justify-content:space-between}
+.l .t i{font-style:normal;color:#1E1A22;font-family:Arial;font-size:7pt;letter-spacing:0;font-weight:700}
+.l .f{display:flex;gap:4px;align-items:flex-end}.l .f b{white-space:nowrap}.l .f span{flex:1;border-bottom:1px solid #1E1A22;height:11px}
+.dot{position:absolute;right:.08in;bottom:.07in;width:.22in;height:.22in;border-radius:50%;border:1.5px solid #1E1A22}
+.l .f.last span{margin-right:.32in}
+.head{position:absolute;top:.12in;left:.25in;right:.25in;font-size:8pt;color:#6B6472}
+.g8{position:absolute;top:.6in;left:.5in;display:grid;grid-template-columns:repeat(2,3.6in);grid-auto-rows:2.35in;gap:.15in .3in}
+.L{border:3px solid #1E1A22;padding:.15in .2in;display:flex;flex-direction:column;justify-content:space-between;position:relative;background:#fff}
+.L .t{font-family:Anton;font-size:22pt;color:#5B2A86;line-height:1}
+.L .f{display:flex;gap:8px;align-items:flex-end;font-size:13pt;font-weight:700}.L .f span{flex:1;border-bottom:2px solid #1E1A22;height:20px}
+.L .dot{width:.42in;height:.42in;right:.15in;top:.15in;bottom:auto;border-width:2.5px}
+.L .ck{font-size:13pt;font-weight:700}
+</style></head><body>
+<section class="pg"><p class="head">Étiquettes de provenance · Rêver le monde de demain · 13 novembre · format 2 ⅝ × 1 po (30 par feuille). Colorez le rond : une couleur par local d’origine.</p><div class="g30" id="a"></div></section>
+<section class="pg"><p class="head">Grandes étiquettes · pour une pile de chaises, une table, un plexiglas, un bac. À coller au ruban de peintre.</p><div class="g8" id="b"></div></section>
+<script>
+const s='<div class="t">Vient de <i>Rêver le monde · 13 nov.</i></div><div class="f"><b>Local / personne :</b><span></span></div><div class="f"><b>Objet, nombre :</b><span></span></div><div class="f last"><b>☐ Remis</b><span></span></div><div class="dot"></div>';
+document.getElementById('a').innerHTML=Array(30).fill('<div class="l">'+s+'</div>').join('');
+const S='<div class="t">Vient de</div><div class="dot"></div><div class="f">Local / personne :<span></span></div><div class="f">Objet, nombre :<span></span></div><div class="f">À remettre à :<span></span></div><div class="ck">☐ Remis à sa place</div>';
+document.getElementById('b').innerHTML=Array(8).fill('<div class="L">'+S+'</div>').join('');
+</script></body></html>
