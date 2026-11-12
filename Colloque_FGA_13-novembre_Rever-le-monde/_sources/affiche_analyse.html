@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Affiche · Notre analyse de contexte</title>
+<style>
+@font-face{font-family:Anton;src:url(fonts/Anton-Regular.ttf)}
+@font-face{font-family:Caveat;src:url(fonts/Caveat-SemiBold.ttf)}
+@page{size:11in 17in;margin:0}
+:root{--ink:#1E1A22;--paper:#FBF8EF;--mauve:#5B2A86;--gold:#F2C230;--orange:#D9541E}
+*{box-sizing:border-box}
+html,body{margin:0;width:11in;height:17in;background:var(--paper);color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{position:relative;width:11in;height:17in;overflow:hidden;padding:.55in .6in .5in;display:flex;flex-direction:column;gap:.18in;background-image:radial-gradient(rgba(91,42,134,.13) 1.3px,transparent 1.5px);background-size:12px 12px}
+.band{position:absolute;inset:0 0 auto;height:.32in;background:var(--mauve);border-bottom:5px solid var(--ink)}
+.top{display:flex;justify-content:space-between;align-items:flex-end;margin-top:.12in;font-family:Arial,sans-serif;font-weight:700;font-size:13pt;letter-spacing:.16em;text-transform:uppercase;color:var(--mauve)}
+.top b{background:var(--ink);color:var(--gold);padding:4px 10px;letter-spacing:.1em}
+h1{font-family:Anton,Impact,sans-serif;font-weight:400;margin:0;font-size:84pt;line-height:1}
+h1 span{color:var(--mauve)}
+.box{border:5px solid var(--ink);background:#fff;padding:.12in .18in;position:relative}
+.box b{font-family:Anton;font-weight:400;font-size:24pt;letter-spacing:.02em;text-transform:uppercase}
+.box i{font-family:Caveat;font-style:normal;font-size:22pt;color:var(--mauve);margin-left:.12in}
+.t{height:1.1in;box-shadow:10px 10px 0 var(--gold)}
+.r{height:1.7in}
+.a{flex:1}
+.votes{display:grid;grid-template-columns:repeat(3,1fr);gap:.15in;height:2.3in}
+.v{border:5px solid var(--ink);padding:.1in .14in;display:flex;flex-direction:column}
+.v b{font-family:Anton;font-weight:400;font-size:24pt;line-height:1}
+.v p{margin:.04in 0 0;font-family:Caveat;font-size:19pt;line-height:1}
+.v1{background:#9ED9A8}.v2{background:#EBDDB0;color:var(--ink)}.v3{background:#F7B5CB;color:var(--ink)}
+.foot{display:flex;justify-content:space-between;align-items:flex-end}
+.foot .h{font-family:Caveat;font-size:26pt;color:var(--mauve)}
+.foot img{height:.62in;background:#fff;border:3px solid var(--ink);padding:4px 7px;margin-left:.12in}
+.qs{display:flex;flex-wrap:wrap;gap:.08in .12in;margin:0;padding:0;list-style:none}
+.qs li{font-family:Caveat;font-size:22pt;line-height:1;background:#fff;border:3px solid var(--ink);padding:.04in .14in}
+.grid{flex:1;display:grid;grid-template-columns:1.25in 1fr 1fr;grid-template-rows:auto 1fr 1fr 1fr;gap:.12in}
+.hd{font-family:Anton;font-size:26pt;line-height:1.05;text-transform:uppercase;padding:.06in .14in;border:5px solid var(--ink);background:#fff}
+.hd i{display:block;font-family:Caveat;font-style:normal;text-transform:none;font-size:20pt;color:var(--mauve)}
+.hd.lev{box-shadow:8px 8px 0 #9ED9A8}.hd.rem{box-shadow:8px 8px 0 var(--gold)}
+.cir{display:flex;align-items:center;justify-content:center;border:5px solid var(--ink);border-radius:50%;width:1.25in;height:1.25in;align-self:center;font-family:Anton;font-size:17pt;text-transform:uppercase;text-align:center;line-height:1}
+.c1{background:var(--gold)}.c2{background:var(--mauve);color:#fff}.c3{background:#fff}
+.z{border:5px solid var(--ink);background:#fff}
+.ex{font-family:Caveat;font-size:19pt;color:#8a8494;padding:.06in .12in}
+</style></head><body><div class="page">
+<div class="band"></div>
+<div class="top"><span>Colloque régional FGA · 13 novembre 2026</span><b>Îlot · surface verticale</b></div>
+<h1 style="font-size:76pt">Notre <span>analyse de contexte</span></h1>
+<ul class="qs"><li>Qu’est-ce qui existe déjà ?</li><li>Qui pourrait nous aider ?</li><li>Quels lieux, quelles ressources ?</li><li>Quelles forces a notre groupe ?</li><li>Qu’est-ce qui manque ?</li></ul>
+<div class="grid">
+<div></div><div class="hd lev">+ Nos leviers<i>ce qui existe déjà</i></div><div class="hd rem">Je remarque que…<i>ce qui manque</i></div>
+<div class="cir c1">École</div><div class="z"><div class="ex">ex. un boisé derrière le centre</div></div><div class="z"><div class="ex">ex. on n’y va jamais avec les élèves</div></div>
+<div class="cir c2">Commu­nauté</div><div class="z"></div><div class="z"></div>
+<div class="cir c3">Nature</div><div class="z"></div><div class="z"></div>
+</div>
+<div class="foot"><span class="h">Au crayon effaçable, sur le plexiglas.</span><div><img src="img/logo_cfga.png" alt="CFGA"><img src="img/logo_csi.png" alt="CSI"></div></div>
+</div></body></html>
