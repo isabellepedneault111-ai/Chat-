@@ -193,7 +193,7 @@ page(f'''
 page(f'''
 {h('07', 'Notre projet d’îlot', 'R', 'Appartenance', 'Autonomie')}
 <div class="ilot">
-  <svg class="plexi" viewBox="0 0 440 300" aria-hidden="true">
+  <svg class="plexi" viewBox="0 0 668 300" aria-hidden="true">
     <g>
       <rect x="10" y="12" width="200" height="226" rx="4" fill="#EEF6F8" stroke="var(--ink)" stroke-width="4"/>
       <text x="110" y="40" text-anchor="middle" font-family="Anton" font-size="17" fill="var(--ink)">NOTRE MONDE IDÉAL</text>
@@ -203,6 +203,15 @@ page(f'''
       <path d="M40 238 26 292M180 238 194 292" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
     </g>
     <g transform="translate(228 0)">
+      <rect x="0" y="12" width="200" height="226" rx="4" fill="#EEF6F8" stroke="var(--ink)" stroke-width="4"/>
+      <text x="100" y="40" text-anchor="middle" font-family="Anton" font-size="17" fill="var(--ink)">NOTRE ANALYSE</text>
+      <g font-family="Inter" font-weight="800" font-size="8.5" fill="var(--ink)"><text x="62" y="60">+ LEVIERS</text><text x="128" y="60">JE REMARQUE</text></g>
+      <g stroke="var(--ink)" stroke-width="2"><circle cx="30" cy="92" r="13" fill="#F2C230"/><circle cx="30" cy="144" r="13" fill="#5B2A86" fill-opacity=".55"/><circle cx="30" cy="196" r="13" fill="#fff"/></g>
+      <g fill="#fff" stroke="var(--ink)" stroke-width="2"><rect x="52" y="70" width="64" height="44"/><rect x="122" y="70" width="64" height="44"/><rect x="52" y="122" width="64" height="44"/><rect x="122" y="122" width="64" height="44"/><rect x="52" y="174" width="64" height="44"/><rect x="122" y="174" width="64" height="44"/></g>
+      <rect x="58" y="78" width="34" height="22" fill="#FFE27A" stroke="var(--ink)" stroke-width="1.5" transform="rotate(-4 75 89)"/><rect x="132" y="130" width="34" height="22" fill="#FFE27A" stroke="var(--ink)" stroke-width="1.5" transform="rotate(3 149 141)"/>
+      <path d="M30 238 16 292M170 238 184 292" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(456 0)">
       <rect x="0" y="12" width="200" height="226" rx="4" fill="#EEF6F8" stroke="var(--ink)" stroke-width="4"/>
       <rect x="12" y="24" width="176" height="30" fill="var(--v1)" stroke="var(--ink)" stroke-width="2.5"/><text x="100" y="45" text-anchor="middle" font-family="Anton" font-size="17" fill="var(--ink)">NOTRE PROJET</text>
       <g font-family="Caveat" font-size="15" fill="var(--ink)">
@@ -215,7 +224,7 @@ page(f'''
       <path d="M30 238 16 292M170 238 184 292" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
     </g>
   </svg>
-  {coche(['Je pointe ce qui m’interpelle dans un cercle.', 'On choisit ensemble un résultat.', 'On trouve des actions concrètes.', 'On donne un titre au projet.', 'On affiche tout au plexiglas, avec l’espace des votes.'], 'grand')}
+  {coche(['Je pointe ce qui m’interpelle dans un cercle.', 'On note nos leviers et nos « je remarque que ».', 'On choisit ensemble un résultat.', 'On trouve des actions concrètes.', 'On donne un titre au projet.', 'On affiche tout au plexiglas, avec l’espace des votes.'], 'grand')}
 </div>
 {zone('Qu’est-ce que je remarque ?', '1.0in')}
 {zone('Comment avons-nous fait pour choisir ?', '1.0in')}
