@@ -2097,7 +2097,7 @@ const G3 = (() => {
       if (window.pickZone) window.pickZone(z); };
     const tick0 = st.tick; st.tick = t => { tick0(t); balls.forEach((b, k) => { pulse[k] *= .9; b.scale.setScalar(1 + pulse[k] * .12); }); };
     // les globes tournent sur eux-mêmes et autour du centre ; les post-it restent droits et lisibles
-    st.tick = t => { if (!reduce) { spin += .0022; } sys.rotation.z = spin; holders.forEach(h => { h.rotation.z = -spin; }); balls.forEach((b, k) => { b.rotation.y = t * (.25 + k * .05); }); sys.rotation.x = 0; sys.rotation.y = 0; };
+    st.tick = t => { if (!reduce) { spin += 0; } sys.rotation.z = spin; holders.forEach(h => { h.rotation.z = -spin; }); balls.forEach((b, k) => { b.rotation.y = t * (.06 + k * .01); }); sys.rotation.x = 0; sys.rotation.y = 0; };
     const l = store.get('enjeux', null); (l && l.length ? l : DEMO_ENJEUX).forEach(t => st.add(t, !(l && l.length))); }
 
   // ---------- village ----------
@@ -2138,8 +2138,8 @@ const ICO = { 'Autonomie': '<svg viewBox="0 0 24 24"><path d="M6 8h12a4 4 0 0 1 
       if (zoom > .001 && sel >= 0) { const w = pl[sel].getWorldPosition(new V()); tg.lerp(w, zoom * .55); p.lerp(w.clone().add(p.clone().sub(w).normalize().multiplyScalar(sel === 3 ? 10 : 8.5)), zoom * .6); }
       return { p, t: tg }; };
     SP.tick = (t, active) => { if (!active) return; const want = sel >= 0 && sel < 3 ? -sel * 2 * Math.PI / 3 + Math.PI / 2 - .75 : null;
-      if (want === null) rot += reduce ? 0 : .004; else { let dlt = ((want - rot) % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI; rot += dlt * .06; }
-      for (let i = 0; i < 3; i++) { const th = rot + i * 2 * Math.PI / 3; pl[i].position.set(Math.cos(th) * 3, CY + 1.5 + (reduce ? 0 : Math.sin(t * .9 + i) * .12), Math.sin(th) * 3); }
+      if (want === null) rot += reduce ? 0 : .0008; else { let dlt = ((want - rot) % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI; rot += dlt * .06; }
+      for (let i = 0; i < 3; i++) { const th = rot + i * 2 * Math.PI / 3; pl[i].position.set(Math.cos(th) * 3, CY + 1.5, Math.sin(th) * 3); }
       pl[3].position.set(0, 1.1, 0); star.rotation.y = t * .6;
       pl.forEach((p, i) => p.scale.setScalar(i === sel ? 1.25 : 1));
       links.forEach(L => { const on = sel < 0 || L.a === sel || L.b === sel; L.m.material.opacity = on ? .9 : .12; setLink(L, (L.k === 'c' ? .035 : .06) * (sel >= 0 && on ? 1.8 : 1)); }); }; }
@@ -2159,7 +2159,7 @@ const ICO = { 'Autonomie': '<svg viewBox="0 0 24 24"><path d="M6 8h12a4 4 0 0 1 
   { const a = inked(new T.BoxGeometry(1.7, 1.7, 1.7), CREAM, .05); add('nomverbe', a, -2.3, 1.2, 0); add('nomverbe', lab('ON VEUT', { scale: 3.6, color: '#FBF8EF' }), -2.3, 2.7, 0); add('nomverbe', lab('résultat', { font: 'Caveat, cursive', size: 80, scale: 3, color: '#5B2A86', stroke: false }), -2.3, 3.6, 0);
     const b = inked(new T.BoxGeometry(1.7, 1.7, 1.7), GOLD, .05); add('nomverbe', b, 2.3, 1.2, 0); add('nomverbe', lab('ON FAIT', { scale: 3.6 }), 2.3, 2.7, 0); add('nomverbe', lab('action !', { font: 'Caveat, cursive', size: 80, scale: 3, color: '#5B2A86', stroke: false }), 2.3, 3.6, 0);
     const ar = new T.Group(); const sh = inked(new T.CylinderGeometry(.12, .12, 1.6, 10), MAUVE, .15); sh.rotation.z = Math.PI / 2; const tp = inked(new T.ConeGeometry(.35, .6, 12), MAUVE, .1); tp.rotation.z = -Math.PI / 2; tp.position.x = 1; ar.add(sh, tp); add('nomverbe', ar, -.1, 1.2, 0);
-    S.nomverbe.look = 2; S.nomverbe.tick = t => { b.rotation.y = Math.sin(t * .5) * .35; ar.position.x = -.1 + Math.sin(t * 1.2) * .08; }; }
+    S.nomverbe.look = 2; S.nomverbe.tick = t => { b.rotation.y = Math.sin(t * .2) * .08; ar.position.x = -.1; }; }
 
   // ---------- escalier ----------
   { const steps = []; for (let i = 0; i < 5; i++) { const h = .55 * (i + 1); const s = inked(new T.BoxGeometry(1.1, h, 1.8), i % 2 ? MAUVE : GOLD, .04); add('escalier', s, -2.6 + i * 1.15, .35 + h / 2, 0); steps.push(.35 + h); add('escalier', lab(String(i + 1), { scale: 1.3, color: i % 2 ? '#F2C230' : '#5B2A86' }), -2.6 + i * 1.15, .35 + h + .9, .95); }
@@ -2200,11 +2200,11 @@ const ICO = { 'Autonomie': '<svg viewBox="0 0 24 24"><path d="M6 8h12a4 4 0 0 1 
   addEventListener('resize', resize); resize();
   const clock = new T.Clock();
   (function loop() { requestAnimationFrame(loop); const t = clock.getElapsedTime();
-    if (to) { const k = Math.min(1, (performance.now() - t0) / 1900), e = ease(k); camPos.lerpVectors(from.p, to.p, e); camPos.y += Math.sin(Math.PI * e) * Math.min(16, from.p.distanceTo(to.p) * .35); camTgt.lerpVectors(from.t, to.t, e); if (k >= 1) { from = to = null; } }
-    const sw = reduce ? 0 : Math.sin(t * .15) * .25; const ov = S[curName] && S[curName].cam ? S[curName].cam({ p: camPos, t: camTgt }, t) : null;
+    if (to) { const k = Math.min(1, (performance.now() - t0) / 900), e = ease(k); camPos.lerpVectors(from.p, to.p, e);  camTgt.lerpVectors(from.t, to.t, e); if (k >= 1) { from = to = null; } }
+    const sw = 0; const ov = S[curName] && S[curName].cam ? S[curName].cam({ p: camPos, t: camTgt }, t) : null;
     if (ov) { camera.position.set(ov.p.x + sw, ov.p.y, ov.p.z); camera.lookAt(ov.t); } else { camera.position.set(camPos.x + sw, camPos.y, camPos.z); camera.lookAt(camTgt); }
-    const cs = S[curName]; if (cs) { const k = reduce ? 1 : Math.min(1, (performance.now() - enterT) / 1100), e = 1 - Math.pow(1 - k, 3); const g = cs.g; g.scale.setScalar(.55 + .45 * e);
-      g.quaternion.copy(g.userData.q0).multiply(new T.Quaternion().setFromAxisAngle(new V(0, 1, 0), ((1 - e) * -1.1 + (reduce || curName === 'globe' ? 0 : Math.sin(t * .35) * .14)))); g.position.y = g.userData.y0 + (reduce ? 0 : Math.sin(t * .8) * .18) - (1 - e) * 1.2; }
+    const cs = S[curName]; if (cs) { const k = reduce ? 1 : Math.min(1, (performance.now() - enterT) / 1100), e = 1 - Math.pow(1 - k, 3); const g = cs.g; g.scale.setScalar(.85 + .15 * e);
+      g.quaternion.copy(g.userData.q0).multiply(new T.Quaternion().setFromAxisAngle(new V(0, 1, 0), ((1 - e) * -.35))); g.position.y = g.userData.y0 + 0 - (1 - e) * .4; }
     NAMES.forEach(n => { S[n].tick && S[n].tick(t, n === curName); });
     const W2 = innerWidth, H2 = innerHeight, vv = new V(), vis = [];
     LBL.forEach(L => { let st = L.st; if (st === undefined) { let o = L.a; while (o && !o.userData.out) o = o.parent; st = L.st = o ? NAMES.find(n => S[n].g === o) : null; }
