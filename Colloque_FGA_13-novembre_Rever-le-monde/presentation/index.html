@@ -603,6 +603,12 @@ body.flat #deck>.slide:not(.s1):not(.s2full) .sheet{width:min(96vw,2400px)!impor
 @keyframes reveIn{from{opacity:0;transform:scale(.4) translateY(30px)}}
 @keyframes reveFloat{50%{translate:0 -10px}}
 @media (prefers-reduced-motion:reduce){.reve{animation:none}}
+
+.slide.s2full .zpick{display:none!important}
+.zchip{flex:none;font-family:Anton,Impact,sans-serif;font-size:clamp(15px,1.3vw,20px);padding:6px 12px;border:3px solid var(--ink);background:#F2C230;color:#1E1A22;white-space:nowrap;align-self:center}
+.zchip.z-c{background:#5B2A86;color:#fff}.zchip.z-n{background:#1E7FC2;color:#fff}
+.zchip.z-ec{background:linear-gradient(90deg,#F2C230 50%,#5B2A86 50%);color:#fff;text-shadow:0 1px 2px #000}.zchip.z-en{background:linear-gradient(90deg,#F2C230 50%,#1E7FC2 50%);color:#fff;text-shadow:0 1px 2px #000}.zchip.z-cn{background:linear-gradient(90deg,#5B2A86 50%,#1E7FC2 50%);color:#fff}.zchip.z-x{background:#D9541E;color:#fff}
+.slide.s2full .checker{align-items:center}
 .me-row{display:grid;grid-template-columns:minmax(0,46%) 1fr;gap:20px;align-items:center}.me-fig{margin:0;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--gold);cursor:zoom-in}.me-fig img{display:block;width:100%;height:auto;max-height:52vh;object-fit:contain;background:#1E1A22}.me-fig.big{position:fixed;inset:3vh 10vw;z-index:60;cursor:zoom-out;display:grid;place-items:center;background:#1E1A22}.me-fig.big img{max-height:94vh}.me-q{font-family:var(--display);font-size:clamp(24px,2.4vw,38px);color:var(--gold);line-height:1.1;margin:10px 0}
 .duo2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px}
 .duo2>div{border:3px solid currentColor;padding:16px 18px}
@@ -1291,6 +1297,7 @@ window.CG = (() => {
     <p class="zlab">Zone choisie<b id="zName">École</b></p>
   </div>
   <form class="checker" id="enjeuForm" style="margin-bottom:12px">
+    <span class="zchip z-e" id="zChip" title="Touchez un globe pour changer de zone">👆 école</span>
     <input type="text" id="enjeuIn" maxlength="40" placeholder="ex. peu de liens avec les organismes du quartier" aria-label="Un enjeu">
     <button class="btn" type="submit" id="enjeuGo">Accrocher au globe</button>
     <button class="btn alt" type="button" id="enjeuClear">Vider</button>
@@ -2059,6 +2066,13 @@ const G3 = (() => {
       ANC[z].add(m); if (save) { const l = store.get('enjeux', []); l.push(it); store.set('enjeux', l); } };
     st.clear = () => { Object.values(ANC).forEach(h => h.children.filter(c => c.geometry && c.geometry.type === 'PlaneGeometry').forEach(c => h.remove(c))); Object.keys(count).forEach(k => delete count[k]); store.set('enjeux', []); };
     st.drag = () => {};
+    st.pick = balls.slice(); balls.forEach((b, k) => { b.userData.zk = 'ecn'[k]; });
+    let pulse = [0, 0, 0];
+    st.onPick = (obj, hit) => { let z = obj.userData.zk || 'e';
+      if (hit) { const p = sys.worldToLocal(hit.point.clone()); const inn = [0, 1, 2].filter(k => Math.hypot(p.x - C3[k][0], p.y - C3[k][1]) < R * 1.16); if (inn.length === 3) z = 'x'; else if (inn.length === 2) z = inn.map(k => 'ecn'[k]).join(''); }
+      'ecn'.split('').forEach((c, k) => { if (z === 'x' || z.includes(c)) pulse[k] = 1; });
+      if (window.pickZone) window.pickZone(z); };
+    const tick0 = st.tick; st.tick = t => { tick0(t); balls.forEach((b, k) => { pulse[k] *= .9; b.scale.setScalar(1 + pulse[k] * .12); }); };
     // les globes tournent sur eux-mêmes et autour du centre ; les post-it restent droits et lisibles
     st.tick = t => { if (!reduce) { sway = Math.sin(t * .4) * .03; } sys.rotation.z = 0; holders.forEach(h => { h.rotation.z = 0; }); balls.forEach((b, k) => { b.rotation.y = t * (.25 + k * .05); }); sys.rotation.x = sway; sys.rotation.y = 0; };
     const l = store.get('enjeux', null); (l && l.length ? l : DEMO_ENJEUX).forEach(t => st.add(t, !(l && l.length))); }
@@ -2182,7 +2196,7 @@ const ICO = { 'Autonomie': '<svg viewBox="0 0 24 24"><path d="M6 8h12a4 4 0 0 1 
   // pointeur : clic sur une station active, glisser pour tourner le globe
   const ray = new T.Raycaster(), mv = new T.Vector2(); let drag = null;
   const screenOf = obj => { const v = new V(); obj.getWorldPosition(v); v.project(camera); return { x: (v.x + 1) / 2 * innerWidth, y: (1 - v.y) / 2 * innerHeight }; };
-  cv.addEventListener('pointerdown', e => { const s = S[curName]; if (!s) return; drag = e.clientX; if (!s.pick.length || !s.onPick) return; mv.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mv, camera); const h = ray.intersectObjects(s.pick, false)[0]; if (h) { s.onPick(h.object); return; } let best = null, bd = 140; s.pick.forEach(o => { const q = screenOf(o); const dd = Math.hypot(q.x - e.clientX, q.y - e.clientY); if (dd < bd) { bd = dd; best = o; } }); if (best) s.onPick(best); });
+  cv.addEventListener('pointerdown', e => { const s = S[curName]; if (!s) return; drag = e.clientX; if (!s.pick.length || !s.onPick) return; mv.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(mv, camera); const h = ray.intersectObjects(s.pick, false)[0]; if (h) { s.onPick(h.object, h); return; } let best = null, bd = 140; s.pick.forEach(o => { const q = screenOf(o); const dd = Math.hypot(q.x - e.clientX, q.y - e.clientY); if (dd < bd) { bd = dd; best = o; } }); if (best) s.onPick(best); });
   addEventListener('pointermove', e => { if (drag === null) return; S[curName] && S[curName].drag && S[curName].drag(e.clientX - drag); drag = e.clientX; });
   addEventListener('pointerup', () => { drag = null; });
   window.__monde = { S, screenOf };
@@ -2191,6 +2205,7 @@ const ICO = { 'Autonomie': '<svg viewBox="0 0 24 24"><path d="M6 8h12a4 4 0 0 1 
 
 // globe : formulaire
 let zoneSel = 'e';
+window.pickZone = z => { zoneSel = z; drawZone(z); const m = document.querySelector('.s2mode button[data-m=enjeu]'); if (m && !m.classList.contains('on')) m.click(); const ch = document.getElementById('zChip'); if (ch) { ch.textContent = '👆 ' + ZN[z]; ch.className = 'zchip z-' + z; } const i = document.getElementById('enjeuIn'); if (i) i.focus(); };
 const ZN = { e: 'école', c: 'communauté', n: 'nature', ec: 'école + communauté', en: 'école + nature', cn: 'communauté + nature', x: 'les trois' };
 const ZORDER = ['e', 'c', 'n', 'ec', 'en', 'cn', 'x'];
 function zoneAt(px, py) { const inn = (cx, cy) => (px - cx) ** 2 + (py - cy) ** 2 <= 66 * 66; const k = (inn(90, 82) ? 'e' : '') + (inn(160, 82) ? 'c' : '') + (inn(125, 140) ? 'n' : ''); return { e: 'e', c: 'c', n: 'n', ec: 'ec', en: 'en', cn: 'cn', ecn: 'x' }[k] || null; }
