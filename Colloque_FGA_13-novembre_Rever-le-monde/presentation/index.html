@@ -378,10 +378,10 @@ body.hubmode::after{display:none}
 .idc{transform:none}
 .idc header{background-color:var(--mauve);background-image:radial-gradient(rgba(30,26,34,.35) 1.4px,transparent 1.6px);background-size:11px 11px;padding:12px 16px;border-bottom:3px solid var(--ink);display:flex;flex-direction:column;gap:4px}
 .idc-name{font-family:var(--display);font-size:clamp(28px,3vw,44px);color:var(--gold);text-shadow:3px 3px 0 var(--ink);line-height:1}
-.idc-role{font-family:var(--ui);font-size:clamp(13px,1.05vw,15px);color:#FFFFFF;letter-spacing:.03em}
-.idc dl{margin:0;padding:10px 16px 14px;display:grid;grid-template-columns:1fr;gap:8px 14px;align-items:baseline}
-.idc dt{font-family:var(--ui);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mauve);white-space:nowrap}
-.idc dd{margin:0;font-family:var(--body);font-size:clamp(17px,1.5vw,22px);line-height:1.3;border-bottom:2px dashed var(--hair);padding-bottom:2px;min-height:1.2em;cursor:text}
+.idc-role{font-family:var(--ui);font-size:clamp(15px,1.2vw,19px);color:#FFFFFF;letter-spacing:.03em}
+.idc dl{margin:0;padding:12px 18px 16px;display:grid;grid-template-columns:auto 1fr;gap:10px 16px;align-items:baseline}
+.idc dt{font-family:var(--ui);font-size:clamp(12px,1vw,15px);font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mauve);max-width:9em;line-height:1.2}
+.idc dd{margin:0;font-family:var(--body);font-size:clamp(20px,1.85vw,30px);line-height:1.25;border-bottom:2px dashed var(--hair);padding-bottom:2px;min-height:1.2em;cursor:text}
 .idc dd.todo{color:var(--muted)}
 .idc dd:focus{outline:none;background:#fff5d1}
 @media (max-width:520px){.idc dl{grid-template-columns:1fr}}
@@ -578,6 +578,17 @@ body.flat .slide:not(.s1) .sheet{margin-inline:auto}
 .url-big{font-weight:800;color:var(--mauve)}
 .cg3-qr{display:flex;flex-direction:column;align-items:center;gap:14px}
 .cg3-qr .qr{background:#fff;padding:10px;border:3px solid var(--ink)}
+
+.slide.s2full{align-items:flex-end;justify-content:center}
+.slide.s2full .sheet{position:absolute;left:50%;bottom:58px;transform:translateX(-50%);width:min(980px,94vw)!important;max-width:none;max-height:none!important;overflow:visible;padding:12px 18px 14px;background:rgba(255,253,247,.94);box-shadow:6px 6px 0 var(--ink);margin:0;zoom:1!important}
+.slide.s2full .sheet>*{zoom:1!important}
+.slide.s2full .kick,.slide.s2full .when,.slide.s2full .mur,.slide.s2full .tally,.slide.s2full .nourrit,.slide.s2full .zlab{display:none!important}
+.slide.s2full h2{font-size:clamp(22px,2.3vw,34px)!important;margin:0 0 8px!important;line-height:1.1}
+.slide.s2full .s2row{display:flex;gap:14px;align-items:center}
+.slide.s2full .zpick{flex:none;margin:0}
+.slide.s2full .zpick svg{width:clamp(80px,7vw,110px);height:auto}
+.slide.s2full .checker{flex:1;margin:0!important}
+.slide.s2full .checker input{font-size:clamp(18px,1.6vw,24px)}
 .me-row{display:grid;grid-template-columns:minmax(0,46%) 1fr;gap:20px;align-items:center}.me-fig{margin:0;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--gold);cursor:zoom-in}.me-fig img{display:block;width:100%;height:auto;max-height:52vh;object-fit:contain;background:#1E1A22}.me-fig.big{position:fixed;inset:3vh 10vw;z-index:60;cursor:zoom-out;display:grid;place-items:center;background:#1E1A22}.me-fig.big img{max-height:94vh}.me-q{font-family:var(--display);font-size:clamp(24px,2.4vw,38px);color:var(--gold);line-height:1.1;margin:10px 0}
 .duo2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px}
 .duo2>div{border:3px solid currentColor;padding:16px 18px}
@@ -1246,11 +1257,11 @@ window.CG = (() => {
   </div>
 </section>
 
-<section data-mode="exp" data-besoins="Sens" class="slide" data-phase="0" data-who="Francis" data-notes="Pendant l’accueil, taper quelques post-it du mur en choisissant leur cercle : ils s’accrochent au globe. Phrase clé : « Ce que vous venez de faire, nos élèves de PPS l’ont fait aussi : c’est la première marche de la démarche. »">
+<section data-mode="exp" data-besoins="Sens" class="slide s2full" data-full="1" data-phase="0" data-who="Francis" data-notes="Pendant l’accueil, taper quelques post-it du mur en choisissant leur cercle : ils s’accrochent au globe. Phrase clé : « Ce que vous venez de faire, nos élèves de PPS l’ont fait aussi : c’est la première marche de la démarche. »">
   <div class="kick">Accueil · le mur d’enjeux</div>
   <h2>Qu’est-ce qui vous <span class="hl">préoccupe</span> ou vous dérange dans votre milieu ?</h2>
   <p class="when"><b>En entrant</b> Un post-it, puis au mur.</p>
-  <div class="zpick">
+  <div class="s2row"><div class="zpick">
     <svg id="zSvg" viewBox="0 0 250 215" role="group" aria-label="Choisir la zone du post-it : touchez une partie des cercles">
       <defs>
         <clipPath id="zcE"><circle cx="90" cy="82" r="66"/></clipPath><clipPath id="zcC"><circle cx="160" cy="82" r="66"/></clipPath><clipPath id="zcN"><circle cx="125" cy="140" r="66"/></clipPath>
@@ -1267,12 +1278,12 @@ window.CG = (() => {
     <input type="text" id="enjeuIn" maxlength="40" placeholder="ex. peu de liens avec les organismes du quartier" aria-label="Un enjeu">
     <button class="btn" type="submit">Accrocher au globe</button>
     <button class="btn alt" type="button" id="enjeuClear">Vider</button>
-  </form>
+  </form></div>
   <div class="mur" id="mur" aria-live="polite"></div>
   <p class="tally" id="tally"></p>
 </section>
 
-<section class="slide" data-phase="0" data-who="Isabelle et Francis" data-notes="Présentation éclair, 30 secondes chacun. Cliquer sur un champ pour l’écrire ou le corriger : ce qui est écrit reste sur cet ordinateur. Même format que la présentation « Motivation et engagement ». Enchaîner : « Et vous, qu’est-ce qui vous dérange ? »">
+<section class="slide" data-wide="1" data-phase="0" data-who="Isabelle et Francis" data-notes="Présentation éclair, 30 secondes chacun. Cliquer sur un champ pour l’écrire ou le corriger : ce qui est écrit reste sur cet ordinateur. Même format que la présentation « Motivation et engagement ». Enchaîner : « Et vous, qu’est-ce qui vous dérange ? »">
   <div class="kick">Qui sommes-nous ?</div>
   <h2>Présentations</h2>
   <div class="ids">
@@ -2008,7 +2019,7 @@ const G3 = (() => {
 
   // ---------- trois globes : école, communauté, nature ----------
   { const sys = new T.Group(); add('globe', sys, 0, 3.6, 0);
-    const R = 1.45, C3 = [[-1.55, .9], [1.55, .9], [0, -1.75]], COLS = [GOLD, MAUVE, 0x1E7FC2], NOMS = ["ÉCOLE", "COMMUNAUTÉ", "NATURE"];
+    const R = 1.45, C3 = [[-1.2, .75], [1.2, .75], [0, -1.35]], COLS = [GOLD, MAUVE, 0x1E7FC2], NOMS = ["ÉCOLE", "COMMUNAUTÉ", "NATURE"];
     const holders = [], balls = [];
     C3.forEach(([x, y], k) => { const h = new T.Group(); h.position.set(x, y, 0); sys.add(h); holders.push(h);
       const b = inked(new T.SphereGeometry(R, 40, 28), COLS[k], .05); b.add(new T.LineSegments(new T.WireframeGeometry(new T.SphereGeometry(R + .01, 10, 7)), new T.LineBasicMaterial({ color: k === 1 ? GOLD : MAUVE, transparent: true, opacity: .45 }))); h.add(b); balls.push(b);
@@ -2019,13 +2030,13 @@ const G3 = (() => {
     const ctr = new T.Group(); ctr.position.set(0, (C3[0][1] + C3[1][1] + C3[2][1]) / 3, 0); sys.add(ctr); holders.push(ctr); ANC.x = ctr;
     const SLOTS = [[0, 0], [.62, .42], [-.62, .42], [.62, -.46], [-.62, -.46], [0, .78], [0, -.8], [1.05, 0], [-1.05, 0]];
     const count = {}; let spin = 0, sway = 0;
-    const st = S.globe; st.look = 3.1; st.dist = 10.8; st.h = 3.0;
+    const st = S.globe; st.look = 3.0; st.dist = 13.4; st.h = 1.0;
     st.add = (item, save = true) => { const it = typeof item === 'string' ? { t: item } : item, txt = it.t; const z = ANC[it.z] ? it.z : 'e'; const k = count[z] = (count[z] || 0) + 1;
       const PAL = { e: ['#F2C230', '#1E1A22'], c: ['#5B2A86', '#FFFFFF'], n: ['#FBF8EF', '#1E1A22'], x: ['#D9541E', '#FFFFFF'] }, ZP = { ec: ['#F2C230', '#5B2A86'], en: ['#F2C230', '#FBF8EF'], cn: ['#5B2A86', '#FBF8EF'] };
       const tex = ZP[z] ? noteTex(txt, ZP[z][0], '#1E1A22', ZP[z][1]) : noteTex(txt, PAL[z][0], PAL[z][1]);
       const m = new T.Mesh(new T.PlaneGeometry(1.05, .82), new T.MeshBasicMaterial({ map: tex, side: T.DoubleSide }));
       const [ox, oy] = SLOTS[(k - 1) % SLOTS.length]; const onBall = 'ecn'.includes(z) && z.length === 1;
-      m.position.set(ox * (onBall ? 1 : .75), oy * (onBall ? 1 : .75), (onBall ? R : .9) + .12 + (k - 1) * .004); m.rotation.z = ((k * 37) % 9 - 4) * .03;
+      m.position.set(ox * (onBall ? 1 : .75), oy * (onBall ? 1 : .75), (onBall ? R : R + .45) + .12 + (k - 1) * .004); m.rotation.z = ((k * 37) % 9 - 4) * .03;
       ANC[z].add(m); if (save) { const l = store.get('enjeux', []); l.push(it); store.set('enjeux', l); } };
     st.clear = () => { Object.values(ANC).forEach(h => h.children.filter(c => c.geometry && c.geometry.type === 'PlaneGeometry').forEach(c => h.remove(c))); Object.keys(count).forEach(k => delete count[k]); store.set('enjeux', []); };
     st.drag = dx => { spin += dx * .01; };
@@ -2127,9 +2138,9 @@ const ICO = { 'Autonomie': '<svg viewBox="0 0 24 24"><path d="M6 8h12a4 4 0 0 1 
     return { p: s.g.position.clone().add(out.clone().multiplyScalar(s.dist * K)).add(side.multiplyScalar(2.2)).add(new V(0, s.h * K, 0)), t: s.g.position.clone().add(new V(0, s.look, 0)) }; }
   const ease = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
   let enterT = 0;
-  function activate(slide) { const i = [...document.querySelectorAll('.slide')].indexOf(slide); const n = STATIONS[i] || 'aerial'; document.body.classList.toggle('flat', n === 'aerial'); if (n === curName) { S[n] && S[n].enter && S[n].enter(); return; }
+  function activate(slide) { const i = [...document.querySelectorAll('.slide')].indexOf(slide); const n = STATIONS[i] || 'aerial'; document.body.classList.toggle('flat', n === 'aerial'); setTimeout(resize, 0); if (n === curName) { S[n] && S[n].enter && S[n].enter(); return; }
     curName = n; NAMES.forEach(k => { S[k].g.visible = k === n; }); const pose = poseFor(n); camPos.copy(pose.p); camTgt.copy(pose.t); from = to = null; enterT = performance.now(); S[n] && S[n].enter && S[n].enter(); }
-  function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; if (w > 820) { const sw = Math.min(820, w * .55) + Math.max(16, w * .04) + 14; const xc = (sw + w) / 2; camera.setViewOffset(w, h, -(xc - w / 2), 0, w, h); const free = w - sw; const k2 = Math.min(1.9, Math.max(1, (w * .42) / free)); if (Math.abs(k2 - K) > .01) { K = k2; if (!to) { const pp = poseFor(curName); camPos.copy(pp.p); camTgt.copy(pp.t); } } } else { camera.clearViewOffset(); K = 1.35; } camera.updateProjectionMatrix(); }
+  function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; const fsl = document.querySelector('#deck > section.slide.on'); if (fsl && fsl.dataset.full) { camera.clearViewOffset(); if (Math.abs(K - 1) > .01) { K = 1; if (!to) { const pp = poseFor(curName); camPos.copy(pp.p); camTgt.copy(pp.t); } } } else if (w > 820) { const sw = Math.min(820, w * .55) + Math.max(16, w * .04) + 14; const xc = (sw + w) / 2; camera.setViewOffset(w, h, -(xc - w / 2), 0, w, h); const free = w - sw; const k2 = Math.min(1.9, Math.max(1, (w * .42) / free)); if (Math.abs(k2 - K) > .01) { K = k2; if (!to) { const pp = poseFor(curName); camPos.copy(pp.p); camTgt.copy(pp.t); } } } else { camera.clearViewOffset(); K = 1.35; } camera.updateProjectionMatrix(); }
   addEventListener('resize', resize); resize();
   const clock = new T.Clock();
   (function loop() { requestAnimationFrame(loop); const t = clock.getElapsedTime();
