@@ -1825,7 +1825,7 @@ const G3 = (() => {
       if (window.pickZone) window.pickZone(z); };
     const tick0 = st.tick; st.tick = t => { tick0(t); balls.forEach((b, k) => { pulse[k] *= .9; b.scale.setScalar(1 + pulse[k] * .12); }); };
     // les globes tournent sur eux-mêmes et autour du centre ; les post-it restent droits et lisibles
-    st.tick = t => { if (!reduce) { sway = Math.sin(t * .4) * .03; } sys.rotation.z = 0; holders.forEach(h => { h.rotation.z = 0; }); balls.forEach((b, k) => { b.rotation.y = t * (.25 + k * .05); }); sys.rotation.x = sway; sys.rotation.y = 0; };
+    st.tick = t => { if (!reduce) { spin += .0022; } sys.rotation.z = spin; holders.forEach(h => { h.rotation.z = -spin; }); balls.forEach((b, k) => { b.rotation.y = t * (.25 + k * .05); }); sys.rotation.x = 0; sys.rotation.y = 0; };
     const l = store.get('enjeux', null); (l && l.length ? l : DEMO_ENJEUX).forEach(t => st.add(t, !(l && l.length))); }
 
   // ---------- village ----------
@@ -1932,7 +1932,7 @@ const ICO = { 'Autonomie': '<svg viewBox="0 0 24 24"><path d="M6 8h12a4 4 0 0 1 
     const sw = reduce ? 0 : Math.sin(t * .15) * .25; const ov = S[curName] && S[curName].cam ? S[curName].cam({ p: camPos, t: camTgt }, t) : null;
     if (ov) { camera.position.set(ov.p.x + sw, ov.p.y, ov.p.z); camera.lookAt(ov.t); } else { camera.position.set(camPos.x + sw, camPos.y, camPos.z); camera.lookAt(camTgt); }
     const cs = S[curName]; if (cs) { const k = reduce ? 1 : Math.min(1, (performance.now() - enterT) / 1100), e = 1 - Math.pow(1 - k, 3); const g = cs.g; g.scale.setScalar(.55 + .45 * e);
-      g.quaternion.copy(g.userData.q0).multiply(new T.Quaternion().setFromAxisAngle(new V(0, 1, 0), (curName === 'globe' ? 0 : (1 - e) * -1.1 + (reduce ? 0 : Math.sin(t * .35) * .14)))); g.position.y = g.userData.y0 + (reduce ? 0 : Math.sin(t * .8) * .18) - (1 - e) * 1.2; }
+      g.quaternion.copy(g.userData.q0).multiply(new T.Quaternion().setFromAxisAngle(new V(0, 1, 0), ((1 - e) * -1.1 + (reduce || curName === 'globe' ? 0 : Math.sin(t * .35) * .14)))); g.position.y = g.userData.y0 + (reduce ? 0 : Math.sin(t * .8) * .18) - (1 - e) * 1.2; }
     NAMES.forEach(n => { S[n].tick && S[n].tick(t, n === curName); });
     const W2 = innerWidth, H2 = innerHeight, vv = new V(), vis = [];
     LBL.forEach(L => { let st = L.st; if (st === undefined) { let o = L.a; while (o && !o.userData.out) o = o.parent; st = L.st = o ? NAMES.find(n => S[n].g === o) : null; }
