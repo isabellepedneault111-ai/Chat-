@@ -621,6 +621,10 @@ body.flat #deck>.slide:not(.s1):not(.s2full) .sheet{width:min(96vw,2400px)!impor
 .mi-cons li{font-family:var(--body);font-size:clamp(20px,1.9vw,30px);background:#fff;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--gold);padding:8px 16px}
 .stepq .mi-note{text-align:center;font-family:Caveat,cursive!important;font-size:clamp(26px,2.4vw,40px)!important;color:var(--mauve);margin-top:8px}
 .slide.s9full[data-step="1"] .sheet{padding-top:12px}
+
+.slide.s2full .s2mode{display:flex;gap:8px;position:absolute;left:0;top:-52px}
+.slide[data-step="0"] .s2mode{display:none!important}
+.s2row[hidden]{display:none!important}
 .me-row{display:grid;grid-template-columns:minmax(0,46%) 1fr;gap:20px;align-items:center}.me-fig{margin:0;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--gold);cursor:zoom-in}.me-fig img{display:block;width:100%;height:auto;max-height:52vh;object-fit:contain;background:#1E1A22}.me-fig.big{position:fixed;inset:3vh 10vw;z-index:60;cursor:zoom-out;display:grid;place-items:center;background:#1E1A22}.me-fig.big img{max-height:94vh}.me-q{font-family:var(--display);font-size:clamp(24px,2.4vw,38px);color:var(--gold);line-height:1.1;margin:10px 0}
 .duo2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px}
 .duo2>div{border:3px solid currentColor;padding:16px 18px}
@@ -1046,32 +1050,9 @@ __COPILOT_GEN__
   </div>
 </section>
 
-<section data-mode="exp" data-besoins="Sens" class="slide s2full" data-full="1" data-steps="2" data-step="0" data-phase="0" data-who="Francis" data-notes="Pendant l’accueil, taper quelques post-it du mur en choisissant leur cercle : ils s’accrochent au globe. Phrase clé : « Ce que vous venez de faire, nos élèves de PPS l’ont fait aussi : c’est la première marche de la démarche. »">
+<section data-mode="exp" data-besoins="Sens" class="slide s2full" data-full="1" data-step="0" data-phase="0" data-who="Francis" data-notes="Pendant l’accueil, taper quelques post-it du mur en choisissant leur cercle : ils s’accrochent au globe. Phrase clé : « Ce que vous venez de faire, nos élèves de PPS l’ont fait aussi : c’est la première marche de la démarche. »">
   <div class="kick">Accueil · le mur d’enjeux</div>
   <div class="stepq s0only"><p>Qu’est-ce qui vous <span class="hl">dérange</span><br>dans votre milieu&nbsp;?</p></div>
-  <h2 class="s1only">Qu’est-ce qui vous <span class="hl">préoccupe</span> ou vous dérange dans votre milieu ?</h2>
-  <p class="when s1only"><b>En entrant</b> Un post-it, puis au mur.</p>
-  <div class="s2row s1only"><div class="zpick">
-    <svg id="zSvg" viewBox="0 0 250 215" role="group" aria-label="Choisir la zone du post-it : touchez une partie des cercles">
-      <defs>
-        <clipPath id="zcE"><circle cx="90" cy="82" r="66"/></clipPath><clipPath id="zcC"><circle cx="160" cy="82" r="66"/></clipPath><clipPath id="zcN"><circle cx="125" cy="140" r="66"/></clipPath>
-        <mask id="zMask" maskUnits="userSpaceOnUse" x="0" y="0" width="250" height="215"><g id="zMaskG"></g></mask>
-      </defs>
-      <circle cx="90" cy="82" r="66" fill="#F2C230"/><circle cx="160" cy="82" r="66" fill="#5B2A86" fill-opacity=".85"/><circle cx="125" cy="140" r="66" fill="#1E7FC2" fill-opacity=".85"/>
-      <rect width="250" height="215" fill="#1E1A22" fill-opacity=".55" mask="url(#zMask)" pointer-events="none"/>
-      <g fill="none" stroke="#1E1A22" stroke-width="3"><circle cx="90" cy="82" r="66"/><circle cx="160" cy="82" r="66"/><circle cx="125" cy="140" r="66"/></g>
-      <g font-family="Anton,Impact,sans-serif" font-size="19" text-anchor="middle" pointer-events="none"><text x="60" y="64" fill="#1E1A22">ÉCOLE</text><text x="192" y="64" fill="#F2C230">COMMUN.</text><text x="125" y="198" fill="#fff">NATURE</text></g>
-    </svg>
-    <p class="zlab">Zone choisie<b id="zName">École</b></p>
-  </div>
-  <form class="checker" id="enjeuForm" style="margin-bottom:12px">
-    <span class="zchip z-e" id="zChip" title="Touchez un globe pour changer de zone">👆 école</span>
-    <input type="text" id="enjeuIn" maxlength="40" placeholder="ex. peu de liens avec les organismes du quartier" aria-label="Un enjeu">
-    <button class="btn" type="submit" id="enjeuGo">Accrocher au globe</button>
-    <button class="btn alt" type="button" id="enjeuClear">Vider</button>
-  </form></div>
-  <div class="mur" id="mur" aria-live="polite"></div>
-  <p class="tally" id="tally"></p>
 </section>
 
 <section class="slide" data-wide="1" data-phase="0" data-who="Isabelle et Francis" data-notes="Présentation éclair, 30 secondes chacun. Cliquer sur un champ pour l’écrire ou le corriger : ce qui est écrit reste sur cet ordinateur. Même format que la présentation « Motivation et engagement ». Enchaîner : « Et vous, qu’est-ce qui vous dérange ? »">
@@ -1183,6 +1164,7 @@ __COPILOT_GEN__
     </svg>
     <div class="col panel" id="vennOut"><h3>Par exemple</h3><p>École : créativité · Communauté : collaboration</p><p class="hand">« Le quartier vient créer avec nous. »</p><p><button class="btn" data-timer="300">5 min · parle</button> <button class="btn alt" data-timer="180">3 min · partage</button></p></div>
   </div>
+  <div class="s2mode s1only" role="tablist" aria-label="Que voulez-vous écrire?"><button type="button" data-m="enjeu">Ce qui me dérange <small>→ sur les globes</small></button><button type="button" class="on" data-m="reve">Mon monde idéal <small>→ autour, en rêve</small></button></div>
   <h2 class="s1only">Votre monde idéal, <span class="hl">sans limite</span>.</h2>
   <div class="reves s1only" id="reves" aria-live="polite"></div>
   <div class="s2row s1only">
@@ -1191,6 +1173,27 @@ __COPILOT_GEN__
     <button class="btn" type="submit">Lancer le rêve</button>
     <button class="btn alt" type="button" id="reveClear">Vider</button>
   </form></div>
+  <div class="s2row s1only" id="enjeuRow" hidden><div class="zpick">
+    <svg id="zSvg" viewBox="0 0 250 215" role="group" aria-label="Choisir la zone du post-it : touchez une partie des cercles">
+      <defs>
+        <clipPath id="zcE"><circle cx="90" cy="82" r="66"/></clipPath><clipPath id="zcC"><circle cx="160" cy="82" r="66"/></clipPath><clipPath id="zcN"><circle cx="125" cy="140" r="66"/></clipPath>
+        <mask id="zMask" maskUnits="userSpaceOnUse" x="0" y="0" width="250" height="215"><g id="zMaskG"></g></mask>
+      </defs>
+      <circle cx="90" cy="82" r="66" fill="#F2C230"/><circle cx="160" cy="82" r="66" fill="#5B2A86" fill-opacity=".85"/><circle cx="125" cy="140" r="66" fill="#1E7FC2" fill-opacity=".85"/>
+      <rect width="250" height="215" fill="#1E1A22" fill-opacity=".55" mask="url(#zMask)" pointer-events="none"/>
+      <g fill="none" stroke="#1E1A22" stroke-width="3"><circle cx="90" cy="82" r="66"/><circle cx="160" cy="82" r="66"/><circle cx="125" cy="140" r="66"/></g>
+      <g font-family="Anton,Impact,sans-serif" font-size="19" text-anchor="middle" pointer-events="none"><text x="60" y="64" fill="#1E1A22">ÉCOLE</text><text x="192" y="64" fill="#F2C230">COMMUN.</text><text x="125" y="198" fill="#fff">NATURE</text></g>
+    </svg>
+    <p class="zlab">Zone choisie<b id="zName">École</b></p>
+  </div>
+  <form class="checker" id="enjeuForm" style="margin-bottom:12px">
+    <span class="zchip z-e" id="zChip" title="Touchez un globe pour changer de zone">👆 école</span>
+    <input type="text" id="enjeuIn" maxlength="40" placeholder="ex. peu de liens avec les organismes du quartier" aria-label="Un enjeu">
+    <button class="btn" type="submit" id="enjeuGo">Accrocher au globe</button>
+    <button class="btn alt" type="button" id="enjeuClear">Vider</button>
+  </form></div>
+  <div class="mur" id="mur" aria-live="polite"></div>
+  <p class="tally" id="tally"></p>
 </section>
 
 <section data-mode="exp" data-besoins="Compétence,Sens" class="slide" data-phase="1" data-who="Isabelle" data-notes="L’analyse de contexte. Modéliser une rangée avec l’exemple. Puis seul ou en îlot, 4 minutes : pour chaque cercle, ce qui existe déjà (un levier, une qualité, une personne, un lieu, un organisme) et ce qu’on remarque. Si rien n’existe : de quoi mon CFGA aurait-il besoin pour s’y rendre ? Cahier, section « Analyse de contexte ». · Détails retirés de l’écran : Pour ce que j’ai noté dans mon monde idéal : des leviers, des personnes, des lieux, des infrastructures, des organismes qui m’aident ou qui y tendent. Rien n’existe ? Notez de quoi votre centre aurait besoin pour s’y rendre. Gardez vos « je remarque que » : chaque manque touche un des 4 besoins ; on s’en sert pour agir, deux diapos plus loin. · Suggérer d’ouvrir le cahier aux pages 5 et 6 : l’analyse de contexte et le résultat ou l’action se suivent.">
@@ -1776,7 +1779,7 @@ const RESSOURCES = 'https://rever-le-monde.netlify.app';
 
 // =================== MONDE 3D EN CEL-SHADING ===================
 // Un seul monde, 11 stations reliées par un sentier. La caméra vole d'une station à l'autre.
-const STATIONS = ['aerial', 'globe@1', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'spheres', 'aerial', 'globe@1', 'aerial', 'nomverbe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'aerial', 'pas', 'aerial'];
+const STATIONS = ['aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'spheres', 'aerial', 'globe@1', 'aerial', 'nomverbe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'aerial', 'pas', 'aerial'];
 const G3 = (() => {
   if (!window.THREE) return { activate() {}, st: {} };
   const T = THREE, V = T.Vector3;
@@ -2112,5 +2115,15 @@ addEventListener('hashchange', () => { if (location.hash === '#ressources') { lo
   document.getElementById('reveForm').addEventListener('submit',e=>{ e.preventDefault(); const inp=document.getElementById('reveIn'); const v=inp.value.trim(); if(!v) return; const l=get(); l.push(v); put(l); inp.value=''; draw(); });
   document.getElementById('reveClear').onclick=()=>{ put([]); draw(); };
   draw();
+})();
+</script>
+<script>
+/* Diapo 10, étape 2 : deux onglets, ce qui dérange (sur les globes) ou le monde idéal (autour) */
+(function(){ const modes=document.querySelectorAll('.s2mode button'); if(!modes.length) return;
+  const sec=modes[0].closest('section.slide'), h=sec.querySelector('h2.s1only'), H0=h?h.innerHTML:'';
+  const rr=document.getElementById('reveForm').closest('.s2row'), er=document.getElementById('enjeuRow');
+  modes.forEach(b=>b.onclick=()=>{ modes.forEach(x=>x.classList.toggle('on',x===b)); const r=b.dataset.m==='reve';
+    rr.hidden=!r; er.hidden=r; if(h) h.innerHTML=r?H0:'Qu’est-ce qui vous <span class="hl">dérange</span> dans votre milieu&nbsp;? <small style="font-family:Caveat,cursive;color:var(--mauve);font-size:.6em">touchez un globe</small>';
+    (r?document.getElementById('reveIn'):document.getElementById('enjeuIn')).focus(); });
 })();
 </script>
