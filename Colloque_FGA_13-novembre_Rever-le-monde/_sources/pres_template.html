@@ -593,7 +593,7 @@ body.flat .slide:not(.s1) .sheet{margin-inline:auto}
 body.flat #deck>.slide:not(.s1):not(.s2full) .sheet{width:min(96vw,2400px)!important;max-width:none!important;height:calc(100vh - 120px);max-height:calc(100vh - 120px)!important;zoom:1!important;margin-inline:auto}
 .sheet-in{display:flow-root;min-width:0}
 
-.slide.s2full .s2mode{display:flex;gap:8px;position:absolute;left:0;top:-52px}
+
 .s2mode button{font-family:Anton,Impact,sans-serif;font-size:clamp(15px,1.2vw,19px);padding:5px 12px;border:3px solid var(--ink);background:#fff;cursor:pointer}
 .s2mode button small{font-family:Caveat,cursive;font-size:1.05em;color:var(--muted)}
 .s2mode button.on{background:var(--mauve);color:#fff}.s2mode button.on small{color:var(--gold)}
@@ -609,6 +609,18 @@ body.flat #deck>.slide:not(.s1):not(.s2full) .sheet{width:min(96vw,2400px)!impor
 .zchip.z-c{background:#5B2A86;color:#fff}.zchip.z-n{background:#1E7FC2;color:#fff}
 .zchip.z-ec{background:linear-gradient(90deg,#F2C230 50%,#5B2A86 50%);color:#fff;text-shadow:0 1px 2px #000}.zchip.z-en{background:linear-gradient(90deg,#F2C230 50%,#1E7FC2 50%);color:#fff;text-shadow:0 1px 2px #000}.zchip.z-cn{background:linear-gradient(90deg,#5B2A86 50%,#1E7FC2 50%);color:#fff}.zchip.z-x{background:#D9541E;color:#fff}
 .slide.s2full .checker{align-items:center}
+
+.slide[data-step="0"] .s1only{display:none!important}
+.slide[data-step="1"] .s0only{display:none!important}
+.slide.s2full[data-step="0"] .sheet{top:50%;bottom:auto;transform:translate(-50%,-50%);background:transparent;border:0;box-shadow:none;width:min(1500px,92vw)!important}
+.stepq p{margin:0;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(54px,7.4vw,130px);line-height:1.02;text-align:center;color:var(--ink)}
+.stepq .hl{background:var(--gold);padding:0 .12em}
+.stepq.mi p:first-child{font-size:clamp(60px,8vw,140px)}
+.stepq .mi-s2{color:var(--mauve);font-size:clamp(44px,5.5vw,96px)!important}
+.mi-cons{list-style:none;margin:28px auto 10px;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:12px 16px;max-width:1300px}
+.mi-cons li{font-family:var(--body);font-size:clamp(20px,1.9vw,30px);background:#fff;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--gold);padding:8px 16px}
+.stepq .mi-note{font-family:Caveat,cursive!important;font-size:clamp(26px,2.4vw,40px)!important;color:var(--mauve);margin-top:8px}
+.slide.s9full[data-step="1"] .sheet{padding-top:12px}
 .me-row{display:grid;grid-template-columns:minmax(0,46%) 1fr;gap:20px;align-items:center}.me-fig{margin:0;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--gold);cursor:zoom-in}.me-fig img{display:block;width:100%;height:auto;max-height:52vh;object-fit:contain;background:#1E1A22}.me-fig.big{position:fixed;inset:3vh 10vw;z-index:60;cursor:zoom-out;display:grid;place-items:center;background:#1E1A22}.me-fig.big img{max-height:94vh}.me-q{font-family:var(--display);font-size:clamp(24px,2.4vw,38px);color:var(--gold);line-height:1.1;margin:10px 0}
 .duo2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px}
 .duo2>div{border:3px solid currentColor;padding:16px 18px}
@@ -1034,13 +1046,12 @@ __COPILOT_GEN__
   </div>
 </section>
 
-<section data-mode="exp" data-besoins="Sens" class="slide s2full" data-full="1" data-phase="0" data-who="Francis" data-notes="Pendant l’accueil, taper quelques post-it du mur en choisissant leur cercle : ils s’accrochent au globe. Phrase clé : « Ce que vous venez de faire, nos élèves de PPS l’ont fait aussi : c’est la première marche de la démarche. »">
+<section data-mode="exp" data-besoins="Sens" class="slide s2full" data-full="1" data-steps="2" data-step="0" data-phase="0" data-who="Francis" data-notes="Pendant l’accueil, taper quelques post-it du mur en choisissant leur cercle : ils s’accrochent au globe. Phrase clé : « Ce que vous venez de faire, nos élèves de PPS l’ont fait aussi : c’est la première marche de la démarche. »">
   <div class="kick">Accueil · le mur d’enjeux</div>
-  <h2>Qu’est-ce qui vous <span class="hl">préoccupe</span> ou vous dérange dans votre milieu ?</h2>
-  <p class="when"><b>En entrant</b> Un post-it, puis au mur.</p>
-  <div class="s2mode" role="tablist" aria-label="Que voulez-vous écrire?"><button type="button" class="on" data-m="enjeu">Ce qui me préoccupe <small>→ sur les globes</small></button><button type="button" data-m="reve">Mon monde idéal <small>→ autour, en rêve</small></button></div>
-  <div class="reves" id="reves" aria-live="polite"></div>
-  <div class="s2row"><div class="zpick">
+  <div class="stepq s0only"><p>Qu’est-ce qui vous <span class="hl">dérange</span><br>dans votre milieu&nbsp;?</p></div>
+  <h2 class="s1only">Qu’est-ce qui vous <span class="hl">préoccupe</span> ou vous dérange dans votre milieu ?</h2>
+  <p class="when s1only"><b>En entrant</b> Un post-it, puis au mur.</p>
+  <div class="s2row s1only"><div class="zpick">
     <svg id="zSvg" viewBox="0 0 250 215" role="group" aria-label="Choisir la zone du post-it : touchez une partie des cercles">
       <defs>
         <clipPath id="zcE"><circle cx="90" cy="82" r="66"/></clipPath><clipPath id="zcC"><circle cx="160" cy="82" r="66"/></clipPath><clipPath id="zcN"><circle cx="125" cy="140" r="66"/></clipPath>
@@ -1058,11 +1069,6 @@ __COPILOT_GEN__
     <input type="text" id="enjeuIn" maxlength="40" placeholder="ex. peu de liens avec les organismes du quartier" aria-label="Un enjeu">
     <button class="btn" type="submit" id="enjeuGo">Accrocher au globe</button>
     <button class="btn alt" type="button" id="enjeuClear">Vider</button>
-  </form>
-  <form class="checker" id="reveForm" style="margin-bottom:12px" hidden>
-    <input type="text" id="reveIn" maxlength="60" placeholder="ex. une cour pleine d’arbres où on apprend dehors" aria-label="Mon monde idéal">
-    <button class="btn" type="submit">Lancer le rêve</button>
-    <button class="btn alt" type="button" id="reveClear">Vider</button>
   </form></div>
   <div class="mur" id="mur" aria-live="polite"></div>
   <p class="tally" id="tally"></p>
@@ -1150,10 +1156,19 @@ __COPILOT_GEN__
   </div>
 </section>
 
-<section data-mode="exp" data-besoins="Autonomie" data-wide="1" class="slide" data-phase="1" data-who="Francis" data-notes="À dire (rien d’écrit à l’écran) : sans limite de territoire, de ressources humaines ni de ressources matérielles. Une case vide ou « je ne sais pas », c’est permis. PENSE, seul. Votre monde idéal, sans limite : ni de territoire, ni de ressources humaines, ni de ressources matérielles. Pas de cercles ni d’exemple ici, à la demande de Francis : on laisse libre cours. Chacun écrit dans son cahier (page 4) ou sur un post-it pour le mur « Mon monde idéal », à côté de la banderole des enjeux. Environ 3 minutes. Une case vide, « je ne sais pas » : c’est permis.">
-  <div class="kick">Rêver · mon monde idéal<span class="mod"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.5"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>Seul</span></div>
-  <h2 class="mi-t">Votre monde idéal</h2>
-  <p class="mi-s">Sans limite.</p>
+<section data-mode="exp" data-besoins="Autonomie" class="slide s2full s9full" data-full="1" data-steps="2" data-step="0" data-phase="1" data-who="Francis" data-notes="ÉTAPE 1 (consignes) : seul, 3 minutes, sur un post-it. ÉTAPE 2 (flèche suivante) : les trois globes réapparaissent ; on tape quelques mondes idéaux, ils flottent autour, hors des cercles. À dire (rien d’écrit à l’écran) : sans limite de territoire, de ressources humaines ni de ressources matérielles. Une case vide ou « je ne sais pas », c’est permis. PENSE, seul. Votre monde idéal, sans limite : ni de territoire, ni de ressources humaines, ni de ressources matérielles. Pas de cercles ni d’exemple ici, à la demande de Francis : on laisse libre cours. Chacun écrit dans son cahier (page 4) ou sur un post-it pour le mur « Mon monde idéal », à côté de la banderole des enjeux. Environ 3 minutes. Une case vide, « je ne sais pas » : c’est permis.">
+  <div class="kick s0only">Rêver · mon monde idéal</div>
+  <div class="stepq s0only mi"><p>Votre monde idéal</p><p class="mi-s2">Sans limite.</p>
+    <ol class="mi-cons"><li><b>Seul</b>, 3 minutes</li><li>Sur un post-it : <b>votre monde idéal</b></li><li>Aucune limite de territoire, de personnes ni de ressources</li></ol>
+    <p class="mi-note">Une case vide, «&nbsp;je ne sais pas&nbsp;» : c’est permis.</p></div>
+  <h2 class="s1only">Votre monde idéal, <span class="hl">sans limite</span>.</h2>
+  <div class="reves s1only" id="reves" aria-live="polite"></div>
+  <div class="s2row s1only">
+  <form class="checker" id="reveForm" style="margin-bottom:12px">
+    <input type="text" id="reveIn" maxlength="60" placeholder="ex. une cour pleine d’arbres où on apprend dehors" aria-label="Mon monde idéal">
+    <button class="btn" type="submit">Lancer le rêve</button>
+    <button class="btn alt" type="button" id="reveClear">Vider</button>
+  </form></div>
 </section>
 
 <section data-mode="res" data-besoins="Appartenance,Compétence" data-wide="1" class="slide" data-phase="1" data-who="Francis" data-notes="Francis présente les trois cercles : école (mon centre), communauté, nature. On relie ce qu’on a écrit à un ou deux cercles. Exemple : école, créativité ; communauté, collaboration ; entre les deux : « Le quartier vient créer avec nous. » Puis en îlot, au plexiglas (affiche « Notre monde idéal ») : PARLE, on repère ce qui revient ; PARTAGE, chaque îlot nomme ce qu’il a gardé. Environ 5 minutes, puis 3 minutes.">
@@ -1480,7 +1495,11 @@ const store = { get(k, d) { try { const v = localStorage.getItem('rmd:' + k); re
 const phases = $('#phases');
 slides.forEach(() => phases.appendChild(document.createElement('i')));
 function go(n) {
+  const sc = slides[cur], ns = sc && +sc.dataset.steps || 0;
+  if (ns && n === cur + 1 && (+sc.dataset.step || 0) < ns - 1) { sc.dataset.step = (+sc.dataset.step || 0) + 1; G3.activate(sc); if (typeof fitSlide === 'function') fitSlide(); return; }
+  if (ns && n === cur - 1 && (+sc.dataset.step || 0) > 0) { sc.dataset.step = (+sc.dataset.step || 0) - 1; G3.activate(sc); if (typeof fitSlide === 'function') fitSlide(); return; }
   n = Math.max(0, Math.min(slides.length - 1, n));
+  const tgt = slides[n]; if (tgt && +tgt.dataset.steps && n !== cur) tgt.dataset.step = n < cur ? (+tgt.dataset.steps - 1) : 0;
   slides[cur].classList.remove('on'); cur = n; slides[cur].classList.add('on');
   $('#count').textContent = (cur + 1) + ' / ' + slides.length;
   [...phases.children].forEach((b, i) => { b.className = i < cur ? 'done' : i === cur ? 'cur' : ''; });
@@ -1757,7 +1776,7 @@ const RESSOURCES = 'https://rever-le-monde.netlify.app';
 
 // =================== MONDE 3D EN CEL-SHADING ===================
 // Un seul monde, 11 stations reliées par un sentier. La caméra vole d'une station à l'autre.
-const STATIONS = ['aerial', 'globe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'spheres', 'aerial', 'aerial', 'aerial', 'nomverbe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'aerial', 'pas', 'aerial'];
+const STATIONS = ['aerial', 'globe@1', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'spheres', 'globe@1', 'aerial', 'aerial', 'nomverbe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'aerial', 'pas', 'aerial'];
 const G3 = (() => {
   if (!window.THREE) return { activate() {}, st: {} };
   const T = THREE, V = T.Vector3;
@@ -1926,7 +1945,7 @@ const ICO = { 'Autonomie': '<svg viewBox="0 0 24 24"><path d="M6 8h12a4 4 0 0 1 
     return { p: s.g.position.clone().add(out.clone().multiplyScalar(s.dist * K)).add(side.multiplyScalar(2.2)).add(new V(0, s.h * K, 0)), t: s.g.position.clone().add(new V(0, s.look, 0)) }; }
   const ease = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
   let enterT = 0;
-  function activate(slide) { const i = [...document.querySelectorAll('.slide')].indexOf(slide); const n = STATIONS[i] || 'aerial'; document.body.classList.toggle('flat', n === 'aerial'); setTimeout(resize, 0); if (n === curName) { S[n] && S[n].enter && S[n].enter(); return; }
+  function activate(slide) { const i = [...document.querySelectorAll('.slide')].indexOf(slide); let n = STATIONS[i] || 'aerial'; if (n.includes('@')) { const [nm, k] = n.split('@'); n = (+slide.dataset.step || 0) >= +k ? nm : 'aerial'; } document.body.classList.toggle('flat', n === 'aerial'); setTimeout(resize, 0); if (n === curName) { S[n] && S[n].enter && S[n].enter(); return; }
     curName = n; NAMES.forEach(k => { S[k].g.visible = k === n; }); const pose = poseFor(n); camPos.copy(pose.p); camTgt.copy(pose.t); from = to = null; enterT = performance.now(); S[n] && S[n].enter && S[n].enter(); }
   function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; const fsl = document.querySelector('#deck > section.slide.on'); if (fsl && fsl.dataset.full) { camera.clearViewOffset(); if (Math.abs(K - 1) > .01) { K = 1; if (!to) { const pp = poseFor(curName); camPos.copy(pp.p); camTgt.copy(pp.t); } } } else if (w > 820) { const sw = Math.min(820, w * .55) + Math.max(16, w * .04) + 14; const xc = (sw + w) / 2; camera.setViewOffset(w, h, -(xc - w / 2), 0, w, h); const free = w - sw; const k2 = Math.min(1.9, Math.max(1, (w * .42) / free)); if (Math.abs(k2 - K) > .01) { K = k2; if (!to) { const pp = poseFor(curName); camPos.copy(pp.p); camTgt.copy(pp.t); } } } else { camera.clearViewOffset(); K = 1.35; } camera.updateProjectionMatrix(); }
   addEventListener('resize', resize); resize();
@@ -2086,11 +2105,6 @@ addEventListener('hashchange', () => { if (location.hash === '#ressources') { lo
   function draw(){ box.innerHTML=''; get().forEach((t,i)=>{ const d=document.createElement('div'); d.className='reve'; d.textContent=t; const p=SPOTS[i%SPOTS.length]; d.style.left=p[0]+'%'; d.style.top=p[1]+'%'; d.style.setProperty('--d',(i%5)*-1.3+'s'); d.style.rotate=((i*37%9)-4)+'deg'; box.appendChild(d); }); }
   document.getElementById('reveForm').addEventListener('submit',e=>{ e.preventDefault(); const inp=document.getElementById('reveIn'); const v=inp.value.trim(); if(!v) return; const l=get(); l.push(v); put(l); inp.value=''; draw(); });
   document.getElementById('reveClear').onclick=()=>{ put([]); draw(); };
-  const modes=document.querySelectorAll('.s2mode button');
-  modes.forEach(b=>b.onclick=()=>{ modes.forEach(x=>x.classList.toggle('on',x===b)); const r=b.dataset.m==='reve';
-    const h=box.closest('section.slide').querySelector('h2'); if(h){ if(!h.dataset.orig) h.dataset.orig=h.innerHTML; h.innerHTML=r?'Votre monde idéal, <span class="hl">sans limite</span>.':h.dataset.orig; }
-    document.getElementById('reveForm').hidden=!r; document.getElementById('enjeuForm').hidden=r; document.querySelector('.s2full .zpick').style.visibility=r?'hidden':'';
-    (r?document.getElementById('reveIn'):document.getElementById('enjeuIn')).focus(); });
   draw();
 })();
 </script>
