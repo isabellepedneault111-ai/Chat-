@@ -619,7 +619,7 @@ body.flat #deck>.slide:not(.s1):not(.s2full) .sheet{width:min(96vw,2400px)!impor
 .stepq .mi-s2{color:var(--mauve);font-size:clamp(44px,5.5vw,96px)!important}
 .mi-cons{list-style:none;margin:28px auto 10px;padding:0;display:flex;flex-wrap:wrap;justify-content:center;gap:12px 16px;max-width:1300px}
 .mi-cons li{font-family:var(--body);font-size:clamp(20px,1.9vw,30px);background:#fff;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--gold);padding:8px 16px}
-.stepq .mi-note{font-family:Caveat,cursive!important;font-size:clamp(26px,2.4vw,40px)!important;color:var(--mauve);margin-top:8px}
+.stepq .mi-note{text-align:center;font-family:Caveat,cursive!important;font-size:clamp(26px,2.4vw,40px)!important;color:var(--mauve);margin-top:8px}
 .slide.s9full[data-step="1"] .sheet{padding-top:12px}
 .me-row{display:grid;grid-template-columns:minmax(0,46%) 1fr;gap:20px;align-items:center}.me-fig{margin:0;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--gold);cursor:zoom-in}.me-fig img{display:block;width:100%;height:auto;max-height:52vh;object-fit:contain;background:#1E1A22}.me-fig.big{position:fixed;inset:3vh 10vw;z-index:60;cursor:zoom-out;display:grid;place-items:center;background:#1E1A22}.me-fig.big img{max-height:94vh}.me-q{font-family:var(--display);font-size:clamp(24px,2.4vw,38px);color:var(--gold);line-height:1.1;margin:10px 0}
 .duo2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px}
@@ -1156,26 +1156,18 @@ __COPILOT_GEN__
   </div>
 </section>
 
-<section data-mode="exp" data-besoins="Autonomie" class="slide s2full s9full" data-full="1" data-steps="2" data-step="0" data-phase="1" data-who="Francis" data-notes="ÉTAPE 1 (consignes) : seul, 3 minutes, sur un post-it. ÉTAPE 2 (flèche suivante) : les trois globes réapparaissent ; on tape quelques mondes idéaux, ils flottent autour, hors des cercles. À dire (rien d’écrit à l’écran) : sans limite de territoire, de ressources humaines ni de ressources matérielles. Une case vide ou « je ne sais pas », c’est permis. PENSE, seul. Votre monde idéal, sans limite : ni de territoire, ni de ressources humaines, ni de ressources matérielles. Pas de cercles ni d’exemple ici, à la demande de Francis : on laisse libre cours. Chacun écrit dans son cahier (page 4) ou sur un post-it pour le mur « Mon monde idéal », à côté de la banderole des enjeux. Environ 3 minutes. Une case vide, « je ne sais pas » : c’est permis.">
-  <div class="kick s0only">Rêver · mon monde idéal</div>
-  <div class="stepq s0only mi"><p>Votre monde idéal</p><p class="mi-s2">Sans limite.</p>
+<section data-mode="exp" data-besoins="Autonomie" class="slide s2full s9full" data-full="1" data-step="0" data-phase="1" data-who="Francis" data-notes="Consignes : seul, 3 minutes, sur un post-it. À dire (rien d’écrit à l’écran) : sans limite de territoire, de ressources humaines ni de ressources matérielles. Une case vide ou « je ne sais pas », c’est permis. PENSE, seul. Votre monde idéal, sans limite : ni de territoire, ni de ressources humaines, ni de ressources matérielles. Pas de cercles ni d’exemple ici, à la demande de Francis : on laisse libre cours. Chacun écrit dans son cahier (page 4) ou sur un post-it pour le mur « Mon monde idéal », à côté de la banderole des enjeux. Environ 3 minutes. Une case vide, « je ne sais pas » : c’est permis.">
+  <div class="kick">Rêver · mon monde idéal</div>
+  <div class="stepq mi"><p>Votre monde idéal</p><p class="mi-s2">Sans limite.</p>
     <ol class="mi-cons"><li><b>Seul</b>, 3 minutes</li><li>Sur un post-it : <b>votre monde idéal</b></li><li>Aucune limite de territoire, de personnes ni de ressources</li></ol>
     <p class="mi-note">Une case vide, «&nbsp;je ne sais pas&nbsp;» : c’est permis.</p></div>
-  <h2 class="s1only">Votre monde idéal, <span class="hl">sans limite</span>.</h2>
-  <div class="reves s1only" id="reves" aria-live="polite"></div>
-  <div class="s2row s1only">
-  <form class="checker" id="reveForm" style="margin-bottom:12px">
-    <input type="text" id="reveIn" maxlength="60" placeholder="ex. une cour pleine d’arbres où on apprend dehors" aria-label="Mon monde idéal">
-    <button class="btn" type="submit">Lancer le rêve</button>
-    <button class="btn alt" type="button" id="reveClear">Vider</button>
-  </form></div>
 </section>
 
-<section data-mode="res" data-besoins="Appartenance,Compétence" data-wide="1" class="slide" data-phase="1" data-who="Francis" data-notes="Francis présente les trois cercles : école (mon centre), communauté, nature. On relie ce qu’on a écrit à un ou deux cercles. Exemple : école, créativité ; communauté, collaboration ; entre les deux : « Le quartier vient créer avec nous. » Puis en îlot, au plexiglas (affiche « Notre monde idéal ») : PARLE, on repère ce qui revient ; PARTAGE, chaque îlot nomme ce qu’il a gardé. Environ 5 minutes, puis 3 minutes.">
-  <div class="kick">Rêver · trois cercles · classe collabo-réflexive<span class="mod"><svg viewBox="0 0 24 24"><circle cx="7" cy="8" r="2.6"/><circle cx="17" cy="8" r="2.6"/><circle cx="12" cy="5" r="2.6"/><path d="M2 19a5 5 0 0 1 10 0M12 19a5 5 0 0 1 10 0"/></svg>En îlot</span></div>
-  <h2>École · communauté · nature</h2>
-  <ol class="mini-steps row3"><li><b>Relie</b> deux cercles</li><li><b>Parle</b> on repère ce qui revient</li><li><b>Partage</b> au groupe</li></ol>
-  <div class="row">
+<section data-mode="res" data-besoins="Appartenance,Compétence" data-wide="1" class="slide s10full" data-steps="2" data-step="0" data-phase="1" data-who="Francis" data-notes="ÉTAPE 2 (flèche suivante) : les globes du début reviennent avec les préoccupations ; on tape les mondes idéaux de la salle, ils flottent autour. Francis présente les trois cercles : école (mon centre), communauté, nature. On relie ce qu’on a écrit à un ou deux cercles. Exemple : école, créativité ; communauté, collaboration ; entre les deux : « Le quartier vient créer avec nous. » Puis en îlot, au plexiglas (affiche « Notre monde idéal ») : PARLE, on repère ce qui revient ; PARTAGE, chaque îlot nomme ce qu’il a gardé. Environ 5 minutes, puis 3 minutes.">
+  <div class="kick s0only">Rêver · trois cercles · classe collabo-réflexive<span class="mod"><svg viewBox="0 0 24 24"><circle cx="7" cy="8" r="2.6"/><circle cx="17" cy="8" r="2.6"/><circle cx="12" cy="5" r="2.6"/><path d="M2 19a5 5 0 0 1 10 0M12 19a5 5 0 0 1 10 0"/></svg>En îlot</span></div>
+  <h2 class="s0only">École · communauté · nature</h2>
+  <ol class="mini-steps row3 s0only"><li><b>Relie</b> deux cercles</li><li><b>Parle</b> on repère ce qui revient</li><li><b>Partage</b> au groupe</li></ol>
+  <div class="row s0only">
     <svg class="venn col" viewBox="0 0 600 520" role="img" aria-label="Trois cercles qui se chevauchent : école, communauté, nature">
       <defs><pattern id="vhe" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)"><rect width="9" height="3.2" fill="#A86F00"/></pattern><pattern id="vde" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="2.1" fill="#A86F00"/></pattern><radialGradient id="vse" cx="165" cy="140" r="235" gradientUnits="userSpaceOnUse"><stop offset=".55" stop-color="#000"/><stop offset=".72" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff"/></radialGradient><mask id="vme"><circle cx="220" cy="200" r="160" fill="url(#vse)"/></mask><radialGradient id="vte" cx="260" cy="240" r="200" gradientUnits="userSpaceOnUse"><stop offset=".25" stop-color="#000"/><stop offset=".6" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#000"/></radialGradient><mask id="vtme"><circle cx="220" cy="200" r="160" fill="url(#vte)"/></mask><pattern id="vhc" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)"><rect width="9" height="3.2" fill="#3E1566"/></pattern><pattern id="vdc" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="2.1" fill="#3E1566"/></pattern><radialGradient id="vsc" cx="325" cy="140" r="235" gradientUnits="userSpaceOnUse"><stop offset=".55" stop-color="#000"/><stop offset=".72" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff"/></radialGradient><mask id="vmc"><circle cx="380" cy="200" r="160" fill="url(#vsc)"/></mask><radialGradient id="vtc" cx="420" cy="240" r="200" gradientUnits="userSpaceOnUse"><stop offset=".25" stop-color="#000"/><stop offset=".6" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#000"/></radialGradient><mask id="vtmc"><circle cx="380" cy="200" r="160" fill="url(#vtc)"/></mask><pattern id="vhn" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)"><rect width="9" height="3.2" fill="#114A7A"/></pattern><pattern id="vdn" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="2.1" fill="#114A7A"/></pattern><radialGradient id="vsn" cx="245" cy="280" r="235" gradientUnits="userSpaceOnUse"><stop offset=".55" stop-color="#000"/><stop offset=".72" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff"/></radialGradient><mask id="vmn"><circle cx="300" cy="340" r="160" fill="url(#vsn)"/></mask><radialGradient id="vtn" cx="340" cy="380" r="200" gradientUnits="userSpaceOnUse"><stop offset=".25" stop-color="#000"/><stop offset=".6" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#000"/></radialGradient><mask id="vtmn"><circle cx="300" cy="340" r="160" fill="url(#vtn)"/></mask><filter id="vsh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#1E1A22" flood-opacity=".45"/></filter></defs>
       <g class="vz"><circle data-z="e" cx="220" cy="200" r="160" fill="#F2B705" fill-opacity=".8"/><circle cx="220" cy="200" r="160" fill="url(#vhe)" opacity=".55" mask="url(#vme)" pointer-events="none"/><circle cx="220" cy="200" r="160" fill="url(#vde)" opacity=".35" mask="url(#vtme)" pointer-events="none"/><ellipse cx="158" cy="122" rx="46" ry="22" transform="rotate(-35 158 122)" fill="#fff" opacity=".35" pointer-events="none"/></g><g class="vz"><circle data-z="c" cx="380" cy="200" r="160" fill="#7C3ABE" fill-opacity=".8"/><circle cx="380" cy="200" r="160" fill="url(#vhc)" opacity=".55" mask="url(#vmc)" pointer-events="none"/><circle cx="380" cy="200" r="160" fill="url(#vdc)" opacity=".35" mask="url(#vtmc)" pointer-events="none"/><ellipse cx="318" cy="122" rx="46" ry="22" transform="rotate(-35 318 122)" fill="#fff" opacity=".35" pointer-events="none"/></g><g class="vz"><circle data-z="n" cx="300" cy="340" r="160" fill="#2E8BD0" fill-opacity=".8"/><circle cx="300" cy="340" r="160" fill="url(#vhn)" opacity=".55" mask="url(#vmn)" pointer-events="none"/><circle cx="300" cy="340" r="160" fill="url(#vdn)" opacity=".35" mask="url(#vtmn)" pointer-events="none"/><ellipse cx="238" cy="262" rx="46" ry="22" transform="rotate(-35 238 262)" fill="#fff" opacity=".35" pointer-events="none"/></g>
@@ -1191,6 +1183,14 @@ __COPILOT_GEN__
     </svg>
     <div class="col panel" id="vennOut"><h3>Par exemple</h3><p>École : créativité · Communauté : collaboration</p><p class="hand">« Le quartier vient créer avec nous. »</p><p><button class="btn" data-timer="300">5 min · parle</button> <button class="btn alt" data-timer="180">3 min · partage</button></p></div>
   </div>
+  <h2 class="s1only">Votre monde idéal, <span class="hl">sans limite</span>.</h2>
+  <div class="reves s1only" id="reves" aria-live="polite"></div>
+  <div class="s2row s1only">
+  <form class="checker" id="reveForm" style="margin-bottom:12px">
+    <input type="text" id="reveIn" maxlength="60" placeholder="ex. une cour pleine d’arbres où on apprend dehors" aria-label="Mon monde idéal">
+    <button class="btn" type="submit">Lancer le rêve</button>
+    <button class="btn alt" type="button" id="reveClear">Vider</button>
+  </form></div>
 </section>
 
 <section data-mode="exp" data-besoins="Compétence,Sens" class="slide" data-phase="1" data-who="Isabelle" data-notes="L’analyse de contexte. Modéliser une rangée avec l’exemple. Puis seul ou en îlot, 4 minutes : pour chaque cercle, ce qui existe déjà (un levier, une qualité, une personne, un lieu, un organisme) et ce qu’on remarque. Si rien n’existe : de quoi mon CFGA aurait-il besoin pour s’y rendre ? Cahier, section « Analyse de contexte ». · Détails retirés de l’écran : Pour ce que j’ai noté dans mon monde idéal : des leviers, des personnes, des lieux, des infrastructures, des organismes qui m’aident ou qui y tendent. Rien n’existe ? Notez de quoi votre centre aurait besoin pour s’y rendre. Gardez vos « je remarque que » : chaque manque touche un des 4 besoins ; on s’en sert pour agir, deux diapos plus loin. · Suggérer d’ouvrir le cahier aux pages 5 et 6 : l’analyse de contexte et le résultat ou l’action se suivent.">
@@ -1776,7 +1776,7 @@ const RESSOURCES = 'https://rever-le-monde.netlify.app';
 
 // =================== MONDE 3D EN CEL-SHADING ===================
 // Un seul monde, 11 stations reliées par un sentier. La caméra vole d'une station à l'autre.
-const STATIONS = ['aerial', 'globe@1', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'spheres', 'globe@1', 'aerial', 'aerial', 'nomverbe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'aerial', 'pas', 'aerial'];
+const STATIONS = ['aerial', 'globe@1', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'spheres', 'aerial', 'globe@1', 'aerial', 'nomverbe', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'aerial', 'pyr', 'aerial', 'aerial', 'pas', 'aerial'];
 const G3 = (() => {
   if (!window.THREE) return { activate() {}, st: {} };
   const T = THREE, V = T.Vector3;
@@ -2094,6 +2094,12 @@ addEventListener('hashchange', () => { if (location.hash === '#ressources') { lo
 <script>
 (function(){ const d=document.getElementById('cgDemo'), b=document.getElementById('cgBack'), w=document.getElementById('cgWrap'), s=document.getElementById('cg3');
   if(!d) return; d.onclick=()=>{ s.hidden=true; w.hidden=false; if(window.fitSlide) fitSlide(); }; b.onclick=()=>{ w.hidden=true; s.hidden=false; if(window.fitSlide) fitSlide(); }; })();
+</script>
+<script>
+/* Diapo 10 : carte normale à l'étape 0 ; à l'étape 1, mise en page plein écran (s2full) avec les globes */
+(function(){ const sl=document.querySelector('section.slide.s10full'); if(!sl) return;
+  const sync=()=>{ const on=sl.dataset.step==='1'; sl.classList.toggle('s2full',on); if(on) sl.dataset.full='1'; else delete sl.dataset.full; };
+  new MutationObserver(sync).observe(sl,{attributes:true,attributeFilter:['data-step']}); sync(); })();
 </script>
 <script>
 /* Diapo 2 : « Mon monde idéal » flotte autour des globes, hors des cercles */
