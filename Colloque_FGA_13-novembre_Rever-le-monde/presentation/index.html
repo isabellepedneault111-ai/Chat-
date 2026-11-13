@@ -10,12 +10,13 @@
   color-scheme:light;
 }
 [hidden]{display:none!important}
-.confiance{border:3px solid var(--ink);background:var(--ink);color:var(--paper);padding:12px 18px;margin-top:4px;box-shadow:6px 6px 0 var(--gold);display:grid;grid-template-columns:1.1fr 1fr;gap:10px 28px}
+.confiance{border:3px solid var(--ink);background:#fff;color:var(--ink);padding:12px 18px;margin-top:4px;box-shadow:6px 6px 0 var(--gold);display:grid;grid-template-columns:1.1fr 1fr;gap:10px 28px}
 @media (max-width:760px){.confiance{grid-template-columns:1fr}}
-.confiance .pari1{font-family:var(--display);font-size:clamp(20px,min(2vw,3.4vh),30px);letter-spacing:.02em;color:var(--paper);line-height:1.15}
+.confiance .pari1{font-family:var(--display);font-size:clamp(20px,min(2vw,3.4vh),30px);letter-spacing:.02em;color:var(--ink);line-height:1.15}
 .surp{margin:6px 0 0;padding:0;list-style:none;font-weight:700;font-size:clamp(17px,min(1.6vw,2.8vh),24px);line-height:1.35}
 .surp li::before{content:"★ ";color:var(--gold)}
 .confiance b{font-family:var(--display);font-weight:400;font-size:clamp(20px,min(2vw,3.4vh),30px);color:var(--gold);text-transform:uppercase;letter-spacing:.03em}
+.confiance b{color:var(--mauve)!important}
 .confiance p{margin:6px 0 0;font-size:clamp(17px,min(1.6vw,2.8vh),24px);line-height:1.3}
 .confiance .surprise{color:var(--gold)}
 .zpick{display:flex;align-items:center;gap:14px;margin:0 0 8px}
@@ -2128,7 +2129,7 @@ const ICO = { 'Autonomie': '<svg viewBox="0 0 24 24"><path d="M6 8h12a4 4 0 0 1 
     const up = new V(0, 1, 0), P = i => i < 0 ? star.position : pl[i].position;
     const setLink = (L, w) => { const A = P(L.a), B = P(L.b), d = B.clone().sub(A), len = d.length(); L.m.position.copy(A).add(B).multiplyScalar(.5); L.m.scale.set(w, len, w); L.m.quaternion.setFromUnitVectors(up, d.normalize()); };
     let sel = -1, rot = 0, zoom = 0, enterAt = 0;
-    SP.look = CY - .4; SP.dist = 14;
+    SP.look = CY - .3; SP.dist = 13;
     SP.enter = () => { enterAt = performance.now(); };
     SP.onPick = o => { sel = o.userData.i; const out = document.getElementById('sphereOut'); if (!out) return;
       if (sel < 0) { out.innerHTML = '<h3>Quatre besoins, reliés</h3><p class="pq">L’appartenance est le socle.</p><p>Compétence · sens · autonomie : les trois questions de l’élève.</p>'; return; }
