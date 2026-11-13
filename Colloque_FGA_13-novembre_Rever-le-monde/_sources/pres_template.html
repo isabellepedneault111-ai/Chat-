@@ -581,7 +581,7 @@ body.flat .slide:not(.s1) .sheet{margin-inline:auto}
 
 .slide.s2full{align-items:flex-end;justify-content:center}
 .slide.s2full .sheet{position:absolute;left:50%;bottom:58px;transform:translateX(-50%);width:min(980px,94vw)!important;max-width:none;max-height:none!important;overflow:visible;padding:12px 18px 14px;background:rgba(255,253,247,.94);box-shadow:6px 6px 0 var(--ink);margin:0;zoom:1!important}
-.slide.s2full .sheet>*{zoom:1!important}
+.slide.s2full .sheet>*,.slide.s2full .sheet-in>*{zoom:1!important}
 .slide.s2full .kick,.slide.s2full .when,.slide.s2full .mur,.slide.s2full .tally,.slide.s2full .nourrit,.slide.s2full .zlab{display:none!important}
 .slide.s2full h2{font-size:clamp(22px,2.3vw,34px)!important;margin:0 0 8px!important;line-height:1.1}
 .slide.s2full .s2row{display:flex;gap:14px;align-items:center}
@@ -589,6 +589,9 @@ body.flat .slide:not(.s1) .sheet{margin-inline:auto}
 .slide.s2full .zpick svg{width:clamp(80px,7vw,110px);height:auto}
 .slide.s2full .checker{flex:1;margin:0!important}
 .slide.s2full .checker input{font-size:clamp(18px,1.6vw,24px)}
+
+body.flat #deck>.slide:not(.s1):not(.s2full) .sheet{width:min(96vw,2400px)!important;max-width:none!important;height:calc(100vh - 120px);max-height:calc(100vh - 120px)!important;zoom:1!important;margin-inline:auto}
+.sheet-in{display:flow-root;min-width:0}
 .me-row{display:grid;grid-template-columns:minmax(0,46%) 1fr;gap:20px;align-items:center}.me-fig{margin:0;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--gold);cursor:zoom-in}.me-fig img{display:block;width:100%;height:auto;max-height:52vh;object-fit:contain;background:#1E1A22}.me-fig.big{position:fixed;inset:3vh 10vw;z-index:60;cursor:zoom-out;display:grid;place-items:center;background:#1E1A22}.me-fig.big img{max-height:94vh}.me-q{font-family:var(--display);font-size:clamp(24px,2.4vw,38px);color:var(--gold);line-height:1.1;margin:10px 0}
 .duo2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:16px}
 .duo2>div{border:3px solid currentColor;padding:16px 18px}
@@ -1972,12 +1975,20 @@ addEventListener('hashchange', () => { if (location.hash === '#ressources') { lo
 (function(){
   const BOX='.cg-pre,.prompt-out';
   function over(el){return el.scrollHeight-el.clientHeight;}
+  function wrapOf(sh){ if(!sh.classList.contains('sheet')) return null; let w=sh.querySelector(':scope > .sheet-in'); if(!w){ w=document.createElement('div'); w.className='sheet-in'; while(sh.firstChild) w.appendChild(sh.firstChild); sh.appendChild(w); } return w; }
   function fitBox(sh){
-    const kids=[...sh.children];
-    kids.forEach(k=>k.style.zoom='');
-    sh.querySelectorAll(BOX).forEach(b=>b.style.maxHeight='');
+    const w=wrapOf(sh); const tgt=w?[w]:[...sh.children];
+    const setZ=z=>tgt.forEach(k=>{ k.style.zoom=(z===1?'':z); });
+    setZ(1); sh.querySelectorAll(BOX).forEach(b=>b.style.maxHeight='');
+    const grow = w && document.body.classList.contains('flat') && !sh.closest('.s2full');
+    if(grow){
+      const cs=getComputedStyle(sh), avail=sh.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+      const fits=z=>{ setZ(z); return w.getBoundingClientRect().height<=avail-6 && over(sh)<=1 && sh.scrollWidth<=sh.clientWidth+2; };
+      let lo=1, hi=2.2; if(!fits(1)){ hi=1; lo=.5; }
+      for(let i=0;i<9;i++){ const m=(lo+hi)/2; if(fits(m)) lo=m; else hi=m; }
+      let zz=Math.round(lo*100)/100; setZ(zz); while(over(sh)>1 && zz>.5){ zz=Math.round((zz-.03)*100)/100; setZ(zz); } return; }
     let o=over(sh); if(o<=1) return;
-    let z=1; const step=()=>{ z=Math.round((z-0.03)*100)/100; kids.forEach(k=>k.style.zoom=z); o=over(sh); };
+    let z=1; const step=()=>{ z=Math.round((z-0.03)*100)/100; setZ(z); o=over(sh); };
     const boxes=[...sh.querySelectorAll(BOX)].filter(b=>b.offsetParent);
     if(boxes.length){ while(o>1&&z>0.83) step();
       boxes.forEach(b=>{ if(o<=1) return; const h=b.getBoundingClientRect().height/z; const nh=Math.max(200,h-o/z-4); if(nh<h){b.style.maxHeight=nh+'px'; o=over(sh);} }); }
@@ -1986,7 +1997,7 @@ addEventListener('hashchange', () => { if (location.hash === '#ressources') { lo
   let busy=false;
   function fit(){ const s=document.querySelector('#deck > section.slide.on'); if(!s) return; busy=true;
     s.querySelectorAll('.sheet,.s1-panel').forEach(fitBox); setTimeout(()=>busy=false,0); }
-  let t; function later(){ clearTimeout(t); t=setTimeout(fit,60); }
+  let t,t2; function later(){ clearTimeout(t); clearTimeout(t2); t=setTimeout(fit,60); t2=setTimeout(fit,900); }
   window.fitSlide=later;
   addEventListener('resize',later);
   const mo=new MutationObserver(()=>{ if(!busy) later(); });
