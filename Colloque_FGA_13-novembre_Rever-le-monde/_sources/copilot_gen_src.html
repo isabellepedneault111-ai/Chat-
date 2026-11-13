@@ -159,7 +159,7 @@ window.CG = (() => {
         <span class="cg-lab">→← Restreindre (restriction)</span><div class="cg-chips" data-g="trucs">${TRUCS.map((t, i) => t[2] === 'r' ? `<button type="button" data-trucs="${i}" aria-pressed="false">${esc(t[0])}</button>` : '').join('')}</div></fieldset>
     </div>
     <div class="cg-out"><pre class="cg-pre" id="${id}o" aria-live="polite"></pre>
-      <div class="cg-acts"><button type="button" class="cg-btn" id="${id}c">Copier l’invite</button><a class="cg-btn alt" href="https://m365.cloud.microsoft/chat" target="_blank" rel="noopener">Ouvrir Copilot ↗</a><span class="cg-msg" id="${id}m"></span></div>
+      <div class="cg-acts"><button type="button" class="cg-btn" id="${id}c">Copier l’invite</button><a class="cg-btn alt" id="${id}o2" href="https://m365.cloud.microsoft/chat" target="copilotTab">Copier et ouvrir Copilot ↗</a><span class="cg-msg" id="${id}m"></span></div>
       <div class="cg-next"><b>Après sa réponse, relancez</b><ul><li>« Plus court. »</li><li>« Pour un élève qui lit difficilement. »</li><li>« Qu’est-ce qui manque pour que ce soit évaluable ? »</li><li>« Ajoute un exemple réussi et un exemple à améliorer. »</li></ul></div>
       <p class="cg-warn">Jamais de nom d’élève, de diagnostic ni de résultat identifiable dans une invite. Copilot propose, vous disposez : vérifiez chaque lien avec le programme.</p></div></div>`;
     const q = s => root.querySelector(s), $id = s => q('#' + id + s);
@@ -227,6 +227,12 @@ window.CG = (() => {
     $id('n').oninput = () => upd('Autre chose à savoir');
     $id('x').oninput = () => { st.dirty = true; upd('Extrait du programme'); };
     $id('f').oninput = () => upd('Format attendu');
+    $id('o2').onclick = e => { e.preventDefault(); try { $id('c').click(); } catch (x) {}
+      const U = 'https://m365.cloud.microsoft/chat'; let w = null;
+      try { w = window.open('', 'copilotTab'); } catch (x) {}
+      if (!w) { window.open(U, '_blank'); return; }
+      let blank = false; try { blank = !w.location.href || w.location.href === 'about:blank'; } catch (x) { blank = false; }
+      if (blank) w.location.href = U; w.focus(); };
     $id('c').onclick = () => { const msg = $id('m'); const ok = () => { msg.textContent = 'Copiée !'; setTimeout(() => msg.textContent = '', 2500); };
       const fb = () => { const r = document.createRange(); r.selectNodeContents($id('o')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); msg.textContent = 'Sélectionnée : faites Ctrl+C'; };
       try { navigator.clipboard.writeText(plain).then(ok, fb); } catch (err) { fb(); } };

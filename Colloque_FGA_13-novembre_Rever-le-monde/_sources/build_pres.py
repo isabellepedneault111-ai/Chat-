@@ -13,7 +13,7 @@ def font(p): return 'data:font/ttf;base64,' + base64.b64encode(open(p, 'rb').rea
 I = B + '/img/'
 rep = {
  '__FONT_ANTON__': font(B + '/fonts/Anton-Regular.ttf'), '__FONT_CAVEAT__': font(B + '/fonts/Caveat-SemiBold.ttf'),
- '__IMG_MUR__': uri(I + 'nb_mur.jpg', 1600, 78), '__IMG_IAG__': uri(I + 'iag_crop.png', 500, png=True), '__IMG_MONDE_ELEVES__': uri(I + 'monde_ideal_eleves.jpg', 1254, 84), '__IMG_COMPOST__': uri(I + 'nb_compost.jpg', 1100, 78),
+ '__IMG_MUR__': uri(I + 'nb_mur.jpg', 1600, 78), '__IMG_IAG__': uri(I + 'iag_crop.png', 500, png=True), '__FR1__': uri(I + 'fr1.jpg', 1100, 68), '__FR2__': uri(I + 'fr2.jpg', 1100, 68), '__FR3__': uri(I + 'fr3.jpg', 1100, 68), '__FR4__': uri(I + 'fr4.jpg', 1100, 68), '__FR5__': uri(I + 'fr5.jpg', 1100, 68), '__FR6__': uri(I + 'fr6.jpg', 1100, 68), '__FR7__': uri(I + 'fr7.jpg', 1100, 68), '__FR8__': uri(I + 'fr8.jpg', 1100, 68), '__FR9__': uri(I + 'fr9.jpg', 1100, 68), '__FR10__': uri(I + 'fr10.jpg', 1100, 68), '__FR_LOGO__': uri(I + 'fr_logo.png', 520, png=True), '__IMG_MONDE_ELEVES__': uri(I + 'monde_ideal_eleves.jpg', 1254, 84), '__IMG_COMPOST__': uri(I + 'nb_compost.jpg', 1100, 78),
  '__IMG_BULLETIN__': uri(I + 'nb_bulletin.jpg', 1000, 78), '__IMG_MAISON__': uri(I + 'nb_maison.jpg', 900, 78),
  '__IMG_Q1__': uri(I + 'mot_eleve_2017.jpg', 900, 82), '__IMG_Q2__': uri(I + 'mot_parent_hate.jpg', 700, 82),
  '__IMG_Q3__': uri(I + 'mot_parent_forces.jpg', 700, 82), '__IMG_Q4__': uri(I + 'mot_parent_confiance.jpg', 700, 82),
