@@ -60,6 +60,9 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.92', quand: '2026-11-23', titre: 'Nos pièces', items: [
+    ['⭐ Mettre dans nos pièces', ['Dans L’oreille, une chanson analysée peut rejoindre Joy Walk et Projet 1 : « ⭐ Mettre dans nos pièces ». Elle apparaît ensuite en tête de liste dans L’oreille et dans Placer mes paroles, avec son tempo, sa tonalité et son premier temps. Elle reste dans votre espace, privée : pas dans les fichiers publics du site.']],
+  ] },
   { v: '0.91', quand: '2026-11-23', titre: 'Tes lignes, à ta main', items: [
     ['Déplacer, ajouter, enlever', ['Dans Mots sur la grille, chaque ligne a ↑ ↓ pour monter ou descendre (ou glisse-la par ⠿ sur l’ordi) et ✕ pour l’enlever. « ＋ Ajouter une ligne » en ajoute une vide, à écrire toi-même. Une ligne que tu retouches est gardée d’office : FLIP ne l’écrase plus en réécrivant les autres.']],
     ['L’accord principal', ['En haut des lignes : l’accord principal de la grille, la « maison » de la chanson, avec sa position à la guitare et un ▶ pour l’entendre. Dans les lignes, il porte une ★ : une ligne qui finit dessus sonne finie.']],

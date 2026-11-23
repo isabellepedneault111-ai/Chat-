@@ -4,14 +4,14 @@
 // Prosodie : les syllabes accentuées vont sur les temps forts, sinon le texte « boite » (Pattison 2009).
 import { audio, out } from '../audio.js';
 import { joue, prechargerSons } from '../sampler.js';
-import { espace, profileOf, saveEntry } from '../espace.js';
+import { espace, profileOf, saveEntry, audioURL } from '../espace.js';
 import { loadLexique, lineSyll, wordSyll } from '../lexique.js';
 import { store, toast } from '../ui.js';
 import { esc } from './carnet.js';
 import { nomNote } from '../oreille.js';
 
 // Les pièces : tempo et premier temps mesurés dans les fichiers ; la gamme sert au guide vocal.
-const PIECES = {
+const PIECES_FROG = {
   projet1: { nom: 'Projet 1, après la pause (Frog)', url: 'data/sons/frog-visite.mp3', bpm: 120, t1: 34.98, ton: 'ré mineur', tonique: 62, gamme: [2, 4, 5, 7, 9, 0], accord: [2, 5, 9] },
   joywalk: { nom: 'Joy Walk (Frog)', url: 'data/sons/frog-joywalk.mp3', bpm: 116.6, t1: 16.43, ton: 'sol majeur', tonique: 67, gamme: [7, 9, 11, 0, 2, 4], accord: [7, 11, 2] },
 };
@@ -96,10 +96,24 @@ function melodie(syl, pl, slots, P, voix, variante) {
   return notes;
 }
 
+// Nos pièces gardées dans l'espace (« ⭐ Mettre dans nos pièces » dans L'oreille) : elles rejoignent la liste.
+function piecesEspace() {
+  if (!espace.connected) return {};
+  const o = {};
+  espace.entries.filter((e) => e.audio && e.data?.piece).forEach((e) => {
+    const p = e.data.piece; let ton = 60 + (p.tonique || 0); if (ton > 66) ton -= 12;
+    const rel = p.mineur ? [0, 2, 3, 5, 7, 10] : [0, 2, 4, 5, 7, 9];
+    const N = ['do', 'do♯', 'ré', 'mi♭', 'mi', 'fa', 'fa♯', 'sol', 'la♭', 'la', 'si♭', 'si'];
+    o[`esp:${e.id}`] = { nom: `${e.title || 'Notre pièce'} (${e.author || ''})`, audio: e.audio, bpm: p.bpm || 100, t1: p.t1 || 0, ton: `${N[(p.tonique || 0) % 12]} ${p.mineur ? 'mineur' : 'majeur'}`, tonique: ton, gamme: rel.map((x) => (x + (p.tonique || 0)) % 12), accord: (p.mineur ? [0, 3, 7] : [0, 4, 7]).map((x) => (x + (p.tonique || 0)) % 12) };
+  });
+  return o;
+}
+
 export default {
   id: 'placer',
   mount(el) {
-    let piece = store.get('placerPiece', 'projet1'); let decale = false; let guide = true; let actif = 0;
+    const PIECES = { ...PIECES_FROG, ...piecesEspace() };
+    let piece = store.get('placerPiece', 'projet1'); if (!PIECES[piece]) piece = 'projet1'; let decale = false; let guide = true; let actif = 0;
     const tampons = {}; let lecture = null; let raf = 0;
     const voix = espace.connected ? profileOf(espace.me)?.voix || null : null;
     el.innerHTML = `
@@ -161,7 +175,7 @@ export default {
 
     // Charge (une seule fois) le son d’une pièce de Frog.
     async function tampon(id) {
-      if (!tampons[id]) tampons[id] = fetch(PIECES[id].url).then((r) => r.arrayBuffer()).then((b) => audio().decodeAudioData(b));
+      if (!tampons[id]) tampons[id] = (PIECES[id].audio ? audioURL(PIECES[id].audio) : Promise.resolve(PIECES[id].url)).then((u) => fetch(u)).then((r) => r.arrayBuffer()).then((b) => audio().decodeAudioData(b));
       return tampons[id];
     }
     // Arrête la lecture de la pièce.

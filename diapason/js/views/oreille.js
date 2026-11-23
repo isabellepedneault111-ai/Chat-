@@ -30,8 +30,8 @@ export default {
         <button class="btn" data-o="micro">● Enregistrer mon clavier</button>
         <span class="muted">ou</span>
         <select data-o="choix"><option value="">Une pièce ou un son de l’espace…</option>
-          ${PIECES.map(([u, n]) => `<option value="url:${u}">${esc(n)}</option>`).join('')}
-          ${sons().map((e) => `<option value="id:${esc(e.id)}">${esc(e.title || 'Son')} (${esc(e.author)})</option>`).join('')}
+          <optgroup label="Nos pièces">${PIECES.map(([u, n]) => `<option value="url:${u}">${esc(n)}</option>`).join('')}${sons().filter((e) => e.data?.piece).map((e) => `<option value="id:${esc(e.id)}">${esc(e.title || 'Son')} (${esc(e.author)})</option>`).join('')}</optgroup>
+          <optgroup label="Les sons de l’espace">${sons().filter((e) => !e.data?.piece).map((e) => `<option value="id:${esc(e.id)}">${esc(e.title || 'Son')} (${esc(e.author)})</option>`).join('')}</optgroup>
         </select>
         <p class="or-etat muted small"></p>
         <details class="or-dicta" ${/iPhone|iPad/.test(navigator.userAgent) ? 'open' : ''}><summary>Un mémo du Dictaphone (iPhone)?</summary><ol><li>Dans <b>Dictaphone</b>, touche le mémo, puis <b>···</b> → <b>Partager</b> → <b>Enregistrer dans Fichiers</b>.</li><li>Ici, <b>Choisir un fichier audio</b> → <b>Choisir le fichier</b> → <b>Parcourir</b> → le mémo (.m4a ou .qta, les deux marchent).</li><li>Si Safari refuse de le décoder, un bouton <b>▶ Le lire avec le lecteur du téléphone</b> apparaît : il l’écoute en entier, en silence, puis l’analyse.</li></ol><p class="muted small">Sur un ordi : glisse le fichier du Dictaphone sur ce bouton, ou partage-le-toi par courriel ou AirDrop. Le mémo peut aussi aller au mur (Nos idées, bouton ♫) : il sera ensuite dans la liste ci-dessus.</p></details>
@@ -84,6 +84,7 @@ export default {
           <button class="btn primary" data-o="morceau" data-bulle="Le morceau entier (ou le passage choisi sur l’onde) part dans Jouer : il tourne au même tempo, avec tous ses accords sur le clavier, et tu joues ou chantes par-dessus.">→ Jouer ce morceau</button>
           <button class="btn" data-o="cathedrale" data-bulle="Les accords du morceau (ou du passage choisi) deviennent une cathédrale : chaque accord qui revient, une partie de l’œuvre, chantée par l’orchestre.">→ La cathédrale de ce morceau</button>
           <button class="btn primary" data-o="fond" data-bulle="La boucle tourne dans Jouer, sous le beat, au même tempo : tu joues, tu chantes, tu improvises par-dessus.">→ Jouer sur la boucle</button>
+          ${espace.connected ? '<button class="btn primary" data-o="piece" data-bulle="La chanson rejoint Joy Walk et Projet 1 : dans L’oreille, Placer mes paroles et partout où on choisit une pièce. Elle reste dans votre espace, privée.">⭐ Mettre dans nos pièces</button>' : ''}
           <button class="btn" data-o="boucle-wav">⬇ La boucle (WAV)</button>
           <button class="btn primary" data-o="mots" data-bulle="Ma voix → Mots sur la grille s’ouvre avec cette chanson : ses accords, son tempo, et la vraie chanson qui joue sous les paroles.">✍️ Des paroles sur cette chanson</button>
           <button class="btn" data-o="ecrire">Écrire des paroles sur la boucle</button>
@@ -279,9 +280,10 @@ export default {
     addEventListener('diapason:stop', surStop);
 
     // Décode la pièce déposée et la fait écouter par l’oreille, en affichant chaque étape.
-    async function analyser(arrayBuffer, n) {
+    let blobCourant = null; let entreeCourante = null; // pour « Mettre dans nos pièces »
+    async function analyser(arrayBuffer, n, id = null) {
       etat('Je décode la pièce…'); pile = []; bout = null;
-      const copie = arrayBuffer.slice(0); let b0 = null;
+      const copie = arrayBuffer.slice(0); let b0 = null; blobCourant = new Blob([copie]); entreeCourante = id;
       try { b0 = await decoder(arrayBuffer); } catch (err) {
         // Dernier recours : le lecteur du téléphone sait souvent lire ce que le décodeur refuse. On l'écoute en entier, en silence.
         etatHTML(`Le décodeur de ce navigateur refuse ce fichier${err?.message ? ` (${esc(err.message.slice(0, 80))})` : ''}. <button class="btn small" data-o="parlecteur">▶ Le lire avec le lecteur du téléphone</button> <span class="muted">(il l’écoute en entier, en silence : une minute de mémo = une minute d’attente)</span>`);
@@ -707,7 +709,7 @@ export default {
         etat('Je charge la pièce…');
         try {
           const url = v.startsWith('url:') ? v.slice(4) : await audioURL(espace.entries.find((x) => x.id === v.slice(3)).audio);
-          await analyser(await (await fetch(url)).arrayBuffer(), label);
+          await analyser(await (await fetch(url)).arrayBuffer(), label, v.startsWith('id:') ? v.slice(3) : null);
         } catch { etat('Impossible de charger ce son.'); }
       }
     });
@@ -739,6 +741,18 @@ export default {
       if (o === 'micro') { micro(e.target.closest('[data-o]')); return; }
       if (o === 'parlecteur') { parLecteur(); return; }
       if (o === 'dossier') { surveiller(); return; }
+      if (o === 'piece') {
+        if (!res || !blobCourant) return; const b = e.target.closest('[data-o]'); const lab = b.textContent; b.disabled = true;
+        const [nm, mode] = String(res.ton).split(' ou ')[0].split(' '); const pc = Math.max(0, NOTES_FR.findIndex((x) => x.toLowerCase() === String(nm).toLowerCase()));
+        const piece = { bpm: res.bpm, t1: cadreG?.debutCale ?? 0, tonique: pc, mineur: /^min/i.test(mode || '') };
+        try {
+          const ex = entreeCourante && espace.entries.find((x) => x.id === entreeCourante);
+          if (ex) await saveEntry({ ...ex, data: { ...(ex.data || {}), piece } }, { force: true });
+          else { b.textContent = 'J’envoie…'; const au = await uploadAudio(blobCourant, (x) => { b.textContent = `J’envoie… ${Math.round(x * 100)} %`; }); const r = await saveEntry({ type: 'audio', title: nom || 'Ma pièce', audio: au, data: { piece, stage: 0 } }); entreeCourante = r.entry?.id || null; }
+          toast(`« ${nom} » est dans nos pièces : L’oreille, Placer mes paroles… (${res.bpm} BPM, ${res.ton.split(' ou ')[0]}).`);
+        } catch (err) { toast(err.message || 'Pas réussi à la ranger.'); }
+        b.disabled = false; b.textContent = lab; return;
+      }
       if (o === 'dossier-reprendre') { reprendre(true); return; }
       if (o === 'dossier-stop') { arreterDossier(); return; }
       if (o === 'harmo-oui' || o === 'harmo-autre') {
