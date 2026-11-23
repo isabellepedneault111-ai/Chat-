@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.99', quand: '2026-11-23', titre: 'Une intro, des silences', items: [
+    ['Les paroles commencent où tu veux', ['Dans Mots sur la grille, « Les paroles commencent à la mesure » : à 5, par exemple, les mesures 1 à 4 deviennent l’intro, musique seule ; chaque ligne prend ensuite ses deux mesures à partir de là. « Chanter sur la grille » joue l’intro avant la première ligne (la barre affiche « Intro »).']],
+    ['🎵 silence', ['Sur chaque ligne, « 🎵 silence » en fait deux mesures de musique seule : FLIP n’y écrit rien, la musique continue, et la ligne ne part pas dans le texte copié. « ✎ paroles » la remet.']],
+  ] },
   { v: '0.98', quand: '2026-11-23', titre: 'La chanson de L’oreille, toujours sous les paroles', items: [
     ['Elle ne se perd plus', ['La dernière chanson passée dans L’oreille reste sur ton appareil (pas sur le serveur). Dans Mots sur la grille, « La dernière grille de L’oreille » la fait jouer sous les paroles, même après un rechargement, avec son onde sous chaque ligne.']],
     ['L’oreille repère le souffle', ['Si une chanson a un fond de bruit, L’oreille le dit et fait briller « 🧹 Réduire le bruit ». Après le nettoyage, elle dit de combien le bruit a baissé.']],

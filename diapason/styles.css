@@ -4550,3 +4550,11 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .mo-l-bouge .mo-ins { font-weight: 700; color: #4f5d1d; }
 .mo-choeur.on { background: #2b2620; color: #fbe7a1; border-color: #2b2620; }
 .or-actions .btn.suggere { box-shadow: 0 0 0 3px #fbe7a1, 0 0 0 5px #b08a2e; }
+
+/* 0.99 — intro et silences dans Mots sur la grille */
+.mo-debut input { width: 90px; font: 700 1.1rem var(--display); padding: 8px 10px; border-radius: 8px; border: 1px solid #d9cfbd; background: #fffdf8; }
+.mo-intro { background: #f3ecda; border-style: dashed; font-size: 1.05rem; }
+.mo-l.pause { background: #f3ecda; }
+.mo-l.pause .pl-piste { opacity: .55; }
+.mo-pause-txt { flex: 1 1 280px; margin: 0; font: 600 1.15rem var(--display); color: #5b4a1c; }
+.mo-silence.on { background: #2b2620; color: #fbe7a1; border-color: #2b2620; }
