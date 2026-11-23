@@ -37,6 +37,28 @@ function fftMag(re) {
 }
 
 // L’oreille : écoute un enregistrement et y repère l’énergie, les silences, les parties et le tempo.
+function tempoFin(buf) {
+  const sr = buf.sampleRate; const n = buf.length; const ch = buf.numberOfChannels;
+  const x = new Float32Array(n); for (let c = 0; c < ch; c++) { const d = buf.getChannelData(c); for (let i = 0; i < n; i++) x[i] += d[i] / ch; }
+  const hop = Math.round(sr / 100); const nF = Math.floor(n / hop) - 1;
+  // deux bandes : le grave (grosse caisse, basse) et l'aigu (caisse claire, charleston), attaques en log
+  const bas = new Float32Array(nF); const haut = new Float32Array(nF); let lp = 0; const a = Math.exp(-2 * Math.PI * 180 / sr); let prev = 0;
+  for (let f = 0; f < nF; f++) { let eb = 0; let eh = 0; for (let i = f * hop; i < (f + 1) * hop; i++) { lp = a * lp + (1 - a) * x[i]; const h = x[i] - prev; prev = x[i]; eb += lp * lp; eh += h * h; } bas[f] = Math.log(1e-9 + eb); haut[f] = Math.log(1e-9 + eh); }
+  const on = new Float32Array(nF); for (let f = 1; f < nF; f++) on[f] = Math.max(0, bas[f] - bas[f - 1]) + Math.max(0, haut[f] - haut[f - 1]);
+  // on retire la moyenne locale (0,5 s) pour ne garder que les attaques
+  const w = 25; const o2 = new Float32Array(nF); let s = 0; for (let f = 0; f < nF; f++) { s += on[f]; if (f >= 2 * w) s -= on[f - 2 * w]; const m = s / Math.min(f + 1, 2 * w); o2[Math.max(0, f - w)] = Math.max(0, on[Math.max(0, f - w)] - m); }
+  const ac = (lag) => { const l0 = Math.floor(lag); const fr = lag - l0; let t = 0; for (let i = 0; i + l0 + 1 < nF; i++) t += o2[i] * (o2[i + l0] * (1 - fr) + o2[i + l0 + 1] * fr); return t / Math.max(1, nF - l0 - 1); }; // moyenne : un long décalage a moins de termes, il ne doit pas perdre pour ça
+  let best = 0; let bpm = 0;
+  for (let b = 60; b <= 180; b += 0.5) { const L = 6000 / b; const v = ac(L) + 0.5 * ac(2 * L) + 0.25 * ac(4 * L) + 0.5 * ac(L / 2); const prior = Math.exp(-0.5 * (Math.log2(b / 115) / 0.45) ** 2); if (v * prior > best) { best = v * prior; bpm = b; } }
+  // Plus fin autour du meilleur : la force de la pulsation (la composante de Fourier des attaques à cette fréquence),
+  // au centième de BPM. Sur une longue pièce, elle est très pointue : 1 BPM d'erreur décalerait la fin de 2 secondes.
+  const puls = (t, h = 1) => { const w = (2 * Math.PI * t * h) / 6000; let re = 0; let im = 0; for (let f = 0; f < nF; f++) { if (!o2[f]) continue; re += o2[f] * Math.cos(w * f); im -= o2[f] * Math.sin(w * f); } return [Math.hypot(re, im), Math.atan2(im, re)]; };
+  let fin = bpm; let bf = -1; for (let t = bpm - 1.5; t <= bpm + 1.5; t += 0.01) { const v = puls(t)[0] + 0.5 * puls(t, 2)[0]; if (v > bf) { bf = v; fin = t; } }
+  // La phase : l'angle de cette composante dit où tombent les temps.
+  const L = 6000 / fin; const phi = ((((-puls(fin)[1]) / (2 * Math.PI)) * L) % L + L) % L;
+  return { bpm: fin, phase: phi / 100 };
+}
+
 export async function ecouter(buf, onStep = () => {}) {
   const { x, sr } = mono(buf);
   const duree = x.length / sr;
@@ -68,15 +90,11 @@ export async function ecouter(buf, onStep = () => {}) {
     let s = 0; for (let j = Math.floor(a * 20); j < Math.floor(b * 20); j++) s += db[j];
     parties.push({ a, b, silence, niveau: s / ((b - a) * 20) });
   }
-  // 4. Le tempo : l'autocorrélation des attaques (60 à 180 BPM).
+  // 4. Le tempo : les attaques à 100 images/s (grave et aigu), leur autocorrélation (60 à 180 BPM), et une préférence
+  // douce autour de 115 BPM : à 60 et à 120, les attaques se répètent toutes les deux ; c'est la préférence qui tranche
+  // (avant : 20 images/s, et Projet 1 sortait à 60 au lieu de 120, Joy Walk à 77 au lieu de 117).
   onStep('Je trouve le tempo…'); await pause();
-  const on = new Float32Array(nE); for (let i = 1; i < nE; i++) on[i] = Math.max(0, db[i] - db[i - 1]);
-  let bpm = 0; let best = -1;
-  for (let b = 60; b <= 180; b++) {
-    const lag = (20 * 60) / b; let s = 0;
-    for (let i = 0; i + lag * 2 < nE; i++) s += on[i] * (on[Math.round(i + lag)] + 0.5 * on[Math.round(i + lag * 2)]);
-    if (s > best) { best = s; bpm = b; }
-  }
+  const tf = tempoFin(buf); const bpm = Math.round(tf.bpm);
   // 5. La tonalité : les douze notes, comparées aux profils majeur et mineur.
   onStep('J’écoute la tonalité…'); await pause();
   const N = 4096; const chroma = new Float64Array(12);
@@ -114,7 +132,7 @@ export async function ecouter(buf, onStep = () => {}) {
       await pause();
     }
   }
-  return { duree, db, silences, parties, bpm, ton, momentFort: [mf, mf + 10], boucle };
+  return { duree, db, silences, parties, bpm, bpmFin: tf.bpm, beat0: tf.phase, ton, momentFort: [mf, mf + 10], boucle };
 }
 
 // Joue un passage en boucle, avec un court fondu enchaîné à chaque tour pour que la jonction disparaisse.
@@ -381,19 +399,27 @@ export function diagnosticHarmonie(accs, res) {
 // devient « % » ; si toute la suite tourne en boucle, on l'écrit une fois, avec ses reprises (‖: … :‖ × n).
 // cadre : le tempo et le départ trouvés la première fois ; on les garde quand on corrige un accord à la main, sinon
 // toute la grille se recalerait et les mesures glisseraient.
-export function grilleMesures(accs, bpm, parMesure = 4, cadre = null) {
+export function grilleMesures(accs, bpm, parMesure = 4, cadre = null, battue = null) {
   if (!accs?.length) return null;
   // Le même tempo que celui affiché en haut (avant : doublé sous 80 BPM, et la grille annonçait le double).
   const t0 = bpm; const debut = accs[0].a;
-  // Recaler le tempo : les changements d'accords tombent sur des temps. On cherche, à ±6 % du tempo entendu,
+  // Recaler le tempo : les changements d'accords tombent sur des temps. On cherche, à ±2 % du tempo entendu,
   // la durée de temps qui les aligne le mieux (sinon, une petite erreur s'accumule et tout glisse en fin de grille).
   const changes = accs.slice(1).map((x) => x.a - debut); let temps = 60 / t0; let mieux = -Infinity;
-  for (let k = -120; k <= 120; k++) { const L = (60 / t0) * (1 + k * 0.0005); const sc = changes.reduce((s2, c) => s2 + Math.cos((2 * Math.PI * c) / L), 0) - Math.abs(k) * 0.002; if (sc > mieux) { mieux = sc; temps = L; } }
+  for (let k = -40; k <= 40; k++) { const L = (60 / t0) * (1 + k * 0.0005); const sc = changes.reduce((s2, c) => s2 + Math.cos((2 * Math.PI * c) / L), 0) - Math.abs(k) * 0.002; if (sc > mieux) { mieux = sc; temps = L; } }
+  if (battue?.bpm) temps = 60 / battue.bpm; // les temps entendus dans les attaques (plus sûrs que les changements d'accords)
   if (cadre) temps = cadre.temps;
   const tempo = Math.round(60 / temps);
   // Et la phase : on décale le départ pour que les changements tombent pile sur les temps, en moyenne.
   const ph = Math.atan2(changes.reduce((s2, c) => s2 + Math.sin((2 * Math.PI * c) / temps), 0), changes.reduce((s2, c) => s2 + Math.cos((2 * Math.PI * c) / temps), 0));
-  const debutCale = cadre ? cadre.debutCale : debut + (ph / (2 * Math.PI)) * temps;
+  let debutCale = cadre ? cadre.debutCale : debut + (ph / (2 * Math.PI)) * temps;
+  if (!cadre && battue?.bpm) {
+    // Le premier temps entendu juste avant le premier accord, puis le temps fort : des 4 temps possibles, celui où
+    // les accords changent le plus souvent en début de mesure.
+    const b0 = battue.phase + Math.ceil((debut - temps * 0.5 - battue.phase) / temps) * temps; let mieuxJ = 0; let sj = -Infinity; const M = temps * parMesure;
+    for (let j = 0; j < parMesure; j++) { const d0 = b0 + j * temps - (j ? M : 0); const sc = changes.reduce((s2, c) => s2 + Math.cos((2 * Math.PI * (c + debut - d0)) / M), 0); if (sc > sj) { sj = sc; mieuxJ = j; } }
+    debutCale = b0 + mieuxJ * temps - (mieuxJ ? M : 0); if (debutCale < 0) debutCale += M;
+  }
   const fin = accs[accs.length - 1].b; const nb = cadre ? cadre.nb : Math.max(1, Math.ceil((fin - debut) / (temps * parMesure) - 0.25));
   // Un petit trou (moins d'un temps) entre deux accords : l'accord continue, le son s'est juste éteint un instant.
   const a = (t) => (accs.find((x) => t >= x.a - temps * 0.25 && t < x.b - temps * 0.25) || accs.find((x) => t >= x.b - temps * 0.25 && t < x.b + temps))?.nom || '';

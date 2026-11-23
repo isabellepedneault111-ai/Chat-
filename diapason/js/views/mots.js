@@ -32,9 +32,30 @@ export function lireAccord(t) {
 }
 
 // Les trois sources de grille : chacune donne des mesures de 4 temps ; un temps = un accord, ou null (on tient).
+// Les accords entendus hésitent souvent entre Ré7, Rém7 et Rémaj7 (une seule note change). Dans la tonalité de la
+// chanson, on garde la couleur qui y appartient : en ré mineur, Ré7 et Rémaj7 redeviennent Rém (ou Rém7 si sa 7e est
+// dans la gamme). Seul le V en mineur peut rester majeur (La en ré mineur). Les accords hors gamme restent tels quels.
+function dansLaTonalite(c, ton) {
+  if (!c || !ton || !IV[c.q] || /sus|add/.test(c.q)) return c;
+  const g = (ton.mineur ? [0, 2, 3, 5, 7, 8, 10] : [0, 2, 4, 5, 7, 9, 11]); const rel = (c.r - ton.r + 12) % 12;
+  if (!g.includes(rel)) return c;
+  const dans = (x) => g.includes((rel + x) % 12);
+  const majeur = ton.mineur && rel === 7 && !['m', 'm7'].includes(c.q) ? true : dans(4);
+  const tri = majeur ? 'M' : dans(7) ? 'm' : 'dim'; if (tri === 'dim') return { r: c.r, q: 'dim' };
+  const sept = /7/.test(c.q); const q = !sept ? tri : tri === 'm' ? (dans(10) ? 'm7' : 'm') : dans(11) ? 'maj7' : dans(10) ? '7' : 'M';
+  return { r: c.r, q };
+}
+// La tonalité écrite « Ré mineur » → { r: 2, mineur: true }.
+function lireTon(t) { const m = String(t || '').match(/^(\S+)\s+(majeur|mineur)/i); const c = m && lireAccord(m[1]); return c ? { r: c.r, mineur: /mineur/i.test(m[2]) } : null; }
+// Les mesures nettoyées : les accords dans la tonalité, et un accord qui se répète n'est pas réécrit.
+function nettoyer(mesures, ton) {
+  let avant = null;
+  return mesures.map((m) => m.map((x) => { const c = dansLaTonalite(x && x !== '—' ? (typeof x === 'string' ? lireAccord(x) : x) : null, ton); if (!c) return null; if (avant && avant.r === c.r && avant.q === c.q) return null; avant = c; return c; }));
+}
 function grilleOreille() {
   const g = store.get('oreilleGrille', null); if (!g?.mesures?.length) return null;
-  return { nom: g.nom ? `L’oreille · ${g.nom}` : 'La dernière grille de L’oreille', bpm: g.bpm || 90, mesures: g.mesures.map((m) => m.map((x) => (x && x !== '—' ? lireAccord(x) : null))) };
+  const ton = lireTon(g.ton);
+  return { nom: g.nom ? `L’oreille · ${g.nom}` : 'La dernière grille de L’oreille', bpm: g.bpm || 90, ton, mesures: nettoyer(g.mesures, ton) };
 }
 function grilleJouer() {
   const key = store.get('key', 0); const bpm = store.get('bpm', 92); const id = store.get('prog', 'pop');
@@ -73,6 +94,7 @@ const piecesEsp = () => (espace.connected ? espace.entries.filter((e) => e.audio
 // L'accord principal (la « maison ») : la gamme qui contient le mieux la grille, puis, entre son accord majeur (I)
 // et son mineur relatif (vi), celui qui sonne le plus longtemps, avec un bonus pour le premier et le dernier accord.
 function accordPrincipal(g) {
+  if (g.ton) return { r: g.ton.r, q: g.ton.mineur ? 'm' : 'M' }; // L'oreille a entendu la tonalité : c'est la maison
   const k = gammeDe(g)[0]; const M = { r: k, q: 'M' }; const m = { r: (k + 9) % 12, q: 'm' };
   let sM = 0; let sm = 0; const L = g.mesures.length;
   for (let i = 0; i < L; i++) for (let t = 0; t < 4; t++) { const c = accordA(g, i, t); const mi = c.q === 'm' || c.q === 'm7'; if (c.r === M.r && !mi) sM++; if (c.r === m.r && mi) sm++; }
@@ -175,9 +197,10 @@ export default {
         <div class="mo-sous" ${chanson ? '' : 'hidden'}><label class="mo-vraie"><input type="checkbox" data-m="vraie" checked> Sous les paroles : la vraie chanson${chanson ? ` (« ${esc(String(chanson.nom).slice(0, 40))} »)` : ''}</label><label class="mo-vraie"><input type="checkbox" data-m="piano" ${store.get('oreilleGrille', null)?.propose ? 'checked' : ''}> + les accords au piano</label></div>
         <label class="mo-vraie mo-guide"><input type="checkbox" data-m="guide"> 🎤 Chœurs sur toutes les lignes <small class="muted">(des « ouuu » synthétiques chantent la note de chaque syllabe ; éteints d’office, ou ligne par ligne avec 🎤)</small></label>
 
+      <div class="ec-row mo-reg-fin"><button class="btn primary" data-m="generer" data-fermer="1">↻ Écrire les lignes avec ces réglages</button><button class="btn" data-m="chanter">▶ Chanter sur la grille</button></div>
       </details>
       <section class="mo-lignes" aria-live="polite"></section>
-      <div class="mo-ajout"><button class="btn" data-m="ajout">＋ Ajouter une ligne</button><span class="muted small">Touche une ligne pour changer ses mots. ↑ ↓ pour la déplacer (ou glisse-la par ⠿).</span></div>
+      <div class="mo-ajout"><button class="btn" data-m="ajout">＋ Ajouter une ligne</button><button class="btn primary" data-m="chanter">▶ Chanter sur la grille</button><span class="muted small">Touche une ligne pour changer ses mots. ↑ ↓ pour la déplacer (ou glisse-la par ⠿).</span></div>
       <div class="mo-lecteur" hidden role="region" aria-label="Pendant que ça chante"></div>
       <section class="panel mo-ranger" hidden></section>
       <section class="panel mo-fin">
@@ -188,7 +211,7 @@ export default {
     if (!st.pos) st.pos = 'milieu';
     ['source', 'place', 'schema', 'pers', 'pos'].forEach((k) => { const x = q(`[data-m=${k}]`); if (x) x.value = st[k]; }); q('[data-m=n]').value = String(st.n);
 
-    const grillePiece = () => { const e = piecesEsp().find((x) => `piece:${x.id}` === st.source); if (!e) return null; const p = e.data.piece; return { nom: `Nos pièces · ${e.title}`, bpm: p.bpm || 90, mesures: p.grille.map((m) => m.map((x) => (x && x !== '—' ? lireAccord(x) : null))) }; };
+    const grillePiece = () => { const e = piecesEsp().find((x) => `piece:${x.id}` === st.source); if (!e) return null; const p = e.data.piece; const ton = Number.isFinite(p.tonique) ? { r: ((p.tonique % 12) + 12) % 12, mineur: !!p.mineur } : null; return { nom: `Nos pièces · ${e.title}`, bpm: p.bpm || 90, ton, mesures: nettoyer(p.grille, ton) }; };
     // La vraie chanson d'une de nos pièces : téléchargée de l'espace et décodée une fois.
     async function chargerPiece() {
       if (st.source === 'oreille' && !chansonGardee) {
@@ -259,7 +282,7 @@ export default {
       const g = grille();
       const nomsSrc = st.source === 'oreille' && !grilleOreille() ? 'Pas encore de grille dans L’oreille : je prends celle de Jouer. ' : '';
       q('.mo-info').textContent = `${nomsSrc}${g.nom} · ${g.bpm} BPM · ${g.mesures.length} mesure${g.mesures.length > 1 ? 's' : ''} · une ligne = deux mesures`;
-      const aide = q('.mo-src-aide'); if (aide) aide.textContent = st.source === 'oreille' ? 'Les accords et le tempo trouvés par L’oreille dans cette chanson ; la vraie chanson joue sous tes paroles.' : st.source.startsWith('piece:') ? 'Une chanson gardée dans Nos pièces : ses accords, son tempo, et la vraie chanson sous tes paroles.' : st.source === 'jouer' ? 'Les accords qui tournent en ce moment dans Jouer (au piano, sans la vraie chanson).' : 'Tape un accord par mesure, par exemple « Lam Fa Do Sol » (ou « Fa/Do » pour deux dans la mesure).';
+      const aide = q('.mo-src-aide'); if (aide) aide.textContent = st.source === 'oreille' ? (store.get('oreilleGrille', null)?.ton ? 'Les accords et le tempo trouvés par L’oreille dans cette chanson ; la vraie chanson joue sous tes paroles.' : 'Cette grille vient d’une ancienne écoute (avant la 1.13) : repasse la chanson dans L’oreille, le tempo et les accords seront plus justes.') : st.source.startsWith('piece:') ? 'Une chanson gardée dans Nos pièces : ses accords, son tempo, et la vraie chanson sous tes paroles.' : st.source === 'jouer' ? 'Les accords qui tournent en ce moment dans Jouer (au piano, sans la vraie chanson).' : 'Tape un accord par mesure, par exemple « Lam Fa Do Sol » (ou « Fa/Do » pour deux dans la mesure).';
       const ap = accordPrincipal(g); const pb = q('.mo-princ');
       pb.hidden = false;
       pb.innerHTML = `<span class="mo-princ-k">★ Accord principal</span><b class="mo-princ-n">${esc(nomAcc(ap))}</b>${diagramme(ap.r, ap.q, { taille: 46 })}<button class="btn small" data-m="ecouter-princ" aria-label="Écouter l’accord principal">▶</button><details class="mo-princ-pq"><summary>c’est quoi?</summary><p>La « maison » de la chanson : c’est là qu’elle se repose. Une ligne qui finit sur ${esc(nomAcc(ap))} sonne finie ; une ligne qui finit ailleurs donne envie d’entendre la suite. Les ★ le marquent dans les lignes.</p></details>`;
@@ -411,7 +434,7 @@ export default {
       if (lecture) { lecture.stop = true; try { lecture.bus.gain.value = 0; lecture.bus.disconnect(); } catch { /* déjà coupé */ } lecture.src.forEach((s) => { try { s.stop(); } catch { /* déjà arrêtée */ } }); lecture = null; }
       el.querySelectorAll('.pl-tete').forEach((t) => { t.style.opacity = 0; });
       el.querySelectorAll('.mo-l.chante').forEach((x) => x.classList.remove('chante'));
-      const b = q('[data-m=chanter]'); if (b) b.textContent = '▶ Chanter sur la grille';
+      el.querySelectorAll('[data-m=chanter]').forEach((b) => { b.textContent = '▶ Chanter sur la grille'; });
       el.querySelectorAll('[data-m=une]').forEach((x) => { x.textContent = '▶'; }); el.querySelectorAll('[data-m=boucle]').forEach((x) => { x.textContent = '🔁'; });
       el.querySelectorAll('.pl-syl.dit').forEach((x) => x.classList.remove('dit'));
       const lb = q('.mo-lecteur'); if (lb) { lb.hidden = true; lb.innerHTML = ''; } cleBarre = ''; document.body.classList.remove('mo-lit');
@@ -515,7 +538,7 @@ export default {
       const th = e.target.closest('[data-theme]');
       if (th) { const k = th.dataset.theme; st.themes = st.themes.includes(k) ? st.themes.filter((x) => x !== k) : [...st.themes, k]; if (!st.themes.length) st.themes = [k]; st.theme = st.themes[0]; el.querySelectorAll('[data-theme]').forEach((x) => { const on = st.themes.includes(x.dataset.theme); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); x.textContent = `${on ? '✓ ' : ''}${THEMES[x.dataset.theme].nom}`; }); sauver(); return; }
       const b = e.target.closest('[data-m]'); const m = b?.dataset.m; if (!m || b.tagName === 'SELECT' || b.tagName === 'INPUT') return;
-      if (m === 'generer') { arreter(); await generer(); return; }
+      if (m === 'generer') { arreter(); await generer(); if (b.dataset.fermer) { const r = q('.mo-reg'); if (r) r.open = false; q('.mo-a-qui')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } return; }
       if (m === 'caler') { await caler(false); return; }
       if (m === 'ranger') { rangerAilleurs(); return; }
       if (m === 'garder-ici') { avantRangement = false; if (parChanson[cle]) delete parChanson[cle].avant; sauver(); rendreRanger(); return; }

@@ -4708,3 +4708,7 @@ body.mo-lit .etincelle { display: none !important; }
 .lb-plus, .kb-plus { margin: 12px 0; }
 .lb-plus > summary, .kb-plus > summary, .or-astuce-d > summary { cursor: pointer; font-weight: 700; padding: 8px 0; }
 .or-astuce-d { margin-top: 8px; }
+.mo-reg-fin { margin-top: 14px; padding-top: 12px; border-top: 1px dashed #d9cfbd; flex-wrap: wrap; gap: 8px; }
+.mo-reg-fin .btn, .mo-ajout .btn { white-space: normal; }
+.mo-ajout { flex-wrap: wrap; }
+.mo-vraie.mo-guide { display: block; } .mo-vraie.mo-guide input { vertical-align: middle; margin-right: 6px; } .mo-vraie.mo-guide small { display: block; margin-top: 2px; }

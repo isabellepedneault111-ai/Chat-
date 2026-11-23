@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.13', quand: '2026-11-23', titre: 'Des paroles qui tombent juste', items: [
+    ['L’oreille trouve le bon tempo', ['Le tempo se calcule maintenant sur les attaques, 100 fois par seconde au lieu de 20. Projet 1 sortait à 60 BPM (la moitié) : il sort à 120, au centième près, et la grille se cale sur les temps entendus dans la musique. Repasse la chanson dans L’oreille une fois pour en profiter.']],
+    ['Des accords dans la tonalité', ['Dans Mots sur la grille, les accords qui hésitaient (Ré7, Rém7, Rémaj7…) sont ramenés dans la tonalité entendue : en ré mineur, ils redeviennent Rém. L’accord principal est la tonalité trouvée par L’oreille (★ Rém pour Projet 1).']],
+    ['Plus besoin de remonter', ['Au bas des réglages : « ↻ Écrire les lignes avec ces réglages » (le panneau se referme et t’amène à tes paroles) et « ▶ Chanter ». Un ▶ Chanter attend aussi sous la dernière ligne.']],
+  ] },
   { v: '1.12', quand: '2026-11-23', titre: 'Un seul Stop, et du ménage', items: [
     ['Un seul Stop', ['Pendant « Chanter sur la grille », un seul bouton rond ■ arrête tout. Le bouton « Arrêter le son » et la flamme se cachent pendant la lecture. Sur téléphone, la barre du bas est plus mince.']],
     ['Moins de choses à la fois', ['L’oreille : le mode d’emploi du Dictaphone et l’astuce du clavier sont repliés. Jouer : les couleurs du clavier se choisissent dans un tiroir, et sur téléphone seuls les Do sont nommés (les noms se chevauchaient). Le labo : les liens et les réglages gardés sont rangés dans « Plus ». La cathédrale : les trois façons de s’en servir tiennent en une rangée, et le menu de la chanson ne dépasse plus de l’écran.']],
