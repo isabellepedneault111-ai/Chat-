@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.0', quand: '2026-11-23', titre: 'La cathédrale habille ta chanson', items: [
+    ['🎻 Un orchestre qui suit ta chanson', ['Dans la cathédrale, « Habiller ma chanson » : choisis une de nos pièces (ou la dernière de L’oreille), le passage (de la mesure… à la mesure…), et un habit en mots simples : cordes douces, chœur lointain, cuivres qui montent, harpe et flûte, tout l’orchestre. L’orchestre suit les accords de la chanson, mesure par mesure, à son tempo ; les voix bougent le moins possible d’un accord à l’autre, comme un arrangeur l’écrirait.']],
+    ['Écouter ensemble, doser, garder', ['« Écouter avec la chanson » joue la vraie chanson et l’orchestre ensemble ; le curseur dose l’un et l’autre. « L’orchestre (WAV) » le télécharge seul, prêt à poser sous la voix ou à donner à Frog. Les nombres et la rosace restent plus bas, « pour aller plus loin ».']],
+  ] },
   { v: '0.99', quand: '2026-11-23', titre: 'Une intro, des silences', items: [
     ['Les paroles commencent où tu veux', ['Dans Mots sur la grille, « Les paroles commencent à la mesure » : à 5, par exemple, les mesures 1 à 4 deviennent l’intro, musique seule ; chaque ligne prend ensuite ses deux mesures à partir de là. « Chanter sur la grille » joue l’intro avant la première ligne (la barre affiche « Intro »).']],
     ['🎵 silence', ['Sur chaque ligne, « 🎵 silence » en fait deux mesures de musique seule : FLIP n’y écrit rien, la musique continue, et la ligne ne part pas dans le texte copié. « ✎ paroles » la remet.']],

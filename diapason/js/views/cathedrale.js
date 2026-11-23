@@ -9,11 +9,14 @@ import { dessinerRosace } from '../rosace.js';
 import { FR } from '../music.js';
 import { espace, saveEntry, uploadAudio } from '../espace.js';
 import { composer, jouer, rendre, charger, evenementsMidi, FAMILLES, RYTHME_DEFAUT, cleDepuisNotes, segmentsMidi, accordsDesSegments, cathedraleDuJeu, ranger, SOURCES_VIVES } from '../cathedrale.js';
-import { audio, mic } from '../audio.js';
+import { audio, mic, out } from '../audio.js';
 import { onCC, onNotes, detecter, appareils, sortiesMidi, filet, instantane, fichierMidi } from '../materiel.js';
 import { createListener } from '../instrument.js';
 import { chordIntervals } from '../music.js';
 import { lireAccord } from './mots.js';
+import { HABITS, habiller as habillerChanson } from '../habiller.js';
+import { lireDerniere } from '../memoire-son.js';
+import { audioURL } from '../espace.js';
 import { wav, trouverAccords } from '../oreille.js';
 
 const esc = (x) => String(x ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -81,8 +84,8 @@ export default {
         <div class="ca-portes">
           <article class="ca-porte">
             <h3>🎻 Habiller ma chanson</h3>
-            <p>Les accords de ta chanson deviennent un orchestre : une intro, un pont, un fond sous la voix. Tu le télécharges (WAV) pour l’enregistrement, ou Frog le reprend (MIDI).</p>
-            <div class="ca-row"><select data-ca="habiller-src" aria-label="Quelle chanson habiller"></select><button class="btn primary" data-ca="habiller">▶ Bâtir et écouter</button></div>
+            <p>Un orchestre qui suit TA chanson : son tempo, ses accords mesure par mesure, seulement là où tu le veux (l’intro, un pont, la fin). Tu l’écoutes avec la chanson, puis tu le télécharges.</p>
+            <button class="btn primary" data-ca="aller-habit">Commencer →</button>
           </article>
           <article class="ca-porte">
             <h3>🎹 Frog joue, l’orchestre suit</h3>
@@ -97,6 +100,21 @@ export default {
         </div>
         <p class="muted small ca-plus-value">Ce qu’elle a que le reste de l’app n’a pas : un orchestre complet sans musiciens, des accords en <b>intonation juste</b> (plus purs qu’au piano, qui triche un peu sur chaque note), et une partition MIDI, une famille par piste, prête pour Frog.</p>
       </section>
+      <section class="panel ca-habit">
+        <h2>🎻 Habiller ma chanson</h2>
+        <p class="muted">L’orchestre suit ta chanson : son tempo, ses accords mesure par mesure, et seulement le passage que tu choisis.</p>
+        <div class="ca-habit-r">
+          <label class="field"><span>La chanson</span><select data-ca="habiller-src"></select></label>
+          <label class="field ca-mes"><span>De la mesure</span><input type="number" min="1" data-ca="h-a" value="1" inputmode="numeric"></label>
+          <label class="field ca-mes"><span>à la mesure</span><input type="number" min="1" data-ca="h-b" value="8" inputmode="numeric"></label>
+          <span class="muted small ca-h-info"></span>
+        </div>
+        <div class="ca-habits" role="radiogroup" aria-label="L’habit">${HABITS.map((h, i) => `<button type="button" class="ca-hab ${i ? '' : 'on'}" data-habit="${h.id}" role="radio" aria-checked="${!i}">${esc(h.nom)}</button>`).join('')}</div>
+        <p class="ca-h-idee">${esc(HABITS[0].idee)}</p>
+        <label class="ca-dose"><span>La chanson</span><input type="range" min="0" max="100" value="55" data-ca="dose" aria-label="Le dosage : la chanson ou l’orchestre"><span>L’orchestre</span></label>
+        <div class="ca-row"><button class="btn primary" data-ca="h-jouer">▶ Écouter avec la chanson</button><button class="btn" data-ca="h-seul">▶ L’orchestre seul</button><button class="btn" data-ca="h-wav">⬇ L’orchestre (WAV)</button><span class="ca-h-etat muted small" aria-live="polite"></span></div>
+      </section>
+      <h2 class="ca-plus-loin">🔢 Pour aller plus loin : composer avec des nombres</h2>
       <section class="nf-commande">
         <canvas class="nf-ros" width="360" height="360" role="img" aria-label="La rosace de la clé de voûte"></canvas>
         <div class="nf-c-mil">
@@ -227,7 +245,11 @@ export default {
     // « ▶ » : charge l’orchestre, puis joue l’œuvre (et les sources vivantes en direct).
     el.addEventListener('click', (e) => {
       const a = e.target.closest('[data-ca]')?.dataset.ca;
-      if (a === 'habiller') habiller();
+      if (a === 'aller-habit') q('.ca-habit').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (a === 'h-jouer') jouerH(true, e.target.closest('[data-ca]'));
+      if (a === 'h-seul') jouerH(false, e.target.closest('[data-ca]'));
+      if (a === 'h-wav') wavH(e.target.closest('[data-ca]'));
+      const hb = e.target.closest('[data-habit]'); if (hb) { habitChoisi = hb.dataset.habit; el.querySelectorAll('[data-habit]').forEach((x) => { x.classList.toggle('on', x === hb); x.setAttribute('aria-checked', x === hb); }); q('.ca-h-idee').textContent = HABITS.find((h) => h.id === habitChoisi).idee; if (hLecture) { arreterH(); } }
       if (a === 'aller-frog') { q('.nf-plus').open = true; q('.nf-plus').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
       if (a === 'aller-nombres') q('.nf-commande').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
@@ -407,6 +429,45 @@ export default {
       await depuisJeu({ segs, nom: `« ${G.nom || 'ta chanson'} »` });
       if (!jeu) return; batirDuJeu(); q('[data-ca=titre]').value = `${G.nom || 'Ma chanson'}, en cathédrale`; if (!lecteur) lancer();
     }
+    // ---------- Habiller ma chanson : l'orchestre calé sur la chanson ----------
+    let habitChoisi = HABITS[0].id; let hLecture = null; const sonsH = new Map();
+    // La chanson choisie : sa grille, son tempo, son premier temps, et (si on l'a) son vrai son.
+    async function chansonH() {
+      const v = q('[data-ca=habiller-src]').value; if (!v) return null;
+      const pe = v !== 'oreille' && piecesG().find((e) => e.id === v);
+      if (pe) { const p = pe.data.piece; if (!sonsH.has(v)) sonsH.set(v, audioURL(pe.audio).then((u) => fetch(u)).then((r) => r.arrayBuffer()).then((b) => audio().decodeAudioData(b)).catch(() => null)); return { nom: pe.title, grille: p.grille, temps: p.temps || 60 / (p.bpm || 90), t0: p.t1 || 0, son: await sonsH.get(v) }; }
+      const og = store.get('oreilleGrille', null); if (!og?.mesures?.length) return null;
+      if (!sonsH.has('oreille')) sonsH.set('oreille', lireDerniere().then(async (f) => (f?.blob ? audio().decodeAudioData(await f.blob.arrayBuffer()) : null)).catch(() => null));
+      return { nom: og.nom, grille: og.mesures, temps: og.temps || 60 / (og.bpm || 90), t0: og.t0 || 0, son: await sonsH.get('oreille') };
+    }
+    async function majInfoH() {
+      const C = await chansonH(); const info = q('.ca-h-info'); if (!C) { info.textContent = 'Passe d’abord une chanson dans L’oreille.'; return; }
+      const n = C.grille.length; q('[data-ca=h-a]').max = n; q('[data-ca=h-b]').max = n; if (+q('[data-ca=h-b]').value > n || q('[data-ca=h-b]').dataset.auto !== 'non') q('[data-ca=h-b]').value = Math.min(n, 8);
+      info.textContent = `${n} mesures · ${Math.round(60 / C.temps)} BPM${C.son ? '' : ' · (pas le son : seulement l’orchestre)'}`;
+    }
+    function arreterH() { if (hLecture) { hLecture.orch?.arreter(); try { hLecture.src?.stop(); } catch { /* déjà arrêtée */ } hLecture = null; } q('[data-ca=h-jouer]').textContent = '▶ Écouter avec la chanson'; q('[data-ca=h-seul]').textContent = '▶ L’orchestre seul'; }
+    async function jouerH(avecChanson, bouton) {
+      if (hLecture) { arreterH(); return; }
+      if (lecteur) arreter();
+      const c = audio(); try { await c.resume(); } catch { /* iOS */ } bouton.textContent = '…';
+      const C = await chansonH(); if (!C) { toast('Passe d’abord une chanson dans L’oreille : ses accords viendront ici.'); arreterH(); return; }
+      await charger(); if (parti) return;
+      const dose = +q('[data-ca=dose]').value / 100; const a = Math.max(1, +q('[data-ca=h-a]').value || 1); const b = Math.max(a, +q('[data-ca=h-b]').value || a);
+      const oeuvre = habillerChanson({ grille: C.grille, temps: C.temps, a, b, habit: habitChoisi, niveau: avecChanson ? 0.35 + 0.9 * dose : 1 });
+      const orch = jouer(oeuvre, { depuis: 0 }); let src = null; hLecture = { orch, src: null };
+      try {
+      if (avecChanson && C.son) { src = c.createBufferSource(); src.buffer = C.son; const g = c.createGain(); g.gain.value = 1.15 * (1 - dose) + 0.1; src.connect(g).connect(out()); src.start(c.currentTime + 0.15, Math.max(0, C.t0 + oeuvre.debut), oeuvre.duree - 2); src.onended = () => { if (hLecture?.src === src) arreterH(); }; }
+      } catch (err) { console.error(err); src = null; }
+      hLecture = { orch, src }; bouton.textContent = '■ Arrêter';
+      q('.ca-h-etat').textContent = `${HABITS.find((h) => h.id === habitChoisi).nom}, mesures ${a} à ${b}${avecChanson && !C.son ? ' (le son de la chanson n’est pas sur cet appareil : repasse-la dans L’oreille)' : ''}.`;
+      setTimeout(() => { if (hLecture?.orch === orch) arreterH(); }, (oeuvre.duree + 0.5) * 1000);
+    }
+    async function wavH(b) {
+      const C = await chansonH(); if (!C) return; b.disabled = true; const lab = b.textContent; b.textContent = 'Je calcule…';
+      try { await charger(); const a = Math.max(1, +q('[data-ca=h-a]').value || 1); const z = Math.max(a, +q('[data-ca=h-b]').value || a); const buf = await rendre(habillerChanson({ grille: C.grille, temps: C.temps, a, b: z, habit: habitChoisi, niveau: 1 })); const l = document.createElement('a'); l.href = URL.createObjectURL(wav(buf)); l.download = `${C.nom || 'Ma chanson'} · ${HABITS.find((h) => h.id === habitChoisi).nom} · mesures ${a}-${z}.wav`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(l); l.click(); l.remove(); }
+      catch (err) { toast(err.message || 'Le calcul n’a pas marché.'); }
+      b.disabled = false; b.textContent = lab;
+    }
     // Bâtit la cathédrale sur le jeu analysé : la clé de l’accord le plus présent, une partie par accord qui revient.
     function batirDuJeu() {
       if (!jeu) return; const c = cathedraleDuJeu(jeu.res);
@@ -427,8 +488,10 @@ export default {
     navigator.permissions?.query({ name: 'midi' }).then((st) => { if (st.state === 'granted') remplirSorties(); }).catch(() => {});
 
     majTout();
-    remplirHabiller();
+    remplirHabiller(); majInfoH();
+    const stopH = () => arreterH(); addEventListener('diapason:stop', stopH);
+    q('[data-ca=habiller-src]').addEventListener('change', majInfoH); q('[data-ca=h-b]').addEventListener('input', (e) => { e.target.dataset.auto = 'non'; });
     const offLampe = brancherLampe(el);
-    return () => { parti = true; offVif.forEach((f) => f?.()); lecteur?.arreter(); lecteur = null; anim?.(); offNotes?.(); ecouteAudio?.stop(); clearTimeout(attente); offLampe(); };
+    return () => { arreterH(); removeEventListener('diapason:stop', stopH); parti = true; offVif.forEach((f) => f?.()); lecteur?.arreter(); lecteur = null; anim?.(); offNotes?.(); ecouteAudio?.stop(); clearTimeout(attente); offLampe(); };
   },
 };
