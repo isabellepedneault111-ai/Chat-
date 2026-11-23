@@ -4500,7 +4500,7 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .mo-lb-acc small { font-size: .95rem; color: #c9bfa9; }
 .mo-lb-compte { font-variant-numeric: tabular-nums; }
 .mo-lb-mots { margin: 0; font: 600 1.5rem/1.35 var(--display); }
-.mo-lb-mots span { color: #8f8676; transition: color .08s; }
+.mo-lb-mots span { color: #b0a690; transition: color .08s; }
 .mo-lb-mots span.dit { color: #efe6d2; }
 .mo-lb-mots span.on { color: #1d1a15; background: #fbe7a1; border-radius: 4px; padding: 0 2px; }
 .mo-lb-mots i { display: inline; } .mo-lb-mots i::after { content: ''; }
