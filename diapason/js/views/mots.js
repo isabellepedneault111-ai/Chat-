@@ -2,7 +2,7 @@
 // ou tapée à la main). FLIP assemble des lignes brouillon qui tombent sur les temps et riment, puis les chante
 // sur les accords : la voix-guide prend les notes de l'accord sur les temps forts.
 import { audio, out, drums } from '../audio.js';
-import { joue, prechargerSons, accord as accordSon } from '../sampler.js';
+import { joue, prechargerSons, accord as accordSon, notePiano } from '../sampler.js';
 import { espace, profileOf, saveEntry } from '../espace.js';
 import { loadLexique, rimeOf } from '../lexique.js';
 import { store, toast } from '../ui.js';
@@ -16,10 +16,10 @@ import { chordIntervals } from '../music.js';
 const NOMS = ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
 const IV = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], maj7: [0, 4, 7, 11], m7: [0, 3, 7, 10], sus2: [0, 2, 7], sus4: [0, 5, 7], dim: [0, 3, 6], add9: [0, 4, 7, 14] };
 const SUF = { M: '', m: 'm', 7: '7', maj7: 'maj7', m7: 'm7', sus2: 'sus2', sus4: 'sus4', dim: 'dim', add9: 'add9' };
-const nomAcc = (c) => `${NOMS[c.r]}${SUF[c.q] ?? ''}`;
+export const nomAcc = (c) => `${NOMS[c.r]}${SUF[c.q] ?? ''}`;
 
 // « Lam », « Sib7 », « Fa♯m », « Am », « C#maj7 » → { r, q }.
-function lireAccord(t) {
+export function lireAccord(t) {
   const s = t.trim().replace('#', '♯');
   let m = s.match(/^(Do|Ré|Re|Mi|Fa|Sol|La|Si)(♯|♭|b)?(maj7|m7|m|7|sus2|sus4|dim|add9)?$/i);
   const base = { do: 0, ré: 2, re: 2, mi: 4, fa: 5, sol: 7, la: 9, si: 11 };
@@ -207,9 +207,9 @@ export default {
           let dur = 1; while (t + dur < 4 && !g.mesures[m][t + dur]) dur++;
           const iv = (() => { try { return chordIntervals(ch.q); } catch { return IV[ch.q] || IV.M; } })();
           const base = 48 + ch.r; accordSon('piano', iv.map((v) => base + v), { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.45, dest: bus });
-          joue('piano', 36 + ch.r, { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.5, dest: bus });
+          if (!joue('piano', 36 + ch.r, { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.5, dest: bus })) iv.forEach((v) => notePiano(base + v, { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.5 }));
         }
-        syl.forEach((s, k) => { const kk = pl.pos[k]; if (kk < 0) return; const x = sl[kk]; joue('voix', notes[k], { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: s.accent ? 0.95 : 0.75, dest: bus }); });
+        syl.forEach((s, k) => { const kk = pl.pos[k]; if (kk < 0) return; const x = sl[kk]; if (!joue('voix', notes[k], { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: s.accent ? 0.95 : 0.75, dest: bus })) notePiano(notes[k] + 12, { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: 0.8 }); });
       });
       const fin = t1 + quelles.length * 2 * mes;
       lecture = { src, bus, stop: false };

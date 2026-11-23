@@ -301,7 +301,7 @@ details > summary { cursor: pointer; }
 .badge-new { display: inline-block; background: var(--lime); color: var(--on-accent); font-weight: 700; border-radius: 4px; padding: 4px 12px; }
 
 /* ---------- Labo ---------- */
-.labo-layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; grid-template-areas: "radar ctrl" "radar tracks" "kb kb" "wave wave" "explain explain"; gap: 0 18px; align-items: start; }
+.labo-layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; grid-template-areas: "radar ctrl" "radar tracks" "acc acc" "kb kb" "wave wave" "explain explain"; gap: 0 18px; align-items: start; }
 .radar-panel { grid-area: radar; padding: 0; aspect-ratio: 1; max-height: 640px; overflow: hidden; }
 .ctrl-panel { grid-area: ctrl; }
 .tracks-panel { grid-area: tracks; }
@@ -643,7 +643,7 @@ details > summary { cursor: pointer; }
 }
 @media (max-width: 1080px) {
   .nav a { padding: 7px 10px; }
-  .labo-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "radar" "ctrl" "kb" "tracks" "wave" "explain"; }
+  .labo-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "radar" "ctrl" "kb" "tracks" "acc" "wave" "explain"; }
   .radar-panel { max-height: none; width: min(100%, 620px, 60svh); margin-left: auto; margin-right: auto; }
   .ex-two { grid-template-columns: 1fr; }
   .carnet-grid { grid-template-columns: 1fr; }
@@ -3093,7 +3093,7 @@ nav.sommaire:not(.md-som) { max-width: 360px; margin: 4px 0 14px; }
 .nv-maj { margin: 0 0 10px; }
 /* Le labo, recomposé : le radar et les réglages côte à côte, à la même hauteur ; tes disques en cartes, sur toute la largeur. */
 @media (min-width: 1000px) {
-  .labo-layout { grid-template-columns: minmax(0, 460px) minmax(0, 1fr); grid-template-areas: "radar ctrl" "tracks tracks" "kb kb" "wave wave" "explain explain"; gap: 0 20px; align-items: stretch; }
+  .labo-layout { grid-template-columns: minmax(0, 460px) minmax(0, 1fr); grid-template-areas: "radar ctrl" "tracks tracks" "acc acc" "kb kb" "wave wave" "explain explain"; gap: 0 20px; align-items: stretch; }
   .radar-panel { max-height: 460px; align-self: start; }
   .ctrl-panel { display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
   .ctrl-panel .mobile-presets { display: flex; flex-wrap: wrap; overflow: visible; margin: 0; }
@@ -4465,3 +4465,15 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .mo-choix .field select { min-width: 0; }
 .mo-txt { resize: none; overflow: hidden; font-family: var(--display); }
 @media (max-width: 640px) { .mo-txt { min-height: 2.9em; } }
+
+/* 0.82 — Les accords sous les disques (labo) */
+.acc-panel .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.acc-on { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1rem; }
+.acc-on input { width: 22px; height: 22px; accent-color: #b08a2e; }
+.acc-ligne { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+.acc-ligne input { flex: 1 1 220px; min-width: 0; font: 600 1.15rem var(--display); padding: 10px 12px; border-radius: 8px; border: 1px solid #d9cfbd; background: #fffdf8; }
+.acc-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.acc-m { font: 700 1.1rem var(--display); padding: 6px 12px; border-radius: 6px; background: #fbefc6; border-left: 3px solid #b08a2e; color: #1d1a15; }
+.acc-m small { color: #6d655a; }
+.acc-m.on { background: #2b2620; color: #fbe7a1; }
+.acc-panel { grid-area: acc; margin-top: 18px; }

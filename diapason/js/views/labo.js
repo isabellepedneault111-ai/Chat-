@@ -9,6 +9,8 @@ import { MEMBERS, memberColor } from '../duo.js';
 import { lampeHTML, brancherLampe } from '../lampe.js';
 import { onNotes, onCC, detecter } from '../materiel.js';
 import { mic } from '../audio.js';
+import { lireAccord, nomAcc } from './mots.js';
+import { notePiano, prechargerSons } from '../sampler.js';
 const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 const FMIN = 0.5;
@@ -125,6 +127,13 @@ export default {
           <p class="muted small">Touche le cercle d’un disque pour le choisir ; choisis-en plusieurs pour en faire un <b>groupe</b> qui bouge ensemble. <b>Pour l’instant : jusqu’à 6 disques et 3 groupes.</b> Il y en aura plus quand nous aurons bien testé. Chaque disque devient une ligne de batterie, ses frappes réparties au mieux sur la mesure (rythme euclidien, Toussaint 2005).</p>
         </div>
 
+        <div class="panel acc-panel">
+          <div class="panel-head"><h2>Les accords sous les disques</h2><label class="acc-on"><input type="checkbox" data-acc="on"> Les jouer</label></div>
+          <p class="muted small">Un accord par mesure (une mesure = 4 tours du disque 1). « Do/Sol » coupe une mesure en deux. Ils jouent au piano quand les disques sont dans la zone du rythme, et partent avec le beat vers Jouer.</p>
+          <div class="acc-ligne"><input type="text" data-acc="txt" aria-label="Les accords, un par mesure" placeholder="Lam Fa Do Sol"><button class="btn primary" data-acc="oreille">🎧 Caler sur la toune de L’oreille</button></div>
+          <div class="acc-chips" aria-live="polite"></div>
+        </div>
+
         <div class="panel wave-panel">
           <div class="wave-head">
             <p class="eyebrow">L’onde</p>
@@ -213,6 +222,49 @@ export default {
       else store.set('laboReglages', fn(store.get('laboReglages', [])));
       renderReglages();
     }
+    // ---------- Les accords sous les disques ----------
+    // Une mesure = 4 tours du disque 1 (son tempo). « Do/Sol » : deux accords dans la mesure.
+    const acc = store.get('laboAccords', { on: false, txt: 'Lam Fa' });
+    let chordT = 0; let chordK = 0;
+    const mesuresAcc = () => acc.txt.split(/[\s,|]+/).filter(Boolean).map((m) => m.split('/').map(lireAccord).filter(Boolean)).filter((m) => m.length);
+    const IVA = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], maj7: [0, 4, 7, 11], m7: [0, 3, 7, 10], sus2: [0, 2, 7], sus4: [0, 5, 7], dim: [0, 3, 6], add9: [0, 4, 7, 14] };
+    function montrerAcc() {
+      const M = mesuresAcc(); const ici = M.length ? Math.floor(chordK / 4) % M.length : -1;
+      q('.acc-chips').innerHTML = M.length ? M.map((m, i) => `<span class="acc-m ${playing && acc.on && i === ici ? 'on' : ''}">${m.map((c) => esc2(nomAcc(c))).join(' <small>·</small> ')}</span>`).join('') : '<span class="muted small">Écris des accords (Lam Fa Do Sol), ou cale-toi sur L’oreille.</span>';
+      q('[data-acc=on]').checked = acc.on;
+    }
+    const esc2 = (x) => String(x).replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+    const garderAcc = () => store.set('laboAccords', acc);
+    // Joue l'accord d'un temps (chordK compte les temps) : au piano, grave + accord, seulement à un tempo de chanson.
+    function planifierAccords(now) {
+      if (!acc.on || f >= 8) { chordT = now + 0.05; return; }
+      const M = mesuresAcc(); if (!M.length) return;
+      if (chordT < now - 0.25) chordT = now + 0.05;
+      while (chordT < now + 0.1) {
+        const m = M[Math.floor(chordK / 4) % M.length]; const part = Math.floor(((chordK % 4) / 4) * m.length);
+        const debutPart = (chordK % 4) === Math.ceil((part * 4) / m.length);
+        if (debutPart) {
+          const c = m[part]; const dur = (4 / m.length) / f;
+          (IVA[c.q] || IVA.M).forEach((v) => notePiano(55 + ((c.r + v - 7 + 12) % 12) + (v >= 12 ? 12 : 0), { when: chordT, dur: dur * 0.95, vel: 0.42 }));
+          notePiano(36 + c.r, { when: chordT, dur: dur * 0.95, vel: 0.5 });
+        }
+        if (chordK % 4 === 0) setTimeout(montrerAcc, Math.max(0, (chordT - now) * 1000));
+        chordK++; chordT += 1 / f;
+      }
+    }
+    // La toune de L'oreille : sa boucle d'accords et son tempo.
+    function caleOreille() {
+      const g = store.get('oreilleGrille', null);
+      if (!g?.mesures?.length) { import('../ui.js').then((u) => u.toast('Passe d’abord ta toune dans L’oreille (une fois) : sa grille se garde ici.')); return; }
+      let avant = '';
+      acc.txt = g.mesures.map((m) => { const l = m.filter((x) => x && x !== '—'); const t = l.length ? l.join('/') : avant; if (l.length) avant = l.at(-1); return t || 'Do'; }).join(' ');
+      acc.on = true; garderAcc(); q('[data-acc=txt]').value = acc.txt;
+      if (g.bpm) setF(g.bpm / 60);
+      chordK = 0; montrerAcc();
+      import('../ui.js').then((u) => u.toast(`Calé sur ${g.nom ? `« ${g.nom.slice(0, 40)} »` : 'ta toune'} : ${g.bpm} BPM, ${g.mesures.length} mesure${g.mesures.length > 1 ? 's' : ''} d’accords.`));
+    }
+    // Les accords au format de Jouer : [note, sorte, temps].
+    const accordsPourJouer = () => mesuresAcc().flatMap((m) => m.map((c) => [c.r, IVA[c.q] ? c.q : 'M', 4 / m.length])).slice(0, 16);
     const garder = () => store.set('laboEtat', { tracks: tracks.map(({ n, muted, inst, vol, g, respire, cache, pos }) => ({ n, muted, inst, vol, g, respire, cache, pos })), liens, focus, presetId, f, posG });
     // Après un changement de disques : retire les liens devenus orphelins, retient la clé pour La cathédrale, et redessine tout.
     function tracksChanged() {
@@ -599,12 +651,14 @@ export default {
       nodes = { gain, oscs, lp, tg, filt, pans };
       // Les frappes de batterie, programmées un peu à l'avance pour tomber juste.
       nextHit = tracks.map(() => c.currentTime + 0.05);
+      chordT = c.currentTime + 0.05; chordK = 0; if (acc.on) prechargerSons(['piano']);
       let avant = audio().currentTime;
       drumT = setInterval(() => {
         const now = audio().currentTime;
         if (tracks.some((t) => t.respire)) souffle += ((now - avant) * Math.min(f, 4) * Math.PI * 2) / 4;
         if (liens.length || tracks.some((t) => t.respire)) updateMutes(true);
         avant = now;
+        planifierAccords(now);
         tracks.forEach((t, i) => {
           const fr = freqOf(i);
           if (t.muted || (t.inst || 'clic') === 'clic' || fr >= 20) { nextHit[i] = now + 0.02; return; }
@@ -715,7 +769,14 @@ export default {
       if (act === 'beat') {
         const g = { k: Array(16).fill(0), s: Array(16).fill(0), h: Array(16).fill(0), c: Array(16).fill(0) };
         tracks.filter((t) => !t.muted).forEach((t) => { const row = ROW[t.inst || 'clic']; euclid(Math.min(16, t.n)).forEach((v, j) => { if (v) g[row][j] = 1; }); });
-        import('./studio.js').then((m) => { m.setGrid(g); location.hash = '#/studio?tab=beat'; });
+        import('./studio.js').then((m) => {
+          m.setGrid(g);
+          // Avec les accords (et le tempo du labo) : le beat de Jouer joue la même toune.
+          const ch = acc.on ? accordsPourJouer() : [];
+          if (ch.length) { const poids = Array(12).fill(0); ch.forEach(([r, qq, b]) => (IVA[qq] || IVA.M).forEach((v) => { poids[(r + v) % 12] += b; })); let key = 0; let bs = -1; for (let k = 0; k < 12; k++) { const sc = [0, 2, 4, 5, 7, 9, 11].reduce((a, x) => a + poids[(k + x) % 12], 0); if (sc > bs) { bs = sc; key = k; } } m.chargerGrille(key, ch, 'Accords du labo'); }
+          if (f < 4) m.setTempo(f * 60);
+          location.hash = '#/studio?tab=beat';
+        });
         return;
       }
       if (act === 'play' || act === 'play2') setPlaying(!playing);
@@ -966,6 +1027,10 @@ export default {
     const garde = store.get('laboEtat', null);
     if (garde?.tracks?.length) { tracks = garde.tracks; liens = garde.liens || []; posG = garde.posG || {}; focus = garde.focus || 0; presetId = garde.presetId || 'custom'; f = garde.f || f; tracksChanged(); } else loadPreset(presetId);
     setF(f);
+    q('[data-acc=txt]').value = acc.txt; montrerAcc();
+    q('.acc-panel').addEventListener('input', (e) => { if (e.target.dataset.acc === 'txt') { acc.txt = e.target.value; garderAcc(); montrerAcc(); } });
+    q('.acc-panel').addEventListener('change', (e) => { if (e.target.dataset.acc === 'on') { acc.on = e.target.checked; garderAcc(); if (acc.on) { prechargerSons(['piano']); chordK = 0; } montrerAcc(); } });
+    q('.acc-panel').addEventListener('click', (e) => { if (e.target.closest('[data-acc=oreille]')) caleOreille(); });
     const offLampe = brancherLampe(el);
     return () => { if (prise) { prise.proc.disconnect(); try { finalOut().disconnect(prise.proc); } catch { /* déjà débranché */ } } offMidi.forEach((o) => o()); offLampe(); io.disconnect(); stop(); stopAudio(); radar.dispose(); strip.dispose(); air.dispose(); wave.dispose(); kb.dispose(); };
   },
