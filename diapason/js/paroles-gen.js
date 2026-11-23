@@ -115,8 +115,10 @@ const propre = (s) => s.replace(/\s+/g, ' ').replace(/ ,/g, ',').trim();
 
 // Prépare la banque : le thème, le fonds commun, les mots-clés (et leurs synonymes du dictionnaire de l'app).
 export async function banque(theme, motsCles) {
-  const t = THEMES[theme] || THEMES.nuit;
-  const n = [...t.n, ...COMMUN.n.slice(0, 4)]; const a = [...t.a, ...COMMUN.a]; const vt = [...t.vt, ...COMMUN.vt.slice(0, 2)]; const vi = [...t.vi, ...COMMUN.vi.slice(0, 2)];
+  // Un thème ou plusieurs : leurs banques se mélangent (sans doublons).
+  const ts = (Array.isArray(theme) ? theme : [theme]).map((k) => THEMES[k]).filter(Boolean); if (!ts.length) ts.push(THEMES.nuit);
+  const uniq = (l, k = (x) => x) => l.filter((x, i) => l.findIndex((y) => k(y) === k(x)) === i);
+  const n = uniq([...ts.flatMap((t) => t.n), ...COMMUN.n.slice(0, 4)], (x) => x.w); const a = uniq([...ts.flatMap((t) => t.a), ...COMMUN.a]); const vt = uniq([...ts.flatMap((t) => t.vt), ...COMMUN.vt.slice(0, 2)]); const vi = uniq([...ts.flatMap((t) => t.vi), ...COMMUN.vi.slice(0, 2)]);
   const cles = []; const phrases = [];
   for (const brut of motsCles) {
     const k = brut.trim().toLowerCase(); if (!k) continue;

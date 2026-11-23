@@ -60,6 +60,13 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.94', quand: '2026-11-23', titre: 'Écrire en voyant la musique', items: [
+    ['L’onde sous chaque ligne', ['Dans Mots sur la grille, avec une de nos pièces (ou la chanson venue de L’oreille) : chaque ligne montre l’onde de ses deux mesures, avec les temps et les mesures marqués. « Les mots » : sur l’onde, au-dessus ou en dessous.']],
+    ['Comme la chanson', ['« Sur les temps » propose « Comme la chanson » : FLIP repère les attaques du vrai son dans chaque passage et y pose les syllabes, ligne par ligne. Le nombre de syllabes visé vient de la musique elle-même.']],
+    ['🔁 Écrire en boucle', ['Le 🔁 d’une ligne rejoue ses deux mesures en boucle pendant que tu écris dedans.']],
+    ['Plusieurs thèmes', ['Coche autant de thèmes que tu veux : leurs mots se mélangent.']],
+    ['La cathédrale, enfin claire', ['En haut de la cathédrale : à quoi elle sert, en trois portes. « Habiller ma chanson » prend les accords d’une de nos pièces (ou de la dernière de L’oreille), bâtit l’orchestre et le joue, prêt à télécharger en WAV ou en MIDI pour Frog.']],
+  ] },
   { v: '0.93', quand: '2026-11-23', titre: 'La vraie pièce, sans le bruit', items: [
     ['🧹 Réduire le bruit', ['Dans L’oreille : « Réduire le bruit » enlève le souffle du cellulaire et la rumeur de la pièce, puis réanalyse le son nettoyé ; « Le son d’origine » le ramène. En enregistrant au micro, la case « sans le bruit » le fait d’office. « Mettre dans nos pièces » garde la version nettoyée.']],
     ['Les paroles sur la vraie pièce', ['Dans Mots sur la grille, « La grille » propose aussi nos pièces : la vraie chanson joue sous les lignes, avec sa grille et son tempo. La voix-guide (les voix synthétiques en chœur) se tait quand la vraie chanson joue ; une case 🎤 la remet si tu la veux.']],

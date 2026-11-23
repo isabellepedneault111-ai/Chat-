@@ -4526,3 +4526,24 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 @media (max-width: 640px) { .mo-l-bouge { position: static; justify-content: flex-end; margin-bottom: 6px; } .mo-poignee { display: none; } }
 .or-nettoie { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; } .or-nettoie input { width: 20px; height: 20px; accent-color: #5d6d24; }
 .acc-ligne select { font: 600 1rem var(--display); padding: 8px 10px; border-radius: 8px; border: 1px solid #d9cfbd; background: #fffdf8; max-width: 100%; }
+
+/* 0.94 — Mots sur la grille : plusieurs thèmes, l'onde de la chanson sous chaque ligne, les mots dessus/dessous/sur l'onde */
+.mo-th-aide { align-self: center; }
+.mo-piste { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; position: relative; }
+.mo-piste .pl-piste { margin: 0; }
+.mo-onde { width: 100%; height: 72px; display: block; border-radius: 8px; background: #fbf3dc; border: 1px solid #e3d6b4; }
+.mo-piste.pos-dessus .pl-piste { order: -1; }
+.mo-piste.pos-milieu.avec-onde .pl-piste { position: absolute; inset: 0; height: auto; background: transparent; }
+.mo-piste.pos-milieu.avec-onde .pl-cases { display: none; }
+.mo-piste.pos-milieu.avec-onde .pl-syl { top: 12px; bottom: 12px; background: rgba(29, 26, 21, .82); border-left-color: #fbe7a1; }
+.mo-piste.pos-milieu.avec-onde .pl-syl.a2 { background: rgba(120, 84, 10, .92); }
+
+/* 0.94 — La cathédrale : à quoi elle sert */
+.ca-quoi h2 { margin: 0 0 10px; }
+.ca-portes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.ca-porte { position: relative; padding: 18px 16px 14px; border-radius: 8px; background: #fffdf8; border: 1px solid #e3d6b4; box-shadow: 0 1px 0 rgba(0, 0, 0, .05); display: flex; flex-direction: column; gap: 8px; }
+.ca-porte::before { content: ''; position: absolute; top: -7px; left: 22px; width: 64px; height: 16px; background: rgba(246, 214, 107, .85); transform: rotate(-2deg); }
+.ca-porte h3 { margin: 0; font: 700 1.2rem var(--display); }
+.ca-porte p { margin: 0; font-size: 1rem; line-height: 1.45; flex: 1; }
+.ca-porte select { font: 600 1rem var(--display); padding: 8px 10px; border-radius: 8px; border: 1px solid #d9cfbd; background: #fffdf8; max-width: 100%; }
+.ca-plus-value { margin: 12px 0 0; font-size: .95rem; }

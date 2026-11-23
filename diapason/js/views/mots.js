@@ -83,7 +83,8 @@ const memeAccord = (a, b) => a && b && a.r === b.r && ((a.q === 'm' || a.q === '
 export default {
   id: 'mots',
   mount(el) {
-    const st = { theme: 'nuit', cles: '', schema: 'AABB', place: 'croches', pers: 'je', n: 4, source: 'jouer', main: 'Lam Fa Do Sol', ...store.get('motsReglages', {}) };
+    const st = { theme: 'nuit', themes: null, cles: '', schema: 'AABB', place: 'croches', pers: 'je', n: 4, source: 'jouer', main: 'Lam Fa Do Sol', ...store.get('motsReglages', {}) };
+    if (!Array.isArray(st.themes) || !st.themes.length) st.themes = [st.theme || 'nuit'];
     let lignes = store.get('motsLignes', []); // [{ txt, garde }]
     // Des lignes écrites avant le filtre (0.89) peuvent traîner en mémoire : celles qui contiennent un mot écarté
     // (et que la personne n'a pas tapé elle-même en mot-clé) sont vidées, puis réécrites.
@@ -106,16 +107,17 @@ export default {
         <p class="muted">Choisis un thème, ajoute tes mots. FLIP assemble des lignes qui tombent sur les temps et qui riment, puis te les chante sur la grille. Ce sont des brouillons : garde une ligne, retire les autres, réécris par-dessus.</p>
       </div></div>
       <section class="panel mo-reg">
-        <div class="mo-themes" role="radiogroup" aria-label="Thème">${Object.entries(THEMES).map(([k, t]) => `<button type="button" class="mo-th ${k === st.theme ? 'on' : ''}" data-theme="${k}" role="radio" aria-checked="${k === st.theme}">${esc(t.nom)}</button>`).join('')}</div>
+        <div class="mo-themes" role="group" aria-label="Thèmes (un ou plusieurs)">${Object.entries(THEMES).map(([k, t]) => `<button type="button" class="mo-th ${st.themes.includes(k) ? 'on' : ''}" data-theme="${k}" aria-pressed="${st.themes.includes(k)}">${st.themes.includes(k) ? '✓ ' : ''}${esc(t.nom)}</button>`).join('')}<span class="muted small mo-th-aide">Coche-en un ou plusieurs : leurs mots se mélangent.</span></div>
         <label class="field mo-cles"><span>Mes mots-clés <small class="muted">(séparés par des virgules ; une expression entière marche aussi)</small></span>
           <input type="text" data-m="cles" value="${esc(st.cles)}" placeholder="lac, fanal, on se retrouve à minuit"></label>
         <div class="mo-choix">
           <label class="field"><span>La grille</span><select data-m="source">
             <option value="jouer">Les accords de Jouer</option><option value="oreille">La dernière grille de L’oreille</option><option value="main">Je les tape</option>${piecesEsp().length ? `<optgroup label="Nos pièces">${piecesEsp().map((e) => `<option value="piece:${esc(e.id)}">${esc(e.title || 'Notre pièce')}</option>`).join('')}</optgroup>` : ''}</select></label>
           <label class="field mo-main" ${st.source === 'main' ? '' : 'hidden'}><span>Un accord par mesure</span><input type="text" data-m="main" value="${esc(st.main)}" placeholder="Lam Fa Do Sol"></label>
-          <label class="field"><span>Sur les temps</span><select data-m="place">${PLACEMENTS.map((p) => `<option value="${p.id}">${esc(p.nom)} (${p.slots.length} syll.)</option>`).join('')}</select></label>
+          <label class="field"><span>Sur les temps</span><select data-m="place"><option value="chanson">Comme la chanson (ses attaques)</option>${PLACEMENTS.map((p) => `<option value="${p.id}">${esc(p.nom)} (${p.slots.length} syll.)</option>`).join('')}</select></label>
           <label class="field"><span>Les rimes</span><select data-m="schema">${Object.entries(SCHEMAS).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('')}</select></label>
           <label class="field"><span>Qui parle</span><select data-m="pers"><option value="je">Je</option><option value="tu">Tu</option><option value="mix">Les deux</option></select></label>
+          <label class="field"><span>Les mots</span><select data-m="pos"><option value="milieu">Sur l’onde</option><option value="dessus">Au-dessus de l’onde</option><option value="dessous">Sous l’onde</option></select></label>
           <label class="field"><span>Lignes</span><select data-m="n"><option>4</option><option>8</option><option>12</option></select></label>
         </div>
         <div class="mo-sous" ${chanson ? '' : 'hidden'}><label class="mo-vraie"><input type="checkbox" data-m="vraie" checked> Sous les paroles : la vraie chanson${chanson ? ` (« ${esc(String(chanson.nom).slice(0, 40))} »)` : ''}</label><label class="mo-vraie"><input type="checkbox" data-m="piano" ${store.get('oreilleGrille', null)?.propose ? 'checked' : ''}> + les accords au piano</label></div>
@@ -131,7 +133,8 @@ export default {
         <p class="muted small">Comment c’est fait : pas d’intelligence artificielle. Des tournures de phrases, des banques de mots par thème, tes mots-clés et leurs synonymes (le dictionnaire de l’app). Pour chaque ligne, FLIP essaie quelques centaines de phrases et garde celle dont les accents tombent le mieux sur les temps forts (le calcul de « Placer ») et qui rime comme demandé. Le genre des mots-clés est deviné : relis les « le / la ».</p>
       </section>`;
     const q = (s) => el.querySelector(s);
-    ['source', 'place', 'schema', 'pers'].forEach((k) => { q(`[data-m=${k}]`).value = st[k]; }); q('[data-m=n]').value = String(st.n);
+    if (!st.pos) st.pos = 'milieu';
+    ['source', 'place', 'schema', 'pers', 'pos'].forEach((k) => { const x = q(`[data-m=${k}]`); if (x) x.value = st[k]; }); q('[data-m=n]').value = String(st.n);
 
     const grillePiece = () => { const e = piecesEsp().find((x) => `piece:${x.id}` === st.source); if (!e) return null; const p = e.data.piece; return { nom: `Nos pièces · ${e.title}`, bpm: p.bpm || 90, mesures: p.grille.map((m) => m.map((x) => (x && x !== '—' ? lireAccord(x) : null))) }; };
     // La vraie chanson d'une de nos pièces : téléchargée de l'espace et décodée une fois.
@@ -150,7 +153,23 @@ export default {
       const g = store.get('motsGuide', null); const cb = q('[data-m=guide]'); if (cb) cb.checked = g == null ? !vraiOk : g;
     }
     const grille = () => (st.source.startsWith('piece:') ? grillePiece() : st.source === 'oreille' ? grilleOreille() : st.source === 'main' ? grilleMain(st.main, store.get('bpm', 92)) : grilleJouer()) || grilleJouer();
-    const slots = () => PLACEMENTS.find((p) => p.id === st.place).slots;
+    const vraiOk = () => !!chanson && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source);
+    // Le passage de la vraie chanson sous une ligne (deux mesures).
+    const passage = (i) => { const g = grille(); const s0 = chanson.t0 + ((2 * i) % g.mesures.length) * 4 * chanson.temps; return { a: Math.max(0, s0), b: s0 + 8 * chanson.temps }; };
+    // Où la chanson attaque ses notes, dans ce passage : des places pour les syllabes, calées sur les doubles-croches.
+    const cacheAttaques = new Map();
+    function attaques(i) {
+      const { a, b } = passage(i); const k = `${chanson.src || 'o'}|${a.toFixed(2)}`; if (cacheAttaques.has(k)) return cacheAttaques.get(k);
+      const buf = chanson.buf; const sr = buf.sampleRate; const d = buf.getChannelData(0); const hop = Math.round(sr * 0.01);
+      const i0 = Math.floor(a * sr); const i1 = Math.min(d.length, Math.floor(b * sr)); const env = [];
+      for (let p = i0; p + hop <= i1; p += hop) { let e = 0; for (let j = p; j < p + hop; j++) e += d[j] * d[j]; env.push(Math.log10(e / hop + 1e-9)); }
+      const pics = []; let der = -99;
+      for (let j = 3; j < env.length - 1; j++) { const mont = env[j] - Math.min(env[j - 1], env[j - 2], env[j - 3]); if (mont > 0.35 && env[j] >= env[j + 1] && env[j] > -5.5 && j - der > 11) { pics.push(j); der = j; } }
+      const dc = (b - a) / 32; const pas = [...new Set(pics.map((j) => Math.min(31, Math.round((j * 0.01) / dc))))].sort((x, y) => x - y);
+      const sl = pas.map((p, n) => ({ s: p, d: Math.max(1, (pas[n + 1] ?? 32) - p), f: p % 4 === 0 }));
+      const res = sl.length >= 3 ? sl : null; cacheAttaques.set(k, res); return res;
+    }
+    const slots = (i = 0) => (st.place === 'chanson' && vraiOk() && attaques(i)) || PLACEMENTS.find((p) => p.id === (st.place === 'chanson' ? 'croches' : st.place)).slots;
 
     // La mélodie d'une ligne : sur les temps forts et les accents, une note de l'accord qui sonne ; ailleurs, on marche dans la gamme.
     function melodie(syl, pl, sl, g, i) {
@@ -169,7 +188,7 @@ export default {
       });
       return notes;
     }
-    const analyse = (txt, i) => { const g = grille(); const sl = slots(); const syl = syllabes(txt); const pl = placer(syl, sl); return { g, sl, syl, pl, notes: melodie(syl, pl, sl, g, i) }; };
+    const analyse = (txt, i) => { const g = grille(); const sl = slots(i); const syl = syllabes(txt); const pl = placer(syl, sl); return { g, sl, syl, pl, notes: melodie(syl, pl, sl, g, i) }; };
 
     function rendre() {
       const g = grille();
@@ -199,12 +218,27 @@ export default {
             ${rime === true ? '<span class="mo-rime pos">rime ✓</span>' : rime === false ? '<span class="mo-rime neg">ne rime pas</span>' : ''}
             <label class="mo-garde"><input type="checkbox" data-garde="${i}" ${L.garde ? 'checked' : ''}> Garder</label>
             <button class="btn small" data-m="autre" data-i="${i}" title="Une autre ligne à cette place">↻ Une autre</button>
+            <button class="btn small" data-m="boucle" data-i="${i}" title="Rejoue ces deux mesures en boucle pendant que tu écris">🔁</button>
             <button class="btn small" data-m="une" data-i="${i}" aria-label="Écouter la ligne ${i + 1}" title="Écouter cette ligne">▶</button>
           </div>
           <div class="mo-accs">${first}${acc}</div>
-          <div class="pl-piste"><div class="pl-cases">${cases}</div>${blocs}<div class="pl-tete"></div></div>
+          <div class="mo-piste pos-${st.pos || 'milieu'} ${vraiOk() ? 'avec-onde' : ''}">${vraiOk() ? `<canvas class="mo-onde" data-i="${i}" height="72" aria-label="L’onde de la chanson sous cette ligne"></canvas>` : ''}<div class="pl-piste"><div class="pl-cases">${cases}</div>${blocs}<div class="pl-tete"></div></div></div>
         </article>`;
       }).join('');
+      requestAnimationFrame(dessinerOndes);
+    }
+
+    // L'onde de la vraie chanson sous chaque ligne : ses deux mesures, avec les temps et les mesures marqués.
+    function dessinerOndes() {
+      if (!vraiOk()) return; const d = chanson.buf.getChannelData(0); const sr = chanson.buf.sampleRate;
+      el.querySelectorAll('canvas.mo-onde').forEach((cv) => {
+        const i = +cv.dataset.i; const { a, b } = passage(i); const W = cv.clientWidth || 600; const H = 72; const r = Math.min(2, window.devicePixelRatio || 1);
+        cv.width = W * r; cv.height = H * r; const x = cv.getContext('2d'); x.scale(r, r); x.clearRect(0, 0, W, H);
+        const i0 = Math.floor(a * sr); const n = Math.max(1, Math.floor(((b - a) * sr) / W)); let pic = 1e-4;
+        const mm = []; for (let px = 0; px < W; px++) { let lo = 0; let hi = 0; for (let j = i0 + px * n; j < i0 + (px + 1) * n && j < d.length; j += 4) { const v = d[j]; if (v < lo) lo = v; if (v > hi) hi = v; } mm.push([lo, hi]); pic = Math.max(pic, hi, -lo); }
+        for (let t = 0; t <= 8; t++) { const X = (t / 8) * W; x.fillStyle = t % 4 === 0 ? 'rgba(29,26,21,.55)' : 'rgba(29,26,21,.18)'; x.fillRect(Math.min(W - 2, X), 0, t % 4 === 0 ? 2 : 1, H); }
+        x.fillStyle = '#b08a2e'; mm.forEach(([lo, hi], px) => { const y0 = H / 2 - (hi / pic) * (H / 2 - 4); const y1 = H / 2 - (lo / pic) * (H / 2 - 4); x.fillRect(px, y0, 1, Math.max(1, y1 - y0)); });
+      });
     }
 
     // Écrit (ou réécrit) les lignes non gardées. « seule » : une seule ligne à refaire.
@@ -212,7 +246,7 @@ export default {
       q('[data-m=generer]').disabled = true; q('[data-m=generer]').textContent = 'J’écris…';
       await loadLexique();
       const cles = st.cles.split(/[,;\n]/).map((x) => x.trim()).filter(Boolean);
-      const b = await banque(st.theme, cles);
+      const b = await banque(st.themes, cles);
       const n = +st.n; const sl = slots();
       while (lignes.length < n) lignes.push({ txt: '', garde: false });
       if (seule == null) { let fin = n; lignes.forEach((L, k) => { if (L.garde && L.txt) fin = Math.max(fin, k + 1); }); lignes = lignes.slice(0, fin); }
@@ -229,7 +263,7 @@ export default {
         const vus = lignes.map((x) => x.txt.toLowerCase());
         const manquantes = b.cles.filter((c) => !vus.some((t) => t.includes(c.k)));
         const tete = lignes.some((_, j) => partenaire(st.schema, j) === i);
-        const res = ligne({ b, r, slots: sl, pers: st.pers, rime, tete, finAEviter: fins, dejaVus, clesManquantes: manquantes });
+        const res = ligne({ b, r, slots: slots(i), pers: st.pers, rime, tete, finAEviter: fins, dejaVus, clesManquantes: manquantes });
         if (res) { L.txt = res.txt; compter(res.txt); fins.push(res.fin); }
         // Une ligne refaite peut casser la rime de sa partenaire suivante : on la refait aussi, si elle n'est pas gardée.
         if (seule != null) { const suiv = lignes.findIndex((_, j) => j > i && partenaire(st.schema, j) === i); if (suiv >= 0 && !lignes[suiv].garde) seule = suiv; }
@@ -244,7 +278,7 @@ export default {
       el.querySelectorAll('.pl-tete').forEach((t) => { t.style.opacity = 0; });
       el.querySelectorAll('.mo-l.chante').forEach((x) => x.classList.remove('chante'));
       const b = q('[data-m=chanter]'); if (b) b.textContent = '▶ Chanter sur la grille';
-      el.querySelectorAll('[data-m=une]').forEach((x) => { x.textContent = '▶'; });
+      el.querySelectorAll('[data-m=une]').forEach((x) => { x.textContent = '▶'; }); el.querySelectorAll('[data-m=boucle]').forEach((x) => { x.textContent = '🔁'; });
       el.querySelectorAll('.pl-syl.dit').forEach((x) => x.classList.remove('dit'));
       const lb = q('.mo-lecteur'); if (lb) { lb.hidden = true; lb.innerHTML = ''; } cleBarre = '';
     }
@@ -325,12 +359,13 @@ export default {
 
     el.addEventListener('click', async (e) => {
       const th = e.target.closest('[data-theme]');
-      if (th) { st.theme = th.dataset.theme; el.querySelectorAll('[data-theme]').forEach((x) => { x.classList.toggle('on', x === th); x.setAttribute('aria-checked', x === th); }); sauver(); return; }
+      if (th) { const k = th.dataset.theme; st.themes = st.themes.includes(k) ? st.themes.filter((x) => x !== k) : [...st.themes, k]; if (!st.themes.length) st.themes = [k]; st.theme = st.themes[0]; el.querySelectorAll('[data-theme]').forEach((x) => { const on = st.themes.includes(x.dataset.theme); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); x.textContent = `${on ? '✓ ' : ''}${THEMES[x.dataset.theme].nom}`; }); sauver(); return; }
       const b = e.target.closest('[data-m]'); const m = b?.dataset.m; if (!m || b.tagName === 'SELECT' || b.tagName === 'INPUT') return;
       if (m === 'generer') { arreter(); await generer(); return; }
       if (m === 'autre') { arreter(); await generer(+b.dataset.i); return; }
       if (m === 'chanter') { if (b.textContent.startsWith('■')) { arreter(); return; } if (!lignes.length) await generer(); chanter(lignes.map((_, i) => i).filter((i) => lignes[i].txt), b); return; }
       if (m === 'stop') { arreter(); return; }
+      if (m === 'boucle') { if (b.textContent === '■') { arreter(); return; } const i = +b.dataset.i; await chanter(Array(24).fill(i), null); b.textContent = '■'; el.querySelector(`.mo-txt[data-i="${i}"]`)?.focus(); return; }
       if (m === 'haut' || m === 'bas') { const i = +b.dataset.i; const j = m === 'haut' ? i - 1 : i + 1; if (j < 0 || j >= lignes.length) return; arreter(); [lignes[i], lignes[j]] = [lignes[j], lignes[i]]; sauver(); rendre(); el.querySelector(`[data-m=${m}][data-i="${j}"]`)?.focus(); return; }
       if (m === 'enlever') { arreter(); lignes.splice(+b.dataset.i, 1); sauver(); rendre(); return; }
       if (m === 'ajout') { arreter(); lignes.push({ txt: '', garde: true }); sauver(); rendre(); const t = el.querySelector(`.mo-txt[data-i="${lignes.length - 1}"]`); t?.focus(); t?.scrollIntoView({ block: 'center' }); return; }
@@ -339,7 +374,7 @@ export default {
       const texte = lignes.map((x) => x.txt).filter(Boolean).join('\n');
       if (m === 'placer') { if (!texte) return; store.set('placerTexte', texte); location.hash = '#/placer'; return; }
       if (m === 'copier') { try { await navigator.clipboard.writeText(texte); toast('Copié.'); } catch { toast('Copie impossible ici : sélectionne le texte à la main.'); } return; }
-      if (m === 'journal') { if (!texte) return; try { await saveEntry({ type: 'texte', title: lignes[0].txt.slice(0, 80), body: texte, data: { journal: true, date: new Date().toISOString().slice(0, 10), invite: `Mots sur la grille · ${THEMES[st.theme].nom}`, stage: 0 } }); toast('Dans le journal.'); } catch (err) { toast(err.message); } }
+      if (m === 'journal') { if (!texte) return; try { await saveEntry({ type: 'texte', title: lignes[0].txt.slice(0, 80), body: texte, data: { journal: true, date: new Date().toISOString().slice(0, 10), invite: `Mots sur la grille · ${st.themes.map((k) => THEMES[k]?.nom).filter(Boolean).join(', ')}`, stage: 0 } }); toast('Dans le journal.'); } catch (err) { toast(err.message); } }
     });
     el.addEventListener('change', (e) => {
       const k = e.target.dataset.m;
@@ -347,7 +382,7 @@ export default {
       if (e.target.dataset.garde != null) { lignes[+e.target.dataset.garde].garde = e.target.checked; e.target.closest('.mo-l').classList.toggle('garde', e.target.checked); sauver(); return; }
       if (!k || e.target.tagName !== 'SELECT') return;
       st[k] = k === 'n' ? +e.target.value : e.target.value;
-      if (k === 'source') { q('.mo-main').hidden = st.source !== 'main'; majSous(); chargerPiece(); }
+      if (k === 'source') { q('.mo-main').hidden = st.source !== 'main'; majSous(); chargerPiece().then(rendre); }
       sauver(); arreter(); rendre();
     });
     el.addEventListener('input', (e) => {
@@ -367,7 +402,7 @@ export default {
     el.addEventListener('focusout', (e) => { if (e.target.classList?.contains('mo-txt')) rendre(); });
     loadLexique().then(async () => { if (aRefaire) await generer(); else rendre(); }); rendre();
     setTimeout(() => prechargerSons(['voix', 'piano']), 400);
-    majSous(); chargerPiece();
+    majSous(); chargerPiece().then(rendre);
     return () => arreter();
   },
 };

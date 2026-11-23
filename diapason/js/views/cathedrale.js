@@ -13,6 +13,7 @@ import { audio, mic } from '../audio.js';
 import { onCC, onNotes, detecter, appareils, sortiesMidi, filet, instantane, fichierMidi } from '../materiel.js';
 import { createListener } from '../instrument.js';
 import { chordIntervals } from '../music.js';
+import { lireAccord } from './mots.js';
 import { wav, trouverAccords } from '../oreille.js';
 
 const esc = (x) => String(x ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -72,9 +73,30 @@ export default {
     el.innerHTML = `
       <div class="mod-head"><div>
         <p class="eyebrow">Le labo · La cathédrale</p>
-        <h1>Quelques nombres, tout un orchestre.</h1>
-        <p class="muted">Choisis une clé de voûte, quelques nombres. Chaque nombre devient <b>une voix</b> (elle frappe autant de fois par tour), <b>une partie</b> de l’œuvre (aussi longue que lui) et <b>une note</b> de l’accord. Pas besoin de passer par le studio : touche ▶, puis façonne.</p>
+        <h1>Un orchestre autour de tes accords.</h1>
+        <p class="muted">Des cordes, des cuivres, des bois, un chœur, une harpe : un orchestre entier qui joue tout seul, de 1 à 5 minutes, sur les accords que tu lui donnes.</p>
       </div></div>
+      <section class="panel ca-quoi">
+        <h2>À quoi elle sert</h2>
+        <div class="ca-portes">
+          <article class="ca-porte">
+            <h3>🎻 Habiller ma chanson</h3>
+            <p>Les accords de ta chanson deviennent un orchestre : une intro, un pont, un fond sous la voix. Tu le télécharges (WAV) pour l’enregistrement, ou Frog le reprend (MIDI).</p>
+            <div class="ca-row"><select data-ca="habiller-src" aria-label="Quelle chanson habiller"></select><button class="btn primary" data-ca="habiller">▶ Bâtir et écouter</button></div>
+          </article>
+          <article class="ca-porte">
+            <h3>🎹 Frog joue, l’orchestre suit</h3>
+            <p>Un accord tenu sur son clavier devient la base de l’œuvre ; une minute improvisée devient toute une cathédrale.</p>
+            <button class="btn" data-ca="aller-frog">Voir comment →</button>
+          </article>
+          <article class="ca-porte">
+            <h3>🔢 Composer avec des nombres</h3>
+            <p>Comme le labo, en grand : quelques nombres donnent les rythmes, les parties et l’accord. Pour explorer sans savoir d’avance.</p>
+            <button class="btn" data-ca="aller-nombres">Essayer →</button>
+          </article>
+        </div>
+        <p class="muted small ca-plus-value">Ce qu’elle a que le reste de l’app n’a pas : un orchestre complet sans musiciens, des accords en <b>intonation juste</b> (plus purs qu’au piano, qui triche un peu sur chaque note), et une partition MIDI, une famille par piste, prête pour Frog.</p>
+      </section>
       <section class="nf-commande">
         <canvas class="nf-ros" width="360" height="360" role="img" aria-label="La rosace de la clé de voûte"></canvas>
         <div class="nf-c-mil">
@@ -203,6 +225,12 @@ export default {
     }
     const arreter = () => { lecteur?.arreter(); lecteur = null; anim?.(); anim = null; q('[data-ca=jouer]').textContent = '▶'; q('[data-ca=jouer]').classList.remove('on'); const L = q('.nf-lumiere'); if (L) L.hidden = true; el.querySelectorAll('.joue, .frappe').forEach((x) => x.classList.remove('joue', 'frappe')); rosace(-1); q('.nf-temps').textContent = `0:00 / ${mmss(oeuvre.duree)}`; };
     // « ▶ » : charge l’orchestre, puis joue l’œuvre (et les sources vivantes en direct).
+    el.addEventListener('click', (e) => {
+      const a = e.target.closest('[data-ca]')?.dataset.ca;
+      if (a === 'habiller') habiller();
+      if (a === 'aller-frog') { q('.nf-plus').open = true; q('.nf-plus').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      if (a === 'aller-nombres') q('.nf-commande').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
     let parti = false; // la page est quittée
     async function lancer() {
       if (lecteur) { arreter(); return; }
@@ -362,6 +390,23 @@ export default {
         <p class="small">Celui qui revient le plus, <b>${esc(t.nom)}</b>, devient la clé de voûte <b class="mono">${t.cle.join(' : ')}</b>. Les parties se posent sur ${c.parties.map((p) => `<b>${esc(p.nom)}</b>`).join(', ')}, dans l’ordre où tu les as joués.</p>
         <button class="btn primary" data-ca="batir">Bâtir la cathédrale de ce jeu</button>`;
     }
+    // « Habiller ma chanson » : la dernière grille de L'oreille ou une de nos pièces devient l'œuvre, et elle joue.
+    const piecesG = () => (espace.connected ? espace.entries.filter((e) => e.data?.piece?.grille?.length) : []);
+    function remplirHabiller() {
+      const sel = q('[data-ca=habiller-src]'); if (!sel) return; const og = store.get('oreilleGrille', null);
+      const opts = [...(og?.mesures?.length ? [`<option value="oreille">La dernière de L’oreille${og.nom ? ` (« ${esc(og.nom.slice(0, 30))} »)` : ''}</option>`] : []), ...piecesG().map((e) => `<option value="${esc(e.id)}">⭐ ${esc(e.title || 'Notre pièce')}</option>`)];
+      sel.innerHTML = opts.join('') || '<option value="">Passe d’abord une chanson dans L’oreille</option>';
+    }
+    async function habiller() {
+      const v = q('[data-ca=habiller-src]').value; if (!v) { toast('Passe d’abord une chanson dans L’oreille : ses accords viendront ici.'); return; }
+      const pe = v !== 'oreille' && piecesG().find((e) => e.id === v); const og = store.get('oreilleGrille', null);
+      const G = pe ? { nom: pe.title, bpm: pe.data.piece.bpm, mesures: pe.data.piece.grille } : og; if (!G?.mesures?.length) return;
+      const temps = 60 / (G.bpm || 90); const segs = []; let cur = null;
+      G.mesures.flat().forEach((nomA, k) => { const c = nomA && nomA !== '—' ? lireAccord(nomA) : null; if (c) { if (cur) cur.b = k * temps; cur = { notes: chordIntervals(c.q).map((iv) => 48 + c.r + iv), a: k * temps, b: (k + 1) * temps }; segs.push(cur); } else if (cur) cur.b = (k + 1) * temps; });
+      audio(); // le son part pendant le toucher (iPhone)
+      await depuisJeu({ segs, nom: `« ${G.nom || 'ta chanson'} »` });
+      if (!jeu) return; batirDuJeu(); q('[data-ca=titre]').value = `${G.nom || 'Ma chanson'}, en cathédrale`; if (!lecteur) lancer();
+    }
     // Bâtit la cathédrale sur le jeu analysé : la clé de l’accord le plus présent, une partie par accord qui revient.
     function batirDuJeu() {
       if (!jeu) return; const c = cathedraleDuJeu(jeu.res);
@@ -382,6 +427,7 @@ export default {
     navigator.permissions?.query({ name: 'midi' }).then((st) => { if (st.state === 'granted') remplirSorties(); }).catch(() => {});
 
     majTout();
+    remplirHabiller();
     const offLampe = brancherLampe(el);
     return () => { parti = true; offVif.forEach((f) => f?.()); lecteur?.arreter(); lecteur = null; anim?.(); offNotes?.(); ecouteAudio?.stop(); clearTimeout(attente); offLampe(); };
   },
