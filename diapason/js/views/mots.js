@@ -88,9 +88,16 @@ export default {
     if (!Array.isArray(st.themes) || !st.themes.length) st.themes = [st.theme || 'nuit'];
     // Les paroles appartiennent à UNE chanson : chaque chanson garde ses lignes, son départ et ses silences.
     const nomPropre = (n) => String(n || '').replace(/ \(sans bruit\)$/, '').trim();
-    const cleDe = (src) => (src === 'oreille' ? `oreille:${nomPropre(store.get('oreilleGrille', null)?.nom)}` : src);
+    const nomJouer = () => nomPropre(grilleJouer().nom.replace(/^Jouer · /, '').replace(/^Accords de « (.*) »$/, '$1').replace(/^« (.*) »$/, '$1'));
+    // Une chanson = son nom = un seul tiroir de paroles, qu'on l'ouvre par L'oreille, par Jouer ou par Nos pièces.
+    const nomPiece = (src) => piecesEsp().find((e) => `piece:${e.id}` === src)?.title || '';
+    const cleDe = (src) => (src === 'oreille' ? `chanson:${nomPropre(store.get('oreilleGrille', null)?.nom)}` : src === 'jouer' ? `chanson:${nomJouer()}` : src.startsWith('piece:') ? `chanson:${nomPropre(nomPiece(src)) || src}` : src);
+    const normCle = (k) => { const m = String(k).match(/^(oreille|jouer):(.*)$/); if (m) return `chanson:${nomPropre(m[2])}`; if (String(k).startsWith('piece:')) { const n = nomPropre(nomPiece(k)); return n ? `chanson:${n}` : k; } return k; };
+    const nomDeCle = (k) => (k.startsWith('chanson:') ? k.slice(8) || 'la dernière de L’oreille' : k === 'main' ? 'mes accords tapés' : k);
     let parChanson = store.get('motsParChanson', null);
     if (!parChanson) { parChanson = {}; const vieilles = store.get('motsLignes', []); if (vieilles.length) parChanson[cleDe(st.source)] = { lignes: vieilles, debut: st.debut || 1, avant: true }; }
+    if (parChanson.jouer) { const k = cleDe('jouer'); if (!parChanson[k]) parChanson[k] = { ...parChanson.jouer, avant: true }; delete parChanson.jouer; }
+    Object.keys(parChanson).forEach((k) => { const m = k.match(/^(oreille|jouer):(.*)$/) || (k.startsWith('piece:') ? [k, 'piece', nomPiece(k)] : null); if (!m || !m[2]) return; const k2 = `chanson:${nomPropre(m[2])}`; if (!parChanson[k2] || (parChanson[k2].at || 0) < (parChanson[k].at || 0)) parChanson[k2] = parChanson[k]; delete parChanson[k]; });
     // Les clés d'avant qui portaient « (sans bruit) » rejoignent la chanson elle-même.
     Object.keys(parChanson).forEach((k) => { const k2 = k.replace(/ \(sans bruit\)$/, ''); if (k2 !== k) { if (!parChanson[k2]) parChanson[k2] = parChanson[k]; delete parChanson[k]; } });
     // Des paroles rangées au passage à la 1.03 : peut-être pas avec la bonne chanson. On le signale.
@@ -112,6 +119,7 @@ export default {
       aRefaire = lignes.some((L) => salie(L.txt)); lignes = lignes.map((L) => (salie(L.txt) ? { txt: '', garde: false } : L));
       st.debut = f.debut || 1; st.cale = !!f.cale; avantRangement = !!f.avant && lignes.length > 0;
     }
+    store.set('motsParChanson', parChanson); // le rangement à jour, tout de suite
     chargerLignes();
     if (aCaler && lignes.length) aCaler = false; // cette chanson a déjà ses paroles : on ne touche à rien
     let graine = Date.now() % 100000; let lecture = null; let raf = 0;
@@ -126,8 +134,8 @@ export default {
     function recevoir() {
       if (!espace.connected) return; let ici = false;
       espace.entries.filter((e) => e.type === 'motsgrille' && e.author === espace.me && e.data?.cle).forEach((e) => {
-        const loc = parChanson[e.data.cle]; if (loc && (loc.at || 0) >= (e.data.at || 0)) return;
-        parChanson[e.data.cle] = { lignes: e.data.lignes || [], debut: e.data.debut || 1, cale: !!e.data.cale, at: e.data.at || 0 }; if (e.data.cle === cle) ici = true;
+        const k = normCle(e.data.cle); const loc = parChanson[k]; if (loc && (loc.at || 0) >= (e.data.at || 0)) return;
+        parChanson[k] = { lignes: e.data.lignes || [], debut: e.data.debut || 1, cale: !!e.data.cale, at: e.data.at || 0 }; if (k === cle) ici = true;
       });
       store.set('motsParChanson', parChanson);
       if (ici && !el.contains(document.activeElement?.closest?.('.mo-txt') || null)) { chargerLignes(); const d = q('[data-m=debut]'); if (d) d.value = st.debut; rendre(); }
@@ -251,7 +259,7 @@ export default {
       const introH = deb() ? `<article class="panel mo-intro"><b>🎵 Intro</b> · mesure${deb() > 1 ? `s 1 à ${deb()}` : ' 1'} · musique seule <span class="muted small">(« Chanter sur la grille » la joue avant la première ligne)</span></article>` : '';
       if (!lignes.length) { box.innerHTML = '<div class="panel mo-vide"><p>J’écris les premières lignes de cette chanson…</p></div>'; return; }
       const schema = st.schema;
-      box.innerHTML = introH + lignes.map((L, i) => {
+      box.innerHTML = `<p class="mo-a-qui">📄 Les paroles de <b>« ${esc(nomDeCle(cle))} »</b></p>` + introH + lignes.map((L, i) => {
         const { sl, syl, pl, notes } = analyse(txtDe(L), i);
         const p = partL(i); const rime = p != null && lignes[p] ? rimeOf(L.txt) === rimeOf(lignes[p].txt) : null;
         const acc = [0, 1].map((h) => [0, 1, 2, 3].map((t) => { const m = mDe(i, h, g.mesures.length); const c = g.mesures[m][t]; return c ? `<span class="mo-acc ${memeAccord(c, ap) ? 'princ' : ''}" style="left:${((h * 16 + t * 4) / 32) * 100}%">${memeAccord(c, ap) ? '★ ' : ''}${esc(nomAcc(c))}</span>` : ''; }).join('')).join('');
@@ -312,29 +320,28 @@ export default {
     // Ranger ces paroles avec une autre chanson (et repartir à neuf ici).
     function destinations() {
       const d = new Map();
-      piecesEsp().forEach((e) => d.set(`piece:${e.id}`, `⭐ ${e.title || 'Notre pièce'}`));
-      Object.keys(parChanson).filter((k) => k.startsWith('oreille:') && k !== 'oreille:').forEach((k) => d.set(k, `L’oreille · ${k.slice(8)}`));
-      d.set('jouer', 'Les accords de Jouer'); d.set('main', 'Mes accords tapés'); d.delete(cle);
-      return d;
+      const noms = new Set([...Object.keys(parChanson).filter((k) => k.startsWith('chanson:') && k.length > 8).map((k) => k.slice(8)), ...piecesEsp().map((e) => nomPropre(e.title)), nomPropre(store.get('oreilleGrille', null)?.nom), nomJouer()].filter(Boolean));
+      [...noms].sort((a, b) => a.localeCompare(b, 'fr')).forEach((n) => d.set(`chanson:${n}`, n));
+      d.delete(cle); return d;
     }
     function rendreRanger() {
       const box = q('.mo-ranger'); if (!box) return; box.hidden = !lignes.some((L) => L.txt);
       const opts = [...destinations()].map(([k, v]) => `<option value="${esc(k)}">${esc(v)}</option>`).join('');
       box.innerHTML = `${avantRangement ? '<p class="mo-ranger-alerte"><b>Ces paroles viennent d’avant le rangement par chanson</b> : elles étaient peut-être pour une autre chanson. Range-les avec la bonne, ou garde-les ici.</p>' : ''}
         <div class="ec-row"><span>Ces paroles vont avec une autre chanson?</span>
-          <select data-m="dest" aria-label="La chanson où ranger ces paroles">${opts}<option value="__nom">Une chanson de L’oreille, par son nom…</option></select>
+          <select data-m="dest" aria-label="La chanson où ranger ces paroles">${opts}<option value="__nom">Une autre chanson, par son nom…</option></select><input type="text" class="mo-dest-nom" data-m="destnom" placeholder="Interminable" aria-label="Le nom de la chanson dans L’oreille" hidden>
           <button class="btn" data-m="ranger">↪ Les ranger là-bas</button>${avantRangement ? '<button class="btn" data-m="garder-ici">Elles vont bien ici</button>' : ''}</div>`;
     }
     function rangerAilleurs() {
       let dest = q('[data-m=dest]').value;
-      if (dest === '__nom') { const n = nomPropre(prompt('Le nom de la chanson dans L’oreille (comme il s’affiche, ex. Interminable) :', 'Interminable') || ''); if (!n) return; dest = `oreille:${n}`; }
+      if (dest === '__nom') { const n = nomPropre(q('[data-m=destnom]').value || ''); if (!n) { q('[data-m=destnom]').focus(); toast('Écris le nom de la chanson, comme il s’affiche dans L’oreille.'); return; } dest = `chanson:${n}`; }
       if (!dest || dest === cle) return;
       if (parChanson[dest]?.lignes?.some((L) => L.txt) && !confirm('Cette chanson a déjà des paroles. Les remplacer par celles-ci?')) return;
       parChanson[dest] = { lignes, debut: st.debut || 1, cale: !!st.cale, at: Date.now() }; envoyer(dest);
       parChanson[cle] = { lignes: [], debut: 1, at: Date.now() }; avantRangement = false;
       store.set('motsParChanson', parChanson); envoyer(cle);
-      const nomD = destinations().get(dest) || dest.replace(/^oreille:/, '');
-      chargerLignes(); arreter(); rendre(); toast(`Rangées avec « ${nomD.replace(/^⭐ |^L’oreille · /, '')} ». Ici, on repart à neuf.`); remplirSiVide();
+      const nomD = nomDeCle(dest);
+      chargerLignes(); arreter(); rendre(); toast(`Rangées avec « ${nomD} ». Ici, on repart à neuf.`); remplirSiVide();
     }
 
     // Une chanson sans paroles encore : la page se remplit toute seule (calée sur la chanson si on a son son).
@@ -511,7 +518,8 @@ export default {
       const k = e.target.dataset.m;
       if (e.target.dataset.m === 'guide') { store.set('motsChoeurs', e.target.checked); return; }
       if (e.target.dataset.garde != null) { lignes[+e.target.dataset.garde].garde = e.target.checked; e.target.closest('.mo-l').classList.toggle('garde', e.target.checked); sauver(); return; }
-      if (!k || e.target.tagName !== 'SELECT' || k === 'dest') return;
+      if (k === 'dest') { const i = q('[data-m=destnom]'); if (i) { i.hidden = e.target.value !== '__nom'; if (!i.hidden) i.focus(); } return; }
+      if (!k || e.target.tagName !== 'SELECT') return;
       st[k] = k === 'n' ? +e.target.value : e.target.value; if (k === 'n') st.cale = false;
       if (k === 'source') { q('.mo-main').hidden = st.source !== 'main'; changerDeChanson(); majSous(); chargerPiece().then(async () => { rendre(); await remplirSiVide(); }); }
       sauver(); arreter(); rendre();

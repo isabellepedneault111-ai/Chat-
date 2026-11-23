@@ -4579,3 +4579,5 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .mo-ranger[hidden] { display: none; }
 .mo-ranger select { font: 600 1rem var(--display); padding: 8px 10px; border-radius: 8px; border: 1px solid #d9cfbd; background: #fffdf8; max-width: 100%; }
 .mo-ranger-alerte { margin: 0 0 10px; padding: 10px 14px; border-radius: 8px; background: #fbefc6; border-left: 4px solid #b08a2e; }
+.mo-a-qui { margin: 0 0 4px; font: 600 1.15rem var(--display); color: #2b2620; }
+.mo-dest-nom { font: 600 1rem var(--display); padding: 8px 10px; border-radius: 8px; border: 1px solid #b08a2e; background: #fffdf8; }

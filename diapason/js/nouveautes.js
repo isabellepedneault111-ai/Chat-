@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.06', quand: '2026-11-23', titre: 'Une chanson, un seul tiroir de paroles', items: [
+    ['Le nom de la chanson fait foi', ['Les paroles suivent maintenant le nom de la chanson, d’où qu’on l’ouvre : Interminable par L’oreille, par Jouer ou par Nos pièces, ce sont les mêmes paroles. Avant, chaque chemin avait son tiroir, et toutes les chansons passées par Jouer partageaient le même.']],
+    ['On voit à qui elles sont', ['En haut des lignes : « 📄 Les paroles de « Joy Walk » ». Et « Ces paroles vont avec une autre chanson? » propose toutes les chansons connues, ou un nom à taper directement dans la page.']],
+  ] },
   { v: '1.05', quand: '2026-11-23', titre: 'Les paroles à la bonne chanson', items: [
     ['↪ Ranger ces paroles ailleurs', ['Sous les lignes de Mots sur la grille : « Ces paroles vont avec une autre chanson? ». Choisis la chanson (une de nos pièces, une chanson de L’oreille par son nom, Jouer…) et « Les ranger là-bas » : elles y partent, et la chanson ici repart à neuf.']],
     ['Un avertissement', ['Au rangement par chanson (1.03), les paroles d’avant ont été rangées avec la chanson qui était dans L’oreille à ce moment-là, parfois la mauvaise. Ces paroles-là portent maintenant un avertissement, pour les ranger avec la bonne en un geste. Et la version « sans bruit » d’une chanson garde les mêmes paroles que l’originale.']],
