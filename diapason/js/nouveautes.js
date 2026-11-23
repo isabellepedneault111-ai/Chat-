@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.05', quand: '2026-11-23', titre: 'Les paroles à la bonne chanson', items: [
+    ['↪ Ranger ces paroles ailleurs', ['Sous les lignes de Mots sur la grille : « Ces paroles vont avec une autre chanson? ». Choisis la chanson (une de nos pièces, une chanson de L’oreille par son nom, Jouer…) et « Les ranger là-bas » : elles y partent, et la chanson ici repart à neuf.']],
+    ['Un avertissement', ['Au rangement par chanson (1.03), les paroles d’avant ont été rangées avec la chanson qui était dans L’oreille à ce moment-là, parfois la mauvaise. Ces paroles-là portent maintenant un avertissement, pour les ranger avec la bonne en un geste. Et la version « sans bruit » d’une chanson garde les mêmes paroles que l’originale.']],
+  ] },
   { v: '1.04', quand: '2026-11-23', titre: 'Tes paroles sur tous tes appareils', items: [
     ['Synchronisées', ['Les paroles de chaque chanson (lignes, silences, départ) voyagent maintenant avec votre espace : écris sur le Mac, retrouve-les sur l’iPhone, et l’inverse. La version la plus récente gagne ; FLIP n’écrase jamais une version plus récente avec une plus vieille. Elles ne s’affichent ni sur le mur ni dans les nouvelles.']],
     ['Plus de page vide', ['Une chanson sans paroles se remplit toute seule en l’ouvrant : calée sur la chanson si son son est là, sinon écrite sur la grille. (Avant, il fallait toucher « Écrire les lignes ».)']],

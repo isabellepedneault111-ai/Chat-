@@ -87,9 +87,14 @@ export default {
     const st = { theme: 'nuit', themes: null, cles: '', schema: 'AABB', place: 'croches', pers: 'je', n: 4, source: 'jouer', main: 'Lam Fa Do Sol', ...store.get('motsReglages', {}) };
     if (!Array.isArray(st.themes) || !st.themes.length) st.themes = [st.theme || 'nuit'];
     // Les paroles appartiennent à UNE chanson : chaque chanson garde ses lignes, son départ et ses silences.
-    const cleDe = (src) => (src === 'oreille' ? `oreille:${store.get('oreilleGrille', null)?.nom || ''}` : src);
+    const nomPropre = (n) => String(n || '').replace(/ \(sans bruit\)$/, '').trim();
+    const cleDe = (src) => (src === 'oreille' ? `oreille:${nomPropre(store.get('oreilleGrille', null)?.nom)}` : src);
     let parChanson = store.get('motsParChanson', null);
-    if (!parChanson) { parChanson = {}; const vieilles = store.get('motsLignes', []); if (vieilles.length) parChanson[cleDe(st.source)] = { lignes: vieilles, debut: st.debut || 1 }; }
+    if (!parChanson) { parChanson = {}; const vieilles = store.get('motsLignes', []); if (vieilles.length) parChanson[cleDe(st.source)] = { lignes: vieilles, debut: st.debut || 1, avant: true }; }
+    // Les clés d'avant qui portaient « (sans bruit) » rejoignent la chanson elle-même.
+    Object.keys(parChanson).forEach((k) => { const k2 = k.replace(/ \(sans bruit\)$/, ''); if (k2 !== k) { if (!parChanson[k2]) parChanson[k2] = parChanson[k]; delete parChanson[k]; } });
+    // Des paroles rangées au passage à la 1.03 : peut-être pas avec la bonne chanson. On le signale.
+    { const vieilles = JSON.stringify(store.get('motsLignes', [])); Object.values(parChanson).forEach((f) => { if (vieilles !== '[]' && JSON.stringify(f.lignes || []) === vieilles && f.avant !== false) f.avant = true; }); }
     // Venue de L'oreille (« Des paroles sur cette chanson ») : la vraie chanson joue sous les paroles.
     let aCaler = !!window.__flipMots;
     let chanson = window.__flipMots || null; window.__flipMots = null;
@@ -100,12 +105,12 @@ export default {
     // Des lignes écrites avant le filtre (0.89) peuvent traîner en mémoire : celles qui contiennent un mot écarté
     // (et que la personne n'a pas tapé elle-même en mot-clé) sont vidées, puis réécrites.
     const salie = (txt) => { const cles = (st.cles || '').toLowerCase(); return String(txt || '').split(/[\s’',.;:!?]+/).some((w) => w && ecarte(w) && !cles.includes(w.toLowerCase())); };
-    let cle = ''; let lignes = []; let aRefaire = false;
+    let cle = ''; let lignes = []; let aRefaire = false; let avantRangement = false;
     function chargerLignes() {
       cle = cleDe(st.source); const f = parChanson[cle] || {};
       lignes = (f.lignes || []).flatMap((L) => (L.pause && L.txt ? [{ txt: '', garde: true, pause: true }, { ...L, pause: false }] : [L]));
       aRefaire = lignes.some((L) => salie(L.txt)); lignes = lignes.map((L) => (salie(L.txt) ? { txt: '', garde: false } : L));
-      st.debut = f.debut || 1; st.cale = !!f.cale;
+      st.debut = f.debut || 1; st.cale = !!f.cale; avantRangement = !!f.avant && lignes.length > 0;
     }
     chargerLignes();
     if (aCaler && lignes.length) aCaler = false; // cette chanson a déjà ses paroles : on ne touche à rien
@@ -116,7 +121,7 @@ export default {
     const idDe = (k) => { let h = 0; for (const ch of `${espace.me}|${k}`) h = (h * 31 + ch.codePointAt(0)) >>> 0; return `mots-${String(espace.me || 'x').replace(/[^A-Za-z0-9]/g, '').slice(0, 12)}-${h.toString(36)}`; };
     const envois = new Map();
     const envoyer = (k) => { if (!espace.connected) return; clearTimeout(envois.get(k)); envois.set(k, setTimeout(() => { envois.delete(k); const f = parChanson[k]; if (!f) return; const la = espace.entries.find((e) => e.id === idDe(k)); if (la && (la.data?.at || 0) > (f.at || 0)) return; /* jamais par-dessus plus récent */ saveEntry({ id: idDe(k), type: 'motsgrille', title: k, data: { cle: k, ...f } }, { force: true }).catch(() => {}); }, 1500)); };
-    const sauver = () => { store.set('motsReglages', st); parChanson[cle] = { lignes, debut: st.debut || 1, cale: !!st.cale, at: Date.now() }; store.set('motsParChanson', parChanson); envoyer(cle); };
+    const sauver = () => { store.set('motsReglages', st); parChanson[cle] = { lignes, debut: st.debut || 1, cale: !!st.cale, at: Date.now(), ...(avantRangement ? { avant: true } : {}) }; store.set('motsParChanson', parChanson); envoyer(cle); };
     // Ce qui arrive de l'espace (écrit sur un autre appareil) : plus récent que ce qu'on a ici → on le prend.
     function recevoir() {
       if (!espace.connected) return; let ici = false;
@@ -158,6 +163,7 @@ export default {
       <section class="mo-lignes" aria-live="polite"></section>
       <div class="mo-ajout"><button class="btn" data-m="ajout">＋ Ajouter une ligne</button><span class="muted small">Touche une ligne pour changer ses mots. ↑ ↓ pour la déplacer (ou glisse-la par ⠿).</span></div>
       <div class="mo-lecteur" hidden role="region" aria-label="Pendant que ça chante"></div>
+      <section class="panel mo-ranger" hidden></section>
       <section class="panel mo-fin">
         <div class="ec-row"><button class="btn" data-m="placer" title="Écrire → Placer mes paroles : chaque ligne essayée sur 7 rythmes (sur le temps, contretemps, syncopé…), notée, et chantée sur une pièce">→ Essayer 7 rythmes par ligne (Placer)</button><button class="btn" data-m="copier">Copier le texte</button>${espace.connected ? '<button class="btn" data-m="journal">Dans le journal</button>' : ''}</div>
         <p class="muted small">Comment c’est fait : pas d’intelligence artificielle. Des tournures de phrases, des banques de mots par thème, tes mots-clés et leurs synonymes (le dictionnaire de l’app). Pour chaque ligne, FLIP essaie quelques centaines de phrases et garde celle dont les accents tombent le mieux sur les temps forts (le calcul de « Placer ») et qui rime comme demandé. Le genre des mots-clés est deviné : relis les « le / la ».</p>
@@ -271,6 +277,7 @@ export default {
         </article>`;
       }).join('');
       requestAnimationFrame(dessinerOndes);
+      rendreRanger();
     }
 
     // Où ça chante, mesure par mesure : la voix repérée par L'oreille ; sinon, là où la chanson a du son.
@@ -300,6 +307,34 @@ export default {
       toast(`Calé sur ${A.via} : les paroles commencent à la mesure ${st.debut}${premier ? ` (${premier} mesure${premier > 1 ? 's' : ''} d’intro)` : ''}, ${lignes.length - nbS} lignes${nbS ? `, ${nbS} silence${nbS > 1 ? 's' : ''}` : ''}.`);
       if (lignes.some((L) => !L.pause && !L.txt)) await generer();
       return true;
+    }
+
+    // Ranger ces paroles avec une autre chanson (et repartir à neuf ici).
+    function destinations() {
+      const d = new Map();
+      piecesEsp().forEach((e) => d.set(`piece:${e.id}`, `⭐ ${e.title || 'Notre pièce'}`));
+      Object.keys(parChanson).filter((k) => k.startsWith('oreille:') && k !== 'oreille:').forEach((k) => d.set(k, `L’oreille · ${k.slice(8)}`));
+      d.set('jouer', 'Les accords de Jouer'); d.set('main', 'Mes accords tapés'); d.delete(cle);
+      return d;
+    }
+    function rendreRanger() {
+      const box = q('.mo-ranger'); if (!box) return; box.hidden = !lignes.some((L) => L.txt);
+      const opts = [...destinations()].map(([k, v]) => `<option value="${esc(k)}">${esc(v)}</option>`).join('');
+      box.innerHTML = `${avantRangement ? '<p class="mo-ranger-alerte"><b>Ces paroles viennent d’avant le rangement par chanson</b> : elles étaient peut-être pour une autre chanson. Range-les avec la bonne, ou garde-les ici.</p>' : ''}
+        <div class="ec-row"><span>Ces paroles vont avec une autre chanson?</span>
+          <select data-m="dest" aria-label="La chanson où ranger ces paroles">${opts}<option value="__nom">Une chanson de L’oreille, par son nom…</option></select>
+          <button class="btn" data-m="ranger">↪ Les ranger là-bas</button>${avantRangement ? '<button class="btn" data-m="garder-ici">Elles vont bien ici</button>' : ''}</div>`;
+    }
+    function rangerAilleurs() {
+      let dest = q('[data-m=dest]').value;
+      if (dest === '__nom') { const n = nomPropre(prompt('Le nom de la chanson dans L’oreille (comme il s’affiche, ex. Interminable) :', 'Interminable') || ''); if (!n) return; dest = `oreille:${n}`; }
+      if (!dest || dest === cle) return;
+      if (parChanson[dest]?.lignes?.some((L) => L.txt) && !confirm('Cette chanson a déjà des paroles. Les remplacer par celles-ci?')) return;
+      parChanson[dest] = { lignes, debut: st.debut || 1, cale: !!st.cale, at: Date.now() }; envoyer(dest);
+      parChanson[cle] = { lignes: [], debut: 1, at: Date.now() }; avantRangement = false;
+      store.set('motsParChanson', parChanson); envoyer(cle);
+      const nomD = destinations().get(dest) || dest.replace(/^oreille:/, '');
+      chargerLignes(); arreter(); rendre(); toast(`Rangées avec « ${nomD.replace(/^⭐ |^L’oreille · /, '')} ». Ici, on repart à neuf.`); remplirSiVide();
     }
 
     // Une chanson sans paroles encore : la page se remplit toute seule (calée sur la chanson si on a son son).
@@ -453,6 +488,8 @@ export default {
       const b = e.target.closest('[data-m]'); const m = b?.dataset.m; if (!m || b.tagName === 'SELECT' || b.tagName === 'INPUT') return;
       if (m === 'generer') { arreter(); await generer(); return; }
       if (m === 'caler') { await caler(false); return; }
+      if (m === 'ranger') { rangerAilleurs(); return; }
+      if (m === 'garder-ici') { avantRangement = false; if (parChanson[cle]) delete parChanson[cle].avant; sauver(); rendreRanger(); return; }
       if (m === 'autre') { arreter(); await generer(+b.dataset.i); return; }
       if (m === 'chanter') { if (b.textContent.startsWith('■')) { arreter(); return; } if (!lignes.length) await generer(); chanter(lignes.map((_, i) => i).filter((i) => lignes[i].txt || lignes[i].pause), b, true); return; }
       if (m === 'stop') { arreter(); return; }
@@ -474,7 +511,7 @@ export default {
       const k = e.target.dataset.m;
       if (e.target.dataset.m === 'guide') { store.set('motsChoeurs', e.target.checked); return; }
       if (e.target.dataset.garde != null) { lignes[+e.target.dataset.garde].garde = e.target.checked; e.target.closest('.mo-l').classList.toggle('garde', e.target.checked); sauver(); return; }
-      if (!k || e.target.tagName !== 'SELECT') return;
+      if (!k || e.target.tagName !== 'SELECT' || k === 'dest') return;
       st[k] = k === 'n' ? +e.target.value : e.target.value; if (k === 'n') st.cale = false;
       if (k === 'source') { q('.mo-main').hidden = st.source !== 'main'; changerDeChanson(); majSous(); chargerPiece().then(async () => { rendre(); await remplirSiVide(); }); }
       sauver(); arreter(); rendre();

@@ -4573,3 +4573,9 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .ca-plus-loin { margin: 28px 0 10px; font: 700 1.3rem var(--display); }
 .mo-l.pause .mo-garde, .mo-l.pause [data-m=autre], .mo-l.pause [data-m=choeur], .mo-l.pause .mo-n, .mo-l.pause .mo-lettre { display: none; }
 .mo-l.pause .mo-rime { display: none; }
+
+/* 1.05 — ranger des paroles avec la bonne chanson */
+.mo-ranger { margin-top: 16px; background: #fffdf8; }
+.mo-ranger[hidden] { display: none; }
+.mo-ranger select { font: 600 1rem var(--display); padding: 8px 10px; border-radius: 8px; border: 1px solid #d9cfbd; background: #fffdf8; max-width: 100%; }
+.mo-ranger-alerte { margin: 0 0 10px; padding: 10px 14px; border-radius: 8px; background: #fbefc6; border-left: 4px solid #b08a2e; }
