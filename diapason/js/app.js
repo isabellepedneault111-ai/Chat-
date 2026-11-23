@@ -41,6 +41,7 @@ import miroir from './views/miroir.js';
 import tessiture from './views/tessiture.js';
 import gym from './views/gym.js';
 import mots from './views/mots.js';
+import { initArrivee } from './arrivee.js';
 import labo from './views/labo.js';
 import studio from './views/studio.js';
 import paroles from './views/paroles.js';
@@ -90,6 +91,7 @@ const routes = { '': home, miroir, tessiture, gym, mots, labo, studio, paroles, 
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { n = 0; document.title = base; } });
 }
 initEtincelle();
+initArrivee(); // les sons qui arrivent sur l'ordi (glissés, ouverts avec FLIP, dossier surveillé) s'ouvrent dans L'oreille
 // Quatre lieux, rangés par ce qu'on y fait : aujourd'hui, nos idées, écrire, jouer (la Session est à part).
 // Chaque lieu a sa barre de sous-onglets. La voix et les disques ne sont plus des lieux à eux : ce sont des
 // sous-onglets de Jouer, avec une petite rangée de pastilles pour leurs pages.

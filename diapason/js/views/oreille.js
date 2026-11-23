@@ -5,6 +5,7 @@ import { clavierDe } from '../doigte.js';
 import { espace, audioURL, saveEntry, uploadAudio, saveProfile, members } from '../espace.js';
 import { toast, autoCanvas, keyboard, store } from '../ui.js';
 import { esc } from './carnet.js';
+import { surveiller, reprendre, arreter as arreterDossier, surEtat, dossierPossible } from '../arrivee.js';
 import { chromaDuSpectre, accordDuChroma, hauteurDirecte, diagnosticHarmonie, ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, harmoniserVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
 import { chargerGrille, poserFond } from './studio.js';
 import { diagramme, nomSimple } from '../guitare.js';
@@ -34,6 +35,7 @@ export default {
         </select>
         <p class="or-etat muted small"></p>
         <details class="or-dicta" ${/iPhone|iPad/.test(navigator.userAgent) ? 'open' : ''}><summary>Un mémo du Dictaphone (iPhone)?</summary><ol><li>Dans <b>Dictaphone</b>, touche le mémo, puis <b>···</b> → <b>Partager</b> → <b>Enregistrer dans Fichiers</b>.</li><li>Ici, <b>Choisir un fichier audio</b> → <b>Choisir le fichier</b> → <b>Parcourir</b> → le mémo (.m4a ou .qta, les deux marchent).</li><li>Si Safari refuse de le décoder, un bouton <b>▶ Le lire avec le lecteur du téléphone</b> apparaît : il l’écoute en entier, en silence, puis l’analyse.</li></ol><p class="muted small">Sur un ordi : glisse le fichier du Dictaphone sur ce bouton, ou partage-le-toi par courriel ou AirDrop. Le mémo peut aussi aller au mur (Nos idées, bouton ♫) : il sera ensuite dans la liste ci-dessus.</p></details>
+        <div class="or-dossier"></div>
         <p class="muted small or-astuce">Pour trouver les accords d’un bout joué au clavier : enregistre-le ici (micro) ou dépose le fichier. Un son clair, sans batterie, donne le meilleur résultat. Branché en MIDI, le studio les lit encore plus juste, en direct : <a href="#/studio?tab=instrument">Studio → Mon instrument</a>.</p>
       </section>
       <section class="panel or-direct" hidden>
@@ -96,7 +98,18 @@ export default {
     const etat = (t) => { q('.or-etat').textContent = t; };
     const etatHTML = (h) => { q('.or-etat').innerHTML = h; };
     // Un bout pris dans le filet arrive ici tout seul.
-    if (window.__flipOreille) { const f = window.__flipOreille; window.__flipOreille = null; setTimeout(async () => analyser(await f.blob.arrayBuffer(), f.nom), 0); }
+    const prendreArrivee = () => { if (window.__flipOreille) { const f = window.__flipOreille; window.__flipOreille = null; etat(`Je lis « ${f.nom} »…`); setTimeout(async () => analyser(await f.blob.arrayBuffer(), f.nom), 0); } };
+    prendreArrivee(); addEventListener('flip:oreille', prendreArrivee);
+    // Le dossier surveillé (Chrome ou Edge sur l'ordi) : ce que l'iPhone y envoie (AirDrop → Téléchargements) s'ouvre ici tout seul.
+    surEtat((d) => {
+      const box = q('.or-dossier'); if (!box) return;
+      if (!dossierPossible()) { box.innerHTML = '<p class="muted small">Sur l’ordi, glisse un fichier n’importe où dans FLIP : il s’ouvre ici. (Pour qu’un AirDrop s’ouvre tout seul, ouvre FLIP dans Chrome ou Edge.)</p>'; return; }
+      box.innerHTML = d.actif
+        ? `<p class="or-dossier-on"><span class="or-pastille" aria-hidden="true"></span> J’attends les sons qui arrivent dans <b>${esc(d.dossier)}</b> : un AirDrop de ton iPhone s’ouvre ici tout seul, peu importe la page. <button class="btn small" data-o="dossier-stop">Arrêter</button></p>`
+        : d.reprendre
+          ? `<p><button class="btn" data-o="dossier-reprendre">📂 Reprendre l’attente dans « ${esc(d.dossier)} »</button></p>`
+          : '<p><button class="btn" data-o="dossier">📂 Ouvrir tout seul ce qui arrive de mon iPhone</button> <span class="muted small">Choisis ton dossier Téléchargements (là où arrive l’AirDrop) : chaque nouveau mémo s’ouvre ici.</span></p>';
+    });
     // La lecture et sa tête : où on en est, sur l'onde, pendant qu'on écoute (une boucle tourne entre a et b).
     let tete = null; let cents = 0; let cp = []; let cible = -1; const voulus = new Set(); let occK = {}; let voixForcee = false; let orig = null; let plage = null; let presse = null; let bout = null; let pile = []; let curseur = 0; let entendus = {}; let cadreG = null; let corrigees = new Set(); let pvoulus = new Set(); let ptOuverte = -1; let apercu = null; let aligner = true; let choisie = null; let corr = {}; let corrige = true;
     // La justesse : toute la prise (cents) plus, au besoin, une partie à part (cp[i]). rate(t) : la vitesse à ce moment.
@@ -712,6 +725,9 @@ export default {
       const o = e.target.closest('[data-o]')?.dataset.o;
       if (o === 'micro') { micro(e.target.closest('[data-o]')); return; }
       if (o === 'parlecteur') { parLecteur(); return; }
+      if (o === 'dossier') { surveiller(); return; }
+      if (o === 'dossier-reprendre') { reprendre(true); return; }
+      if (o === 'dossier-stop') { arreterDossier(); return; }
       if (o === 'harmo-oui' || o === 'harmo-autre') {
         const p = harmoniserVoix(voix, res.bpm, o === 'harmo-autre' ? (accs?.variante || 0) + 1 : 0);
         if (p?.length) { accs = p; cadreG = null; corrigees = new Set(); montrerAccords(); harmo(false); toast(`Accords proposés en ${p.ton}.`); } else toast('Pas assez de notes chantées pour proposer des accords.');
@@ -897,6 +913,6 @@ export default {
       }
     });
     addEventListener('resize', dessiner);
-    return () => { directStop(); arrete(); removeEventListener('diapason:stop', surStop); removeEventListener('resize', dessiner); roC.disconnect(); cv.dispose?.(); };
+    return () => { directStop(); arrete(); removeEventListener('flip:oreille', prendreArrivee); removeEventListener('diapason:stop', surStop); removeEventListener('resize', dessiner); roC.disconnect(); cv.dispose?.(); };
   },
 };

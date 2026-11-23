@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.85', quand: '2026-11-23', titre: 'De l’iPhone à l’ordi, direct dans L’oreille', items: [
+    ['📂 Ce qui arrive de l’iPhone s’ouvre tout seul', ['Sur l’ordi, dans Chrome ou Edge : L’oreille → « Ouvrir tout seul ce qui arrive de mon iPhone », choisis Téléchargements une fois. Ensuite, un mémo envoyé par AirDrop s’ouvre dans L’oreille quelques secondes après, peu importe la page où tu es. Les fichiers ne quittent pas l’ordi.']],
+    ['Glisser n’importe où', ['Un son glissé n’importe où dans FLIP (pas seulement sur L’oreille) s’ouvre dans L’oreille.']],
+    ['Ouvrir avec FLIP', ['FLIP installé comme app (Chrome ou Edge : icône ⊕ dans la barre d’adresse) apparaît dans « Ouvrir avec » pour les mémos, mp3, m4a et wav.']],
+  ] },
   { v: '0.84', quand: '2026-11-23', titre: 'Des accords pour ta voix', items: [
     ['🎹 Des accords sous ta mélodie', ['Quand L’oreille entend une voix seule, elle propose des accords qui vont dessous : la tonalité vient de tes notes, puis, mesure par mesure, l’accord de la gamme qui contient le plus de notes chantées (surtout au premier temps), avec des enchaînements qui sonnent et une fin sur la tonique. Ils sont dans la grille : tu les écoutes, tu les corriges. « ↻ D’autres accords » essaie une version qui bouge plus, puis une version plus colorée (7e).']],
     ['✍️ Des paroles sur cette chanson', ['Un bouton dans L’oreille ouvre Ma voix → Mots sur la grille directement sur la chanson : ses accords, son tempo, et la vraie chanson qui joue sous les paroles chantées (avec ou sans le piano). Et quand une nouvelle chanson passe dans L’oreille, la page s’ouvre dessus d’elle-même.']],

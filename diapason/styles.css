@@ -4484,3 +4484,8 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .mo-vraie { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1rem; }
 .mo-vraie input { width: 22px; height: 22px; accent-color: #b08a2e; }
 .mo-sous { display: flex; flex-wrap: wrap; gap: 8px 24px; }
+.or-dossier p { margin: 8px 0 0; }
+.or-dossier-on { padding: 10px 14px; border-radius: 8px; background: #eef1df; border-left: 4px solid #5d6d24; color: #1d1a15; }
+.or-pastille { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #5d6d24; margin-right: 6px; animation: or-pouls 1.6s ease-in-out infinite; }
+@keyframes or-pouls { 50% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .or-pastille { animation: none; } }
