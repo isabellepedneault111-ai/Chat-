@@ -10,7 +10,7 @@ import { syllabes, placer } from './views/placer.js';
 // Verbes transitifs : à la 1re personne (« cherche », « rêve de »). Verbes intransitifs : à la 3e personne.
 const B = (n, a, vt, vi) => ({ n: n.split(', ').map((x) => { const [w, g] = x.split(' '); return { w, g }; }), a: a.split(', '), vt: vt.split(', '), vi: vi.split(', ') });
 export const THEMES = {
-  amour: { nom: 'L’amour', ...B('peau f, bouche f, main f, cœur m, regard m, baiser m, souffle m, nom m, épaule f, promesse f, lit m, tendresse f, sourire m, voix f', 'doux/douce, tendre, chaud, nu, fragile, léger/légère, lent, vrai', 'cherche, garde, tiens, embrasse, appelle, attends, veux, porte, devine, respire', 'tremble, brûle, revient, respire, s’ouvre, s’allume, chavire, frissonne') },
+  amour: { nom: 'L’amour', ...B('peau f, bouche f, main f, cœur m, regard m, souffle m, nom m, épaule f, promesse f, tendresse f, fenêtre f, sourire m, voix f', 'doux/douce, tendre, chaud, fragile, léger/légère, lent, vrai', 'cherche, garde, tiens, embrasse, appelle, attends, veux, porte, devine, respire', 'tremble, brûle, revient, respire, s’ouvre, s’allume, chavire, frissonne') },
   nuit: { nom: 'La nuit', ...B('nuit f, lune f, rue f, néon m, silence m, ombre f, étoile f, fenêtre f, sommeil m, minuit m, lampe f, insomnie f, ciel m, noir m', 'noir, sombre, bleu, immense, froid, lent, muet, éveillé', 'traverse, écoute, allume, attends, compte, cherche, garde, éteins', 'tombe, brille, s’éteint, veille, se tait, dort, respire, s’efface') },
   route: { nom: 'La route', ...B('route f, horizon m, voiture f, poussière f, carte f, frontière f, ville f, valise f, vent m, phare m, départ m, chemin m, autoroute f, station f', 'lointain, vide, ouvert, perdu, immense, fatigué, libre, droit', 'prends, quitte, suis, traverse, laisse, oublie, cherche, retrouve, roule vers', 'défile, s’en va, file, recommence, passe, avance, se perd, s’étire') },
   mer: { nom: 'La mer', ...B('mer f, vague f, sel m, sable m, rivage m, marée f, bateau m, phare m, écume f, large m, océan m, plage f, tempête f, quai m', 'salé, bleu, profond, calme, immense, gris, sauvage, mouillé', 'regarde, attends, traverse, écoute, garde, rejoins, laisse, perds', 'monte, revient, se brise, chante, gronde, s’efface, respire, dérive') },
@@ -18,10 +18,22 @@ export const THEMES = {
   souvenir: { nom: 'Les souvenirs', ...B('souvenir m, photo f, enfance f, cour f, cabane f, maison f, été m, vélo m, cahier m, odeur f, parfum m, jardin m, grenier m, chanson f', 'jauni, ancien, perdu, tendre, doux/douce, lointain, oublié, fragile', 'garde, retrouve, oublie, cherche, revois, efface, raconte, rêve de', 'revient, s’efface, s’envole, jaunit, résonne, dort, attend, sourit') },
   absence: { nom: 'L’absence', ...B('absence f, vide m, chaise f, silence m, téléphone m, lettre f, adieu m, place f, trace f, manque m, porte f, écho m, cendre f, fantôme m', 'vide, froid, lourd, muet, seul, fermé, lent, gris', 'attends, appelle, garde, cherche, efface, relis, ferme, laisse', 'pèse, reste, s’éteint, résonne, s’efface, se tait, tombe, s’en va') },
   hiver: { nom: 'L’hiver', ...B('hiver m, neige f, tempête f, glace f, froid m, poudrerie f, tuque f, fenêtre f, foyer m, flocon m, mitaine f, lumière f, matin m, souffle m', 'blanc/blanche, gelé, froid, glacé, immense, muet, bleu, pâle', 'réchauffe, attends, traverse, regarde, garde, allume, souffle, pellette', 'tombe, craque, fond, gèle, s’installe, siffle, dort, brille') },
-  feu: { nom: 'Le feu', ...B('feu m, flamme f, braise f, colère f, cendre f, fièvre f, orage m, étincelle f, sang m, cri m, tonnerre m, poing m, rage f, incendie m', 'rouge, brûlant, sauvage, vivant, fou/folle, ardent, nu, fort', 'allume, porte, crie, garde, avale, nourris, lance, réveille', 'brûle, gronde, éclate, monte, crépite, explose, danse, rugit') },
+  feu: { nom: 'Le feu', ...B('feu m, flamme f, braise f, colère f, cendre f, fièvre f, orage m, étincelle f, sang m, cri m, tonnerre m, poing m, rage f, incendie m', 'rouge, brûlant, sauvage, vivant, fou/folle, ardent, fort', 'allume, porte, crie, garde, avale, nourris, lance, réveille', 'brûle, gronde, éclate, monte, crépite, explose, danse, rugit') },
   liberte: { nom: 'La liberté', ...B('liberté f, ciel m, aile f, oiseau m, vent m, fenêtre f, porte f, horizon m, envol m, chemin m, espace m, souffle m, lumière f, saut m', 'libre, léger/légère, ouvert, immense, neuf/neuve, sauvage, vivant, haut', 'ouvre, prends, quitte, cherche, respire, lance, invente, choisis', 's’envole, s’ouvre, danse, respire, éclate, recommence, avance, chante') },
 };
 const COMMUN = B('temps m, monde m, jour m, voix f, cœur m, main f, chanson f, silence m', 'seul, vrai, lent, doux/douce', 'cherche, garde, attends, chante', 'passe, revient, s’en va, reste');
+
+// ---------- Les mots que FLIP ne propose jamais de lui-même ----------
+// Les rimes et les synonymes viennent de grands dictionnaires : on écarte le sexe, la vulgarité, les insultes,
+// la drogue et la violence crue. (Un mot que TU tapes en mot-clé reste à toi : il n'est jamais filtré.)
+const ECARTES = new RegExp('^(' + [
+  'sex', 'sexy', 'sexu', 'coït', 'coit', 'orgasm', 'érotiq', 'erotiq', 'porn', 'pénis', 'penis', 'vagin', 'vulv', 'clitor', 'testicul', 'sperm', 'éjacul', 'ejacul',
+  'masturb', 'maîtress', 'maitress', 'plaisir', 'amant', 'caress', 'sensuel', 'volupt', 'jouir', 'jouiss', 'charnel', 'intime', 'gémi', 'lingerie', 'strip', 'excitant', 'excité', 'violence', 'violent', 'chair$', 'sodom', 'fellat', 'prostitu', 'putain', 'pute', 'putes', 'bordel', 'baise', 'baiser?s?$', 'baisé', 'nique', 'niqu', 'couill', 'bite', 'bites', 'queue', 'queues', 'chatte', 'cul$', 'culs$', 'culott', 'fesse',
+  'nichon', 'seins?$', 'téton', 'teton', 'nu$', 'nue', 'nus', 'nues', 'nudit', 'lubri', 'viol$', 'viols$', 'violé', 'violer', 'violeur', 'inceste', 'pédo', 'pedo', 'pervers', 'obscén', 'obscen', 'libid', 'désir', 'lit$',
+  'merde', 'chier$', 'chie$', 'chies$', 'chiant', 'pisse', 'pisser', 'vomi', 'crotte', 'con$', 'cons$', 'conne$', 'connes$', 'connard', 'connerie', 'salope', 'salaud', 'enculé', 'encul', 'branl', 'foutre', 'fout', 'bâtard', 'batard', 'pétasse', 'garce', 'gouin', 'pédé$', 'pédés$', 'tapette', 'tafiole', 'nègre', 'negre', 'bougnoul', 'youpin',
+  'drogu', 'cocaïn', 'cocain', 'héroïn', 'heroin', 'cannabis', 'shit$', 'joint$', 'seringu', 'cadavr', 'suicid', 'égorg', 'egorg', 'tortur', 'massacr', 'meurtr', 'assassin', 'imbécile', 'idiot', 'crétin', 'débile', 'abruti', 'hôpital', 'cercueil', 'tribunal', 'mari$', 'maris$',
+].join('|') + ')', 'i');
+export const ecarte = (w) => ECARTES.test(String(w).toLowerCase().replace(/^[ljdmtsnc]’|^[ljdmtsnc]'/, ''));
 
 // ---------- Le petit français : élisions, accords, pluriels ----------
 const H_MUET = /^h(abit|ésit|iver|orizon|istoire|eure|umeur|ôtel|erbe|asard)/i;
@@ -126,7 +138,7 @@ export async function banque(theme, motsCles) {
     try {
       const s = await synonymesParSens(k);
       const sens = s?.sens?.find((x) => (cat.startsWith('ADJ') ? x.nature === 'adjectif' : x.nature === 'nom')) || null;
-      (sens?.mots || []).filter((w) => !/\s/.test(w) && info(w)?.rank < 8000).slice(0, 3).forEach((w) => { if (cat.startsWith('ADJ')) a.push(w); else n.push({ w, g: genre(w) }); });
+      (sens?.mots || []).filter((w) => !/\s/.test(w) && info(w)?.rank < 8000 && !ecarte(w)).slice(0, 3).forEach((w) => { if (cat.startsWith('ADJ')) a.push(w); else n.push({ w, g: genre(w) }); });
     } catch { /* hors ligne : on garde le mot seul */ }
   }
   return { n, a, vt, vi, cles, phrases };
@@ -140,7 +152,7 @@ function nomsQuiRiment(b, cle, eviter) {
   if (l.length >= 3) return l;
   // Sinon, les rimes du lexique : des noms courants qui partagent le son de la fin.
   const r = rimesClassees(eviter, 120);
-  const plus = (r?.rimes || []).filter((x) => info(x.w)?.cat === 'NOM' && x.rank < 4000 && x.w.length > 2 && !/[s-]/.test(x.w.slice(-1)) && !x.w.includes('-')).slice(0, 10).map((x) => ({ w: x.w, g: genre(x.w), devine: true }));
+  const plus = (r?.rimes || []).filter((x) => info(x.w)?.cat === 'NOM' && !ecarte(x.w) && x.rank < 4000 && x.w.length > 2 && !/[s-]/.test(x.w.slice(-1)) && !x.w.includes('-')).slice(0, 10).map((x) => ({ w: x.w, g: genre(x.w), devine: true }));
   return [...l, ...plus];
 }
 
@@ -181,6 +193,8 @@ export function ligne({ b, r, slots, pers, rime = null, tete = false, finAEviter
     if (finAEviter.includes(finMot)) note -= 60;
     for (const w of derniers) note -= (dejaVus.get(w.toLowerCase()) || 0) * (w.length > 3 ? 12 : 0);
     // Le même mot plein deux fois dans la ligne (« le fanal dans mon fanal ») : non.
+    // Le filet : aucun mot écarté, sauf ceux que la personne a tapés elle-même.
+    if (derniers.some((w) => ecarte(w) && !b.cles.some((c) => w.toLowerCase().includes(c.k)) && !b.phrases.some((ph) => ph.includes(w.toLowerCase())))) continue;
     const pleins = derniers.map((w) => w.toLowerCase().replace(/s$/, '')).filter((w) => w.length > 3);
     if (new Set(pleins).size < pleins.length) note -= 90;
     for (const c of clesManquantes) if (s.toLowerCase().includes(c.k)) note += 14;

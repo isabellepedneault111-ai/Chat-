@@ -60,6 +60,9 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.89', quand: '2026-11-23', titre: 'Des mots propres dans les brouillons', items: [
+    ['Mots sur la grille fait le ménage', ['Les rimes et les synonymes viennent de grands dictionnaires : FLIP y pigeait parfois des mots crus ou à côté (sexe, insultes, violence…). Il ne les propose plus jamais de lui-même. Un mot que tu tapes toi-même en mot-clé reste à toi.']],
+  ] },
   { v: '0.88', quand: '2026-11-23', titre: 'Suivre les mots pendant que ça chante', items: [
     ['La barre de lecture', ['Dans Mots sur la grille, pendant que ça chante : en bas, l’accord qui joue en gros, avec sa position à la guitare et le suivant ; la ligne en cours, le mot chanté allumé ; et un gros ■ Stop. Dans la piste de la ligne, la syllabe chantée s’allume aussi, et la ligne revient d’elle-même au milieu de l’écran.']],
     ['▶ par ligne', ['Le ▶ d’une ligne devient ■ pendant qu’elle joue : un deuxième toucher l’arrête.']],
