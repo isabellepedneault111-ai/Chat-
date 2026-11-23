@@ -82,7 +82,7 @@ Pp("« Niveau final » pour ce guide, « Mon carnet » pour le cahier de l'élè
 H("1. L'idée en une page")
 Pp("Les ateliers travaillent directement les quatre caractéristiques d'un comportement autodéterminé, déjà présentes dans les intentions pédagogiques de la séquence. Chacune devient un « power-up » que l'élève débloque :")
 tableau([["Power-up", "Caractéristique", "Ce que l'élève fait concrètement", "Atelier"],
-         ["R · Je me règle", "Autorégulation", "Reconnaître ses signaux de stress, respirer 4 · 4 · 6, se donner un plan « si… alors… ».", "3"],
+         ["Z · Je reste dans ma zone", "Autorégulation", "Reconnaître ses signaux de stress, respirer 4 · 4 · 6, se donner un plan « si… alors… ».", "3"],
          ["C · Je choisis", "Autonomie", "Choisir son ordre (les 3 passes), gérer son temps, bâtir son aide-mémoire.", "4"],
          ["P · Je peux", "Empowerment psychologique", "Remplacer la voix du critique par celle du coach; voir la preuve de ses progrès.", "5"],
          ["M · Je me connais", "Autoréalisation", "Nommer ce qui marche pour soi : moment, stratégie, personne, force.", "5"]], [Cm(3.2), Cm(3.6), Cm(8), Cm(2.2)])
@@ -92,12 +92,12 @@ B([("30 minutes, une fois par semaine. ", "Mentimeter, réponses anonymes, sur p
    ("Chaque atelier se suffit à lui-même : ", "une personne qui a manqué les ateliers 1 et 2, ou qui n'a vu l'animatrice qu'une fois, embarque sans retard."),
    ("Les maths seulement quand c'est utile : ", "lire une question de problème, calculer son temps, préparer son aide-mémoire. Le reste vaut pour toutes les matières.")])
 
-H("2. Les deux groupes, le même matériel")
-tableau([["", "Classe de modélisation algébrique", "Groupe de maths en parcours individualisé"],
-         ["Ce qui est pareil", "Les visuels, les questions Mentimeter, le carnet, la carte de poche.", "Les visuels, les questions Mentimeter, le carnet, la carte de poche."],
-         ["Le chrono (atelier 4)", "Même épreuve pour toute la classe : 3 heures, 4 questions, 3 tâches, aide-mémoire d'une page permis. Le calcul du jeu est leur vrai calcul.", "Chaque élève note la durée de sa propre évaluation; s'il ne la connaît pas, la demander à l'enseignant·e devient l'action de la semaine."],
-         ["L'aide-mémoire", "Une page recto, faite par l'élève, approuvée par l'enseignant·e.", "Les règles varient selon les cours : l'élève vérifie ce qui est permis."],
-         ["Le lien humain", "La classe se connaît : on peut partager à voix haute si quelqu'un le souhaite.", "Le groupe se connaît peu : tout passe par Mentimeter, rien à voix haute."]], [Cm(3.4), Cm(6.8), Cm(6.8)])
+H("2. Adapter selon la situation")
+Pp("Le matériel est le même partout : visuels, questions Mentimeter, carnet, carte de poche. Seuls deux points s'ajustent.")
+tableau([["", "Quand tous les élèves passent la même évaluation", "Quand chaque élève a sa propre évaluation"],
+         ["Le chrono (atelier 4)", "Le calcul du jeu est leur vrai calcul : 3 heures, 4 questions, 3 tâches, aide-mémoire d'une page permis.", "Chaque élève note la durée de sa propre évaluation; s'il ne la connaît pas, la demander à l'enseignant·e devient l'action de la semaine."],
+         ["L'aide-mémoire", "Une page recto, faite par l'élève, approuvée par l'enseignant·e.", "Les règles varient selon les cours : l'élève vérifie ce qui est permis."]], [Cm(3.4), Cm(6.8), Cm(6.8)])
+Pp("Dans tous les cas, les partages passent par Mentimeter, de façon anonyme. Une personne qui le souhaite peut en dire plus à voix haute, sans jamais y être invitée nommément.")
 
 H("3. Sécurité affective")
 tableau([["À dire", "À éviter"],
@@ -108,13 +108,13 @@ tableau([["À dire", "À éviter"],
 Pp("Une personne très anxieuse peut faire la respiration les yeux ouverts, ou seulement regarder. Si un·e élève parle d'une anxiété qui l'empêche de se présenter à l'évaluation, l'orienter vers les services du centre (orientation, TES, accommodements prévus).", italic=True)
 
 # ------------------------------------------------------------------ Atelier 3
-H("4. Atelier 3 · Je me règle", color=CY)
+H("4. Atelier 3 · Je reste dans ma zone", color=CY)
 Pp("Reconnaître ses signaux de stress et reprendre le contrôle avec deux outils simples : la respiration 4 · 4 · 6 et le plan « si… alors… ».", "Intention. ")
 vignettes(["NF3-01_Le-stress-cest-le-volume", "NF3-02_Qui-tient-la-manette-du-cerveau", "NF3-03_Respiration-4-4-6"])
 vignettes(["NF3-04_Si-alors", "NF3-05_Vrai-ou-mythe-1", "NF0-02_Les-4-power-ups"])
 tableau([["Minutes", "Déroulement", "Mentimeter", "Visuel · carnet"],
          ["0 à 2", "Accueil. Ceux qui arrivent : on part d'ici, aucun retard.", "Q1 Échelle : ma batterie (0 à 10)", "NF0-01"],
-         ["2 à 3", "Les 4 power-ups : aujourd'hui, on débloque R.", "—", "NF0-02 · carnet p. 1"],
+         ["2 à 3", "Les 4 power-ups : aujourd'hui, on débloque Z.", "—", "NF0-02 · carnet p. 1"],
          ["3 à 7", "Jeu « Vrai ou mythe ? » : 4 affirmations, 45 secondes chacune, la bonne réponse et l'explication en direct.", "Q2 à Q5 Choix multiple (Vrai / Mythe), bonne réponse révélée", "NF3-05 à NF3-08"],
          ["7 à 10", "Je fais : le stress, c'est le volume. Modeler à voix haute : « Quand je pense à une évaluation, je me situe ici, et voici ce que je sens. »", "Q6 Échelle : quand je pense à l'évaluation, je suis… (1 endormi, 10 bloqué)", "NF3-01 · carnet p. 2"],
          ["10 à 12", "Je fais : l'alarme et le pilote. Le cerveau croit que l'examen est un ours; l'expiration lente redonne la manette au pilote.", "—", "NF3-02"],
@@ -134,7 +134,7 @@ Pp("Choisir comment aborder l'évaluation : la carte du niveau, les 3 passes, le
 vignettes(["NF4-01_La-carte-du-niveau", "NF4-02_Les-3-passes", "NF4-03_Lire-comme-un-detective"])
 vignettes(["NF4-04_Le-chrono-du-boss", "NF4-05_Le-chrono-reponse", "NF4-06_Mon-aide-memoire"])
 tableau([["Minutes", "Déroulement", "Mentimeter", "Visuel · carnet"],
-         ["0 à 2", "Batterie, rappel du power-up R (une respiration ensemble).", "Q1 Échelle : ma batterie", "—"],
+         ["0 à 2", "Batterie, rappel du power-up Z (une respiration ensemble).", "Q1 Échelle : ma batterie", "—"],
          ["2 à 4", "Sondage : dans une évaluation, je commence par…", "Q2 Choix multiple : la première question / ce que je sais / ce qui vaut le plus de points / je ne sais pas", "—"],
          ["4 à 8", "Je fais : la carte du niveau, puis les 3 passes en pensant à voix haute sur une copie d'évaluation fictive.", "—", "NF4-01, NF4-02 · carnet p. 4"],
          ["8 à 12", "Jeu « Le chrono du boss » : combien de minutes par grande tâche ? Puis la démarche.", "Q3 Deviner le nombre (réponse : 40)", "NF4-04, NF4-05"],

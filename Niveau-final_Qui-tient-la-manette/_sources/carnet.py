@@ -9,7 +9,7 @@ from blocs import L, CB, OPTS
 
 style.COURS, style.TITRE_COURS, style.FOOT = "Qui tient la manette ?", "Niveau final", "Mon carnet"
 CY, JA, CO, VE, NU = "#0E8FB0", "#B7860B", "#E0522B", "#1E9E6A", "#0F1430"
-CAT.update({"R": dict(nom="Je me règle", court="R", c=CY, cl="#E2F4F9", crit=""), "C": dict(nom="Je choisis", court="C", c=JA, cl="#FBF1D6", crit=""),
+CAT.update({"Z": dict(nom="Je reste dans ma zone", court="Z", c=CY, cl="#E2F4F9", crit=""), "C": dict(nom="Je choisis", court="C", c=JA, cl="#FBF1D6", crit=""),
             "P": dict(nom="Je peux", court="P", c=CO, cl="#FDE9E2", crit=""), "M": dict(nom="Je me connais", court="M", c=VE, cl="#E1F4EB", crit=""),
             "N": dict(nom="Niveau final", court="", c=NU, cl="#ECEEF6", crit="")})
 MAN = f'''<svg viewBox="0 0 240 150" width="{{w}}" aria-hidden="true"><path d="M60 20h120c34 0 52 28 58 70 6 40-10 58-28 58-16 0-26-12-38-30H68c-12 18-22 30-38 30-18 0-34-18-28-58 6-42 24-70 58-70z" fill="none" stroke="{NU}" stroke-width="8"/>
@@ -33,7 +33,7 @@ def batterie(moment):
 
 
 def pu(actif):
-    return "".join(f'<span style="display:inline-flex;width:24px;height:24px;border-radius:6px;align-items:center;justify-content:center;font-weight:900;font-size:10pt;margin-right:4px;{"background:" + CAT[k]["c"] + ";color:#fff" if k in actif else "border:1.5px solid #C9CEDB;color:#C9CEDB"}">{k}</span>' for k in "RCPM")
+    return "".join(f'<span style="display:inline-flex;width:24px;height:24px;border-radius:6px;align-items:center;justify-content:center;font-weight:900;font-size:10pt;margin-right:4px;{"background:" + CAT[k]["c"] + ";color:#fff" if k in actif else "border:1.5px solid #C9CEDB;color:#C9CEDB"}">{k}</span>' for k in "ZCPM")
 
 
 TOT = 8
@@ -41,7 +41,7 @@ TOT = 8
 
 def couverture():
     cartes = "".join(f'<div style="border:2px solid {CAT[k]["c"]};border-radius:16px;padding:14px"><div style="width:46px;height:46px;border-radius:12px;background:{CAT[k]["c"]};color:#fff;font-weight:900;font-size:22pt;display:flex;align-items:center;justify-content:center">{k}</div><div style="font-weight:900;font-size:15pt;margin-top:10px">{CAT[k]["nom"]}</div><div class="small">{d}</div></div>'
-                     for k, d in [("R", "Je garde le contrôle quand le stress monte."), ("C", "Je choisis mes stratégies et mon ordre."), ("P", "Je crois que mes efforts changent le résultat."), ("M", "Je sais ce qui marche pour moi.")])
+                     for k, d in [("Z", "Je garde le contrôle quand le stress monte."), ("C", "Je choisis mes stratégies et mon ordre."), ("P", "Je crois que mes efforts changent le résultat."), ("M", "Je sais ce qui marche pour moi.")])
     corps = f'''<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-top:.5in"><div><div class="kick" style="color:{JA};font-size:10pt;letter-spacing:.24em;font-weight:900">QUI TIENT LA MANETTE ?</div>
 <div style="font-size:60pt;font-weight:900;letter-spacing:-.045em;line-height:.88;margin-top:10px">Niveau<br><span style="color:{JA}">final</span></div><div class="lede" style="margin-top:16px;max-width:3.8in">Mon carnet pour arriver à l'évaluation <b style="color:{NU}">en contrôle</b>.</div></div>{MAN.format(w=230)}</div>
 <div class="card" style="margin-top:.4in;max-width:4in"><div class="small"><b>Prénom :</b> ________________________________</div></div>
@@ -52,7 +52,7 @@ def couverture():
 
 def a3a():
     sig = ["Mon cœur bat vite", "Mes mains sont moites", "J'ai la tête vide", "J'ai mal au ventre", "J'ai envie de partir", "Je relis sans comprendre", "Je pense « je suis nul »"]
-    corps = f'''<div style="display:flex;justify-content:space-between;align-items:center">{batterie("au début")}<div>{pu("R")}</div></div>
+    corps = f'''<div style="display:flex;justify-content:space-between;align-items:center">{batterie("au début")}<div>{pu("Z")}</div></div>
 <h2 class="mt2">{ico("cible")}Le stress, c'est le volume</h2>
 <svg viewBox="0 0 640 190" width="100%" height="190"><rect x="210" y="10" width="220" height="150" rx="12" fill="#E1F4EB"/><path d="M20 150 C 150 150, 200 20, 320 20 S 490 150, 620 150" fill="none" stroke="{NU}" stroke-width="4"/>
 <line x1="20" y1="165" x2="620" y2="165" stroke="#8A90A6" stroke-width="2"/><text x="320" y="55" text-anchor="middle" font-size="18" font-weight="900" fill="{VE}">LA ZONE</text>
@@ -62,7 +62,7 @@ def a3a():
 <h2 class="mt">{ico("attention")}Mes signaux d'alarme</h2><p class="small">Je coche ce que je ressens quand le stress monte trop.</p>{OPTS(sig)}<p class="small mt">Autre :</p>{L(1)}
 <div class="card t mt2" style="--cl:#E2F4F9;display:grid;grid-template-columns:1fr 1fr 1fr;text-align:center;gap:8px">{"".join(f'<div><div style="font-size:40pt;font-weight:900;color:{c};line-height:1">{n}</div><div style="font-weight:900">{t}</div><div class="xs">{d}</div></div>' for n, t, d, c in [("4", "J'inspire", "par le nez", CY), ("4", "Je bloque", "doucement", JA), ("6", "J'expire", "lentement, par la bouche", VE)])}</div>
 <p class="small mt">Je l'ai essayé : après 3 fois, je me sens {OPTS(["plus calme", "pareil", "je dois encore pratiquer"])}</p>'''
-    return P("R", "Je me règle", corps, kick="Atelier 3", sous="Je garde le contrôle quand le stress monte.", n=2, tot=TOT, no="3")
+    return P("Z", "Je reste dans ma zone", corps, kick="Atelier 3", sous="Je garde le contrôle quand le stress monte.", n=2, tot=TOT, no="3")
 
 
 def a3b():
@@ -72,13 +72,13 @@ def a3b():
 <div class="g3 mt2"><div class="phase pa"><span class="tag">Avant</span>Qu'est-ce qui me stresse le plus dans l'évaluation ?<div class="lines l2"></div></div><div class="phase pp"><span class="tag">Pendant</span>Quel signal me dit que je sors de ma zone ?<div class="lines l2"></div></div><div class="phase pap"><span class="tag">Après</span>Quel « si… alors… » vais-je essayer cette semaine ?<div class="lines l2"></div></div></div>
 <div class="card k mt2"><h2>{ico("idee")}Mon truc pour m'en souvenir</h2><p class="small">Je découpe ma carte de poche (dernière page) et je la garde dans mon étui à crayons.</p></div>
 <div style="margin-top:auto">{batterie("à la fin")}</div>'''
-    return P("R", "", corps, kick="Atelier 3", n=3, tot=TOT, no="3")
+    return P("Z", "", corps, kick="Atelier 3", n=3, tot=TOT, no="3")
 
 
 def a4a():
     et = [("La veille", ["Je dors assez", "Mon sac est prêt (calculatrice, crayons, efface)", "Mon aide-mémoire est approuvé"]), ("En entrant", ["3 respirations 4 · 4 · 6", "Je survole toutes les questions", "J'écris l'heure de fin en haut"]),
           ("Pendant", ["Les 3 passes", "J'encercle et je passe", "Je regarde l'heure à la moitié"]), ("À la fin", ["Je relis chaque question", "Unités et phrase de réponse", "Je remets, fier·ère de moi"])]
-    corps = f'''<div style="display:flex;justify-content:space-between;align-items:center">{batterie("au début")}<div>{pu("RC")}</div></div>
+    corps = f'''<div style="display:flex;justify-content:space-between;align-items:center">{batterie("au début")}<div>{pu("ZC")}</div></div>
 <h2 class="mt2">{ico("drapeau")}Ma carte du niveau</h2><p class="small">Je coche ce que je fais déjà. J'encercle ce que je veux essayer.</p>
 <div class="g4">{"".join(f'<div class="card" style="border-top:5px solid {[CY, JA, CO, VE][i]}"><b>{t}</b><ul class="ticks small">{"".join(f"<li>{x}</li>" for x in xs)}</ul></div>' for i, (t, xs) in enumerate(et))}</div>
 <h2 class="mt2">{ico("etapes")}Les 3 passes</h2><div class="g3">{"".join(f'<div class="card t" style="--cl:{cl}"><span class="tag" style="color:{c}">Passe {n}</span><div style="font-weight:900;font-size:13pt">{t}</div><div class="small">{d}</div></div>' for n, t, d, c, cl in [(1, "Je ramasse les points sûrs", "Tout ce que je sais faire, vite.", VE, "#E1F4EB"), (2, "Je reviens aux encerclées", "Avec plus de temps.", JA, "#FBF1D6"), (3, "Je vérifie", "Question, unités, phrase.", CY, "#E2F4F9")])}</div>
@@ -99,7 +99,7 @@ def a4b():
 
 def a5a():
     crit = ["Je suis nul en maths.", "Je vais encore échouer.", "Les autres comprennent, pas moi."]
-    corps = f'''<div style="display:flex;justify-content:space-between;align-items:center">{batterie("au début")}<div>{pu("RCP")}</div></div>
+    corps = f'''<div style="display:flex;justify-content:space-between;align-items:center">{batterie("au début")}<div>{pu("ZCP")}</div></div>
 <h2 class="mt2">{ico("personne")}Du critique au coach</h2><p class="small">Je transforme la phrase du critique en phrase de coach. La phrase du coach est vraie, pas magique.</p>
 <table class="t grid"><tr><th style="width:44%;color:{CO}">Le critique dit…</th><th style="color:{VE}">Mon coach répond…</th></tr>{"".join(f'<tr><td style="text-decoration:line-through;color:#8A90A6">« {c} »</td><td style="height:40px"></td></tr>' for c in crit)}<tr><td>Ma phrase à moi : <div class="lines" style="min-height:27px"></div></td><td></td></tr></table>
 <h2 class="mt2">{ico("fusee")}Ma preuve</h2><div class="g2"><div class="card"><b>Au début, je ne savais pas…</b><div class="lines l3"></div></div><div class="card t" style="--cl:#E1F4EB"><b>Maintenant, je sais…</b><div class="lines l3"></div></div></div>
@@ -110,7 +110,7 @@ def a5a():
 def a5b():
     corps = f'''<div style="border:2px dashed #B9BFD0;border-radius:18px;padding:22px 26px;position:relative"><div class="tag" style="color:{CO}">À découper · à ouvrir le jour de l'évaluation</div>
 <div style="font-size:24pt;font-weight:900;margin-top:8px">Cher moi du jour J,</div>{"".join('<div style="height:27px;border-bottom:1.5px solid #CDD2E0"></div>' for _ in range(8))}<div style="text-align:right;font-weight:800;margin-top:8px">— Moi, aujourd'hui</div></div>
-<h2 class="mt2">{ico("ok")}Mes power-ups</h2><table class="t">{"".join(f'<tr><td style="width:38px"><span style="display:inline-flex;width:26px;height:26px;border-radius:6px;background:{CAT[k]["c"]};color:#fff;font-weight:900;align-items:center;justify-content:center">{k}</span></td><td><b>{CAT[k]["nom"]}</b> · <span class="small">{d}</span></td><td style="width:42%"><span class="opt" style="color:#127A45"><span class="dot" style="margin-right:4px"></span>Débloqué</span><span class="opt" style="color:#946200"><span class="dot" style="margin-right:4px"></span>En chemin</span><span class="opt" style="color:#B3341B"><span class="dot" style="margin-right:4px"></span>Pas encore</span></td></tr>' for k, d in [("R", "je me calme et j'ai un plan si je bloque"), ("C", "j'ai mes 3 passes, mon chrono, mon aide-mémoire"), ("P", "mon coach parle plus fort que mon critique"), ("M", "je sais ce qui marche pour moi")])}</table>
+<h2 class="mt2">{ico("ok")}Mes power-ups</h2><table class="t">{"".join(f'<tr><td style="width:38px"><span style="display:inline-flex;width:26px;height:26px;border-radius:6px;background:{CAT[k]["c"]};color:#fff;font-weight:900;align-items:center;justify-content:center">{k}</span></td><td><b>{CAT[k]["nom"]}</b> · <span class="small">{d}</span></td><td style="width:42%"><span class="opt" style="color:#127A45"><span class="dot" style="margin-right:4px"></span>Débloqué</span><span class="opt" style="color:#946200"><span class="dot" style="margin-right:4px"></span>En chemin</span><span class="opt" style="color:#B3341B"><span class="dot" style="margin-right:4px"></span>Pas encore</span></td></tr>' for k, d in [("Z", "je me calme et j'ai un plan si je bloque"), ("C", "j'ai mes 3 passes, mon chrono, mon aide-mémoire"), ("P", "mon coach parle plus fort que mon critique"), ("M", "je sais ce qui marche pour moi")])}</table>
 <div class="g2 mt2"><div class="card"><b>Une chose que je garde après ces ateliers</b><div class="lines l2"></div></div><div class="card"><b>Mon prochain niveau, après l'évaluation</b><div class="lines l2"></div></div></div>
 <div style="margin-top:auto">{batterie("à la fin")}</div>'''
     return P("P", "", corps, kick="Atelier 5", n=7, tot=TOT, no="5")
