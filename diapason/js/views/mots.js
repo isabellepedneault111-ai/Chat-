@@ -46,7 +46,8 @@ function grilleJouer() {
   return { nom: `Jouer · ${p.name || 'la grille'}`, bpm, mesures };
 }
 function grilleMain(texte, bpm) {
-  const mesures = texte.split(/[\s|,]+/).filter(Boolean).map((t) => { const c = lireAccord(t); return [c, null, null, null]; }).filter((m) => m[0]);
+  // Un accord par mesure ; « Fa/Do » : deux accords dans la mesure (deux temps chacun).
+  const mesures = texte.split(/[\s|,]+/).filter(Boolean).map((t) => { const l = t.split('/').map(lireAccord).filter(Boolean); return l.length === 2 ? [l[0], null, l[1], null] : [l[0] || null, null, null, null]; }).filter((m) => m[0]);
   return mesures.length ? { nom: 'Mes accords', bpm, mesures } : null;
 }
 // L'accord qui sonne à un temps (on remonte jusqu'au dernier changement, en bouclant la grille).
@@ -145,17 +146,24 @@ export default {
     el.innerHTML = `
       <div class="mod-head"><div>
         <p class="eyebrow">Ma voix · mots sur la grille</p>
-        <h1>Des paroles qui tombent sur les accords.</h1>
-        <p class="muted">Choisis un thème, ajoute tes mots. FLIP assemble des lignes qui tombent sur les temps et qui riment, puis te les chante sur la grille. Ce sont des brouillons : garde une ligne, retire les autres, réécris par-dessus.</p>
+        <h1>Des paroles sur ta chanson.</h1>
       </div></div>
-      <section class="panel mo-reg">
+      <section class="panel mo-entete">
+        <div class="mo-entete-l">
+          <label class="field mo-src"><span>La chanson</span><select data-m="source">
+            <option value="jouer">Les accords de Jouer</option><option value="oreille">La dernière grille de L’oreille</option><option value="main">Je les tape</option>${piecesEsp().length ? `<optgroup label="Nos pièces">${piecesEsp().map((e) => `<option value="piece:${esc(e.id)}">${esc(e.title || 'Notre pièce')}</option>`).join('')}</optgroup>` : ''}</select></label>
+          <label class="field mo-main" ${st.source === 'main' ? '' : 'hidden'}><span>Un accord par mesure</span><input type="text" data-m="main" value="${esc(st.main)}" placeholder="Lam Fa Do Sol"></label>
+          <div class="mo-princ" hidden></div>
+        </div>
+        <div class="ec-row mo-gestes"><button class="btn primary" data-m="chanter">▶ Chanter sur la grille</button><button class="btn" data-m="caler" title="Les paroles commencent là où la voix entre, les passages sans voix deviennent des silences, et les syllabes suivent les attaques de la chanson">✨ Caler sur la chanson</button><button class="btn" data-m="generer">↻ Écrire les lignes</button><span class="mo-info muted small"></span></div>
+      </section>
+      <details class="panel mo-reg" ${lignes.length ? '' : 'open'}>
+        <summary>⚙ Thèmes, mots-clés et réglages</summary>
         <div class="mo-themes" role="group" aria-label="Thèmes (un ou plusieurs)">${Object.entries(THEMES).map(([k, t]) => `<button type="button" class="mo-th ${st.themes.includes(k) ? 'on' : ''}" data-theme="${k}" aria-pressed="${st.themes.includes(k)}">${st.themes.includes(k) ? '✓ ' : ''}${esc(t.nom)}</button>`).join('')}<span class="muted small mo-th-aide">Coche-en un ou plusieurs : leurs mots se mélangent.</span></div>
         <label class="field mo-cles"><span>Mes mots-clés <small class="muted">(séparés par des virgules ; une expression entière marche aussi)</small></span>
           <input type="text" data-m="cles" value="${esc(st.cles)}" placeholder="lac, fanal, on se retrouve à minuit"></label>
         <div class="mo-choix">
-          <label class="field"><span>La grille</span><select data-m="source">
-            <option value="jouer">Les accords de Jouer</option><option value="oreille">La dernière grille de L’oreille</option><option value="main">Je les tape</option>${piecesEsp().length ? `<optgroup label="Nos pièces">${piecesEsp().map((e) => `<option value="piece:${esc(e.id)}">${esc(e.title || 'Notre pièce')}</option>`).join('')}</optgroup>` : ''}</select></label>
-          <label class="field mo-main" ${st.source === 'main' ? '' : 'hidden'}><span>Un accord par mesure</span><input type="text" data-m="main" value="${esc(st.main)}" placeholder="Lam Fa Do Sol"></label>
+
           <label class="field"><span>Sur les temps</span><select data-m="place"><option value="chanson">Comme la chanson (ses attaques)</option>${PLACEMENTS.map((p) => `<option value="${p.id}">${esc(p.nom)} (${p.slots.length} syll.)</option>`).join('')}</select></label>
           <label class="field"><span>Les rimes</span><select data-m="schema">${Object.entries(SCHEMAS).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('')}</select></label>
           <label class="field"><span>Qui parle</span><select data-m="pers"><option value="je">Je</option><option value="tu">Tu</option><option value="mix">Les deux</option></select></label>
@@ -165,9 +173,8 @@ export default {
         </div>
         <div class="mo-sous" ${chanson ? '' : 'hidden'}><label class="mo-vraie"><input type="checkbox" data-m="vraie" checked> Sous les paroles : la vraie chanson${chanson ? ` (« ${esc(String(chanson.nom).slice(0, 40))} »)` : ''}</label><label class="mo-vraie"><input type="checkbox" data-m="piano" ${store.get('oreilleGrille', null)?.propose ? 'checked' : ''}> + les accords au piano</label></div>
         <label class="mo-vraie mo-guide"><input type="checkbox" data-m="guide"> 🎤 Chœurs sur toutes les lignes <small class="muted">(des « ouuu » synthétiques chantent la note de chaque syllabe ; éteints d’office, ou ligne par ligne avec 🎤)</small></label>
-        <div class="ec-row"><button class="btn" data-m="caler" title="Les paroles commencent là où la voix entre, les passages sans voix deviennent des silences, et les syllabes suivent les attaques de la chanson">✨ Caler sur la chanson</button><button class="btn primary" data-m="generer">Écrire les lignes</button><button class="btn" data-m="chanter">▶ Chanter sur la grille</button><span class="mo-info muted small"></span></div>
-      </section>
-      <section class="panel mo-princ" hidden></section>
+
+      </details>
       <section class="mo-lignes" aria-live="polite"></section>
       <div class="mo-ajout"><button class="btn" data-m="ajout">＋ Ajouter une ligne</button><span class="muted small">Touche une ligne pour changer ses mots. ↑ ↓ pour la déplacer (ou glisse-la par ⠿).</span></div>
       <div class="mo-lecteur" hidden role="region" aria-label="Pendant que ça chante"></div>
@@ -186,13 +193,13 @@ export default {
       if (st.source === 'oreille' && !chansonGardee) {
         // Rien en mémoire (rechargement, autre page) : la dernière chanson de L'oreille, gardée sur cet appareil.
         const f = await lireDerniere();
-        if (f?.blob) { try { const buf = await audio().decodeAudioData(await f.blob.arrayBuffer()); chansonGardee = { buf, nom: f.nom, t0: f.t0 || 0, temps: f.temps || 0.6 }; chanson = chansonGardee; } catch { /* son illisible */ } }
+        if (f?.blob) { try { const buf = await audio().decodeAudioData(await f.blob.arrayBuffer()); chansonGardee = { buf, nom: f.nom, t0: f.t0 || 0, temps: f.temps || 0.6, voix: f.voix || null }; chanson = chansonGardee; } catch { /* son illisible */ } }
         majSous(); return;
       }
       if (!st.source.startsWith('piece:')) return;
       const e = piecesEsp().find((x) => `piece:${x.id}` === st.source); if (!e) return;
       if (!chansonsPieces.has(e.id)) chansonsPieces.set(e.id, audioURL(e.audio).then((u) => fetch(u)).then((r) => r.arrayBuffer()).then((b) => audio().decodeAudioData(b)));
-      try { const buf = await chansonsPieces.get(e.id); chanson = { buf, nom: e.title, t0: e.data.piece.t1 || 0, temps: e.data.piece.temps || 60 / (e.data.piece.bpm || 90), src: st.source }; } catch { chanson = null; }
+      try { const buf = await chansonsPieces.get(e.id); chanson = { buf, nom: e.title, t0: e.data.piece.t1 || 0, temps: e.data.piece.temps || 60 / (e.data.piece.bpm || 90), src: st.source, voix: e.data.piece.voix || null }; } catch { chanson = null; }
       majSous();
     }
     function majSous() {
@@ -253,22 +260,22 @@ export default {
       q('.mo-info').textContent = `${nomsSrc}${g.nom} · ${g.bpm} BPM · ${g.mesures.length} mesure${g.mesures.length > 1 ? 's' : ''} · une ligne = deux mesures`;
       const ap = accordPrincipal(g); const pb = q('.mo-princ');
       pb.hidden = false;
-      pb.innerHTML = `<div class="mo-princ-acc"><small>Accord principal</small><b>${esc(nomAcc(ap))}</b></div>${diagramme(ap.r, ap.q, { taille: 70 })}<p>La « maison » de la chanson : c’est là qu’elle se repose. Une ligne qui <b>finit sur ${esc(nomAcc(ap))}</b> sonne finie ; une ligne qui finit ailleurs donne envie d’entendre la suite. Les ★ le montrent dans les lignes.</p><button class="btn small" data-m="ecouter-princ" aria-label="Écouter l’accord principal">▶</button>`;
+      pb.innerHTML = `<span class="mo-princ-k">★ Accord principal</span><b class="mo-princ-n">${esc(nomAcc(ap))}</b>${diagramme(ap.r, ap.q, { taille: 46 })}<button class="btn small" data-m="ecouter-princ" aria-label="Écouter l’accord principal">▶</button><details class="mo-princ-pq"><summary>c’est quoi?</summary><p>La « maison » de la chanson : c’est là qu’elle se repose. Une ligne qui finit sur ${esc(nomAcc(ap))} sonne finie ; une ligne qui finit ailleurs donne envie d’entendre la suite. Les ★ le marquent dans les lignes.</p></details>`;
       principal = ap;
       const box = q('.mo-lignes');
       const introH = deb() ? `<article class="panel mo-intro"><b>🎵 Intro</b> · mesure${deb() > 1 ? `s 1 à ${deb()}` : ' 1'} · musique seule <span class="muted small">(« Chanter sur la grille » la joue avant la première ligne)</span></article>` : '';
       if (!lignes.length) { box.innerHTML = '<div class="panel mo-vide"><p>J’écris les premières lignes de cette chanson…</p></div>'; return; }
       const schema = st.schema;
-      box.innerHTML = `<p class="mo-a-qui">📄 Les paroles de <b>« ${esc(nomDeCle(cle))} »</b></p>${lignes.some((L) => L.txt) ? `<details class="mo-ranger-haut" ${avantRangement ? 'open' : ''}><summary>↪ Ces paroles ne sont pas pour « ${esc(nomDeCle(cle))} »?</summary><div class="mo-ranger-ici"></div></details>` : ''}` + introH + lignes.map((L, i) => {
+      box.innerHTML = `<p class="mo-a-qui">📄 Les paroles de <b>« ${esc(nomDeCle(cle))} »</b> <span class="mo-a-qui-acc" title="L’accord principal">★ ${esc(nomAcc(ap))}</span></p>${lignes.some((L) => L.txt) ? `<details class="mo-ranger-haut" ${avantRangement ? 'open' : ''}><summary>↪ Ces paroles ne sont pas pour « ${esc(nomDeCle(cle))} »?</summary><div class="mo-ranger-ici"></div></details>` : ''}` + introH + lignes.map((L, i) => {
         const { sl, syl, pl, notes } = analyse(txtDe(L), i);
         const p = partL(i); const rime = p != null && lignes[p] ? rimeOf(L.txt) === rimeOf(lignes[p].txt) : null;
-        const acc = [0, 1].map((h) => [0, 1, 2, 3].map((t) => { const m = mDe(i, h, g.mesures.length); const c = g.mesures[m][t]; return c ? `<span class="mo-acc ${memeAccord(c, ap) ? 'princ' : ''}" style="left:${((h * 16 + t * 4) / 32) * 100}%">${memeAccord(c, ap) ? '★ ' : ''}${esc(nomAcc(c))}</span>` : ''; }).join('')).join('');
-        const first = !g.mesures[mDe(i, 0, g.mesures.length)][0] ? `<span class="mo-acc tenu ${memeAccord(accordA(g, mDe(i, 0, g.mesures.length), 0), ap) ? 'princ' : ''}" style="left:0">${esc(nomAcc(accordA(g, mDe(i, 0, g.mesures.length), 0)))}</span>` : '';
+        const cases8 = []; for (let h = 0; h < 2; h++) for (let t = 0; t < 4; t++) { const m = mDe(i, h, g.mesures.length); const c = g.mesures[m][t] || (!cases8.length ? accordA(g, m, t) : null); if (c) cases8.push({ c, de: h * 4 + t, n: 1 }); else if (cases8.length) cases8.at(-1).n++; }
+        const acc = cases8.map(({ c, de, n }) => `<span class="mo-acc ${memeAccord(c, ap) ? 'princ' : ''}" style="grid-column:${de + 1} / span ${n}">${memeAccord(c, ap) ? '★ ' : ''}${esc(nomAcc(c))}</span>`).join(''); const first = '';
         const cases = [...Array(32)].map((_, s) => `<i class="${s % 4 === 0 ? 'b' : ''} ${s % 16 === 0 ? 'm' : ''} ${sl.some((x) => x.s === s && x.f) ? 'f' : ''}"></i>`).join('');
         const blocs = syl.map((s, k) => { const kk = pl.pos[k]; if (kk < 0) return ''; const x = sl[kk]; return `<span class="pl-syl ${s.accent === 2 ? 'a2' : s.accent ? 'a1' : ''} ${x.f ? 'sur-f' : ''}" data-k="${k}" style="left:${(x.s / 32) * 100}%;width:${(x.d / 32) * 100}%"><b>${esc(s.txt)}</b><small>${nomNote(notes[k])}</small></span>`; }).join('');
         const lettre = 'ABCDEFGH'[schema === 'AABB' ? Math.floor((kP(i) % 4) / 2) + 2 * Math.floor(kP(i) / 4) : schema === 'ABAB' ? (kP(i) % 2) + 2 * Math.floor(kP(i) / 4) : schema === 'ABCB' ? [0, 1, 2, 1][kP(i) % 4] + 3 * Math.floor(kP(i) / 4) : 0] || '';
         return `<article class="panel mo-l ${L.garde ? 'garde' : ''} ${L.pause ? 'pause' : ''}" data-i="${i}">
-          <div class="mo-l-bouge">${L.pause ? '' : `<button class="btn small mo-silence" data-m="pause" data-i="${i}" title="Ajoute deux mesures de musique seule avant cette ligne (ses mots ne bougent pas)">🎵 silence avant</button>`}<button class="btn small mo-ins" data-m="ins-avant" data-i="${i}" title="Ajouter une ligne avant celle-ci" aria-label="Ajouter une ligne avant la ligne ${i + 1}">＋ avant</button><button class="btn small mo-ins" data-m="ins-apres" data-i="${i}" title="Ajouter une ligne après celle-ci" aria-label="Ajouter une ligne après la ligne ${i + 1}">＋ après</button><span class="mo-poignee" draggable="true" data-glisse="${i}" title="Glisse pour déplacer" aria-hidden="true">⠿</span><button class="btn small" data-m="haut" data-i="${i}" ${i ? '' : 'disabled'} aria-label="Monter la ligne ${i + 1}">↑</button><button class="btn small" data-m="bas" data-i="${i}" ${i < lignes.length - 1 ? '' : 'disabled'} aria-label="Descendre la ligne ${i + 1}">↓</button><button class="btn small" data-m="enlever" data-i="${i}" aria-label="Enlever la ligne ${i + 1}">✕</button></div>
+          <details class="mo-l-outils"><summary aria-label="Plus d’outils pour la ligne ${i + 1}">⋯</summary><div class="mo-l-bouge">${L.pause ? '' : `<button class="btn small mo-silence" data-m="pause" data-i="${i}" title="Ajoute deux mesures de musique seule avant cette ligne (ses mots ne bougent pas)">🎵 silence avant</button>`}<button class="btn small mo-ins" data-m="ins-avant" data-i="${i}" title="Ajouter une ligne avant celle-ci" aria-label="Ajouter une ligne avant la ligne ${i + 1}">＋ avant</button><button class="btn small mo-ins" data-m="ins-apres" data-i="${i}" title="Ajouter une ligne après celle-ci" aria-label="Ajouter une ligne après la ligne ${i + 1}">＋ après</button><span class="mo-poignee" draggable="true" data-glisse="${i}" title="Glisse pour déplacer" aria-hidden="true">⠿</span><button class="btn small" data-m="haut" data-i="${i}" ${i ? '' : 'disabled'} aria-label="Monter la ligne ${i + 1}">↑</button><button class="btn small" data-m="bas" data-i="${i}" ${i < lignes.length - 1 ? '' : 'disabled'} aria-label="Descendre la ligne ${i + 1}">↓</button><button class="btn small" data-m="enlever" data-i="${i}" aria-label="Enlever la ligne ${i + 1}">✕</button><button class="btn small mo-choeur ${L.choeur ? 'on' : ''}" data-m="choeur" data-i="${i}" aria-pressed="${!!L.choeur}" title="Les chœurs chantent cette ligne">🎤 chœurs</button></div></details>
           <div class="mo-l-tete">
             ${schema !== 'libre' ? `<span class="mo-lettre" title="Schéma de rimes">${lettre}</span>` : ''}
             ${L.pause ? '' : '<span class="mo-crayon" aria-hidden="true">✎</span>'}${L.pause ? '<p class="mo-pause-txt">🎵 Deux mesures de musique seule <small class="muted">(✕ pour enlever ce silence)</small></p>' : `<textarea class="mo-txt" data-i="${i}" rows="1" aria-label="Ligne ${i + 1}" placeholder="Écris ta ligne ici…">${esc(L.txt)}</textarea>`}
@@ -276,7 +283,6 @@ export default {
             ${rime === true ? '<span class="mo-rime pos">rime ✓</span>' : rime === false ? '<span class="mo-rime neg">ne rime pas</span>' : ''}
             <label class="mo-garde"><input type="checkbox" data-garde="${i}" ${L.garde ? 'checked' : ''}> Garder</label>
             <button class="btn small" data-m="autre" data-i="${i}" title="Une autre ligne à cette place">↻ Une autre</button>
-            <button class="btn small mo-choeur ${L.choeur ? 'on' : ''}" data-m="choeur" data-i="${i}" aria-pressed="${!!L.choeur}" title="Les chœurs (« ouuu ») chantent cette ligne : la note de chaque syllabe">🎤</button>
             <button class="btn small" data-m="boucle" data-i="${i}" title="Rejoue ces deux mesures en boucle pendant que tu écris">🔁</button>
             <button class="btn small" data-m="une" data-i="${i}" aria-label="Écouter la ligne ${i + 1}" title="Écouter cette ligne">▶</button>
           </div>
@@ -423,11 +429,13 @@ export default {
     // où elle est chantée ; la syllabe chantée s'allume, celles à venir attendent à droite, et une tête de lecture avance.
     function roulette(F, ks) {
       const ss = F.syl.filter((x) => x.t != null); if (!ss.length) return '';
-      const lo = Math.min(...ss.map((x) => x.note)) - 1; const hi = Math.max(...ss.map((x) => x.note)) + 1; const span = Math.max(4, hi - lo); const D = F.fin - F.debut;
+      const vv = F.vraies || []; const toutes = [...ss.map((x) => x.note), ...vv.map((x) => x.m)];
+      const lo = Math.min(...toutes) - 1; const hi = Math.max(...toutes) + 1; const span = Math.max(4, hi - lo); const D = F.fin - F.debut;
       const barres = ss.map((x) => `<span class="mo-roll-b ${x.k === ks ? 'on' : x.k < ks ? 'dit' : ''} ${x.accent ? 'fort' : ''}" style="left:${((x.t - F.debut) / D) * 100}%;width:${Math.max(2, (x.d / D) * 100 - 0.6)}%;top:${((hi - x.note) / span) * 78}%"><b>${esc(x.txt)}</b><small>${esc(nomNote(x.note))}</small></span>`).join('');
       const accs = F.acc.filter((a, n) => !n || nomAcc(a.c) !== nomAcc(F.acc[n - 1].c)).map((a) => `<i class="mo-roll-acc" style="left:${((a.t - F.debut) / D) * 100}%">${esc(nomAcc(a.c))}</i>`).join('');
       const temps = [...Array(8)].map((_, n) => `<i class="mo-roll-t ${n % 4 === 0 ? 'm' : ''}" style="left:${(n / 8) * 100}%"></i>`).join('');
-      return `<div class="mo-roll" aria-hidden="true">${temps}${accs}${barres}<i class="mo-roll-tete"></i></div>`;
+      const voixVraie = vv.map((x) => `<i class="mo-roll-v" style="left:${Math.max(0, ((x.t - F.debut) / D) * 100)}%;width:${Math.max(1, (x.d / D) * 100)}%;top:${((hi - x.m) / span) * 78 + 6}%"></i>`).join('');
+      return `<div class="mo-roll" aria-hidden="true">${temps}${accs}${voixVraie}${barres}<i class="mo-roll-tete"></i></div>${vv.length ? '<p class="mo-roll-leg"><i></i> ta voix dans la chanson · <b></b> la mélodie proposée</p>' : ''}`;
     }
     function majBarre(t, t0, t1, noire, frise, j, tIntro = t1) {
       const lb = q('.mo-lecteur'); if (!lb) return; lb.hidden = false;
@@ -466,7 +474,8 @@ export default {
       const frise = []; // par ligne : ses syllabes et ses accords, avec leur moment
       quelles.forEach((i, j) => {
         const { sl, syl, pl, notes } = analyse(txtDe(lignes[i]), i); const debut = t1 + j * 2 * mes;
-        const F = { i, debut, fin: debut + 2 * mes, syl: syl.map((sy, k) => ({ txt: sy.txt, mot: sy.mot, t: pl.pos[k] >= 0 ? debut + sl[pl.pos[k]].s * dc : null, d: pl.pos[k] >= 0 ? sl[pl.pos[k]].d * dc : 0, note: notes[k], accent: sy.accent, k })), acc: [] };
+        const vraies = (() => { if (!chanson?.voix?.length || !vraiOk()) return []; const { a, b } = passage(i); const k = mes / (4 * chanson.temps); return chanson.voix.filter(([t, d]) => t + d > a && t < b).map(([t, d, m]) => ({ t: debut + (t - a) * k, d: d * k, m })); })();
+        const F = { i, debut, fin: debut + 2 * mes, vraies, syl: syl.map((sy, k) => ({ txt: sy.txt, mot: sy.mot, t: pl.pos[k] >= 0 ? debut + sl[pl.pos[k]].s * dc : null, d: pl.pos[k] >= 0 ? sl[pl.pos[k]].d * dc : 0, note: notes[k], accent: sy.accent, k })), acc: [] };
         for (let h = 0; h < 2; h++) for (let t = 0; t < 4; t++) { const m = mDe(i, h, g.mesures.length); const ch = g.mesures[m][t] || (h === 0 && t === 0 ? accordA(g, m, 0) : null); if (ch) F.acc.push({ t: debut + (h * 4 + t) * noire, c: ch }); }
         frise.push(F);
         const vraie = chanson && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source) && q('[data-m=vraie]')?.checked;

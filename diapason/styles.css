@@ -4612,3 +4612,47 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .mo-roll-b.on { background: #fbe7a1; color: #1d1a15; } .mo-roll-b.on small { color: #5b4a1c; }
 .mo-roll-tete { position: absolute; top: 0; bottom: 0; width: 2px; background: #d93a24; opacity: 0; }
 @media (max-width: 640px) { .mo-lb-mil { grid-column: 1 / -1; grid-row: 2; } .mo-roll { height: 76px; } .mo-roll-b small { display: none; } }
+
+/* 1.10 — Mots sur la grille, simplifiée : la chanson en haut, les lignes, les réglages repliés */
+.mo-entete { display: grid; gap: 12px; margin-top: 12px; }
+.mo-entete-l { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; }
+.mo-entete .mo-src select { font: 700 1.1rem var(--display); padding: 10px 12px; border-radius: 8px; border: 1px solid #b08a2e; background: #fffdf8; max-width: 100%; }
+.mo-entete .mo-gestes { margin: 0; }
+.mo-princ { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 6px 12px 6px 14px; border-radius: 10px; background: #2b2620; color: #fbe7a1; }
+.mo-princ[hidden] { display: none; }
+.mo-princ-k { font-size: .8rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #e8d9a8; }
+.mo-princ-n { font: 800 2rem/1 var(--display); color: #fbe7a1; }
+.mo-princ .gt-diag { background: #fffdf8; border-radius: 6px; }
+.mo-princ .btn { background: #fbe7a1; color: #1d1a15; border-color: #fbe7a1; }
+.mo-princ-pq summary { cursor: pointer; font-size: .85rem; color: #e8d9a8; text-decoration: underline; }
+.mo-princ-pq p { margin: 6px 0 0; max-width: 46ch; font-size: .95rem; color: #efe6d2; }
+.mo-reg { margin-top: 12px; }
+.mo-reg > summary { cursor: pointer; font: 700 1.05rem var(--display); color: #2b2620; padding: 2px 0; }
+.mo-reg[open] > summary { margin-bottom: 12px; }
+.mo-a-qui-acc { display: inline-block; margin-left: 6px; padding: 2px 10px; border-radius: 99px; background: #2b2620; color: #fbe7a1; font: 800 1rem var(--display); white-space: nowrap; }
+/* les accords d'une ligne : 8 temps, chaque accord aussi large que sa durée */
+.mo-accs { position: static; height: auto; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 3px; margin-top: 10px; }
+.mo-acc { position: static; font: 800 1.05rem var(--display); padding: 4px 8px; border-left: 3px solid #b08a2e; background: #fbefc6; border-radius: 0 6px 6px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.mo-acc.princ { background: #2b2620; color: #fbe7a1; border-left-color: #fbe7a1; }
+/* les outils d'une ligne, repliés */
+.mo-l-outils { position: absolute; top: -14px; right: 18px; z-index: 2; }
+.mo-l-outils > summary { list-style: none; cursor: pointer; font: 800 1.2rem/1 var(--display); padding: 4px 12px 8px; border-radius: 8px; background: #fffdf8; border: 1px solid #d9cfbd; color: #2b2620; }
+.mo-l-outils > summary::-webkit-details-marker { display: none; }
+.mo-l-outils[open] > summary { background: #2b2620; color: #fbe7a1; }
+.mo-l-outils .mo-l-bouge { position: absolute; right: 0; top: 44px; width: max-content; max-width: min(92vw, 520px); padding: 10px; border-radius: 10px; background: #fffdf8; border: 1px solid #d9cfbd; box-shadow: 0 8px 24px rgba(0, 0, 0, .18); }
+@media (max-width: 640px) {
+  .mo-acc { font-size: .95rem; padding: 4px 5px; }
+  .mo-entete .mo-gestes .btn { flex: 1 1 auto; }
+  .mo-l-outils .mo-l-bouge { position: absolute; right: 0; }
+}
+.mo-entete-l > * { min-width: 0; max-width: 100%; }
+@media (max-width: 640px) {
+  .mo-entete .field { display: grid; gap: 4px; width: 100%; }
+  .mo-entete .field select, .mo-entete .field input { width: 100%; min-width: 0; }
+  .mo-princ { width: 100%; }
+  .mo-princ-n { font-size: 1.7rem; }
+}
+.mo-roll-v { position: absolute; height: 10%; min-height: 6px; border-radius: 4px; background: rgba(120, 200, 230, .45); border: 1px solid rgba(160, 220, 240, .7); }
+.mo-roll-leg { margin: 0; font-size: .8rem; color: #e8d9a8; display: flex; align-items: center; gap: 6px; }
+.mo-roll-leg i { display: inline-block; width: 18px; height: 8px; border-radius: 3px; background: rgba(120, 200, 230, .45); border: 1px solid rgba(160, 220, 240, .7); }
+.mo-roll-leg b { display: inline-block; width: 18px; height: 8px; border-radius: 3px; background: rgba(239, 230, 210, .3); }

@@ -317,8 +317,10 @@ export default {
       voix.notes.forEach((b) => b.occ.forEach((t, k) => { const d = b.occD?.[k] || 0.2; const a = t - cadreG.debutCale; for (let m = Math.max(0, Math.floor(a / mes)); m <= Math.floor((a + d) / mes) && m < cumul.length; m++) cumul[m] += Math.max(0, Math.min(a + d, (m + 1) * mes) - Math.max(a, m * mes)); }));
       return cumul.map((x) => (x / mes >= 0.34 ? 1 : 0));
     }
+    // Les notes vraiment chantées (moment, durée, hauteur), pour les montrer sous les paroles.
+    const notesListe = (max = 1500) => (voix?.voix && voix.notes ? voix.notes.flatMap((b) => b.occ.map((t, k) => [Math.round(t * 100) / 100, Math.round((b.occD?.[k] || 0.2) * 100) / 100, b.m])).sort((x, y) => x[0] - y[0]).slice(0, max) : null);
     function garderSon() {
-      const og = store.get('oreilleGrille', null); if (og) { og.chant = ouChante(); store.set('oreilleGrille', og); } if (blobCourant && res) garderDerniere({ blob: blobCourant, nom, t0: cadreG?.debutCale ?? 0, temps: cadreG?.temps ?? 60 / res.bpm, at: Date.now() });
+      const og = store.get('oreilleGrille', null); if (og) { og.chant = ouChante(); store.set('oreilleGrille', og); } if (blobCourant && res) garderDerniere({ blob: blobCourant, nom, t0: cadreG?.debutCale ?? 0, temps: cadreG?.temps ?? 60 / res.bpm, at: Date.now(), voix: notesListe() });
     }
     // Y a-t-il du souffle? On compare les passages les plus calmes aux plus forts (trames de 50 ms).
     function niveauBruit(b) {
@@ -791,7 +793,7 @@ export default {
       if (o === 'piece') {
         if (!res || !blobCourant) return; const b = e.target.closest('[data-o]'); const lab = b.textContent; b.disabled = true;
         const [nm, mode] = String(res.ton).split(' ou ')[0].split(' '); const pc = Math.max(0, NOTES_FR.findIndex((x) => x.toLowerCase() === String(nm).toLowerCase()));
-        const og = store.get('oreilleGrille', null); const piece = { bpm: res.bpm, t1: cadreG?.debutCale ?? 0, tonique: pc, mineur: /^min/i.test(mode || ''), grille: og?.mesures || null, chant: og?.chant || null, temps: cadreG?.temps ?? 60 / res.bpm };
+        const og = store.get('oreilleGrille', null); const piece = { bpm: res.bpm, t1: cadreG?.debutCale ?? 0, tonique: pc, mineur: /^min/i.test(mode || ''), grille: og?.mesures || null, chant: og?.chant || null, voix: notesListe(700), temps: cadreG?.temps ?? 60 / res.bpm };
         try {
           const ex = entreeCourante && espace.entries.find((x) => x.id === entreeCourante);
           if (ex) await saveEntry({ ...ex, data: { ...(ex.data || {}), piece } }, { force: true });
@@ -810,7 +812,7 @@ export default {
       if (o === 'harmo-non') { accs = accsEntendus; cadreG = null; corrigees = new Set(); montrerAccords(); harmo(false); return; }
       if (o === 'mots') {
         if (!accs?.length) { toast('Pas encore d’accords pour cette chanson.'); return; }
-        window.__flipMots = { buf, nom, t0: cadreG?.debutCale ?? 0, temps: cadreG?.temps ?? 60 / res.bpm };
+        window.__flipMots = { buf, nom, t0: cadreG?.debutCale ?? 0, temps: cadreG?.temps ?? 60 / res.bpm, voix: notesListe() };
         const st = store.get('motsReglages', {}); store.set('motsReglages', { ...st, source: 'oreille' });
         location.hash = '#/mots'; return;
       }

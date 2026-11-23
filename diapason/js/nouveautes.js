@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.10', quand: '2026-11-23', titre: 'Mots sur la grille, plus simple', items: [
+    ['Moins d’éléments partout', ['En haut : la chanson, son accord principal (en gros, avec sa position à la guitare) et trois gestes : ▶ Chanter, ✨ Caler, ↻ Écrire. Les thèmes, mots-clés et réglages sont repliés dans « ⚙ ». Les outils d’une ligne (silence, ＋ avant/après, ↑ ↓ ✕, chœurs) sont rangés derrière « ⋯ ».']],
+    ['Des accords lisibles', ['Les accords d’une ligne sont maintenant de grosses étiquettes, chacune aussi large que sa durée ; l’accord principal est en foncé avec ★, et rappelé à côté du nom de la chanson. « Fa/Do » marche aussi dans les accords tapés.']],
+    ['Ta voix sous la mélodie', ['Pendant la lecture, si L’oreille a repéré ta voix dans la chanson, tes vraies notes apparaissent en bleu sous la mélodie proposée : tu vois si tes mots suivent ta propre mélodie.']],
+    ['Des phrases qui ont plus de sens', ['« dans », « sous », « je traverse », « je quitte » ne prennent plus que des lieux (la nuit, la rue, la mer, tes bras…), et la tournure « ta glace de ma chasse » est retirée.']],
+  ] },
   { v: '1.09', quand: '2026-11-23', titre: 'Voir les sons qui viennent', items: [
     ['La mélodie dans la barre de lecture', ['Pendant « Chanter sur la grille », la barre du bas montre maintenant les sons, pas seulement les mots : chaque syllabe est une barre placée à la hauteur de sa note (plus haut = plus aigu), aussi longue qu’elle est chantée, avec le nom de la note. La syllabe chantée s’allume, celles qui viennent attendent à droite, une tête rouge avance, et les accords sont marqués là où ils changent.']],
   ] },

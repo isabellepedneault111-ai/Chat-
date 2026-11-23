@@ -94,30 +94,44 @@ export function hasard(graine) {
 }
 
 // Les tournures. Chacune reçoit un tirage, la banque, la personne, et un nom imposé pour la fin (pour rimer).
+// Le sens : « dans », « sous », « je traverse », « je quitte »… veulent un LIEU (la nuit, la rue, la mer, tes bras),
+// pas n'importe quel nom (« je traverse ta lampe », « dans ma glace »).
+const LIEUX = new Set('nuit rue ville mer ciel chambre maison jardin cour cabane route chemin horizon foule métro voiture plage rivage large océan vague neige tempête vent pluie forêt champ lac rivière fleuve silence ombre noir lumière brouillard hiver été matin soir minuit aube enfance mémoire rêve sommeil cœur voix bras yeux regard main mains peau lit fenêtre porte quai pont toit ruelle terrasse carrefour grenier sable sel marée orage feu flamme braise cendre ciel espace monde jour temps'.split(' '));
+export const estLieu = (w) => LIEUX.has(String(w).toLowerCase());
+const VERBES_LIEU = new Set(['traverse', 'quitte', 'habite', 'rejoins', 'fuis', 'roule', 'retrouve', 'parcours']);
+// Un verbe et son complément qui vont ensemble ; avec une rime imposée, on choisit un verbe qui l'accepte.
+function verbeEtObjet(r, b, fin) {
+  for (let k = 0; k < 8; k++) {
+    const v = verbe(r.pick(b.vt)); const lieu = VERBES_LIEU.has(v.v);
+    if (lieu && fin && !estLieu(fin.w)) continue;
+    return { v, nom: fin || (lieu ? b.lieu(r) : b.nom(r)) };
+  }
+  const v = verbe(r.pick(b.vt.filter((x) => !VERBES_LIEU.has(verbe(x).v))) || b.vt[0]); return { v, nom: fin || b.nom(r) };
+}
+const lieuOu = (r, b, fin) => (fin && estLieu(fin.w) ? fin : b.lieu(r));
 const TOURNURES = [
-  (r, b, p, fin) => { const v = verbe(r.pick(b.vt)); return `${sujet(p, v.v)} ${avec(v.p, gn(r, fin || b.nom(r)))}`; },
-  (r, b, p, fin) => { const v = verbe(r.pick(b.vt)); return `${sujet(p, v.v)} ${avec(v.p, gn(r, fin || b.nom(r), { adj: r.pick(b.a) }))}`; },
+  (r, b, p, fin) => { const { v, nom } = verbeEtObjet(r, b, fin); return `${sujet(p, v.v)} ${avec(v.p, gn(r, nom))}`; },
+  (r, b, p, fin) => { const { v, nom } = verbeEtObjet(r, b, fin); return `${sujet(p, v.v)} ${avec(v.p, gn(r, nom, { adj: r.pick(b.a) }))}`; },
   (r, b) => `${txt(gn(r, b.nom(r), { det: r.pick(['def', 'pos2', 'pos1', 'dem']) }))} ${r.pick(b.vi)}`,
   (r, b) => `${txt(gn(r, b.nom(r), { det: r.pick(['def', 'pos2', 'dem']) }))} ${r.pick(b.vi)} encore`,
-  (r, b, p, fin) => `et ${txt(gn(r, b.nom(r), { det: r.pick(['def', 'pos2']) }))} ${r.pick(b.vi)} dans ${txt(gn(r, fin || b.nom(r)))}`,
-  (r, b, p, fin) => { const v = verbe(r.pick(b.vt)); return `${sujet(p, v.v)} ${avec(v.p, gn(r, b.nom(r)))} dans ${txt(gn(r, fin || b.nom(r)))}`; },
-  (r, b, p, fin) => `${p === 'tu' ? 'tu as' : 'j’ai'} ${txt(gn(r, b.nom(r), { det: 'def' }))} dans ${txt(gn(r, fin || b.nom(r), { det: r.pick(['pos1', 'pos2', 'plpos', 'def']) }))}`,
+  (r, b, p, fin) => `et ${txt(gn(r, b.nom(r), { det: r.pick(['def', 'pos2']) }))} ${r.pick(b.vi)} dans ${txt(gn(r, lieuOu(r, b, fin)))}`,
+  (r, b, p) => { const { v, nom } = verbeEtObjet(r, b, null); return `${sujet(p, v.v)} ${avec(v.p, gn(r, nom))} dans ${txt(gn(r, b.lieu(r)))}`; },
+  (r, b, p, fin) => `${p === 'tu' ? 'tu as' : 'j’ai'} ${txt(gn(r, b.nom(r), { det: 'def' }))} dans ${txt(gn(r, lieuOu(r, b, fin), { det: r.pick(['pos1', 'pos2', 'plpos', 'def']) }))}`,
   (r, b, p, fin) => `${txt(gn(r, b.nom(r), { adj: r.pick(b.a) }))}, ${txt(gn(r, fin || b.nom(r), { adj: fin ? null : r.pick(b.a) }))}`,
   (r, b) => `quand ${txt(gn(r, b.nom(r), { det: r.pick(['def', 'pos2', 'pos1']) }))} ${r.pick(b.vi)}`,
-  (r, b, p, fin) => { const v = verbe(r.pick(b.vt)); return `${sujet(p, v.v)} encore ${avec(v.p, gn(r, fin || b.nom(r)))}`; },
-  (r, b, p, fin) => { const v = verbe(r.pick(b.vt)); return `${neg(p, v.v)} ${avec(v.p, gn(r, fin || b.nom(r)))}`; },
-  (r, b, p, fin) => `sous ${txt(gn(r, fin || b.nom(r), { adj: fin ? null : r.pick(b.a) }))}`,
+  (r, b, p, fin) => { const { v, nom } = verbeEtObjet(r, b, fin); return `${sujet(p, v.v)} encore ${avec(v.p, gn(r, nom))}`; },
+  (r, b, p, fin) => { const { v, nom } = verbeEtObjet(r, b, fin); return `${neg(p, v.v)} ${avec(v.p, gn(r, nom))}`; },
+  (r, b, p, fin) => `sous ${txt(gn(r, lieuOu(r, b, fin), { adj: fin ? null : r.pick(b.a) }))}`,
   (r, b, p, fin) => `entre ${txt(gn(r, b.nom(r)))} et ${txt(gn(r, fin || b.nom(r)))}`,
   (r, b, p, fin) => `il reste ${txt(gn(r, fin || b.nom(r), { det: r.pick(['def', 'pos2', 'pos1', 'un']) }))}`,
-  (r, b, p, fin) => { const v = verbe(r.pick(b.vt)); return `${sujet(p, v.v)} ${avec(v.p, gn(r, b.nom(r)))} comme ${txt(gn(r, fin || b.nom(r), { det: r.pick(['def', 'un']) }))}`; },
+  (r, b, p, fin) => { const { v, nom } = verbeEtObjet(r, b, null); return `${sujet(p, v.v)} ${avec(v.p, gn(r, nom))} comme ${txt(gn(r, fin || b.nom(r), { det: r.pick(['def', 'un']) }))}`; },
   (r, b, p, fin) => `${txt(gn(r, b.nom(r)))}, ${txt(gn(r, b.nom(r)))} et ${txt(gn(r, fin || b.nom(r)))}`,
   (r, b, p, fin) => `oh, ${txt(gn(r, fin || b.nom(r), { det: r.pick(['pos1', 'pos2', 'def']) }))}`,
-  (r, b, p, fin) => `on ${r.pick(b.vi)} sous ${txt(gn(r, fin || b.nom(r)))}`,
+  (r, b, p, fin) => `on ${r.pick(b.vi)} sous ${txt(gn(r, lieuOu(r, b, fin)))}`,
   (r, b, p, fin) => `tout ${r.pick(b.vi)}, même ${txt(gn(r, fin || b.nom(r)))}`,
-  (r, b, p, fin) => { const v = verbe(r.pick(b.vt)); return `${sujet(p, v.v)} ${avec(v.p, gn(r, b.nom(r)))} ${avec('de', gn(r, fin || b.nom(r), { det: r.pick(['def', 'pos2', 'pos1']) }))}`; },
 ];
 // Le naturel de chaque tournure : une phrase avec un verbe sonne mieux qu'une énumération de noms.
-const NATUREL = [10, 8, 9, 6, 6, 7, 9, -6, 5, 8, 9, 0, 0, 5, 7, -14, -8, 6, 5, 0];
+const NATUREL = [10, 8, 9, 6, 6, 7, 9, -6, 5, 8, 9, 2, 0, 5, 7, -14, -8, 6, 5];
 const PHRASES = [(k) => k, (k) => `oh, ${k}`, (k) => `${k}, encore`, (k) => `et ${k}`, (k) => `tout ça pour ${k}`, (k) => `j’ai dit : ${k}`, (k) => `${k}, ${k}`];
 const propre = (s) => s.replace(/\s+/g, ' ').replace(/ ,/g, ',').trim();
 
@@ -176,7 +190,8 @@ export function ligne({ b, r, slots, pers, rime = null, tete = false, finAEviter
     if (manque.length && rr() < 0.35) return rr.pick(manque).nom;
     return rr.pick(b.n);
   };
-  const banqueL = { ...b, nom: nomAuHasard };
+  const lieux = b.n.filter((x) => estLieu(x.w));
+  const banqueL = { ...b, nom: nomAuHasard, lieu: (rr) => (lieux.length ? rr.pick(lieux) : nomAuHasard(rr)) };
   let best = null;
   for (let i = 0; i < 420; i++) {
     const p = pers === 'mix' ? r.pick(['je', 'tu']) : pers;
