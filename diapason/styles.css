@@ -4490,3 +4490,21 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 @keyframes or-pouls { 50% { opacity: .3; } }
 @media (prefers-reduced-motion: reduce) { .or-pastille { animation: none; } }
 .or-recoit { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; } .or-recoit input { width: 22px; height: 22px; accent-color: #5d6d24; }
+
+/* 0.88 — la barre de lecture de Mots sur la grille : l'accord en gros, les mots qui s'allument, un vrai Stop */
+.mo-lecteur { position: fixed; left: 50%; transform: translateX(-50%); bottom: 72px; z-index: 60; width: min(980px, calc(100% - 32px)); display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 18px; padding: 12px 18px; border-radius: 12px; background: #1d1a15; color: #efe6d2; box-shadow: 0 10px 30px rgba(0, 0, 0, .35); }
+.mo-lecteur[hidden] { display: none; }
+.mo-lb-acc { display: grid; grid-template-columns: auto auto; grid-template-rows: auto auto; align-items: center; gap: 0 10px; min-width: 150px; }
+.mo-lb-acc > b { font: 800 2.4rem/1 var(--display); color: #fbe7a1; }
+.mo-lb-acc .gt-diag { grid-row: span 2; background: #fffdf8; border-radius: 6px; }
+.mo-lb-acc small { font-size: .95rem; color: #c9bfa9; }
+.mo-lb-compte { font-variant-numeric: tabular-nums; }
+.mo-lb-mots { margin: 0; font: 600 1.5rem/1.35 var(--display); }
+.mo-lb-mots span { color: #8f8676; transition: color .08s; }
+.mo-lb-mots span.dit { color: #efe6d2; }
+.mo-lb-mots span.on { color: #1d1a15; background: #fbe7a1; border-radius: 4px; padding: 0 2px; }
+.mo-lb-mots i { display: inline; } .mo-lb-mots i::after { content: ''; }
+.mo-lb-stop { font-size: 1.15rem; padding: 12px 20px; background: #d93a24; color: #fff; border-color: #8f2414; }
+.pl-syl.dit { background: #fbe7a1 !important; border-left-color: #b08a2e !important; }
+.pl-syl.dit b { color: #1d1a15 !important; } .pl-syl.dit small { color: #5b4a1c !important; }
+@media (max-width: 640px) { .mo-lecteur { grid-template-columns: auto 1fr; bottom: 64px; gap: 10px; padding: 10px 12px; } .mo-lb-mots { grid-column: 1 / -1; grid-row: 2; font-size: 1.2rem; } .mo-lb-acc > b { font-size: 1.8rem; } .mo-lb-acc .gt-diag { width: 48px; height: auto; } }

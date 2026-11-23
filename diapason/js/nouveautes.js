@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.88', quand: '2026-11-23', titre: 'Suivre les mots pendant que ça chante', items: [
+    ['La barre de lecture', ['Dans Mots sur la grille, pendant que ça chante : en bas, l’accord qui joue en gros, avec sa position à la guitare et le suivant ; la ligne en cours, le mot chanté allumé ; et un gros ■ Stop. Dans la piste de la ligne, la syllabe chantée s’allume aussi, et la ligne revient d’elle-même au milieu de l’écran.']],
+    ['▶ par ligne', ['Le ▶ d’une ligne devient ■ pendant qu’elle joue : un deuxième toucher l’arrête.']],
+  ] },
   { v: '0.87', quand: '2026-11-23', titre: 'La cathédrale reste à sa place', items: [
     ['Plus d’orchestre fantôme', ['Si on quittait la cathédrale pendant qu’elle chargeait son orchestre (le « … »), elle démarrait quand même, sur la page suivante, et rien ne l’arrêtait. Maintenant, quitter la page l’arrête pour vrai, et « Arrêter le son » la coupe où qu’on soit.']],
   ] },
