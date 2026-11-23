@@ -60,6 +60,9 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.95', quand: '2026-11-23', titre: 'Une ligne, n’importe où', items: [
+    ['＋ avant, ＋ après', ['Chaque ligne de Mots sur la grille a « ＋ avant » et « ＋ après » : une ligne vide apparaît juste là, prête à écrire. Les lignes suivantes glissent d’une place, avec leurs mesures.']],
+  ] },
   { v: '0.94', quand: '2026-11-23', titre: 'Écrire en voyant la musique', items: [
     ['L’onde sous chaque ligne', ['Dans Mots sur la grille, avec une de nos pièces (ou la chanson venue de L’oreille) : chaque ligne montre l’onde de ses deux mesures, avec les temps et les mesures marqués. « Les mots » : sur l’onde, au-dessus ou en dessous.']],
     ['Comme la chanson', ['« Sur les temps » propose « Comme la chanson » : FLIP repère les attaques du vrai son dans chaque passage et y pose les syllabes, ligne par ligne. Le nombre de syllabes visé vient de la musique elle-même.']],
