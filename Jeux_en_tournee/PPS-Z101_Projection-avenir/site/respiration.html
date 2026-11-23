@@ -4,62 +4,85 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Respiration 4 · 4 · 6</title>
 <style>
-:root{--nuit:#0F1430;--cyan:#2EC4E6;--jaune:#FFC531;--vert:#3DDC97;--blanc:#F4F6FF;--gris:#8B93B8}
+:root{--nuit:#0F1430;--cyan:#2EC4E6;--jaune:#FFC531;--vert:#3DDC97;--blanc:#F4F6FF;--gris:#8B93B8;--trait:#2C3360}
 *{box-sizing:border-box;margin:0}
-html,body{height:100%;background:var(--nuit);color:var(--blanc);font-family:Inter,"Segoe UI",system-ui,sans-serif;overflow:hidden;cursor:pointer;user-select:none}
-body{display:flex;flex-direction:column;align-items:center;justify-content:center}
+html,body{height:100%;background:var(--nuit);color:var(--blanc);font-family:Inter,"Segoe UI",system-ui,sans-serif;overflow:hidden;user-select:none}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
 .haut{position:fixed;top:3vh;left:4vw;right:4vw;display:flex;justify-content:space-between;align-items:center;font-weight:800;letter-spacing:.2em;text-transform:uppercase;font-size:clamp(12px,1.4vw,22px);color:var(--gris)}
 .haut b{color:var(--jaune)}
-.scene{position:relative;width:min(62vh,80vw);height:min(62vh,80vw);display:flex;align-items:center;justify-content:center}
-.anneau{position:absolute;inset:0;border-radius:50%;border:clamp(4px,.6vh,8px) solid #2C3360}
-.bulle{position:absolute;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(255,255,255,.18),transparent 60%),var(--c,var(--cyan));transform:scale(.55);opacity:.9;transition:transform linear,background-color .6s}
-.chiffre.petit{font-size:min(7vh,8vw);letter-spacing:.02em}
-.chiffre{position:relative;font-size:min(17vh,20vw);font-weight:900;line-height:1;color:var(--nuit);font-variant-numeric:tabular-nums}
-.etape{margin-top:4vh;font-size:clamp(28px,6vh,72px);font-weight:900;letter-spacing:-.02em;min-height:1.2em;text-align:center}
-.sous{margin-top:1vh;font-size:clamp(16px,2.4vh,30px);color:var(--gris);text-align:center;min-height:1.4em}
-.points{position:fixed;bottom:4vh;display:flex;gap:14px}
-.points span{width:18px;height:18px;border-radius:50%;border:3px solid #2C3360}
-.points span.ok{background:var(--vert);border-color:var(--vert)}
-.coin{position:fixed;bottom:3vh;right:3vw;display:flex;gap:10px}
-.coin button{font:inherit;font-size:14px;font-weight:700;color:var(--gris);background:transparent;border:1.5px solid #2C3360;border-radius:99px;padding:6px 12px;cursor:pointer}
-.coin button[aria-pressed=true]{color:var(--nuit);background:var(--jaune);border-color:var(--jaune)}
+svg.tri{width:min(86vw,118vh);height:auto;max-height:64vh}
+.etape{margin-top:2vh;font-size:clamp(30px,7vh,80px);font-weight:900;letter-spacing:-.02em;text-align:center;min-height:1.2em}
+.sous{margin-top:.6vh;font-size:clamp(16px,2.6vh,30px);color:var(--gris);text-align:center;min-height:1.4em}
+.bas{position:fixed;bottom:3vh;left:4vw;right:4vw;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.points{display:flex;gap:12px}.points span{width:18px;height:18px;border-radius:50%;border:3px solid var(--trait)}.points span.ok{background:var(--vert);border-color:var(--vert)}
+.ctrl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ctrl span{color:var(--gris);font-size:14px;font-weight:700;margin-right:2px}
+.ctrl button{font:inherit;font-size:15px;font-weight:800;color:var(--gris);background:transparent;border:1.5px solid var(--trait);border-radius:99px;padding:7px 14px;cursor:pointer;min-width:42px}
+.ctrl button[aria-pressed=true]{color:var(--nuit);background:var(--jaune);border-color:var(--jaune)}
+.encore{display:none;margin-top:2vh;font:inherit;font-size:clamp(18px,3vh,30px);font-weight:900;color:var(--nuit);background:var(--vert);border:0;border-radius:16px;padding:14px 30px;cursor:pointer}
+.encore.on{display:inline-block}
+@media (max-width:600px){.bas{justify-content:center}}
 </style>
 </head>
 <body>
 <div class="haut"><span><b>Niveau final</b> · je reste dans ma zone</span><span id="cycle"></span></div>
-<div class="scene"><div class="anneau"></div><div class="bulle" id="bulle"></div><div class="chiffre petit" id="chiffre">4 · 4 · 6</div></div>
+<svg class="tri" viewBox="40 140 720 400" aria-label="Triangle isocèle de côtés 4, 4 et 6">
+ <path d="M100 440 L400 175 L700 440 Z" fill="rgba(255,255,255,.03)" stroke="#2C3360" stroke-width="14" stroke-linejoin="round"/>
+ <path id="s0" d="M100 440 L400 175" fill="none" stroke="#2EC4E6" stroke-width="14" stroke-linecap="round" stroke-dasharray="400.3" stroke-dashoffset="400.3"/>
+ <path id="s1" d="M400 175 L700 440" fill="none" stroke="#FFC531" stroke-width="14" stroke-linecap="round" stroke-dasharray="400.3" stroke-dashoffset="400.3"/>
+ <path id="s2" d="M700 440 L100 440" fill="none" stroke="#3DDC97" stroke-width="14" stroke-linecap="round" stroke-dasharray="600" stroke-dashoffset="600"/>
+ <g font-weight="900" font-size="62" text-anchor="middle" font-family="Inter,Segoe UI,sans-serif">
+  <text id="l0" x="165" y="275" fill="#8B93B8">4</text><text id="l1" x="635" y="275" fill="#8B93B8">4</text><text id="l2" x="400" y="530" fill="#8B93B8">6</text>
+  <text x="165" y="305" font-size="18" font-weight="800" fill="#8B93B8" letter-spacing="2">INSPIRE</text><text x="635" y="305" font-size="18" font-weight="800" fill="#8B93B8" letter-spacing="2">BLOQUE</text><text x="400" y="478" font-size="18" font-weight="800" fill="#8B93B8" letter-spacing="2">EXPIRE</text>
+ </g>
+ <text id="chiffre" x="400" y="395" text-anchor="middle" font-size="120" font-weight="900" fill="#F4F6FF" font-family="Inter,Segoe UI,sans-serif">▶</text>
+ <circle id="point" cx="100" cy="440" r="20" fill="#F4F6FF" stroke="#0F1430" stroke-width="6"/>
+</svg>
 <div class="etape" id="etape">Cliquez pour commencer</div>
-<div class="sous" id="sous">3 respirations · personne ne le voit · ça marche aussi en évaluation</div>
-<div class="points" id="points"></div>
-<div class="coin" onclick="event.stopPropagation()">
- <button id="nb" title="Nombre de respirations">3 fois</button>
- <button id="son" aria-pressed="false" title="Un petit son à chaque étape">Son</button>
- <button id="ecran" title="Plein écran (touche F)">Plein écran</button>
+<div class="sous" id="sous">Je suis le point : 4 en montant, 4 en descendant, 6 tout le long du bas.</div>
+<button class="encore" id="encore">Encore une fois</button>
+<div class="bas" onclick="event.stopPropagation()">
+ <div class="points" id="points"></div>
+ <div class="ctrl"><span>Respirations</span><button data-n="1">1</button><button data-n="2">2</button><button data-n="3">3</button><button data-n="5">5</button>
+  <button id="son" aria-pressed="false">Son</button><button id="ecran">Plein écran</button></div>
 </div>
 <script>
-const PHASES=[{t:"J'inspire",s:"par le nez",d:4,scale:1,c:"#2EC4E6"},{t:"Je bloque",s:"doucement",d:4,scale:1,c:"#FFC531"},{t:"J'expire",s:"lentement, par la bouche",d:6,scale:.55,c:"#3DDC97"}];
-let N=3,actif=false,minuteur=null,sonOn=false,ctx=null;
-const $=id=>document.getElementById(id),bulle=$("bulle");
-function points(fait){$("points").innerHTML=Array.from({length:N},(_,i)=>`<span class="${i<fait?"ok":""}"></span>`).join("")}
+const PH=[{t:"J'inspire",s:"par le nez",d:4},{t:"Je bloque",s:"doucement",d:4},{t:"J'expire",s:"lentement, par la bouche",d:6}];
+const LEN=[400.3,400.3,600],COUL=["#2EC4E6","#FFC531","#3DDC97"],CYCLE=14;
+const $=id=>document.getElementById(id),pt=$("point"),path=document.createElementNS("http://www.w3.org/2000/svg","path");
+path.setAttribute("d","M100 440 L400 175 L700 440 Z");const TOT=path.getTotalLength();
+let N=3,actif=false,t0=0,raf=null,phPrec=-1,sonOn=false,ctx=null,pause=0;
+try{N=+localStorage.getItem("z446-n")||3}catch(e){}
+function boutons(){document.querySelectorAll("[data-n]").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.n===N))}
+function points(f){$("points").innerHTML=Array.from({length:N},(_,i)=>`<span class="${i<f?"ok":""}"></span>`).join("")}
 function bip(f){if(!sonOn)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=f;g.gain.setValueAtTime(.0001,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.12,ctx.currentTime+.05);g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.6);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.65)}catch(e){}}
-function arreter(){actif=false;clearInterval(minuteur);minuteur=null}
-function depart(){
- arreter();actif=true;let cycle=0,ph=0,reste;points(0);
- const lancer=()=>{const p=PHASES[ph];reste=p.d;bulle.style.setProperty("--c",p.c);bulle.style.transitionDuration=(ph===1?0:p.d)+"s";bulle.style.transform=`scale(${p.scale})`;
-  $("etape").textContent=p.t;$("sous").textContent=p.s;$("chiffre").textContent=reste;$("cycle").textContent=`Respiration ${cycle+1} / ${N}`;bip([440,520,392][ph])};
- $("chiffre").classList.remove("petit");bulle.style.transitionDuration="0s";bulle.style.transform="scale(.55)";
- requestAnimationFrame(()=>requestAnimationFrame(lancer));
- minuteur=setInterval(()=>{reste--;if(reste>0){$("chiffre").textContent=reste;return}
-  ph++;if(ph===PHASES.length){ph=0;cycle++;points(cycle);if(cycle===N){fin();return}}lancer()},1000)}
-function fin(){arreter();$("chiffre").classList.remove("petit");$("chiffre").textContent="✓";bulle.style.setProperty("--c","#3DDC97");bulle.style.transitionDuration="1.2s";bulle.style.transform="scale(.7)";
- $("etape").textContent="Vous êtes dans votre zone.";$("sous").textContent="Cliquez pour recommencer";$("cycle").textContent="";bip(660)}
-document.body.addEventListener("click",()=>{if(actif){arreter();$("etape").textContent="En pause";$("sous").textContent="Cliquez pour recommencer";return}depart()});
+function dessiner(cycleT){ // cycleT : secondes dans le cycle (0 à 14)
+ const p=path.getPointAtLength(Math.min(cycleT*100,TOT-.01));pt.setAttribute("cx",p.x);pt.setAttribute("cy",p.y);
+ let acc=0;for(let i=0;i<3;i++){const loc=Math.max(0,Math.min(PH[i].d,cycleT-acc))/PH[i].d;$("s"+i).setAttribute("stroke-dashoffset",LEN[i]*(1-loc));acc+=PH[i].d}}
+function remise(){for(let i=0;i<3;i++){$("s"+i).setAttribute("stroke-dashoffset",LEN[i]);$("l"+i).setAttribute("fill","#8B93B8")}pt.setAttribute("cx",100);pt.setAttribute("cy",440);pt.setAttribute("fill","#F4F6FF")}
+function boucle(now){
+ const el=(now-t0)/1000,cyc=Math.floor(el/CYCLE),ct=el-cyc*CYCLE;
+ if(cyc>=N){fin();return}
+ if(ct<.05&&cyc>0){}
+ if(cyc!==Math.floor(((now-t0)/1000-0.016)/CYCLE)&&cyc>0)remise();
+ dessiner(ct);
+ let acc=0,ph=0;for(;ph<3;ph++){if(ct<acc+PH[ph].d)break;acc+=PH[ph].d}ph=Math.min(ph,2);
+ const reste=Math.ceil(acc+PH[ph].d-ct);$("chiffre").textContent=reste;$("chiffre").setAttribute("fill",COUL[ph]);
+ const cle=cyc*3+ph;if(cle!==phPrec){phPrec=cle;$("etape").textContent=PH[ph].t;$("sous").textContent=PH[ph].s;pt.setAttribute("fill",COUL[ph]);
+  for(let i=0;i<3;i++)$("l"+i).setAttribute("fill",i===ph?COUL[i]:"#8B93B8");$("cycle").textContent=`Respiration ${cyc+1} / ${N}`;points(cyc);bip([440,520,392][ph])}
+ raf=requestAnimationFrame(boucle)}
+function depart(){cancelAnimationFrame(raf);remise();$("encore").classList.remove("on");actif=true;phPrec=-1;t0=performance.now();raf=requestAnimationFrame(boucle)}
+function arreter(){actif=false;cancelAnimationFrame(raf)}
+function fin(){arreter();dessiner(CYCLE);points(N);$("chiffre").textContent="✓";$("chiffre").setAttribute("fill","#3DDC97");for(let i=0;i<3;i++)$("l"+i).setAttribute("fill",COUL[i]);
+ $("etape").textContent="Vous êtes dans votre zone.";$("sous").textContent="Un clic pour refaire l'exercice";$("cycle").textContent="";$("encore").classList.add("on");bip(660)}
+document.body.addEventListener("click",()=>{if(actif){arreter();$("etape").textContent="En pause";$("sous").textContent="Un clic pour recommencer";$("encore").classList.add("on");return}depart()});
+$("encore").addEventListener("click",e=>{e.stopPropagation();depart()});
 document.addEventListener("keydown",e=>{if(e.code==="Space"||e.code==="Enter"){e.preventDefault();document.body.click()}if(e.key==="f"||e.key==="F")plein()});
 function plein(){const d=document.documentElement;if(!document.fullscreenElement)(d.requestFullscreen||d.webkitRequestFullscreen||(()=>{})).call(d);else document.exitFullscreen&&document.exitFullscreen()}
 $("ecran").onclick=plein;
 $("son").onclick=()=>{sonOn=!sonOn;$("son").setAttribute("aria-pressed",sonOn);if(sonOn)bip(520)};
-$("nb").onclick=()=>{N=N===3?5:N===5?1:3;$("nb").textContent=N+(N>1?" fois":" fois");points(0)};
-points(0);
+document.querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{N=+b.dataset.n;try{localStorage.setItem("z446-n",N)}catch(e){}boutons();if(!actif)points(0)});
+boutons();points(0);
 </script>
 </body>
 </html>
