@@ -2,6 +2,8 @@
 // Trois chemins : (1) glisser un fichier n'importe où dans l'app ; (2) FLIP installé comme app (Chrome ou Edge) :
 // double-clic sur un mémo → « Ouvrir avec FLIP » ; (3) surveiller un dossier (Téléchargements, où arrive l'AirDrop) :
 // chaque nouveau son s'ouvre dans L'oreille, peu importe la page où on est. Les fichiers ne quittent pas l'ordi.
+import { espace, onEspace, saveEntry, uploadAudio, audioURL } from './espace.js';
+
 const SONS = /\.(m4a|qta|mov|mp4|caf|aac|mp3|wav|aif|aiff|flac|ogg|opus|webm)$/i;
 let annonce = () => {};
 export const surEtat = (f) => { annonce = f; f(etat); };
@@ -61,7 +63,36 @@ export async function reprendre(geste = false) {
 }
 export function arreter() { clearInterval(minuterie); dire({ actif: false, reprendre: !!poignee }); }
 
+// (4) De l'iPhone à l'ordi par l'espace, sans AirDrop et dans n'importe quel navigateur (Safari aussi) :
+// sur l'iPhone, « Envoyer à mon ordi » téléverse le mémo ; sur l'ordi qui « reçoit », il s'ouvre dans L'oreille.
+const CLE = 'diapason:recoit'; const OUVERTS = 'diapason:arrivesOuverts';
+const lireLS = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
+const ecrireLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* navigation privée */ } };
+export const recoit = () => !!lireLS(CLE, null);
+export function recevoirIci(oui) { ecrireLS(CLE, oui ? { depuis: Date.now() } : null); verifierArrivees(); }
+export async function envoyerAOrdi(fichier, surProgres) {
+  if (!espace.connected) throw new Error('Connecte-toi à votre espace pour envoyer à ton ordi.');
+  const audio = await uploadAudio(fichier, surProgres);
+  await saveEntry({ type: 'audio', title: fichier.name.replace(/\.[^.]+$/, '') || 'Mémo', audio, data: { versOrdi: true, stage: 0 } });
+}
+let enCours = false;
+async function verifierArrivees() {
+  const r = lireLS(CLE, null); if (!r || enCours || !espace.connected) return;
+  const ouverts = new Set(lireLS(OUVERTS, []));
+  const t = (e) => new Date(e.createdAt || e.updatedAt || 0).getTime();
+  const neuf = espace.entries.filter((e) => e.type === 'audio' && e.data?.versOrdi && e.author === espace.me && !ouverts.has(e.id) && t(e) > r.depuis - 5000).sort((a, b) => t(b) - t(a))[0];
+  if (!neuf) return;
+  enCours = true; ouverts.add(neuf.id); ecrireLS(OUVERTS, [...ouverts].slice(-50));
+  try {
+    const url = await audioURL(neuf.audio); const blob = await (await fetch(url)).blob();
+    import('./ui.js').then((u) => u.toast(`« ${neuf.title} » arrive de ton iPhone : je l’ouvre dans L’oreille.`));
+    ouvrirDansOreille(blob, neuf.title);
+  } catch { /* on réessaiera au prochain mémo */ }
+  enCours = false;
+}
+
 export function initArrivee() {
+  onEspace((type) => { if (type === 'entries') verifierArrivees(); });
   // (1) Un fichier son glissé n'importe où dans l'app (sauf sur une zone qui s'en occupe déjà).
   addEventListener('dragover', (e) => { if (e.dataTransfer?.types?.includes('Files')) e.preventDefault(); });
   addEventListener('drop', (e) => {

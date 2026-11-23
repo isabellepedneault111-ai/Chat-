@@ -5,7 +5,7 @@ import { clavierDe } from '../doigte.js';
 import { espace, audioURL, saveEntry, uploadAudio, saveProfile, members } from '../espace.js';
 import { toast, autoCanvas, keyboard, store } from '../ui.js';
 import { esc } from './carnet.js';
-import { surveiller, reprendre, arreter as arreterDossier, surEtat, dossierPossible } from '../arrivee.js';
+import { surveiller, reprendre, arreter as arreterDossier, surEtat, dossierPossible, recoit, recevoirIci, envoyerAOrdi } from '../arrivee.js';
 import { chromaDuSpectre, accordDuChroma, hauteurDirecte, diagnosticHarmonie, ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, harmoniserVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
 import { chargerGrille, poserFond } from './studio.js';
 import { diagramme, nomSimple } from '../guitare.js';
@@ -101,15 +101,22 @@ export default {
     const prendreArrivee = () => { if (window.__flipOreille) { const f = window.__flipOreille; window.__flipOreille = null; etat(`Je lis « ${f.nom} »…`); setTimeout(async () => analyser(await f.blob.arrayBuffer(), f.nom), 0); } };
     prendreArrivee(); addEventListener('flip:oreille', prendreArrivee);
     // Le dossier surveillé (Chrome ou Edge sur l'ordi) : ce que l'iPhone y envoie (AirDrop → Téléchargements) s'ouvre ici tout seul.
-    surEtat((d) => {
-      const box = q('.or-dossier'); if (!box) return;
-      if (!dossierPossible()) { box.innerHTML = '<p class="muted small">Sur l’ordi, glisse un fichier n’importe où dans FLIP : il s’ouvre ici. (Pour qu’un AirDrop s’ouvre tout seul, ouvre FLIP dans Chrome ou Edge.)</p>'; return; }
-      box.innerHTML = d.actif
-        ? `<p class="or-dossier-on"><span class="or-pastille" aria-hidden="true"></span> J’attends les sons qui arrivent dans <b>${esc(d.dossier)}</b> : un AirDrop de ton iPhone s’ouvre ici tout seul, peu importe la page. <button class="btn small" data-o="dossier-stop">Arrêter</button></p>`
-        : d.reprendre
-          ? `<p><button class="btn" data-o="dossier-reprendre">📂 Reprendre l’attente dans « ${esc(d.dossier)} »</button></p>`
-          : '<p><button class="btn" data-o="dossier">📂 Ouvrir tout seul ce qui arrive de mon iPhone</button> <span class="muted small">Choisis ton dossier Téléchargements (là où arrive l’AirDrop) : chaque nouveau mémo s’ouvre ici.</span></p>';
-    });
+    let dEtat = null;
+    const telephone = /iPhone|iPad|Android/.test(navigator.userAgent);
+    function rendreDossier() {
+      const box = q('.or-dossier'); if (!box) return; const d = dEtat || {};
+      // Par l'espace : marche partout (Safari aussi), sans AirDrop.
+      const parEspace = !espace.connected ? '' : telephone
+        ? `<p class="or-envoi"><label class="btn primary">💻 Envoyer un mémo à mon ordi<input type="file" data-o="envoi" hidden></label> <span class="muted small">Sur l’ordi, L’oreille l’ouvre toute seule (coche « Recevoir ici » là-bas).</span></p>`
+        : `<p class="or-envoi"><label class="or-recoit"><input type="checkbox" data-o="recoit" ${recoit() ? 'checked' : ''}> 💻 Recevoir ici les mémos de mon iPhone</label> <span class="muted small">Sur l’iPhone : L’oreille → « Envoyer un mémo à mon ordi ». Il s’ouvre ici tout seul, dans Safari aussi.</span></p>`;
+      let parDossier = '';
+      if (!telephone && dossierPossible()) parDossier = d.actif
+        ? `<p class="or-dossier-on"><span class="or-pastille" aria-hidden="true"></span> J’attends aussi les sons qui arrivent dans <b>${esc(d.dossier)}</b> (AirDrop). <button class="btn small" data-o="dossier-stop">Arrêter</button></p>`
+        : d.reprendre ? `<p><button class="btn" data-o="dossier-reprendre">📂 Reprendre l’attente dans « ${esc(d.dossier)} »</button></p>`
+          : '<p><button class="btn" data-o="dossier">📂 Ouvrir tout seul ce qui arrive par AirDrop</button> <span class="muted small">Choisis Téléchargements une fois (Chrome ou Edge).</span></p>';
+      box.innerHTML = parEspace + parDossier;
+    }
+    surEtat((d) => { dEtat = d; rendreDossier(); });
     // La lecture et sa tête : où on en est, sur l'onde, pendant qu'on écoute (une boucle tourne entre a et b).
     let tete = null; let cents = 0; let cp = []; let cible = -1; const voulus = new Set(); let occK = {}; let voixForcee = false; let orig = null; let plage = null; let presse = null; let bout = null; let pile = []; let curseur = 0; let entendus = {}; let cadreG = null; let corrigees = new Set(); let pvoulus = new Set(); let ptOuverte = -1; let apercu = null; let aligner = true; let choisie = null; let corr = {}; let corrige = true;
     // La justesse : toute la prise (cents) plus, au besoin, une partie à part (cp[i]). rate(t) : la vitesse à ce moment.
@@ -688,6 +695,12 @@ export default {
     }
     el.addEventListener('change', async (e) => {
       const o = e.target.dataset.o;
+      if (o === 'recoit') { recevoirIci(e.target.checked); toast(e.target.checked ? 'Ce navigateur reçoit maintenant les mémos envoyés de ton iPhone.' : 'Ce navigateur ne reçoit plus les mémos.'); return; }
+      if (o === 'envoi' && e.target.files[0]) {
+        const f = e.target.files[0]; e.target.value = ''; const lab = e.target.closest('label'); const txt = lab.firstChild;
+        try { await envoyerAOrdi(f, (x) => { txt.textContent = `Envoi… ${Math.round(x * 100)} %`; }); toast(`« ${f.name} » est parti : il s’ouvre sur ton ordi.`); } catch (err) { toast(err.message); }
+        txt.textContent = '💻 Envoyer un mémo à mon ordi'; return;
+      }
       if (o === 'file' && e.target.files[0]) { const f = e.target.files[0]; e.target.value = ''; etat(`Je lis « ${f.name} »…`); await analyser(await f.arrayBuffer(), f.name.replace(/\.[^.]+$/, '')); }
       if (o === 'choix' && e.target.value) {
         const v = e.target.value; const label = e.target.selectedOptions[0].textContent;
