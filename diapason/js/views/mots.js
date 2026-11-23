@@ -66,6 +66,18 @@ function gammeDe(g) {
 // La chanson venue de L'oreille reste en mémoire tant que la page n'est pas rechargée.
 let chansonGardee = null;
 
+// L'accord principal (la « maison ») : la gamme qui contient le mieux la grille, puis, entre son accord majeur (I)
+// et son mineur relatif (vi), celui qui sonne le plus longtemps, avec un bonus pour le premier et le dernier accord.
+function accordPrincipal(g) {
+  const k = gammeDe(g)[0]; const M = { r: k, q: 'M' }; const m = { r: (k + 9) % 12, q: 'm' };
+  let sM = 0; let sm = 0; const L = g.mesures.length;
+  for (let i = 0; i < L; i++) for (let t = 0; t < 4; t++) { const c = accordA(g, i, t); const mi = c.q === 'm' || c.q === 'm7'; if (c.r === M.r && !mi) sM++; if (c.r === m.r && mi) sm++; }
+  const bout = (c) => { const mi = c.q === 'm' || c.q === 'm7'; return c.r === m.r && mi ? 'm' : c.r === M.r && !mi ? 'M' : ''; };
+  const a = bout(accordA(g, 0, 0)); const z = bout(accordA(g, L - 1, 3)); if (a === 'm') sm += 3; if (a === 'M') sM += 3; if (z === 'm') sm += 2; if (z === 'M') sM += 2;
+  return sm > sM ? m : M;
+}
+const memeAccord = (a, b) => a && b && a.r === b.r && ((a.q === 'm' || a.q === 'm7') === (b.q === 'm' || b.q === 'm7'));
+
 export default {
   id: 'mots',
   mount(el) {
@@ -107,7 +119,9 @@ export default {
         <div class="mo-sous" ${chanson ? '' : 'hidden'}><label class="mo-vraie"><input type="checkbox" data-m="vraie" checked> Sous les paroles : la vraie chanson${chanson ? ` (« ${esc(String(chanson.nom).slice(0, 40))} »)` : ''}</label><label class="mo-vraie"><input type="checkbox" data-m="piano" ${store.get('oreilleGrille', null)?.propose ? 'checked' : ''}> + les accords au piano</label></div>
         <div class="ec-row"><button class="btn primary" data-m="generer">Écrire les lignes</button><button class="btn" data-m="chanter">▶ Chanter sur la grille</button><span class="mo-info muted small"></span></div>
       </section>
+      <section class="panel mo-princ" hidden></section>
       <section class="mo-lignes" aria-live="polite"></section>
+      <div class="mo-ajout"><button class="btn" data-m="ajout">＋ Ajouter une ligne</button><span class="muted small">Touche une ligne pour changer ses mots. ↑ ↓ pour la déplacer (ou glisse-la par ⠿).</span></div>
       <div class="mo-lecteur" hidden role="region" aria-label="Pendant que ça chante"></div>
       <section class="panel mo-fin">
         <div class="ec-row"><button class="btn" data-m="placer">Envoyer dans Placer</button><button class="btn" data-m="copier">Copier le texte</button>${espace.connected ? '<button class="btn" data-m="journal">Dans le journal</button>' : ''}</div>
@@ -142,21 +156,26 @@ export default {
       const g = grille();
       const nomsSrc = st.source === 'oreille' && !grilleOreille() ? 'Pas encore de grille dans L’oreille : je prends celle de Jouer. ' : '';
       q('.mo-info').textContent = `${nomsSrc}${g.nom} · ${g.bpm} BPM · ${g.mesures.length} mesure${g.mesures.length > 1 ? 's' : ''} · une ligne = deux mesures`;
+      const ap = accordPrincipal(g); const pb = q('.mo-princ');
+      pb.hidden = false;
+      pb.innerHTML = `<div class="mo-princ-acc"><small>Accord principal</small><b>${esc(nomAcc(ap))}</b></div>${diagramme(ap.r, ap.q, { taille: 70 })}<p>La « maison » de la chanson : c’est là qu’elle se repose. Une ligne qui <b>finit sur ${esc(nomAcc(ap))}</b> sonne finie ; une ligne qui finit ailleurs donne envie d’entendre la suite. Les ★ le montrent dans les lignes.</p><button class="btn small" data-m="ecouter-princ" aria-label="Écouter l’accord principal">▶</button>`;
+      principal = ap;
       const box = q('.mo-lignes');
       if (!lignes.length) { box.innerHTML = '<div class="panel mo-vide"><p>Choisis un thème, ajoute un mot ou deux qui t’appartiennent, puis « Écrire les lignes ».</p></div>'; return; }
       const schema = st.schema;
       box.innerHTML = lignes.map((L, i) => {
         const { sl, syl, pl, notes } = analyse(L.txt, i);
         const p = partenaire(schema, i); const rime = p != null && lignes[p] ? rimeOf(L.txt) === rimeOf(lignes[p].txt) : null;
-        const acc = [0, 1].map((h) => [0, 1, 2, 3].map((t) => { const m = (2 * i + h) % g.mesures.length; const c = g.mesures[m][t]; return c ? `<span class="mo-acc" style="left:${((h * 16 + t * 4) / 32) * 100}%">${esc(nomAcc(c))}</span>` : ''; }).join('')).join('');
-        const first = !g.mesures[(2 * i) % g.mesures.length][0] ? `<span class="mo-acc tenu" style="left:0">${esc(nomAcc(accordA(g, (2 * i) % g.mesures.length, 0)))}</span>` : '';
+        const acc = [0, 1].map((h) => [0, 1, 2, 3].map((t) => { const m = (2 * i + h) % g.mesures.length; const c = g.mesures[m][t]; return c ? `<span class="mo-acc ${memeAccord(c, ap) ? 'princ' : ''}" style="left:${((h * 16 + t * 4) / 32) * 100}%">${memeAccord(c, ap) ? '★ ' : ''}${esc(nomAcc(c))}</span>` : ''; }).join('')).join('');
+        const first = !g.mesures[(2 * i) % g.mesures.length][0] ? `<span class="mo-acc tenu ${memeAccord(accordA(g, (2 * i) % g.mesures.length, 0), ap) ? 'princ' : ''}" style="left:0">${esc(nomAcc(accordA(g, (2 * i) % g.mesures.length, 0)))}</span>` : '';
         const cases = [...Array(32)].map((_, s) => `<i class="${s % 4 === 0 ? 'b' : ''} ${s % 16 === 0 ? 'm' : ''} ${sl.some((x) => x.s === s && x.f) ? 'f' : ''}"></i>`).join('');
         const blocs = syl.map((s, k) => { const kk = pl.pos[k]; if (kk < 0) return ''; const x = sl[kk]; return `<span class="pl-syl ${s.accent === 2 ? 'a2' : s.accent ? 'a1' : ''} ${x.f ? 'sur-f' : ''}" data-k="${k}" style="left:${(x.s / 32) * 100}%;width:${(x.d / 32) * 100}%"><b>${esc(s.txt)}</b><small>${nomNote(notes[k])}</small></span>`; }).join('');
         const lettre = 'ABCDEFGH'[schema === 'AABB' ? Math.floor((i % 4) / 2) + 2 * Math.floor(i / 4) : schema === 'ABAB' ? (i % 2) + 2 * Math.floor(i / 4) : schema === 'ABCB' ? [0, 1, 2, 1][i % 4] + 3 * Math.floor(i / 4) : 0] || '';
         return `<article class="panel mo-l ${L.garde ? 'garde' : ''}" data-i="${i}">
+          <div class="mo-l-bouge"><span class="mo-poignee" draggable="true" data-glisse="${i}" title="Glisse pour déplacer" aria-hidden="true">⠿</span><button class="btn small" data-m="haut" data-i="${i}" ${i ? '' : 'disabled'} aria-label="Monter la ligne ${i + 1}">↑</button><button class="btn small" data-m="bas" data-i="${i}" ${i < lignes.length - 1 ? '' : 'disabled'} aria-label="Descendre la ligne ${i + 1}">↓</button><button class="btn small" data-m="enlever" data-i="${i}" aria-label="Enlever la ligne ${i + 1}">✕</button></div>
           <div class="mo-l-tete">
             ${schema !== 'libre' ? `<span class="mo-lettre" title="Schéma de rimes">${lettre}</span>` : ''}
-            <textarea class="mo-txt" data-i="${i}" rows="1" aria-label="Ligne ${i + 1}">${esc(L.txt)}</textarea>
+            <span class="mo-crayon" aria-hidden="true">✎</span><textarea class="mo-txt" data-i="${i}" rows="1" aria-label="Ligne ${i + 1}" placeholder="Écris ta ligne ici…">${esc(L.txt)}</textarea>
             <span class="mo-n ${pl.trop ? 'neg' : ''}">${syl.length}/${sl.length}</span>
             ${rime === true ? '<span class="mo-rime pos">rime ✓</span>' : rime === false ? '<span class="mo-rime neg">ne rime pas</span>' : ''}
             <label class="mo-garde"><input type="checkbox" data-garde="${i}" ${L.garde ? 'checked' : ''}> Garder</label>
@@ -177,7 +196,7 @@ export default {
       const b = await banque(st.theme, cles);
       const n = +st.n; const sl = slots();
       while (lignes.length < n) lignes.push({ txt: '', garde: false });
-      if (seule == null) lignes = lignes.slice(0, n);
+      if (seule == null) { let fin = n; lignes.forEach((L, k) => { if (L.garde && L.txt) fin = Math.max(fin, k + 1); }); lignes = lignes.slice(0, fin); }
       graine += 7919; const r = hasard(graine);
       const dejaVus = new Map(); const fins = [];
       const compter = (t) => t.toLowerCase().split(/[\s’',]+/).forEach((w) => dejaVus.set(w, (dejaVus.get(w) || 0) + 1));
@@ -210,7 +229,7 @@ export default {
       el.querySelectorAll('.pl-syl.dit').forEach((x) => x.classList.remove('dit'));
       const lb = q('.mo-lecteur'); if (lb) { lb.hidden = true; lb.innerHTML = ''; } cleBarre = '';
     }
-    let cleBarre = '';
+    let cleBarre = ''; let principal = null;
     // La barre du bas, pendant que ça chante : l'accord qui joue (en gros, avec sa position à la guitare), le suivant,
     // la ligne en cours avec la syllabe chantée allumée, et un gros ■ Stop.
     // La ligne telle qu'écrite (avec ses « j’ », « l’ »), le mot chanté allumé : on compte les mots d'après les syllabes.
@@ -293,6 +312,10 @@ export default {
       if (m === 'autre') { arreter(); await generer(+b.dataset.i); return; }
       if (m === 'chanter') { if (b.textContent.startsWith('■')) { arreter(); return; } if (!lignes.length) await generer(); chanter(lignes.map((_, i) => i).filter((i) => lignes[i].txt), b); return; }
       if (m === 'stop') { arreter(); return; }
+      if (m === 'haut' || m === 'bas') { const i = +b.dataset.i; const j = m === 'haut' ? i - 1 : i + 1; if (j < 0 || j >= lignes.length) return; arreter(); [lignes[i], lignes[j]] = [lignes[j], lignes[i]]; sauver(); rendre(); el.querySelector(`[data-m=${m}][data-i="${j}"]`)?.focus(); return; }
+      if (m === 'enlever') { arreter(); lignes.splice(+b.dataset.i, 1); sauver(); rendre(); return; }
+      if (m === 'ajout') { arreter(); lignes.push({ txt: '', garde: true }); sauver(); rendre(); const t = el.querySelector(`.mo-txt[data-i="${lignes.length - 1}"]`); t?.focus(); t?.scrollIntoView({ block: 'center' }); return; }
+      if (m === 'ecouter-princ' && principal) { const c = audio(); try { await c.resume(); } catch { /* iOS */ } const iv = IV[principal.q] || IV.M; iv.forEach((v, k) => notePiano(57 + ((principal.r + v - 9 + 12) % 12) + (v >= 12 ? 12 : 0), { when: c.currentTime + 0.05 + k * 0.02, dur: 1.6, vel: 0.6 })); notePiano(36 + principal.r, { when: c.currentTime + 0.05, dur: 1.6, vel: 0.55 }); return; }
       if (m === 'une') { if (b.textContent.startsWith('■')) { arreter(); return; } await chanter([+b.dataset.i, +b.dataset.i], null); b.textContent = '■'; return; }
       const texte = lignes.map((x) => x.txt).filter(Boolean).join('\n');
       if (m === 'placer') { if (!texte) return; store.set('placerTexte', texte); location.hash = '#/placer'; return; }
@@ -310,8 +333,14 @@ export default {
     el.addEventListener('input', (e) => {
       if (e.target.dataset.m === 'cles') { st.cles = e.target.value; sauver(); return; }
       if (e.target.dataset.m === 'main') { st.main = e.target.value; sauver(); rendre(); return; }
-      if (e.target.classList.contains('mo-txt')) { lignes[+e.target.dataset.i].txt = e.target.value; sauver(); }
+      if (e.target.classList.contains('mo-txt')) { const L = lignes[+e.target.dataset.i]; L.txt = e.target.value; if (!L.garde) { L.garde = true; const cb = el.querySelector(`[data-garde="${e.target.dataset.i}"]`); if (cb) cb.checked = true; e.target.closest('.mo-l')?.classList.add('garde'); } sauver(); }
     });
+    // Glisser une ligne par sa poignée ⠿ pour la déplacer.
+    let glisse = -1;
+    el.addEventListener('dragstart', (e) => { const h = e.target.closest?.('[data-glisse]'); if (!h) return; glisse = +h.dataset.glisse; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(glisse)); h.closest('.mo-l').classList.add('glisse'); });
+    el.addEventListener('dragover', (e) => { if (glisse < 0) return; const a = e.target.closest('.mo-l'); if (!a) return; e.preventDefault(); el.querySelectorAll('.mo-l.vise').forEach((x) => x.classList.remove('vise')); a.classList.add('vise'); });
+    el.addEventListener('drop', (e) => { if (glisse < 0) return; const a = e.target.closest('.mo-l'); e.preventDefault(); if (a) { const j = +a.dataset.i; const [L] = lignes.splice(glisse, 1); lignes.splice(j, 0, L); sauver(); } glisse = -1; arreter(); rendre(); });
+    el.addEventListener('dragend', () => { glisse = -1; el.querySelectorAll('.mo-l.vise, .mo-l.glisse').forEach((x) => x.classList.remove('vise', 'glisse')); });
     // Une ligne = une ligne : Entrée valide la retouche au lieu de couper la ligne.
     el.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.classList?.contains('mo-txt')) { e.preventDefault(); e.target.blur(); } });
     // Après une retouche à la main : on recalcule la ligne quand on quitte le champ (pour ne pas perdre le curseur).
