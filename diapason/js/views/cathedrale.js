@@ -79,27 +79,11 @@ export default {
         <h1>Un orchestre autour de tes accords.</h1>
         <p class="muted">Des cordes, des cuivres, des bois, un chœur, une harpe : un orchestre entier qui joue tout seul, de 1 à 5 minutes, sur les accords que tu lui donnes.</p>
       </div></div>
-      <section class="panel ca-quoi">
-        <h2>À quoi elle sert</h2>
-        <div class="ca-portes">
-          <article class="ca-porte">
-            <h3>🎻 Habiller ma chanson</h3>
-            <p>Un orchestre qui suit TA chanson : son tempo, ses accords mesure par mesure, seulement là où tu le veux (l’intro, un pont, la fin). Tu l’écoutes avec la chanson, puis tu le télécharges.</p>
-            <button class="btn primary" data-ca="aller-habit">Commencer →</button>
-          </article>
-          <article class="ca-porte">
-            <h3>🎹 Frog joue, l’orchestre suit</h3>
-            <p>Un accord tenu sur son clavier devient la base de l’œuvre ; une minute improvisée devient toute une cathédrale.</p>
-            <button class="btn" data-ca="aller-frog">Voir comment →</button>
-          </article>
-          <article class="ca-porte">
-            <h3>🔢 Composer avec des nombres</h3>
-            <p>Comme le labo, en grand : quelques nombres donnent les rythmes, les parties et l’accord. Pour explorer sans savoir d’avance.</p>
-            <button class="btn" data-ca="aller-nombres">Essayer →</button>
-          </article>
-        </div>
-        <p class="muted small ca-plus-value">Ce qu’elle a que le reste de l’app n’a pas : un orchestre complet sans musiciens, des accords en <b>intonation juste</b> (plus purs qu’au piano, qui triche un peu sur chaque note), et une partition MIDI, une famille par piste, prête pour Frog.</p>
-      </section>
+      <nav class="ca-quoi" aria-label="À quoi elle sert">
+        <button class="ca-porte" data-ca="aller-habit"><b>🎻 Habiller ma chanson</b><span>un orchestre sur TES accords, où tu veux</span></button>
+        <button class="ca-porte" data-ca="aller-frog"><b>🎹 Frog joue, l’orchestre suit</b><span>un accord tenu devient l’œuvre</span></button>
+        <button class="ca-porte" data-ca="aller-nombres"><b>🔢 Composer avec des nombres</b><span>explorer sans savoir d’avance</span></button>
+      </nav>
       <section class="panel ca-habit">
         <h2>🎻 Habiller ma chanson</h2>
         <p class="muted">L’orchestre suit ta chanson : son tempo, ses accords mesure par mesure, et seulement le passage que tu choisis.</p>

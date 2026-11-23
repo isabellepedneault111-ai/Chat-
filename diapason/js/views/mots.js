@@ -414,7 +414,7 @@ export default {
       const b = q('[data-m=chanter]'); if (b) b.textContent = '▶ Chanter sur la grille';
       el.querySelectorAll('[data-m=une]').forEach((x) => { x.textContent = '▶'; }); el.querySelectorAll('[data-m=boucle]').forEach((x) => { x.textContent = '🔁'; });
       el.querySelectorAll('.pl-syl.dit').forEach((x) => x.classList.remove('dit'));
-      const lb = q('.mo-lecteur'); if (lb) { lb.hidden = true; lb.innerHTML = ''; } cleBarre = '';
+      const lb = q('.mo-lecteur'); if (lb) { lb.hidden = true; lb.innerHTML = ''; } cleBarre = ''; document.body.classList.remove('mo-lit');
     }
     let cleBarre = ''; let principal = null;
     // La barre du bas, pendant que ça chante : l'accord qui joue (en gros, avec sa position à la guitare), le suivant,
@@ -440,7 +440,7 @@ export default {
       return `<div class="mo-roll" aria-hidden="true">${temps}${accs}${voixVraie}${barres}<i class="mo-roll-tete"></i></div>${vv.length ? '<p class="mo-roll-leg"><i></i> ta voix dans la chanson · <b></b> la mélodie proposée</p>' : ''}`;
     }
     function majBarre(t, t0, t1, noire, frise, j, tIntro = t1) {
-      const lb = q('.mo-lecteur'); if (!lb) return; lb.hidden = false;
+      const lb = q('.mo-lecteur'); if (!lb) return; lb.hidden = false; document.body.classList.add('mo-lit');
       const F = frise[j]; const tous = frise.flatMap((x) => x.acc);
       let ic = -1; tous.forEach((a, k) => { if (a.t <= t + 0.02) ic = k; });
       const cur = t < t1 ? null : tous[Math.max(0, ic)]; const suiv = cur ? tous.slice(Math.max(0, ic) + 1).find((a) => nomAcc(a.c) !== nomAcc(cur.c)) : tous[0];
@@ -453,7 +453,7 @@ export default {
       cleBarre = cle;
       lb.innerHTML = `<div class="mo-lb-acc">${cur ? `<b>${esc(nomAcc(cur.c))}</b>${diagramme(cur.c.r, cur.c.q, { taille: 64 })}` : `<b class="mo-lb-compte">${compte || ''}</b>`}${suiv ? `<small>puis ${esc(nomAcc(suiv.c))}</small>` : ''}</div>
         <div class="mo-lb-mil"><p class="mo-lb-mots">${enIntro ? '<span class="dit">🎵 Musique seule… les paroles arrivent</span>' : lignes[F.i]?.pause ? '<span class="dit">🎵 Musique seule</span>' : motsAllumes(F, ks)}</p>${enIntro || lignes[F.i]?.pause ? '' : roulette(F, ks)}</div>
-        <button class="btn mo-lb-stop" data-m="stop" aria-label="Arrêter">■ Stop</button>`;
+        <button class="mo-lb-stop" data-m="stop" aria-label="Arrêter">■</button>`;
       el.querySelectorAll('.pl-syl.dit').forEach((x) => x.classList.remove('dit'));
       const sp = el.querySelector(`.mo-l[data-i="${F.i}"] .pl-syl[data-k="${ks}"]`); if (sp) sp.classList.add('dit');
     }

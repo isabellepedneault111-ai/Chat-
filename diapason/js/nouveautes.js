@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.12', quand: '2026-11-23', titre: 'Un seul Stop, et du ménage', items: [
+    ['Un seul Stop', ['Pendant « Chanter sur la grille », un seul bouton rond ■ arrête tout. Le bouton « Arrêter le son » et la flamme se cachent pendant la lecture. Sur téléphone, la barre du bas est plus mince.']],
+    ['Moins de choses à la fois', ['L’oreille : le mode d’emploi du Dictaphone et l’astuce du clavier sont repliés. Jouer : les couleurs du clavier se choisissent dans un tiroir, et sur téléphone seuls les Do sont nommés (les noms se chevauchaient). Le labo : les liens et les réglages gardés sont rangés dans « Plus ». La cathédrale : les trois façons de s’en servir tiennent en une rangée, et le menu de la chanson ne dépasse plus de l’écran.']],
+  ] },
   { v: '1.11', quand: '2026-11-23', titre: 'Rien ne bouge pendant l’écoute', items: [
     ['Des tailles fixes', ['Pendant « Chanter sur la grille », la barre du bas, le bouton Stop et les boutons ▶ ne changent plus de grosseur à chaque accord ou syllabe.']],
     ['« La chanson », en mots simples', ['Le menu dit maintenant d’où viennent les accords : 🎧 la dernière chanson passée dans L’oreille (avec son nom), ⭐ nos pièces, 🎹 ce qui joue dans Jouer, ✏️ des accords que tu écris toi-même. Une phrase dessous explique le choix.']],

@@ -96,7 +96,7 @@ export function keyboard(host, { from = 48, to = 72, labels = true, playable = t
       k.className = 'key white';
       k.style.width = `${wPct}%`;
       if (labels && (m % 12 === 0 || whites.length <= 22)) {
-        k.innerHTML = `<span>${nameFR(m)}</span>`;
+        k.innerHTML = `<span${m % 12 ? ' class="kb-n"' : ''}>${nameFR(m)}</span>`;
       }
     }
     keys.set(m, k);

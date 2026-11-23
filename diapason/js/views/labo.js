@@ -119,12 +119,11 @@ export default {
           </div>
           <ul class="tracks"></ul>
           <div class="groupes" aria-live="polite"></div>
-          <div class="liens"></div>
-          <div class="reglages"></div>
+          <details class="lb-plus"><summary>Plus : les liens entre disques, mes réglages gardés</summary><div class="liens"></div><div class="reglages"></div></details>
           <button class="btn add-track" data-act="add">＋ Ajouter un disque</button>
           <button class="btn primary labo-beat" data-act="beat">Faire un beat de ces disques → Jouer</button>
           <a class="btn labo-cathedrale" href="#/cathedrale?du-labo">Bâtir La cathédrale de ces disques →</a>
-          <p class="muted small">Touche le cercle d’un disque pour le choisir ; choisis-en plusieurs pour en faire un <b>groupe</b> qui bouge ensemble. <b>Pour l’instant : jusqu’à 6 disques et 3 groupes.</b> Il y en aura plus quand nous aurons bien testé. Chaque disque devient une ligne de batterie, ses frappes réparties au mieux sur la mesure (rythme euclidien, Toussaint 2005).</p>
+          <p class="muted small">Touche le cercle d’un disque pour le choisir ; plusieurs choisis font un <b>groupe</b> qui bouge ensemble (6 disques, 3 groupes au plus). Chaque disque devient une ligne de batterie, ses frappes réparties au mieux sur la mesure (rythme euclidien, Toussaint 2005).</p>
         </div>
 
         <div class="panel acc-panel">
