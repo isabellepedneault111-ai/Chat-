@@ -60,6 +60,9 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.96', quand: '2026-11-23', titre: 'Les chœurs, seulement si tu veux', items: [
+    ['🎤 Chœurs ligne par ligne', ['Les « ouuu » synthétiques (la voix-guide) sont éteints d’office dans Mots sur la grille. Le 🎤 d’une ligne les allume pour cette ligne seulement ; « Chœurs sur toutes les lignes » les met partout.']],
+  ] },
   { v: '0.95', quand: '2026-11-23', titre: 'Une ligne, n’importe où', items: [
     ['＋ avant, ＋ après', ['Chaque ligne de Mots sur la grille a « ＋ avant » et « ＋ après » : une ligne vide apparaît juste là, prête à écrire. Les lignes suivantes glissent d’une place, avec leurs mesures.']],
   ] },

@@ -121,7 +121,7 @@ export default {
           <label class="field"><span>Lignes</span><select data-m="n"><option>4</option><option>8</option><option>12</option></select></label>
         </div>
         <div class="mo-sous" ${chanson ? '' : 'hidden'}><label class="mo-vraie"><input type="checkbox" data-m="vraie" checked> Sous les paroles : la vraie chanson${chanson ? ` (« ${esc(String(chanson.nom).slice(0, 40))} »)` : ''}</label><label class="mo-vraie"><input type="checkbox" data-m="piano" ${store.get('oreilleGrille', null)?.propose ? 'checked' : ''}> + les accords au piano</label></div>
-        <label class="mo-vraie mo-guide"><input type="checkbox" data-m="guide"> 🎤 Voix-guide <small class="muted">(une voix synthétique chante la note de chaque syllabe)</small></label>
+        <label class="mo-vraie mo-guide"><input type="checkbox" data-m="guide"> 🎤 Chœurs sur toutes les lignes <small class="muted">(des « ouuu » synthétiques chantent la note de chaque syllabe ; éteints d’office, ou ligne par ligne avec 🎤)</small></label>
         <div class="ec-row"><button class="btn primary" data-m="generer">Écrire les lignes</button><button class="btn" data-m="chanter">▶ Chanter sur la grille</button><span class="mo-info muted small"></span></div>
       </section>
       <section class="panel mo-princ" hidden></section>
@@ -150,7 +150,7 @@ export default {
       const vraiOk = !!chanson && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source);
       const sous = q('.mo-sous'); if (sous) { sous.hidden = !vraiOk; const l = sous.querySelector('.mo-vraie'); if (l && chanson) l.lastChild.textContent = ` Sous les paroles : la vraie chanson (« ${String(chanson.nom).slice(0, 40)} »)`; }
       // La voix-guide : à toi de choisir ; sinon, elle se tait quand la vraie chanson joue.
-      const g = store.get('motsGuide', null); const cb = q('[data-m=guide]'); if (cb) cb.checked = g == null ? !vraiOk : g;
+      const cb = q('[data-m=guide]'); if (cb) cb.checked = !!store.get('motsChoeurs', false); // éteints d'office
     }
     const grille = () => (st.source.startsWith('piece:') ? grillePiece() : st.source === 'oreille' ? grilleOreille() : st.source === 'main' ? grilleMain(st.main, store.get('bpm', 92)) : grilleJouer()) || grilleJouer();
     const vraiOk = () => !!chanson && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source);
@@ -218,6 +218,7 @@ export default {
             ${rime === true ? '<span class="mo-rime pos">rime ✓</span>' : rime === false ? '<span class="mo-rime neg">ne rime pas</span>' : ''}
             <label class="mo-garde"><input type="checkbox" data-garde="${i}" ${L.garde ? 'checked' : ''}> Garder</label>
             <button class="btn small" data-m="autre" data-i="${i}" title="Une autre ligne à cette place">↻ Une autre</button>
+            <button class="btn small mo-choeur ${L.choeur ? 'on' : ''}" data-m="choeur" data-i="${i}" aria-pressed="${!!L.choeur}" title="Les chœurs (« ouuu ») chantent cette ligne : la note de chaque syllabe">🎤</button>
             <button class="btn small" data-m="boucle" data-i="${i}" title="Rejoue ces deux mesures en boucle pendant que tu écris">🔁</button>
             <button class="btn small" data-m="une" data-i="${i}" aria-label="Écouter la ligne ${i + 1}" title="Écouter cette ligne">▶</button>
           </div>
@@ -341,7 +342,7 @@ export default {
           const base = 48 + ch.r; accordSon('piano', iv.map((v) => base + v), { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.45, dest: bus });
           if (!joue('piano', 36 + ch.r, { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.5, dest: bus })) iv.forEach((v) => notePiano(base + v, { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.5 }));
         }
-        if (q('[data-m=guide]')?.checked) syl.forEach((s, k) => { const kk = pl.pos[k]; if (kk < 0) return; const x = sl[kk]; if (!joue('voix', notes[k], { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: s.accent ? 0.95 : 0.75, dest: bus })) notePiano(notes[k] + 12, { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: 0.8 }); });
+        if (q('[data-m=guide]')?.checked || lignes[i]?.choeur) syl.forEach((s, k) => { const kk = pl.pos[k]; if (kk < 0) return; const x = sl[kk]; if (!joue('voix', notes[k], { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: s.accent ? 0.95 : 0.75, dest: bus })) notePiano(notes[k] + 12, { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: 0.8 }); });
       });
       const fin = t1 + quelles.length * 2 * mes;
       lecture = { src, bus, stop: false };
@@ -365,6 +366,7 @@ export default {
       if (m === 'autre') { arreter(); await generer(+b.dataset.i); return; }
       if (m === 'chanter') { if (b.textContent.startsWith('■')) { arreter(); return; } if (!lignes.length) await generer(); chanter(lignes.map((_, i) => i).filter((i) => lignes[i].txt), b); return; }
       if (m === 'stop') { arreter(); return; }
+      if (m === 'choeur') { const L = lignes[+b.dataset.i]; L.choeur = !L.choeur; b.classList.toggle('on', L.choeur); b.setAttribute('aria-pressed', L.choeur); sauver(); toast(L.choeur ? 'Les chœurs chanteront cette ligne.' : 'Plus de chœurs sur cette ligne.'); return; }
       if (m === 'boucle') { if (b.textContent === '■') { arreter(); return; } const i = +b.dataset.i; await chanter(Array(24).fill(i), null); b.textContent = '■'; el.querySelector(`.mo-txt[data-i="${i}"]`)?.focus(); return; }
       if (m === 'haut' || m === 'bas') { const i = +b.dataset.i; const j = m === 'haut' ? i - 1 : i + 1; if (j < 0 || j >= lignes.length) return; arreter(); [lignes[i], lignes[j]] = [lignes[j], lignes[i]]; sauver(); rendre(); el.querySelector(`[data-m=${m}][data-i="${j}"]`)?.focus(); return; }
       if (m === 'ins-avant' || m === 'ins-apres') { arreter(); const j = +b.dataset.i + (m === 'ins-apres' ? 1 : 0); lignes.splice(j, 0, { txt: '', garde: true }); sauver(); rendre(); const t = el.querySelector(`.mo-txt[data-i="${j}"]`); t?.focus(); t?.scrollIntoView({ block: 'center' }); return; }
@@ -379,7 +381,7 @@ export default {
     });
     el.addEventListener('change', (e) => {
       const k = e.target.dataset.m;
-      if (e.target.dataset.m === 'guide') { store.set('motsGuide', e.target.checked); return; }
+      if (e.target.dataset.m === 'guide') { store.set('motsChoeurs', e.target.checked); return; }
       if (e.target.dataset.garde != null) { lignes[+e.target.dataset.garde].garde = e.target.checked; e.target.closest('.mo-l').classList.toggle('garde', e.target.checked); sauver(); return; }
       if (!k || e.target.tagName !== 'SELECT') return;
       st[k] = k === 'n' ? +e.target.value : e.target.value;
