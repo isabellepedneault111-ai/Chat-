@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.83', quand: '2026-11-23', titre: 'Importer un mémo du Dictaphone', items: [
+    ['Plus aucun fichier grisé', ['« Choisir un fichier audio » montre maintenant tous les fichiers : l’iPhone grisait parfois les mémos du Dictaphone.']],
+    ['Les mémos .qta', ['Si le décodeur refuse un mémo .qta, L’oreille le relit comme un .m4a (c’est le même contenu, sous une autre étiquette).']],
+    ['▶ Le lire avec le lecteur du téléphone', ['Si Safari refuse encore, un bouton fait jouer le fichier par le lecteur du téléphone, en silence, et l’oreille capte ce qui en sort. Une minute de mémo = une minute d’attente, puis l’analyse complète. Et si l’analyse plante, l’oreille dit pourquoi au lieu de « fichier illisible ».']],
+  ] },
   { v: '0.82', quand: '2026-11-23', titre: 'Des accords dans le labo', items: [
     ['Les accords sous les disques', ['Dans le labo, juste après tes disques : écris « Lam Fa » (un accord par mesure, « Do/Sol » pour deux dans une mesure), coche « Les jouer », et le piano joue la grille au tempo des disques.']],
     ['🎧 Caler sur la toune de L’oreille', ['Un bouton prend les accords de la dernière toune passée dans L’oreille, et son tempo. Ensuite, « Faire un beat de ces disques → Jouer » envoie le beat, les accords et le tempo ensemble dans le séquenceur de Jouer.']],

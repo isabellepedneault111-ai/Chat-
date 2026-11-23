@@ -24,7 +24,7 @@ export default {
         <p class="muted">Les silences, les parties, le tempo, la tonalité, le moment fort, et une boucle qui ne s’entend pas : en quelques secondes, ce qui prend une heure à l’oreille.</p>
       </div></div>
       <section class="panel or-src">
-        <label class="btn primary">Choisir un fichier audio<input type="file" accept="audio/*,video/*,.m4a,.qta,.mov,.mp4,.caf,.aac,.mp3,.wav,.aif,.aiff,.flac,.ogg,.opus,.webm" data-o="file" hidden></label>
+        <label class="btn primary">Choisir un fichier audio<input type="file" data-o="file" hidden></label>
         <button class="btn primary" data-o="direct">🎧 Écouter en direct</button>
         <button class="btn" data-o="micro">● Enregistrer mon clavier</button>
         <span class="muted">ou</span>
@@ -33,7 +33,7 @@ export default {
           ${sons().map((e) => `<option value="id:${esc(e.id)}">${esc(e.title || 'Son')} (${esc(e.author)})</option>`).join('')}
         </select>
         <p class="or-etat muted small"></p>
-        <details class="or-dicta"><summary>Un mémo du Dictaphone (iPhone)?</summary><ol><li>Dans <b>Dictaphone</b>, touche le mémo, puis <b>···</b> → <b>Partager</b> → <b>Enregistrer dans Fichiers</b>.</li><li>Ici, <b>Choisir un fichier audio</b> → <b>Parcourir</b> → le mémo (il est en .m4a).</li></ol><p class="muted small">Sur un ordi : glisse le fichier du Dictaphone sur ce bouton, ou partage-le-toi par courriel ou AirDrop. Le mémo peut aussi aller au mur (Nos idées, bouton ♫) : il sera ensuite dans la liste ci-dessus.</p></details>
+        <details class="or-dicta" ${/iPhone|iPad/.test(navigator.userAgent) ? 'open' : ''}><summary>Un mémo du Dictaphone (iPhone)?</summary><ol><li>Dans <b>Dictaphone</b>, touche le mémo, puis <b>···</b> → <b>Partager</b> → <b>Enregistrer dans Fichiers</b>.</li><li>Ici, <b>Choisir un fichier audio</b> → <b>Choisir le fichier</b> → <b>Parcourir</b> → le mémo (.m4a ou .qta, les deux marchent).</li><li>Si Safari refuse de le décoder, un bouton <b>▶ Le lire avec le lecteur du téléphone</b> apparaît : il l’écoute en entier, en silence, puis l’analyse.</li></ol><p class="muted small">Sur un ordi : glisse le fichier du Dictaphone sur ce bouton, ou partage-le-toi par courriel ou AirDrop. Le mémo peut aussi aller au mur (Nos idées, bouton ♫) : il sera ensuite dans la liste ci-dessus.</p></details>
         <p class="muted small or-astuce">Pour trouver les accords d’un bout joué au clavier : enregistre-le ici (micro) ou dépose le fichier. Un son clair, sans batterie, donne le meilleur résultat. Branché en MIDI, le studio les lit encore plus juste, en direct : <a href="#/studio?tab=instrument">Studio → Mon instrument</a>.</p>
       </section>
       <section class="panel or-direct" hidden>
@@ -92,6 +92,7 @@ export default {
     // Redessiner quand la carte prend sa taille (elle apparaît seulement après l'écoute).
     const roC = new ResizeObserver(() => requestAnimationFrame(dessiner)); roC.observe(q('.or-canvas'));
     const etat = (t) => { q('.or-etat').textContent = t; };
+    const etatHTML = (h) => { q('.or-etat').innerHTML = h; };
     // Un bout pris dans le filet arrive ici tout seul.
     if (window.__flipOreille) { const f = window.__flipOreille; window.__flipOreille = null; setTimeout(async () => analyser(await f.blob.arrayBuffer(), f.nom), 0); }
     // La lecture et sa tête : où on en est, sur l'onde, pendant qu'on écoute (une boucle tourne entre a et b).
@@ -258,7 +259,46 @@ export default {
     // Décode la pièce déposée et la fait écouter par l’oreille, en affichant chaque étape.
     async function analyser(arrayBuffer, n) {
       etat('Je décode la pièce…'); pile = []; bout = null;
-      try { await analyserBuf(await audio().decodeAudioData(arrayBuffer), n); } catch { etat('Ce navigateur n’arrive pas à lire ce fichier. Un mémo du Dictaphone : partage-le « Enregistrer dans Fichiers » (il devient un .m4a), puis choisis-le ici. Sinon : un mp3, un m4a ou un wav.'); }
+      const copie = arrayBuffer.slice(0); let b0 = null;
+      try { b0 = await decoder(arrayBuffer); } catch (err) {
+        // Dernier recours : le lecteur du téléphone sait souvent lire ce que le décodeur refuse. On l'écoute en entier, en silence.
+        etatHTML(`Le décodeur de ce navigateur refuse ce fichier${err?.message ? ` (${esc(err.message.slice(0, 80))})` : ''}. <button class="btn small" data-o="parlecteur">▶ Le lire avec le lecteur du téléphone</button> <span class="muted">(il l’écoute en entier, en silence : une minute de mémo = une minute d’attente)</span>`);
+        lecteurEnAttente = { copie, n }; return;
+      }
+      try { await analyserBuf(b0, n); } catch (err) { console.error(err); etat(`Le fichier est lu (${Math.round(b0.duration)} s), mais l’analyse a planté : ${err?.message || err}. Dis-le-moi, avec la longueur du mémo.`); }
+    }
+    // Décode un fichier audio. Les mémos du Dictaphone en .qta (QuickTime) ont les mêmes boîtes qu'un .m4a :
+    // si le décodeur les refuse, on change seulement l'étiquette (« qt » → « M4A ») et on réessaie.
+    async function decoder(ab) {
+      const copie = ab.slice(0);
+      try { return await audio().decodeAudioData(ab); } catch (e1) {
+        const v = new Uint8Array(copie);
+        if (v.length > 12 && String.fromCharCode(...v.slice(4, 8)) === 'ftyp') {
+          v.set([77, 52, 65, 32], 8); // « M4A »
+          try { return await audio().decodeAudioData(v.buffer.slice(0)); } catch { /* on garde la première erreur */ }
+        }
+        throw e1;
+      }
+    }
+    let lecteurEnAttente = null;
+    // Lit le fichier avec un élément <audio> (dans le geste, pour iPhone) et capte ce qui en sort.
+    async function parLecteur() {
+      const { copie, n } = lecteurEnAttente || {}; if (!copie) return; lecteurEnAttente = null;
+      const c = audio(); try { await c.resume(); } catch { /* iOS */ }
+      const url = URL.createObjectURL(new Blob([copie])); const el2 = new Audio(); el2.src = url; el2.preload = 'auto';
+      const srcN = c.createMediaElementSource(el2); const proc = c.createScriptProcessor(4096, 2, 2); const muet = c.createGain(); muet.gain.value = 0;
+      const morceaux = [[], []];
+      proc.onaudioprocess = (ev) => { if (el2.paused) return; for (let k = 0; k < 2; k++) morceaux[k].push(new Float32Array(ev.inputBuffer.getChannelData(Math.min(k, ev.inputBuffer.numberOfChannels - 1)))); };
+      srcN.connect(proc).connect(muet).connect(c.destination);
+      const tic = setInterval(() => etat(`Je l’écoute avec le lecteur du téléphone… ${mmss(el2.currentTime)}${isFinite(el2.duration) ? ` / ${mmss(el2.duration)}` : ''}`), 500);
+      try { await el2.play(); } catch (err) { clearInterval(tic); etat(`Le lecteur refuse aussi ce fichier (${err?.message || err}). Essaie de le partager depuis le Dictaphone en « Enregistrer dans Fichiers », puis de le choisir ici.`); return; }
+      await new Promise((ok) => { el2.onended = ok; el2.onerror = ok; });
+      clearInterval(tic); proc.disconnect(); srcN.disconnect(); URL.revokeObjectURL(url);
+      const L = morceaux[0].reduce((a, x) => a + x.length, 0);
+      if (!L) { etat('Rien n’est sorti du lecteur : ce fichier ne contient peut-être pas de son.'); return; }
+      const buf = c.createBuffer(2, L, c.sampleRate);
+      for (let k = 0; k < 2; k++) { let o = 0; const d = buf.getChannelData(k); morceaux[k].forEach((m) => { d.set(m, o); o += m.length; }); }
+      try { await analyserBuf(buf, n); } catch (err) { console.error(err); etat(`L’analyse a planté : ${err?.message || err}.`); }
     }
     async function analyserBuf(b0, n) {
       arrete(); curseur = 0; nom = n; plage = null; entendus = {}; cadreG = null; corrigees = new Set(); pvoulus = new Set(); ptOuverte = -1; apercu = null; cp = []; cible = -1; cents = 0; voixForcee = false; voulus.clear(); occK = {}; { const r = q('[data-cents]'); if (r) r.value = 0; const lab = q('.or-cents'); if (lab) lab.textContent = '0 ¢'; }
@@ -659,6 +699,7 @@ export default {
     el.addEventListener('click', async (e) => {
       const o = e.target.closest('[data-o]')?.dataset.o;
       if (o === 'micro') { micro(e.target.closest('[data-o]')); return; }
+      if (o === 'parlecteur') { parLecteur(); return; }
       if (o === 'direct') { directStart(); return; }
       if (o === 'direct-stop') { directStop(); q('.or-direct').hidden = true; return; }
       if (o === 'direct-analyser') { const d = directStop(); if (!d?.rec) { toast('Rien d’enregistré.'); return; }
