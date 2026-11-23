@@ -17,8 +17,8 @@ export function loadLexique() {
       let rank = 0;
       for (const line of txt.split('\n')) {
         if (!line || line[0] === '#') continue;
-        const [w, phon, nb, osyl] = line.split('\t');
-        const info = { phon, nb: +nb, parts: osyl ? osyl.split('-') : [w], rank: rank++ };
+        const [w, phon, nb, osyl, cat] = line.split('\t');
+        const info = { phon, nb: +nb, parts: osyl ? osyl.split('-') : [w], rank: rank++, cat: cat || '' };
         words.set(w, info);
         const k = rimeKey(phon);
         if (k) {

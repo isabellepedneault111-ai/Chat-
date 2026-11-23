@@ -17,7 +17,7 @@ const PIECES = {
 };
 // Une ligne = deux mesures = 32 doubles-croches. [pas, durée, fort]
 const S = (l) => l.map(([s, d, f]) => ({ s, d, f: !!f }));
-const PLACEMENTS = [
+export const PLACEMENTS = [
   { id: 'temps', nom: 'Sur le temps', idee: 'Une syllabe par temps : posé, clair, facile à chanter.', slots: S([[0, 4, 1], [4, 4], [8, 4, 1], [12, 4], [16, 4, 1], [20, 4], [24, 8, 1]]) },
   { id: 'croches', nom: 'En croches', idee: 'Deux syllabes par temps : le débit d’une conversation.', slots: S([[0, 2, 1], [2, 2], [4, 2], [6, 2], [8, 2, 1], [10, 2], [12, 2], [14, 2], [16, 2, 1], [18, 2], [20, 2], [22, 2], [24, 8, 1]]) },
   { id: 'contre', nom: 'Contretemps', idee: 'Chaque syllabe arrive juste après le temps : ça balance, ça flotte.', slots: S([[2, 4, 1], [6, 4], [10, 4, 1], [14, 4], [18, 4, 1], [22, 4], [26, 6, 1]]) },
@@ -30,7 +30,7 @@ const PETITS = new Set('le la les l un une des de du d et ou à au aux en y ne n
 
 // Les syllabes chantées d'une ligne, et l'accent tonique : en français, sur la dernière syllabe prononcée du groupe
 // (fin de ligne, avant une virgule), plus doucement sur la fin des mots pleins.
-function syllabes(ligne) {
+export function syllabes(ligne) {
   const { words } = lineSyll(ligne);
   const out = [];
   const coupes = new Set(); // mots suivis d'une ponctuation
@@ -51,7 +51,7 @@ function syllabes(ligne) {
 
 // Où chaque syllabe tombe dans un placement : on essaie quelques départs et on garde celui où les accents
 // tombent le mieux sur les temps forts, la fin de ligne sur la dernière place.
-function placer(syl, slots) {
+export function placer(syl, slots) {
   const N = syl.length; const M = slots.length;
   const essais = N <= M ? [...Array(Math.min(4, M - N + 1))].map((_, i) => M - N - i) : [M - N];
   let best = null;

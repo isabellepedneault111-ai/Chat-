@@ -4426,3 +4426,42 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .od-f { display: grid; justify-items: center; padding: 6px 12px; border-radius: 8px; background: #fff; border: 1.5px solid #e2d6bf; } .od-f .nm b { font: 700 1.2rem var(--display); } .od-f small { font-size: .78rem; color: #6d655a; }
 .od-f.ici { border-color: #1d1a15; box-shadow: 0 2px 0 #1d1a15; }
 .od-kb .key.white.k-jeu-r span, .or-jeu-kb .key.white.k-jeu-r span { color: #fffdf8; }
+/* Le micro se voit toujours dans l'en-tête, pour le rouvrir de partout */
+.tools #micBtn.hors-lieu { display: inline-flex; }
+
+/* 0.81 — Mots sur la grille (Ma voix) : des feuilles de papier, du ruban, du gros texte lisible. */
+.mo-reg { display: grid; gap: 14px; }
+.mo-themes { display: flex; flex-wrap: wrap; gap: 8px; }
+.mo-th { font: 600 1rem var(--display); padding: 8px 14px; border-radius: 6px; border: 1px solid #d9cfbd; background: #fffdf8; color: #2b2620; cursor: pointer; box-shadow: 0 1px 0 rgba(0, 0, 0, .06); }
+.mo-th:hover { border-color: #c9a45c; }
+.mo-th.on { background: #fbe7a1; border-color: #b08a2e; box-shadow: inset 0 -2px 0 #b08a2e; }
+.mo-cles input, .mo-main input { width: 100%; font: 1.05rem var(--display); padding: 10px 12px; border-radius: 8px; border: 1px solid #d9cfbd; background: #fffdf8; }
+.mo-choix { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; }
+.mo-choix .field { min-width: 150px; }
+.mo-lignes { display: grid; gap: 14px; margin-top: 16px; }
+.mo-vide p { margin: 0; font-size: 1.05rem; }
+.mo-l { position: relative; background: #fffdf8; padding-top: 18px; transition: box-shadow .2s; }
+.mo-l::before { content: ''; position: absolute; top: -7px; left: 26px; width: 78px; height: 18px; background: rgba(246, 214, 107, .85); transform: rotate(-2deg); box-shadow: 0 1px 1px rgba(0, 0, 0, .08); }
+.mo-l.garde { box-shadow: inset 4px 0 0 #5d6d24; }
+.mo-l.chante { box-shadow: 0 0 0 2px #d93a24; }
+.mo-l-tete { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.mo-lettre { font: 800 1rem var(--display); width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: #2b2620; color: #fbe7a1; flex: none; }
+.mo-txt { flex: 1 1 280px; min-width: 0; font: 600 1.3rem/1.3 var(--display); padding: 6px 8px; border: 1px solid transparent; border-bottom: 1px dashed #c9bfa9; background: transparent; color: #1d1a15; border-radius: 4px; }
+.mo-txt:focus { outline: none; border-color: #c9a45c; background: #fff; }
+.mo-n { font-weight: 800; font-size: .95rem; color: #5b4a1c; white-space: nowrap; }
+.mo-n.neg { color: #b8331f; }
+.mo-rime { font-size: .9rem; font-weight: 700; white-space: nowrap; }
+.mo-rime.pos { color: #4f5d1d; } .mo-rime.neg { color: #b8331f; }
+.mo-garde { display: flex; align-items: center; gap: 6px; font-size: .95rem; white-space: nowrap; }
+.mo-garde input { width: 20px; height: 20px; accent-color: #5d6d24; }
+.mo-accs { position: relative; height: 26px; margin-top: 10px; }
+.mo-acc { position: absolute; top: 0; font: 700 .95rem var(--display); color: #1d1a15; padding: 1px 6px; border-left: 2px solid #b08a2e; background: #fbefc6; border-radius: 0 4px 4px 0; white-space: nowrap; }
+.mo-acc.tenu { background: #efe6d2; border-left-color: #9b9180; color: #4a443b; }
+.mo-fin { margin-top: 16px; }
+.mo-info { flex: 1 1 260px; }
+@media (max-width: 640px) { .mo-txt { font-size: 1.1rem; flex-basis: 100%; } .mo-acc { font-size: .82rem; } }
+.mo-reg .mo-cles { display: grid; gap: 6px; grid-template-columns: 1fr; }
+.mo-reg .mo-cles > span { font-weight: 600; }
+.mo-choix .field select { min-width: 0; }
+.mo-txt { resize: none; overflow: hidden; font-family: var(--display); }
+@media (max-width: 640px) { .mo-txt { min-height: 2.9em; } }

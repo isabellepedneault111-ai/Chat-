@@ -40,6 +40,7 @@ import home from './views/home.js';
 import miroir from './views/miroir.js';
 import tessiture from './views/tessiture.js';
 import gym from './views/gym.js';
+import mots from './views/mots.js';
 import labo from './views/labo.js';
 import studio from './views/studio.js';
 import paroles from './views/paroles.js';
@@ -63,6 +64,7 @@ const APPUIS = {
   calendrier: ['Des séances courtes, régulières et planifiées d’avance tiennent mieux que les élans de dernière minute ; un rendez-vous fixé à deux est un engagement.', 'Rohrer 2004 · Gollwitzer 1999'],
   miroir: ['Voir sa hauteur pendant qu’on chante corrige la justesse plus vite que l’oreille seule.', 'Welch, Howard & Rush 1989'],
   tessiture: ['Chanter dans sa tessiture confortable ménage la voix : moins d’effort, moins de fatigue.', 'Titze 1994'],
+  mots: ['Les syllabes accentuées posées sur les temps forts font qu’un texte se chante sans boiter ; un brouillon imparfait donne de la matière à réécrire.', 'Pattison 2009'],
   gym: ['Les exercices à conduit vocal semi-fermé (paille, lèvres, « vv ») échauffent la voix avec moins d’effort.', 'Titze 2006'],
   labo: ['Un rythme et un accord sont le même rapport de nombres, à deux vitesses : l’entendre change la façon de composer.', 'Cowell 1930 · Toussaint 2005'],
   studio: ['Improviser sur une boucle stable libère l’attention pour inventer ; c’est là que naît le vocabulaire.', 'Biasutti & Frezza 2009'],
@@ -76,7 +78,7 @@ const APPUIS = {
   placer: ['La prosodie : quand les syllabes accentuées tombent sur les temps forts, le texte se chante tout seul ; à côté, il boite.', 'Pattison 2009'],
 };
 
-const routes = { '': home, miroir, tessiture, gym, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles: home, elan, cathedrale, passage, calendrier, projet: home };
+const routes = { '': home, miroir, tessiture, gym, mots, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles: home, elan, cathedrale, passage, calendrier, projet: home };
 // Onglet en arrière-plan : le titre compte ce que l'autre vient d'ajouter, « (2) FLIP ». Revenir remet à zéro.
 {
   const base = document.title; let n = 0;
@@ -91,7 +93,7 @@ initEtincelle();
 // Quatre lieux, rangés par ce qu'on y fait : aujourd'hui, nos idées, écrire, jouer (la Session est à part).
 // Chaque lieu a sa barre de sous-onglets. La voix et les disques ne sont plus des lieux à eux : ce sont des
 // sous-onglets de Jouer, avec une petite rangée de pastilles pour leurs pages.
-const VOIX = ['accord', 'miroir', 'tessiture', 'gym'];
+const VOIX = ['accord', 'miroir', 'tessiture', 'gym', 'mots'];
 const PROJET = ['projet', 'depart', 'ames']; // notre projet, et ses deux sections : d'où chacun part, ce que ça donne à deux
 const LIEUX = {
   home: { nom: 'Accueil', pages: ['', 'calendrier', 'projet', 'bilan', 'passage'], aussi: ['nouvelles', 'ames', 'depart', 'evolution', 'arbre', 'elan'] },
@@ -215,7 +217,7 @@ onMicStatus((on, err) => {
   micBtn.setAttribute('aria-pressed', on);
   micBtn.querySelector('.mic-label').textContent = on ? 'Micro ouvert' : 'Micro fermé';
   micBtn.title = on ? 'Le micro est ouvert : Voix, Miroir et Empreinte t’entendent. Touche pour le fermer.' : 'Ouvrir le micro (pour chanter dans Voix, Miroir, Empreinte)';
-  if (err) toast('Micro refusé. Autorise-le dans la barre d’adresse du navigateur.');
+  if (err) toast(/iPhone|iPad/.test(navigator.userAgent) ? 'Micro refusé. Sur iPhone : touche « aA » dans la barre d’adresse → Réglages du site web → Micro → Autoriser, puis recharge la page.' : 'Micro refusé. Autorise-le dans la barre d’adresse du navigateur (le petit cadenas), puis réessaie.');
 });
 onPitch((p, rms) => {
   micBtn.style.setProperty('--lvl', Math.min(1, rms * 12).toFixed(3));

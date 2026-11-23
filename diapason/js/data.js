@@ -8,6 +8,7 @@ export const MODULES = [
   { id: 'miroir', num: '01', name: 'Miroir', color: 'var(--c-miroir)', tagline: 'La voix, dessinée en direct.' },
   { id: 'tessiture', num: '02', name: 'Empreinte', color: 'var(--c-empreinte)', tagline: 'L’étendue de chaque voix, et la zone du duo.' },
   { id: 'gym', num: '03', name: 'Gym vocal', color: 'var(--c-gym)', tagline: 'Échauffements transposés, notés en direct.' },
+  { id: 'mots', num: '04', name: 'Mots sur la grille', color: 'var(--c-paroles)', tagline: 'Un thème, tes mots-clés : des lignes qui tombent sur les temps et les accords, chantées.' },
   { id: 'labo', num: '∿', name: 'Le labo', color: 'var(--c-labo)', tagline: 'Rythme ↔ note : quand un polyrythme devient un accord.' },
   { id: 'cathedrale', num: '✶', name: 'La cathédrale', color: 'var(--c-labo)', tagline: 'Quelques nombres, tout un orchestre.' },
   { id: 'studio', num: '', name: 'Jouer', color: 'var(--c-studio)', tagline: 'Beat, accords, instrument, scène, clip.' },

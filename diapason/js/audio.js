@@ -374,6 +374,9 @@ export async function startMic() {
     statusListeners.forEach((fn) => fn(false, e));
     return false;
   }
+  // iPhone : un appel, la mise en veille ou une autre app peut couper le micro en silence ; il se ferme alors
+  // vraiment (le bouton le dit), et un toucher le rouvre.
+  stream.getTracks().forEach((t) => t.addEventListener('ended', () => stopMic()));
   source = c.createMediaStreamSource(stream);
   analyser = c.createAnalyser();
   analyser.fftSize = 2048;

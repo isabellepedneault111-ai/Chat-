@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.81', quand: '2026-11-23', titre: 'Des mots sur la grille', items: [
+    ['✍️ Mots sur la grille (Ma voix)', ['Un thème, tes mots-clés (un mot ou une expression), une grille : celle de Jouer, la dernière de L’oreille, ou des accords que tu tapes. FLIP écrit des lignes brouillon qui tombent sur les temps et qui riment (AABB, ABAB…), puis te les chante sur les accords, la voix-guide sur les notes de l’accord. Garde une ligne, demande-en une autre, réécris par-dessus, puis envoie le tout dans Placer ou dans le journal.']],
+    ['Le micro, toujours là', ['Le bouton micro reste en haut à droite sur toutes les pages. Si l’iPhone le coupe, il s’arrête proprement, et s’il est refusé, FLIP dit où l’autoriser (aA → Réglages du site web → Micro).']],
+  ] },
   { v: '0.80', quand: '2026-11-23', titre: 'Le son sur iPhone', items: [
     ['La cathédrale sur iPhone', ['Sur iPhone, Safari ne laisse partir le son que pendant le toucher. Le ▶ de la cathédrale chargeait d’abord l’orchestre, puis démarrait le son : trop tard, et ça restait muet. Maintenant, le son de l’app se réveille dès le premier toucher, partout ; la cathédrale, l’oreille ralentie et le reste partent pour vrai.']],
   ] },
