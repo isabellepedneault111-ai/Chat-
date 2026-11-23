@@ -3,7 +3,8 @@
 // le lexique (syllabes, rimes, nature des mots) et le dictionnaire de synonymes de l'app. FLIP essaie des
 // centaines de phrases par ligne et garde celles qui tombent le mieux sur les temps (le même calcul que « Placer »)
 // et qui riment selon le schéma choisi. Ce sont des brouillons à retravailler, pas des paroles finies.
-import { info, rimeOf, rimesClassees, synonymesParSens } from './lexique.js';
+import { info, rimeOf, rimesClassees, synonymesParSens, ecarte } from './lexique.js';
+export { ecarte };
 import { syllabes, placer } from './views/placer.js';
 
 // Banques par thème. Noms : « mot genre » (m ou f). Adjectifs : au masculin (le féminin est calculé, ou « m/f »).
@@ -23,17 +24,7 @@ export const THEMES = {
 };
 const COMMUN = B('temps m, monde m, jour m, voix f, cœur m, main f, chanson f, silence m', 'seul, vrai, lent, doux/douce', 'cherche, garde, attends, chante', 'passe, revient, s’en va, reste');
 
-// ---------- Les mots que FLIP ne propose jamais de lui-même ----------
-// Les rimes et les synonymes viennent de grands dictionnaires : on écarte le sexe, la vulgarité, les insultes,
-// la drogue et la violence crue. (Un mot que TU tapes en mot-clé reste à toi : il n'est jamais filtré.)
-const ECARTES = new RegExp('^(' + [
-  'sex', 'sexy', 'sexu', 'coït', 'coit', 'orgasm', 'érotiq', 'erotiq', 'porn', 'pénis', 'penis', 'vagin', 'vulv', 'clitor', 'testicul', 'sperm', 'éjacul', 'ejacul',
-  'masturb', 'maîtress', 'maitress', 'plaisir', 'amant', 'caress', 'sensuel', 'volupt', 'jouir', 'jouiss', 'charnel', 'intime', 'gémi', 'lingerie', 'strip', 'excitant', 'excité', 'violence', 'violent', 'chair$', 'sodom', 'fellat', 'prostitu', 'putain', 'pute', 'putes', 'bordel', 'baise', 'baiser?s?$', 'baisé', 'nique', 'niqu', 'couill', 'bite', 'bites', 'queue', 'queues', 'chatte', 'cul$', 'culs$', 'culott', 'fesse',
-  'nichon', 'seins?$', 'téton', 'teton', 'nu$', 'nue', 'nus', 'nues', 'nudit', 'lubri', 'viol$', 'viols$', 'violé', 'violer', 'violeur', 'inceste', 'pédo', 'pedo', 'pervers', 'obscén', 'obscen', 'libid', 'désir', 'lit$',
-  'merde', 'chier$', 'chie$', 'chies$', 'chiant', 'pisse', 'pisser', 'vomi', 'crotte', 'con$', 'cons$', 'conne$', 'connes$', 'connard', 'connerie', 'salope', 'salaud', 'enculé', 'encul', 'branl', 'foutre', 'fout', 'bâtard', 'batard', 'pétasse', 'garce', 'gouin', 'pédé$', 'pédés$', 'tapette', 'tafiole', 'nègre', 'negre', 'bougnoul', 'youpin',
-  'drogu', 'cocaïn', 'cocain', 'héroïn', 'heroin', 'cannabis', 'shit$', 'joint$', 'seringu', 'cadavr', 'suicid', 'égorg', 'egorg', 'tortur', 'massacr', 'meurtr', 'assassin', 'imbécile', 'idiot', 'crétin', 'débile', 'abruti', 'hôpital', 'cercueil', 'tribunal', 'mari$', 'maris$',
-].join('|') + ')', 'i');
-export const ecarte = (w) => ECARTES.test(String(w).toLowerCase().replace(/^[ljdmtsnc]’|^[ljdmtsnc]'/, ''));
+// Les mots écartés (sexe, vulgarité, insultes, drogue, violence crue) : la liste vit dans lexique.js.
 
 // ---------- Le petit français : élisions, accords, pluriels ----------
 const H_MUET = /^h(abit|ésit|iver|orizon|istoire|eure|umeur|ôtel|erbe|asard)/i;

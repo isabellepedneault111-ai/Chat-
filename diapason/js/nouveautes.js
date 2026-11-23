@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.90', quand: '2026-11-23', titre: 'Le filtre partout', items: [
+    ['Les vieilles lignes nettoyées', ['Des lignes écrites avant le filtre restaient en mémoire, même gardées : celles qui contiennent un mot écarté sont vidées et réécrites à l’ouverture de Mots sur la grille.']],
+    ['Rimes et synonymes, partout', ['Le même filtre s’applique maintenant aux rimes et aux synonymes de toute l’app (Écrire, Placer, Paroles), pas seulement aux brouillons.']],
+  ] },
   { v: '0.89', quand: '2026-11-23', titre: 'Des mots propres dans les brouillons', items: [
     ['Mots sur la grille fait le ménage', ['Les rimes et les synonymes viennent de grands dictionnaires : FLIP y pigeait parfois des mots crus ou à côté (sexe, insultes, violence…). Il ne les propose plus jamais de lui-même. Un mot que tu tapes toi-même en mot-clé reste à toi.']],
   ] },

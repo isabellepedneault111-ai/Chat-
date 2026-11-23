@@ -3,6 +3,18 @@
 // Synonymes : myThes 2.3 (Frédéric Labbé, Dicollecte, LGPL), le dictionnaire de LibreOffice, dans l'app et hors ligne ;
 // le Wiktionnaire (CC BY-SA) en renfort pour les mots qu'il ne connaît pas.
 
+// ---------- Les mots que FLIP ne propose jamais de lui-même ----------
+// Rimes et synonymes viennent de grands dictionnaires : on écarte le sexe, la vulgarité, les insultes,
+// la drogue et la violence crue. (Un mot que TU tapes en mot-clé reste à toi : il n'est jamais filtré.)
+const ECARTES = new RegExp('^(' + [
+  'sex', 'sexy', 'sexu', 'coït', 'coit', 'orgasm', 'érotiq', 'erotiq', 'porn', 'pénis', 'penis', 'vagin', 'vulv', 'clitor', 'testicul', 'sperm', 'éjacul', 'ejacul',
+  'masturb', 'maîtress', 'maitress', 'plaisir', 'amant', 'caress', 'sensuel', 'volupt', 'jouir', 'jouiss', 'charnel', 'intime', 'gémi', 'lingerie', 'strip', 'excitant', 'excité', 'violence', 'violent', 'chair$', 'sodom', 'fellat', 'prostitu', 'putain', 'pute', 'putes', 'bordel', 'baise', 'baiser?s?$', 'baisé', 'nique', 'niqu', 'couill', 'bite', 'bites', 'queue', 'queues', 'chatte', 'cul$', 'culs$', 'culott', 'fesse',
+  'nichon', 'seins?$', 'téton', 'teton', 'nu$', 'nue', 'nus', 'nues', 'nudit', 'lubri', 'viol$', 'viols$', 'violé', 'violer', 'violeur', 'inceste', 'pédo', 'pedo', 'pervers', 'obscén', 'obscen', 'libid', 'désir', 'lit$',
+  'merde', 'chier$', 'chie$', 'chies$', 'chiant', 'pisse', 'pisser', 'vomi', 'crotte', 'con$', 'cons$', 'conne$', 'connes$', 'connard', 'connerie', 'salope', 'salaud', 'enculé', 'encul', 'branl', 'foutre', 'fout', 'bâtard', 'batard', 'pétasse', 'garce', 'gouin', 'pédé$', 'pédés$', 'tapette', 'tafiole', 'nègre', 'negre', 'bougnoul', 'youpin',
+  'drogu', 'cocaïn', 'cocain', 'héroïn', 'heroin', 'cannabis', 'shit$', 'joint$', 'seringu', 'cadavr', 'suicid', 'égorg', 'egorg', 'tortur', 'massacr', 'meurtr', 'assassin', 'imbécile', 'idiot', 'crétin', 'débile', 'abruti', 'hôpital', 'cercueil', 'tribunal', 'mari$', 'maris$',
+].join('|') + ')', 'i');
+export const ecarte = (w) => ECARTES.test(String(w).toLowerCase().replace(/^[ljdmtsnc]’|^[ljdmtsnc]'/, ''));
+
 const VOWELS = 'aeiouyEO29@§51°';
 let words = null; // mot → { phon, nb, parts, freq }
 let byRime = null; // clé de rime → [mots], du plus fréquent au moins fréquent
@@ -119,7 +131,8 @@ export function rhymes(w, limit = 80) {
     if (asson.length > 300) break;
   }
   asson.sort((a, b) => words.get(a).rank - words.get(b).rank);
-  return { phon: i.phon, riches: riches.slice(0, limit), suffisantes: suff.slice(0, limit), assonances: asson.slice(0, 40) };
+  const ok = (x) => !ecarte(x);
+  return { phon: i.phon, riches: riches.filter(ok).slice(0, limit), suffisantes: suff.filter(ok).slice(0, limit), assonances: asson.filter(ok).slice(0, 40) };
 }
 
 // La rime d’une ligne de paroles : celle de son dernier mot.
@@ -142,7 +155,7 @@ export function rimesClassees(w, limit = 60) {
   // Une seule forme par son : « balance » suffit, pas aussi « balances » et « balancent ».
   const vus = new Set(); const uniques = liste.filter((x) => { const ph = words.get(x.w).phon.replace(/°+$/, ''); if (vus.has(ph)) return false; vus.add(ph); return true; });
   const homophones = (byRime.get(rimeKey(i.phon)) || []).filter((x) => x !== self && words.get(x).phon.replace(/°+$/, '') === a);
-  return { phon: i.phon, nb: i.nb, rimes: uniques.slice(0, limit), homophones: homophones.slice(0, 8) };
+  return { phon: i.phon, nb: i.nb, rimes: uniques.filter((x) => !ecarte(x.w)).slice(0, limit), homophones: homophones.filter((x) => !ecarte(x)).slice(0, 8) };
 }
 
 // Synonymes, par sens : d'abord le dictionnaire de l'app (hors ligne), sinon le Wiktionnaire.
@@ -155,9 +168,10 @@ const chargerThes = () => (thes ||= fetch('data/synonymes-fr.tsv').then((r) => r
 export async function synonymesParSens(w) {
   const m = await chargerThes(); const k = norm(w);
   let brut = m.get(k) || m.get(k.replace(/s$/, '')) || m.get(k.replace(/es$/, 'e')) || m.get(k.replace(/x$/, ''));
-  if (brut) return { source: 'dico', sens: brut.split(';').map((x) => { const [n, l] = x.split(':'); const rang = (m) => words?.get(norm(m))?.rank ?? 1e6; return { nature: NATURE[n] ?? '', mots: l.split('|').sort((x, y) => rang(x) - rang(y)) }; }) };
+  if (brut) return { source: 'dico', sens: brut.split(';').map((x) => { const [n, l] = x.split(':'); const rang = (m) => words?.get(norm(m))?.rank ?? 1e6; return { nature: NATURE[n] ?? '', mots: l.split('|').filter((m) => !ecarte(m)).sort((x, y) => rang(x) - rang(y)) }; }).filter((x) => x.mots.length) };
   const wik = await synonyms(w);
-  return wik == null ? null : { source: 'wiktionnaire', sens: wik.length ? [{ nature: '', mots: wik }] : [] };
+  const w2 = (wik || []).filter((m) => !ecarte(m));
+  return wik == null ? null : { source: 'wiktionnaire', sens: w2.length ? [{ nature: '', mots: w2 }] : [] };
 }
 
 // Synonymes : section « Synonymes » du Wiktionnaire (et quasi-synonymes).

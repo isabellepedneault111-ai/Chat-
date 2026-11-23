@@ -9,7 +9,7 @@ import { store, toast } from '../ui.js';
 import { esc } from './carnet.js';
 import { nomNote } from '../oreille.js';
 import { PLACEMENTS, syllabes, placer } from './placer.js';
-import { THEMES, SCHEMAS, banque, ligne, partenaire, hasard } from '../paroles-gen.js';
+import { THEMES, SCHEMAS, banque, ligne, partenaire, hasard, ecarte } from '../paroles-gen.js';
 import { PROGRESSIONS } from '../data.js';
 import { diagramme } from '../guitare.js';
 import { chordIntervals } from '../music.js';
@@ -71,6 +71,11 @@ export default {
   mount(el) {
     const st = { theme: 'nuit', cles: '', schema: 'AABB', place: 'croches', pers: 'je', n: 4, source: 'jouer', main: 'Lam Fa Do Sol', ...store.get('motsReglages', {}) };
     let lignes = store.get('motsLignes', []); // [{ txt, garde }]
+    // Des lignes écrites avant le filtre (0.89) peuvent traîner en mémoire : celles qui contiennent un mot écarté
+    // (et que la personne n'a pas tapé elle-même en mot-clé) sont vidées, puis réécrites.
+    const salie = (txt) => { const cles = (store.get('motsReglages', {}).cles || '').toLowerCase(); return txt.split(/[\s’',.;:!?]+/).some((w) => w && ecarte(w) && !cles.includes(w.toLowerCase())); };
+    const aRefaire = lignes.some((L) => salie(L.txt));
+    lignes = lignes.map((L) => (salie(L.txt) ? { txt: '', garde: false } : L));
     // Venue de L'oreille (« Des paroles sur cette chanson ») : la vraie chanson joue sous les paroles.
     let chanson = window.__flipMots || null; window.__flipMots = null;
     if (chanson) chansonGardee = chanson; else chanson = chansonGardee;
@@ -311,7 +316,7 @@ export default {
     el.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.classList?.contains('mo-txt')) { e.preventDefault(); e.target.blur(); } });
     // Après une retouche à la main : on recalcule la ligne quand on quitte le champ (pour ne pas perdre le curseur).
     el.addEventListener('focusout', (e) => { if (e.target.classList?.contains('mo-txt')) rendre(); });
-    loadLexique().then(rendre); rendre();
+    loadLexique().then(async () => { if (aRefaire) await generer(); else rendre(); }); rendre();
     setTimeout(() => prechargerSons(['voix', 'piano']), 400);
     return () => arreter();
   },
