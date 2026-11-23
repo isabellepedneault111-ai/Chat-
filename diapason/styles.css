@@ -4549,3 +4549,4 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .ca-plus-value { margin: 12px 0 0; font-size: .95rem; }
 .mo-l-bouge .mo-ins { font-weight: 700; color: #4f5d1d; }
 .mo-choeur.on { background: #2b2620; color: #fbe7a1; border-color: #2b2620; }
+.or-actions .btn.suggere { box-shadow: 0 0 0 3px #fbe7a1, 0 0 0 5px #b08a2e; }

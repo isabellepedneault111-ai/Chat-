@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.98', quand: '2026-11-23', titre: 'La chanson de L’oreille, toujours sous les paroles', items: [
+    ['Elle ne se perd plus', ['La dernière chanson passée dans L’oreille reste sur ton appareil (pas sur le serveur). Dans Mots sur la grille, « La dernière grille de L’oreille » la fait jouer sous les paroles, même après un rechargement, avec son onde sous chaque ligne.']],
+    ['L’oreille repère le souffle', ['Si une chanson a un fond de bruit, L’oreille le dit et fait briller « 🧹 Réduire le bruit ». Après le nettoyage, elle dit de combien le bruit a baissé.']],
+    ['Placer, plus clair', ['« Envoyer dans Placer » devient « Essayer 7 rythmes par ligne (Placer) » : ce que ça fait, dit sur le bouton.']],
+  ] },
   { v: '0.97', quand: '2026-11-23', titre: 'Le bon genre', items: [
     ['Le genre des noms, pour vrai', ['Mots sur la grille ne devine plus le genre des noms d’après leur terminaison : il le prend dans le dictionnaire Lexique (près de 12 000 noms), avec les pluriels irréguliers (fanaux, travaux) et les féminins irréguliers des adjectifs (douce, vieille, légère). Sur des centaines de lignes de test, plus aucun « la » devant un nom masculin, ni l’inverse.']],
     ['L’homme, l’heure, l’hiver', ['Les mots en h muet prennent l’apostrophe (l’homme, l’horizon), les h aspirés non (le hasard). Et un verbe en mot-clé (« partir ») reste un verbe : « tout ça pour partir », jamais « ce partir ».']],

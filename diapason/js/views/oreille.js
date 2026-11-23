@@ -5,6 +5,7 @@ import { clavierDe } from '../doigte.js';
 import { espace, audioURL, saveEntry, uploadAudio, saveProfile, members } from '../espace.js';
 import { toast, autoCanvas, keyboard, store } from '../ui.js';
 import { esc } from './carnet.js';
+import { garderDerniere } from '../memoire-son.js';
 import { surveiller, reprendre, arreter as arreterDossier, surEtat, dossierPossible, recoit, recevoirIci, envoyerAOrdi } from '../arrivee.js';
 import { chromaDuSpectre, accordDuChroma, hauteurDirecte, diagnosticHarmonie, ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, harmoniserVoix, reduireBruit, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
 import { chargerGrille, poserFond } from './studio.js';
@@ -307,6 +308,21 @@ export default {
         throw e1;
       }
     }
+    // La chanson analysée reste sur l'appareil : Mots sur la grille la fera jouer sous les paroles (même après un rechargement).
+    function garderSon() { if (blobCourant && res) garderDerniere({ blob: blobCourant, nom, t0: cadreG?.debutCale ?? 0, temps: cadreG?.temps ?? 60 / res.bpm, at: Date.now() }); }
+    // Y a-t-il du souffle? On compare les passages les plus calmes aux plus forts (trames de 50 ms).
+    function niveauBruit(b) {
+      const d = b.getChannelData(0); const n = Math.floor(b.sampleRate * 0.05); const db = [];
+      for (let p = 0; p + n < d.length; p += n) { let e = 0; for (let i = p; i < p + n; i += 2) e += d[i] * d[i]; db.push(10 * Math.log10(e / (n / 2) + 1e-12)); }
+      db.sort((x, y) => x - y); const bas = db[Math.floor(db.length * 0.1)] ?? -99; const haut = db[Math.floor(db.length * 0.95)] ?? -99;
+      return { bas, ecart: haut - bas };
+    }
+    function conseillerBruit() {
+      const b = q('[data-o=debruit]'); if (!b || !orig) return; const nb = niveauBruit(orig);
+      const souffle = !sonBrut && nb.bas > -52 && nb.ecart < 38; b.classList.toggle('suggere', souffle);
+      if (souffle) etat(`On entend un fond de bruit (${Math.round(nb.bas)} dB dans les silences). « 🧹 Réduire le bruit » devrait aider.`);
+      else if (sonBrut) { const avant = niveauBruit(sonBrut); etat(`Bruit réduit : les silences passent de ${Math.round(avant.bas)} dB à ${Math.round(nb.bas)} dB (${Math.round(avant.bas - nb.bas)} dB de moins).`); }
+    }
     const majDebruit = () => { const b = q('[data-o=debruit]'); if (b) b.textContent = sonBrut ? '↺ Le son d’origine' : '🧹 Réduire le bruit'; };
     let lecteurEnAttente = null;
     // Lit le fichier avec un élément <audio> (dans le geste, pour iPhone) et capte ce qui en sort.
@@ -342,6 +358,7 @@ export default {
         voix = await notesVoix(buf, etat); etat('');
         montrerVoix();
         accsEntendus = accs; harmo(true);
+        garderSon(); conseillerBruit();
       }
     }
     // Une voix seule : des accords proposés sous la mélodie (auto quand l'oreille n'en entend aucun).
@@ -759,7 +776,7 @@ export default {
           if (sonBrut) { const s0 = sonBrut; const n0 = nomBrut; const bl = blobBrut; sonBrut = null; await analyserBuf(s0, n0); blobCourant = bl; toast('Le son d’origine est revenu.'); }
           else { const brut = orig; const n0 = nom; const bl = blobCourant; const propre = await reduireBruit(brut, { onStep: etat }); await analyserBuf(propre, `${n0} (sans bruit)`); sonBrut = brut; nomBrut = n0; blobBrut = bl; blobCourant = wav(propre); entreeCourante = null; toast('Le bruit est réduit : écoute la différence. « Mettre dans nos pièces » gardera cette version.'); }
         } catch (err) { etat(`Le nettoyage n’a pas marché : ${err?.message || err}`); }
-        b.disabled = false; majDebruit(); return;
+        b.disabled = false; majDebruit(); garderSon(); conseillerBruit(); return;
       }
       if (o === 'piece') {
         if (!res || !blobCourant) return; const b = e.target.closest('[data-o]'); const lab = b.textContent; b.disabled = true;

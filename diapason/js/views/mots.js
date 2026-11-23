@@ -9,6 +9,7 @@ import { store, toast } from '../ui.js';
 import { esc } from './carnet.js';
 import { nomNote } from '../oreille.js';
 import { PLACEMENTS, syllabes, placer } from './placer.js';
+import { lireDerniere } from '../memoire-son.js';
 import { THEMES, SCHEMAS, banque, ligne, partenaire, hasard, ecarte } from '../paroles-gen.js';
 import { PROGRESSIONS } from '../data.js';
 import { diagramme } from '../guitare.js';
@@ -129,7 +130,7 @@ export default {
       <div class="mo-ajout"><button class="btn" data-m="ajout">＋ Ajouter une ligne</button><span class="muted small">Touche une ligne pour changer ses mots. ↑ ↓ pour la déplacer (ou glisse-la par ⠿).</span></div>
       <div class="mo-lecteur" hidden role="region" aria-label="Pendant que ça chante"></div>
       <section class="panel mo-fin">
-        <div class="ec-row"><button class="btn" data-m="placer">Envoyer dans Placer</button><button class="btn" data-m="copier">Copier le texte</button>${espace.connected ? '<button class="btn" data-m="journal">Dans le journal</button>' : ''}</div>
+        <div class="ec-row"><button class="btn" data-m="placer" title="Écrire → Placer mes paroles : chaque ligne essayée sur 7 rythmes (sur le temps, contretemps, syncopé…), notée, et chantée sur une pièce">→ Essayer 7 rythmes par ligne (Placer)</button><button class="btn" data-m="copier">Copier le texte</button>${espace.connected ? '<button class="btn" data-m="journal">Dans le journal</button>' : ''}</div>
         <p class="muted small">Comment c’est fait : pas d’intelligence artificielle. Des tournures de phrases, des banques de mots par thème, tes mots-clés et leurs synonymes (le dictionnaire de l’app). Pour chaque ligne, FLIP essaie quelques centaines de phrases et garde celle dont les accents tombent le mieux sur les temps forts (le calcul de « Placer ») et qui rime comme demandé. Le genre des mots-clés est deviné : relis les « le / la ».</p>
       </section>`;
     const q = (s) => el.querySelector(s);
@@ -139,6 +140,12 @@ export default {
     const grillePiece = () => { const e = piecesEsp().find((x) => `piece:${x.id}` === st.source); if (!e) return null; const p = e.data.piece; return { nom: `Nos pièces · ${e.title}`, bpm: p.bpm || 90, mesures: p.grille.map((m) => m.map((x) => (x && x !== '—' ? lireAccord(x) : null))) }; };
     // La vraie chanson d'une de nos pièces : téléchargée de l'espace et décodée une fois.
     async function chargerPiece() {
+      if (st.source === 'oreille' && !chansonGardee) {
+        // Rien en mémoire (rechargement, autre page) : la dernière chanson de L'oreille, gardée sur cet appareil.
+        const f = await lireDerniere();
+        if (f?.blob) { try { const buf = await audio().decodeAudioData(await f.blob.arrayBuffer()); chansonGardee = { buf, nom: f.nom, t0: f.t0 || 0, temps: f.temps || 0.6 }; chanson = chansonGardee; } catch { /* son illisible */ } }
+        majSous(); return;
+      }
       if (!st.source.startsWith('piece:')) return;
       const e = piecesEsp().find((x) => `piece:${x.id}` === st.source); if (!e) return;
       if (!chansonsPieces.has(e.id)) chansonsPieces.set(e.id, audioURL(e.audio).then((u) => fetch(u)).then((r) => r.arrayBuffer()).then((b) => audio().decodeAudioData(b)));
