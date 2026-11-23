@@ -113,7 +113,18 @@ export default {
   id: 'placer',
   mount(el) {
     const PIECES = { ...PIECES_FROG, ...piecesEspace() };
-    let piece = store.get('placerPiece', 'projet1'); if (!PIECES[piece]) piece = 'projet1'; let decale = false; let guide = true; let actif = 0;
+    let piece = store.get('placerPiece', 'projet1'); if (!PIECES[piece]) piece = 'projet1';
+    // Chaque musique a son propre texte (avant, un seul texte servait à toutes).
+    const norm = (x) => String(x || '').toLowerCase().replace(/\s*\((frog|zaza|sans bruit)\)/g, '').replace(/[«»"]/g, '').trim();
+    const textes = store.get('placerTextes', null) || { [piece]: store.get('placerTexte', '') };
+    // Des lignes qui arrivent d'ailleurs (Mots sur la grille, le relais) : sur la musique du même nom si elle est là.
+    const arrivee = store.get('placerArrivee', null);
+    if (arrivee?.texte) {
+      const cible = arrivee.chanson && Object.keys(PIECES).find((k) => { const a = norm(PIECES[k].nom); const b = norm(arrivee.chanson); return a && b && (a === b || a.startsWith(b) || b.startsWith(a)); });
+      if (cible) piece = cible; textes[piece] = arrivee.texte; store.set('placerArrivee', null);
+    }
+    const garderTextes = () => { store.set('placerTextes', textes); store.set('placerPiece', piece); store.set('placerTexte', textes[piece] || ''); };
+    garderTextes(); let decale = false; let guide = true; let actif = 0;
     const tampons = {}; let lecture = null; let raf = 0;
     const voix = espace.connected ? profileOf(espace.me)?.voix || null : null;
     el.innerHTML = `
@@ -131,11 +142,12 @@ export default {
       </section>
       <div class="pl-grid">
         <section class="panel pl-ecrire">
-          <h2>Mes lignes</h2>
+          <h2>Mes lignes <small class="pl-a-qui muted"></small></h2>
           <p class="muted small">Une ligne de chanson par ligne. Chaque ligne dure deux mesures. Touche une ligne pour voir ses placements.</p>
-          <textarea class="pl-texte" rows="8" placeholder="Vingt secondes de silence&#10;et ton piano revient me chercher">${esc(store.get('placerTexte', ''))}</textarea>
+          <textarea class="pl-texte" rows="8" placeholder="Vingt secondes de silence&#10;et ton piano revient me chercher">${esc(textes[piece] || '')}</textarea>
           <p class="mo-astuce">Double-clique un mot : ses rimes (de la plus riche à la plus simple) et ses synonymes.</p>
           <ol class="pl-lignes"></ol>
+          <div class="ec-row pl-deplacer"><span class="small">Ce texte va avec une autre musique?</span><select data-p="vers" aria-label="La musique où mettre ce texte">${Object.entries(PIECES).map(([k, p]) => `<option value="${k}">${esc(p.nom)}</option>`).join('')}</select><button class="btn small" data-p="deplacer">↪ L’y mettre</button></div>
           <div class="ec-row"><button class="btn" data-p="tout">▶ Toutes mes lignes, avec le meilleur placement</button>${espace.connected ? '<button class="btn" data-p="garder">Dans le journal</button>' : ''}</div>
         </section>
         <section class="pl-versions" aria-live="polite"></section>
@@ -148,6 +160,7 @@ export default {
 
     // Redessine les lignes de paroles à placer sur la pièce, avec leurs syllabes et leurs accents.
     function rendre() {
+      const qui = q('.pl-a-qui'); if (qui) qui.textContent = `pour « ${P().nom} »`;
       const L = lignes(); actif = Math.min(actif, Math.max(0, L.length - 1));
       q('.pl-info').textContent = `${P().ton} · ${P().bpm} BPM · une ligne = deux mesures (${(8 * 60 / P().bpm).toFixed(1).replace('.', ',')} s)`;
       q('.pl-lignes').innerHTML = L.map((l, i) => { const n = syllabes(l).length; return `<li class="${i === actif ? 'on' : ''}" data-l="${i}"><span>${esc(l)}</span><b>${n} syll.</b></li>`; }).join('');
@@ -218,16 +231,22 @@ export default {
     }
     const versionDe = (texte, id, v) => { const pl = PLACEMENTS.find((x) => x.id === id); const sl = slotsDe(pl); const syl = syllabes(texte); const r = placer(syl, sl); return { syl, sl, r, notes: melodie(syl, r, sl, P(), voix, v) }; };
 
-    el.addEventListener('input', (e) => { if (e.target.classList.contains('pl-texte')) { store.set('placerTexte', e.target.value); arreter(); rendre(); } });
+    el.addEventListener('input', (e) => { if (e.target.classList.contains('pl-texte')) { textes[piece] = e.target.value; garderTextes(); arreter(); rendre(); } });
     el.addEventListener('change', (e) => {
       const p = e.target.dataset.p;
-      if (p === 'piece') { piece = e.target.value; store.set('placerPiece', piece); arreter(); rendre(); }
+      if (p === 'vers') return;
+      if (p === 'piece') { textes[piece] = q('.pl-texte').value; piece = e.target.value; q('.pl-texte').value = textes[piece] || ''; actif = 0; garderTextes(); arreter(); rendre(); }
       if (p === 'guide') { guide = e.target.checked; rendre(); }
       if (p === 'decale') { decale = e.target.checked; arreter(); rendre(); }
     });
     el.addEventListener('click', async (e) => {
       const li = e.target.closest('.pl-lignes li'); if (li) { actif = +li.dataset.l; arreter(); rendre(); return; }
       const b = e.target.closest('[data-p]'); const p = b?.dataset.p;
+      if (p === 'deplacer') {
+        const v = q('[data-p=vers]').value; if (!v || v === piece) return; const t = q('.pl-texte').value; if (!t.trim()) return;
+        if ((textes[v] || '').trim() && !confirm(`« ${PIECES[v].nom} » a déjà un texte. Le remplacer?`)) return;
+        textes[v] = t; textes[piece] = ''; piece = v; q('[data-p=piece]').value = v; q('.pl-texte').value = t; actif = 0; garderTextes(); arreter(); rendre(); toast(`Le texte est maintenant sur « ${PIECES[v].nom} ».`); return;
+      }
       if (p === 'jouer') {
         if (b.textContent.startsWith('■')) { arreter(); return; }
         const L = lignes(); const v = PLACEMENTS.findIndex((x) => x.id === b.dataset.id);

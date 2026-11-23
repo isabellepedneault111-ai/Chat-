@@ -396,7 +396,7 @@ export default {
         e.target.textContent = 'Chargement…';
         try { await play(entry); } catch { toast('Ce son ne se charge pas.'); renderThreads(true); }
       }
-      if (r === 'placer' && entry) { store.set('placerTexte', entry.body || entry.title); location.hash = '#/placer'; return; }
+      if (r === 'placer' && entry) { store.set('placerArrivee', { texte: entry.body || entry.title }); location.hash = '#/placer'; return; }
       if ((r === 'over' || r === 'write' || r === 'reply' || r === 'habille') && entry) {
         stopPlay();
         work = { kind: r, entry };

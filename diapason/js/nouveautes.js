@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.07', quand: '2026-11-23', titre: 'Placer : un texte par musique', items: [
+    ['Chaque musique a son texte', ['Dans Écrire → Placer mes paroles, changer de musique (Projet 1, Joy Walk, nos pièces) change aussi le texte : chaque musique garde le sien. Avant, un seul texte servait à toutes, d’où les mêmes paroles sur Joy Walk que sur Interminable. Le titre dit à quelle musique le texte appartient.']],
+    ['↪ L’y mettre', ['« Ce texte va avec une autre musique? » déplace le texte vers la bonne musique en un geste. Et « Essayer 7 rythmes par ligne » (Mots sur la grille) ouvre Placer directement sur la musique du même nom.']],
+  ] },
   { v: '1.06', quand: '2026-11-23', titre: 'Une chanson, un seul tiroir de paroles', items: [
     ['Le nom de la chanson fait foi', ['Les paroles suivent maintenant le nom de la chanson, d’où qu’on l’ouvre : Interminable par L’oreille, par Jouer ou par Nos pièces, ce sont les mêmes paroles. Avant, chaque chemin avait son tiroir, et toutes les chansons passées par Jouer partageaient le même.']],
     ['On voit à qui elles sont', ['En haut des lignes : « 📄 Les paroles de « Joy Walk » ». Et « Ces paroles vont avec une autre chanson? » propose toutes les chansons connues, ou un nom à taper directement dans la page.']],

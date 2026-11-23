@@ -510,7 +510,7 @@ export default {
       if (m === 'ecouter-princ' && principal) { const c = audio(); try { await c.resume(); } catch { /* iOS */ } const iv = IV[principal.q] || IV.M; iv.forEach((v, k) => notePiano(57 + ((principal.r + v - 9 + 12) % 12) + (v >= 12 ? 12 : 0), { when: c.currentTime + 0.05 + k * 0.02, dur: 1.6, vel: 0.6 })); notePiano(36 + principal.r, { when: c.currentTime + 0.05, dur: 1.6, vel: 0.55 }); return; }
       if (m === 'une') { if (b.textContent.startsWith('■')) { arreter(); return; } await chanter([+b.dataset.i, +b.dataset.i], null); b.textContent = '■'; return; }
       const texte = lignes.filter((x) => !x.pause).map((x) => x.txt).filter(Boolean).join('\n');
-      if (m === 'placer') { if (!texte) return; store.set('placerTexte', texte); location.hash = '#/placer'; return; }
+      if (m === 'placer') { if (!texte) return; store.set('placerArrivee', { texte, chanson: nomDeCle(cle) }); location.hash = '#/placer'; return; }
       if (m === 'copier') { try { await navigator.clipboard.writeText(texte); toast('Copié.'); } catch { toast('Copie impossible ici : sélectionne le texte à la main.'); } return; }
       if (m === 'journal') { if (!texte) return; try { await saveEntry({ type: 'texte', title: lignes[0].txt.slice(0, 80), body: texte, data: { journal: true, date: new Date().toISOString().slice(0, 10), invite: `Mots sur la grille · ${st.themes.map((k) => THEMES[k]?.nom).filter(Boolean).join(', ')}`, stage: 0 } }); toast('Dans le journal.'); } catch (err) { toast(err.message); } }
     });
