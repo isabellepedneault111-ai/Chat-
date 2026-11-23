@@ -207,6 +207,10 @@ export function cathedraleDuJeu({ accords }) {
 }
 
 // Jouer en direct : on programme les notes un peu à l'avance, au fil de la lecture.
+// Les œuvres qui jouent en ce moment : « Arrêter le son » (en bas de l'écran) les coupe toutes, où qu'on soit.
+const actifs = new Set();
+addEventListener('diapason:stop', () => [...actifs].forEach((a) => a()));
+export const cathedralesActives = () => actifs.size;
 export function jouer(oeuvre, { depuis = 0, onFin, sortie = null, vivant = null } = {}) {
   const c = audio(); const maitre = c.createGain(); maitre.gain.value = 0.42; maitre.connect(out()); /* la sortie de l'app double le volume : on entre plus bas, pour ne pas faire craquer le limiteur */ // par la lampe, si elle est allumée
   const pans = new Map(); const panDe = (p) => { const k = Math.round(p * 10) / 10; if (!pans.has(k)) { const sp = c.createStereoPanner(); sp.pan.value = k; sp.connect(maitre); pans.set(k, sp); } return pans.get(k); };
@@ -227,7 +231,8 @@ export function jouer(oeuvre, { depuis = 0, onFin, sortie = null, vivant = null 
   };
   if (sortie) Object.entries(PROGRAMMES).forEach(([b, p]) => { try { sortie.send([0xc0 | canal(b), p]); } catch { /* */ } });
   const id = setInterval(tic, 120); tic();
-  const arreter = () => { if (sortie) for (let ch = 0; ch < 16; ch++) { try { sortie.send([0xb0 | ch, 123, 0]); } catch { /* */ } } clearInterval(id); maitre.gain.setTargetAtTime(0, c.currentTime, 0.15); setTimeout(() => maitre.disconnect(), 900); };
+  const arreter = () => { actifs.delete(arreter); if (sortie) for (let ch = 0; ch < 16; ch++) { try { sortie.send([0xb0 | ch, 123, 0]); } catch { /* */ } } clearInterval(id); maitre.gain.setTargetAtTime(0, c.currentTime, 0.15); setTimeout(() => maitre.disconnect(), 900); };
+  actifs.add(arreter);
   return { arreter, position: () => c.currentTime - t0 };
 }
 

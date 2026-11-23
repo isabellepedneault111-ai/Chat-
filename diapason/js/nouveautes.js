@@ -60,6 +60,9 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.87', quand: '2026-11-23', titre: 'La cathédrale reste à sa place', items: [
+    ['Plus d’orchestre fantôme', ['Si on quittait la cathédrale pendant qu’elle chargeait son orchestre (le « … »), elle démarrait quand même, sur la page suivante, et rien ne l’arrêtait. Maintenant, quitter la page l’arrête pour vrai, et « Arrêter le son » la coupe où qu’on soit.']],
+  ] },
   { v: '0.86', quand: '2026-11-23', titre: 'Envoyer un mémo à mon ordi', items: [
     ['💻 De l’iPhone au Mac, sans AirDrop', ['Sur l’iPhone, dans L’oreille : « Envoyer un mémo à mon ordi ». Sur le Mac (Safari aussi), dans L’oreille, coche une fois « Recevoir ici les mémos de mon iPhone » : chaque mémo envoyé s’ouvre tout seul dans L’oreille, peu importe la page où tu es. Le mémo passe par votre espace (comme un son du mur).']],
   ] },

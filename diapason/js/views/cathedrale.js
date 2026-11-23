@@ -203,14 +203,17 @@ export default {
     }
     const arreter = () => { lecteur?.arreter(); lecteur = null; anim?.(); anim = null; q('[data-ca=jouer]').textContent = '▶'; q('[data-ca=jouer]').classList.remove('on'); const L = q('.nf-lumiere'); if (L) L.hidden = true; el.querySelectorAll('.joue, .frappe').forEach((x) => x.classList.remove('joue', 'frappe')); rosace(-1); q('.nf-temps').textContent = `0:00 / ${mmss(oeuvre.duree)}`; };
     // « ▶ » : charge l’orchestre, puis joue l’œuvre (et les sources vivantes en direct).
+    let parti = false; // la page est quittée
     async function lancer() {
       if (lecteur) { arreter(); return; }
       audio(); // le moteur part pendant le toucher (iPhone), avant d'attendre l'orchestre
       const b = q('[data-ca=jouer]'); b.textContent = '…'; await charger();
+      if (parti) return; // on a quitté la page pendant le chargement : surtout, ne pas démarrer ailleurs
       demarrer(0);
     }
     // Démarre l'écoute au moment voulu (0 au début ; ou là où on était, quand on vient de changer quelque chose).
     function demarrer(depuis) {
+      if (parti) return;
       const b = q('[data-ca=jouer]');
       lecteur = jouer(oeuvre, { depuis: Math.min(depuis, Math.max(0, oeuvre.duree - 1)), onFin: arreter, vivant: envVivant, sortie: sorties.find((o) => o.id === store.get('caSortie', '')) || null }); b.textContent = '■'; b.classList.add('on');
       anim = animate(() => { if (!lecteur) return; const p = Math.max(0, lecteur.position()); suivre(p); q('.nf-temps').textContent = `${mmss(p)} / ${mmss(oeuvre.duree)}`; });
@@ -380,6 +383,6 @@ export default {
 
     majTout();
     const offLampe = brancherLampe(el);
-    return () => { offVif.forEach((f) => f?.()); lecteur?.arreter(); anim?.(); offNotes?.(); ecouteAudio?.stop(); clearTimeout(attente); offLampe(); };
+    return () => { parti = true; offVif.forEach((f) => f?.()); lecteur?.arreter(); lecteur = null; anim?.(); offNotes?.(); ecouteAudio?.stop(); clearTimeout(attente); offLampe(); };
   },
 };
