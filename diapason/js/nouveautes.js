@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.11', quand: '2026-11-23', titre: 'Rien ne bouge pendant l’écoute', items: [
+    ['Des tailles fixes', ['Pendant « Chanter sur la grille », la barre du bas, le bouton Stop et les boutons ▶ ne changent plus de grosseur à chaque accord ou syllabe.']],
+    ['« La chanson », en mots simples', ['Le menu dit maintenant d’où viennent les accords : 🎧 la dernière chanson passée dans L’oreille (avec son nom), ⭐ nos pièces, 🎹 ce qui joue dans Jouer, ✏️ des accords que tu écris toi-même. Une phrase dessous explique le choix.']],
+  ] },
   { v: '1.10', quand: '2026-11-23', titre: 'Mots sur la grille, plus simple', items: [
     ['Moins d’éléments partout', ['En haut : la chanson, son accord principal (en gros, avec sa position à la guitare) et trois gestes : ▶ Chanter, ✨ Caler, ↻ Écrire. Les thèmes, mots-clés et réglages sont repliés dans « ⚙ ». Les outils d’une ligne (silence, ＋ avant/après, ↑ ↓ ✕, chœurs) sont rangés derrière « ⋯ ».']],
     ['Des accords lisibles', ['Les accords d’une ligne sont maintenant de grosses étiquettes, chacune aussi large que sa durée ; l’accord principal est en foncé avec ★, et rappelé à côté du nom de la chanson. « Fa/Do » marche aussi dans les accords tapés.']],

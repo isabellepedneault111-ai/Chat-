@@ -151,7 +151,8 @@ export default {
       <section class="panel mo-entete">
         <div class="mo-entete-l">
           <label class="field mo-src"><span>La chanson</span><select data-m="source">
-            <option value="jouer">Les accords de Jouer</option><option value="oreille">La dernière grille de L’oreille</option><option value="main">Je les tape</option>${piecesEsp().length ? `<optgroup label="Nos pièces">${piecesEsp().map((e) => `<option value="piece:${esc(e.id)}">${esc(e.title || 'Notre pièce')}</option>`).join('')}</optgroup>` : ''}</select></label>
+            <option value="oreille">🎧 ${esc(store.get('oreilleGrille', null)?.nom ? `« ${nomPropre(store.get('oreilleGrille', null).nom)} », la dernière passée dans L’oreille` : 'La dernière chanson passée dans L’oreille')}</option>${piecesEsp().length ? `<optgroup label="⭐ Nos pièces">${piecesEsp().map((e) => `<option value="piece:${esc(e.id)}">⭐ ${esc(e.title || 'Notre pièce')}</option>`).join('')}</optgroup>` : ''}<option value="jouer">🎹 Ce qui joue dans Jouer (« ${esc(nomJouer())} »)</option><option value="main">✏️ Des accords que j’écris moi-même</option></select></label>
+          <p class="mo-src-aide muted small"></p>
           <label class="field mo-main" ${st.source === 'main' ? '' : 'hidden'}><span>Un accord par mesure</span><input type="text" data-m="main" value="${esc(st.main)}" placeholder="Lam Fa Do Sol"></label>
           <div class="mo-princ" hidden></div>
         </div>
@@ -258,6 +259,7 @@ export default {
       const g = grille();
       const nomsSrc = st.source === 'oreille' && !grilleOreille() ? 'Pas encore de grille dans L’oreille : je prends celle de Jouer. ' : '';
       q('.mo-info').textContent = `${nomsSrc}${g.nom} · ${g.bpm} BPM · ${g.mesures.length} mesure${g.mesures.length > 1 ? 's' : ''} · une ligne = deux mesures`;
+      const aide = q('.mo-src-aide'); if (aide) aide.textContent = st.source === 'oreille' ? 'Les accords et le tempo trouvés par L’oreille dans cette chanson ; la vraie chanson joue sous tes paroles.' : st.source.startsWith('piece:') ? 'Une chanson gardée dans Nos pièces : ses accords, son tempo, et la vraie chanson sous tes paroles.' : st.source === 'jouer' ? 'Les accords qui tournent en ce moment dans Jouer (au piano, sans la vraie chanson).' : 'Tape un accord par mesure, par exemple « Lam Fa Do Sol » (ou « Fa/Do » pour deux dans la mesure).';
       const ap = accordPrincipal(g); const pb = q('.mo-princ');
       pb.hidden = false;
       pb.innerHTML = `<span class="mo-princ-k">★ Accord principal</span><b class="mo-princ-n">${esc(nomAcc(ap))}</b>${diagramme(ap.r, ap.q, { taille: 46 })}<button class="btn small" data-m="ecouter-princ" aria-label="Écouter l’accord principal">▶</button><details class="mo-princ-pq"><summary>c’est quoi?</summary><p>La « maison » de la chanson : c’est là qu’elle se repose. Une ligne qui finit sur ${esc(nomAcc(ap))} sonne finie ; une ligne qui finit ailleurs donne envie d’entendre la suite. Les ★ le marquent dans les lignes.</p></details>`;
