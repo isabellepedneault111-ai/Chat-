@@ -4477,3 +4477,10 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .acc-m small { color: #6d655a; }
 .acc-m.on { background: #2b2620; color: #fbe7a1; }
 .acc-panel { grid-area: acc; margin-top: 18px; }
+
+/* 0.84 — accords proposés pour une voix seule ; la vraie chanson sous les paroles */
+.or-harmo-in { margin: 10px 0; padding: 12px 16px; border-radius: 8px; background: #fbefc6; border-left: 4px solid #b08a2e; }
+.or-harmo-in p { margin: 0 0 8px; font-size: 1rem; line-height: 1.45; color: #1d1a15; }
+.mo-vraie { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1rem; }
+.mo-vraie input { width: 22px; height: 22px; accent-color: #b08a2e; }
+.mo-sous { display: flex; flex-wrap: wrap; gap: 8px 24px; }

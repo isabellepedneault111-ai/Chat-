@@ -62,11 +62,20 @@ function gammeDe(g) {
   return [0, 2, 4, 5, 7, 9, 11].map((x) => (best + x) % 12);
 }
 
+// La chanson venue de L'oreille reste en mémoire tant que la page n'est pas rechargée.
+let chansonGardee = null;
+
 export default {
   id: 'mots',
   mount(el) {
-    const st = store.get('motsReglages', { theme: 'nuit', cles: '', schema: 'AABB', place: 'croches', pers: 'je', n: 4, source: 'jouer', main: 'Lam Fa Do Sol' });
+    const st = { theme: 'nuit', cles: '', schema: 'AABB', place: 'croches', pers: 'je', n: 4, source: 'jouer', main: 'Lam Fa Do Sol', ...store.get('motsReglages', {}) };
     let lignes = store.get('motsLignes', []); // [{ txt, garde }]
+    // Venue de L'oreille (« Des paroles sur cette chanson ») : la vraie chanson joue sous les paroles.
+    let chanson = window.__flipMots || null; window.__flipMots = null;
+    if (chanson) chansonGardee = chanson; else chanson = chansonGardee;
+    // Une nouvelle grille dans L'oreille depuis la dernière visite : la page s'ouvre dessus.
+    { const og = store.get('oreilleGrille', null); if (og?.at && og.at > (st.vuAt || 0)) { st.source = 'oreille'; st.vuAt = og.at; store.set('motsReglages', st); } }
+    if (chanson) st.source = 'oreille';
     let graine = Date.now() % 100000; let lecture = null; let raf = 0;
     const voix = espace.connected ? profileOf(espace.me)?.voix || null : null;
     const sauver = () => { store.set('motsReglages', st); store.set('motsLignes', lignes); };
@@ -89,6 +98,7 @@ export default {
           <label class="field"><span>Qui parle</span><select data-m="pers"><option value="je">Je</option><option value="tu">Tu</option><option value="mix">Les deux</option></select></label>
           <label class="field"><span>Lignes</span><select data-m="n"><option>4</option><option>8</option><option>12</option></select></label>
         </div>
+        <div class="mo-sous" ${chanson ? '' : 'hidden'}><label class="mo-vraie"><input type="checkbox" data-m="vraie" checked> Sous les paroles : la vraie chanson${chanson ? ` (« ${esc(String(chanson.nom).slice(0, 40))} »)` : ''}</label><label class="mo-vraie"><input type="checkbox" data-m="piano" ${store.get('oreilleGrille', null)?.propose ? 'checked' : ''}> + les accords au piano</label></div>
         <div class="ec-row"><button class="btn primary" data-m="generer">Écrire les lignes</button><button class="btn" data-m="chanter">▶ Chanter sur la grille</button><span class="mo-info muted small"></span></div>
       </section>
       <section class="mo-lignes" aria-live="polite"></section>
@@ -202,7 +212,15 @@ export default {
       for (let k = 0; k < 4; k++) try { drums.hat?.(t0 + k * noire, k ? 0.35 : 0.6); } catch { /* pas de métronome */ }
       quelles.forEach((i, j) => {
         const { sl, syl, pl, notes } = analyse(lignes[i].txt, i); const debut = t1 + j * 2 * mes;
-        for (let h = 0; h < 2; h++) for (let t = 0; t < 4; t++) {
+        const vraie = chanson && st.source === 'oreille' && q('[data-m=vraie]')?.checked;
+        if (vraie) {
+          // Le passage de la vraie chanson qui porte ces deux mesures (la grille de L'oreille commence à t0).
+          const s0 = chanson.t0 + ((2 * i) % g.mesures.length) * 4 * chanson.temps; const sN = c.createBufferSource(); sN.buffer = chanson.buf;
+          sN.playbackRate.value = (chanson.temps * g.bpm) / 60 || 1; const gv = c.createGain(); gv.gain.value = 0.85; sN.connect(gv).connect(bus);
+          sN.start(debut, Math.max(0, s0), 2 * mes * sN.playbackRate.value + 0.05); src.push(sN);
+        }
+        const piano = !vraie || q('[data-m=piano]')?.checked;
+        if (piano) for (let h = 0; h < 2; h++) for (let t = 0; t < 4; t++) {
           const m = (2 * i + h) % g.mesures.length; const ch = g.mesures[m][t] || (h === 0 && t === 0 ? accordA(g, m, 0) : null); if (!ch) continue;
           let dur = 1; while (t + dur < 4 && !g.mesures[m][t + dur]) dur++;
           const iv = (() => { try { return chordIntervals(ch.q); } catch { return IV[ch.q] || IV.M; } })();

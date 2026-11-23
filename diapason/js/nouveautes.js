@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.84', quand: '2026-11-23', titre: 'Des accords pour ta voix', items: [
+    ['🎹 Des accords sous ta mélodie', ['Quand L’oreille entend une voix seule, elle propose des accords qui vont dessous : la tonalité vient de tes notes, puis, mesure par mesure, l’accord de la gamme qui contient le plus de notes chantées (surtout au premier temps), avec des enchaînements qui sonnent et une fin sur la tonique. Ils sont dans la grille : tu les écoutes, tu les corriges. « ↻ D’autres accords » essaie une version qui bouge plus, puis une version plus colorée (7e).']],
+    ['✍️ Des paroles sur cette chanson', ['Un bouton dans L’oreille ouvre Ma voix → Mots sur la grille directement sur la chanson : ses accords, son tempo, et la vraie chanson qui joue sous les paroles chantées (avec ou sans le piano). Et quand une nouvelle chanson passe dans L’oreille, la page s’ouvre dessus d’elle-même.']],
+  ] },
   { v: '0.83', quand: '2026-11-23', titre: 'Importer un mémo du Dictaphone', items: [
     ['Plus aucun fichier grisé', ['« Choisir un fichier audio » montre maintenant tous les fichiers : l’iPhone grisait parfois les mémos du Dictaphone.']],
     ['Les mémos .qta', ['Si le décodeur refuse un mémo .qta, L’oreille le relit comme un .m4a (c’est le même contenu, sous une autre étiquette).']],

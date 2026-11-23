@@ -5,7 +5,7 @@ import { clavierDe } from '../doigte.js';
 import { espace, audioURL, saveEntry, uploadAudio, saveProfile, members } from '../espace.js';
 import { toast, autoCanvas, keyboard, store } from '../ui.js';
 import { esc } from './carnet.js';
-import { chromaDuSpectre, accordDuChroma, hauteurDirecte, diagnosticHarmonie, ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
+import { chromaDuSpectre, accordDuChroma, hauteurDirecte, diagnosticHarmonie, ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, harmoniserVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
 import { chargerGrille, poserFond } from './studio.js';
 import { diagramme, nomSimple } from '../guitare.js';
 
@@ -15,7 +15,7 @@ const mmss = (t) => { t = Math.max(0, t); return `${Math.floor(t / 60)}:${String
 export default {
   id: 'oreille',
   mount(el) {
-    let buf = null; let res = null; let nom = ''; let diag = null; let voix = null; let accs = null; let rec = null; let stopBoucle = null; let lecture = null;
+    let buf = null; let res = null; let nom = ''; let diag = null; let voix = null; let accs = null; let accsEntendus = null; let rec = null; let stopBoucle = null; let lecture = null;
     const sons = () => (espace.connected ? espace.entries.filter((e) => e.audio && !e.audio.type?.startsWith('video')) : []);
     el.innerHTML = `
       <div class="mod-head"><div>
@@ -71,6 +71,7 @@ export default {
           <p class="muted small or-jeu-aide">En orange, l’accord qui joue (ses touches frappent à chaque temps) ; cerclées, celles de l’accord suivant ; les pastilles, les notes pour improviser par-dessus (les mêmes cases que dans Jouer). Tu peux jouer sur ce clavier.</p>
         </div>
         <div class="or-monter"></div>
+        <div class="or-harmo"></div>
         <div class="or-grille-box"></div>
         <div class="or-voix"></div>
         <div class="or-diag"></div>
@@ -82,6 +83,7 @@ export default {
           <button class="btn" data-o="cathedrale" data-bulle="Les accords du morceau (ou du passage choisi) deviennent une cathédrale : chaque accord qui revient, une partie de l’œuvre, chantée par l’orchestre.">→ La cathédrale de ce morceau</button>
           <button class="btn primary" data-o="fond" data-bulle="La boucle tourne dans Jouer, sous le beat, au même tempo : tu joues, tu chantes, tu improvises par-dessus.">→ Jouer sur la boucle</button>
           <button class="btn" data-o="boucle-wav">⬇ La boucle (WAV)</button>
+          <button class="btn primary" data-o="mots" data-bulle="Ma voix → Mots sur la grille s’ouvre avec cette chanson : ses accords, son tempo, et la vraie chanson qui joue sous les paroles.">✍️ Des paroles sur cette chanson</button>
           <button class="btn" data-o="ecrire">Écrire des paroles sur la boucle</button>
           ${espace.connected ? '<button class="btn" data-o="relais">Lancer la boucle au relais</button>' : ''}
         </div>
@@ -313,7 +315,17 @@ export default {
         montrerAccords();
         voix = await notesVoix(buf, etat); etat('');
         montrerVoix();
+        accsEntendus = accs; harmo(true);
       }
+    }
+    // Une voix seule : des accords proposés sous la mélodie (auto quand l'oreille n'en entend aucun).
+    function harmo(auto) {
+      const box = q('.or-harmo'); if (!box) return;
+      if (!voix?.voix) { box.innerHTML = ''; return; }
+      if (auto && !accs?.propose) { const p = harmoniserVoix(voix, res.bpm); if (p?.length) { accs = p; cadreG = null; montrerAccords(); } }
+      box.innerHTML = accs?.propose
+        ? `<div class="or-harmo-in"><p><b>🎹 Des accords pour ta voix</b> · en ${esc(accs.ton)}. FLIP ne les a pas entendus : il les a choisis pour aller sous ta mélodie, une mesure à la fois. Écoute-les avec « Jouer et regarder », corrige ceux qui ne te plaisent pas dans la grille.</p><div class="ec-row"><button class="btn small" data-o="harmo-autre">↻ D’autres accords</button>${accsEntendus?.length ? '<button class="btn small" data-o="harmo-non">Revenir aux accords entendus</button>' : ''}</div></div>`
+        : `<div class="or-harmo-in"><p><b>Ta voix est seule?</b> FLIP peut proposer des accords qui vont sous ta mélodie.</p><div class="ec-row"><button class="btn small primary" data-o="harmo-oui">🎹 Proposer des accords sous ma mélodie</button></div></div>`;
     }
     // Affiche ce que l’oreille a trouvé : tempo, tonalité, parties, conseils.
     function montrer() {
@@ -459,7 +471,7 @@ export default {
             // Le tempo recalé sur les changements d'accords est le plus juste : il devient LE tempo de la pièce, partout.
             if (Math.abs(g.tempo - res.bpm) <= res.bpm * 0.07) { res.bpm = g.tempo; const f = [...el.querySelectorAll('.or-faits > div')].find((d) => d.querySelector('small')?.textContent === 'Tempo'); if (f) f.querySelector('b').textContent = `${g.tempo} BPM`; } } box._grille = g; const l = g.boucle || g.mesures;
       // Gardée pour « Mots sur la grille » (Ma voix) : la boucle, ou toute la pièce, mesure par mesure.
-      try { store.set('oreilleGrille', { nom: typeof nom === 'string' ? nom : '', bpm: g.tempo, mesures: l.slice(0, 64).map((x) => x.cases) }); } catch { /* rien */ }
+      try { store.set('oreilleGrille', { nom: typeof nom === 'string' ? nom : '', bpm: g.tempo, mesures: l.slice(0, 64).map((x) => x.cases), t0: g.debutCale, temps: g.temps, at: Date.now(), propose: !!accs.propose }); } catch { /* rien */ }
           return `<div class="or-grille"><div class="or-grille-t"><h4>La grille</h4><span>${res.bpm} BPM · 4 temps par mesure${g.periode ? ` · <span class="or-rep">‖: ${g.periode} mesure${g.periode > 1 ? 's' : ''} qui reviennent ${g.tours} fois :‖</span>` : ''}</span><button class="btn small or-etsi" data-o="etsi" data-bulle="Une mesure au hasard, une autre couleur d’accord, entendue tout de suite dans le son. Rien ne change tant que tu n’approuves pas.">🎲 Et si… ?</button></div>
             <div class="or-mesures">${l.map((x, i) => { const segs = []; x.cases.forEach((c) => { if (c) segs.push({ c, n: 1 }); else if (segs.length) segs[segs.length - 1].n++; else segs.push({ c: '—', n: 1 }); });
               return `<button class="or-mes n${segs.length} ${g.periode && i === 0 ? 'rep-a' : ''} ${g.periode && i === l.length - 1 ? 'rep-b' : ''} ${corrigee(i, x, g) ? 'corrigee' : ''}" data-mes="${i}" data-t="${x.t}" title="Mesure ${g.boucle ? i + 1 : x.m} · ${mmss(x.t)}"><small>${g.boucle ? i + 1 : x.m}</small><span class="or-bts">${temps4(x)}</span></button>`; }).join('')}</div>
@@ -700,6 +712,18 @@ export default {
       const o = e.target.closest('[data-o]')?.dataset.o;
       if (o === 'micro') { micro(e.target.closest('[data-o]')); return; }
       if (o === 'parlecteur') { parLecteur(); return; }
+      if (o === 'harmo-oui' || o === 'harmo-autre') {
+        const p = harmoniserVoix(voix, res.bpm, o === 'harmo-autre' ? (accs?.variante || 0) + 1 : 0);
+        if (p?.length) { accs = p; cadreG = null; corrigees = new Set(); montrerAccords(); harmo(false); toast(`Accords proposés en ${p.ton}.`); } else toast('Pas assez de notes chantées pour proposer des accords.');
+        return;
+      }
+      if (o === 'harmo-non') { accs = accsEntendus; cadreG = null; corrigees = new Set(); montrerAccords(); harmo(false); return; }
+      if (o === 'mots') {
+        if (!accs?.length) { toast('Pas encore d’accords pour cette chanson.'); return; }
+        window.__flipMots = { buf, nom, t0: cadreG?.debutCale ?? 0, temps: cadreG?.temps ?? 60 / res.bpm };
+        const st = store.get('motsReglages', {}); store.set('motsReglages', { ...st, source: 'oreille' });
+        location.hash = '#/mots'; return;
+      }
       if (o === 'direct') { directStart(); return; }
       if (o === 'direct-stop') { directStop(); q('.or-direct').hidden = true; return; }
       if (o === 'direct-analyser') { const d = directStop(); if (!d?.rec) { toast('Rien d’enregistré.'); return; }

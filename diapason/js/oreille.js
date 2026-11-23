@@ -552,3 +552,43 @@ export function hauteurDirecte(x, sr) {
   const d = (r[bl - 1] - r[bl + 1]) / (2 * (r[bl - 1] - 2 * r[bl] + r[bl + 1]) || 1);
   return 69 + 12 * Math.log2(sr / (bl + d) / 440);
 }
+
+// ---------- Des accords pour une voix seule ----------
+// Une voix chantée n'a pas d'accords à entendre : on en propose. La tonalité vient des notes chantées (profils de
+// Krumhansl), puis, mesure par mesure, on choisit l'accord de la gamme qui contient le plus de notes chantées (surtout
+// celles du premier temps), avec des enchaînements qui sonnent (V → I, ii → V, IV → V…), et une fin sur la tonique.
+// Viterbi : le meilleur chemin sur toute la chanson, pas un accord à la fois.
+const KMAJ = [6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88];
+const KMIN = [6.33, 2.68, 3.52, 5.38, 2.6, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17];
+export function harmoniserVoix(vx, bpm, variante = 0) {
+  const v3 = variante % 3; // 0 : simple · 1 : plus de mouvement · 2 : couleurs (7e)
+  const notes = (vx?.notes || []).flatMap((b) => b.occ.map((t, i) => ({ m: b.m, t, d: b.occD?.[i] || 0.2 }))).sort((a, b) => a.t - b.t);
+  if (notes.length < 6) return null;
+  const pc = Array(12).fill(0); notes.forEach((n) => { pc[n.m % 12] += n.d; });
+  const corr = (prof, k) => { const mx = pc.reduce((a, v) => a + v, 0) / 12; const mp = prof.reduce((a, v) => a + v, 0) / 12; let s = 0; let sx = 0; let sp = 0; for (let i = 0; i < 12; i++) { const x = pc[(i + k) % 12] - mx; const p = prof[i] - mp; s += x * p; sx += x * x; sp += p * p; } return s / Math.sqrt(sx * sp || 1); };
+  let ton = { k: 0, mineur: false, sc: -2 };
+  for (let k = 0; k < 12; k++) { const a = corr(KMAJ, k); const b = corr(KMIN, k); if (a > ton.sc) ton = { k, mineur: false, sc: a }; if (b > ton.sc) ton = { k, mineur: true, sc: b }; }
+  const k = ton.k;
+  // Les accords possibles, avec leur fonction (0 tonique, 1 sous-dominante, 2 dominante).
+  const cand = ton.mineur
+    ? [[0, 'm', 0], [3, 'M', 0], [5, 'm', 1], [7, 'M', 2], [8, 'M', 1], [10, 'M', 2]]
+    : [[0, 'M', 0], [2, 'm', 1], [4, 'm', 0], [5, 'M', 1], [7, 'M', 2], [9, 'm', 0]];
+  const C = cand.map(([d, q, f]) => ({ r: (k + d) % 12, q, f, tons: (q === 'm' ? [0, 3, 7] : [0, 4, 7]).map((x) => (k + d + x) % 12) }));
+  const gamme = (ton.mineur ? [0, 2, 3, 5, 7, 8, 10, 11] : [0, 2, 4, 5, 7, 9, 11]).map((x) => (k + x) % 12);
+  const tempo = bpm < 70 ? bpm * 2 : bpm > 150 ? bpm / 2 : bpm; const mes = (4 * 60) / tempo;
+  const t0 = notes[0].t; const fin = notes.at(-1).t + notes.at(-1).d; const M = Math.max(1, Math.ceil((fin - t0) / mes));
+  // Ce que chaque accord vaut dans chaque mesure.
+  const E = [...Array(M)].map((_, j) => C.map((c) => {
+    const a = t0 + j * mes; const b = a + mes; let s = 0;
+    notes.forEach((n) => { const o = Math.min(b, n.t + n.d) - Math.max(a, n.t); if (o <= 0) return; const p = n.m % 12; const fort = n.t <= a + mes * 0.15 ? 1.6 : 1; s += o * fort * (c.tons.includes(p) ? 1 : gamme.includes(p) ? -0.15 : -0.6); });
+    return s / mes;
+  }));
+  const T = (x, y) => { const a = C[x]; const b = C[y]; if (x === y) return v3 === 1 ? -0.6 : -0.12; let v = 0; if (a.f === 2 && b.f === 0 && y === 0) v += 0.35; if (a.f === 1 && b.f === 2) v += 0.25; if (a.f === 0 && b.f === 1) v += 0.12; if (a.f === 2 && b.f === 1) v -= 0.15; return v; };
+  let V = C.map((_, i) => E[0][i] + (i === 0 ? 0.3 : C[i].f === 0 ? 0.1 : 0)); const arr = [];
+  for (let j = 1; j < M; j++) { const nv = []; const ar = []; C.forEach((_, y) => { let best = -Infinity; let bi = 0; C.forEach((__, x) => { const v = V[x] + T(x, y); if (v > best) { best = v; bi = x; } }); nv.push(best + E[j][y] + (j === M - 1 && y === 0 ? 0.4 : 0)); ar.push(bi); }); V = nv; arr.push(ar); }
+  let i = V.indexOf(Math.max(...V)); const chemin = [i]; for (let j = arr.length - 1; j >= 0; j--) { i = arr[j][i]; chemin.unshift(i); }
+  const segs = [];
+  chemin.forEach((ci, j) => { const c0 = C[ci]; const c = v3 === 2 ? { ...c0, q: c0.q === 'm' ? 'm7' : c0.f === 2 ? '7' : 'maj7' } : c0; const a = t0 + j * mes; const last = segs.at(-1); if (last && last.r === c.r && last.q === c.q) { last.b = a + mes; last.temps += 4; } else segs.push({ r: c.r, q: c.q, a, b: a + mes, nom: NOTES[c.r] + SUF[c.q], temps: 4 }); });
+  segs.propose = true; segs.variante = variante; segs.ton = `${NOTES[k]} ${ton.mineur ? 'mineur' : 'majeur'}`; segs.clair = [];
+  return segs;
+}
