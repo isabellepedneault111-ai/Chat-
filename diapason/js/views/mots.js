@@ -3,7 +3,7 @@
 // sur les accords : la voix-guide prend les notes de l'accord sur les temps forts.
 import { audio, out, drums } from '../audio.js';
 import { joue, prechargerSons, accord as accordSon, notePiano } from '../sampler.js';
-import { espace, profileOf, saveEntry } from '../espace.js';
+import { espace, profileOf, saveEntry, audioURL } from '../espace.js';
 import { loadLexique, rimeOf } from '../lexique.js';
 import { store, toast } from '../ui.js';
 import { esc } from './carnet.js';
@@ -65,6 +65,8 @@ function gammeDe(g) {
 
 // La chanson venue de L'oreille reste en mémoire tant que la page n'est pas rechargée.
 let chansonGardee = null;
+const chansonsPieces = new Map(); // id → promesse du son décodé
+const piecesEsp = () => (espace.connected ? espace.entries.filter((e) => e.audio && e.data?.piece?.grille?.length) : []);
 
 // L'accord principal (la « maison ») : la gamme qui contient le mieux la grille, puis, entre son accord majeur (I)
 // et son mineur relatif (vi), celui qui sonne le plus longtemps, avec un bonus pour le premier et le dernier accord.
@@ -109,7 +111,7 @@ export default {
           <input type="text" data-m="cles" value="${esc(st.cles)}" placeholder="lac, fanal, on se retrouve à minuit"></label>
         <div class="mo-choix">
           <label class="field"><span>La grille</span><select data-m="source">
-            <option value="jouer">Les accords de Jouer</option><option value="oreille">La dernière grille de L’oreille</option><option value="main">Je les tape</option></select></label>
+            <option value="jouer">Les accords de Jouer</option><option value="oreille">La dernière grille de L’oreille</option><option value="main">Je les tape</option>${piecesEsp().length ? `<optgroup label="Nos pièces">${piecesEsp().map((e) => `<option value="piece:${esc(e.id)}">${esc(e.title || 'Notre pièce')}</option>`).join('')}</optgroup>` : ''}</select></label>
           <label class="field mo-main" ${st.source === 'main' ? '' : 'hidden'}><span>Un accord par mesure</span><input type="text" data-m="main" value="${esc(st.main)}" placeholder="Lam Fa Do Sol"></label>
           <label class="field"><span>Sur les temps</span><select data-m="place">${PLACEMENTS.map((p) => `<option value="${p.id}">${esc(p.nom)} (${p.slots.length} syll.)</option>`).join('')}</select></label>
           <label class="field"><span>Les rimes</span><select data-m="schema">${Object.entries(SCHEMAS).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('')}</select></label>
@@ -117,6 +119,7 @@ export default {
           <label class="field"><span>Lignes</span><select data-m="n"><option>4</option><option>8</option><option>12</option></select></label>
         </div>
         <div class="mo-sous" ${chanson ? '' : 'hidden'}><label class="mo-vraie"><input type="checkbox" data-m="vraie" checked> Sous les paroles : la vraie chanson${chanson ? ` (« ${esc(String(chanson.nom).slice(0, 40))} »)` : ''}</label><label class="mo-vraie"><input type="checkbox" data-m="piano" ${store.get('oreilleGrille', null)?.propose ? 'checked' : ''}> + les accords au piano</label></div>
+        <label class="mo-vraie mo-guide"><input type="checkbox" data-m="guide"> 🎤 Voix-guide <small class="muted">(une voix synthétique chante la note de chaque syllabe)</small></label>
         <div class="ec-row"><button class="btn primary" data-m="generer">Écrire les lignes</button><button class="btn" data-m="chanter">▶ Chanter sur la grille</button><span class="mo-info muted small"></span></div>
       </section>
       <section class="panel mo-princ" hidden></section>
@@ -130,7 +133,23 @@ export default {
     const q = (s) => el.querySelector(s);
     ['source', 'place', 'schema', 'pers'].forEach((k) => { q(`[data-m=${k}]`).value = st[k]; }); q('[data-m=n]').value = String(st.n);
 
-    const grille = () => (st.source === 'oreille' ? grilleOreille() : st.source === 'main' ? grilleMain(st.main, store.get('bpm', 92)) : grilleJouer()) || grilleJouer();
+    const grillePiece = () => { const e = piecesEsp().find((x) => `piece:${x.id}` === st.source); if (!e) return null; const p = e.data.piece; return { nom: `Nos pièces · ${e.title}`, bpm: p.bpm || 90, mesures: p.grille.map((m) => m.map((x) => (x && x !== '—' ? lireAccord(x) : null))) }; };
+    // La vraie chanson d'une de nos pièces : téléchargée de l'espace et décodée une fois.
+    async function chargerPiece() {
+      if (!st.source.startsWith('piece:')) return;
+      const e = piecesEsp().find((x) => `piece:${x.id}` === st.source); if (!e) return;
+      if (!chansonsPieces.has(e.id)) chansonsPieces.set(e.id, audioURL(e.audio).then((u) => fetch(u)).then((r) => r.arrayBuffer()).then((b) => audio().decodeAudioData(b)));
+      try { const buf = await chansonsPieces.get(e.id); chanson = { buf, nom: e.title, t0: e.data.piece.t1 || 0, temps: e.data.piece.temps || 60 / (e.data.piece.bpm || 90), src: st.source }; } catch { chanson = null; }
+      majSous();
+    }
+    function majSous() {
+      if (st.source === 'oreille' && chanson?.src) chanson = chansonGardee;
+      const vraiOk = !!chanson && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source);
+      const sous = q('.mo-sous'); if (sous) { sous.hidden = !vraiOk; const l = sous.querySelector('.mo-vraie'); if (l && chanson) l.lastChild.textContent = ` Sous les paroles : la vraie chanson (« ${String(chanson.nom).slice(0, 40)} »)`; }
+      // La voix-guide : à toi de choisir ; sinon, elle se tait quand la vraie chanson joue.
+      const g = store.get('motsGuide', null); const cb = q('[data-m=guide]'); if (cb) cb.checked = g == null ? !vraiOk : g;
+    }
+    const grille = () => (st.source.startsWith('piece:') ? grillePiece() : st.source === 'oreille' ? grilleOreille() : st.source === 'main' ? grilleMain(st.main, store.get('bpm', 92)) : grilleJouer()) || grilleJouer();
     const slots = () => PLACEMENTS.find((p) => p.id === st.place).slots;
 
     // La mélodie d'une ligne : sur les temps forts et les accents, une note de l'accord qui sonne ; ailleurs, on marche dans la gamme.
@@ -273,7 +292,7 @@ export default {
         const F = { i, debut, syl: syl.map((sy, k) => ({ txt: sy.txt, mot: sy.mot, t: pl.pos[k] >= 0 ? debut + sl[pl.pos[k]].s * dc : null, k })), acc: [] };
         for (let h = 0; h < 2; h++) for (let t = 0; t < 4; t++) { const m = (2 * i + h) % g.mesures.length; const ch = g.mesures[m][t] || (h === 0 && t === 0 ? accordA(g, m, 0) : null); if (ch) F.acc.push({ t: debut + (h * 4 + t) * noire, c: ch }); }
         frise.push(F);
-        const vraie = chanson && st.source === 'oreille' && q('[data-m=vraie]')?.checked;
+        const vraie = chanson && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source) && q('[data-m=vraie]')?.checked;
         if (vraie) {
           // Le passage de la vraie chanson qui porte ces deux mesures (la grille de L'oreille commence à t0).
           const s0 = chanson.t0 + ((2 * i) % g.mesures.length) * 4 * chanson.temps; const sN = c.createBufferSource(); sN.buffer = chanson.buf;
@@ -288,7 +307,7 @@ export default {
           const base = 48 + ch.r; accordSon('piano', iv.map((v) => base + v), { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.45, dest: bus });
           if (!joue('piano', 36 + ch.r, { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.5, dest: bus })) iv.forEach((v) => notePiano(base + v, { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.5 }));
         }
-        syl.forEach((s, k) => { const kk = pl.pos[k]; if (kk < 0) return; const x = sl[kk]; if (!joue('voix', notes[k], { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: s.accent ? 0.95 : 0.75, dest: bus })) notePiano(notes[k] + 12, { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: 0.8 }); });
+        if (q('[data-m=guide]')?.checked) syl.forEach((s, k) => { const kk = pl.pos[k]; if (kk < 0) return; const x = sl[kk]; if (!joue('voix', notes[k], { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: s.accent ? 0.95 : 0.75, dest: bus })) notePiano(notes[k] + 12, { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: 0.8 }); });
       });
       const fin = t1 + quelles.length * 2 * mes;
       lecture = { src, bus, stop: false };
@@ -324,10 +343,11 @@ export default {
     });
     el.addEventListener('change', (e) => {
       const k = e.target.dataset.m;
+      if (e.target.dataset.m === 'guide') { store.set('motsGuide', e.target.checked); return; }
       if (e.target.dataset.garde != null) { lignes[+e.target.dataset.garde].garde = e.target.checked; e.target.closest('.mo-l').classList.toggle('garde', e.target.checked); sauver(); return; }
       if (!k || e.target.tagName !== 'SELECT') return;
       st[k] = k === 'n' ? +e.target.value : e.target.value;
-      if (k === 'source') q('.mo-main').hidden = st.source !== 'main';
+      if (k === 'source') { q('.mo-main').hidden = st.source !== 'main'; majSous(); chargerPiece(); }
       sauver(); arreter(); rendre();
     });
     el.addEventListener('input', (e) => {
@@ -347,6 +367,7 @@ export default {
     el.addEventListener('focusout', (e) => { if (e.target.classList?.contains('mo-txt')) rendre(); });
     loadLexique().then(async () => { if (aRefaire) await generer(); else rendre(); }); rendre();
     setTimeout(() => prechargerSons(['voix', 'piano']), 400);
+    majSous(); chargerPiece();
     return () => arreter();
   },
 };

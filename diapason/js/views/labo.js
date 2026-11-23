@@ -130,7 +130,7 @@ export default {
         <div class="panel acc-panel">
           <div class="panel-head"><h2>Les accords sous les disques</h2><label class="acc-on"><input type="checkbox" data-acc="on"> Les jouer</label></div>
           <p class="muted small">Un accord par mesure (une mesure = 4 tours du disque 1). « Do/Sol » coupe une mesure en deux. Ils jouent au piano quand les disques sont dans la zone du rythme, et partent avec le beat vers Jouer.</p>
-          <div class="acc-ligne"><input type="text" data-acc="txt" aria-label="Les accords, un par mesure" placeholder="Lam Fa Do Sol"><button class="btn primary" data-acc="oreille">🎧 Caler sur la toune de L’oreille</button></div>
+          <div class="acc-ligne"><input type="text" data-acc="txt" aria-label="Les accords, un par mesure" placeholder="Lam Fa Do Sol"><select data-acc="src" aria-label="Sur quelle chanson se caler"></select><button class="btn primary" data-acc="oreille">🎧 Caler sur cette chanson</button></div>
           <div class="acc-chips" aria-live="polite"></div>
         </div>
 
@@ -253,8 +253,15 @@ export default {
       }
     }
     // La toune de L'oreille : sa boucle d'accords et son tempo.
+    // Les chansons sur lesquelles se caler : la dernière de L'oreille, puis nos pièces (avec leur grille).
+    const piecesG = () => (espace.connected ? espace.entries.filter((e) => e.data?.piece?.grille?.length) : []);
+    function remplirSrc() {
+      const s = q('[data-acc=src]'); if (!s) return; const og = store.get('oreilleGrille', null);
+      s.innerHTML = `<option value="oreille">La dernière de L’oreille${og?.nom ? ` (« ${esc2(og.nom.slice(0, 30))} »)` : ''}</option>${piecesG().map((e) => `<option value="${esc2(e.id)}">⭐ ${esc2(e.title || 'Notre pièce')}</option>`).join('')}`;
+    }
     function caleOreille() {
-      const g = store.get('oreilleGrille', null);
+      const src = q('[data-acc=src]')?.value || 'oreille'; const pe = src !== 'oreille' && piecesG().find((e) => e.id === src);
+      const g = pe ? { nom: pe.title, bpm: pe.data.piece.bpm, mesures: pe.data.piece.grille } : store.get('oreilleGrille', null);
       if (!g?.mesures?.length) { import('../ui.js').then((u) => u.toast('Passe d’abord ta toune dans L’oreille (une fois) : sa grille se garde ici.')); return; }
       let avant = '';
       acc.txt = g.mesures.map((m) => { const l = m.filter((x) => x && x !== '—'); const t = l.length ? l.join('/') : avant; if (l.length) avant = l.at(-1); return t || 'Do'; }).join(' ');
@@ -1027,7 +1034,7 @@ export default {
     const garde = store.get('laboEtat', null);
     if (garde?.tracks?.length) { tracks = garde.tracks; liens = garde.liens || []; posG = garde.posG || {}; focus = garde.focus || 0; presetId = garde.presetId || 'custom'; f = garde.f || f; tracksChanged(); } else loadPreset(presetId);
     setF(f);
-    q('[data-acc=txt]').value = acc.txt; montrerAcc();
+    q('[data-acc=txt]').value = acc.txt; montrerAcc(); remplirSrc();
     q('.acc-panel').addEventListener('input', (e) => { if (e.target.dataset.acc === 'txt') { acc.txt = e.target.value; garderAcc(); montrerAcc(); } });
     q('.acc-panel').addEventListener('change', (e) => { if (e.target.dataset.acc === 'on') { acc.on = e.target.checked; garderAcc(); if (acc.on) { prechargerSons(['piano']); chordK = 0; } montrerAcc(); } });
     q('.acc-panel').addEventListener('click', (e) => { if (e.target.closest('[data-acc=oreille]')) caleOreille(); });

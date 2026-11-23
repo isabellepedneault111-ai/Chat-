@@ -4524,3 +4524,5 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .mo-crayon { font-size: 1.1rem; color: #75591a; }
 .mo-ajout { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 14px; }
 @media (max-width: 640px) { .mo-l-bouge { position: static; justify-content: flex-end; margin-bottom: 6px; } .mo-poignee { display: none; } }
+.or-nettoie { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; } .or-nettoie input { width: 20px; height: 20px; accent-color: #5d6d24; }
+.acc-ligne select { font: 600 1rem var(--display); padding: 8px 10px; border-radius: 8px; border: 1px solid #d9cfbd; background: #fffdf8; max-width: 100%; }

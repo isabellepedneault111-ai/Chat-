@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.93', quand: '2026-11-23', titre: 'La vraie pièce, sans le bruit', items: [
+    ['🧹 Réduire le bruit', ['Dans L’oreille : « Réduire le bruit » enlève le souffle du cellulaire et la rumeur de la pièce, puis réanalyse le son nettoyé ; « Le son d’origine » le ramène. En enregistrant au micro, la case « sans le bruit » le fait d’office. « Mettre dans nos pièces » garde la version nettoyée.']],
+    ['Les paroles sur la vraie pièce', ['Dans Mots sur la grille, « La grille » propose aussi nos pièces : la vraie chanson joue sous les lignes, avec sa grille et son tempo. La voix-guide (les voix synthétiques en chœur) se tait quand la vraie chanson joue ; une case 🎤 la remet si tu la veux.']],
+    ['Nos pièces dans le labo', ['Le labo peut se caler sur une de nos pièces, pas seulement sur la dernière de L’oreille.']],
+  ] },
   { v: '0.92', quand: '2026-11-23', titre: 'Nos pièces', items: [
     ['⭐ Mettre dans nos pièces', ['Dans L’oreille, une chanson analysée peut rejoindre Joy Walk et Projet 1 : « ⭐ Mettre dans nos pièces ». Elle apparaît ensuite en tête de liste dans L’oreille et dans Placer mes paroles, avec son tempo, sa tonalité et son premier temps. Elle reste dans votre espace, privée : pas dans les fichiers publics du site.']],
   ] },

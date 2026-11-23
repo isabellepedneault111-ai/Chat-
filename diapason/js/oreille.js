@@ -592,3 +592,45 @@ export function harmoniserVoix(vx, bpm, variante = 0) {
   segs.propose = true; segs.variante = variante; segs.ton = `${NOTES[k]} ${ton.mineur ? 'mineur' : 'majeur'}`; segs.clair = [];
   return segs;
 }
+
+// ---------- Réduire le bruit (souffle d'un cellulaire, ventilation, rumeur de la pièce) ----------
+// Soustraction spectrale : on mesure le « fond » du bruit dans les moments les plus calmes (les 12 % de trames les plus
+// faibles), puis, trame par trame, on baisse chaque fréquence qui ne dépasse pas assez ce fond. Le gain est lissé dans
+// le temps et entre fréquences voisines, pour éviter les petits sifflements (« bruit musical »). Le son sort en mono.
+function fftDB(re, im, inv = false) {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) { let b = n >> 1; for (; j & b; b >>= 1) j ^= b; j ^= b; if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; } }
+  for (let len = 2; len <= n; len <<= 1) {
+    const a = ((inv ? 2 : -2) * Math.PI) / len; const wr = Math.cos(a); const wi = Math.sin(a);
+    for (let i = 0; i < n; i += len) { let cr = 1; let ci = 0; for (let k = 0; k < len / 2; k++) { const p = i + k; const q2 = p + len / 2; const tr = re[q2] * cr - im[q2] * ci; const ti = re[q2] * ci + im[q2] * cr; re[q2] = re[p] - tr; im[q2] = im[p] - ti; re[p] += tr; im[p] += ti; const nr = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = nr; } }
+  }
+  if (inv) for (let i = 0; i < n; i++) { re[i] /= n; im[i] /= n; }
+}
+export async function reduireBruit(buf, { force = 1, onStep = () => {} } = {}) {
+  onStep('Je mesure le bruit de fond…'); await pause();
+  const sr = buf.sampleRate; const L = buf.length; const x = new Float32Array(L);
+  for (let c = 0; c < buf.numberOfChannels; c++) { const d = buf.getChannelData(c); for (let i = 0; i < L; i++) x[i] += d[i] / buf.numberOfChannels; }
+  const N = 2048; const H = 512; const B = N / 2 + 1; const w = new Float32Array(N); for (let i = 0; i < N; i++) w[i] = 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / N);
+  const nT = Math.max(1, Math.floor((L - N) / H) + 1);
+  // 1. Le profil du bruit : la moyenne des spectres des trames les plus calmes.
+  const energies = new Float32Array(nT); for (let t = 0; t < nT; t++) { let e = 0; for (let i = 0; i < N; i += 4) { const v = x[t * H + i] || 0; e += v * v; } energies[t] = e; }
+  const seuil = [...energies].sort((a, b) => a - b)[Math.floor(nT * 0.12)];
+  const bruit = new Float64Array(B); let nb = 0; const re = new Float64Array(N); const im = new Float64Array(N);
+  for (let t = 0; t < nT; t++) { if (energies[t] > seuil) continue; for (let i = 0; i < N; i++) { re[i] = (x[t * H + i] || 0) * w[i]; im[i] = 0; } fftDB(re, im); for (let k = 0; k < B; k++) bruit[k] += re[k] * re[k] + im[k] * im[k]; nb++; if (nb > 400) break; }
+  for (let k = 0; k < B; k++) bruit[k] /= Math.max(1, nb);
+  // 2. Le nettoyage, trame par trame, puis on recolle (chevauchement de 75 %).
+  const y = new Float32Array(L); const norme = new Float32Array(L); const gPrec = new Float32Array(B).fill(1); const g = new Float32Array(B);
+  const alpha = 2.2 * force; const plancher = Math.max(0.04, 0.12 - 0.05 * force);
+  for (let t = 0; t < nT; t++) {
+    const o = t * H; for (let i = 0; i < N; i++) { re[i] = (x[o + i] || 0) * w[i]; im[i] = 0; } fftDB(re, im);
+    for (let k = 0; k < B; k++) { const p = re[k] * re[k] + im[k] * im[k] + 1e-12; const v = Math.max(plancher, 1 - (alpha * bruit[k]) / p); g[k] = v > gPrec[k] ? v : 0.55 * gPrec[k] + 0.45 * v; }
+    for (let k = 0; k < B; k++) { const gs = (g[Math.max(0, k - 1)] + 2 * g[k] + g[Math.min(B - 1, k + 1)]) / 4; gPrec[k] = g[k]; re[k] *= gs; im[k] *= gs; if (k > 0 && k < N / 2) { re[N - k] = re[k]; im[N - k] = -im[k]; } }
+    fftDB(re, im, true);
+    for (let i = 0; i < N; i++) { y[o + i] += re[i] * w[i]; norme[o + i] += w[i] * w[i]; }
+    if (t % 400 === 0) { onStep(`Je nettoie le son… ${Math.round((t / nT) * 100)} %`); await pause(); }
+  }
+  const out = new AudioBuffer({ numberOfChannels: 1, length: L, sampleRate: sr }); const d = out.getChannelData(0);
+  let pic = 0; for (let i = 0; i < L; i++) { d[i] = norme[i] > 1e-3 ? y[i] / norme[i] : 0; pic = Math.max(pic, Math.abs(d[i])); }
+  if (pic > 0.99) for (let i = 0; i < L; i++) d[i] *= 0.99 / pic;
+  return out;
+}

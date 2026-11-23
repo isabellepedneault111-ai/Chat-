@@ -6,7 +6,7 @@ import { espace, audioURL, saveEntry, uploadAudio, saveProfile, members } from '
 import { toast, autoCanvas, keyboard, store } from '../ui.js';
 import { esc } from './carnet.js';
 import { surveiller, reprendre, arreter as arreterDossier, surEtat, dossierPossible, recoit, recevoirIci, envoyerAOrdi } from '../arrivee.js';
-import { chromaDuSpectre, accordDuChroma, hauteurDirecte, diagnosticHarmonie, ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, harmoniserVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
+import { chromaDuSpectre, accordDuChroma, hauteurDirecte, diagnosticHarmonie, ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, harmoniserVoix, reduireBruit, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
 import { chargerGrille, poserFond } from './studio.js';
 import { diagramme, nomSimple } from '../guitare.js';
 
@@ -28,6 +28,7 @@ export default {
         <label class="btn primary">Choisir un fichier audio<input type="file" data-o="file" hidden></label>
         <button class="btn primary" data-o="direct">🎧 Écouter en direct</button>
         <button class="btn" data-o="micro">● Enregistrer mon clavier</button>
+        <label class="or-nettoie"><input type="checkbox" data-o="nettoie" ${store.get('oreilleNettoie', true) ? 'checked' : ''}> 🧹 sans le bruit</label>
         <span class="muted">ou</span>
         <select data-o="choix"><option value="">Une pièce ou un son de l’espace…</option>
           <optgroup label="Nos pièces">${PIECES.map(([u, n]) => `<option value="url:${u}">${esc(n)}</option>`).join('')}${sons().filter((e) => e.data?.piece).map((e) => `<option value="id:${esc(e.id)}">${esc(e.title || 'Son')} (${esc(e.author)})</option>`).join('')}</optgroup>
@@ -84,6 +85,7 @@ export default {
           <button class="btn primary" data-o="morceau" data-bulle="Le morceau entier (ou le passage choisi sur l’onde) part dans Jouer : il tourne au même tempo, avec tous ses accords sur le clavier, et tu joues ou chantes par-dessus.">→ Jouer ce morceau</button>
           <button class="btn" data-o="cathedrale" data-bulle="Les accords du morceau (ou du passage choisi) deviennent une cathédrale : chaque accord qui revient, une partie de l’œuvre, chantée par l’orchestre.">→ La cathédrale de ce morceau</button>
           <button class="btn primary" data-o="fond" data-bulle="La boucle tourne dans Jouer, sous le beat, au même tempo : tu joues, tu chantes, tu improvises par-dessus.">→ Jouer sur la boucle</button>
+          <button class="btn" data-o="debruit" data-bulle="Enlève le souffle du cellulaire et la rumeur de la pièce, puis réécoute le son nettoyé. Le son d’origine reste à un clic.">🧹 Réduire le bruit</button>
           ${espace.connected ? '<button class="btn primary" data-o="piece" data-bulle="La chanson rejoint Joy Walk et Projet 1 : dans L’oreille, Placer mes paroles et partout où on choisit une pièce. Elle reste dans votre espace, privée.">⭐ Mettre dans nos pièces</button>' : ''}
           <button class="btn" data-o="boucle-wav">⬇ La boucle (WAV)</button>
           <button class="btn primary" data-o="mots" data-bulle="Ma voix → Mots sur la grille s’ouvre avec cette chanson : ses accords, son tempo, et la vraie chanson qui joue sous les paroles.">✍️ Des paroles sur cette chanson</button>
@@ -281,9 +283,10 @@ export default {
 
     // Décode la pièce déposée et la fait écouter par l’oreille, en affichant chaque étape.
     let blobCourant = null; let entreeCourante = null; // pour « Mettre dans nos pièces »
+    let sonBrut = null; let nomBrut = ''; let blobBrut = null; // le son d'avant « Réduire le bruit »
     async function analyser(arrayBuffer, n, id = null) {
       etat('Je décode la pièce…'); pile = []; bout = null;
-      const copie = arrayBuffer.slice(0); let b0 = null; blobCourant = new Blob([copie]); entreeCourante = id;
+      const copie = arrayBuffer.slice(0); let b0 = null; blobCourant = new Blob([copie]); entreeCourante = id; sonBrut = null;
       try { b0 = await decoder(arrayBuffer); } catch (err) {
         // Dernier recours : le lecteur du téléphone sait souvent lire ce que le décodeur refuse. On l'écoute en entier, en silence.
         etatHTML(`Le décodeur de ce navigateur refuse ce fichier${err?.message ? ` (${esc(err.message.slice(0, 80))})` : ''}. <button class="btn small" data-o="parlecteur">▶ Le lire avec le lecteur du téléphone</button> <span class="muted">(il l’écoute en entier, en silence : une minute de mémo = une minute d’attente)</span>`);
@@ -304,6 +307,7 @@ export default {
         throw e1;
       }
     }
+    const majDebruit = () => { const b = q('[data-o=debruit]'); if (b) b.textContent = sonBrut ? '↺ Le son d’origine' : '🧹 Réduire le bruit'; };
     let lecteurEnAttente = null;
     // Lit le fichier avec un élément <audio> (dans le geste, pour iPhone) et capte ce qui en sort.
     async function parLecteur() {
@@ -690,13 +694,21 @@ export default {
         const flux = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
         const morceaux = []; rec = new MediaRecorder(flux);
         rec.ondataavailable = (ev) => ev.data.size && morceaux.push(ev.data);
-        rec.onstop = async () => { flux.getTracks().forEach((t) => t.stop()); rec = null; b.textContent = '● Enregistrer mon clavier'; b.classList.remove('on'); await analyser(await new Blob(morceaux).arrayBuffer(), 'Mon enregistrement'); };
+        rec.onstop = async () => {
+          flux.getTracks().forEach((t) => t.stop()); rec = null; b.textContent = '● Enregistrer mon clavier'; b.classList.remove('on');
+          const ab = await new Blob(morceaux).arrayBuffer();
+          if (!store.get('oreilleNettoie', true)) { await analyser(ab, 'Mon enregistrement'); return; }
+          // Le bruit du cellulaire enlevé tout de suite ; l'original reste à un clic (« Le son d'origine »).
+          try { const brut = await decoder(ab.slice(0)); const propre = await reduireBruit(brut, { onStep: etat }); sonBrut = brut; blobBrut = new Blob([ab]); nomBrut = 'Mon enregistrement'; blobCourant = wav(propre); entreeCourante = null; await analyserBuf(propre, 'Mon enregistrement (sans bruit)'); majDebruit(); }
+          catch { await analyser(ab, 'Mon enregistrement'); }
+        };
         rec.start(); b.textContent = '■ Arrêter et analyser'; b.classList.add('on'); etat('J’écoute… joue ton bout (une minute au plus).');
         setTimeout(() => rec?.state === 'recording' && rec.stop(), 60000);
       } catch { toast('Micro refusé : autorise-le dans la barre d’adresse.'); }
     }
     el.addEventListener('change', async (e) => {
       const o = e.target.dataset.o;
+      if (o === 'nettoie') { store.set('oreilleNettoie', e.target.checked); return; }
       if (o === 'recoit') { recevoirIci(e.target.checked); toast(e.target.checked ? 'Ce navigateur reçoit maintenant les mémos envoyés de ton iPhone.' : 'Ce navigateur ne reçoit plus les mémos.'); return; }
       if (o === 'envoi' && e.target.files[0]) {
         const f = e.target.files[0]; e.target.value = ''; const lab = e.target.closest('label'); const txt = lab.firstChild;
@@ -741,14 +753,22 @@ export default {
       if (o === 'micro') { micro(e.target.closest('[data-o]')); return; }
       if (o === 'parlecteur') { parLecteur(); return; }
       if (o === 'dossier') { surveiller(); return; }
+      if (o === 'debruit') {
+        if (!orig) return; const b = e.target.closest('[data-o]'); b.disabled = true;
+        try {
+          if (sonBrut) { const s0 = sonBrut; const n0 = nomBrut; const bl = blobBrut; sonBrut = null; await analyserBuf(s0, n0); blobCourant = bl; toast('Le son d’origine est revenu.'); }
+          else { const brut = orig; const n0 = nom; const bl = blobCourant; const propre = await reduireBruit(brut, { onStep: etat }); await analyserBuf(propre, `${n0} (sans bruit)`); sonBrut = brut; nomBrut = n0; blobBrut = bl; blobCourant = wav(propre); entreeCourante = null; toast('Le bruit est réduit : écoute la différence. « Mettre dans nos pièces » gardera cette version.'); }
+        } catch (err) { etat(`Le nettoyage n’a pas marché : ${err?.message || err}`); }
+        b.disabled = false; majDebruit(); return;
+      }
       if (o === 'piece') {
         if (!res || !blobCourant) return; const b = e.target.closest('[data-o]'); const lab = b.textContent; b.disabled = true;
         const [nm, mode] = String(res.ton).split(' ou ')[0].split(' '); const pc = Math.max(0, NOTES_FR.findIndex((x) => x.toLowerCase() === String(nm).toLowerCase()));
-        const piece = { bpm: res.bpm, t1: cadreG?.debutCale ?? 0, tonique: pc, mineur: /^min/i.test(mode || '') };
+        const og = store.get('oreilleGrille', null); const piece = { bpm: res.bpm, t1: cadreG?.debutCale ?? 0, tonique: pc, mineur: /^min/i.test(mode || ''), grille: og?.mesures || null, temps: cadreG?.temps ?? 60 / res.bpm };
         try {
           const ex = entreeCourante && espace.entries.find((x) => x.id === entreeCourante);
           if (ex) await saveEntry({ ...ex, data: { ...(ex.data || {}), piece } }, { force: true });
-          else { b.textContent = 'J’envoie…'; const au = await uploadAudio(blobCourant, (x) => { b.textContent = `J’envoie… ${Math.round(x * 100)} %`; }); const r = await saveEntry({ type: 'audio', title: nom || 'Ma pièce', audio: au, data: { piece, stage: 0 } }); entreeCourante = r.entry?.id || null; }
+          else { b.textContent = 'J’envoie…'; const au = await uploadAudio(blobCourant, (x) => { b.textContent = `J’envoie… ${Math.round(x * 100)} %`; }); const r = await saveEntry({ type: 'audio', title: (nom || 'Ma pièce').replace(/ \(sans bruit\)$/, ''), audio: au, data: { piece, stage: 0 } }); entreeCourante = r.entry?.id || null; }
           toast(`« ${nom} » est dans nos pièces : L’oreille, Placer mes paroles… (${res.bpm} BPM, ${res.ton.split(' ou ')[0]}).`);
         } catch (err) { toast(err.message || 'Pas réussi à la ranger.'); }
         b.disabled = false; b.textContent = lab; return;
