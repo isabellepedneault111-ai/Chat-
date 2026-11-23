@@ -86,24 +86,34 @@ export default {
   mount(el) {
     const st = { theme: 'nuit', themes: null, cles: '', schema: 'AABB', place: 'croches', pers: 'je', n: 4, source: 'jouer', main: 'Lam Fa Do Sol', ...store.get('motsReglages', {}) };
     if (!Array.isArray(st.themes) || !st.themes.length) st.themes = [st.theme || 'nuit'];
-    let lignes = store.get('motsLignes', []); // [{ txt, garde, pause }]
-    // Avant, « silence » cachait le texte de la ligne : on le rend, précédé de son silence.
-    lignes = lignes.flatMap((L) => (L.pause && L.txt ? [{ txt: '', garde: true, pause: true }, { ...L, pause: false }] : [L]));
-    // Des lignes écrites avant le filtre (0.89) peuvent traîner en mémoire : celles qui contiennent un mot écarté
-    // (et que la personne n'a pas tapé elle-même en mot-clé) sont vidées, puis réécrites.
-    const salie = (txt) => { const cles = (store.get('motsReglages', {}).cles || '').toLowerCase(); return txt.split(/[\s’',.;:!?]+/).some((w) => w && ecarte(w) && !cles.includes(w.toLowerCase())); };
-    const aRefaire = lignes.some((L) => salie(L.txt));
-    lignes = lignes.map((L) => (salie(L.txt) ? { txt: '', garde: false } : L));
+    // Les paroles appartiennent à UNE chanson : chaque chanson garde ses lignes, son départ et ses silences.
+    const cleDe = (src) => (src === 'oreille' ? `oreille:${store.get('oreilleGrille', null)?.nom || ''}` : src);
+    let parChanson = store.get('motsParChanson', null);
+    if (!parChanson) { parChanson = {}; const vieilles = store.get('motsLignes', []); if (vieilles.length) parChanson[cleDe(st.source)] = { lignes: vieilles, debut: st.debut || 1 }; }
     // Venue de L'oreille (« Des paroles sur cette chanson ») : la vraie chanson joue sous les paroles.
+    let aCaler = !!window.__flipMots;
     let chanson = window.__flipMots || null; window.__flipMots = null;
     if (chanson) chansonGardee = chanson; else chanson = chansonGardee;
     // Une nouvelle grille dans L'oreille depuis la dernière visite : la page s'ouvre dessus.
-    let aCaler = !!window.__flipMots;
-    { const og = store.get('oreilleGrille', null); if (og?.at && og.at > (st.vuAt || 0)) { st.source = 'oreille'; st.vuAt = og.at; store.set('motsReglages', st); aCaler = true; } }
+    { const og = store.get('oreilleGrille', null); if (og?.at && og.at > (st.vuAt || 0)) { st.source = 'oreille'; st.vuAt = og.at; aCaler = true; } }
     if (chanson) st.source = 'oreille';
+    // Des lignes écrites avant le filtre (0.89) peuvent traîner en mémoire : celles qui contiennent un mot écarté
+    // (et que la personne n'a pas tapé elle-même en mot-clé) sont vidées, puis réécrites.
+    const salie = (txt) => { const cles = (st.cles || '').toLowerCase(); return String(txt || '').split(/[\s’',.;:!?]+/).some((w) => w && ecarte(w) && !cles.includes(w.toLowerCase())); };
+    let cle = ''; let lignes = []; let aRefaire = false;
+    function chargerLignes() {
+      cle = cleDe(st.source); const f = parChanson[cle] || {};
+      lignes = (f.lignes || []).flatMap((L) => (L.pause && L.txt ? [{ txt: '', garde: true, pause: true }, { ...L, pause: false }] : [L]));
+      aRefaire = lignes.some((L) => salie(L.txt)); lignes = lignes.map((L) => (salie(L.txt) ? { txt: '', garde: false } : L));
+      st.debut = f.debut || 1; st.cale = !!f.cale;
+    }
+    chargerLignes();
+    if (aCaler && lignes.length) aCaler = false; // cette chanson a déjà ses paroles : on ne touche à rien
     let graine = Date.now() % 100000; let lecture = null; let raf = 0;
     const voix = espace.connected ? profileOf(espace.me)?.voix || null : null;
-    const sauver = () => { store.set('motsReglages', st); store.set('motsLignes', lignes); };
+    const sauver = () => { store.set('motsReglages', st); parChanson[cle] = { lignes, debut: st.debut || 1, cale: !!st.cale }; store.set('motsParChanson', parChanson); };
+    // Changer de chanson : les lignes de l'autre restent rangées avec elle ; celles de la nouvelle reviennent.
+    function changerDeChanson() { sauver(); chargerLignes(); const d = q('[data-m=debut]'); if (d) d.value = st.debut; arreter(); rendre(); }
     el.innerHTML = `
       <div class="mod-head"><div>
         <p class="eyebrow">Ma voix · mots sur la grille</p>
@@ -441,7 +451,7 @@ export default {
       if (e.target.dataset.garde != null) { lignes[+e.target.dataset.garde].garde = e.target.checked; e.target.closest('.mo-l').classList.toggle('garde', e.target.checked); sauver(); return; }
       if (!k || e.target.tagName !== 'SELECT') return;
       st[k] = k === 'n' ? +e.target.value : e.target.value; if (k === 'n') st.cale = false;
-      if (k === 'source') { q('.mo-main').hidden = st.source !== 'main'; majSous(); chargerPiece().then(rendre); }
+      if (k === 'source') { q('.mo-main').hidden = st.source !== 'main'; changerDeChanson(); majSous(); chargerPiece().then(async () => { rendre(); if (!lignes.length && (st.source === 'oreille' || st.source.startsWith('piece:'))) await caler(true); }); }
       sauver(); arreter(); rendre();
     });
     el.addEventListener('input', (e) => {

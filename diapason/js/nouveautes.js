@@ -60,6 +60,9 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.03', quand: '2026-11-23', titre: 'Chaque chanson a ses paroles', items: [
+    ['Les paroles restent avec leur chanson', ['Dans Mots sur la grille, les lignes (gardées ou non), le départ des paroles et les silences appartiennent maintenant à une seule chanson. Passer à Joy Walk ouvre une page à elle ; revenir à Interminable redonne ses lignes, comme tu les avais laissées. Tes lignes d’avant sont rangées avec la chanson sur laquelle tu travaillais.']],
+  ] },
   { v: '1.02', quand: '2026-11-23', titre: 'Les paroles se calent toutes seules', items: [
     ['✨ Caler sur la chanson', ['Une chanson passée dans L’oreille, puis « Des paroles sur cette chanson » : les paroles se calent d’office. Elles commencent à la première mesure où la voix chante (ou, sans voix repérée, où il y a du son) ; les passages sans voix deviennent des silences ; les syllabes suivent les attaques de la chanson. Le bouton « ✨ Caler sur la chanson » le refait quand tu veux, en gardant tes lignes déjà écrites, dans l’ordre.']],
     ['Toute la chanson', ['Mots sur la grille et la cathédrale suivent maintenant toute la chanson trouvée par L’oreille, pas seulement sa boucle. Le labo, lui, tourne toujours sur la boucle.']],
