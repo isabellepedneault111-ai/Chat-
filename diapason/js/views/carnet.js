@@ -289,7 +289,7 @@ export default {
     function filtered(withQuery = true) {
       const qv = withQuery ? (el.querySelector('.search')?.value || '') : '';
       const since = { semaine: 7, mois: 31 }[fWhen];
-      return espace.entries.filter((e) => !['parcours', 'session', 'profil'].includes(e.type)
+      return espace.entries.filter((e) => !['parcours', 'session', 'profil', 'motsgrille', 'trace'].includes(e.type)
         && (!projetCourant() || e.data?.projet === projetCourant())
         && (!fWho || e.author === fWho)
         && (!fSong || (fSong === '—' ? !songOf(e) : songOf(e) === fSong))

@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.04', quand: '2026-11-23', titre: 'Tes paroles sur tous tes appareils', items: [
+    ['Synchronisées', ['Les paroles de chaque chanson (lignes, silences, départ) voyagent maintenant avec votre espace : écris sur le Mac, retrouve-les sur l’iPhone, et l’inverse. La version la plus récente gagne ; FLIP n’écrase jamais une version plus récente avec une plus vieille. Elles ne s’affichent ni sur le mur ni dans les nouvelles.']],
+    ['Plus de page vide', ['Une chanson sans paroles se remplit toute seule en l’ouvrant : calée sur la chanson si son son est là, sinon écrite sur la grille. (Avant, il fallait toucher « Écrire les lignes ».)']],
+  ] },
   { v: '1.03', quand: '2026-11-23', titre: 'Chaque chanson a ses paroles', items: [
     ['Les paroles restent avec leur chanson', ['Dans Mots sur la grille, les lignes (gardées ou non), le départ des paroles et les silences appartiennent maintenant à une seule chanson. Passer à Joy Walk ouvre une page à elle ; revenir à Interminable redonne ses lignes, comme tu les avais laissées. Tes lignes d’avant sont rangées avec la chanson sur laquelle tu travaillais.']],
   ] },

@@ -3,7 +3,7 @@
 // sur les accords : la voix-guide prend les notes de l'accord sur les temps forts.
 import { audio, out, drums } from '../audio.js';
 import { joue, prechargerSons, accord as accordSon, notePiano } from '../sampler.js';
-import { espace, profileOf, saveEntry, audioURL } from '../espace.js';
+import { espace, profileOf, saveEntry, audioURL, onEspace } from '../espace.js';
 import { loadLexique, rimeOf } from '../lexique.js';
 import { store, toast } from '../ui.js';
 import { esc } from './carnet.js';
@@ -111,7 +111,22 @@ export default {
     if (aCaler && lignes.length) aCaler = false; // cette chanson a déjà ses paroles : on ne touche à rien
     let graine = Date.now() % 100000; let lecture = null; let raf = 0;
     const voix = espace.connected ? profileOf(espace.me)?.voix || null : null;
-    const sauver = () => { store.set('motsReglages', st); parChanson[cle] = { lignes, debut: st.debut || 1, cale: !!st.cale }; store.set('motsParChanson', parChanson); };
+    // Les paroles de chaque chanson voyagent avec l'espace (une entrée cachée par chanson et par personne) :
+    // elles se retrouvent sur l'iPhone comme sur l'ordi. La version la plus récente gagne.
+    const idDe = (k) => { let h = 0; for (const ch of `${espace.me}|${k}`) h = (h * 31 + ch.codePointAt(0)) >>> 0; return `mots-${String(espace.me || 'x').replace(/[^A-Za-z0-9]/g, '').slice(0, 12)}-${h.toString(36)}`; };
+    const envois = new Map();
+    const envoyer = (k) => { if (!espace.connected) return; clearTimeout(envois.get(k)); envois.set(k, setTimeout(() => { envois.delete(k); const f = parChanson[k]; if (!f) return; const la = espace.entries.find((e) => e.id === idDe(k)); if (la && (la.data?.at || 0) > (f.at || 0)) return; /* jamais par-dessus plus récent */ saveEntry({ id: idDe(k), type: 'motsgrille', title: k, data: { cle: k, ...f } }, { force: true }).catch(() => {}); }, 1500)); };
+    const sauver = () => { store.set('motsReglages', st); parChanson[cle] = { lignes, debut: st.debut || 1, cale: !!st.cale, at: Date.now() }; store.set('motsParChanson', parChanson); envoyer(cle); };
+    // Ce qui arrive de l'espace (écrit sur un autre appareil) : plus récent que ce qu'on a ici → on le prend.
+    function recevoir() {
+      if (!espace.connected) return; let ici = false;
+      espace.entries.filter((e) => e.type === 'motsgrille' && e.author === espace.me && e.data?.cle).forEach((e) => {
+        const loc = parChanson[e.data.cle]; if (loc && (loc.at || 0) >= (e.data.at || 0)) return;
+        parChanson[e.data.cle] = { lignes: e.data.lignes || [], debut: e.data.debut || 1, cale: !!e.data.cale, at: e.data.at || 0 }; if (e.data.cle === cle) ici = true;
+      });
+      store.set('motsParChanson', parChanson);
+      if (ici && !el.contains(document.activeElement?.closest?.('.mo-txt') || null)) { chargerLignes(); const d = q('[data-m=debut]'); if (d) d.value = st.debut; rendre(); }
+    }
     // Changer de chanson : les lignes de l'autre restent rangées avec elle ; celles de la nouvelle reviennent.
     function changerDeChanson() { sauver(); chargerLignes(); const d = q('[data-m=debut]'); if (d) d.value = st.debut; arreter(); rendre(); }
     el.innerHTML = `
@@ -228,7 +243,7 @@ export default {
       principal = ap;
       const box = q('.mo-lignes');
       const introH = deb() ? `<article class="panel mo-intro"><b>🎵 Intro</b> · mesure${deb() > 1 ? `s 1 à ${deb()}` : ' 1'} · musique seule <span class="muted small">(« Chanter sur la grille » la joue avant la première ligne)</span></article>` : '';
-      if (!lignes.length) { box.innerHTML = '<div class="panel mo-vide"><p>Choisis un thème, ajoute un mot ou deux qui t’appartiennent, puis « Écrire les lignes ».</p></div>'; return; }
+      if (!lignes.length) { box.innerHTML = '<div class="panel mo-vide"><p>J’écris les premières lignes de cette chanson…</p></div>'; return; }
       const schema = st.schema;
       box.innerHTML = introH + lignes.map((L, i) => {
         const { sl, syl, pl, notes } = analyse(txtDe(L), i);
@@ -285,6 +300,16 @@ export default {
       toast(`Calé sur ${A.via} : les paroles commencent à la mesure ${st.debut}${premier ? ` (${premier} mesure${premier > 1 ? 's' : ''} d’intro)` : ''}, ${lignes.length - nbS} lignes${nbS ? `, ${nbS} silence${nbS > 1 ? 's' : ''}` : ''}.`);
       if (lignes.some((L) => !L.pause && !L.txt)) await generer();
       return true;
+    }
+
+    // Une chanson sans paroles encore : la page se remplit toute seule (calée sur la chanson si on a son son).
+    async function remplirSiVide() {
+      // D'abord, laisser arriver ce que l'espace a déjà (les paroles écrites sur un autre appareil).
+      if (espace.connected) { for (let k = 0; k < 20 && !espace.rev; k++) await new Promise((r) => setTimeout(r, 200)); recevoir(); }
+      if (lignes.length) return;
+      if (!(await caler(true))) await generer();
+      // Des lignes écrites d'office comptent pour « très vieilles » : celles d'un autre appareil passent toujours devant.
+      if (parChanson[cle]) { parChanson[cle].at = 1; store.set('motsParChanson', parChanson); }
     }
 
     // L'onde de la vraie chanson sous chaque ligne : ses deux mesures, avec les temps et les mesures marqués.
@@ -451,7 +476,7 @@ export default {
       if (e.target.dataset.garde != null) { lignes[+e.target.dataset.garde].garde = e.target.checked; e.target.closest('.mo-l').classList.toggle('garde', e.target.checked); sauver(); return; }
       if (!k || e.target.tagName !== 'SELECT') return;
       st[k] = k === 'n' ? +e.target.value : e.target.value; if (k === 'n') st.cale = false;
-      if (k === 'source') { q('.mo-main').hidden = st.source !== 'main'; changerDeChanson(); majSous(); chargerPiece().then(async () => { rendre(); if (!lignes.length && (st.source === 'oreille' || st.source.startsWith('piece:'))) await caler(true); }); }
+      if (k === 'source') { q('.mo-main').hidden = st.source !== 'main'; changerDeChanson(); majSous(); chargerPiece().then(async () => { rendre(); await remplirSiVide(); }); }
       sauver(); arreter(); rendre();
     });
     el.addEventListener('input', (e) => {
@@ -472,7 +497,8 @@ export default {
     el.addEventListener('focusout', (e) => { if (e.target.classList?.contains('mo-txt')) rendre(); });
     loadLexique().then(async () => { if (aRefaire) await generer(); else rendre(); }); rendre();
     setTimeout(() => prechargerSons(['voix', 'piano']), 400);
-    majSous(); chargerPiece().then(async () => { rendre(); if (aCaler) await caler(true); });
-    return () => arreter();
+    recevoir(); const offEsp = onEspace((t) => { if (t === 'entries') recevoir(); });
+    majSous(); chargerPiece().then(async () => { rendre(); await remplirSiVide(); });
+    return () => { arreter(); offEsp?.(); for (const [k, t] of envois) { clearTimeout(t); const f = parChanson[k]; if (f && espace.connected) saveEntry({ id: idDe(k), type: 'motsgrille', title: k, data: { cle: k, ...f } }, { force: true }).catch(() => {}); } };
   },
 };

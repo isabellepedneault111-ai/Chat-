@@ -16,7 +16,7 @@ export async function marquer(ids, champ, oui = true) {
 }
 
 // Ce qui compte comme une nouvelle : ce qu'une personne a créé, pas les traces techniques.
-const CACHES = new Set(['profil', 'parcours', 'trace', 'evaluation']);
+const CACHES = new Set(['profil', 'parcours', 'trace', 'evaluation', 'motsgrille']);
 // Vrai si une entrée compte comme une nouvelle (ni un exemple, ni un profil, ni une séance pas finie).
 export const nouvelle = (e) => e.author && !CACHES.has(e.type) && !e.demo && !e.data?.demo && !(e.type === 'session' && !e.data?.done);
 // Les nouvelles ajoutées par l’autre, de la plus récente à la plus ancienne.
