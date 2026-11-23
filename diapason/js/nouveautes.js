@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.97', quand: '2026-11-23', titre: 'Le bon genre', items: [
+    ['Le genre des noms, pour vrai', ['Mots sur la grille ne devine plus le genre des noms d’après leur terminaison : il le prend dans le dictionnaire Lexique (près de 12 000 noms), avec les pluriels irréguliers (fanaux, travaux) et les féminins irréguliers des adjectifs (douce, vieille, légère). Sur des centaines de lignes de test, plus aucun « la » devant un nom masculin, ni l’inverse.']],
+    ['L’homme, l’heure, l’hiver', ['Les mots en h muet prennent l’apostrophe (l’homme, l’horizon), les h aspirés non (le hasard). Et un verbe en mot-clé (« partir ») reste un verbe : « tout ça pour partir », jamais « ce partir ».']],
+  ] },
   { v: '0.96', quand: '2026-11-23', titre: 'Les chœurs, seulement si tu veux', items: [
     ['🎤 Chœurs ligne par ligne', ['Les « ouuu » synthétiques (la voix-guide) sont éteints d’office dans Mots sur la grille. Le 🎤 d’une ligne les allume pour cette ligne seulement ; « Chœurs sur toutes les lignes » les met partout.']],
   ] },

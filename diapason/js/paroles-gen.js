@@ -27,21 +27,29 @@ const COMMUN = B('temps m, monde m, jour m, voix f, cœur m, main f, chanson f, 
 // Les mots écartés (sexe, vulgarité, insultes, drogue, violence crue) : la liste vit dans lexique.js.
 
 // ---------- Le petit français : élisions, accords, pluriels ----------
-const H_MUET = /^h(abit|ésit|iver|orizon|istoire|eure|umeur|ôtel|erbe|asard)/i;
+const H_MUET = /^h(abit|ésit|iver|orizon|istoire|eure|umeur|ôtel|erbe|omme|onneur|orreur|uile|umain|umanit|umour|ôpital|ôte|irondelle|orloge|ymne|armonie|éroïne|ommage|abitude|ivers|aleine|ospice|ostie|uître|ypoth|orizons)/i;
 const voyelle = (w) => /^[aeiouyàâäéèêëîïôöùûüœæ]/i.test(w) || (H_MUET.test(w) && !/^hasard/i.test(w));
 // Genre d'un mot hors des banques : quelques mots courants, puis les terminaisons.
 const FEM = new Set('lettre fenêtre baraque musique banque nuit main fin peau eau faim soif voix croix fois mort part dent forêt clé clef faim chair cour tour fleur peur sœur douleur chaleur couleur odeur vapeur lueur saveur fureur pluie vie joie mort neige page plage image cage rage nage'.split(' '));
 const MASC = new Set('musée lycée trophée cœur silence visage rêve monde ciel ange fleuve arbre livre verre nombre sable vide rire ventre rythme groupe piano soleil feu jeu lieu temps espace orage nuage voyage passage message paysage village courage bonheur malheur moteur regard'.split(' '));
+// Le vrai genre des noms, leurs pluriels irréguliers et les féminins irréguliers des adjectifs (Lexique 3.83).
+const GENRES = new Map(); const FEMININS = new Map(); let genresP = null;
+export const chargerGenres = () => (genresP ||= fetch('data/genres-fr.tsv').then((r) => r.text()).then((t) => {
+  for (const l of t.split('\n')) { if (!l || l[0] === '#') continue; const [w, g, x] = l.split('\t'); if (g === 'a') FEMININS.set(w, x); else GENRES.set(w, { g, pl: x || '' }); }
+}).catch(() => {}));
+export const genreConnu = (w) => GENRES.get(String(w).toLowerCase())?.g || null;
 export function genre(w) {
   const x = w.toLowerCase();
+  const connu = GENRES.get(x); if (connu) return connu.g;
   if (FEM.has(x)) return 'f'; if (MASC.has(x)) return 'm';
   if (/(tion|sion|té|tié|ure|ette|ence|ance|ade|ie|ée|ise|elle|esse|ude|ine|ière|ance|eille|ouille)$/.test(x)) return 'f';
   if (/e$/.test(x) && !/(age|isme|ème|ège|ste|tre|bre|ice|ome|aire|oire|phe|que)$/.test(x)) return 'f';
   return 'm';
 }
-const pluriel = (w) => (/[sxz]$/.test(w) ? w : /(eau|eu|au)$/.test(w) ? `${w}x` : /al$/.test(w) && !/(bal|festival|carnaval|chacal)$/.test(w) ? w.replace(/al$/, 'aux') : `${w}s`);
+const pluriel = (w) => (GENRES.get(w)?.pl) || (/[sxz]$/.test(w) ? w : /(eau|eu|au)$/.test(w) ? `${w}x` : /al$/.test(w) && !/(bal|festival|carnaval|chacal)$/.test(w) ? w.replace(/al$/, 'aux') : `${w}s`);
 function adjForme(a, g, pl) {
   let [m, f] = a.split('/');
+  if (!f && FEMININS.has(m)) f = FEMININS.get(m);
   if (!f) {
     f = /e$/.test(m) ? m : /eux$/.test(m) ? m.replace(/eux$/, 'euse') : /if$/.test(m) ? m.replace(/if$/, 'ive') : /(el|en|on)$/.test(m) ? `${m}${m.slice(-1)}e` : /er$/.test(m) ? m.replace(/er$/, 'ère') : /et$/.test(m) ? `${m}te` : `${m}e`;
   }
@@ -115,10 +123,13 @@ const propre = (s) => s.replace(/\s+/g, ' ').replace(/ ,/g, ',').trim();
 
 // Prépare la banque : le thème, le fonds commun, les mots-clés (et leurs synonymes du dictionnaire de l'app).
 export async function banque(theme, motsCles) {
+  await chargerGenres();
   // Un thème ou plusieurs : leurs banques se mélangent (sans doublons).
   const ts = (Array.isArray(theme) ? theme : [theme]).map((k) => THEMES[k]).filter(Boolean); if (!ts.length) ts.push(THEMES.nuit);
   const uniq = (l, k = (x) => x) => l.filter((x, i) => l.findIndex((y) => k(y) === k(x)) === i);
   const n = uniq([...ts.flatMap((t) => t.n), ...COMMUN.n.slice(0, 4)], (x) => x.w); const a = uniq([...ts.flatMap((t) => t.a), ...COMMUN.a]); const vt = uniq([...ts.flatMap((t) => t.vt), ...COMMUN.vt.slice(0, 2)]); const vi = uniq([...ts.flatMap((t) => t.vi), ...COMMUN.vi.slice(0, 2)]);
+  // Le genre des banques vérifié dans le dictionnaire (au cas où on se serait trompé en les écrivant).
+  n.forEach((x, i) => { const g = genreConnu(x.w); if (g && g !== x.g) n[i] = { ...x, g }; });
   const cles = []; const phrases = [];
   for (const brut of motsCles) {
     const k = brut.trim().toLowerCase(); if (!k) continue;
@@ -126,12 +137,13 @@ export async function banque(theme, motsCles) {
     const cat = info(k)?.cat || '';
     if (cat.startsWith('ADJ')) { a.push(k); cles.push({ k, sorte: 'a' }); }
     else if (cat.startsWith('VER') && /er$/.test(k)) { const v = k.replace(/er$/, 'e'); vt.push(v); cles.push({ k: v, sorte: 'vt' }); }
+    else if (cat.startsWith('VER') && !genreConnu(k)) { phrases.push(k); cles.push({ k, sorte: 'p' }); } // « partir », « courir » : un verbe à l'infinitif, gardé tel quel
     else { const nom = { w: k, g: genre(k), cle: true }; n.push(nom); cles.push({ k, sorte: 'n', nom }); }
     // Quelques synonymes du même sens, pour ne pas répéter le mot-clé à chaque ligne.
     try {
       const s = await synonymesParSens(k);
       const sens = s?.sens?.find((x) => (cat.startsWith('ADJ') ? x.nature === 'adjectif' : x.nature === 'nom')) || null;
-      (sens?.mots || []).filter((w) => !/\s/.test(w) && info(w)?.rank < 8000 && !ecarte(w)).slice(0, 3).forEach((w) => { if (cat.startsWith('ADJ')) a.push(w); else n.push({ w, g: genre(w) }); });
+      (sens?.mots || []).filter((w) => !/\s/.test(w) && info(w)?.rank < 8000 && !ecarte(w)).filter((w) => (cat.startsWith('ADJ') ? info(w)?.cat?.startsWith('ADJ') : !!genreConnu(w))).slice(0, 3).forEach((w) => { if (cat.startsWith('ADJ')) a.push(w); else n.push({ w, g: genreConnu(w) }); });
     } catch { /* hors ligne : on garde le mot seul */ }
   }
   return { n, a, vt, vi, cles, phrases };
@@ -145,7 +157,7 @@ function nomsQuiRiment(b, cle, eviter) {
   if (l.length >= 3) return l;
   // Sinon, les rimes du lexique : des noms courants qui partagent le son de la fin.
   const r = rimesClassees(eviter, 120);
-  const plus = (r?.rimes || []).filter((x) => info(x.w)?.cat === 'NOM' && !ecarte(x.w) && x.rank < 4000 && x.w.length > 2 && !/[s-]/.test(x.w.slice(-1)) && !x.w.includes('-')).slice(0, 10).map((x) => ({ w: x.w, g: genre(x.w), devine: true }));
+  const plus = (r?.rimes || []).filter((x) => info(x.w)?.cat === 'NOM' && !ecarte(x.w) && x.rank < 4000 && x.w.length > 2 && !/[s-]/.test(x.w.slice(-1)) && !x.w.includes('-')).slice(0, 10).map((x) => ({ w: x.w, g: genre(x.w), devine: !genreConnu(x.w) }));
   return [...l, ...plus];
 }
 
