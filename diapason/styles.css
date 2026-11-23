@@ -4554,7 +4554,7 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 /* 0.99 — intro et silences dans Mots sur la grille */
 .mo-debut input { width: 90px; font: 700 1.1rem var(--display); padding: 8px 10px; border-radius: 8px; border: 1px solid #d9cfbd; background: #fffdf8; }
 .mo-intro { background: #f3ecda; border-style: dashed; font-size: 1.05rem; }
-.mo-l.pause { background: #f3ecda; }
+.mo-l.pause { background: transparent; border-style: dashed; box-shadow: none; }
 .mo-l.pause .pl-piste { opacity: .55; }
 .mo-pause-txt { flex: 1 1 280px; margin: 0; font: 600 1.15rem var(--display); color: #5b4a1c; }
 .mo-silence.on { background: #2b2620; color: #fbe7a1; border-color: #2b2620; }
@@ -4571,3 +4571,5 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .ca-dose { display: flex; align-items: center; gap: 12px; margin: 6px 0 12px; font-weight: 700; }
 .ca-dose input { flex: 0 1 320px; accent-color: #b08a2e; }
 .ca-plus-loin { margin: 28px 0 10px; font: 700 1.3rem var(--display); }
+.mo-l.pause .mo-garde, .mo-l.pause [data-m=autre], .mo-l.pause [data-m=choeur], .mo-l.pause .mo-n, .mo-l.pause .mo-lettre { display: none; }
+.mo-l.pause .mo-rime { display: none; }

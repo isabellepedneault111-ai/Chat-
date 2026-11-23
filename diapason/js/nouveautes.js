@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.01', quand: '2026-11-23', titre: 'Le silence ne mange plus de ligne', items: [
+    ['🎵 silence avant', ['« 🎵 silence » ne remplace plus la ligne : il ajoute deux mesures de musique seule juste avant, et la ligne garde ses mots (elle descend d’une place). Un silence s’enlève avec ✕. Les lignes qu’un ancien silence cachait sont revenues, avec leur silence devant.']],
+    ['Les rimes sautent les silences', ['Le schéma de rimes (AABB, ABAB…) se compte sur les lignes de paroles seulement : la ligne qui suit un silence rime avec la bonne.']],
+  ] },
   { v: '1.0', quand: '2026-11-23', titre: 'La cathédrale habille ta chanson', items: [
     ['🎻 Un orchestre qui suit ta chanson', ['Dans la cathédrale, « Habiller ma chanson » : choisis une de nos pièces (ou la dernière de L’oreille), le passage (de la mesure… à la mesure…), et un habit en mots simples : cordes douces, chœur lointain, cuivres qui montent, harpe et flûte, tout l’orchestre. L’orchestre suit les accords de la chanson, mesure par mesure, à son tempo ; les voix bougent le moins possible d’un accord à l’autre, comme un arrangeur l’écrirait.']],
     ['Écouter ensemble, doser, garder', ['« Écouter avec la chanson » joue la vraie chanson et l’orchestre ensemble ; le curseur dose l’un et l’autre. « L’orchestre (WAV) » le télécharge seul, prêt à poser sous la voix ou à donner à Frog. Les nombres et la rosace restent plus bas, « pour aller plus loin ».']],

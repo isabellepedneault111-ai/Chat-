@@ -86,7 +86,9 @@ export default {
   mount(el) {
     const st = { theme: 'nuit', themes: null, cles: '', schema: 'AABB', place: 'croches', pers: 'je', n: 4, source: 'jouer', main: 'Lam Fa Do Sol', ...store.get('motsReglages', {}) };
     if (!Array.isArray(st.themes) || !st.themes.length) st.themes = [st.theme || 'nuit'];
-    let lignes = store.get('motsLignes', []); // [{ txt, garde }]
+    let lignes = store.get('motsLignes', []); // [{ txt, garde, pause }]
+    // Avant, « silence » cachait le texte de la ligne : on le rend, précédé de son silence.
+    lignes = lignes.flatMap((L) => (L.pause && L.txt ? [{ txt: '', garde: true, pause: true }, { ...L, pause: false }] : [L]));
     // Des lignes écrites avant le filtre (0.89) peuvent traîner en mémoire : celles qui contiennent un mot écarté
     // (et que la personne n'a pas tapé elle-même en mot-clé) sont vidées, puis réécrites.
     const salie = (txt) => { const cles = (store.get('motsReglages', {}).cles || '').toLowerCase(); return txt.split(/[\s’',.;:!?]+/).some((w) => w && ecarte(w) && !cles.includes(w.toLowerCase())); };
@@ -162,6 +164,9 @@ export default {
     }
     const grille = () => (st.source.startsWith('piece:') ? grillePiece() : st.source === 'oreille' ? grilleOreille() : st.source === 'main' ? grilleMain(st.main, store.get('bpm', 92)) : grilleJouer()) || grilleJouer();
     // Les paroles peuvent commencer plus loin (une intro, des silences) : la ligne i prend les mesures debut + 2i et suivante.
+    // Les rimes se comptent sur les lignes de paroles seulement : un silence ne casse pas le schéma.
+    const kP = (i) => lignes.slice(0, i).filter((L) => !L.pause).length;
+    const partL = (i) => { if (lignes[i]?.pause) return null; const idx = lignes.map((L, k) => (L.pause ? -1 : k)).filter((k) => k >= 0); const pk = partenaire(st.schema, idx.indexOf(i)); return pk == null ? null : idx[pk]; };
     const txtDe = (L) => (L?.pause ? '' : L?.txt || '');
     const deb = () => Math.max(0, (+st.debut || 1) - 1);
     const mDe = (i, h, M) => (deb() + 2 * i + h) % M;
@@ -216,17 +221,17 @@ export default {
       const schema = st.schema;
       box.innerHTML = introH + lignes.map((L, i) => {
         const { sl, syl, pl, notes } = analyse(txtDe(L), i);
-        const p = partenaire(schema, i); const rime = p != null && lignes[p] ? rimeOf(L.txt) === rimeOf(lignes[p].txt) : null;
+        const p = partL(i); const rime = p != null && lignes[p] ? rimeOf(L.txt) === rimeOf(lignes[p].txt) : null;
         const acc = [0, 1].map((h) => [0, 1, 2, 3].map((t) => { const m = mDe(i, h, g.mesures.length); const c = g.mesures[m][t]; return c ? `<span class="mo-acc ${memeAccord(c, ap) ? 'princ' : ''}" style="left:${((h * 16 + t * 4) / 32) * 100}%">${memeAccord(c, ap) ? '★ ' : ''}${esc(nomAcc(c))}</span>` : ''; }).join('')).join('');
         const first = !g.mesures[mDe(i, 0, g.mesures.length)][0] ? `<span class="mo-acc tenu ${memeAccord(accordA(g, mDe(i, 0, g.mesures.length), 0), ap) ? 'princ' : ''}" style="left:0">${esc(nomAcc(accordA(g, mDe(i, 0, g.mesures.length), 0)))}</span>` : '';
         const cases = [...Array(32)].map((_, s) => `<i class="${s % 4 === 0 ? 'b' : ''} ${s % 16 === 0 ? 'm' : ''} ${sl.some((x) => x.s === s && x.f) ? 'f' : ''}"></i>`).join('');
         const blocs = syl.map((s, k) => { const kk = pl.pos[k]; if (kk < 0) return ''; const x = sl[kk]; return `<span class="pl-syl ${s.accent === 2 ? 'a2' : s.accent ? 'a1' : ''} ${x.f ? 'sur-f' : ''}" data-k="${k}" style="left:${(x.s / 32) * 100}%;width:${(x.d / 32) * 100}%"><b>${esc(s.txt)}</b><small>${nomNote(notes[k])}</small></span>`; }).join('');
-        const lettre = 'ABCDEFGH'[schema === 'AABB' ? Math.floor((i % 4) / 2) + 2 * Math.floor(i / 4) : schema === 'ABAB' ? (i % 2) + 2 * Math.floor(i / 4) : schema === 'ABCB' ? [0, 1, 2, 1][i % 4] + 3 * Math.floor(i / 4) : 0] || '';
+        const lettre = 'ABCDEFGH'[schema === 'AABB' ? Math.floor((kP(i) % 4) / 2) + 2 * Math.floor(kP(i) / 4) : schema === 'ABAB' ? (kP(i) % 2) + 2 * Math.floor(kP(i) / 4) : schema === 'ABCB' ? [0, 1, 2, 1][kP(i) % 4] + 3 * Math.floor(kP(i) / 4) : 0] || '';
         return `<article class="panel mo-l ${L.garde ? 'garde' : ''} ${L.pause ? 'pause' : ''}" data-i="${i}">
-          <div class="mo-l-bouge"><button class="btn small mo-silence ${L.pause ? 'on' : ''}" data-m="pause" data-i="${i}" aria-pressed="${!!L.pause}" title="Deux mesures de musique seule, sans paroles">${L.pause ? '✎ paroles' : '🎵 silence'}</button><button class="btn small mo-ins" data-m="ins-avant" data-i="${i}" title="Ajouter une ligne avant celle-ci" aria-label="Ajouter une ligne avant la ligne ${i + 1}">＋ avant</button><button class="btn small mo-ins" data-m="ins-apres" data-i="${i}" title="Ajouter une ligne après celle-ci" aria-label="Ajouter une ligne après la ligne ${i + 1}">＋ après</button><span class="mo-poignee" draggable="true" data-glisse="${i}" title="Glisse pour déplacer" aria-hidden="true">⠿</span><button class="btn small" data-m="haut" data-i="${i}" ${i ? '' : 'disabled'} aria-label="Monter la ligne ${i + 1}">↑</button><button class="btn small" data-m="bas" data-i="${i}" ${i < lignes.length - 1 ? '' : 'disabled'} aria-label="Descendre la ligne ${i + 1}">↓</button><button class="btn small" data-m="enlever" data-i="${i}" aria-label="Enlever la ligne ${i + 1}">✕</button></div>
+          <div class="mo-l-bouge">${L.pause ? '' : `<button class="btn small mo-silence" data-m="pause" data-i="${i}" title="Ajoute deux mesures de musique seule avant cette ligne (ses mots ne bougent pas)">🎵 silence avant</button>`}<button class="btn small mo-ins" data-m="ins-avant" data-i="${i}" title="Ajouter une ligne avant celle-ci" aria-label="Ajouter une ligne avant la ligne ${i + 1}">＋ avant</button><button class="btn small mo-ins" data-m="ins-apres" data-i="${i}" title="Ajouter une ligne après celle-ci" aria-label="Ajouter une ligne après la ligne ${i + 1}">＋ après</button><span class="mo-poignee" draggable="true" data-glisse="${i}" title="Glisse pour déplacer" aria-hidden="true">⠿</span><button class="btn small" data-m="haut" data-i="${i}" ${i ? '' : 'disabled'} aria-label="Monter la ligne ${i + 1}">↑</button><button class="btn small" data-m="bas" data-i="${i}" ${i < lignes.length - 1 ? '' : 'disabled'} aria-label="Descendre la ligne ${i + 1}">↓</button><button class="btn small" data-m="enlever" data-i="${i}" aria-label="Enlever la ligne ${i + 1}">✕</button></div>
           <div class="mo-l-tete">
             ${schema !== 'libre' ? `<span class="mo-lettre" title="Schéma de rimes">${lettre}</span>` : ''}
-            <span class="mo-crayon" aria-hidden="true">${L.pause ? '🎵' : '✎'}</span>${L.pause ? '<p class="mo-pause-txt">Musique seule : deux mesures sans paroles</p>' : `<textarea class="mo-txt" data-i="${i}" rows="1" aria-label="Ligne ${i + 1}" placeholder="Écris ta ligne ici…">${esc(L.txt)}</textarea>`}
+            ${L.pause ? '' : '<span class="mo-crayon" aria-hidden="true">✎</span>'}${L.pause ? '<p class="mo-pause-txt">🎵 Deux mesures de musique seule <small class="muted">(✕ pour enlever ce silence)</small></p>' : `<textarea class="mo-txt" data-i="${i}" rows="1" aria-label="Ligne ${i + 1}" placeholder="Écris ta ligne ici…">${esc(L.txt)}</textarea>`}
             <span class="mo-n ${pl.trop ? 'neg' : ''}">${syl.length}/${sl.length}</span>
             ${rime === true ? '<span class="mo-rime pos">rime ✓</span>' : rime === false ? '<span class="mo-rime neg">ne rime pas</span>' : ''}
             <label class="mo-garde"><input type="checkbox" data-garde="${i}" ${L.garde ? 'checked' : ''}> Garder</label>
@@ -272,15 +277,15 @@ export default {
         const L = lignes[i];
         if (L.pause || (L.garde && L.txt)) continue;
         if (seule != null && i !== seule) continue;
-        const p = partenaire(st.schema, i);
+        const p = partL(i);
         const rime = p != null && lignes[p]?.txt ? { cle: rimeOf(lignes[p].txt), mot: lignes[p].txt.split(/[\s’']/).at(-1).toLowerCase() } : null;
         const vus = lignes.map((x) => x.txt.toLowerCase());
         const manquantes = b.cles.filter((c) => !vus.some((t) => t.includes(c.k)));
-        const tete = lignes.some((_, j) => partenaire(st.schema, j) === i);
+        const tete = lignes.some((_, j) => partL(j) === i);
         const res = ligne({ b, r, slots: slots(i), pers: st.pers, rime, tete, finAEviter: fins, dejaVus, clesManquantes: manquantes });
         if (res) { L.txt = res.txt; compter(res.txt); fins.push(res.fin); }
         // Une ligne refaite peut casser la rime de sa partenaire suivante : on la refait aussi, si elle n'est pas gardée.
-        if (seule != null) { const suiv = lignes.findIndex((_, j) => j > i && partenaire(st.schema, j) === i); if (suiv >= 0 && !lignes[suiv].garde) seule = suiv; }
+        if (seule != null) { const suiv = lignes.findIndex((_, j) => j > i && partL(j) === i); if (suiv >= 0 && !lignes[suiv].garde) seule = suiv; }
       }
       sauver(); rendre();
       q('[data-m=generer]').disabled = false; q('[data-m=generer]').textContent = 'Écrire les lignes';
@@ -385,7 +390,7 @@ export default {
       if (m === 'autre') { arreter(); await generer(+b.dataset.i); return; }
       if (m === 'chanter') { if (b.textContent.startsWith('■')) { arreter(); return; } if (!lignes.length) await generer(); chanter(lignes.map((_, i) => i).filter((i) => lignes[i].txt || lignes[i].pause), b, true); return; }
       if (m === 'stop') { arreter(); return; }
-      if (m === 'pause') { arreter(); const L = lignes[+b.dataset.i]; L.pause = !L.pause; sauver(); rendre(); return; }
+      if (m === 'pause') { arreter(); lignes.splice(+b.dataset.i, 0, { txt: '', garde: true, pause: true }); sauver(); rendre(); toast('Deux mesures de musique seule ajoutées : la ligne et ses mots descendent d’une place.'); return; }
       if (m === 'choeur') { const L = lignes[+b.dataset.i]; L.choeur = !L.choeur; b.classList.toggle('on', L.choeur); b.setAttribute('aria-pressed', L.choeur); sauver(); toast(L.choeur ? 'Les chœurs chanteront cette ligne.' : 'Plus de chœurs sur cette ligne.'); return; }
       if (m === 'boucle') { if (b.textContent === '■') { arreter(); return; } const i = +b.dataset.i; await chanter(Array(24).fill(i), null); b.textContent = '■'; el.querySelector(`.mo-txt[data-i="${i}"]`)?.focus(); return; }
       if (m === 'haut' || m === 'bas') { const i = +b.dataset.i; const j = m === 'haut' ? i - 1 : i + 1; if (j < 0 || j >= lignes.length) return; arreter(); [lignes[i], lignes[j]] = [lignes[j], lignes[i]]; sauver(); rendre(); el.querySelector(`[data-m=${m}][data-i="${j}"]`)?.focus(); return; }
