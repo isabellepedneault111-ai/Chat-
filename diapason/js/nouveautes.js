@@ -60,6 +60,9 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.09', quand: '2026-11-23', titre: 'Voir les sons qui viennent', items: [
+    ['La mélodie dans la barre de lecture', ['Pendant « Chanter sur la grille », la barre du bas montre maintenant les sons, pas seulement les mots : chaque syllabe est une barre placée à la hauteur de sa note (plus haut = plus aigu), aussi longue qu’elle est chantée, avec le nom de la note. La syllabe chantée s’allume, celles qui viennent attendent à droite, une tête rouge avance, et les accords sont marqués là où ils changent.']],
+  ] },
   { v: '1.08', quand: '2026-11-23', titre: 'Mots sur la grille, sur iPhone', items: [
     ['Tout tient dans l’écran', ['Sur iPhone, la rangée de boutons au-dessus de chaque ligne (silence, ＋ avant, ＋ après, ↑ ↓ ✕) passe maintenant à la ligne : la page ne déborde plus à droite, le titre n’est plus coupé.']],
     ['↪ Juste sous le titre', ['« Ces paroles ne sont pas pour « Joy Walk »? » est maintenant juste sous « Les paroles de… » : touche-le, choisis la bonne chanson (ou tape son nom), « Les ranger là-bas ».']],

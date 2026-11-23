@@ -4598,3 +4598,17 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .mo-ranger-haut[open] summary { margin-bottom: 8px; }
 .mo-ranger-ici select, .mo-ranger-ici input { font: 600 1rem var(--display); padding: 8px 10px; border-radius: 8px; border: 1px solid #d9cfbd; background: #fffdf8; max-width: 100%; }
 .mo-fin .ec-row .btn { white-space: normal; text-align: left; max-width: 100%; }
+
+/* 1.09 — les sons qui viennent, dans la barre de lecture */
+.mo-lb-mil { display: grid; gap: 6px; min-width: 0; }
+.mo-roll { position: relative; height: 92px; border-radius: 8px; background: #2b2620; overflow: hidden; }
+.mo-roll-t { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(239, 230, 210, .12); }
+.mo-roll-t.m { width: 2px; background: rgba(239, 230, 210, .32); }
+.mo-roll-acc { position: absolute; bottom: 2px; font: 700 .72rem var(--display); font-style: normal; color: #fbe7a1; padding-left: 4px; border-left: 2px solid #b08a2e; }
+.mo-roll-b { position: absolute; height: 22%; min-height: 18px; display: flex; align-items: center; gap: 4px; padding: 0 4px; border-radius: 5px; background: rgba(239, 230, 210, .18); color: #efe6d2; overflow: hidden; white-space: nowrap; transition: background .08s; }
+.mo-roll-b b { font: 600 .8rem var(--display); } .mo-roll-b small { font-size: .66rem; color: #c9bfa9; }
+.mo-roll-b.fort { box-shadow: inset 0 -2px 0 #b08a2e; }
+.mo-roll-b.dit { background: rgba(239, 230, 210, .08); color: #b0a690; }
+.mo-roll-b.on { background: #fbe7a1; color: #1d1a15; } .mo-roll-b.on small { color: #5b4a1c; }
+.mo-roll-tete { position: absolute; top: 0; bottom: 0; width: 2px; background: #d93a24; opacity: 0; }
+@media (max-width: 640px) { .mo-lb-mil { grid-column: 1 / -1; grid-row: 2; } .mo-roll { height: 76px; } .mo-roll-b small { display: none; } }

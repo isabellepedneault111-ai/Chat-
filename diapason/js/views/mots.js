@@ -419,6 +419,16 @@ export default {
       const ici = ks >= 0 ? idx[ks] : -1;
       return mots.map((m, n) => `<span class="${n === ici ? 'on' : n < ici ? 'dit' : ''}">${esc(m)}</span>`).join(' ');
     }
+    // Les sons qui viennent : chaque syllabe est une barre à la hauteur de sa note (plus haut = plus aigu), de la durée
+    // où elle est chantée ; la syllabe chantée s'allume, celles à venir attendent à droite, et une tête de lecture avance.
+    function roulette(F, ks) {
+      const ss = F.syl.filter((x) => x.t != null); if (!ss.length) return '';
+      const lo = Math.min(...ss.map((x) => x.note)) - 1; const hi = Math.max(...ss.map((x) => x.note)) + 1; const span = Math.max(4, hi - lo); const D = F.fin - F.debut;
+      const barres = ss.map((x) => `<span class="mo-roll-b ${x.k === ks ? 'on' : x.k < ks ? 'dit' : ''} ${x.accent ? 'fort' : ''}" style="left:${((x.t - F.debut) / D) * 100}%;width:${Math.max(2, (x.d / D) * 100 - 0.6)}%;top:${((hi - x.note) / span) * 78}%"><b>${esc(x.txt)}</b><small>${esc(nomNote(x.note))}</small></span>`).join('');
+      const accs = F.acc.filter((a, n) => !n || nomAcc(a.c) !== nomAcc(F.acc[n - 1].c)).map((a) => `<i class="mo-roll-acc" style="left:${((a.t - F.debut) / D) * 100}%">${esc(nomAcc(a.c))}</i>`).join('');
+      const temps = [...Array(8)].map((_, n) => `<i class="mo-roll-t ${n % 4 === 0 ? 'm' : ''}" style="left:${(n / 8) * 100}%"></i>`).join('');
+      return `<div class="mo-roll" aria-hidden="true">${temps}${accs}${barres}<i class="mo-roll-tete"></i></div>`;
+    }
     function majBarre(t, t0, t1, noire, frise, j, tIntro = t1) {
       const lb = q('.mo-lecteur'); if (!lb) return; lb.hidden = false;
       const F = frise[j]; const tous = frise.flatMap((x) => x.acc);
@@ -426,12 +436,13 @@ export default {
       const cur = t < t1 ? null : tous[Math.max(0, ic)]; const suiv = cur ? tous.slice(Math.max(0, ic) + 1).find((a) => nomAcc(a.c) !== nomAcc(cur.c)) : tous[0];
       let ks = -1; if (t >= t1) F.syl.forEach((sy) => { if (sy.t != null && sy.t <= t + 0.03) ks = sy.k; });
       const enIntro = t >= tIntro && t < t1; const compte = enIntro ? `Intro ${Math.floor((t - tIntro) / (4 * noire)) + 1}` : t < t1 ? Math.min(4, Math.floor((t - t0) / noire) + 1) : 0;
+      const tete = lb.querySelector('.mo-roll-tete'); if (tete) { const x = (t - F.debut) / (F.fin - F.debut); tete.style.left = `${Math.max(0, Math.min(1, x)) * 100}%`; tete.style.opacity = x >= 0 && x <= 1 ? 1 : 0; }
       const cle = `${j}|${ic}|${ks}|${compte}`; if (cle === cleBarre) return;
       // Nouvelle ligne : on la ramène au milieu de l'écran, au-dessus de la barre.
       if (cleBarre.split('|')[0] !== String(j)) el.querySelector(`.mo-l[data-i="${F.i}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
       cleBarre = cle;
       lb.innerHTML = `<div class="mo-lb-acc">${cur ? `<b>${esc(nomAcc(cur.c))}</b>${diagramme(cur.c.r, cur.c.q, { taille: 64 })}` : `<b class="mo-lb-compte">${compte || ''}</b>`}${suiv ? `<small>puis ${esc(nomAcc(suiv.c))}</small>` : ''}</div>
-        <p class="mo-lb-mots">${enIntro ? '<span class="dit">🎵 Musique seule… les paroles arrivent</span>' : lignes[F.i]?.pause ? '<span class="dit">🎵 Musique seule</span>' : motsAllumes(F, ks)}</p>
+        <div class="mo-lb-mil"><p class="mo-lb-mots">${enIntro ? '<span class="dit">🎵 Musique seule… les paroles arrivent</span>' : lignes[F.i]?.pause ? '<span class="dit">🎵 Musique seule</span>' : motsAllumes(F, ks)}</p>${enIntro || lignes[F.i]?.pause ? '' : roulette(F, ks)}</div>
         <button class="btn mo-lb-stop" data-m="stop" aria-label="Arrêter">■ Stop</button>`;
       el.querySelectorAll('.pl-syl.dit').forEach((x) => x.classList.remove('dit'));
       const sp = el.querySelector(`.mo-l[data-i="${F.i}"] .pl-syl[data-k="${ks}"]`); if (sp) sp.classList.add('dit');
@@ -455,7 +466,7 @@ export default {
       const frise = []; // par ligne : ses syllabes et ses accords, avec leur moment
       quelles.forEach((i, j) => {
         const { sl, syl, pl, notes } = analyse(txtDe(lignes[i]), i); const debut = t1 + j * 2 * mes;
-        const F = { i, debut, syl: syl.map((sy, k) => ({ txt: sy.txt, mot: sy.mot, t: pl.pos[k] >= 0 ? debut + sl[pl.pos[k]].s * dc : null, k })), acc: [] };
+        const F = { i, debut, fin: debut + 2 * mes, syl: syl.map((sy, k) => ({ txt: sy.txt, mot: sy.mot, t: pl.pos[k] >= 0 ? debut + sl[pl.pos[k]].s * dc : null, d: pl.pos[k] >= 0 ? sl[pl.pos[k]].d * dc : 0, note: notes[k], accent: sy.accent, k })), acc: [] };
         for (let h = 0; h < 2; h++) for (let t = 0; t < 4; t++) { const m = mDe(i, h, g.mesures.length); const ch = g.mesures[m][t] || (h === 0 && t === 0 ? accordA(g, m, 0) : null); if (ch) F.acc.push({ t: debut + (h * 4 + t) * noire, c: ch }); }
         frise.push(F);
         const vraie = chanson && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source) && q('[data-m=vraie]')?.checked;
