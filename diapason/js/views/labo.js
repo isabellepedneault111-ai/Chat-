@@ -261,7 +261,8 @@ export default {
     }
     function caleOreille() {
       const src = q('[data-acc=src]')?.value || 'oreille'; const pe = src !== 'oreille' && piecesG().find((e) => e.id === src);
-      const g = pe ? { nom: pe.title, bpm: pe.data.piece.bpm, mesures: pe.data.piece.grille } : store.get('oreilleGrille', null);
+      // Le labo tourne en boucle : la boucle de la chanson si L'oreille en a trouvé une, sinon toute la grille.
+      const og = store.get('oreilleGrille', null); const g = pe ? { nom: pe.title, bpm: pe.data.piece.bpm, mesures: pe.data.piece.grille } : og && { ...og, mesures: og.boucle || og.mesures };
       if (!g?.mesures?.length) { import('../ui.js').then((u) => u.toast('Passe d’abord ta toune dans L’oreille (une fois) : sa grille se garde ici.')); return; }
       let avant = '';
       acc.txt = g.mesures.map((m) => { const l = m.filter((x) => x && x !== '—'); const t = l.length ? l.join('/') : avant; if (l.length) avant = l.at(-1); return t || 'Do'; }).join(' ');

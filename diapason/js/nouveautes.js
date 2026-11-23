@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.02', quand: '2026-11-23', titre: 'Les paroles se calent toutes seules', items: [
+    ['✨ Caler sur la chanson', ['Une chanson passée dans L’oreille, puis « Des paroles sur cette chanson » : les paroles se calent d’office. Elles commencent à la première mesure où la voix chante (ou, sans voix repérée, où il y a du son) ; les passages sans voix deviennent des silences ; les syllabes suivent les attaques de la chanson. Le bouton « ✨ Caler sur la chanson » le refait quand tu veux, en gardant tes lignes déjà écrites, dans l’ordre.']],
+    ['Toute la chanson', ['Mots sur la grille et la cathédrale suivent maintenant toute la chanson trouvée par L’oreille, pas seulement sa boucle. Le labo, lui, tourne toujours sur la boucle.']],
+  ] },
   { v: '1.01', quand: '2026-11-23', titre: 'Le silence ne mange plus de ligne', items: [
     ['🎵 silence avant', ['« 🎵 silence » ne remplace plus la ligne : il ajoute deux mesures de musique seule juste avant, et la ligne garde ses mots (elle descend d’une place). Un silence s’enlève avec ✕. Les lignes qu’un ancien silence cachait sont revenues, avec leur silence devant.']],
     ['Les rimes sautent les silences', ['Le schéma de rimes (AABB, ABAB…) se compte sur les lignes de paroles seulement : la ligne qui suit un silence rime avec la bonne.']],

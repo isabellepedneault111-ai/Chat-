@@ -309,7 +309,17 @@ export default {
       }
     }
     // La chanson analysée reste sur l'appareil : Mots sur la grille la fera jouer sous les paroles (même après un rechargement).
-    function garderSon() { if (blobCourant && res) garderDerniere({ blob: blobCourant, nom, t0: cadreG?.debutCale ?? 0, temps: cadreG?.temps ?? 60 / res.bpm, at: Date.now() }); }
+    // Où la voix chante, mesure par mesure (d'après les notes tenues de la voix) : pour caler les paroles d'office.
+    function ouChante() {
+      if (!voix?.voix || !voix.notes?.length || !cadreG) return null;
+      // Une mesure « chante » si des notes tenues de la voix couvrent au moins le tiers de sa durée.
+      const n = cadreG.nb || 0; const mes = 4 * cadreG.temps; const cumul = Array(Math.min(160, n)).fill(0);
+      voix.notes.forEach((b) => b.occ.forEach((t, k) => { const d = b.occD?.[k] || 0.2; const a = t - cadreG.debutCale; for (let m = Math.max(0, Math.floor(a / mes)); m <= Math.floor((a + d) / mes) && m < cumul.length; m++) cumul[m] += Math.max(0, Math.min(a + d, (m + 1) * mes) - Math.max(a, m * mes)); }));
+      return cumul.map((x) => (x / mes >= 0.34 ? 1 : 0));
+    }
+    function garderSon() {
+      const og = store.get('oreilleGrille', null); if (og) { og.chant = ouChante(); store.set('oreilleGrille', og); } if (blobCourant && res) garderDerniere({ blob: blobCourant, nom, t0: cadreG?.debutCale ?? 0, temps: cadreG?.temps ?? 60 / res.bpm, at: Date.now() });
+    }
     // Y a-t-il du souffle? On compare les passages les plus calmes aux plus forts (trames de 50 ms).
     function niveauBruit(b) {
       const d = b.getChannelData(0); const n = Math.floor(b.sampleRate * 0.05); const db = [];
@@ -514,7 +524,7 @@ export default {
             // Le tempo recalé sur les changements d'accords est le plus juste : il devient LE tempo de la pièce, partout.
             if (Math.abs(g.tempo - res.bpm) <= res.bpm * 0.07) { res.bpm = g.tempo; const f = [...el.querySelectorAll('.or-faits > div')].find((d) => d.querySelector('small')?.textContent === 'Tempo'); if (f) f.querySelector('b').textContent = `${g.tempo} BPM`; } } box._grille = g; const l = g.boucle || g.mesures;
       // Gardée pour « Mots sur la grille » (Ma voix) : la boucle, ou toute la pièce, mesure par mesure.
-      try { store.set('oreilleGrille', { nom: typeof nom === 'string' ? nom : '', bpm: g.tempo, mesures: l.slice(0, 64).map((x) => x.cases), t0: g.debutCale, temps: g.temps, at: Date.now(), propose: !!accs.propose }); } catch { /* rien */ }
+      try { const ancien = store.get('oreilleGrille', null); store.set('oreilleGrille', { nom: typeof nom === 'string' ? nom : '', bpm: g.tempo, mesures: g.mesures.slice(0, 160).map((x) => x.cases), boucle: g.boucle ? g.boucle.map((x) => x.cases) : null, t0: g.debutCale, temps: g.temps, at: Date.now(), propose: !!accs.propose, chant: ancien?.nom === nom ? ancien.chant || null : null }); } catch { /* rien */ }
           return `<div class="or-grille"><div class="or-grille-t"><h4>La grille</h4><span>${res.bpm} BPM · 4 temps par mesure${g.periode ? ` · <span class="or-rep">‖: ${g.periode} mesure${g.periode > 1 ? 's' : ''} qui reviennent ${g.tours} fois :‖</span>` : ''}</span><button class="btn small or-etsi" data-o="etsi" data-bulle="Une mesure au hasard, une autre couleur d’accord, entendue tout de suite dans le son. Rien ne change tant que tu n’approuves pas.">🎲 Et si… ?</button></div>
             <div class="or-mesures">${l.map((x, i) => { const segs = []; x.cases.forEach((c) => { if (c) segs.push({ c, n: 1 }); else if (segs.length) segs[segs.length - 1].n++; else segs.push({ c: '—', n: 1 }); });
               return `<button class="or-mes n${segs.length} ${g.periode && i === 0 ? 'rep-a' : ''} ${g.periode && i === l.length - 1 ? 'rep-b' : ''} ${corrigee(i, x, g) ? 'corrigee' : ''}" data-mes="${i}" data-t="${x.t}" title="Mesure ${g.boucle ? i + 1 : x.m} · ${mmss(x.t)}"><small>${g.boucle ? i + 1 : x.m}</small><span class="or-bts">${temps4(x)}</span></button>`; }).join('')}</div>
@@ -781,7 +791,7 @@ export default {
       if (o === 'piece') {
         if (!res || !blobCourant) return; const b = e.target.closest('[data-o]'); const lab = b.textContent; b.disabled = true;
         const [nm, mode] = String(res.ton).split(' ou ')[0].split(' '); const pc = Math.max(0, NOTES_FR.findIndex((x) => x.toLowerCase() === String(nm).toLowerCase()));
-        const og = store.get('oreilleGrille', null); const piece = { bpm: res.bpm, t1: cadreG?.debutCale ?? 0, tonique: pc, mineur: /^min/i.test(mode || ''), grille: og?.mesures || null, temps: cadreG?.temps ?? 60 / res.bpm };
+        const og = store.get('oreilleGrille', null); const piece = { bpm: res.bpm, t1: cadreG?.debutCale ?? 0, tonique: pc, mineur: /^min/i.test(mode || ''), grille: og?.mesures || null, chant: og?.chant || null, temps: cadreG?.temps ?? 60 / res.bpm };
         try {
           const ex = entreeCourante && espace.entries.find((x) => x.id === entreeCourante);
           if (ex) await saveEntry({ ...ex, data: { ...(ex.data || {}), piece } }, { force: true });

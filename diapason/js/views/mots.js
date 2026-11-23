@@ -98,7 +98,8 @@ export default {
     let chanson = window.__flipMots || null; window.__flipMots = null;
     if (chanson) chansonGardee = chanson; else chanson = chansonGardee;
     // Une nouvelle grille dans L'oreille depuis la dernière visite : la page s'ouvre dessus.
-    { const og = store.get('oreilleGrille', null); if (og?.at && og.at > (st.vuAt || 0)) { st.source = 'oreille'; st.vuAt = og.at; store.set('motsReglages', st); } }
+    let aCaler = !!window.__flipMots;
+    { const og = store.get('oreilleGrille', null); if (og?.at && og.at > (st.vuAt || 0)) { st.source = 'oreille'; st.vuAt = og.at; store.set('motsReglages', st); aCaler = true; } }
     if (chanson) st.source = 'oreille';
     let graine = Date.now() % 100000; let lecture = null; let raf = 0;
     const voix = espace.connected ? profileOf(espace.me)?.voix || null : null;
@@ -126,7 +127,7 @@ export default {
         </div>
         <div class="mo-sous" ${chanson ? '' : 'hidden'}><label class="mo-vraie"><input type="checkbox" data-m="vraie" checked> Sous les paroles : la vraie chanson${chanson ? ` (« ${esc(String(chanson.nom).slice(0, 40))} »)` : ''}</label><label class="mo-vraie"><input type="checkbox" data-m="piano" ${store.get('oreilleGrille', null)?.propose ? 'checked' : ''}> + les accords au piano</label></div>
         <label class="mo-vraie mo-guide"><input type="checkbox" data-m="guide"> 🎤 Chœurs sur toutes les lignes <small class="muted">(des « ouuu » synthétiques chantent la note de chaque syllabe ; éteints d’office, ou ligne par ligne avec 🎤)</small></label>
-        <div class="ec-row"><button class="btn primary" data-m="generer">Écrire les lignes</button><button class="btn" data-m="chanter">▶ Chanter sur la grille</button><span class="mo-info muted small"></span></div>
+        <div class="ec-row"><button class="btn" data-m="caler" title="Les paroles commencent là où la voix entre, les passages sans voix deviennent des silences, et les syllabes suivent les attaques de la chanson">✨ Caler sur la chanson</button><button class="btn primary" data-m="generer">Écrire les lignes</button><button class="btn" data-m="chanter">▶ Chanter sur la grille</button><span class="mo-info muted small"></span></div>
       </section>
       <section class="panel mo-princ" hidden></section>
       <section class="mo-lignes" aria-live="polite"></section>
@@ -247,6 +248,35 @@ export default {
       requestAnimationFrame(dessinerOndes);
     }
 
+    // Où ça chante, mesure par mesure : la voix repérée par L'oreille ; sinon, là où la chanson a du son.
+    function activites() {
+      const g = grille(); const M = g.mesures.length; let flags = null;
+      if (st.source === 'oreille') flags = store.get('oreilleGrille', null)?.chant || null;
+      else if (st.source.startsWith('piece:')) flags = piecesEsp().find((x) => `piece:${x.id}` === st.source)?.data?.piece?.chant || null;
+      if (flags?.some(Boolean)) return { act: Array.from({ length: M }, (_, m) => !!flags[m]), via: 'la voix' };
+      if (!vraiOk()) return null;
+      const d = chanson.buf.getChannelData(0); const sr = chanson.buf.sampleRate; const rms = [];
+      // Par tranches de 100 ms : une mesure « sonne » si au moins le tiers de ses tranches a du son.
+      const tr = Math.floor(sr * 0.1); const parMes = []; let max = 1e-6;
+      for (let m = 0; m < M; m++) { const a = Math.floor((chanson.t0 + m * 4 * chanson.temps) * sr); const b = Math.min(d.length, Math.floor(a + 4 * chanson.temps * sr)); const l = []; for (let p = Math.max(0, a); p + tr <= b; p += tr) { let e = 0; for (let i = p; i < p + tr; i += 8) e += d[i] * d[i]; const r = Math.sqrt(e / (tr / 8)); l.push(r); if (r > max) max = r; } parMes.push(l); }
+      return { act: parMes.map((l) => l.length > 0 && l.filter((r) => r > max * 0.12).length / l.length >= 0.34), via: 'le son' };
+    }
+    // ✨ Les paroles calées sur la chanson : elles commencent où ça chante, les passages sans voix deviennent des
+    // silences, et les syllabes suivent les attaques. Les lignes déjà écrites gardent leurs mots, dans l'ordre.
+    async function caler(auto = false) {
+      const A = activites(); if (!A) { if (!auto) toast('Pour caler les paroles, il faut la vraie chanson : passe-la dans L’oreille, ou choisis une de nos pièces.'); return false; }
+      const { act } = A; const M = act.length; const premier = act.findIndex(Boolean); if (premier < 0) return false;
+      const deja = lignes.filter((L) => !L.pause && L.txt); const nouv = [];
+      for (let m = premier; m < M && nouv.length < 48; m += 2) { if (act[m] || act[m + 1]) nouv.push(deja.shift() || { txt: '', garde: false }); else nouv.push({ txt: '', garde: true, pause: true }); }
+      while (nouv.length && nouv.at(-1).pause) nouv.pop(); nouv.push(...deja);
+      lignes = nouv; st.debut = premier + 1; st.cale = true; if (vraiOk()) st.place = 'chanson';
+      q('[data-m=debut]').value = st.debut; q('[data-m=place]').value = st.place; sauver(); arreter(); rendre();
+      const nbS = lignes.filter((L) => L.pause).length;
+      toast(`Calé sur ${A.via} : les paroles commencent à la mesure ${st.debut}${premier ? ` (${premier} mesure${premier > 1 ? 's' : ''} d’intro)` : ''}, ${lignes.length - nbS} lignes${nbS ? `, ${nbS} silence${nbS > 1 ? 's' : ''}` : ''}.`);
+      if (lignes.some((L) => !L.pause && !L.txt)) await generer();
+      return true;
+    }
+
     // L'onde de la vraie chanson sous chaque ligne : ses deux mesures, avec les temps et les mesures marqués.
     function dessinerOndes() {
       if (!vraiOk()) return; const d = chanson.buf.getChannelData(0); const sr = chanson.buf.sampleRate;
@@ -266,7 +296,7 @@ export default {
       await loadLexique();
       const cles = st.cles.split(/[,;\n]/).map((x) => x.trim()).filter(Boolean);
       const b = await banque(st.themes, cles);
-      const n = +st.n; const sl = slots();
+      const n = st.cale ? lignes.length : +st.n;
       while (lignes.length < n) lignes.push({ txt: '', garde: false });
       if (seule == null) { let fin = n; lignes.forEach((L, k) => { if (L.garde && L.txt) fin = Math.max(fin, k + 1); }); lignes = lignes.slice(0, fin); }
       graine += 7919; const r = hasard(graine);
@@ -387,6 +417,7 @@ export default {
       if (th) { const k = th.dataset.theme; st.themes = st.themes.includes(k) ? st.themes.filter((x) => x !== k) : [...st.themes, k]; if (!st.themes.length) st.themes = [k]; st.theme = st.themes[0]; el.querySelectorAll('[data-theme]').forEach((x) => { const on = st.themes.includes(x.dataset.theme); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); x.textContent = `${on ? '✓ ' : ''}${THEMES[x.dataset.theme].nom}`; }); sauver(); return; }
       const b = e.target.closest('[data-m]'); const m = b?.dataset.m; if (!m || b.tagName === 'SELECT' || b.tagName === 'INPUT') return;
       if (m === 'generer') { arreter(); await generer(); return; }
+      if (m === 'caler') { await caler(false); return; }
       if (m === 'autre') { arreter(); await generer(+b.dataset.i); return; }
       if (m === 'chanter') { if (b.textContent.startsWith('■')) { arreter(); return; } if (!lignes.length) await generer(); chanter(lignes.map((_, i) => i).filter((i) => lignes[i].txt || lignes[i].pause), b, true); return; }
       if (m === 'stop') { arreter(); return; }
@@ -409,7 +440,7 @@ export default {
       if (e.target.dataset.m === 'guide') { store.set('motsChoeurs', e.target.checked); return; }
       if (e.target.dataset.garde != null) { lignes[+e.target.dataset.garde].garde = e.target.checked; e.target.closest('.mo-l').classList.toggle('garde', e.target.checked); sauver(); return; }
       if (!k || e.target.tagName !== 'SELECT') return;
-      st[k] = k === 'n' ? +e.target.value : e.target.value;
+      st[k] = k === 'n' ? +e.target.value : e.target.value; if (k === 'n') st.cale = false;
       if (k === 'source') { q('.mo-main').hidden = st.source !== 'main'; majSous(); chargerPiece().then(rendre); }
       sauver(); arreter(); rendre();
     });
@@ -431,7 +462,7 @@ export default {
     el.addEventListener('focusout', (e) => { if (e.target.classList?.contains('mo-txt')) rendre(); });
     loadLexique().then(async () => { if (aRefaire) await generer(); else rendre(); }); rendre();
     setTimeout(() => prechargerSons(['voix', 'piano']), 400);
-    majSous(); chargerPiece().then(rendre);
+    majSous(); chargerPiece().then(async () => { rendre(); if (aCaler) await caler(true); });
     return () => arreter();
   },
 };
