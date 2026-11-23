@@ -548,7 +548,7 @@ export default {
       arrete(); const c = audio(); a = Math.max(0, a); b = Math.min(buf.duration, Math.max(a + 0.05, b)); // jamais avant le début ni après la fin
       // Un départ prévu (le fichier se prépare encore) ne part jamais en retard, après un arrêt ou une autre écoute.
       if (vitesse !== 1) { const m = lecteurLent(); const jeton = ++mediaJeton; const go = () => { if (jeton !== mediaJeton || !tete?.media) return; m.currentTime = a; m.playbackRate = vitesse; m.play().catch(() => {}); };
-        if (m.readyState >= 1) go(); else m.addEventListener('loadedmetadata', go, { once: true });
+        if (m.readyState >= 1) go(); else { m.muted = true; m.play().catch(() => {}); m.addEventListener('loadedmetadata', () => { m.muted = false; go(); }, { once: true }); } // iPhone : play() pendant le toucher, sinon muet
         tete = { media: true, a, b, boucle }; const l = q('[data-o=lire]'); if (l) l.textContent = '■ Arrêter'; requestAnimationFrame(animerTete); return; }
       const t0 = c.currentTime + 0.05; let segs;
       if (boucle) { segs = [{ a, b, r: rate(a) }]; stopBoucle = boucler(c, buf, { a, b }, sortieChanson(), 0.12, segs[0].r); }

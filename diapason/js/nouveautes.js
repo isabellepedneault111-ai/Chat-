@@ -60,6 +60,9 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.80', quand: '2026-11-23', titre: 'Le son sur iPhone', items: [
+    ['La cathédrale sur iPhone', ['Sur iPhone, Safari ne laisse partir le son que pendant le toucher. Le ▶ de la cathédrale chargeait d’abord l’orchestre, puis démarrait le son : trop tard, et ça restait muet. Maintenant, le son de l’app se réveille dès le premier toucher, partout ; la cathédrale, l’oreille ralentie et le reste partent pour vrai.']],
+  ] },
   { v: '0.79', quand: '2026-11-23', titre: 'L’oreille en direct', items: [
     ['🎧 Écouter en direct', ['L’oreille écoute le micro pendant que tu joues ou chantes : l’accord qui sonne (et sa version guitare), la note la plus présente avec sa justesse comme un accordeur, le clavier qui s’allume, et le fil des accords dans l’ordre. « Analyser ce que je viens de jouer » en fait ensuite l’analyse complète.']],
     ['Les mémos du Dictaphone', ['« Choisir un fichier audio » accepte plus de formats (m4a, qta, caf, aiff…), et l’oreille explique comment faire passer un mémo du Dictaphone de l’iPhone : Partager → Enregistrer dans Fichiers, puis le choisir ici. Sur un ordi, on peut aussi glisser le fichier sur le haut de la page.']],

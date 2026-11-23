@@ -38,9 +38,18 @@ export function audio() {
     // L'oreille de l'app sur sa propre sortie : sert à savoir si quelque chose joue (le bouton « Arrêter le son »).
     ecoute = ctx.createAnalyser(); ecoute.fftSize = 512; bus.connect(ecoute);
   }
-  if (ctx.state === 'suspended') ctx.resume();
+  if (ctx.state !== 'running') ctx.resume?.().catch(() => {});
   return ctx;
 }
+// iPhone : Safari ne laisse partir le son que pendant un toucher. Si un bouton attend d'abord quelque chose (charger
+// l'orchestre, un fichier), l'audio démarrerait trop tard et resterait muet, sans erreur. Alors, à chaque toucher, on
+// réveille le moteur tout de suite, avec un son vide d'un échantillon (la clé qu'iOS attend) ; et après un appel ou une
+// mise en veille (état « interrompu »), le toucher suivant le relance.
+function reveiller() {
+  const c = audio();
+  if (!reveiller.fait) { try { const b = c.createBuffer(1, 1, 22050); const s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.start(0); reveiller.fait = true; } catch { /* pas grave */ } }
+}
+['touchend', 'pointerdown', 'keydown'].forEach((ev) => addEventListener(ev, reveiller, { capture: true, passive: true }));
 // Est-ce que l'app sonne en ce moment? (sans créer le moteur s'il n'existe pas encore)
 const tampon = new Float32Array(512);
 export function sonne() {

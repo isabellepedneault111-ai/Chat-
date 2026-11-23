@@ -205,6 +205,7 @@ export default {
     // « ▶ » : charge l’orchestre, puis joue l’œuvre (et les sources vivantes en direct).
     async function lancer() {
       if (lecteur) { arreter(); return; }
+      audio(); // le moteur part pendant le toucher (iPhone), avant d'attendre l'orchestre
       const b = q('[data-ca=jouer]'); b.textContent = '…'; await charger();
       demarrer(0);
     }
