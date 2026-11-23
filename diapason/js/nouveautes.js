@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.08', quand: '2026-11-23', titre: 'Mots sur la grille, sur iPhone', items: [
+    ['Tout tient dans l’écran', ['Sur iPhone, la rangée de boutons au-dessus de chaque ligne (silence, ＋ avant, ＋ après, ↑ ↓ ✕) passe maintenant à la ligne : la page ne déborde plus à droite, le titre n’est plus coupé.']],
+    ['↪ Juste sous le titre', ['« Ces paroles ne sont pas pour « Joy Walk »? » est maintenant juste sous « Les paroles de… » : touche-le, choisis la bonne chanson (ou tape son nom), « Les ranger là-bas ».']],
+  ] },
   { v: '1.07', quand: '2026-11-23', titre: 'Placer : un texte par musique', items: [
     ['Chaque musique a son texte', ['Dans Écrire → Placer mes paroles, changer de musique (Projet 1, Joy Walk, nos pièces) change aussi le texte : chaque musique garde le sien. Avant, un seul texte servait à toutes, d’où les mêmes paroles sur Joy Walk que sur Interminable. Le titre dit à quelle musique le texte appartient.']],
     ['↪ L’y mettre', ['« Ce texte va avec une autre musique? » déplace le texte vers la bonne musique en un geste. Et « Essayer 7 rythmes par ligne » (Mots sur la grille) ouvre Placer directement sur la musique du même nom.']],

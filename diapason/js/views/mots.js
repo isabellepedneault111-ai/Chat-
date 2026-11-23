@@ -259,7 +259,7 @@ export default {
       const introH = deb() ? `<article class="panel mo-intro"><b>🎵 Intro</b> · mesure${deb() > 1 ? `s 1 à ${deb()}` : ' 1'} · musique seule <span class="muted small">(« Chanter sur la grille » la joue avant la première ligne)</span></article>` : '';
       if (!lignes.length) { box.innerHTML = '<div class="panel mo-vide"><p>J’écris les premières lignes de cette chanson…</p></div>'; return; }
       const schema = st.schema;
-      box.innerHTML = `<p class="mo-a-qui">📄 Les paroles de <b>« ${esc(nomDeCle(cle))} »</b></p>` + introH + lignes.map((L, i) => {
+      box.innerHTML = `<p class="mo-a-qui">📄 Les paroles de <b>« ${esc(nomDeCle(cle))} »</b></p>${lignes.some((L) => L.txt) ? `<details class="mo-ranger-haut" ${avantRangement ? 'open' : ''}><summary>↪ Ces paroles ne sont pas pour « ${esc(nomDeCle(cle))} »?</summary><div class="mo-ranger-ici"></div></details>` : ''}` + introH + lignes.map((L, i) => {
         const { sl, syl, pl, notes } = analyse(txtDe(L), i);
         const p = partL(i); const rime = p != null && lignes[p] ? rimeOf(L.txt) === rimeOf(lignes[p].txt) : null;
         const acc = [0, 1].map((h) => [0, 1, 2, 3].map((t) => { const m = mDe(i, h, g.mesures.length); const c = g.mesures[m][t]; return c ? `<span class="mo-acc ${memeAccord(c, ap) ? 'princ' : ''}" style="left:${((h * 16 + t * 4) / 32) * 100}%">${memeAccord(c, ap) ? '★ ' : ''}${esc(nomAcc(c))}</span>` : ''; }).join('')).join('');
@@ -325,10 +325,10 @@ export default {
       d.delete(cle); return d;
     }
     function rendreRanger() {
-      const box = q('.mo-ranger'); if (!box) return; box.hidden = !lignes.some((L) => L.txt);
+      q('.mo-ranger').hidden = true; const box = q('.mo-ranger-ici'); if (!box) return;
       const opts = [...destinations()].map(([k, v]) => `<option value="${esc(k)}">${esc(v)}</option>`).join('');
       box.innerHTML = `${avantRangement ? '<p class="mo-ranger-alerte"><b>Ces paroles viennent d’avant le rangement par chanson</b> : elles étaient peut-être pour une autre chanson. Range-les avec la bonne, ou garde-les ici.</p>' : ''}
-        <div class="ec-row"><span>Ces paroles vont avec une autre chanson?</span>
+        <div class="ec-row"><span>Les ranger avec :</span>
           <select data-m="dest" aria-label="La chanson où ranger ces paroles">${opts}<option value="__nom">Une autre chanson, par son nom…</option></select><input type="text" class="mo-dest-nom" data-m="destnom" placeholder="Interminable" aria-label="Le nom de la chanson dans L’oreille" hidden>
           <button class="btn" data-m="ranger">↪ Les ranger là-bas</button>${avantRangement ? '<button class="btn" data-m="garder-ici">Elles vont bien ici</button>' : ''}</div>`;
     }

@@ -4582,3 +4582,19 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .mo-a-qui { margin: 0 0 4px; font: 600 1.15rem var(--display); color: #2b2620; }
 .mo-dest-nom { font: 600 1rem var(--display); padding: 8px 10px; border-radius: 8px; border: 1px solid #b08a2e; background: #fffdf8; }
 .pl-deplacer select { font: 600 .95rem var(--display); padding: 6px 8px; border-radius: 8px; border: 1px solid #d9cfbd; background: #fffdf8; max-width: 100%; }
+
+/* 1.08 — Mots sur la grille tient dans un iPhone */
+.mo-lignes > * { min-width: 0; }
+.mo-l-bouge { flex-wrap: wrap; }
+.mo-a-qui { overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .mo-l-bouge { gap: 6px; justify-content: flex-start; }
+  .mo-l-bouge .btn { min-height: 38px; padding: 4px 10px; font-size: .9rem; }
+  .mo-l-tete { gap: 8px; }
+  .mo-ranger-haut .ec-row { flex-direction: column; align-items: stretch; }
+}
+.mo-ranger-haut { margin: 0 0 10px; padding: 10px 14px; border-radius: 8px; background: #fffdf8; border: 1px solid #e3d6b4; }
+.mo-ranger-haut summary { cursor: pointer; font-weight: 700; color: #5b4a1c; }
+.mo-ranger-haut[open] summary { margin-bottom: 8px; }
+.mo-ranger-ici select, .mo-ranger-ici input { font: 600 1rem var(--display); padding: 8px 10px; border-radius: 8px; border: 1px solid #d9cfbd; background: #fffdf8; max-width: 100%; }
+.mo-fin .ec-row .btn { white-space: normal; text-align: left; max-width: 100%; }
