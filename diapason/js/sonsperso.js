@@ -72,7 +72,7 @@ export async function origine(nom, el) {
 export function sonsPersoHTML() {
   return `<div class="sons-perso">${SONS.map(([nom, label]) => { const qui = sonsPerso[nom] ? auteurDe(nom) || 'toi' : null; return `<div class="sp" data-sp="${nom}">
     <b>${label}</b><small>${qui ? (qui === 'toi' ? 'ton son' : `le son de ${qui}`) : 'son d’origine'}</small>
-    <span><button class="icon-btn tiny" data-spa="ecoute" aria-label="Écouter">▶</button><button class="btn small" data-spa="rec">● Mon son</button><label class="btn small">Fichier<input type="file" accept="audio/*" data-spa="fichier" hidden></label>${qui ? '<button class="linklike" data-spa="origine">son d’origine</button>' : ''}</span>
+    <span><button class="icon-btn tiny" data-spa="ecoute" aria-label="Écouter">▶</button><button class="btn small" data-spa="rec">● Mon son</button><label class="btn small">Fichier<input type="file" accept="audio/*,video/*,.m4a,.qta,.mov,.mp4,.caf,.aac,.mp3,.wav,.aif,.aiff,.flac,.ogg,.opus,.webm" data-spa="fichier" hidden></label>${qui ? '<button class="linklike" data-spa="origine">son d’origine</button>' : ''}</span>
   </div>`; }).join('')}</div>`;
 }
 // Branche les boutons des sons perso (enregistrer, importer, réentendre, revenir à l’origine) sur une page.

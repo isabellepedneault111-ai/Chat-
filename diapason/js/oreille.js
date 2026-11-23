@@ -524,3 +524,31 @@ export function changerAccordSon(buf, a, b, de, vers) {
   }
   return { buffer: out, dep, manque };
 }
+
+// ---------- L'oreille en direct ----------
+// Ce que le micro entend, image par image : les douze notes (chroma) tirées du spectre, l'accord qui y tient le mieux,
+// et la hauteur de la note la plus présente (autocorrélation, comme un accordeur).
+export function chromaDuSpectre(db, sr, n) {
+  const ch = new Float64Array(12);
+  for (let k = 2; k < db.length; k++) { const f = (k * sr) / n; if (f < 60 || f > 1800) continue; const a = 10 ** (db[k] / 20); const pc = ((Math.round(12 * Math.log2(f / 261.63)) % 12) + 12) % 12; ch[pc] += a * a * (f < 300 ? 1.4 : 1); }
+  return ch;
+}
+export function accordDuChroma(ch) {
+  const tot = ch.reduce((s, v) => s + v, 0); if (!tot) return null; let best = null;
+  for (let r = 0; r < 12; r++) for (const [q, iv] of Object.entries(GABARITS)) {
+    let dans = 0; iv.forEach((d) => { dans += ch[(r + d) % 12]; });
+    const sc = dans / tot - (iv.length - 3) * 0.035 + (q === 'M' || q === 'm' ? 0.02 : 0);
+    if (!best || sc > best.sc) best = { r, q, sc };
+  }
+  return best && best.sc > 0.42 ? { ...best, nom: NOTES[best.r] + SUF[best.q] } : null;
+}
+export function hauteurDirecte(x, sr) {
+  const L = Math.min(x.length, 2048); let e = 0; for (let i = 0; i < L; i++) e += x[i] * x[i]; if (Math.sqrt(e / L) < 0.01) return null;
+  const lmin = Math.floor(sr / 1000); const lmax = Math.min(L - 1, Math.floor(sr / 70)); const W = L - lmax; let best = 0; let bl = 0; const r = new Float32Array(lmax + 2);
+  for (let l = lmin; l <= lmax + 1; l++) { let s = 0; let e1 = 0; let e2 = 0; for (let i = 0; i < W; i++) { s += x[i] * x[i + l]; e1 += x[i] * x[i]; e2 += x[i + l] * x[i + l]; } r[l] = s / Math.sqrt(e1 * e2 + 1e-12); }
+  for (let l = lmin + 1; l <= lmax; l++) if (r[l] > best && r[l] >= r[l - 1] && r[l] >= r[l + 1]) { best = r[l]; bl = l; }
+  for (let l = lmin + 1; l < bl; l++) if (r[l] >= best * 0.93 && r[l] >= r[l - 1] && r[l] >= r[l + 1]) { bl = l; best = r[l]; break; }
+  if (best < 0.85 || !bl) return null;
+  const d = (r[bl - 1] - r[bl + 1]) / (2 * (r[bl - 1] - 2 * r[bl] + r[bl + 1]) || 1);
+  return 69 + 12 * Math.log2(sr / (bl + d) / 440);
+}

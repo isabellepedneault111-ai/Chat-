@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '0.79', quand: '2026-11-23', titre: 'L’oreille en direct', items: [
+    ['🎧 Écouter en direct', ['L’oreille écoute le micro pendant que tu joues ou chantes : l’accord qui sonne (et sa version guitare), la note la plus présente avec sa justesse comme un accordeur, le clavier qui s’allume, et le fil des accords dans l’ordre. « Analyser ce que je viens de jouer » en fait ensuite l’analyse complète.']],
+    ['Les mémos du Dictaphone', ['« Choisir un fichier audio » accepte plus de formats (m4a, qta, caf, aiff…), et l’oreille explique comment faire passer un mémo du Dictaphone de l’iPhone : Partager → Enregistrer dans Fichiers, puis le choisir ici. Sur un ordi, on peut aussi glisser le fichier sur le haut de la page.']],
+  ] },
   { v: '0.78', quand: '2026-10-29', titre: 'Le calendrier et le mur, en feuilles', items: [
     ['Le calendrier, un jour par feuille', ['Chaque jour est une feuille : la date en gros, sa lune bien rangée, puis ses plages dans l’ordre, en entier (plus de texte coupé). « ＋ proposer » au bas de chaque jour. Et au lieu de quatre fois « Répondre à la plage », un seul pas qui les compte.']],
     ['Ajouter une idée, ça se voit', ['« Ajouter » confirme maintenant : « Pluie » est au mur, en Idée brute. Et une idée courte (moins de 12 lettres) apparaît enfin au ciel ; avant, elle restait invisible.']],

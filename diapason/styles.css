@@ -4394,3 +4394,35 @@ ul.or-trav .check input { width: 22px; height: 22px; accent-color: var(--ink); }
 .board .board-col.ch-new { background: transparent; box-shadow: none; border: 2px dashed #cfc3ad; }
 .board .board-col.ch-new::before { display: none; }
 .board.songs .board-col > div[class*="barre"], .board.songs .board-col .ch-parts { margin: 6px 0; }
+
+/* 0.79 — L'oreille en direct, et les mémos du Dictaphone */
+.or-src.depot { outline: 3px dashed #1d1a15; outline-offset: 4px; background: #fff8e8; }
+.or-dicta { flex-basis: 100%; margin-top: 4px; } .or-dicta summary { cursor: pointer; font-weight: 700; }
+.or-dicta ol { margin: 8px 0 4px; padding-left: 22px; display: grid; gap: 4px; }
+[data-o=direct].on { background: #d93a24; border-color: #d93a24; color: #fff; }
+.or-direct { display: grid; gap: 14px; margin-top: 14px; }
+.or-direct[hidden] { display: none; }
+.od-tete { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; } .od-tete h2 { margin: 0; }
+.od-niv { width: 120px; height: 10px; border-radius: 999px; background: #efe8da; overflow: hidden; } .od-niv i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #3f8a5c, #e0b84a, #d93a24); transition: width .06s; }
+.od-tete .btn:first-of-type { margin-left: auto; }
+.od-grand { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 700px) { .od-grand { grid-template-columns: 1fr; } }
+.od-acc, .od-note { display: grid; justify-items: center; gap: 4px; padding: 16px; border-radius: 12px; background: #fffdf8; box-shadow: 0 1px 0 #e6dccb, 0 8px 18px -14px rgba(60, 40, 10, .5); text-align: center; }
+.od-acc small, .od-note small { color: #6d655a; font-weight: 700; }
+.od-acc b { font: 700 3.4rem/1 var(--display); min-height: 1em; } .od-acc b .nm b { font-size: 3.4rem; } .od-acc b .nm sup { font-size: 1.4rem; }
+.od-gt { color: #1f6b52; font-weight: 700; min-height: 1.2em; }
+.od-note b { font: 700 2.6rem/1 var(--display); }
+.od-aig { position: relative; width: min(100%, 320px); height: 18px; border-radius: 999px; background: linear-gradient(90deg, #fbe1da 0 38%, #e3f2ea 38% 62%, #fbe1da 62%); }
+.od-aig .od-zero { position: absolute; left: 50%; top: -4px; bottom: -4px; width: 2px; background: #1d1a15; }
+.od-aig i { position: absolute; top: -6px; width: 6px; height: 30px; margin-left: -3px; border-radius: 3px; background: #d93a24; left: 50%; transition: left .08s; }
+.od-aig.juste i { background: #3f8a5c; }
+.od-kb .kb { height: 160px; }
+.od-kb .key.white.k-jeu { background: linear-gradient(180deg, #f2c48d, #f6b26b 40%, #ec9b45) !important; }
+.od-kb .key.white.k-jeu-r { background: linear-gradient(180deg, #e8894a, #d55e00 40%, #b84f00) !important; }
+.od-kb .key.black.k-jeu { background: linear-gradient(180deg, #ffd29a, #f6a24a 55%, #e07b2c) !important; box-shadow: 0 0 0 2px #fffdf8 !important; }
+.od-kb .key.k-note { box-shadow: inset 0 -10px 0 #0072b2, 0 0 0 2px #0072b2 !important; }
+.od-fil-t { display: flex; align-items: baseline; gap: 10px; }
+.od-fil { display: flex; flex-wrap: wrap; gap: 8px; min-height: 54px; }
+.od-f { display: grid; justify-items: center; padding: 6px 12px; border-radius: 8px; background: #fff; border: 1.5px solid #e2d6bf; } .od-f .nm b { font: 700 1.2rem var(--display); } .od-f small { font-size: .78rem; color: #6d655a; }
+.od-f.ici { border-color: #1d1a15; box-shadow: 0 2px 0 #1d1a15; }
+.od-kb .key.white.k-jeu-r span, .or-jeu-kb .key.white.k-jeu-r span { color: #fffdf8; }

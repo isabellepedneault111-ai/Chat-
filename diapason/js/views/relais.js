@@ -153,7 +153,7 @@ export default {
               <p class="rl-label"><b>Lancer un son à ${esc(other())}</b><span class="mono rl-time"></span></p>
               <p class="rl-sub">Une touche pour enregistrer, une pour arrêter.</p>
               <div class="rl-more">
-                <label class="btn small">Un fichier audio (mémo, son de l’ordi…)<input type="file" accept="audio/*,video/*" data-r="file" hidden></label>
+                <label class="btn small">Un fichier audio (mémo, son de l’ordi…)<input type="file" accept="audio/*,video/*,.m4a,.qta,.mov,.mp4,.caf,.aac,.mp3,.wav,.aif,.aiff,.flac,.ogg,.opus,.webm" data-r="file" hidden></label>
                 <details class="rl-input"><summary>Entrée : ${store.get('relaisRaw', false) ? 'instrument (son brut)' : 'micro'}</summary>
                   <label class="field"><span>Appareil</span><select data-r="dev"><option value="">Par défaut</option></select></label>
                   <label class="check"><input type="checkbox" data-r="raw" ${store.get('relaisRaw', false) ? 'checked' : ''}> Son d’instrument, brut : pour un clavier ou une guitare branchés dans une carte son (sans réduction de bruit ni égaliseur automatique)</label>

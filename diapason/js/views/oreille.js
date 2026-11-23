@@ -5,7 +5,7 @@ import { clavierDe } from '../doigte.js';
 import { espace, audioURL, saveEntry, uploadAudio, saveProfile, members } from '../espace.js';
 import { toast, autoCanvas, keyboard, store } from '../ui.js';
 import { esc } from './carnet.js';
-import { diagnosticHarmonie, ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
+import { chromaDuSpectre, accordDuChroma, hauteurDirecte, diagnosticHarmonie, ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
 import { chargerGrille, poserFond } from './studio.js';
 import { diagramme, nomSimple } from '../guitare.js';
 
@@ -24,7 +24,8 @@ export default {
         <p class="muted">Les silences, les parties, le tempo, la tonalité, le moment fort, et une boucle qui ne s’entend pas : en quelques secondes, ce qui prend une heure à l’oreille.</p>
       </div></div>
       <section class="panel or-src">
-        <label class="btn primary">Choisir un fichier audio<input type="file" accept="audio/*" data-o="file" hidden></label>
+        <label class="btn primary">Choisir un fichier audio<input type="file" accept="audio/*,video/*,.m4a,.qta,.mov,.mp4,.caf,.aac,.mp3,.wav,.aif,.aiff,.flac,.ogg,.opus,.webm" data-o="file" hidden></label>
+        <button class="btn primary" data-o="direct">🎧 Écouter en direct</button>
         <button class="btn" data-o="micro">● Enregistrer mon clavier</button>
         <span class="muted">ou</span>
         <select data-o="choix"><option value="">Une pièce ou un son de l’espace…</option>
@@ -32,7 +33,17 @@ export default {
           ${sons().map((e) => `<option value="id:${esc(e.id)}">${esc(e.title || 'Son')} (${esc(e.author)})</option>`).join('')}
         </select>
         <p class="or-etat muted small"></p>
+        <details class="or-dicta"><summary>Un mémo du Dictaphone (iPhone)?</summary><ol><li>Dans <b>Dictaphone</b>, touche le mémo, puis <b>···</b> → <b>Partager</b> → <b>Enregistrer dans Fichiers</b>.</li><li>Ici, <b>Choisir un fichier audio</b> → <b>Parcourir</b> → le mémo (il est en .m4a).</li></ol><p class="muted small">Sur un ordi : glisse le fichier du Dictaphone sur ce bouton, ou partage-le-toi par courriel ou AirDrop. Le mémo peut aussi aller au mur (Nos idées, bouton ♫) : il sera ensuite dans la liste ci-dessus.</p></details>
         <p class="muted small or-astuce">Pour trouver les accords d’un bout joué au clavier : enregistre-le ici (micro) ou dépose le fichier. Un son clair, sans batterie, donne le meilleur résultat. Branché en MIDI, le studio les lit encore plus juste, en direct : <a href="#/studio?tab=instrument">Studio → Mon instrument</a>.</p>
+      </section>
+      <section class="panel or-direct" hidden>
+        <div class="od-tete"><h2>En direct</h2><span class="od-niv" aria-hidden="true"><i></i></span><span class="od-duree mono">0:00</span>
+          <button class="btn small primary" data-o="direct-analyser">Analyser ce que je viens de jouer</button><button class="btn small" data-o="direct-stop">■ Arrêter</button></div>
+        <div class="od-grand"><div class="od-acc"><small>l’accord</small><b>—</b><span class="od-gt"></span></div>
+          <div class="od-note"><small>la note la plus présente</small><b>—</b><div class="od-aig"><span class="od-zero"></span><i></i></div><span class="od-cents muted">joue ou chante une note tenue</span></div></div>
+        <div class="od-kb"></div>
+        <div class="od-fil-t"><b>Le fil</b> <span class="muted small">les accords dans l’ordre où ils ont sonné, avec leur durée</span></div><div class="od-fil"></div>
+        <p class="muted small">L’oreille écoute le micro sans rien envoyer nulle part. Un son clair (un clavier, une guitare, une voix) donne le meilleur résultat ; des écouteurs évitent qu’elle entende aussi ce que joue l’ordi. Tout est gardé : « Analyser » fait l’analyse complète de ce que tu viens de jouer (grille, parties, notes).</p>
       </section>
       <section class="or-res" hidden>
         <h2 class="or-titre"></h2>
@@ -241,13 +252,13 @@ export default {
       requestAnimationFrame(animerTete);
     }
     // « ■ Arrêter le son » (en bas de l'écran) : la lecture s'arrête, l'analyse reste là.
-    const surStop = (ev) => { ev.preventDefault(); arrete(); };
+    const surStop = (ev) => { ev.preventDefault(); arrete(); directStop(); };
     addEventListener('diapason:stop', surStop);
 
     // Décode la pièce déposée et la fait écouter par l’oreille, en affichant chaque étape.
     async function analyser(arrayBuffer, n) {
       etat('Je décode la pièce…'); pile = []; bout = null;
-      try { await analyserBuf(await audio().decodeAudioData(arrayBuffer), n); } catch { etat('Je n’arrive pas à lire ce fichier. Essaie un mp3, un m4a ou un wav.'); }
+      try { await analyserBuf(await audio().decodeAudioData(arrayBuffer), n); } catch { etat('Ce navigateur n’arrive pas à lire ce fichier. Un mémo du Dictaphone : partage-le « Enregistrer dans Fichiers » (il devient un .m4a), puis choisis-le ici. Sinon : un mp3, un m4a ou un wav.'); }
     }
     async function analyserBuf(b0, n) {
       arrete(); curseur = 0; nom = n; plage = null; entendus = {}; cadreG = null; corrigees = new Set(); pvoulus = new Set(); ptOuverte = -1; apercu = null; cp = []; cible = -1; cents = 0; voixForcee = false; voulus.clear(); occK = {}; { const r = q('[data-cents]'); if (r) r.value = 0; const lab = q('.or-cents'); if (lab) lab.textContent = '0 ¢'; }
@@ -550,6 +561,52 @@ export default {
       }
       tete = { t0, a, b, boucle, segs }; const l = q('[data-o=lire]'); if (l) l.textContent = '■ Arrêter'; requestAnimationFrame(animerTete);
     };
+    // L'oreille en direct : le micro passe dans un analyseur ; 15 fois par seconde, l'accord qui tient, la note la plus
+    // présente et sa justesse ; un accord qui dure plus d'un quart de seconde entre dans le fil. Tout est enregistré en
+    // même temps, pour l'analyse complète ensuite.
+    let direct = null;
+    function directStop() {
+      if (!direct) return; const d = direct; direct = null; cancelAnimationFrame(d.raf); try { d.rec?.state !== 'inactive' && d.rec?.stop(); } catch { /* déjà arrêté */ }
+      d.flux.getTracks().forEach((t) => t.stop()); try { d.src.disconnect(); } catch { /* déjà débranché */ }
+      const b = q('[data-o=direct]'); if (b) { b.textContent = '🎧 Écouter en direct'; b.classList.remove('on'); }
+      return d;
+    }
+    async function directStart() {
+      if (direct) { directStop(); q('.or-direct').hidden = true; return; }
+      let flux; try { flux = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } }); } catch { toast('Micro refusé : autorise-le dans la barre d’adresse (ou Réglages → Safari → Micro, sur iPhone).'); return; }
+      arrete(); const c = audio(); await c.resume?.(); const src = c.createMediaStreamSource(flux); const an = c.createAnalyser(); an.fftSize = 8192; an.smoothingTimeConstant = 0.6; src.connect(an);
+      const morceaux = []; let rec = null; try { rec = new MediaRecorder(flux); rec.ondataavailable = (ev) => ev.data.size && morceaux.push(ev.data); rec.start(1000); } catch { rec = null; }
+      direct = { flux, src, an, rec, morceaux, t0: performance.now(), dern: 0, ch: new Float64Array(12), cand: null, candN: 0, acc: null, fil: [], raf: 0 };
+      const box = q('.or-direct'); box.hidden = false; const b = q('[data-o=direct]'); b.textContent = '■ Arrêter l’écoute'; b.classList.add('on');
+      if (!box._kb) box._kb = keyboard(q('.od-kb'), { from: 48, to: 76 });
+      q('.od-fil').innerHTML = ''; box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const db = new Float32Array(an.frequencyBinCount); const td = new Float32Array(an.fftSize);
+      const tour = (now) => {
+        if (!direct) return; const d = direct; d.raf = requestAnimationFrame(tour);
+        if (now - d.dern < 66) return; d.dern = now;
+        an.getFloatFrequencyData(db); an.getFloatTimeDomainData(td);
+        let e = 0; for (let i = 0; i < 2048; i++) e += td[i] * td[i]; const niv = Math.min(1, Math.sqrt(e / 2048) * 6);
+        q('.od-niv i').style.width = `${Math.round(niv * 100)}%`; const sec = (now - d.t0) / 1000; q('.od-duree').textContent = mmss(sec);
+        // L'accord : la chroma lissée sur un instant ; il doit tenir 4 images (un quart de seconde) pour changer.
+        const ch = chromaDuSpectre(db, c.sampleRate, an.fftSize); for (let k = 0; k < 12; k++) d.ch[k] = d.ch[k] * 0.55 + ch[k] * 0.45;
+        const a = niv > 0.04 ? accordDuChroma(d.ch) : null; const nom = a?.nom || '';
+        if (nom === d.cand) d.candN++; else { d.cand = nom; d.candN = 1; }
+        if (d.candN === 4 && nom !== (d.acc?.nom || '')) {
+          d.acc = a; const derniere = d.fil[d.fil.length - 1]; if (derniere) derniere.fin = sec;
+          if (a) d.fil.push({ nom, r: a.r, q: a.q, t: sec, fin: null });
+          q('.od-acc b').innerHTML = a ? joli(nom) : '—'; q('.od-gt').textContent = a ? `guitare : ${nomSimple(a.r, a.q)}` : '';
+          box._kb.keys.forEach((k, m) => { const on = a && (IVS[a.q] || IVS.M).some((iv) => (m - a.r - iv) % 12 === 0 && m >= 48 + a.r && m < 48 + a.r + 12); k.classList.toggle('k-jeu', !!on); k.classList.toggle('k-jeu-r', !!a && m === 48 + a.r); });
+          q('.od-fil').innerHTML = d.fil.slice(-16).map((x, i, l) => `<span class="od-f ${i === l.length - 1 ? 'ici' : ''}">${joli(x.nom)}<small>${x.fin ? `${(x.fin - x.t).toFixed(1).replace('.', ',')} s` : '…'}</small></span>`).join('');
+        }
+        // La note : sa hauteur et sa justesse, comme un accordeur.
+        const m = hauteurDirecte(td, c.sampleRate);
+        box._kb.keys.forEach((k) => k.classList.remove('k-note'));
+        if (m != null) { const r = Math.round(m); const ce = Math.round((m - r) * 100); q('.od-note b').textContent = nomNote(r);
+          q('.od-aig i').style.left = `${50 + ce}%`; q('.od-aig').classList.toggle('juste', Math.abs(ce) <= 12);
+          q('.od-cents').textContent = Math.abs(ce) <= 12 ? `juste (${ce > 0 ? '+' : ''}${ce} ¢)` : `${ce > 0 ? 'un peu haut' : 'un peu bas'} : ${ce > 0 ? '+' : ''}${ce} ¢`; box._kb.keys.get(r)?.classList.add('k-note'); }
+      };
+      direct.raf = requestAnimationFrame(tour);
+    }
     // Enregistrer son clavier au micro, jusqu'à une minute, puis l'analyser comme un fichier.
     async function micro(b) {
       if (rec) { rec.stop(); return; }
@@ -564,7 +621,7 @@ export default {
     }
     el.addEventListener('change', async (e) => {
       const o = e.target.dataset.o;
-      if (o === 'file' && e.target.files[0]) { const f = e.target.files[0]; await analyser(await f.arrayBuffer(), f.name.replace(/\.[^.]+$/, '')); }
+      if (o === 'file' && e.target.files[0]) { const f = e.target.files[0]; e.target.value = ''; etat(`Je lis « ${f.name} »…`); await analyser(await f.arrayBuffer(), f.name.replace(/\.[^.]+$/, '')); }
       if (o === 'choix' && e.target.value) {
         const v = e.target.value; const label = e.target.selectedOptions[0].textContent;
         etat('Je charge la pièce…');
@@ -581,6 +638,11 @@ export default {
     // Choisir un passage en glissant sur l'onde (un simple toucher, lui, fait écouter à partir de là).
     let glisse = false;
     const tDe = (e) => { const r = q('.or-canvas').getBoundingClientRect(); return Math.max(0, Math.min(res.duree, ((e.clientX - r.left) / r.width) * res.duree)); };
+    // Glisser un fichier (un mémo du Dictaphone, un mp3) sur le haut de la page : l'oreille l'écoute.
+    const zoneDepot = q('.or-src');
+    zoneDepot.addEventListener('dragover', (e) => { e.preventDefault(); zoneDepot.classList.add('depot'); });
+    zoneDepot.addEventListener('dragleave', () => zoneDepot.classList.remove('depot'));
+    zoneDepot.addEventListener('drop', async (e) => { e.preventDefault(); zoneDepot.classList.remove('depot'); const f = e.dataTransfer?.files?.[0]; if (!f) return; etat(`Je lis « ${f.name} »…`); await analyser(await f.arrayBuffer(), f.name.replace(/\.[^.]+$/, '')); });
     q('.or-canvas').addEventListener('pointerdown', (e) => { if (!res) return; presse = { x: e.clientX, t: tDe(e) }; });
     q('.or-canvas').addEventListener('pointermove', (e) => { if (!presse || Math.abs(e.clientX - presse.x) < 6) return; const t = tDe(e); plage = { a: Math.min(presse.t, t), b: Math.max(presse.t, t) }; dessiner(); });
     addEventListener('pointerup', function lacher() { if (!el.isConnected) { removeEventListener('pointerup', lacher); return; }
@@ -595,6 +657,10 @@ export default {
     el.addEventListener('click', async (e) => {
       const o = e.target.closest('[data-o]')?.dataset.o;
       if (o === 'micro') { micro(e.target.closest('[data-o]')); return; }
+      if (o === 'direct') { directStart(); return; }
+      if (o === 'direct-stop') { directStop(); q('.or-direct').hidden = true; return; }
+      if (o === 'direct-analyser') { const d = directStop(); if (!d?.rec) { toast('Rien d’enregistré.'); return; }
+        d.rec.addEventListener('stop', async () => { const blob = new Blob(d.morceaux, { type: d.rec.mimeType || 'audio/webm' }); await analyser(await blob.arrayBuffer(), `En direct · ${new Date().toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' })}`); q('.or-res')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, { once: true }); return; }
       const wv = e.target.closest('[data-wav-a]');
       if (wv && res) { const blob = await rendreBoucle(buf, { a: +wv.dataset.wavA, b: +wv.dataset.wavB }, 1, 0.12, rate(+wv.dataset.wavA)); const a2 = document.createElement('a'); a2.href = URL.createObjectURL(blob); a2.download = `${nom} · ${mmss(+wv.dataset.wavA)}-${mmss(+wv.dataset.wavB)}.wav`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(a2); a2.click(); a2.remove(); return; }
       if (e.target.closest('label.check')) return; // cocher « c’est voulu » ne lance pas l’écoute
@@ -764,6 +830,6 @@ export default {
       }
     });
     addEventListener('resize', dessiner);
-    return () => { arrete(); removeEventListener('diapason:stop', surStop); removeEventListener('resize', dessiner); roC.disconnect(); cv.dispose?.(); };
+    return () => { directStop(); arrete(); removeEventListener('diapason:stop', surStop); removeEventListener('resize', dessiner); roC.disconnect(); cv.dispose?.(); };
   },
 };

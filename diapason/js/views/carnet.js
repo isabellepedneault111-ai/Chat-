@@ -214,7 +214,7 @@ export default {
           <button class="btn primary" type="submit">Ajouter</button>
           <div class="cap-vite" role="group" aria-label="Ajouter autre chose">
             <button class="icon-btn" type="button" data-c="rec" title="Un mémo vocal" aria-label="Un mémo vocal"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
-            <label class="icon-btn" title="Un fichier audio" aria-label="Un fichier audio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><input type="file" accept="audio/*,video/*" data-c="file" hidden></label>
+            <label class="icon-btn" title="Un fichier audio" aria-label="Un fichier audio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><input type="file" accept="audio/*,video/*,.m4a,.qta,.mov,.mp4,.caf,.aac,.mp3,.wav,.aif,.aiff,.flac,.ogg,.opus,.webm" data-c="file" hidden></label>
             <label class="icon-btn" title="Une image : photo, dessin, toile" aria-label="Une image"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 17l-6-6-9 9"/></svg><input type="file" accept="image/*" data-c="image" multiple hidden></label>
             <button class="icon-btn" type="button" data-type="bravo" title="Un bravo à ${esc(other())}" aria-label="Un bravo à ${esc(other())}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg></button>
             <button class="icon-btn" type="button" data-c="more" title="Un bilan, une évaluation…" aria-label="Un bilan, une évaluation"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6" class="fill"/><circle cx="12" cy="12" r="1.6" class="fill"/><circle cx="19" cy="12" r="1.6" class="fill"/></svg></button>
@@ -259,7 +259,7 @@ export default {
           <div>
             <label class="field col"><span>Mot d’accueil pour ${esc(other())} (sa première visite)</span><textarea class="input" data-s="welcome" rows="3" placeholder="Forever more…">${esc(w.text || '')}</textarea></label>
             <div class="row">
-              <label class="btn small">${w.audio ? 'Remplacer l’audio d’accueil' : 'Ajouter un audio d’accueil'}<input type="file" accept="audio/*" data-s="welcome-audio" hidden></label>
+              <label class="btn small">${w.audio ? 'Remplacer l’audio d’accueil' : 'Ajouter un audio d’accueil'}<input type="file" accept="audio/*,video/*,.m4a,.qta,.mov,.mp4,.caf,.aac,.mp3,.wav,.aif,.aiff,.flac,.ogg,.opus,.webm" data-s="welcome-audio" hidden></label>
               <button class="btn small" data-c="rec-welcome">● L’enregistrer ici</button>
               ${w.audio ? '<span class="muted small">Audio prêt ✓</span>' : ''}
             </div>
