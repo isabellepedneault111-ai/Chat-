@@ -416,7 +416,7 @@ export default {
     }
     // Un déclencheur qui a besoin du matériel : on le branche, ou on dit quoi faire.
     function prevenir(src) {
-      if (src === 'clavier' || src === 'molette') detecter({ demander: true });
+      if (src === 'clavier' || src === 'molette') detecter({ demander: true, micro: false });
       if (src === 'voix' && !mic.level) import('../ui.js').then((u) => u.toast('Allume le MICRO en haut : ta voix fera bouger la cible.'));
     }
     // Tirer un lien à la main (souris ou doigt) : du nœud de départ au nœud d'arrivée.

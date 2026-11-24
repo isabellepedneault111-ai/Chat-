@@ -76,7 +76,7 @@ export default {
       if (![...s.options].some((o) => o.value === source)) source = 'oreille'; s.value = source;
     }
     async function charger() {
-      arreter(); ch = null; boucleMes = null; choixBoucle = null; curseur = 0; q('.ch-nom').textContent = 'Je charge la chanson…'; q('.ch-info').textContent = '';
+      arreter(); ch = null; modeBoucle = false; choix.clear(); curseur = 0; q('.ch-nom').textContent = 'Je charge la chanson…'; q('.ch-info').textContent = '';
       try {
         if (source === 'oreille') {
           const f = await lireDerniere(); if (!f?.blob) throw new Error('vide');
@@ -138,11 +138,12 @@ export default {
     }
 
     // ---------- L'écoute : la chanson + les idées, planifiées juste avant qu'elles sonnent ----------
-    // La position dans la chanson. En boucle, la chanson tourne sans trou (loopStart/loopEnd du son lui-même).
+    // La lecture suit un « plan » : des passages joués l'un après l'autre, collés sans trou (en boucle ou non).
+    // tl : les morceaux de son déjà posés [début sur l'horloge, de, à] ; la position s'en déduit.
     const pos = () => {
-      if (!lect) return curseur; let t = lect.off + (c.currentTime - lect.t0c);
-      if (lect.boucle && t >= lect.boucle.b) { const L = lect.boucle.b - lect.boucle.a; t = lect.boucle.a + ((t - lect.boucle.b) % L); }
-      return t;
+      if (!lect) return curseur; const now = c.currentTime; let r = null;
+      for (const [t0, a, b] of lect.tl) if (t0 <= now) r = Math.min(b, a + (now - t0));
+      return r ?? lect.curSong0;
     };
     // Les idées des autres (Frog) pour cette chanson : on peut les entendre aussi.
     const autresIdees = () => (espace.connected ? espace.entries.filter((e) => e.type === 'chantier' && e.data?.kind === 'idees' && e.data.cle === cle && e.author !== espace.me) : []);
@@ -175,26 +176,40 @@ export default {
     function rebaser() { if (lect) lect.evs = evenements(); }
     function planifier() {
       if (!lect) return; const cible = c.currentTime + 0.3; let garde = 0;
-      while (lect.curCtx < cible && garde++ < 8) {
-        const finSeg = lect.boucle ? lect.boucle.b : Infinity; const fin = Math.min(finSeg, lect.curSong + (cible - lect.curCtx));
+      while (!lect.finCtx && lect.curCtx < cible && garde++ < 16) {
+        const seg = lect.segs[lect.si] || lect.segs[0];
+        if (lect.entree) {
+          // Le début (ou la reprise) d'un passage : son morceau de son, posé exactement au bout du précédent, avec un fondu de 4 ms.
+          const dur = Math.max(0.01, seg.b - lect.curSong); const src = c.createBufferSource(); src.buffer = ch.buf; const f = c.createGain(); src.connect(f).connect(lect.g);
+          const t0 = lect.curCtx; f.gain.setValueAtTime(0, t0); f.gain.linearRampToValueAtTime(1, t0 + 0.004); f.gain.setValueAtTime(1, Math.max(t0 + 0.004, t0 + dur - 0.004)); f.gain.linearRampToValueAtTime(0, t0 + dur);
+          src.start(t0, lect.curSong, dur + 0.005); lect.sources.push(src); lect.tl.push([t0, lect.curSong, seg.b]); if (lect.tl.length > 40) lect.tl.shift(); if (lect.sources.length > 40) lect.sources.shift();
+          lect.entree = false;
+        }
+        const fin = Math.min(seg.b, lect.curSong + (cible - lect.curCtx));
         for (let k = premier(lect.curSong); k < lect.evs.length && lect.evs[k].t < fin - 1e-4; k++) { const e = lect.evs[k]; const when = lect.curCtx + (e.t - lect.curSong); if (when >= c.currentTime - 0.01) sonner(e, when); }
         lect.curCtx += fin - lect.curSong; lect.curSong = fin;
-        if (lect.boucle && lect.curSong >= lect.boucle.b - 1e-4) lect.curSong = lect.boucle.a;
+        if (lect.curSong >= seg.b - 1e-4) {
+          // Le passage suivant : le premier qui commence après celui-ci (la liste peut avoir changé en route), sinon on reboucle.
+          let n = lect.segs.findIndex((x) => x.a >= seg.b - 1e-3);
+          if (n < 0) { if (!lect.boucle) { lect.finCtx = lect.curCtx; break; } n = 0; }
+          lect.si = n; lect.curSong = lect.segs[n].a; lect.entree = true;
+        }
       }
+      if (lect.finCtx && c.currentTime >= lect.finCtx) { curseur = 0; arreter(false); }
     }
-    function jouer(de, boucle = null) {
+    // plan : rien (toute la chanson, une fois), un passage { a, b } ou une liste de passages (en boucle).
+    function jouer(de, plan = null) {
       if (!ch) return; arreter(false); try { c.resume(); } catch { /* iOS */ }
       const g = c.createGain(); g.gain.value = mix.orig ? vol : 0; g.connect(out());
-      const s = c.createBufferSource(); s.buffer = ch.buf; s.connect(g);
-      if (boucle) { s.loop = true; s.loopStart = boucle.a; s.loopEnd = boucle.b; }
-      const off = Math.max(0, Math.min(ch.buf.duration - 0.05, de)); const t0c = c.currentTime + 0.08; s.start(t0c, off);
-      lect = { s, g, off, t0c, boucle, evs: [], curSong: off, curCtx: t0c }; rebaser();
+      const segs = Array.isArray(plan) ? plan : plan ? [plan] : [{ a: 0, b: ch.buf.duration }];
+      let si = segs.findIndex((x) => de >= x.a - 1e-3 && de < x.b); if (si < 0) { si = Math.max(0, segs.findIndex((x) => x.a >= de)); de = segs[si].a; }
+      const t0c = c.currentTime + 0.08; const debut = Math.max(0, Math.min(ch.buf.duration - 0.05, de));
+      lect = { g, segs, boucle: !!plan, si, curSong: debut, curSong0: debut, curCtx: t0c, entree: true, sources: [], tl: [], evs: [] }; rebaser();
       lect.timer = setInterval(planifier, 40); planifier();
-      s.onended = () => { if (lect?.s === s) { curseur = 0; arreter(false); } };
       majPlay(); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick);
     }
     function arreter(garder = true) {
-      if (lect) { const p = pos(); clearInterval(lect.timer); try { lect.s.onended = null; lect.s.stop(); } catch { /* déjà */ } lect = null; if (garder) curseur = p; }
+      if (lect) { const p = pos(); clearInterval(lect.timer); lect.sources.forEach((x) => { try { x.stop(); } catch { /* déjà */ } }); try { lect.g.disconnect(); } catch { /* déjà */ } lect = null; if (garder) curseur = p; }
       cancelAnimationFrame(raf); majPlay(); dessiner(); majPos(); allumerPas(-1);
     }
     const majPlay = () => { const b = q('.ch-play'); if (b) { b.textContent = lect ? '■' : '▶'; b.setAttribute('aria-label', lect ? 'Arrêter' : 'Écouter'); } };
@@ -218,20 +233,31 @@ export default {
     const onStop = () => arreter(); addEventListener('diapason:stop', onStop);
 
     // ---------- Les mesures, à portée de doigt : une touche, et ça part de là ----------
-    let mesAllumee = -1; let boucleMes = null; let choixBoucle = null; let selA = -1; // la boucle choisie sur la rangée
-    const boucleT = () => (boucleMes ? { a: tMes(boucleMes.a), b: tMes(boucleMes.b + 1) } : null);
+    // La boucle : on touche les mesures à répéter, une après l'autre (elles peuvent être séparées : 3, 4 puis 9).
+    // Elle joue tout de suite et se met à jour pendant que ça tourne.
+    let mesAllumee = -1; let modeBoucle = false; const choix = new Set();
+    function planBoucle() {
+      const l = [...choix].sort((x, y) => x - y); const segs = [];
+      l.forEach((m) => { const der = segs[segs.length - 1]; if (der && der.fin === m - 1) { der.fin = m; der.b = tMes(m + 1); } else segs.push({ a: tMes(m), b: tMes(m + 1), fin: m }); });
+      return segs;
+    }
+    const resume = () => { const l = [...choix].sort((x, y) => x - y); const r = []; l.forEach((m) => { const d = r[r.length - 1]; if (d && d[1] === m - 1) d[1] = m; else r.push([m, m]); }); return r.map(([a, b]) => (a === b ? `${a + 1}` : `${a + 1}–${b + 1}`)).join(', '); };
     function majBoucle() {
       const bt = q('[data-c=boucle-mes]'); const info = q('.ch-boucle-info'); if (!bt) return;
-      bt.textContent = boucleMes ? '✕ Arrêter la boucle' : choixBoucle ? 'Annuler' : '🔁 Répéter des mesures'; bt.classList.toggle('primary', !!(boucleMes || choixBoucle));
-      info.textContent = choixBoucle === 'debut' ? 'Touche la première mesure de la boucle…' : choixBoucle === 'fin' ? `De la mesure ${selA + 1}… touche maintenant la dernière.` : boucleMes ? `🔁 Mesures ${boucleMes.a + 1} à ${boucleMes.b + 1}, en boucle` : '';
-      el.querySelectorAll('.ch-m').forEach((b) => { const m = +b.dataset.mes; b.classList.toggle('boucle', !!boucleMes && m >= boucleMes.a && m <= boucleMes.b); b.classList.toggle('sel', choixBoucle === 'fin' && m === selA); });
+      bt.textContent = modeBoucle ? (choix.size ? '✕ Arrêter la boucle' : 'Annuler') : '🔁 Répéter des mesures'; bt.classList.toggle('primary', modeBoucle);
+      info.textContent = !modeBoucle ? '' : choix.size ? `🔁 En boucle : mesure${choix.size > 1 ? 's' : ''} ${resume()} · touche pour en ajouter ou en enlever` : 'Touche les mesures à répéter, une après l’autre…';
+      el.querySelectorAll('.ch-m').forEach((b) => b.classList.toggle('boucle', choix.has(+b.dataset.mes)));
     }
-    // Toucher une mesure : ça part de là (dans la boucle si elle y est ; sinon la boucle s'arrête).
+    function majLecture() {
+      const plan = planBoucle();
+      if (!plan.length) { if (lect?.sel) { const p = pos(); jouer(p); } return; }
+      if (lect?.sel) { lect.segs = plan; return; } // ça tourne déjà : la boucle change au prochain passage, sans couper
+      jouer(plan[0].a, plan); lect.sel = true;
+    }
+    // Toucher une mesure : en mode boucle, elle s'ajoute (ou s'enlève) ; sinon, la chanson part de là.
     function allerMesure(m) {
-      if (choixBoucle === 'debut') { selA = m; choixBoucle = 'fin'; majBoucle(); return; }
-      if (choixBoucle === 'fin') { boucleMes = { a: Math.min(selA, m), b: Math.max(selA, m) }; choixBoucle = null; majBoucle(); curseur = tMes(boucleMes.a); jouer(curseur, boucleT()); return; }
-      if (boucleMes && (m < boucleMes.a || m > boucleMes.b)) { boucleMes = null; majBoucle(); }
-      curseur = tMes(m); jouer(curseur, boucleT());
+      if (modeBoucle) { if (choix.has(m)) choix.delete(m); else choix.add(m); majBoucle(); majLecture(); return; }
+      curseur = tMes(m); jouer(curseur);
     }
     function rendreMesures() {
       const box = q('.ch-mesures'); if (!box) return; if (!ch) { box.innerHTML = ''; return; }
@@ -436,7 +462,7 @@ export default {
     }
     async function commencerEnr() {
       const P = idees.piano; enr = { notes: [], ouvertes: new Map(), fin: tMes(P.de - 1 + P.n) };
-      detecter({ demander: true }).catch(() => {}); // le clavier MIDI de Frog, s'il y en a un
+      detecter({ demander: true, micro: false }).catch(() => {}); // le clavier MIDI de Frog, s'il y en a un (sans demander le micro)
       jouer(tMes(Math.max(0, P.de - 2))); rendre();
     }
     function finirEnr() {
@@ -511,10 +537,10 @@ export default {
       const rp = e.target.closest('[data-repondre]');
       if (rp) { const k = commentaires().find((x) => x.id === rp.dataset.repondre); if (k) { arreter(); composer = { t: k.t, parent: k.id, texte: '' }; rendre(); q('[data-c=texte]')?.focus(); q('.ch-compose')?.scrollIntoView({ block: 'center', behavior: 'smooth' }); } return; }
       const a = e.target.closest('[data-c]')?.dataset.c; if (!a) return;
-      if (a === 'play') { if (lect) arreter(); else if (boucleMes) { const b = boucleT(); jouer(curseur >= b.a && curseur < b.b ? curseur : b.a, b); } else jouer(curseur >= (ch?.buf.duration || 0) - 0.1 ? 0 : curseur); }
-      if (a === 'boucle-mes') { if (boucleMes) { boucleMes = null; if (lect) { const p = pos(); jouer(p); } } else choixBoucle = choixBoucle ? null : 'debut'; majBoucle(); return; }
+      if (a === 'play') { if (lect) arreter(); else if (choix.size) { const plan = planBoucle(); jouer(curseur >= plan[0].a && plan.some((x) => curseur >= x.a && curseur < x.b) ? curseur : plan[0].a, plan); lect.sel = true; } else jouer(curseur >= (ch?.buf.duration || 0) - 0.1 ? 0 : curseur); }
+      if (a === 'boucle-mes') { if (modeBoucle) { const jouait = lect?.sel; modeBoucle = false; choix.clear(); if (jouait) { const p = pos(); jouer(p); } } else modeBoucle = true; majBoucle(); return; }
       if (a === 'commenter') { const p = pos(); arreter(); curseur = p; composer = { t: p, texte: '' }; rendre(); q('[data-c=texte]')?.focus(); }
-      if (a === 'reecouter') { const t0 = composer.t; jouer(Math.max(0, t0 - 3), { a: Math.max(0, t0 - 3), b: t0 + 2 }); setTimeout(() => { if (lect?.boucle?.b === t0 + 2) arreter(false); curseur = t0; majPos(); }, 5200); }
+      if (a === 'reecouter') { const t0 = composer.t; jouer(Math.max(0, t0 - 3), { a: Math.max(0, t0 - 3), b: t0 + 2 }); setTimeout(() => { if (lect?.segs?.[0]?.b === t0 + 2) arreter(false); curseur = t0; majPos(); }, 5200); }
       if (a === 'vocal') vocal();
       if (a === 'annuler-com') { composer?.rec?.stop(); composer = null; rendre(); }
       if (a === 'garder-com') {

@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.27', quand: '2026-11-24', titre: 'La boucle, mesure par mesure', items: [
+    ['🔁 Touche les mesures à répéter', ['Le chantier : « 🔁 Répéter des mesures », puis touche les mesures une après l’autre. Elles tournent en boucle dans l’ordre, même séparées (3, 4 puis 9), collées sans trou. Pendant que ça joue, touche une mesure pour l’ajouter ou l’enlever : la boucle change au passage suivant, sans couper. « ✕ Arrêter la boucle » et la chanson continue.']],
+    ['⏺ Jouer ma ligne sans micro', ['Jouer sa ligne de piano (clavier MIDI ou touches à l’écran) ne demande plus le micro : avant, sans micro, une fenêtre d’aide bloquait l’enregistrement.']],
+  ] },
   { v: '1.26', quand: '2026-11-24', titre: 'Le cercle : un jam pour la classe', items: [
     ['🥁 Jouer › Le cercle', ['Un jam de percussion corporelle pour des élèves qui ne connaissent rien en musique : les mains sur le bureau (BOUM), le bout des doigts (TIC), taper des mains (TAC), claquer des doigts (TSK), frotter les mains (CHHH), les pieds. Projette la page : l’app tient le tempo, joue le modèle et montre en gros quoi faire.']],
     ['Six activités qui roulent toutes seules', ['❤️ Le cœur (tous sur le même battement) · 🔁 L’écho (l’app joue, la classe répète ; facile, moyen, défi) · 🍕 Le moteur des mots (4 groupes, 4 mots qui s’empilent toutes les 4 mesures ; les mots se changent) · 🎬 Le chef (l’app dirige : qui joue, fort, doux, FREEZE) · ⛈️ L’orage (la pluie monte puis redescend) · 🎤 Le trou (une mesure de silence pour un solo, avec la liste des noms).']],

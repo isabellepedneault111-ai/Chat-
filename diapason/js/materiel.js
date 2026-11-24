@@ -101,8 +101,8 @@ export function retirer(k) { const r = reg(); if (r[k]?.perso) { delete r[k]; ec
 // Détecter : un court accès au micro (sinon le navigateur cache le nom des entrées), puis le MIDI.
 let midiAcces = null;
 // Détecte le matériel branché : les entrées audio (après un court accès au micro, sinon le navigateur cache leurs noms) et les claviers MIDI.
-export async function detecter({ demander = false } = {}) {
-  if (demander && navigator.mediaDevices?.getUserMedia) {
+export async function detecter({ demander = false, micro = true } = {}) {
+  if (demander && micro && navigator.mediaDevices?.getUserMedia) { // micro : false → seulement les claviers MIDI, sans demander le micro
     try { const s = await navigator.mediaDevices.getUserMedia({ audio: true }); s.getTracks().forEach((t) => t.stop()); } catch { /* refusé : on garde ce qu'on voit */ }
   }
   detecte.audio.clear();
