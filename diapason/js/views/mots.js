@@ -1,7 +1,8 @@
 // Mots sur la grille (Ma voix) : un thème, des mots-clés, une grille d'accords (celle de L'oreille, celle de Jouer,
 // ou tapée à la main). FLIP assemble des lignes brouillon qui tombent sur les temps et riment, puis les chante
 // sur les accords : la voix-guide prend les notes de l'accord sur les temps forts.
-import { audio, out, drums, startMic, stopMic, onPitch } from '../audio.js';
+import { audio, out, drums, startMic, stopMic, onPitch, mic } from '../audio.js';
+import { demarrerPrise } from '../prise.js';
 import { joue, prechargerSons, accord as accordSon, notePiano } from '../sampler.js';
 import { espace, profileOf, saveEntry, audioURL, onEspace } from '../espace.js';
 import { loadLexique, rimeOf } from '../lexique.js';
@@ -148,6 +149,7 @@ export default {
     if (aCaler && lignes.length) aCaler = false; // cette chanson a déjà ses paroles : on ne touche à rien
     let graine = Date.now() % 100000; let lecture = null; let raf = 0;
     // Ta voix en direct pendant le chant : la hauteur entendue au micro, dessinée sur la mélodie proposée.
+    let priseEnCours = null; let derniere = null; // ta dernière prise chantée sur la grille
     const justes = new Set(); let micLive = store.get('motsMicLive', false); let micOuvert = false; let trace = []; let echelle = null;
     const offPitch = onPitch((r) => { if (micLive && lecture && r?.midi) { trace.push([r.t, r.midi]); if (trace.length > 4000) trace.splice(0, 1000); } });
     async function ouvrirMic() { if (micOuvert) return true; micOuvert = await startMic(); if (!micOuvert) { micLive = false; store.set('motsMicLive', false); cleBarre = ''; } return micOuvert; } // l'aide (pourquoi, quoi faire) s'affiche toute seule : micro.js
@@ -213,7 +215,7 @@ export default {
         <div class="ec-row"><button class="btn" data-m="placer" title="Écrire → Placer mes paroles : chaque ligne essayée sur 7 rythmes (sur le temps, contretemps, syncopé…), notée, et chantée sur une pièce">→ Essayer 7 rythmes par ligne (Placer)</button><button class="btn" data-m="copier">Copier le texte</button>${espace.connected ? '<button class="btn" data-m="journal">Dans le journal</button>' : ''}</div>
         <p class="muted small">Comment c’est fait : pas d’intelligence artificielle. Des tournures de phrases, des banques de mots par thème, tes mots-clés et leurs synonymes (le dictionnaire de l’app). Pour chaque ligne, FLIP essaie quelques centaines de phrases et garde celle dont les accents tombent le mieux sur les temps forts (le calcul de « Placer ») et qui rime comme demandé. Le genre des mots-clés est deviné : relis les « le / la ».</p>
       </section>
-      <nav class="mo-dock" aria-label="Toujours à portée : chanter, écrire, réglages"><button class="btn primary" data-m="chanter" data-lbl="▶ Chanter">▶ Chanter</button><button class="btn" data-m="generer" aria-label="Écrire les lignes">↻ Écrire</button><button class="btn" data-m="texte" aria-label="Le texte seul">📄 Texte</button><button class="btn" data-m="ouvrir-reg" aria-label="Thèmes, mots-clés et réglages">⚙</button></nav>`;
+      <nav class="mo-dock" aria-label="Toujours à portée : chanter, écrire, réglages"><button class="btn primary" data-m="chanter" data-lbl="▶ Chanter">▶ Chanter</button><button class="btn" data-m="generer" aria-label="Écrire les lignes">↻ Écrire</button><button class="btn" data-m="texte" aria-label="Le texte seul">📄 Texte</button><button class="btn" data-m="ouvrir-reg" aria-label="Thèmes, mots-clés et réglages">⚙</button><button class="btn mo-reecoute" data-m="reecoute" hidden aria-label="Réécoute-toi avec la musique">🎧 Réécoute</button></nav>`;
     const q = (s) => el.querySelector(s);
     if (!st.pos) st.pos = 'milieu';
     ['source', 'place', 'schema', 'pers', 'pos'].forEach((k) => { const x = q(`[data-m=${k}]`); if (x) x.value = st[k]; }); q('[data-m=n]').value = String(st.n);
@@ -449,6 +451,7 @@ export default {
 
     function arreter() {
       cancelAnimationFrame(raf);
+      if (priseEnCours) { const { pr, t0, quelles, avecIntro } = priseEnCours; priseEnCours = null; const r = pr.stop(); if (r && r.buf.duration > 1.5) { derniere = { buf: r.buf, decal: r.debut - t0, quelles, avecIntro }; const b = q('.mo-dock [data-m=reecoute]'); if (b) b.hidden = false; toast('🎧 Ta prise est gardée : « Réécoute » pour t’entendre avec la musique.'); } }
       if (lecture) { lecture.stop = true; try { lecture.bus.gain.value = 0; lecture.bus.disconnect(); } catch { /* déjà coupé */ } lecture.src.forEach((s) => { try { s.stop(); } catch { /* déjà arrêtée */ } }); lecture = null; }
       el.querySelectorAll('.pl-tete').forEach((t) => { t.style.opacity = 0; });
       el.querySelectorAll('.mo-l.karaoke').forEach((x) => { x.classList.remove('karaoke'); x.querySelector('.mo-kara')?.remove(); });
@@ -530,20 +533,23 @@ export default {
       if (etat) etat.textContent = !der || t - der[0] > 0.4 ? '🎤 …' : derEcart == null ? `🎤 ${nomNote(Math.round(der[1]))}` : Math.abs(derEcart) < 0.5 ? `🎤 ${nomNote(Math.round(der[1]))} ✓ juste` : derEcart < 0 ? `🎤 ${nomNote(Math.round(der[1]))} ↑ monte un peu` : `🎤 ${nomNote(Math.round(der[1]))} ↓ descends un peu`;
     }
     // Chante les lignes demandées : une mesure de décompte, puis deux mesures par ligne, accords au piano, voix-guide.
-    async function chanter(quelles, bouton, avecIntro = false) {
+    async function chanter(quelles, bouton, avecIntro = false, reecoute = null) {
       arreter();
       const c = audio(); try { await c.resume(); } catch { /* iOS */ }
-      trace = []; if (micLive) await ouvrirMic();
+      trace = []; if (micLive && !reecoute) await ouvrirMic();
       if (bouton) bouton.textContent = '…';
       await prechargerSons(['voix', 'piano']);
       const g = grille(); const noire = 60 / g.bpm; const dc = noire / 4; const mes = 4 * noire;
       const nIntro = avecIntro ? deb() : 0; const t0 = c.currentTime + 0.25; const tIntro = t0 + mes; const src = [];
+      // Ta prise : avec 🎤 allumé, on t'enregistre pendant que tu chantes (pour « 🎧 Réécoute-toi » ensuite).
+      if (micLive && micOuvert && !reecoute && mic.source) { demarrerPrise({ source: mic.source }).then((pr) => { priseEnCours = { pr, t0, quelles, avecIntro }; }).catch(() => {}); }
       // Avec la vraie chanson suivie temps par temps, chaque ligne prend la longueur de SES deux mesures dans la chanson.
       const suit = chanson && suitTemps() && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source);
       const t1 = tIntro + (suit && nIntro ? tMes(nIntro) - tMes(0) : nIntro * mes);
       const mesDe = (i) => { if (!suit) return mes; const m = mDe(i, 0, g.mesures.length); const L = (tMes(m + 2) - tMes(m)) / 2; return L > mes * 0.5 && L < mes * 2 ? L : mes; };
       let cur = t1;
-      const bus = c.createGain(); bus.connect(out()); // tout passe par ici : « Arrêter » coupe aussi les notes déjà prévues
+      const bus = c.createGain(); bus.connect(out());
+      if (reecoute) { const sv = c.createBufferSource(); sv.buffer = reecoute.buf; const gv = c.createGain(); gv.gain.value = 1.1; sv.connect(gv).connect(bus); const at = t0 + reecoute.decal; sv.start(Math.max(c.currentTime, at), Math.max(0, c.currentTime - at)); src.push(sv); } // tout passe par ici : « Arrêter » coupe aussi les notes déjà prévues
       for (let k = 0; k < 4; k++) try { drums.hat?.(t0 + k * noire, k ? 0.35 : 0.6); } catch { /* pas de métronome */ }
       // L'intro : la musique seule, de la mesure 1 jusqu'aux paroles.
       if (nIntro) {
@@ -604,6 +610,7 @@ export default {
       if (m === 'generer') { arreter(); await generer(); if (b.dataset.fermer) { const r = q('.mo-reg'); if (r) r.open = false; q('.mo-a-qui')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } return; }
       if (m === 'caler') { await caler(false); return; }
       if (m === 'texte') { ouvrirTexte(); return; }
+      if (m === 'reecoute') { if (!derniere) return; arreter(); const d = derniere; await chanter(d.quelles, q('.mo-gestes [data-m=chanter]'), d.avecIntro, d); return; }
       if (m === 'ouvrir-reg') { const r = q('.mo-reg'); if (r) { r.open = true; r.scrollIntoView({ behavior: 'smooth', block: 'start' }); } return; }
       if (m === 'ranger') { rangerAilleurs(); return; }
       if (m === 'garder-ici') { avantRangement = false; if (parChanson[cle]) delete parChanson[cle].avant; sauver(); rendreRanger(); return; }

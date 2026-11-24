@@ -5068,3 +5068,25 @@ body {
 .ce-g { grid-template-columns: minmax(170px, 230px) 1fr; }
 .ce-g-t .ce-son { flex: 0 0 auto; padding: 4px 6px; } .ce-g-t .ce-son b { font-size: .85rem; padding: 0 5px; }
 body.ce-ouvert .arret-son, body.ce-ouvert .etincelle { display: none !important; }
+/* 1.28 — Les voix par-dessus (Le chantier) */
+.ch-onglets { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.ch-rec { width: 46px; height: 46px; border-radius: 50%; border: 3px solid #fbe7a1; background: #2a2620; color: #ff5a3c; font-size: 1.2rem; cursor: pointer; flex: 0 0 auto; }
+.ch-rec.rec { background: #ff3b2f; color: #fff; box-shadow: 0 0 0 calc(4px + 14px * var(--niv, 0)) rgba(255, 59, 47, .35); animation: ch-rec 1s infinite; }
+@keyframes ch-rec { 50% { border-color: #ff3b2f; } }
+.ch-gros-rec.rec { background: #ff3b2f; animation: ch-rec 1s infinite; }
+.ch-voix-haut { display: grid; gap: 8px; justify-items: start; }
+.ch-voix-haut .ch-gros-rec { font-size: 1.15rem; padding: 14px 24px; }
+.ch-voix { list-style: none; margin: 14px 0 8px; padding: 0; display: grid; gap: 8px; }
+.ch-v { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; background: #fff; border: 2px solid var(--ink); border-radius: 14px; box-shadow: 0 3px 0 var(--ink); padding: 10px 12px; }
+.ch-v.autre { border-style: dashed; } .ch-v.muet { opacity: .55; }
+.ch-v-t { border: 0; border-radius: 10px; background: #1b1915; color: #fbe7a1; font-weight: 700; padding: 8px 10px; cursor: pointer; }
+.ch-v-c { flex: 1 1 180px; min-width: 0; display: grid; gap: 2px; } .ch-v-c small { color: #5c5446; }
+.ch-v-vol { display: flex; align-items: center; gap: 6px; } .ch-v-vol input { flex: 1; max-width: 180px; accent-color: #b8301c; }
+.ch-v-b { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--ink); background: #fff; cursor: pointer; font-size: 1rem; }
+.ch-v-dec { display: inline-flex; align-items: center; gap: 4px; } .ch-v-dec small { min-width: 3.6em; text-align: center; font-size: .78rem; color: #5c5446; }
+@media (max-width: 640px) { .ch-onglets button { font-size: .72rem; } }
+.mo-dock { display: flex; } .mo-dock .btn { flex: 1 1 auto; } .mo-dock [hidden] { display: none; }
+.mo-reecoute { background: #2d6a3e; color: #fff; }
+.ce-rec, .ce-ecoute { font: 800 clamp(1rem, 2.4vw, 1.3rem) var(--display); padding: 14px 20px; border-radius: 18px; border: 3px solid #fff7dc; background: #2a2620; color: #fff7dc; cursor: pointer; }
+.ce-rec.rec { background: #ff3b2f; border-color: #fff; animation: ch-rec 1s infinite; }
+.ce-ecoute { background: #3fbf7f; color: #0f2a1c; }

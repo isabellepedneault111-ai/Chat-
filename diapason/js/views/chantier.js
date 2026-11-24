@@ -7,6 +7,7 @@
 import { audio, out, drums } from '../audio.js';
 import { joue, prechargerSons, notePiano } from '../sampler.js';
 import { espace, saveEntry, deleteEntry, uploadAudio, audioURL, onEspace } from '../espace.js';
+import { demarrerPrise, enWav, garderPrise, lirePrise, effacerPrise, fermerMicroPrise } from '../prise.js';
 import { store, toast } from '../ui.js';
 import { esc } from './carnet.js';
 import { lireDerniere } from '../memoire-son.js';
@@ -58,11 +59,12 @@ export default {
         <p class="muted small ch-legende"><i class="lg-c"></i> commentaire <i class="lg-b"></i> batterie essayée <i class="lg-p"></i> piano essayé</p>
       </section>
       <div class="ch-onglets" role="tablist" aria-label="Ce que j’ajoute">
-        <button role="tab" data-onglet="com">💬 Commentaires</button><button role="tab" data-onglet="bat">🥁 Batterie</button><button role="tab" data-onglet="pia">🎹 Piano</button><button role="tab" data-onglet="num">🎛 Numérique</button>
+        <button role="tab" data-onglet="com">💬 Commentaires</button><button role="tab" data-onglet="bat">🥁 Batterie</button><button role="tab" data-onglet="pia">🎹 Piano</button><button role="tab" data-onglet="num">🎛 Numérique</button><button role="tab" data-onglet="voix">🎙 Voix</button>
       </div>
       <section class="panel ch-corps"></section>
       <div class="ch-lecteur">
         <button class="ch-play" data-c="play" aria-label="Écouter">▶</button>
+        <button class="ch-rec" data-c="rec" aria-label="Enregistrer une voix par-dessus">●</button>
         <span class="ch-pos mono">0:00</span>
         <span class="ch-mes small"></span>
         <label class="ch-vol"><span aria-hidden="true">🔈 chanson</span><input type="range" min="0" max="1" step="0.05" value="${vol}" data-c="vol" aria-label="Le volume de la chanson (baisse-le pour mieux entendre tes idées)"></label>
@@ -93,7 +95,7 @@ export default {
       cle = `chanson:${ch.nom}`; pics = null; num = null;
       q('.ch-nom').textContent = `« ${ch.nom} »`;
       q('.ch-info').textContent = `${mmss(ch.buf.duration)} · ${nbMes()} mesures${ch.ton ? ` · ${ch.ton}` : ''}`;
-      chargerIdees(); rendreMesures(); rendre();
+      chargerIdees(); rendreMesures(); rendre(); chargerVoix();
     }
     // Les mesures : suivies temps par temps par L'oreille quand le tempo bouge, sinon un tempo fixe.
     const nbMes = () => (ch?.debuts?.length > 2 ? ch.debuts.length - 1 : Math.max(1, Math.floor((ch.buf.duration - ch.t0) / (4 * ch.temps))));
@@ -182,7 +184,7 @@ export default {
           // Le début (ou la reprise) d'un passage : son morceau de son, posé exactement au bout du précédent, avec un fondu de 4 ms.
           const dur = Math.max(0.01, seg.b - lect.curSong); const src = c.createBufferSource(); src.buffer = ch.buf; const f = c.createGain(); src.connect(f).connect(lect.g);
           const t0 = lect.curCtx; f.gain.setValueAtTime(0, t0); f.gain.linearRampToValueAtTime(1, t0 + 0.004); f.gain.setValueAtTime(1, Math.max(t0 + 0.004, t0 + dur - 0.004)); f.gain.linearRampToValueAtTime(0, t0 + dur);
-          src.start(t0, lect.curSong, dur + 0.005); lect.sources.push(src); lect.tl.push([t0, lect.curSong, seg.b]); if (lect.tl.length > 40) lect.tl.shift(); if (lect.sources.length > 40) lect.sources.shift();
+          src.start(t0, lect.curSong, dur + 0.005); lect.sources.push(src); lect.tl.push([t0, lect.curSong, seg.b]); poserVoix(t0, lect.curSong, seg.b); if (lect.tl.length > 40) lect.tl.shift(); if (lect.sources.length > 40) lect.sources.shift();
           lect.entree = false;
         }
         const fin = Math.min(seg.b, lect.curSong + (cible - lect.curCtx));
@@ -200,16 +202,17 @@ export default {
     // plan : rien (toute la chanson, une fois), un passage { a, b } ou une liste de passages (en boucle).
     function jouer(de, plan = null) {
       if (!ch) return; arreter(false); try { c.resume(); } catch { /* iOS */ }
-      const g = c.createGain(); g.gain.value = mix.orig ? vol : 0; g.connect(out());
+      const g = c.createGain(); g.gain.value = mix.orig ? vol : 0; g.connect(out()); const gv = c.createGain(); gv.connect(out());
       const segs = Array.isArray(plan) ? plan : plan ? [plan] : [{ a: 0, b: ch.buf.duration }];
       let si = segs.findIndex((x) => de >= x.a - 1e-3 && de < x.b); if (si < 0) { si = Math.max(0, segs.findIndex((x) => x.a >= de)); de = segs[si].a; }
       const t0c = c.currentTime + 0.08; const debut = Math.max(0, Math.min(ch.buf.duration - 0.05, de));
-      lect = { g, segs, boucle: !!plan, si, curSong: debut, curSong0: debut, curCtx: t0c, entree: true, sources: [], tl: [], evs: [] }; rebaser();
+      lect = { g, gv, segs, boucle: !!plan, si, curSong: debut, curSong0: debut, curCtx: t0c, entree: true, sources: [], tl: [], evs: [] }; rebaser();
       lect.timer = setInterval(planifier, 40); planifier();
       majPlay(); cancelAnimationFrame(raf); raf = requestAnimationFrame(tick);
     }
     function arreter(garder = true) {
-      if (lect) { const p = pos(); clearInterval(lect.timer); lect.sources.forEach((x) => { try { x.stop(); } catch { /* déjà */ } }); try { lect.g.disconnect(); } catch { /* déjà */ } lect = null; if (garder) curseur = p; }
+      if (lect && enrVoix) finirVoix(); // arrêter la musique garde la voix en cours
+      if (lect) { const p = pos(); clearInterval(lect.timer); lect.sources.forEach((x) => { try { x.stop(); } catch { /* déjà */ } }); try { lect.g.disconnect(); lect.gv.disconnect(); } catch { /* déjà */ } lect = null; if (garder) curseur = p; }
       cancelAnimationFrame(raf); majPlay(); dessiner(); majPos(); allumerPas(-1);
     }
     const majPlay = () => { const b = q('.ch-play'); if (b) { b.textContent = lect ? '■' : '▶'; b.setAttribute('aria-label', lect ? 'Arrêter' : 'Écouter'); } };
@@ -229,7 +232,8 @@ export default {
       if (onglet === 'pia') { const P = idees.piano; if (m < P.de - 1 || m >= P.de - 1 + P.n) return -1; return (m - (P.de - 1)) * 8 + Math.floor(f * 8); }
       return -1;
     }
-    function tick() { if (!lect) return; if (enr && pos() >= enr.fin + 0.05) { finirEnr(); return; } dessiner(); majPos(); allumerMesure(); allumerPas(pasCourant()); raf = requestAnimationFrame(tick); }
+    function tick() { if (!lect) return; if (enr && pos() >= enr.fin + 0.05) { finirEnr(); return; }
+      if (enrVoix) { const p = pos(); if (enrVoix.der != null && (p < enrVoix.der - 0.05 || p > enrVoix.der + 0.5)) { finirVoix(); } else { enrVoix.der = p; const b = q('.ch-rec'); if (b) b.style.setProperty('--niv', String(Math.min(1, enrVoix.prise.niveau() * 3))); } } dessiner(); majPos(); allumerMesure(); allumerPas(pasCourant()); raf = requestAnimationFrame(tick); }
     const onStop = () => arreter(); addEventListener('diapason:stop', onStop);
 
     // ---------- Les mesures, à portée de doigt : une touche, et ça part de là ----------
@@ -354,7 +358,7 @@ export default {
     function rendre() {
       el.querySelectorAll('[data-onglet]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.onglet === onglet)));
       const box = q('.ch-corps'); if (!ch) { box.innerHTML = ''; return; }
-      if (onglet === 'com') rendreComs(); else if (onglet === 'bat') rendreBat(); else if (onglet === 'num') rendreNum(); else rendrePiano();
+      if (onglet === 'com') rendreComs(); else if (onglet === 'bat') rendreBat(); else if (onglet === 'num') rendreNum(); else if (onglet === 'voix') rendreVoix(); else rendrePiano();
       dessiner(); majPos();
     }
     function rendreComs() {
@@ -454,6 +458,66 @@ export default {
         <div class="ec-row"><button class="btn primary" data-c="num-seul">▶ Seulement le numérique</button><button class="btn" data-c="num-ens">▶ Les deux ensemble</button><button class="btn" data-c="midi">⬇ En MIDI (pour Frog)</button></div>
         <p class="muted small">Un toucher sur une mesure (en haut) fait partir la chanson de là. Ton idée de batterie (🥁) remplace la batterie numérique sur son passage ; ta ligne de piano (🎹) s’ajoute. Le MIDI s’ouvre dans un logiciel de musique, posé sous l’enregistrement : 4 pistes (basse, accords, mélodie, batterie).</p>` : `<p class="muted small">Ça prend quelques secondes. Rien ne touche à l’enregistrement.</p>`}`;
     }
+    // ---------- 🎙 Les voix : on chante par-dessus (la boucle ou la chanson), une couche après l'autre ----------
+    // Chaque prise garde son instant dans la chanson ; elle rejoue avec chaque passage qui la touche. Les miennes sont
+    // gardées sur l'appareil (et partagées dans l'espace) ; celles de l'autre arrivent de l'espace.
+    let enrVoix = null; const bufs = new Map();
+    const mesVoix = () => store.get('chantierVoix', {})[cle] || [];
+    const ecrireMesVoix = (l) => { const t = store.get('chantierVoix', {}); t[cle] = l; store.set('chantierVoix', t); };
+    const reglageV = () => store.get('chantierVoixMix', {});
+    const autresVoix = () => (espace.connected ? espace.entries.filter((e) => e.type === 'chantier' && e.data?.kind === 'voix' && e.data.cle === cle && e.author !== espace.me && e.audio).map((e) => ({ id: e.id, t: e.data.t, dur: e.data.dur, nom: e.data.nom, auteur: e.author, audio: e.audio, vol: 1, muet: false, decal: 0, ...(reglageV()[e.id] || {}) })) : []);
+    const voixListe = () => [...mesVoix().map((v) => ({ ...v, moi: true, auteur: espace.me || 'moi' })), ...autresVoix()];
+    async function chargerVoix() {
+      for (const v of voixListe()) {
+        if (bufs.has(v.id)) continue;
+        try {
+          const blob = v.moi ? await lirePrise(v.id) : await (await fetch(await audioURL(v.audio))).blob(); if (!blob) continue;
+          bufs.set(v.id, await c.decodeAudioData(await blob.arrayBuffer()));
+        } catch { /* illisible */ }
+      }
+      if (onglet === 'voix') rendre();
+    }
+    function poserVoix(t0, a, b) {
+      voixListe().forEach((v) => {
+        const buf = bufs.get(v.id); if (!buf || v.muet) return; const vt = v.t + (v.decal || 0); const d0 = Math.max(a, vt); const d1 = Math.min(b, vt + buf.duration); if (d1 - d0 < 0.02) return;
+        const s = c.createBufferSource(); s.buffer = buf; const g = c.createGain(); g.gain.value = v.vol ?? 1; s.connect(g).connect(lect.gv);
+        s.start(t0 + (d0 - a), d0 - vt, d1 - d0); lect.sources.push(s);
+      });
+    }
+    const songAt = (T, tl) => { let r = null; for (const [t0, a] of tl) if (t0 <= T + 1e-3) r = a + (T - t0); return r ?? (tl[0] ? tl[0][1] - (tl[0][0] - T) : 0); };
+    async function commencerVoix() {
+      let prise; try { prise = await demarrerPrise(); } catch { return; } // l'aide du micro s'affiche toute seule
+      if (!lect) { if (choix.size) { const plan = planBoucle(); jouer(plan[0].a, plan); lect.sel = true; } else jouer(curseur >= (ch?.buf.duration || 0) - 0.1 ? 0 : curseur); }
+      enrVoix = { prise, der: null, tl: lect.tl }; majRec();
+    }
+    function finirVoix() {
+      if (!enrVoix) return; const { prise, tl } = enrVoix; enrVoix = null; majRec();
+      const res = prise.stop(); if (!res || res.buf.duration < 0.4) { toast('Prise trop courte : chante un peu plus longtemps.'); return; }
+      const t = Math.max(0, songAt(res.debut, tl)); const l = mesVoix(); const id = `p${Date.now().toString(36)}`;
+      const v = { id, t: Math.round(t * 1000) / 1000, dur: Math.round(res.buf.duration * 100) / 100, nom: `Voix ${l.length + 1}`, vol: 1, muet: false, decal: 0 };
+      bufs.set(id, res.buf); ecrireMesVoix([...l, v]); const blob = enWav(res.buf); garderPrise(id, blob);
+      const m0 = mesureDe(t) + 1; const m1 = mesureDe(t + res.buf.duration - 0.05) + 1;
+      toast(`🎙 ${v.nom} gardée (mesure${m1 > m0 ? `s ${m0}–${m1}` : ` ${m0}`}). Elle rejoue avec la chanson${choix.size ? ' : enregistre une autre couche au prochain tour!' : '.'}`);
+      if (espace.connected) uploadAudio(blob).then((audio2) => saveEntry({ id: `voix-${id}`, type: 'chantier', title: `🎙 ${ch.nom} · ${v.nom}`, audio: audio2, data: { kind: 'voix', cle, t: v.t, dur: v.dur, nom: v.nom } })).catch(() => {});
+      if (onglet === 'voix') rendre(); dessiner();
+    }
+    function majRec() { el.querySelectorAll('[data-c=rec]').forEach((b) => { b.classList.toggle('rec', !!enrVoix); if (b.classList.contains('ch-gros-rec')) b.textContent = enrVoix ? '■ Arrêter la prise' : '● Enregistrer une voix'; else { b.textContent = enrVoix ? '■' : '●'; b.setAttribute('aria-label', enrVoix ? 'Arrêter la prise' : 'Enregistrer une voix par-dessus'); } }); }
+    function setV(v, patch) { if (v.moi) ecrireMesVoix(mesVoix().map((x) => (x.id === v.id ? { ...x, ...patch } : x))); else { const r = reglageV(); r[v.id] = { ...(r[v.id] || {}), ...patch }; store.set('chantierVoixMix', r); } }
+    function rendreVoix() {
+      const L = voixListe(); const mes = (v) => { const a = mesureDe(v.t) + 1; const b = mesureDe(v.t + (v.dur || 1) - 0.05) + 1; return b > a ? `m. ${a}–${b}` : `m. ${a}`; };
+      q('.ch-corps').innerHTML = `
+        <div class="ch-voix-haut"><button class="btn primary ch-gros-rec ${enrVoix ? 'rec' : ''}" data-c="rec">${enrVoix ? '■ Arrêter la prise' : '● Enregistrer une voix'}</button>
+          <p class="muted small">Ça part tout de suite : ta boucle de mesures si tu en as une (🔁 en haut), sinon la chanson d’ici. Chante, puis ■. <b>En boucle, la prise s’arrête toute seule au tour suivant</b> : réappuie pour empiler une autre couche (harmonie, chœur, beatbox, claps). 🎧 Prends des écouteurs, sinon le micro reprend la musique.</p></div>
+        <ol class="ch-voix">${L.length ? L.map((v) => `<li class="ch-v ${v.muet ? 'muet' : ''} ${v.moi ? '' : 'autre'}">
+          <button class="ch-v-t" data-t="${v.t}" aria-label="Écouter à partir de cette voix">▶ ${mes(v)}</button>
+          <div class="ch-v-c"><b>${esc(v.nom)}</b> <small>${esc(v.auteur || '')} · ${(v.dur || 0).toFixed(1).replace('.', ',')} s${bufs.has(v.id) ? '' : ' · je la charge…'}</small>
+            <label class="ch-v-vol"><span aria-hidden="true">🔉</span><input type="range" min="0" max="1.5" step="0.05" value="${v.vol ?? 1}" data-vvol="${esc(v.id)}" aria-label="Volume de ${esc(v.nom)}"></label></div>
+          <button class="ch-v-b" data-vmuet="${esc(v.id)}" aria-label="${v.muet ? 'Rallumer' : 'Couper'} ${esc(v.nom)}">${v.muet ? '🔇' : '🔊'}</button>
+          <span class="ch-v-dec"><button class="ch-v-b" data-vdec="${esc(v.id)}" data-d="-0.02" aria-label="Un peu plus tôt">⏪</button><small>${Math.round((v.decal || 0) * 1000)} ms</small><button class="ch-v-b" data-vdec="${esc(v.id)}" data-d="0.02" aria-label="Un peu plus tard">⏩</button></span>
+          ${v.moi ? `<button class="ch-v-b" data-vdl="${esc(v.id)}" aria-label="Télécharger ${esc(v.nom)}">⬇</button><button class="ch-v-b" data-vx="${esc(v.id)}" aria-label="Effacer ${esc(v.nom)}">✕</button>` : ''}</li>`).join('') : '<li class="muted">Pas encore de voix sur cette chanson. Mets quelques mesures en boucle, puis ● : c’est parti.</li>'}</ol>
+        <p class="muted small">⏪ ⏩ : si une voix arrive un poil trop tôt ou trop tard, décale-la de 20 ms à la fois. Les voix de l’autre arrivent ici toutes seules.</p>`;
+    }
+
     // ---------- Jouer sa ligne en direct (clavier MIDI ou touches à l'écran), puis la poser sur la grille ----------
     function noteOn(m) { if (!enr || !lect) return; enr.ouvertes.set(m, pos()); }
     function noteOff(m) {
@@ -524,6 +588,10 @@ export default {
       const ms = e.target.closest('[data-mes]'); if (ms && ch) { allerMesure(+ms.dataset.mes); return; }
       const mx = e.target.closest('[data-mix]');
       if (mx) { const k = mx.dataset.mix; mix[k] = !mix[k]; store.set('chantierMix', mix); if (k === 'orig' && lect) lect.g.gain.setTargetAtTime(mix.orig ? vol : 0, c.currentTime, 0.03); else if (lect) rebaser(); rendre(); return; }
+      const vm = e.target.closest('[data-vmuet]'); if (vm) { const v = voixListe().find((x) => x.id === vm.dataset.vmuet); if (v) { setV(v, { muet: !v.muet }); rendre(); } return; }
+      const vd = e.target.closest('[data-vdec]'); if (vd) { const v = voixListe().find((x) => x.id === vd.dataset.vdec); if (v) { setV(v, { decal: Math.round(((v.decal || 0) + +vd.dataset.d) * 1000) / 1000 }); rendre(); } return; }
+      const vx = e.target.closest('[data-vx]'); if (vx) { if (!confirm('Effacer cette voix?')) return; const id = vx.dataset.vx; ecrireMesVoix(mesVoix().filter((x) => x.id !== id)); bufs.delete(id); effacerPrise(id); if (espace.connected) deleteEntry(`voix-${id}`).catch(() => {}); rendre(); return; }
+      const vdl = e.target.closest('[data-vdl]'); if (vdl) { const v = voixListe().find((x) => x.id === vdl.dataset.vdl); const buf = bufs.get(vdl.dataset.vdl); if (v && buf) { const l = document.createElement('a'); l.href = URL.createObjectURL(enWav(buf)); l.download = `${ch.nom} - ${v.nom}.wav`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(l); l.click(); l.remove(); } return; }
       const lg = e.target.closest('[data-long]'); if (lg) { idees.batterie.long = +lg.dataset.long; garderIdees(); rendre(); return; }
       const mo = e.target.closest('[data-motif]');
       if (mo) { const B = idees.batterie; const p = MOTIFS[mo.dataset.motif].f(); FUTS.forEach(([f]) => { B.pas[f] = vide16(2); (p[f] || []).forEach((s) => { B.pas[f][s] = 1; B.pas[f][s + 16] = 1; }); }); garderIdees(); rendre(); return; }
@@ -558,6 +626,7 @@ export default {
       if (a === 'num-ens') { mix.orig = true; store.set('chantierMix', mix); rendre(); jouer(tMes(mesureDe(pos()))); }
       if (a === 'midi') { const f = midiNumerique(); if (!f) return; store.set('evasionMidi', true); const l = document.createElement('a'); l.href = URL.createObjectURL(f); l.download = `${ch.nom} (numérique).mid`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(l); l.click(); l.remove(); }
       if (a === 'enr') { if (enr) finirEnr(); else commencerEnr(); return; }
+      if (a === 'rec') { if (enrVoix) finirVoix(); else commencerVoix(); return; }
       if (a === 'enr-annuler') { if (avantEnr) { idees.piano.notes = avantEnr; avantEnr = null; garderIdees(); rendre(); } return; }
       if (a === 'bat-ici') { const m = mesureDe(pos()) + 1; const B = idees.batterie; const L = B.a - B.de; B.de = m; B.a = Math.min(nbMes(), m + Math.max(B.long, L)); garderIdees(); rendre(); }
       if (a === 'pia-ici') { idees.piano.de = mesureDe(pos()) + 1; garderIdees(); rendre(); }
@@ -566,6 +635,7 @@ export default {
     });
     el.addEventListener('input', (e) => {
       const a = e.target.dataset.c;
+      if (e.target.dataset.vvol) { const v = voixListe().find((x) => x.id === e.target.dataset.vvol); if (v) setV(v, { vol: +e.target.value }); return; }
       if (a === 'vol') { vol = +e.target.value; store.set('chantierVolume', vol); if (lect) lect.g.gain.setTargetAtTime(mix.orig ? vol : 0, c.currentTime, 0.03); }
       if (a === 'texte' && composer) composer.texte = e.target.value;
     });
@@ -582,9 +652,9 @@ export default {
       if (a === 'melinst') { mix.melInst = e.target.value; store.set('chantierMix', mix); prechargerSons([mix.melInst]); }
       if (a === 'detail') { detail = +e.target.value; store.set('chantierDetail', detail); refaire(); rendre(); }
     });
-    const offEsp = onEspace((type) => { if (type === 'entries' && ch && !composer) { if (onglet === 'com') rendreComs(); dessiner(); } if (type === 'entries' && !ch) majSources(); });
+    const offEsp = onEspace((type) => { if (type === 'entries' && ch && !composer) { if (onglet === 'com') rendreComs(); dessiner(); chargerVoix(); } if (type === 'entries' && !ch) majSources(); });
     const auResize = () => { pics = null; dessiner(); }; addEventListener('resize', auResize);
     majSources(); charger(); rendre(); document.body.classList.add('ch-ouvert'); // un seul bouton d'arrêt : celui du lecteur
-    return () => { offNotes?.(); enr = null; document.body.classList.remove('ch-ouvert'); arreter(false); clearTimeout(envoi); removeEventListener('diapason:stop', onStop); removeEventListener('resize', auResize); offEsp?.(); composer?.rec?.stop(); };
+    return () => { if (enrVoix) { try { enrVoix.prise.stop(); } catch { /* déjà */ } enrVoix = null; } fermerMicroPrise(); offNotes?.(); enr = null; document.body.classList.remove('ch-ouvert'); arreter(false); clearTimeout(envoi); removeEventListener('diapason:stop', onStop); removeEventListener('resize', auResize); offEsp?.(); composer?.rec?.stop(); };
   },
 };

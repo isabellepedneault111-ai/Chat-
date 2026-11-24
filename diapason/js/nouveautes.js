@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.28', quand: '2026-11-24', titre: 'Des voix par-dessus', items: [
+    ['🎙 Le chantier devient une loop station', ['Mets des mesures en boucle (🔁), puis ● (dans la barre du bas ou l’onglet 🎙 Voix) : tu chantes par-dessus, et la prise s’arrête toute seule au tour suivant. Réappuie pour empiler une autre couche : une harmonie, un chœur, du beatbox, des claps. Chaque voix rejoue pile au bon moment, avec son volume, 🔇, ⏪ ⏩ (20 ms) si elle arrive un poil tôt ou tard, ⬇ en WAV. Sans boucle, ● enregistre sur la chanson, d’ici jusqu’à ■.']],
+    ['Les voix de l’autre', ['Tes voix partent dans votre espace ; celles de Frog arrivent dans ta liste et jouent avec les tiennes (en pointillé).']],
+    ['🎧 Réécoute-toi (Mots sur la grille)', ['Avec 🎤 allumé, l’app t’enregistre pendant que tu chantes. Au Stop, « 🎧 Réécoute » apparaît en bas : la même chose rejoue, la musique ET ta voix, pile ensemble.']],
+    ['🎙 La classe enregistrée (Le cercle)', ['« 🎙 Enregistrer la classe » pendant une activité, puis « ▶ Réécouter » tout de suite (et ⬇ pour le garder). Le moment de fierté.']],
+  ] },
   { v: '1.27', quand: '2026-11-24', titre: 'La boucle, mesure par mesure', items: [
     ['🔁 Touche les mesures à répéter', ['Le chantier : « 🔁 Répéter des mesures », puis touche les mesures une après l’autre. Elles tournent en boucle dans l’ordre, même séparées (3, 4 puis 9), collées sans trou. Pendant que ça joue, touche une mesure pour l’ajouter ou l’enlever : la boucle change au passage suivant, sans couper. « ✕ Arrêter la boucle » et la chanson continue.']],
     ['⏺ Jouer ma ligne sans micro', ['Jouer sa ligne de piano (clavier MIDI ou touches à l’écran) ne demande plus le micro : avant, sans micro, une fenêtre d’aide bloquait l’enregistrement.']],

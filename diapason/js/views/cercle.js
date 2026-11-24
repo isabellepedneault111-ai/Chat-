@@ -6,6 +6,7 @@
 import { audio, out, drums, click } from '../audio.js';
 import { store } from '../ui.js';
 import { esc } from './carnet.js';
+import { demarrerPrise, enWav, fermerMicroPrise } from '../prise.js';
 
 // Les six sons du corps : un geste, un mot à dire, une couleur, et le son que l'app joue comme modèle.
 const SONS = {
@@ -40,6 +41,7 @@ export default {
     let act = store.get('cercleActivite', 'coeur'); let tempo = store.get('cercleTempo', 'lent');
     const reglages = { mots: GROUPES.map((g) => store.get(`cercleMot-${g.id}`, g.mot)), noms: store.get('cercleNoms', ''), niveau: store.get('cercleNiveau', 'facile') };
     let moteur = null; let file = []; let raf = 0; let gel = false;
+    let prise = null; let enreg = null; let ecoute = null; // 🎙 la classe, enregistrée puis réécoutée
     const bpm = () => TEMPOS.find((x) => x[0] === tempo)[2];
 
     // ---------- Les sons ----------
@@ -67,6 +69,11 @@ export default {
     function planifier() { if (!moteur) return; const d = 60 / bpm() / 2; while (moteur.prochain < c.currentTime + 0.12) { moteur.fn(moteur.pas, moteur.prochain, d); moteur.prochain += d; moteur.pas++; } }
     function demarrer(fn) { arreter(); try { c.resume(); } catch { /* iOS */ } gel = false; moteur = { prochain: c.currentTime + 0.2, pas: 0, fn, timer: setInterval(planifier, 25) }; planifier(); cancelAnimationFrame(raf); raf = requestAnimationFrame(boucle); majJouer(); }
     function arreter() { if (moteur) clearInterval(moteur.timer); moteur = null; file = []; majJouer(); }
+    function majBas() {
+      const r = el.querySelector('[data-c=rec]'); if (!r) return; r.classList.toggle('rec', !!prise); r.textContent = prise ? '■ Fin de l’enregistrement' : '🎙 Enregistrer la classe';
+      el.querySelectorAll('.ce-ecoute').forEach((x) => x.remove());
+      if (enreg) r.insertAdjacentHTML('afterend', `<button class="ce-ecoute" data-c="ecoute">${ecoute ? '■ Stop' : '▶ Réécouter'}</button><button class="ce-ecoute" data-c="dl" aria-label="Télécharger l’enregistrement">⬇</button>`);
+    }
     const majJouer = () => { const b = el.querySelector('[data-c=jouer]'); if (b) { b.textContent = moteur ? '■ Arrêter' : '▶ C’est parti'; b.classList.toggle('stop', !!moteur); } };
     const scene = () => el.querySelector('.ce-scene');
     const carte = (k, grand = false) => `<div class="ce-son ${grand ? 'grand' : ''}" style="--c:${SONS[k].c}"><span class="ce-ico">${SONS[k].ico}</span><b>${SONS[k].mot}</b>${grand ? `<small>${esc(SONS[k].geste)}</small>` : ''}</div>`;
@@ -161,7 +168,8 @@ export default {
             <span class="ce-tempos">${TEMPOS.map(([k, l]) => `<button class="${k === tempo ? 'on' : ''}" data-tempo="${k}">${l}</button>`).join('')}</span>
             <button class="ce-plein" data-c="plein" aria-label="Plein écran">⛶</button></div>
           <div class="ce-corps">${A[act].rendre.call(A[act])}</div>
-          <div class="ce-bas"><button class="ce-go" data-c="jouer">▶ C’est parti</button><button class="ce-freeze" data-c="freeze">✋ FREEZE</button></div>
+          <div class="ce-bas"><button class="ce-go" data-c="jouer">▶ C’est parti</button><button class="ce-freeze" data-c="freeze">✋ FREEZE</button>
+            <button class="ce-rec ${prise ? 'rec' : ''}" data-c="rec">${prise ? '■ Fin de l’enregistrement' : '🎙 Enregistrer la classe'}</button>${enreg ? `<button class="ce-ecoute" data-c="ecoute">${ecoute ? '■ Stop' : '▶ Réécouter'}</button><button class="ce-ecoute" data-c="dl" aria-label="Télécharger l’enregistrement">⬇</button>` : ''}</div>
         </section>
         ${act === 'mots' ? `<details class="panel ce-mots-edit"><summary>✏️ Changer les mots des groupes</summary>${GROUPES.map((g, gi) => `<label style="--c:${g.c}"><b>${g.nom}</b> <input class="input" data-mot="${gi}" value="${esc(reglages.mots[gi])}"> <small>${g.pos.length} syllabes</small></label>`).join('')}<p class="muted small">Un mot par battement allumé : le nom de l’école, un plat, une équipe. Le rythme ne change pas.</p></details>` : ''}
         <div class="ce-gel" hidden><b>✋</b><span>FREEZE</span><small>Touche pour reprendre</small></div>`;
@@ -175,6 +183,15 @@ export default {
       const c2 = e.target.closest('[data-c]')?.dataset.c; if (!c2) return;
       if (c2 === 'jouer') { if (moteur) arreter(); else { const ac = A[act]; demarrer((p, t, d) => ac.fn.call(ac, p, t, d)); } }
       if (c2 === 'freeze') { arreter(); el.querySelector('.ce-gel').hidden = false; }
+      if (c2 === 'rec') {
+        if (prise) { const r = prise.stop(); prise = null; if (r && r.buf.duration > 1) enreg = r.buf; majBas(); return; }
+        demarrerPrise().then((pr) => { prise = pr; majBas(); }).catch(() => {}); // l'aide du micro s'affiche toute seule
+      }
+      if (c2 === 'ecoute' && enreg) {
+        if (ecoute) { try { ecoute.stop(); } catch { /* déjà */ } ecoute = null; majBas(); return; }
+        arreter(); try { c.resume(); } catch { /* iOS */ } const s = c.createBufferSource(); s.buffer = enreg; const g = c.createGain(); g.gain.value = 1.6; s.connect(g).connect(out()); s.start(); ecoute = s; s.onended = () => { if (ecoute === s) { ecoute = null; majBas(); } }; majBas();
+      }
+      if (c2 === 'dl' && enreg) { const l = document.createElement('a'); l.href = URL.createObjectURL(enWav(enreg)); l.download = 'Notre cercle.wav'; document.body.append(l); l.click(); l.remove(); }
       if (c2 === 'plein') { const s = el.querySelector('.ce-scene'); if (document.fullscreenElement) document.exitFullscreen?.(); else (s.requestFullscreen || s.webkitRequestFullscreen)?.call(s); }
     });
     el.addEventListener('input', (e) => {
@@ -185,6 +202,6 @@ export default {
     const clavier = (e) => { if (e.target.closest?.('input, textarea')) return; if (e.key === ' ') { e.preventDefault(); el.querySelector('[data-c=jouer]')?.click(); } if (e.key === 'f' || e.key === 'F') el.querySelector('[data-c=freeze]')?.click(); };
     addEventListener('keydown', clavier);
     rendre(); document.body.classList.add('ce-ouvert');
-    return () => { document.body.classList.remove('ce-ouvert'); arreter(); cancelAnimationFrame(raf); removeEventListener('diapason:stop', onStop); removeEventListener('keydown', clavier); };
+    return () => { document.body.classList.remove('ce-ouvert'); if (prise) { try { prise.stop(); } catch { /* déjà */ } } try { ecoute?.stop(); } catch { /* déjà */ } fermerMicroPrise(); arreter(); cancelAnimationFrame(raf); removeEventListener('diapason:stop', onStop); removeEventListener('keydown', clavier); };
   },
 };
