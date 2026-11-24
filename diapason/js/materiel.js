@@ -72,7 +72,7 @@ export function ignorer(k) { const r = reg(); r[k] = { ...(r[k] || {}), nom: r[k
 // La liste des appareils ignorés (pour pouvoir les remettre).
 export const ignores = () => Object.entries(reg()).filter(([, x]) => x.masque).map(([k, x]) => ({ k, nom: x.nom || k }));
 // Remet un appareil ignoré dans le studio.
-export function retablir(k) { const r = reg(); if (r[k]) { delete r[k].masque; r[k].actif = false; } ecrire(r); signaler(); }
+export function retablir(k) { const r = reg(); if (r[k]) { delete r[k].masque; r[k].actif = true; } ecrire(r); signaler(); } // remis, et tout de suite en marche
 
 // La liste complète : ce que le navigateur voit + ce que Frog a ajouté à la main.
 export function appareils() {
@@ -117,10 +117,25 @@ export async function detecter({ demander = false } = {}) {
       midiAcces.onstatechange = lire; lire();
     } catch { /* MIDI refusé */ }
   }
-  signaler();
+  signaler(); reproposer();
   return appareils();
 }
 navigator.mediaDevices?.addEventListener?.('devicechange', () => detecter());
+
+// Un appareil écarté un jour (« je n'en veux plus ») qui est de nouveau là : on ne le reprend pas en cachette, mais on
+// le repropose d'un geste, une fois par visite. Avant, il restait écarté pour toujours, caché dans Mon studio.
+const reproposes = new Set();
+function reproposer() {
+  if (typeof document === 'undefined') return; const r = reg();
+  const la = [...detecte.audio.keys(), ...detecte.midi.keys()].filter((k) => r[k]?.masque && !reproposes.has(k) && !VIRTUEL.test(r[k].nom || k));
+  if (!la.length) return; la.forEach((k) => reproposes.add(k));
+  document.querySelector('.mat-retour')?.remove();
+  const b = document.createElement('div'); b.className = 'mat-retour'; b.setAttribute('role', 'status');
+  const noms = la.map((k) => `« ${r[k].nom || k} »`).join(', ');
+  b.innerHTML = `<span>🎤 ${noms} ${la.length > 1 ? 'sont là' : 'est là'}. Tu l’avais écarté du studio.</span><button class="btn small primary" data-r="oui">Le reprendre</button><button class="mat-x" data-r="non" aria-label="Non merci">✕</button>`;
+  b.addEventListener('click', (e) => { const x = e.target.closest('[data-r]')?.dataset.r; if (!x) return; if (x === 'oui') la.forEach(retablir); b.remove(); });
+  document.body.append(b); setTimeout(() => b.remove(), 20000);
+}
 
 // Reçoit chaque message d’un clavier MIDI actif : allume l’appareil, transmet les notes et les contrôleurs aux pages, fait sonner le piano si demandé, et le garde dans le filet.
 function surMidi(e) {
@@ -227,3 +242,7 @@ export function fichierMidi(evts, bpm = 60) {
   const l = piste.length;
   return new Blob([new Uint8Array([0x4d, 0x54, 0x68, 0x64, 0, 0, 0, 6, 0, 0, 0, 1, 0x03, 0xc0, 0x4d, 0x54, 0x72, 0x6b, (l >>> 24) & 255, (l >>> 16) & 255, (l >>> 8) & 255, l & 255, ...piste])], { type: 'audio/midi' });
 }
+
+// Au démarrage, un coup d'œil sans rien demander (le navigateur ne montre les noms que si le micro a déjà été permis) :
+// assez pour reproposer un micro écarté qui est revenu.
+if (typeof window !== 'undefined') setTimeout(() => { detecter().catch(() => {}); }, 4000);

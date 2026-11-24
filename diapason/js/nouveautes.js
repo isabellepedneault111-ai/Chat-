@@ -60,6 +60,14 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.19', quand: '2026-11-24', titre: 'Répéter, répondre, jouer en direct', items: [
+    ['🔁 Répéter les mesures de ton choix', ['Le chantier : « 🔁 Répéter des mesures », puis touche la première et la dernière mesure. La chanson tourne en boucle sur ce passage, sans trou, avec tes idées par-dessus. Une mesure hors de la boucle (ou « ✕ Arrêter la boucle ») la défait.']],
+    ['Plus besoin de remonter (Mots sur la grille)', ['Une petite barre reste en bas de l’écran : ▶ Chanter, ↻ Écrire, 📄 Texte et ⚙ (les réglages). Elle disparaît pendant que ça chante.']],
+    ['↩ Répondre à un commentaire', ['Chaque commentaire du chantier peut recevoir des réponses, écrites ou au micro : un vrai fil, vocal sur vocal, posé au même moment de la chanson.']],
+    ['⏺ Jouer sa ligne de piano en direct', ['Dans 🎹 Piano : « ⏺ Jouer ma ligne ». La chanson part une mesure avant le passage ; joue au clavier MIDI (Frog) ou sur les touches à l’écran. Tes notes se posent sur la grille, à la croche près, et tu corriges ensuite (↶ remet la ligne d’avant). Le passage peut maintenant faire 8 ou 16 mesures.']],
+    ['👤 Les idées de l’autre', ['La ligne de piano de Frog apparaît en hachuré sur ta grille, et sa batterie et son piano s’entendent avec les tiens (« 👤 J’entends aussi les idées de Frog »). Pendant la lecture, la case de batterie et la colonne de piano qui jouent s’allument.']],
+    ['🎤 Le micro écarté revient', ['Un micro (ou un clavier) que tu avais écarté du studio et qui est de nouveau là t’est reproposé en haut de l’écran : « Le reprendre », et il remarche tout de suite. Avant, il restait caché pour toujours dans Mon studio.']],
+  ] },
   { v: '1.18', quand: '2026-11-24', titre: 'La chanson en numérique', items: [
     ['Une touche, et ça part', ['Dans Le chantier, sous la frise : une rangée de mesures (1, 2, 3… avec leur accord). Touche une mesure : la chanson part de là, tout de suite. Toucher la frise fait pareil. La mesure qui joue s’allume et la rangée la suit.']],
     ['🎛 Refaire la chanson en numérique', ['Nouvel onglet « 🎛 Numérique » : une copie de la chanson refaite avec ce que L’oreille a entendu, qui suit ses mesures même quand le tempo bouge. La batterie reprend les coups repérés dans l’enregistrement (grosse caisse, caisse claire, charleston ; « plus simple ↔ plus fidèle »), la basse suit la grosse caisse sur la fondamentale, les accords passent au piano électrique, et la mélodie de ta voix (si L’oreille l’a repérée) se rejoue à la flûte, à la clarinette, au piano ou aux cordes.']],

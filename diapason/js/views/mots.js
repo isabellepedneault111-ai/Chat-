@@ -207,7 +207,8 @@ export default {
       <section class="panel mo-fin">
         <div class="ec-row"><button class="btn" data-m="placer" title="Écrire → Placer mes paroles : chaque ligne essayée sur 7 rythmes (sur le temps, contretemps, syncopé…), notée, et chantée sur une pièce">→ Essayer 7 rythmes par ligne (Placer)</button><button class="btn" data-m="copier">Copier le texte</button>${espace.connected ? '<button class="btn" data-m="journal">Dans le journal</button>' : ''}</div>
         <p class="muted small">Comment c’est fait : pas d’intelligence artificielle. Des tournures de phrases, des banques de mots par thème, tes mots-clés et leurs synonymes (le dictionnaire de l’app). Pour chaque ligne, FLIP essaie quelques centaines de phrases et garde celle dont les accents tombent le mieux sur les temps forts (le calcul de « Placer ») et qui rime comme demandé. Le genre des mots-clés est deviné : relis les « le / la ».</p>
-      </section>`;
+      </section>
+      <nav class="mo-dock" aria-label="Toujours à portée : chanter, écrire, réglages"><button class="btn primary" data-m="chanter" data-lbl="▶ Chanter">▶ Chanter</button><button class="btn" data-m="generer" aria-label="Écrire les lignes">↻ Écrire</button><button class="btn" data-m="texte" aria-label="Le texte seul">📄 Texte</button><button class="btn" data-m="ouvrir-reg" aria-label="Thèmes, mots-clés et réglages">⚙</button></nav>`;
     const q = (s) => el.querySelector(s);
     if (!st.pos) st.pos = 'milieu';
     ['source', 'place', 'schema', 'pers', 'pos'].forEach((k) => { const x = q(`[data-m=${k}]`); if (x) x.value = st[k]; }); q('[data-m=n]').value = String(st.n);
@@ -439,7 +440,7 @@ export default {
       if (lecture) { lecture.stop = true; try { lecture.bus.gain.value = 0; lecture.bus.disconnect(); } catch { /* déjà coupé */ } lecture.src.forEach((s) => { try { s.stop(); } catch { /* déjà arrêtée */ } }); lecture = null; }
       el.querySelectorAll('.pl-tete').forEach((t) => { t.style.opacity = 0; });
       el.querySelectorAll('.mo-l.chante').forEach((x) => x.classList.remove('chante'));
-      el.querySelectorAll('[data-m=chanter]').forEach((b) => { b.textContent = '▶ Chanter sur la grille'; });
+      el.querySelectorAll('[data-m=chanter]').forEach((b) => { b.textContent = b.dataset.lbl || '▶ Chanter sur la grille'; });
       el.querySelectorAll('[data-m=une]').forEach((x) => { x.textContent = '▶'; }); el.querySelectorAll('[data-m=boucle]').forEach((x) => { x.textContent = '🔁'; });
       el.querySelectorAll('.pl-syl.dit').forEach((x) => x.classList.remove('dit'));
       const lb = q('.mo-lecteur'); if (lb) { lb.hidden = true; lb.innerHTML = ''; } cleBarre = ''; document.body.classList.remove('mo-lit');
@@ -559,6 +560,7 @@ export default {
       if (m === 'generer') { arreter(); await generer(); if (b.dataset.fermer) { const r = q('.mo-reg'); if (r) r.open = false; q('.mo-a-qui')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } return; }
       if (m === 'caler') { await caler(false); return; }
       if (m === 'texte') { ouvrirTexte(); return; }
+      if (m === 'ouvrir-reg') { const r = q('.mo-reg'); if (r) { r.open = true; r.scrollIntoView({ behavior: 'smooth', block: 'start' }); } return; }
       if (m === 'ranger') { rangerAilleurs(); return; }
       if (m === 'garder-ici') { avantRangement = false; if (parChanson[cle]) delete parChanson[cle].avant; sauver(); rendreRanger(); return; }
       if (m === 'autre') { arreter(); await generer(+b.dataset.i); return; }
