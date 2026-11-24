@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.20', quand: '2026-11-24', titre: 'Du punch, et ta voix en direct', items: [
+    ['Fini le beige', ['Un papier clair et net, une bande de couleurs en haut, des lueurs rouge, bleu et or, des cartes qui ont du relief, des titres soulignés d’un trait de couleur.']],
+    ['🎤 Ta voix en direct pendant le chant', ['Dans Mots sur la grille, pendant « ▶ Chanter », touche 🎤 dans la barre du bas (ou coche-le dans ⚙) : le micro dessine ta voix sur la mélodie proposée. Vert quand c’est juste, jaune un peu à côté, rouge loin ; à côté, « ✓ juste », « ↑ monte un peu » ou « ↓ descends un peu ». Une voix une octave plus bas compte comme juste. Avec des écouteurs, c’est plus précis.']],
+    ['La mélodie se voit vraiment', ['La grille de la barre de chant est plus grande et plus contrastée : la syllabe chantée s’allume, la tête de lecture brille.']],
+  ] },
   { v: '1.19', quand: '2026-11-24', titre: 'Répéter, répondre, jouer en direct', items: [
     ['🔁 Répéter les mesures de ton choix', ['Le chantier : « 🔁 Répéter des mesures », puis touche la première et la dernière mesure. La chanson tourne en boucle sur ce passage, sans trou, avec tes idées par-dessus. Une mesure hors de la boucle (ou « ✕ Arrêter la boucle ») la défait.']],
     ['Plus besoin de remonter (Mots sur la grille)', ['Une petite barre reste en bas de l’écran : ▶ Chanter, ↻ Écrire, 📄 Texte et ⚙ (les réglages). Elle disparaît pendant que ça chante.']],

@@ -1,7 +1,7 @@
 // Mots sur la grille (Ma voix) : un thème, des mots-clés, une grille d'accords (celle de L'oreille, celle de Jouer,
 // ou tapée à la main). FLIP assemble des lignes brouillon qui tombent sur les temps et riment, puis les chante
 // sur les accords : la voix-guide prend les notes de l'accord sur les temps forts.
-import { audio, out, drums } from '../audio.js';
+import { audio, out, drums, startMic, stopMic, onPitch } from '../audio.js';
 import { joue, prechargerSons, accord as accordSon, notePiano } from '../sampler.js';
 import { espace, profileOf, saveEntry, audioURL, onEspace } from '../espace.js';
 import { loadLexique, rimeOf } from '../lexique.js';
@@ -147,6 +147,10 @@ export default {
     chargerLignes();
     if (aCaler && lignes.length) aCaler = false; // cette chanson a déjà ses paroles : on ne touche à rien
     let graine = Date.now() % 100000; let lecture = null; let raf = 0;
+    // Ta voix en direct pendant le chant : la hauteur entendue au micro, dessinée sur la mélodie proposée.
+    let micLive = store.get('motsMicLive', false); let micOuvert = false; let trace = []; let echelle = null;
+    const offPitch = onPitch((r) => { if (micLive && lecture && r?.midi) { trace.push([r.t, r.midi]); if (trace.length > 4000) trace.splice(0, 1000); } });
+    async function ouvrirMic() { if (micOuvert) return true; micOuvert = await startMic(); if (!micOuvert) { micLive = false; store.set('motsMicLive', false); toast('Le micro est refusé : autorise-le dans les réglages du navigateur.'); } return micOuvert; }
     const voix = espace.connected ? profileOf(espace.me)?.voix || null : null;
     // Les paroles de chaque chanson voyagent avec l'espace (une entrée cachée par chanson et par personne) :
     // elles se retrouvent sur l'iPhone comme sur l'ordi. La version la plus récente gagne.
@@ -196,6 +200,7 @@ export default {
           <label class="field"><span>Lignes</span><select data-m="n"><option>4</option><option>8</option><option>12</option></select></label>
         </div>
         <div class="mo-sous" ${chanson ? '' : 'hidden'}><label class="mo-vraie"><input type="checkbox" data-m="vraie" checked> Sous les paroles : la vraie chanson${chanson ? ` (« ${esc(String(chanson.nom).slice(0, 40))} »)` : ''}</label><label class="mo-vraie"><input type="checkbox" data-m="piano" ${store.get('oreilleGrille', null)?.propose ? 'checked' : ''}> + les accords au piano</label></div>
+        <label class="mo-vraie mo-guide"><input type="checkbox" data-m="miclive" ${store.get('motsMicLive', false) ? 'checked' : ''}> 🎤 Ma voix en direct pendant le chant <small class="muted">(le micro dessine ta hauteur sur la mélodie : vert quand c’est juste ; des écouteurs aident)</small></label>
         <label class="mo-vraie mo-guide"><input type="checkbox" data-m="guide"> 🎤 Chœurs sur toutes les lignes <small class="muted">(des « ouuu » synthétiques chantent la note de chaque syllabe ; éteints d’office, ou ligne par ligne avec 🎤)</small></label>
 
       <div class="ec-row mo-reg-fin"><button class="btn primary" data-m="generer" data-fermer="1">↻ Écrire les lignes avec ces réglages</button><button class="btn" data-m="chanter">▶ Chanter sur la grille</button></div>
@@ -466,7 +471,8 @@ export default {
       const accs = F.acc.filter((a, n) => !n || nomAcc(a.c) !== nomAcc(F.acc[n - 1].c)).map((a) => `<i class="mo-roll-acc" style="left:${((a.t - F.debut) / D) * 100}%">${esc(nomAcc(a.c))}</i>`).join('');
       const temps = [...Array(8)].map((_, n) => `<i class="mo-roll-t ${n % 4 === 0 ? 'm' : ''}" style="left:${(n / 8) * 100}%"></i>`).join('');
       const voixVraie = vv.map((x) => `<i class="mo-roll-v" style="left:${Math.max(0, ((x.t - F.debut) / D) * 100)}%;width:${Math.max(1, (x.d / D) * 100)}%;top:${((hi - x.m) / span) * 78 + 6}%"></i>`).join('');
-      return `<div class="mo-roll" aria-hidden="true">${temps}${accs}${voixVraie}${barres}<i class="mo-roll-tete"></i></div>${vv.length ? '<p class="mo-roll-leg"><i></i> ta voix dans la chanson · <b></b> la mélodie proposée</p>' : ''}`;
+      echelle = { lo, hi, span };
+      return `<div class="mo-roll" aria-hidden="true">${temps}${accs}${voixVraie}${barres}${micLive ? '<canvas class="mo-roll-mic"></canvas>' : ''}<i class="mo-roll-tete"></i></div>${vv.length ? '<p class="mo-roll-leg"><i></i> ta voix dans la chanson · <b></b> la mélodie proposée</p>' : ''}`;
     }
     function majBarre(t, t0, t1, noire, frise, j, tIntro = t1) {
       const lb = q('.mo-lecteur'); if (!lb) return; lb.hidden = false; document.body.classList.add('mo-lit');
@@ -476,20 +482,44 @@ export default {
       let ks = -1; if (t >= t1) F.syl.forEach((sy) => { if (sy.t != null && sy.t <= t + 0.03) ks = sy.k; });
       const enIntro = t >= tIntro && t < t1; const compte = enIntro ? `Intro ${Math.floor((t - tIntro) / (4 * noire)) + 1}` : t < t1 ? Math.min(4, Math.floor((t - t0) / noire) + 1) : 0;
       const tete = lb.querySelector('.mo-roll-tete'); if (tete) { const x = (t - F.debut) / (F.fin - F.debut); tete.style.left = `${Math.max(0, Math.min(1, x)) * 100}%`; tete.style.opacity = x >= 0 && x <= 1 ? 1 : 0; }
-      const cle = `${j}|${ic}|${ks}|${compte}`; if (cle === cleBarre) return;
+      const cle = `${j}|${ic}|${ks}|${compte}|${micLive}`; if (cle === cleBarre) { dessinerVoix(lb, F, t); return; }
       // Nouvelle ligne : on la ramène au milieu de l'écran, au-dessus de la barre.
       if (cleBarre.split('|')[0] !== String(j)) el.querySelector(`.mo-l[data-i="${F.i}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
       cleBarre = cle;
       lb.innerHTML = `<div class="mo-lb-acc">${cur ? `<b>${esc(nomAcc(cur.c))}</b>${diagramme(cur.c.r, cur.c.q, { taille: 64 })}` : `<b class="mo-lb-compte">${compte || ''}</b>`}${suiv ? `<small>puis ${esc(nomAcc(suiv.c))}</small>` : ''}</div>
         <div class="mo-lb-mil"><p class="mo-lb-mots">${enIntro ? '<span class="dit">🎵 Musique seule… les paroles arrivent</span>' : lignes[F.i]?.pause ? '<span class="dit">🎵 Musique seule</span>' : motsAllumes(F, ks)}</p>${enIntro || lignes[F.i]?.pause ? '' : roulette(F, ks)}</div>
+        <button class="mo-lb-mic ${micLive ? 'on' : ''}" data-m="micdirect" aria-pressed="${micLive}" aria-label="${micLive ? 'Fermer le micro' : 'Voir ma voix en direct (micro)'}">🎤</button><span class="mo-mic-etat" aria-live="off"></span>
         <button class="mo-lb-stop" data-m="stop" aria-label="Arrêter">■</button>`;
+      dessinerVoix(lb, F, t);
       el.querySelectorAll('.pl-syl.dit').forEach((x) => x.classList.remove('dit'));
       const sp = el.querySelector(`.mo-l[data-i="${F.i}"] .pl-syl[data-k="${ks}"]`); if (sp) sp.classList.add('dit');
+    }
+    // La voix entendue : une trace sur la grille de la ligne (verte quand elle tombe sur la note proposée), et un mot.
+    // On la ramène à l'octave de la mélodie : une voix grave qui chante une octave plus bas est juste quand même.
+    function dessinerVoix(lb, F, t) {
+      const cv = lb.querySelector('.mo-roll-mic'); const etat = lb.querySelector('.mo-mic-etat'); if (!cv || !echelle || !micLive) { if (etat) etat.textContent = ''; return; }
+      const W = cv.clientWidth; const H = cv.clientHeight; const dpr = devicePixelRatio || 1; if (!W || !H) return;
+      if (cv.width !== Math.round(W * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+      const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, W, H);
+      const D = F.fin - F.debut; const { hi, span } = echelle; const Y = (m) => (((hi - m) / span) * 0.78 + 0.11) * H;
+      const cible = (tp) => F.syl.find((s) => s.t != null && tp >= s.t && tp < s.t + Math.max(0.15, s.d))?.note;
+      const plie = (m, c) => (c == null ? m : m + 12 * Math.round((c - m) / 12));
+      let der = null; let derEcart = null; x.lineWidth = 3; x.lineCap = 'round';
+      trace.forEach(([tp, m]) => {
+        if (tp < F.debut || tp > Math.min(t, F.fin)) return; const c = cible(tp); const mm = plie(m, c); const e = c == null ? null : mm - c;
+        const px = ((tp - F.debut) / D) * W; const py = Math.max(2, Math.min(H - 2, Y(mm)));
+        x.fillStyle = e == null ? '#9fd4ff' : Math.abs(e) < 0.5 ? '#5ee08a' : Math.abs(e) < 1.5 ? '#ffc24a' : '#ff6b4a';
+        x.beginPath(); x.arc(px, py, 2.6, 0, 2 * Math.PI); x.fill();
+        der = [tp, mm, px, py]; derEcart = e;
+      });
+      if (der && t - der[0] < 0.25) { x.strokeStyle = '#fff'; x.beginPath(); x.arc(der[2], der[3], 6, 0, 2 * Math.PI); x.stroke(); }
+      if (etat) etat.textContent = !der || t - der[0] > 0.4 ? '🎤 …' : derEcart == null ? `🎤 ${nomNote(Math.round(der[1]))}` : Math.abs(derEcart) < 0.5 ? `🎤 ${nomNote(Math.round(der[1]))} ✓ juste` : derEcart < 0 ? `🎤 ${nomNote(Math.round(der[1]))} ↑ monte un peu` : `🎤 ${nomNote(Math.round(der[1]))} ↓ descends un peu`;
     }
     // Chante les lignes demandées : une mesure de décompte, puis deux mesures par ligne, accords au piano, voix-guide.
     async function chanter(quelles, bouton, avecIntro = false) {
       arreter();
       const c = audio(); try { await c.resume(); } catch { /* iOS */ }
+      trace = []; if (micLive) await ouvrirMic();
       if (bouton) bouton.textContent = '…';
       await prechargerSons(['voix', 'piano']);
       const g = grille(); const noire = 60 / g.bpm; const dc = noire / 4; const mes = 4 * noire;
@@ -566,6 +596,7 @@ export default {
       if (m === 'autre') { arreter(); await generer(+b.dataset.i); return; }
       if (m === 'chanter') { if (b.textContent.startsWith('■')) { arreter(); return; } if (!lignes.length) await generer(); chanter(lignes.map((_, i) => i).filter((i) => lignes[i].txt || lignes[i].pause), b, true); return; }
       if (m === 'stop') { arreter(); return; }
+      if (m === 'micdirect') { micLive = !micLive; store.set('motsMicLive', micLive); if (micLive) { if (await ouvrirMic()) toast('🎤 Ta voix s’affiche sur la mélodie. Avec des écouteurs, c’est plus juste (le micro n’entend que toi).'); } else if (micOuvert) { stopMic(); micOuvert = false; } cleBarre = ''; return; }
       if (m === 'pause') { arreter(); lignes.splice(+b.dataset.i, 0, { txt: '', garde: true, pause: true }); sauver(); rendre(); toast('Deux mesures de musique seule ajoutées : la ligne et ses mots descendent d’une place.'); return; }
       if (m === 'choeur') { const L = lignes[+b.dataset.i]; L.choeur = !L.choeur; b.classList.toggle('on', L.choeur); b.setAttribute('aria-pressed', L.choeur); sauver(); toast(L.choeur ? 'Les chœurs chanteront cette ligne.' : 'Plus de chœurs sur cette ligne.'); return; }
       if (m === 'boucle') { if (b.textContent === '■') { arreter(); return; } const i = +b.dataset.i; await chanter(Array(24).fill(i), null); b.textContent = '■'; el.querySelector(`.mo-txt[data-i="${i}"]`)?.focus(); return; }
@@ -583,6 +614,7 @@ export default {
     el.addEventListener('change', (e) => {
       const k = e.target.dataset.m;
       if (e.target.dataset.m === 'guide') { store.set('motsChoeurs', e.target.checked); return; }
+      if (e.target.dataset.m === 'miclive') { micLive = e.target.checked; store.set('motsMicLive', micLive); if (micLive) ouvrirMic(); else if (micOuvert) { stopMic(); micOuvert = false; } return; }
       if (e.target.dataset.garde != null) { lignes[+e.target.dataset.garde].garde = e.target.checked; e.target.closest('.mo-l').classList.toggle('garde', e.target.checked); sauver(); return; }
       if (k === 'dest') { const i = q('[data-m=destnom]'); if (i) { i.hidden = e.target.value !== '__nom'; if (!i.hidden) i.focus(); } return; }
       if (!k || e.target.tagName !== 'SELECT') return;
@@ -610,6 +642,6 @@ export default {
     setTimeout(() => prechargerSons(['voix', 'piano']), 400);
     recevoir(); const offEsp = onEspace((t) => { if (t === 'entries') recevoir(); });
     majSous(); chargerPiece().then(async () => { rendre(); await remplirSiVide(); if (texteDemande) ouvrirTexte(); });
-    return () => { arreter(); offEsp?.(); for (const [k, t] of envois) { clearTimeout(t); const f = parChanson[k]; if (f && espace.connected) saveEntry({ id: idDe(k), type: 'motsgrille', title: k, data: { cle: k, ...f } }, { force: true }).catch(() => {}); } };
+    return () => { arreter(); offPitch?.(); if (micOuvert) stopMic(); offEsp?.(); for (const [k, t] of envois) { clearTimeout(t); const f = parChanson[k]; if (f && espace.connected) saveEntry({ id: idDe(k), type: 'motsgrille', title: k, data: { cle: k, ...f } }, { force: true }).catch(() => {}); } };
   },
 };
