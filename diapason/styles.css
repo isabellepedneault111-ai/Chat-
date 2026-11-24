@@ -5181,3 +5181,21 @@ button.ce-g { font: inherit; color: inherit; text-align: left; width: 100%; back
 .ce-chg { border: 3px solid var(--c) !important; }
 .ce-chg:not(.on) { opacity: .5; text-decoration: line-through; }
 .ce-chg.on { background: var(--c) !important; color: #14120f !important; }
+
+/* Les gestes dessinés (1.34) */
+.geste { display: block; width: 100%; height: 100%; }
+.ce-img { display: block; width: 64px; height: 64px; flex: 0 0 auto; }
+.ce-son .ce-img { width: 72px; height: 72px; background: #2a2620; border-radius: 14px; padding: 4px; }
+.ce-sons .ce-son .ce-img { width: 88px; height: 88px; }
+.ce-son.grand .ce-img { width: clamp(110px, 22vw, 200px); height: clamp(110px, 22vw, 200px); }
+.ce-g-t .ce-son .ce-img { width: 44px; height: 44px; padding: 2px; }
+.ce-rond .ce-img { width: 55%; height: 55%; }
+.ce-case .ce-img { width: 80%; height: auto; aspect-ratio: 1; max-width: 120px; }
+.ce-jam-ligne .ce-case .ce-img { width: 76%; max-width: 110px; }
+.ce-jam-r > b { display: flex; align-items: center; gap: 4px; } .ce-jam-r > b .ce-img { width: 36px; height: 36px; }
+.ce-chef-g .ce-g-t .ce-img { width: 58px; height: 58px; }
+.ce-chg { display: inline-flex; align-items: center; gap: 6px; } .ce-chg .ce-img { width: 30px; height: 30px; }
+@media (max-width: 640px) { .ce-img { width: 46px; height: 46px; } .ce-chef-g .ce-g-t .ce-img { width: 40px; height: 40px; } .ce-son .ce-img { width: 56px; height: 56px; } .ce-jam-r > b .ce-img { width: 24px; height: 24px; } .ce-jam-r { grid-template-columns: 4em repeat(8, minmax(0, 1fr)); } }
+.ce-jam-r { grid-template-columns: 7em repeat(8, minmax(0, 1fr)); }
+@media (max-width: 640px) { .ce-jam-r { grid-template-columns: 5.2em repeat(8, minmax(0, 1fr)); } .ce-jam-r > b { font-size: .8rem; } }
+.ce-sons .ce-son .ce-img, .ce-sons .ce-son.grand .ce-img { width: min(100%, 120px); height: auto; aspect-ratio: 1; }

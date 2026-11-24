@@ -7,6 +7,7 @@ import { audio, out, drums, click, bass, pluck } from '../audio.js';
 import { joue, prechargerSons } from '../sampler.js';
 import { store } from '../ui.js';
 import { esc } from './carnet.js';
+import { geste, gesteImage } from '../gestes.js';
 import { demarrerPrise, enWav, fermerMicroPrise } from '../prise.js';
 
 // Les six sons du corps : un geste, un mot à dire, une couleur, et le son que l'app joue comme modèle.
@@ -120,7 +121,7 @@ export default {
     }
     const majJouer = () => { const b = el.querySelector('[data-c=jouer]'); if (b) { b.textContent = moteur ? 'Arrêter' : 'Démarrer'; b.classList.toggle('stop', !!moteur); } };
     const scene = () => el.querySelector('.ce-scene');
-    const carte = (k, grand = false) => `<div class="ce-son ${grand ? 'grand' : ''}" style="--c:${SONS[k].c}"><b>${SONS[k].mot}</b>${grand ? `<small>${esc(SONS[k].geste)}</small>` : ''}</div>`;
+    const carte = (k, grand = false) => `<div class="ce-son ${grand ? 'grand' : ''}" style="--c:${SONS[k].c}"><span class="ce-img">${geste(k, SONS[k].c)}</span><b>${SONS[k].mot}</b>${grand ? `<small>${esc(SONS[k].geste)}</small>` : ''}</div>`;
 
     // Une voix modèle synthétique, douce, différente pour chaque groupe (AAA claire à gauche, OOO ronde à droite,
     // MMM fredonnée au centre) : on entend qui chante quoi.
@@ -149,7 +150,7 @@ export default {
           <div class="ce-ligne ce-jam-ligne">${[...Array(8)].map((_, i) => `<div class="ce-case ${i % 2 ? 'et' : ''}" data-i="${i}"></div>`).join('')}</div>
           <p class="ce-dis ce-jam-dit">L’app joue le groupe. Vous, vous êtes la batterie.</p>
           <details class="ce-jam-ed" open><summary>Le beat de la classe (le couplet) : touchez les cases pour l’inventer</summary>
-            ${['boum', 'tac', 'tic'].map((k) => `<div class="ce-jam-r" style="--c:${SONS[k].c}"><b>${SONS[k].mot}</b>${[...Array(8)].map((_, i) => `<button class="${g[k].includes(i) ? 'on' : ''} ${i % 2 ? 'et' : ''}" data-gr="${k}" data-gi="${i}" aria-label="${SONS[k].mot} sur ${i % 2 ? 'le et' : `le ${i / 2 + 1}`}">${i % 2 ? '·' : i / 2 + 1}</button>`).join('')}</div>`).join('')}
+            ${['boum', 'tac', 'tic'].map((k) => `<div class="ce-jam-r" style="--c:${SONS[k].c}"><b><span class="ce-img">${geste(k, SONS[k].c)}</span>${SONS[k].mot}</b>${[...Array(8)].map((_, i) => `<button class="${g[k].includes(i) ? 'on' : ''} ${i % 2 ? 'et' : ''}" data-gr="${k}" data-gi="${i}" aria-label="${SONS[k].mot} sur ${i % 2 ? 'le et' : `le ${i / 2 + 1}`}">${i % 2 ? '·' : i / 2 + 1}</button>`).join('')}</div>`).join('')}
           </details>
           <div class="ce-niveaux"><span class="ce-l">Ambiance</span>${Object.entries(AMBIANCES).map(([k, a]) => `<button class="${reglages.ambiance === k ? 'on' : ''}" data-amb="${k}">${a.nom}</button>`).join('')}</div>`;
         },
@@ -157,10 +158,10 @@ export default {
         partition(sec, m) {
           const id = PLAN_JAM[sec].id; const g = reglages.grille;
           if (id === 'intro') return Array(8).fill(null).map((_, i) => (i === 0 ? [['ÉCOUTEZ', '#6b6455']] : []));
-          if (id === 'couplet') return [...Array(8)].map((_, i) => ['boum', 'tac', 'tic'].filter((k) => g[k].includes(i)).map((k) => [SONS[k].mot, SONS[k].c]));
-          if (id === 'refrain') return REFRAIN.map((k) => (k ? [[SONS[k].mot, SONS[k].c]] : []));
+          if (id === 'couplet') return [...Array(8)].map((_, i) => ['boum', 'tac', 'tic'].filter((k) => g[k].includes(i)).map((k) => [SONS[k].mot, SONS[k].c, k]));
+          if (id === 'refrain') return REFRAIN.map((k) => (k ? [[SONS[k].mot, SONS[k].c, k]] : []));
           if (id === 'libre') return [...Array(8)].map((_, i) => (i === 0 ? [['1 !', '#f1cf4e']] : []));
-          if (id === 'fin') return m === 0 ? REFRAIN.map((k) => (k ? [[SONS[k].mot, SONS[k].c]] : [])) : [...Array(8)].map((_, i) => (i === 0 ? [['HÉ!', '#e5452c']] : []));
+          if (id === 'fin') return m === 0 ? REFRAIN.map((k) => (k ? [[SONS[k].mot, SONS[k].c, k]] : [])) : [...Array(8)].map((_, i) => (i === 0 ? [['HÉ!', '#e5452c']] : []));
           return [];
         },
         fn(pas, t, d) {
@@ -192,7 +193,7 @@ export default {
             const sc = scene(); if (!sc) return;
             if (p === 0) {
               const part = this.partition(sec, m);
-              sc.querySelectorAll('.ce-jam-ligne .ce-case').forEach((x, i) => { x.innerHTML = part[i].map(([mot, c]) => `<b style="--c:${c}">${mot}</b>`).join(''); });
+              sc.querySelectorAll('.ce-jam-ligne .ce-case').forEach((x, i) => { x.innerHTML = part[i].map(([mot, c, k]) => `${k && part[i].length === 1 ? `<span class="ce-img">${geste(k, c)}</span>` : ''}<b style="--c:${c}">${mot}</b>`).join(''); });
               sc.querySelectorAll('.ce-jam-plan span').forEach((x, i) => { x.classList.toggle('on', i === sec); x.classList.toggle('fait', i < sec); x.querySelector('i').style.width = i < sec ? '100%' : i === sec ? `${((m + 1) / S.mes) * 100}%` : '0%'; });
               const avant = m === S.mes - 1 && PLAN_JAM[sec + 1];
               sc.querySelector('.ce-jam-titre').textContent = S.id === 'fin' && m === 1 ? 'HÉ!' : S.nom;
@@ -206,7 +207,7 @@ export default {
         },
       },
       coeur: {
-        rendre: () => `<div class="ce-centre"><div class="ce-rond" style="--c:${SONS.boum.c}"><b>BOUM</b></div><p class="ce-compte"><span>1</span><span>2</span><span>3</span><span>4</span></p><p class="ce-dis">Main à plat sur le bureau, <b>avec le rond</b>.</p></div>`,
+        rendre: () => `<div class="ce-centre"><div class="ce-rond" style="--c:${SONS.boum.c}"><span class="ce-img">${geste('boum', '#fff7dc')}</span><b>BOUM</b></div><p class="ce-compte"><span>1</span><span>2</span><span>3</span><span>4</span></p><p class="ce-dis">Main à plat sur le bureau, <b>avec le rond</b>.</p></div>`,
         fn: (pas, t) => { if (pas % 2) return; const temps = (pas / 2) % 4; sonne('boum', t, temps === 0 ? 1 : 0.75); quand(t, () => { const r = scene()?.querySelector('.ce-rond'); if (r) { r.classList.remove('bat'); void r.offsetWidth; r.classList.add('bat'); } scene()?.querySelectorAll('.ce-compte span').forEach((s, i) => s.classList.toggle('on', i === temps)); }); },
       },
       echo: {
@@ -221,7 +222,7 @@ export default {
           <div class="ce-niveaux">${[['facile', 'Facile'], ['moyen', 'Moyen'], ['defi', 'Défi']].map(([k, l]) => `<button class="${reglages.niveau === k ? 'on' : ''}" data-niveau="${k}">${l}</button>`).join('')}</div>`,
         fn(pas, t) {
           const i = pas % 16; const phase = i < 8 ? 'ecoute' : 'vous'; const k = i % 8;
-          if (i === 0) { this.motif = this.nouveau(); const m = this.motif; quand(t, () => { const cs = scene()?.querySelectorAll('.ce-case'); cs?.forEach((x, n) => { x.innerHTML = m[n] ? `<b style="--c:${SONS[m[n]].c}">${SONS[m[n]].mot}</b>` : ''; }); }); }
+          if (i === 0) { this.motif = this.nouveau(); const m = this.motif; quand(t, () => { const cs = scene()?.querySelectorAll('.ce-case'); cs?.forEach((x, n) => { x.innerHTML = m[n] ? `<span class="ce-img">${geste(m[n], SONS[m[n]].c)}</span><b style="--c:${SONS[m[n]].c}">${SONS[m[n]].mot}</b>` : ''; }); }); }
           const s = this.motif?.[k];
           if (phase === 'ecoute' && s) sonne(s, t); if (phase === 'vous' && k % 2 === 0) sonne('tic', t, 0.35); // pendant « À vous », juste le tempo, tout doux
           quand(t, () => { const sc = scene(); if (!sc) return; const ph = sc.querySelector('.ce-phase'); if (k === 0) { ph.textContent = phase === 'ecoute' ? 'ÉCOUTEZ' : 'À VOUS!'; ph.classList.toggle('vous', phase === 'vous'); } sc.querySelectorAll('.ce-case').forEach((x, n) => x.classList.toggle('on', n === k)); });
@@ -247,7 +248,7 @@ export default {
         voulu: new Set([0]), actuel: new Set([0]), nuance: 'normal', nuanceActu: 'normal', fige: false, figeActu: false,
         rendre() {
           return `<div class="ce-compte ce-chef-compte">${[1, 2, 3, 4].map((n) => `<span>${n}</span>`).join('')}</div>
-          <div class="ce-groupes ce-chef">${GROUPES.map((g, gi) => { const syl = reglages.mots[gi].split(/[\s-]+/).filter(Boolean); return `<button class="ce-g ce-chef-g" data-chef-g="${gi}" style="--c:${g.c}"><span class="ce-g-t"><b>${g.nom}</b><span class="ce-chef-etat"></span></span><span class="ce-g-l">${[...Array(8)].map((_, p) => { const n = g.pos.indexOf(p); return `<span class="${n >= 0 ? 'joue' : ''}" data-p="${p}">${n >= 0 ? esc(syl[n % Math.max(1, syl.length)] || '•') : ''}</span>`; }).join('')}</span></button>`; }).join('')}</div>
+          <div class="ce-groupes ce-chef">${GROUPES.map((g, gi) => { const syl = reglages.mots[gi].split(/[\s-]+/).filter(Boolean); return `<button class="ce-g ce-chef-g" data-chef-g="${gi}" style="--c:${g.c}"><span class="ce-g-t"><span class="ce-img">${geste(g.son, g.c)}</span><b>${g.nom}</b><span class="ce-chef-etat"></span></span><span class="ce-g-l">${[...Array(8)].map((_, p) => { const n = g.pos.indexOf(p); return `<span class="${n >= 0 ? 'joue' : ''}" data-p="${p}">${n >= 0 ? esc(syl[n % Math.max(1, syl.length)] || '•') : ''}</span>`; }).join('')}</span></button>`; }).join('')}</div>
           <div class="ce-fige-msg" hidden><b>ON FIGE</b><span>Personne ne bouge. Les yeux sur le chef.</span></div>
           <div class="ce-chef-ctrl"><button data-chef="tous">Tout le monde</button><button data-chef="personne">Personne</button><button data-chef="doux">Doux</button><button data-chef="normal">Normal</button><button data-chef="fort">Fort</button><button class="ce-chef-fige" data-chef="fige">On fige</button></div>
           <p class="ce-dis ce-chef-dis">Le chef touche un groupe pour le faire <b>entrer</b> ou <b>sortir</b>. Touche encore pour défaire.</p>`;
@@ -302,9 +303,9 @@ export default {
         marques: [],
         pistes() {
           const g = reglages.chGr; const L = [];
-          if (g.rouge) L.push({ id: 'rouge', nom: 'ROUGE', mot: 'BOUM', geste: 'main à plat', c: GROUPES[0].c });
-          if (g.bleu) L.push({ id: 'bleu', nom: 'BLEU', mot: 'TAC', geste: 'taper des mains', c: GROUPES[1].c });
-          VOIX_C.forEach((v) => { if (g[v.id]) L.push({ id: v.id, nom: 'Groupe', mot: v.voy, c: v.c, voix: v }); });
+          if (g.rouge) L.push({ id: 'rouge', nom: 'ROUGE', mot: 'BOUM', geste: 'main à plat', c: GROUPES[0].c, im: 'boum' });
+          if (g.bleu) L.push({ id: 'bleu', nom: 'BLEU', mot: 'TAC', geste: 'taper des mains', c: GROUPES[1].c, im: 'tac' });
+          VOIX_C.forEach((v) => { if (g[v.id]) L.push({ id: v.id, nom: 'Groupe', mot: v.voy, c: v.c, voix: v, im: v.id }); });
           return L;
         },
         // Les voix entrent une à une : la 1re après 2 mesures d'intro, puis une de plus toutes les 8 mesures.
@@ -320,7 +321,7 @@ export default {
         },
         rendre: () => `<canvas class="ce-pistes" aria-label="Les pistes des groupes : les sons arrivent vers la ligne"></canvas>
           <p class="ce-dis ce-c-dis">Quand un bloc touche la ligne : <b>à vous!</b> Les voix tiennent la note tant que la barre passe.</p>
-          <div class="ce-niveaux"><span class="ce-l">Groupes</span>${[['rouge', 'ROUGE · BOUM', GROUPES[0].c], ['bleu', 'BLEU · TAC', GROUPES[1].c], ...VOIX_C.map((v) => [v.id, v.voy, v.c])].map(([k, l, c]) => `<button class="ce-chg ${reglages.chGr[k] ? 'on' : ''}" style="--c:${c}" data-chg="${k}" aria-pressed="${reglages.chGr[k]}">${l}</button>`).join('')}</div>
+          <div class="ce-niveaux"><span class="ce-l">Groupes</span>${[['rouge', 'ROUGE · BOUM', GROUPES[0].c, 'boum'], ['bleu', 'BLEU · TAC', GROUPES[1].c, 'tac'], ...VOIX_C.map((v) => [v.id, v.voy, v.c, v.id])].map(([k, l, c, im]) => `<button class="ce-chg ${reglages.chGr[k] ? 'on' : ''}" style="--c:${c}" data-chg="${k}" aria-pressed="${reglages.chGr[k]}"><span class="ce-img">${geste(im, '#fff7dc')}</span>${l}</button>`).join('')}</div>
           <div class="ce-niveaux"><span class="ce-l">Tonalité</span>${TONS.map(([n, m]) => `<button class="${reglages.tonique === m ? 'on' : ''}" data-ton="${m}">${n}</button>`).join('')}<button class="${reglages.modele ? 'on' : ''}" data-modele="1">${reglages.modele ? 'Modèle chanté : oui' : 'Modèle chanté : non'}</button></div>`,
         fn(pas, t, d) {
           if (pas === 0) this.marques = []; this.marques.push([pas, t, d]); if (this.marques.length > 48) this.marques.shift();
@@ -340,11 +341,11 @@ export default {
         },
         dessiner() {
           const cv = scene()?.querySelector('.ce-pistes'); if (!cv) return;
-          const L = this.pistes(); const dpr = window.devicePixelRatio || 1; const W = cv.clientWidth; const hP = W < 640 ? 64 : Math.min(110, Math.max(70, (innerHeight * 0.55) / Math.max(1, L.length)));
+          const L = this.pistes(); const dpr = window.devicePixelRatio || 1; const W = cv.clientWidth; const hP = W < 640 ? 72 : Math.min(130, Math.max(84, (innerHeight * 0.6) / Math.max(1, L.length)));
           const H = Math.max(1, L.length) * hP + 26; if (cv.height !== Math.round(H * dpr) || cv.width !== Math.round(W * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.height = `${H}px`; }
           const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, W, H);
           const police = getComputedStyle(document.documentElement).getPropertyValue('--display') || 'sans-serif';
-          const pos = this.pos(); const gauche = W < 640 ? 92 : Math.min(260, W * 0.2); const ligne = gauche + 18; const ppc = (W - ligne - 6) / 18; const X = (pas) => ligne + (pas - pos) * ppc;
+          const pos = this.pos(); const gauche = W < 640 ? 118 : Math.min(300, W * 0.24); const ligne = gauche + 18; const ppc = (W - ligne - 6) / 18; const X = (pas) => ligne + (pas - pos) * ppc;
           // Les temps : une ligne par temps, plus forte sur le 1 ; le compte en haut.
           for (let b = Math.ceil(pos / 2) * 2; X(b) < W; b += 2) { const xx = X(b); const un = b % 8 === 0; x.fillStyle = un ? '#5a5346' : '#2e2a23'; x.fillRect(xx, 22, un ? 2 : 1, H - 22); x.fillStyle = un ? '#f1cf4e' : '#a39b87'; x.font = `800 ${un ? 15 : 12}px ${police}`; x.textAlign = 'center'; x.fillText(String((((b / 2) % 4) + 4) % 4 + 1), xx, 16); }
           const evs = []; for (let q = Math.floor(pos) - 16; q < pos + 19; q++) evs.push(...this.evts(q));
@@ -357,20 +358,24 @@ export default {
               const xa = Math.max(ligne, X(e.debut)); const xb = X(e.debut + e.len) - 3; if (xb <= ligne || xa > W) return;
               const actif = e === ici; x.globalAlpha = e.ecoute ? 0.45 : 1;
               if (!pl.voix) {
-                const bh = hP * 0.62; const yy = y0 + (hP - 4 - bh) / 2; x.fillStyle = actif ? '#fff7dc' : pl.c; arrondi(x, xa, yy, Math.max(6, xb - xa), bh, 8); x.fill();
-                if (xb - xa > 34) { x.fillStyle = '#14120f'; x.font = `900 ${Math.round(Math.min(bh * 0.42, (xb - xa - 8) / 3.4))}px ${police}`; x.textAlign = 'left'; x.fillText(pl.mot, xa + 4, yy + bh * 0.64); }
+                const bh = hP * 0.78; const yy = y0 + (hP - 4 - bh) / 2; x.fillStyle = actif ? '#fff7dc' : '#2a2620'; x.strokeStyle = pl.c; x.lineWidth = 3; arrondi(x, xa, yy, Math.max(6, xb - xa), bh, 10); x.fill(); x.stroke();
+                const im = gesteImage(pl.im, pl.c); const tI = Math.min(bh - 6, xb - xa - 6); if (tI > 16 && im.complete) x.drawImage(im, xa + (xb - xa - tI) / 2, yy + (bh - tI) / 2, tI, tI);
               } else {
                 const bh = hP * 0.42; const haut = hi === lo ? 0.5 : (e.voix.notes[e.k ?? 0] - lo) / (hi - lo); const yy = y0 + 4 + (hP - 12 - bh) * (1 - haut);
                 x.fillStyle = actif ? pl.c : `${pl.c}99`; arrondi(x, xa, yy, Math.max(6, xb - xa), bh, 10); x.fill();
                 if (actif) { x.fillStyle = 'rgba(255,247,220,.35)'; arrondi(x, xa, yy, Math.max(6, Math.min(xb - xa, (pos - e.debut) / e.len * (e.len * ppc))), bh, 10); x.fill(); }
-                if (xb - xa > 60) { x.fillStyle = '#14120f'; x.font = `900 ${Math.round(bh * 0.6)}px ${police}`; x.textAlign = 'left'; x.fillText(`${e.ecoute ? 'écoutez ' : ''}${NOTE_FR[((e.note % 12) + 12) % 12]}`, xa + 8, yy + bh * 0.72); }
+                const im = gesteImage(pl.im, pl.c); const tI = bh + 10; let tx = xa + 8; if (xb - xa > tI + 10 && im.complete) { x.drawImage(im, xa + 4, yy - 5, tI, tI); tx = xa + tI + 8; }
+                if (xb - tx > 40) { x.fillStyle = '#14120f'; x.font = `900 ${Math.round(bh * 0.6)}px ${police}`; x.textAlign = 'left'; x.fillText(`${e.ecoute ? 'écoutez ' : ''}${NOTE_FR[((e.note % 12) + 12) % 12]}`, tx, yy + bh * 0.72); }
               }
               x.globalAlpha = 1;
             });
             // L'étiquette : le groupe, quoi faire, et le décompte
             const flash = ici && !ici.ecoute && (pl.voix ? pos - ici.debut < 1 : true); // le moment de jouer : l'étiquette s'allume
             x.fillStyle = flash ? pl.c : '#14120f'; x.fillRect(0, y0, gauche, hP - 4); x.fillStyle = pl.c; x.fillRect(0, y0, 6, hP - 4);
-            x.textAlign = 'left'; x.fillStyle = flash ? '#14120f' : pl.c; x.font = `900 ${Math.round(hP * (W < 640 ? 0.3 : 0.34))}px ${police}`; x.fillText(pl.mot, 14, y0 + hP * 0.42);
+            x.save(); x.beginPath(); x.rect(0, y0, gauche, hP - 4); x.clip(); // le texte reste dans l'étiquette
+            const imL = gesteImage(pl.im, flash ? '#fff7dc' : pl.c); const tL = (hP - 4) * (flash ? 0.92 : 0.82); if (imL.complete) x.drawImage(imL, 10 + ((hP - 4) * 0.92 - tL) / 2, y0 + (hP - 4 - tL) / 2 + (flash && !pl.voix ? 4 : 0), tL, tL);
+            const tx0 = 14 + (hP - 4) * 0.92;
+            x.textAlign = 'left'; x.fillStyle = flash ? '#14120f' : pl.c; x.font = `900 ${Math.round(hP * (W < 640 ? 0.24 : 0.32))}px ${police}`; x.fillText(pl.mot, tx0, y0 + hP * 0.42);
             let etat = pl.geste || ''; let fort = false;
             if (pl.voix) {
               const proch = mes.filter((e) => e.debut > pos && !e.ecoute).sort((a, b) => a.debut - b.debut)[0];
@@ -379,7 +384,7 @@ export default {
               else if (ici?.ecoute) etat = 'écoutez la note';
               else etat = this.entree(pl.voix) === Infinity ? '' : 'attendez…';
             }
-            x.fillStyle = flash ? '#14120f' : fort ? '#fff7dc' : '#a39b87'; x.font = `800 ${Math.round(hP * (W < 640 ? 0.17 : 0.19))}px ${police}`; x.fillText(etat, 14, y0 + hP * 0.75);
+            x.fillStyle = flash ? '#14120f' : fort ? '#fff7dc' : '#a39b87'; x.font = `800 ${Math.round(hP * (W < 640 ? 0.15 : 0.19))}px ${police}`; x.fillText(W < 640 ? (pl.voix ? etat.replace('à vous dans', 'dans').replace('chantez : ', '').replace('écoutez la note', 'écoutez').replace('attendez…', '…') : '') : etat, tx0, y0 + hP * 0.75); x.restore();
           });
           // La ligne : c'est maintenant.
           x.fillStyle = '#fff7dc'; x.fillRect(ligne - 2, 18, 4, H - 18);

@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.34', quand: '2026-11-24', titre: 'On voit le geste à faire', items: [
+    ['Des dessins pour chaque son', ['Chaque son du corps a son dessin : la main à plat qui tape le bureau (BOUM), les mains qui se tapent (TAC), le bout des doigts (TIC), le claquement (TSK), les mains qui frottent (CHHH), le pied (BOUM des pieds). Et pour les voix, la forme de la bouche : grande ouverte (AAA), ronde (OOO), fermée (MMM).']],
+    ['Partout dans Le cercle', ['Sur les cartes du haut, dans le rond du cœur, les cases de l’écho et de la chanson, les tuiles du chef, et dans les pistes du chœur : chaque bloc qui arrive montre le geste, et l’étiquette du groupe s’allume avec son dessin au moment de jouer.']],
+  ] },
   { v: '1.33', quand: '2026-11-24', titre: 'Le chœur : on voit son tour arriver', items: [
     ['Des pistes qui défilent', ['Chaque groupe a sa piste. Ses sons arrivent de la droite vers la ligne blanche : quand un bloc touche la ligne, l’étiquette du groupe s’allume et on joue (BOUM, TAC). Les voix voient une barre : on chante en touchant la ligne et on tient tant qu’elle passe. Plus la barre est haute, plus la note est haute. Les groupes qui attendent voient « à vous dans 3, 2, 1 ».']],
     ['Chaque groupe s’allume ou s’éteint', ['ROUGE, BLEU, AAA, OOO, MMM : un bouton chacun. Les voix entrent une à une (la première dès le début).']],
