@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.15', quand: '2026-11-24', titre: 'Le texte seul', items: [
+    ['Les paroles, sans rien autour', ['Dans Mots sur la grille, « 📄 Le texte seul » ouvre les paroles de la chanson en grand, avec la vraie chanson dessous. Touche un temps (0:34) pour écouter à partir de là ; la ligne qui joue s’allume.']],
+    ['Marquer quand chaque ligne arrive', ['« ⏱ Marquer les temps » : lance la chanson et touche « Maintenant! » (ou la barre d’espace) au moment où chaque ligne commence. − et + ajustent d’un dixième de seconde, ↶ annule. Tant qu’une ligne n’est pas marquée, son temps est celui de la grille, en italique.']],
+    ['Apprendre', ['« 🧠 Apprendre » : cache les mots (seulement la 1re lettre, ou rien), chante par-dessus la chanson, touche une ligne pour la voir. 🔁 répète la ligne qui joue.']],
+    ['Tes vraies paroles, et les sortir', ['« ✏️ Modifier le texte » : colle les paroles de ta chanson (une ligne vide sépare les couplets). Puis ⧉ Copier, ⬇ le texte (.txt), ⬇ avec les temps (.lrc, le format karaoké que beaucoup de lecteurs de musique affichent) ou 🖨 Imprimer. Le texte et ses temps se gardent avec la chanson et suivent sur tes autres appareils.']],
+  ] },
   { v: '1.14', quand: '2026-11-24', titre: 'Le tempo qui bouge, et les voix autour', items: [
     ['La grille suit le tempo', ['L’oreille repère maintenant les temps un par un. Quand le tempo bouge (une intro plus lente, un refrain qui pousse), chaque mesure garde sa vraie longueur, et dans Mots sur la grille chaque ligne suit les deux mesures de la chanson qu’elle couvre. La grille l’annonce : « le tempo bouge : 108 à 124 BPM ». Repasse la chanson dans L’oreille une fois.']],
     ['Couper ce qui n’est pas de la musique', ['Avant ou après la musique, quand on se parle (« on la refait? »), L’oreille le repère et propose « ▶ L’écouter » puis « ✂ Couper la fin » ou « Couper le début ». Le réducteur de bruit, lui, enlève un souffle régulier (micro, ventilation) : il ne peut pas enlever des voix qui parlent. La version coupée garde les paroles de la chanson.']],

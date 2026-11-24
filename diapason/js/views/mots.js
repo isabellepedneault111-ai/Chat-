@@ -10,6 +10,7 @@ import { esc } from './carnet.js';
 import { nomNote } from '../oreille.js';
 import { PLACEMENTS, syllabes, placer } from './placer.js';
 import { lireDerniere } from '../memoire-son.js';
+import { ouvrirFeuille } from '../feuille.js';
 import { THEMES, SCHEMAS, banque, ligne, partenaire, hasard, ecarte } from '../paroles-gen.js';
 import { PROGRESSIONS } from '../data.js';
 import { diagramme } from '../guitare.js';
@@ -135,12 +136,12 @@ export default {
     // Des lignes écrites avant le filtre (0.89) peuvent traîner en mémoire : celles qui contiennent un mot écarté
     // (et que la personne n'a pas tapé elle-même en mot-clé) sont vidées, puis réécrites.
     const salie = (txt) => { const cles = (st.cles || '').toLowerCase(); return String(txt || '').split(/[\s’',.;:!?]+/).some((w) => w && ecarte(w) && !cles.includes(w.toLowerCase())); };
-    let cle = ''; let lignes = []; let aRefaire = false; let avantRangement = false;
+    let cle = ''; let lignes = []; let aRefaire = false; let avantRangement = false; let feuille = null; // feuille : le texte seul, avec ses temps
     function chargerLignes() {
       cle = cleDe(st.source); const f = parChanson[cle] || {};
       lignes = (f.lignes || []).flatMap((L) => (L.pause && L.txt ? [{ txt: '', garde: true, pause: true }, { ...L, pause: false }] : [L]));
       aRefaire = lignes.some((L) => salie(L.txt)); lignes = lignes.map((L) => (salie(L.txt) ? { txt: '', garde: false } : L));
-      st.debut = f.debut || 1; st.cale = !!f.cale; avantRangement = !!f.avant && lignes.length > 0;
+      st.debut = f.debut || 1; st.cale = !!f.cale; avantRangement = !!f.avant && lignes.length > 0; feuille = f.feuille || null;
     }
     store.set('motsParChanson', parChanson); // le rangement à jour, tout de suite
     chargerLignes();
@@ -152,7 +153,7 @@ export default {
     const idDe = (k) => { let h = 0; for (const ch of `${espace.me}|${k}`) h = (h * 31 + ch.codePointAt(0)) >>> 0; return `mots-${String(espace.me || 'x').replace(/[^A-Za-z0-9]/g, '').slice(0, 12)}-${h.toString(36)}`; };
     const envois = new Map();
     const envoyer = (k) => { if (!espace.connected) return; clearTimeout(envois.get(k)); envois.set(k, setTimeout(() => { envois.delete(k); const f = parChanson[k]; if (!f) return; const la = espace.entries.find((e) => e.id === idDe(k)); if (la && (la.data?.at || 0) > (f.at || 0)) return; /* jamais par-dessus plus récent */ saveEntry({ id: idDe(k), type: 'motsgrille', title: k, data: { cle: k, ...f } }, { force: true }).catch(() => {}); }, 1500)); };
-    const sauver = () => { store.set('motsReglages', st); parChanson[cle] = { lignes, debut: st.debut || 1, cale: !!st.cale, at: Date.now(), ...(avantRangement ? { avant: true } : {}) }; store.set('motsParChanson', parChanson); envoyer(cle); };
+    const sauver = () => { store.set('motsReglages', st); parChanson[cle] = { lignes, debut: st.debut || 1, cale: !!st.cale, at: Date.now(), ...(avantRangement ? { avant: true } : {}), ...(feuille ? { feuille } : {}) }; store.set('motsParChanson', parChanson); envoyer(cle); };
     // Ce qui arrive de l'espace (écrit sur un autre appareil) : plus récent que ce qu'on a ici → on le prend.
     function recevoir() {
       if (!espace.connected) return; let ici = false;
@@ -178,7 +179,7 @@ export default {
           <label class="field mo-main" ${st.source === 'main' ? '' : 'hidden'}><span>Un accord par mesure</span><input type="text" data-m="main" value="${esc(st.main)}" placeholder="Lam Fa Do Sol"></label>
           <div class="mo-princ" hidden></div>
         </div>
-        <div class="ec-row mo-gestes"><button class="btn primary" data-m="chanter">▶ Chanter sur la grille</button><button class="btn" data-m="caler" title="Les paroles commencent là où la voix entre, les passages sans voix deviennent des silences, et les syllabes suivent les attaques de la chanson">✨ Caler sur la chanson</button><button class="btn" data-m="generer">↻ Écrire les lignes</button><span class="mo-info muted small"></span></div>
+        <div class="ec-row mo-gestes"><button class="btn primary" data-m="chanter">▶ Chanter sur la grille</button><button class="btn" data-m="texte" title="Les paroles seules, la vraie chanson dessous : marquer quand chaque ligne arrive, apprendre, exporter">📄 Le texte seul</button><button class="btn" data-m="caler" title="Les paroles commencent là où la voix entre, les passages sans voix deviennent des silences, et les syllabes suivent les attaques de la chanson">✨ Caler sur la chanson</button><button class="btn" data-m="generer">↻ Écrire les lignes</button><span class="mo-info muted small"></span></div>
       </section>
       <details class="panel mo-reg" ${lignes.length ? '' : 'open'}>
         <summary>⚙ Thèmes, mots-clés et réglages</summary>
@@ -549,6 +550,14 @@ export default {
       const b = e.target.closest('[data-m]'); const m = b?.dataset.m; if (!m || b.tagName === 'SELECT' || b.tagName === 'INPUT') return;
       if (m === 'generer') { arreter(); await generer(); if (b.dataset.fermer) { const r = q('.mo-reg'); if (r) r.open = false; q('.mo-a-qui')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } return; }
       if (m === 'caler') { await caler(false); return; }
+      if (m === 'texte') {
+        arreter(); const g = grille(); const M = g.mesures.length;
+        const vraie = chanson && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source) ? chanson : null;
+        // Les lignes de la grille, avec le moment où la grille les fait arriver dans la chanson (un silence = un saut de couplet).
+        const depuisGrille = () => lignes.map((L, i) => (L.pause || !L.txt ? { txt: '' } : { txt: L.txt, t: null, ta: vraie ? Math.max(0, tMes(mDe(i, 0, M))) : null })).filter((l, i, a) => l.txt || (i > 0 && a[i - 1].txt));
+        ouvrirFeuille({ titre: nomDeCle(cle), depart: feuille || { lignes: depuisGrille() }, chanson: vraie, reprendre: depuisGrille, enregistrer: (f) => { feuille = f; sauver(); } });
+        return;
+      }
       if (m === 'ranger') { rangerAilleurs(); return; }
       if (m === 'garder-ici') { avantRangement = false; if (parChanson[cle]) delete parChanson[cle].avant; sauver(); rendreRanger(); return; }
       if (m === 'autre') { arreter(); await generer(+b.dataset.i); return; }
