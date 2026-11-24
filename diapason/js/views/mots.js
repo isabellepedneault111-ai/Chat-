@@ -127,7 +127,7 @@ export default {
     // Des paroles rangées au passage à la 1.03 : peut-être pas avec la bonne chanson. On le signale.
     { const vieilles = JSON.stringify(store.get('motsLignes', [])); Object.values(parChanson).forEach((f) => { if (vieilles !== '[]' && JSON.stringify(f.lignes || []) === vieilles && f.avant !== false) f.avant = true; }); }
     // Venue de L'oreille (« Des paroles sur cette chanson ») : la vraie chanson joue sous les paroles.
-    let aCaler = !!window.__flipMots;
+    let aCaler = !!window.__flipMots; const texteDemande = !!window.__flipTexte; window.__flipTexte = false;
     let chanson = window.__flipMots || null; window.__flipMots = null;
     if (chanson) chansonGardee = chanson; else chanson = chansonGardee;
     // Une nouvelle grille dans L'oreille depuis la dernière visite : la page s'ouvre dessus.
@@ -544,20 +544,21 @@ export default {
       raf = requestAnimationFrame(tick);
     }
 
+    // Le texte seul (feuille.js) : les paroles de cette chanson, en grand, sur la vraie chanson.
+    function ouvrirTexte() {
+      arreter(); const g = grille(); const M = g.mesures.length;
+      const vraie = chanson && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source) ? chanson : null;
+      // Les lignes de la grille, avec le moment où la grille les fait arriver dans la chanson (un silence = un saut de couplet).
+      const depuisGrille = () => lignes.map((L, i) => (L.pause || !L.txt ? { txt: '' } : { txt: L.txt, t: null, ta: vraie ? Math.max(0, tMes(mDe(i, 0, M))) : null })).filter((l, i, a) => l.txt || (i > 0 && a[i - 1].txt));
+      ouvrirFeuille({ titre: nomDeCle(cle), depart: feuille || { lignes: depuisGrille(), propre: false }, chanson: vraie, reprendre: depuisGrille, enregistrer: (f) => { feuille = f; sauver(); } });
+    }
     el.addEventListener('click', async (e) => {
       const th = e.target.closest('[data-theme]');
       if (th) { const k = th.dataset.theme; st.themes = st.themes.includes(k) ? st.themes.filter((x) => x !== k) : [...st.themes, k]; if (!st.themes.length) st.themes = [k]; st.theme = st.themes[0]; el.querySelectorAll('[data-theme]').forEach((x) => { const on = st.themes.includes(x.dataset.theme); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); x.textContent = `${on ? '✓ ' : ''}${THEMES[x.dataset.theme].nom}`; }); sauver(); return; }
       const b = e.target.closest('[data-m]'); const m = b?.dataset.m; if (!m || b.tagName === 'SELECT' || b.tagName === 'INPUT') return;
       if (m === 'generer') { arreter(); await generer(); if (b.dataset.fermer) { const r = q('.mo-reg'); if (r) r.open = false; q('.mo-a-qui')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } return; }
       if (m === 'caler') { await caler(false); return; }
-      if (m === 'texte') {
-        arreter(); const g = grille(); const M = g.mesures.length;
-        const vraie = chanson && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source) ? chanson : null;
-        // Les lignes de la grille, avec le moment où la grille les fait arriver dans la chanson (un silence = un saut de couplet).
-        const depuisGrille = () => lignes.map((L, i) => (L.pause || !L.txt ? { txt: '' } : { txt: L.txt, t: null, ta: vraie ? Math.max(0, tMes(mDe(i, 0, M))) : null })).filter((l, i, a) => l.txt || (i > 0 && a[i - 1].txt));
-        ouvrirFeuille({ titre: nomDeCle(cle), depart: feuille || { lignes: depuisGrille() }, chanson: vraie, reprendre: depuisGrille, enregistrer: (f) => { feuille = f; sauver(); } });
-        return;
-      }
+      if (m === 'texte') { ouvrirTexte(); return; }
       if (m === 'ranger') { rangerAilleurs(); return; }
       if (m === 'garder-ici') { avantRangement = false; if (parChanson[cle]) delete parChanson[cle].avant; sauver(); rendreRanger(); return; }
       if (m === 'autre') { arreter(); await generer(+b.dataset.i); return; }
@@ -606,7 +607,7 @@ export default {
     loadLexique().then(async () => { if (aRefaire) await generer(); else rendre(); }); rendre();
     setTimeout(() => prechargerSons(['voix', 'piano']), 400);
     recevoir(); const offEsp = onEspace((t) => { if (t === 'entries') recevoir(); });
-    majSous(); chargerPiece().then(async () => { rendre(); await remplirSiVide(); });
+    majSous(); chargerPiece().then(async () => { rendre(); await remplirSiVide(); if (texteDemande) ouvrirTexte(); });
     return () => { arreter(); offEsp?.(); for (const [k, t] of envois) { clearTimeout(t); const f = parChanson[k]; if (f && espace.connected) saveEntry({ id: idDe(k), type: 'motsgrille', title: k, data: { cle: k, ...f } }, { force: true }).catch(() => {}); } };
   },
 };

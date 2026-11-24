@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.16', quand: '2026-11-24', titre: 'Le texte seul, encore plus simple', items: [
+    ['Trois étapes, toujours en vue', ['En haut du texte : 1 Colle tes paroles, 2 Marque les temps (3 / 34 lignes), 3 Apprends. La prochaine étape est en jaune, celles qui sont faites passent au vert ✓. Touche une étape pour y aller.']],
+    ['Marquer sans réfléchir', ['Plus besoin de ▶ : le gros bouton jaune « ▶ Commencer » lance la chanson un peu avant la ligne à marquer, puis devient « ⏎ Maintenant! ». La ligne suivante se place au milieu de l’écran. À la fin, il t’amène à 🧠 Apprendre.']],
+    ['Rassurant', ['« ✓ gardé » s’affiche chaque fois que ton texte ou un temps est enregistré. Le geste « retour » du téléphone ferme le texte sans quitter la page. Un texte vide n’efface plus rien.']],
+    ['Depuis L’oreille', ['Nouveau bouton « 📄 Le texte de cette chanson » à côté de « ✍️ Des paroles sur cette chanson » : il ouvre directement le texte, la chanson dessous.']],
+  ] },
   { v: '1.15', quand: '2026-11-24', titre: 'Le texte seul', items: [
     ['Les paroles, sans rien autour', ['Dans Mots sur la grille, « 📄 Le texte seul » ouvre les paroles de la chanson en grand, avec la vraie chanson dessous. Touche un temps (0:34) pour écouter à partir de là ; la ligne qui joue s’allume.']],
     ['Marquer quand chaque ligne arrive', ['« ⏱ Marquer les temps » : lance la chanson et touche « Maintenant! » (ou la barre d’espace) au moment où chaque ligne commence. − et + ajustent d’un dixième de seconde, ↶ annule. Tant qu’une ligne n’est pas marquée, son temps est celui de la grille, en italique.']],

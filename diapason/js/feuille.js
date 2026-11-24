@@ -14,15 +14,16 @@ const indice = (txt) => txt.split(/(\s+)/).map((m) => { let vu = false; return [
 const vide = (txt) => txt.replace(/[^\s’'-]/g, '_');
 
 const AIDES = {
-  lire: 'Touche un temps pour écouter à partir de là. La ligne qui joue s’allume.',
-  marquer: 'Lance la chanson, puis touche « Maintenant! » (ou la barre d’espace) au moment où chaque ligne commence. Touche une ligne pour reprendre à partir d’elle ; − et + ajustent d’un dixième de seconde.',
-  apprendre: 'Cache les mots, écoute, et chante par-dessus. Touche une ligne cachée pour la voir. 🔁 répète la ligne qui joue.',
+  lire: '▶ en bas pour écouter. Touche une ligne pour sauter à elle : celle qui joue s’allume en jaune.',
+  marquer: 'Touche le gros bouton jaune : la chanson part. Puis retouche-le chaque fois qu’une ligne commence. Tu t’es trompée? ↶ annule, ou − / + à côté de la ligne.',
+  apprendre: 'Cache les mots, écoute, chante par-dessus. Touche une ligne cachée pour la voir. 🔁 répète la ligne qui joue.',
 };
 
 // depart : { lignes: [{ txt, t (marqué), ta (estimé par la grille) }] } ; chanson : { buf } ou null ;
 // enregistrer(feuille) : à chaque changement ; reprendre() : les lignes de la grille, pour repartir de là.
 export function ouvrirFeuille({ titre, depart, chanson, enregistrer, reprendre }) {
   let F = (depart?.lignes || []).map((l) => ({ txt: l.txt || '', t: l.t ?? null, ta: l.ta ?? null }));
+  let propre = depart?.propre ?? true; // false : ce sont encore les lignes brouillon de la grille, pas les vraies paroles
   let mode = 'lire'; let cache = 1; const vues = new Set(); let pointeur = -1; const annuler = []; let boucle = null;
   const c = audio(); const D = chanson?.buf?.duration || 0;
   let src = null; let t0c = 0; let off = 0; let raf = 0; let courant = -1;
@@ -34,15 +35,16 @@ export function ouvrirFeuille({ titre, depart, chanson, enregistrer, reprendre }
   const v = document.createElement('div'); v.className = 'fe'; v.setAttribute('role', 'dialog'); v.setAttribute('aria-modal', 'true'); v.setAttribute('aria-label', `Le texte de « ${titre} »`);
   v.innerHTML = `
     <div class="fe-feuille">
-      <header class="fe-tete"><div><p class="fe-sur">📄 Le texte seul</p><h2>« ${esc(titre)} »</h2></div><button class="fe-x" data-f="fermer" aria-label="Fermer le texte">✕</button></header>
+      <header class="fe-tete"><div><p class="fe-sur">📄 Le texte seul <span class="fe-garde" aria-live="polite"></span></p><h2>« ${esc(titre)} »</h2></div><button class="fe-x" data-f="fermer" aria-label="Fermer le texte">✕</button></header>
+      <ol class="fe-etapes" aria-label="Par où commencer"></ol>
       <div class="fe-modes" role="tablist" aria-label="Ce que je fais avec le texte">
-        <button role="tab" data-mode="lire">👀 Lire et écouter</button><button role="tab" data-mode="marquer">⏱ Marquer les temps</button><button role="tab" data-mode="apprendre">🧠 Apprendre</button>
+        <button role="tab" data-mode="lire">👀 Écouter</button><button role="tab" data-mode="marquer">⏱ Marquer</button><button role="tab" data-mode="apprendre">🧠 Apprendre</button>
       </div>
       <p class="fe-aide"></p>
       <div class="fe-cache" role="group" aria-label="Cacher les mots"><span>Les mots :</span><button data-cache="0">tous</button><button data-cache="1">la 1re lettre</button><button data-cache="2">rien</button></div>
       <ol class="fe-lignes"></ol>
-      <div class="fe-edit" hidden><label for="fe-ta">Une ligne par ligne ; une ligne vide sépare les couplets.</label><textarea id="fe-ta" rows="12"></textarea>
-        <div class="fe-row"><button class="btn primary" data-f="garder">Garder ce texte</button><button class="btn" data-f="annuler-edit">Annuler</button>${reprendre ? '<button class="btn" data-f="reprendre">↺ Reprendre les lignes de la grille</button>' : ''}</div></div>
+      <div class="fe-edit" hidden><label for="fe-ta">Une ligne par ligne ; une ligne vide sépare les couplets.</label><textarea id="fe-ta" rows="12" placeholder="Colle ou écris tes paroles ici.&#10;Une ligne par ligne.&#10;&#10;Une ligne vide entre deux couplets."></textarea>
+        <div class="fe-row"><button class="btn primary" data-f="garder">Garder ce texte</button><button class="btn" data-f="annuler-edit">Annuler</button>${reprendre ? '<button class="btn" data-f="reprendre">↺ Remettre les lignes brouillon de la grille</button>' : ''}</div></div>
       <footer class="fe-pied"><button class="btn small" data-f="modifier">✏️ Modifier le texte</button><button class="btn small" data-f="copier">⧉ Copier</button><button class="btn small" data-f="txt">⬇ Le texte (.txt)</button><button class="btn small" data-f="lrc" title="Le format des paroles synchronisées : beaucoup de lecteurs de musique l’affichent en karaoké">⬇ Avec les temps (.lrc)</button><button class="btn small" data-f="imprimer">🖨 Imprimer</button></footer>
     </div>
     <div class="fe-lecteur">${D ? `
@@ -54,12 +56,18 @@ export function ouvrirFeuille({ titre, depart, chanson, enregistrer, reprendre }
   document.body.append(v); document.body.classList.add('fe-ouverte');
   const q = (s) => v.querySelector(s);
 
-  function sauver() { enregistrer?.({ lignes: F.map((l) => ({ txt: l.txt, t: l.t == null ? null : Math.round(l.t * 100) / 100, ta: l.ta == null ? null : Math.round(l.ta * 100) / 100 })), at: Date.now() }); }
+  let garde = 0;
+  function sauver() { clearTimeout(garde); const g = q('.fe-garde'); if (g) { g.textContent = '✓ gardé'; garde = setTimeout(() => { g.textContent = ''; }, 1800); } enregistrer?.({ propre, lignes: F.map((l) => ({ txt: l.txt, t: l.t == null ? null : Math.round(l.t * 100) / 100, ta: l.ta == null ? null : Math.round(l.ta * 100) / 100 })), at: Date.now() }); }
   function rendre() {
     v.dataset.vue = mode;
     v.querySelectorAll('[data-mode]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.mode === mode)));
     v.querySelectorAll('[data-cache]').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.cache === cache)));
     q('.fe-aide').textContent = AIDES[mode];
+    // Les trois étapes, toujours visibles : où on en est, et la prochaine chose à faire.
+    const nL = F.filter((l) => l.txt.trim()).length; const nT = F.filter((l) => l.txt.trim() && l.t != null).length;
+    q('.fe-etapes').innerHTML = `<li class="${propre && nL ? 'fait' : 'afaire'}"><button data-etape="texte"><b>1</b> ${propre && nL ? '✓ Tes paroles' : 'Colle tes paroles'}<small>${propre && nL ? `${nL} lignes` : 'pour l’instant : un brouillon'}</small></button></li>
+      <li class="${nT === nL && nL ? 'fait' : propre ? 'afaire' : ''}"><button data-etape="marquer"><b>2</b> ${nT === nL && nL ? '✓ Les temps' : 'Marque les temps'}<small>${nT} / ${nL} lignes</small></button></li>
+      <li class="${nT ? 'afaire' : ''}"><button data-etape="apprendre"><b>3</b> Apprends<small>cache les mots, chante</small></button></li>`;
     q('.fe-lignes').innerHTML = F.map((l, i) => {
       if (!l.txt.trim()) return '<li class="fe-strophe" aria-hidden="true"></li>';
       const t = tps(i); const montre = mode !== 'apprendre' || cache === 0 || vues.has(i);
@@ -69,9 +77,14 @@ export function ouvrirFeuille({ titre, depart, chanson, enregistrer, reprendre }
         <span class="fe-txt" data-li="${i}">${txt}</span>
         ${mode === 'marquer' && l.t != null ? `<span class="fe-nudge"><button data-n="-0.1" data-ni="${i}" aria-label="Un dixième de seconde plus tôt">−</button><button data-n="0.1" data-ni="${i}" aria-label="Un dixième de seconde plus tard">+</button></span>` : ''}</li>`;
     }).join('') || '<li class="fe-rien">Pas encore de paroles pour cette chanson : ✏️ Modifier le texte pour coller les tiennes.</li>';
-    const m = q('.fe-marque'); if (m) { const L = F[pointeur]; m.innerHTML = L ? `⏎ Maintenant! <small>${esc(L.txt.slice(0, 32))}${L.txt.length > 32 ? '…' : ''}</small>` : '✓ Toutes marquées'; m.disabled = !L; }
+    majMarque();
   }
-  function majBouton() { const b = q('.fe-play'); if (b) { b.textContent = src ? '■' : '▶'; b.setAttribute('aria-label', src ? 'Arrêter' : 'Écouter la chanson'); } }
+  function majMarque() {
+    const m = q('.fe-marque'); if (!m) return; const L = F[pointeur];
+    m.innerHTML = !L ? '✓ Toutes les lignes ont leur temps <small>touche pour passer à 🧠 Apprendre</small>' : !src ? `▶ Commencer <small>la chanson part ; retouche quand « ${esc(L.txt.slice(0, 28))}${L.txt.length > 28 ? '…' : ''} » commence</small>` : `⏎ Maintenant! <small>${esc(L.txt.slice(0, 32))}${L.txt.length > 32 ? '…' : ''}</small>`;
+
+  }
+  function majBouton() { const b = q('.fe-play'); if (b) { b.textContent = src ? '■' : '▶'; b.setAttribute('aria-label', src ? 'Arrêter' : 'Écouter la chanson'); } majMarque(); }
   function arret(garder = true) { if (src) { const p = pos(); try { src.onended = null; src.stop(); } catch { /* déjà arrêtée */ } src = null; if (garder) off = Math.min(D, p); } cancelAnimationFrame(raf); majBouton(); }
   function jouer(de) {
     arret(false); if (!chanson?.buf) return; try { c.resume(); } catch { /* iOS */ }
@@ -88,9 +101,13 @@ export function ouvrirFeuille({ titre, depart, chanson, enregistrer, reprendre }
     raf = requestAnimationFrame(tick);
   }
   function marquer() {
-    if (pointeur < 0 || !F[pointeur]) return; if (!src) { toast('Lance d’abord la chanson (▶), puis touche « Maintenant! » quand la ligne commence.'); return; }
+    if (pointeur < 0 || !F[pointeur]) { mode = 'apprendre'; vues.clear(); rendre(); return; }
+    // Le premier toucher lance la chanson un peu avant la ligne visée (après la dernière ligne marquée), pas besoin de ▶.
+    if (!src) { let de = 0; for (let j = pointeur - 1; j >= 0; j--) if (F[j].txt.trim() && F[j].t != null) { de = F[j].t; break; } jouer(Math.max(0, de - 1)); return; }
     annuler.push([pointeur, F[pointeur].t]); F[pointeur].t = Math.max(0, pos() - 0.15); // ~ le temps de réaction
     pointeur = prochaine(pointeur + 1); sauver(); rendre();
+    v.querySelector('.fe-l.vise')?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    if (pointeur < 0) toast('Toutes les lignes ont leur temps. Essaie 🧠 Apprendre, ou ⬇ .lrc pour les garder.');
   }
   function boucleLigne() {
     const i = courant >= 0 ? courant : prochaine(0); const a = tps(i); if (a == null) { toast('Cette ligne n’a pas encore de temps : marque-la d’abord.'); return; }
@@ -99,15 +116,24 @@ export function ouvrirFeuille({ titre, depart, chanson, enregistrer, reprendre }
   }
   function telecharger(texte, ext) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([texte], { type: 'text/plain;charset=utf-8' })); a.download = `${titre}.${ext}`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(a); a.click(); a.remove(); }
   const texte = () => F.map((l) => l.txt).join('\n').replace(/\n{3,}/g, '\n\n').trim();
-  function fermer() { arret(); removeEventListener('keydown', clavier, true); v.remove(); document.body.classList.remove('fe-ouverte'); }
+  let ferme = false;
+  function fermer(e) {
+    if (ferme) return; ferme = true;
+    // Fermé par ✕ ou Échap : on retire l'étape d'historique qu'on avait ajoutée (sans changer de page).
+    if (!(e instanceof Event) && history.state?.feuille) history.back();
+    arret(); removeEventListener('keydown', clavier, true); removeEventListener('hashchange', fermer); removeEventListener('popstate', fermer); v.remove(); document.body.classList.remove('fe-ouverte'); }
   function clavier(e) {
     if (e.key === 'Escape') { e.preventDefault(); fermer(); return; }
     if (e.target.closest?.('textarea, input')) return;
     if (mode === 'marquer' && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); marquer(); }
   }
   addEventListener('keydown', clavier, true);
+  // Le geste « retour » du téléphone ferme le texte, et on reste sur la page (une étape d'historique à nous).
+  try { history.pushState({ ...(history.state || {}), feuille: true }, ''); } catch { /* rien */ }
+  addEventListener('popstate', fermer); addEventListener('hashchange', fermer);
 
   v.addEventListener('click', (e) => {
+    const et = e.target.closest('[data-etape]'); if (et) { const k = et.dataset.etape; if (k === 'texte') { q('[data-f=modifier]').click(); return; } mode = k; vues.clear(); rendre(); return; }
     const md = e.target.closest('[data-mode]'); if (md) { mode = md.dataset.mode; if (mode !== 'apprendre') vues.clear(); rendre(); return; }
     const ch = e.target.closest('[data-cache]'); if (ch) { cache = +ch.dataset.cache; vues.clear(); rendre(); return; }
     const ti = e.target.closest('[data-ti]'); if (ti) { const t = tps(+ti.dataset.ti); if (t != null) { boucle = null; q('.fe-boucle')?.setAttribute('aria-pressed', 'false'); jouer(Math.max(0, t - 0.5)); } return; }
@@ -120,16 +146,17 @@ export function ouvrirFeuille({ titre, depart, chanson, enregistrer, reprendre }
     if (f === 'marque') marquer();
     if (f === 'ann') { const u = annuler.pop(); if (u) { F[u[0]].t = u[1]; pointeur = u[0]; sauver(); rendre(); } }
     if (f === 'boucle') { if (boucle) { boucle = null; q('.fe-boucle').setAttribute('aria-pressed', 'false'); } else boucleLigne(); }
-    if (f === 'modifier') { q('.fe-edit').hidden = false; q('.fe-lignes').hidden = true; q('#fe-ta').value = texte(); q('#fe-ta').focus(); }
+    if (f === 'modifier') { q('.fe-edit').hidden = false; q('.fe-lignes').hidden = true; q('#fe-ta').value = propre ? texte() : ''; q('#fe-ta').focus(); q('.fe-edit').scrollIntoView({ block: 'start' }); }
     if (f === 'annuler-edit') { q('.fe-edit').hidden = true; q('.fe-lignes').hidden = false; }
     if (f === 'reprendre') { q('#fe-ta').value = (reprendre() || []).map((l) => l.txt).join('\n'); }
     if (f === 'garder') {
       // Les temps suivent leurs lignes : une ligne qu'on retrouve, mot pour mot, garde son temps.
       const anciens = new Map(); F.forEach((l) => { if (l.txt.trim()) { const k = l.txt.trim(); if (!anciens.has(k)) anciens.set(k, []); anciens.get(k).push(l); } });
       const neuves = q('#fe-ta').value.replace(/\r/g, '').split('\n').map((t) => t.trim());
+      if (!neuves.some(Boolean)) { toast('Le texte est vide : colle d’abord tes paroles (ou ↺ remets les lignes brouillon).'); return; }
       const grille = reprendre ? reprendre() : [];
       F = neuves.map((txt) => { const a = anciens.get(txt)?.shift(); if (a) return { ...a }; const g = grille.find((x) => x.txt.trim() === txt); return { txt, t: null, ta: g?.ta ?? null }; });
-      q('.fe-edit').hidden = true; q('.fe-lignes').hidden = false; pointeur = (() => { const i = F.findIndex((l) => l.txt.trim() && l.t == null); return i >= 0 ? i : prochaine(0); })(); sauver(); rendre(); toast('Texte gardé.');
+      propre = true; q('.fe-edit').hidden = true; q('.fe-lignes').hidden = false; pointeur = (() => { const i = F.findIndex((l) => l.txt.trim() && l.t == null); return i >= 0 ? i : prochaine(0); })(); sauver(); rendre(); toast('Texte gardé.');
     }
     if (f === 'copier') navigator.clipboard?.writeText(texte()).then(() => toast('Le texte est copié.'), () => toast('Copie refusée par le navigateur : utilise ⬇ .txt.'));
     if (f === 'txt') telecharger(`${texte()}\n`, 'txt');
