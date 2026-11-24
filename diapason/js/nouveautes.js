@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.18', quand: '2026-11-24', titre: 'La chanson en numérique', items: [
+    ['Une touche, et ça part', ['Dans Le chantier, sous la frise : une rangée de mesures (1, 2, 3… avec leur accord). Touche une mesure : la chanson part de là, tout de suite. Toucher la frise fait pareil. La mesure qui joue s’allume et la rangée la suit.']],
+    ['🎛 Refaire la chanson en numérique', ['Nouvel onglet « 🎛 Numérique » : une copie de la chanson refaite avec ce que L’oreille a entendu, qui suit ses mesures même quand le tempo bouge. La batterie reprend les coups repérés dans l’enregistrement (grosse caisse, caisse claire, charleston ; « plus simple ↔ plus fidèle »), la basse suit la grosse caisse sur la fondamentale, les accords passent au piano électrique, et la mélodie de ta voix (si L’oreille l’a repérée) se rejoue à la flûte, à la clarinette, au piano ou aux cordes.']],
+    ['Tout se remplace', ['Allume ou éteins chaque partie, et l’enregistrement lui-même : « ▶ Seulement le numérique » ou « ▶ Les deux ensemble ». Ton idée de batterie (🥁) remplace la batterie numérique sur son passage : cette fois, on n’entend plus l’ancienne. ⬇ En MIDI (pour Frog) : 4 pistes à ouvrir dans un logiciel de musique, posées sous l’enregistrement.']],
+  ] },
   { v: '1.17', quand: '2026-11-24', titre: 'Le chantier', items: [
     ['Une page pour travailler une chanson', ['Jouer → ⚒ Le chantier (ou, dans L’oreille, « ⚒ Le chantier de cette chanson »). En haut, la frise de la chanson : son onde, ses mesures, les commentaires (pastilles dorées) et tes idées (bandes rouge et bleue). Touche-la pour t’y rendre. En bas, ▶ et le volume de « la chanson » : baisse-le pour mieux entendre tes idées.']],
     ['💬 Des commentaires à la seconde près', ['« 💬 Commenter ici » pose un commentaire au moment où tu es (0:42, mesure 12), écrit ou dit au micro (🎙, jusqu’à 1 min 30). Ils vont dans votre espace : Frog les voit dans la liste et sur la frise, et un toucher sur l’heure rejoue ce moment.']],

@@ -10,7 +10,8 @@ import { espace, saveEntry, deleteEntry, uploadAudio, audioURL, onEspace } from 
 import { store, toast } from '../ui.js';
 import { esc } from './carnet.js';
 import { lireDerniere } from '../memoire-son.js';
-import { lireAccord } from './mots.js';
+import { lireAccord, dansLaTonalite, lireTon } from './mots.js';
+import { fichierMidi } from '../materiel.js';
 
 const NOTES = ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
 const IV = { M: [0, 4, 7], m: [0, 3, 7], 7: [0, 4, 7, 10], maj7: [0, 4, 7, 11], m7: [0, 3, 7, 10], sus2: [0, 2, 7], sus4: [0, 5, 7], dim: [0, 3, 6], add9: [0, 4, 7, 14] };
@@ -29,7 +30,7 @@ const MOTIFS = {
 export default {
   id: 'chantier',
   mount(el) {
-    const c = audio(); prechargerSons(['piano']);
+    const c = audio(); prechargerSons(['piano', 'rhodes', 'flute']);
     let source = store.get('chantierSource', 'oreille');
     let ch = null; // { buf, nom, debuts, t0, temps, grille, ton }
     let onglet = store.get('chantierOnglet', 'com');
@@ -37,6 +38,9 @@ export default {
     let curseur = 0; let lect = null; let raf = 0;
     let idees = null; let cle = ''; let composer = null; // composer : { t, rec, blob, url }
     let toutesNotes = false; let dureeNote = 2;
+    let num = null; // la chanson refaite en numérique : { bat, basse, acc, mel } (des évènements, en secondes de la chanson)
+    const mix = { orig: true, bat: true, basse: true, acc: true, mel: true, melInst: 'flute', ...store.get('chantierMix', {}) };
+    let detail = store.get('chantierDetail', 0.5);
 
     const pieces = () => (espace.connected ? espace.entries.filter((e) => e.audio && e.data?.piece) : []);
     el.innerHTML = `
@@ -49,10 +53,11 @@ export default {
       <section class="panel ch-frise-p">
         <div class="ch-frise-t"><b class="ch-nom">…</b><span class="muted small ch-info"></span></div>
         <canvas class="ch-frise" role="img" aria-label="La chanson : son onde, ses mesures, les commentaires et les idées. Touche pour t’y rendre."></canvas>
+        <div class="ch-mesures" role="group" aria-label="Aller à une mesure : elle part tout de suite"></div>
         <p class="muted small ch-legende"><i class="lg-c"></i> commentaire <i class="lg-b"></i> batterie essayée <i class="lg-p"></i> piano essayé</p>
       </section>
       <div class="ch-onglets" role="tablist" aria-label="Ce que j’ajoute">
-        <button role="tab" data-onglet="com">💬 Commentaires</button><button role="tab" data-onglet="bat">🥁 Batterie</button><button role="tab" data-onglet="pia">🎹 Piano</button>
+        <button role="tab" data-onglet="com">💬 Commentaires</button><button role="tab" data-onglet="bat">🥁 Batterie</button><button role="tab" data-onglet="pia">🎹 Piano</button><button role="tab" data-onglet="num">🎛 Numérique</button>
       </div>
       <section class="panel ch-corps"></section>
       <div class="ch-lecteur">
@@ -76,32 +81,35 @@ export default {
           const f = await lireDerniere(); if (!f?.blob) throw new Error('vide');
           const buf = await c.decodeAudioData(await f.blob.arrayBuffer()); const og = store.get('oreilleGrille', null);
           const meme = og && nomPropre(og.nom) === nomPropre(f.nom);
-          ch = { buf, nom: nomPropre(f.nom), debuts: f.debuts || (meme ? og.debuts : null), t0: f.t0 || 0, temps: f.temps || 0.5, grille: meme ? og.mesures : null, ton: meme ? og.ton : null };
+          ch = { buf, nom: nomPropre(f.nom), debuts: f.debuts || (meme ? og.debuts : null), t0: f.t0 || 0, temps: f.temps || 0.5, grille: meme ? og.mesures : null, ton: meme ? og.ton : null, voix: f.voix || null };
         } else {
           const e = pieces().find((x) => `piece:${x.id}` === source); if (!e) throw new Error('vide');
           const u = await audioURL(e.audio); const buf = await c.decodeAudioData(await (await fetch(u)).arrayBuffer()); const p = e.data.piece;
-          ch = { buf, nom: nomPropre(e.title), debuts: p.debuts || null, t0: p.t1 || 0, temps: p.temps || 60 / (p.bpm || 90), grille: p.grille || null, ton: Number.isFinite(p.tonique) ? `${NOTES[((p.tonique % 12) + 12) % 12]} ${p.mineur ? 'mineur' : 'majeur'}` : null };
+          ch = { buf, nom: nomPropre(e.title), debuts: p.debuts || null, t0: p.t1 || 0, temps: p.temps || 60 / (p.bpm || 90), grille: p.grille || null, voix: p.voix || null, ton: Number.isFinite(p.tonique) ? `${NOTES[((p.tonique % 12) + 12) % 12]} ${p.mineur ? 'mineur' : 'majeur'}` : null };
         }
       } catch { ch = null; }
       if (!ch) { q('.ch-nom').textContent = 'Pas encore de chanson'; q('.ch-info').innerHTML = 'Passe une chanson dans <a href="#/oreille">L’oreille</a> (ou garde-la dans Nos pièces) : elle arrivera ici.'; q('.ch-corps').innerHTML = ''; dessiner(); return; }
-      cle = `chanson:${ch.nom}`; pics = null;
+      cle = `chanson:${ch.nom}`; pics = null; num = null;
       q('.ch-nom').textContent = `« ${ch.nom} »`;
       q('.ch-info').textContent = `${mmss(ch.buf.duration)} · ${nbMes()} mesures${ch.ton ? ` · ${ch.ton}` : ''}`;
-      chargerIdees(); rendre();
+      chargerIdees(); rendreMesures(); rendre();
     }
     // Les mesures : suivies temps par temps par L'oreille quand le tempo bouge, sinon un tempo fixe.
     const nbMes = () => (ch?.debuts?.length > 2 ? ch.debuts.length - 1 : Math.max(1, Math.floor((ch.buf.duration - ch.t0) / (4 * ch.temps))));
     const tMes = (m) => { const d = ch?.debuts; if (d?.length > 2) { const L = d.length - 1; if (m <= L) return d[m]; return d[L] + (m - L) * (d[L] - d[L - 1]); } return ch.t0 + m * 4 * ch.temps; };
     const mesureDe = (t) => { let m = 0; const N = nbMes(); while (m < N && tMes(m + 1) <= t) m++; return m; }; // 0 = la 1re
     // L'accord qui sonne au début de chaque mesure (grille de L'oreille ou de la pièce).
-    function accordDe(m) {
-      const g = ch?.grille; if (!g?.length) return null; const M = g.length; const idx = m < M ? m : m % M;
-      const lu = (x) => { if (!x || x === '—') return null; const a = lireAccord(x); return a ? { ...a, nom: x } : null; };
-      if (lu(g[idx][0])) return lu(g[idx][0]);
-      for (let k = idx - 1; k >= 0; k--) for (let t = 3; t >= 0; t--) { const a = lu(g[k][t]); if (a) return a; }
-      for (let t = 1; t < 4; t++) { const a = lu(g[idx][t]); if (a) return a; } // rien avant : le premier de la mesure
+    // L'accord qui sonne au temps b de la mesure m (le dernier écrit avant, en bouclant la grille si la chanson est plus longue).
+    // (dans la tonalité de la chanson, comme dans Mots sur la grille : Ré7, Rém7 et Rémaj7 qui hésitent redeviennent Rém en ré mineur)
+    const nomAcc = (a) => NOTES[a.r] + ({ M: '', m: 'm', 7: '7', maj7: 'maj7', m7: 'm7', sus2: 'sus2', sus4: 'sus4', dim: '°', add9: 'add9' }[a.q] ?? '');
+    const lu = (x) => { if (!x || x === '—') return null; const a0 = lireAccord(x); if (!a0) return null; const a = dansLaTonalite(a0, lireTon(ch?.ton)) || a0; return { ...a, nom: nomAcc(a) }; };
+    function accordA(m, b = 0) {
+      const g = ch?.grille; if (!g?.length) return null; const M = g.length; const k0 = (m < M ? m : m % M) * 4 + b;
+      for (let k = k0; k >= 0; k--) { const a = lu(g[Math.floor(k / 4)]?.[k % 4]); if (a) return a; }
+      for (let k = k0 + 1; k < M * 4; k++) { const a = lu(g[Math.floor(k / 4)]?.[k % 4]); if (a) return a; }
       return null;
     }
+    const accordDe = (m) => accordA(m, 0);
     // La gamme : la tonalité trouvée, sinon do majeur.
     function gamme() { const m = String(ch?.ton || '').match(/^(\S+)\s+(majeur|mineur)/i); const a = m && lireAccord(m[1]); const r = a ? a.r : 0; const pas = m && /mineur/i.test(m[2]) ? [0, 2, 3, 5, 7, 8, 10] : [0, 2, 4, 5, 7, 9, 11]; return pas.map((x) => (r + x) % 12); }
 
@@ -134,12 +142,19 @@ export default {
       const ev = []; if (!ch || !idees) return ev; const N = nbMes();
       const B = idees.batterie;
       if (B.on) for (let m = B.de - 1; m <= Math.min(N, B.a) - 1; m++) { const L = tMes(m + 1) - tMes(m); const k = (m - (B.de - 1)) % B.long; FUTS.forEach(([f]) => { for (let s = 0; s < 16; s++) if (B.pas[f]?.[k * 16 + s]) ev.push({ t: tMes(m) + (s * L) / 16, f, v: s % 4 === 0 ? 1 : 0.75 }); }); }
+      if (num) {
+        // Ton idée de batterie remplace la batterie numérique sur son passage.
+        const remplace = B.on && FUTS.some(([f]) => B.pas[f]?.some(Boolean)) ? [tMes(B.de - 1), tMes(Math.min(N, B.a))] : null;
+        if (mix.bat) num.bat.forEach((e) => { if (!remplace || e.t < remplace[0] - 0.01 || e.t >= remplace[1] - 0.01) ev.push(e); });
+        if (mix.basse) ev.push(...num.basse); if (mix.acc) ev.push(...num.acc); if (mix.mel) ev.push(...num.mel);
+      }
       const P = idees.piano;
       if (P.on) P.notes.forEach((n) => { const m = P.de - 1 + Math.floor(n.p / 8); const L = tMes(m + 1) - tMes(m); ev.push({ t: tMes(m) + ((n.p % 8) * L) / 8, f: 'piano', midi: n.m, dur: (n.d * L) / 8 }); });
       return ev.sort((a, b) => a.t - b.t);
     }
     function sonner(e, when) {
       if (e.f === 'piano') { if (!joue('piano', e.midi, { when, dur: e.dur * 0.95, vel: 0.75 })) notePiano(e.midi, { when, dur: e.dur, vel: 0.7 }); return; }
+      if (e.f === 'note') { const b = e.b === 'mel' ? mix.melInst : e.b; if (!joue(b, e.midi, { when, dur: e.dur, vel: e.vel })) notePiano(e.midi, { when, dur: e.dur, vel: e.vel * 0.8 }); return; }
       try { drums[e.f]?.(when, e.v); } catch { /* son absent */ }
     }
     function rebaser() { if (!lect) return; lect.evs = evenements(); const p = pos() + 0.3; lect.k = lect.evs.findIndex((e) => e.t >= p); if (lect.k < 0) lect.k = lect.evs.length; }
@@ -150,7 +165,7 @@ export default {
     }
     function jouer(de, boucle = null) {
       if (!ch) return; arreter(false); try { c.resume(); } catch { /* iOS */ }
-      const g = c.createGain(); g.gain.value = vol; g.connect(out());
+      const g = c.createGain(); g.gain.value = mix.orig ? vol : 0; g.connect(out());
       const s = c.createBufferSource(); s.buffer = ch.buf; s.connect(g);
       const off = Math.max(0, Math.min(ch.buf.duration - 0.05, de)); const t0c = c.currentTime + 0.08; s.start(t0c, off);
       lect = { s, g, off, t0c, boucle, evs: [], k: 0 }; rebaser(); lect.k = lect.evs.findIndex((e) => e.t >= off - 0.005); if (lect.k < 0) lect.k = lect.evs.length;
@@ -164,8 +179,73 @@ export default {
     }
     const majPlay = () => { const b = q('.ch-play'); if (b) { b.textContent = lect ? '■' : '▶'; b.setAttribute('aria-label', lect ? 'Arrêter' : 'Écouter'); } };
     function majPos() { const p = pos(); q('.ch-pos').textContent = mmss(p); if (ch) q('.ch-mes').textContent = `mesure ${mesureDe(p) + 1}`; const ici = q('.ch-ici'); if (ici && ch) ici.textContent = `${mmss(p)} · mesure ${mesureDe(p) + 1}`; }
-    function tick() { if (!lect) return; dessiner(); majPos(); raf = requestAnimationFrame(tick); }
+    function tick() { if (!lect) return; dessiner(); majPos(); allumerMesure(); raf = requestAnimationFrame(tick); }
     const onStop = () => arreter(); addEventListener('diapason:stop', onStop);
+
+    // ---------- Les mesures, à portée de doigt : une touche, et ça part de là ----------
+    let mesAllumee = -1;
+    function rendreMesures() {
+      const box = q('.ch-mesures'); if (!box) return; if (!ch) { box.innerHTML = ''; return; }
+      box.innerHTML = [...Array(nbMes())].map((_, m) => { const a = accordDe(m); return `<button class="ch-m" data-mes="${m}" aria-label="Mesure ${m + 1}${a ? `, ${a.nom}` : ''} : écouter à partir d’ici"><b>${m + 1}</b>${a ? `<small>${esc(a.nom)}</small>` : ''}</button>`; }).join('');
+      mesAllumee = -1; allumerMesure();
+    }
+    function allumerMesure() {
+      if (!ch) return; const m = mesureDe(pos()); if (m === mesAllumee) return; mesAllumee = m;
+      const box = q('.ch-mesures'); box?.querySelectorAll('.ch-m.ici').forEach((b) => b.classList.remove('ici'));
+      const b = box?.querySelector(`[data-mes="${m}"]`); if (b) { b.classList.add('ici'); if (lect) box.scrollTo({ left: b.offsetLeft - box.clientWidth / 2 + b.offsetWidth / 2, behavior: 'smooth' }); }
+    }
+
+    // ---------- La chanson refaite en numérique ----------
+    // Tout part de ce que L'oreille a entendu, mesure par mesure (même quand le tempo bouge) :
+    //  la batterie : les coups repérés dans l'enregistrement, en trois bandes (grave = grosse caisse, médium = caisse
+    //   claire, aigu = charleston), cherchés sur chaque double croche ; « plus fidèle » en garde davantage ;
+    //  la basse : la fondamentale de l'accord, sur les coups de grosse caisse (sinon sur les temps 1 et 3) ;
+    //  les accords : au piano électrique, à chaque changement et à chaque mesure ;
+    //  la mélodie : les notes de la voix repérées par L'oreille, jouées par un instrument.
+    function bandes(buf) {
+      const sr = buf.sampleRate; const n = buf.length; const x = new Float32Array(n);
+      for (let k = 0; k < buf.numberOfChannels; k++) { const d = buf.getChannelData(k); for (let i = 0; i < n; i++) x[i] += d[i] / buf.numberOfChannels; }
+      const hop = Math.round(sr / 200); const nF = Math.floor(n / hop); const coef = (fc) => Math.exp((-2 * Math.PI * fc) / sr);
+      const a1 = coef(150); const a2 = coef(400); const a3 = coef(3500); const a4 = coef(6000);
+      let l1 = 0; let l2 = 0; let l3 = 0; let l4 = 0; const E = [new Float32Array(nF), new Float32Array(nF), new Float32Array(nF)];
+      for (let f = 0; f < nF; f++) { let e0 = 0; let e1 = 0; let e2 = 0; for (let i = f * hop; i < (f + 1) * hop; i++) { const v = x[i]; l1 = a1 * l1 + (1 - a1) * v; l2 = a2 * l2 + (1 - a2) * v; l3 = a3 * l3 + (1 - a3) * v; l4 = a4 * l4 + (1 - a4) * v; const bas = l1; const mid = l3 - l2; const haut = v - l4; e0 += bas * bas; e1 += mid * mid; e2 += haut * haut; } E[0][f] = Math.log(1e-9 + e0); E[1][f] = Math.log(1e-9 + e1); E[2][f] = Math.log(1e-9 + e2); }
+      return E.map((e) => { const o = new Float32Array(nF); for (let f = 3; f < nF; f++) o[f] = Math.max(0, e[f] - Math.max(e[f - 2], e[f - 3])); return o; });
+    }
+    function refaire() {
+      if (!ch) return; const O = bandes(ch.buf); const N = nbMes(); const futs = ['kick', 'snare', 'hat'];
+      const pas = []; for (let m = 0; m < N; m++) { const L = tMes(m + 1) - tMes(m); for (let s = 0; s < 16; s++) pas.push({ m, s, t: tMes(m) + (s * L) / 16 }); }
+      const val = (o, t) => { const f = Math.round(t * 200); let v = 0; for (let k = f - 3; k <= f + 3; k++) v = Math.max(v, o[k] || 0); return v; };
+      const bat = [];
+      futs.forEach((f, b) => {
+        const v = pas.map((p) => val(O[b], p.t)); const tri = [...v].sort((x, y) => x - y); const p90 = tri[Math.floor(tri.length * 0.9)] || 1;
+        const seuil = (f === 'hat' ? 1.0 : 1.15) - 0.75 * detail; // plus fidèle = un seuil plus bas
+        pas.forEach((p, i) => { const r = v[i] / p90; if (r > seuil && (f !== 'hat' || p.s % 2 === 0 || detail > 0.6)) bat.push({ t: p.t, f, v: Math.min(1, 0.45 + 0.4 * r), m: p.m, s: p.s }); });
+      });
+      bat.sort((x, y) => x.t - y.t);
+      const basse = []; const acc = [];
+      for (let m = 0; m < N; m++) {
+        const L = tMes(m + 1) - tMes(m); const kicks = bat.filter((e) => e.m === m && e.f === 'kick').map((e) => e.s);
+        const coups = kicks.length ? kicks : [0, 8];
+        coups.forEach((s, i) => { const a = accordA(m, Math.floor(s / 4)); if (!a) return; let r = 36 + a.r; if (r > 45) r -= 12; const fin = coups[i + 1] ?? 16; basse.push({ t: tMes(m) + (s * L) / 16, f: 'note', b: 'piano', midi: r, dur: ((fin - s) * L) / 16 * 0.9, vel: 0.8 }); });
+        let avant = m ? accordA(m - 1, 3) : null;
+        for (let b = 0; b < 4; b++) {
+          const a = accordA(m, b); if (!a) continue; const change = !avant || avant.r !== a.r || avant.q !== a.q; avant = a;
+          if (!change && b) continue; let fin = b + 1; while (fin < 4) { const z = accordA(m, fin); if (!z || z.r !== a.r || z.q !== a.q) break; fin++; }
+          (IV[a.q] || IV.M).map((v) => { let n = 48 + a.r + v; while (n < 55) n += 12; while (n > 70) n -= 12; return n; }).forEach((n) => acc.push({ t: tMes(m) + (b * L) / 4, f: 'note', b: 'rhodes', midi: n, dur: ((fin - b) * L) / 4 * 0.95, vel: 0.5 }));
+        }
+      }
+      const mel = (ch.voix || []).filter((x) => Array.isArray(x) && x[2]).map(([t, d, m]) => ({ t, f: 'note', b: 'mel', midi: m < 60 && mix.melInst === 'flute' ? m + 12 : m, dur: Math.max(0.12, d), vel: 0.7 }));
+      num = { bat, basse, acc, mel }; if (lect) rebaser(); dessiner();
+    }
+    // Le fichier MIDI : à ouvrir dans le logiciel de Frog, posé sous l'enregistrement (le temps 0 = le début du son).
+    function midiNumerique() {
+      if (!num) return null; const bpm = Math.round(60 / ((tMes(nbMes()) - tMes(0)) / (4 * nbMes())));
+      const GM = { kick: 36, snare: 38, hat: 42, clap: 39 }; const ev = [{ t: 0, d: [0xc0, 33] }, { t: 0, d: [0xc1, 4] }, { t: 0, d: [0xc2, { flute: 73, piano: 0, clarinette: 71, cordes: 48 }[mix.melInst] ?? 73] }];
+      const note = (canal, n, t, dur, vel) => { ev.push({ t, d: [0x90 | canal, n, Math.max(1, Math.round(vel * 110))] }, { t: t + dur, d: [0x80 | canal, n, 0], off: true }); };
+      num.bat.forEach((e) => note(9, GM[e.f], e.t, 0.1, e.v)); num.basse.forEach((e) => note(0, e.midi, e.t, e.dur, e.vel)); num.acc.forEach((e) => note(1, e.midi, e.t, e.dur, e.vel)); num.mel.forEach((e) => note(2, e.midi, e.t, e.dur, e.vel));
+      ev.sort((a, b) => a.t - b.t || (b.off ? 1 : 0) - (a.off ? 1 : 0));
+      return fichierMidi(ev.map((e) => ({ t: e.t, d: e.d })), bpm); // les temps restent en secondes : le fichier les place au tempo écrit
+    }
 
     // ---------- La frise ----------
     let pics = null;
@@ -192,15 +272,14 @@ export default {
     }
     let glisse = false;
     const versT = (e) => { const r = q('.ch-frise').getBoundingClientRect(); return Math.max(0, Math.min(ch.buf.duration, ((e.clientX - r.left) / r.width) * ch.buf.duration)); };
-    q('.ch-frise').addEventListener('pointerdown', (e) => { if (!ch) return; glisse = true; try { e.target.setPointerCapture?.(e.pointerId); } catch { /* pas de pointeur actif */ } curseur = versT(e); if (lect) jouer(curseur); else { dessiner(); majPos(); } });
-    q('.ch-frise').addEventListener('pointermove', (e) => { if (!glisse || !ch || lect) return; curseur = versT(e); dessiner(); majPos(); });
+    q('.ch-frise').addEventListener('pointerdown', (e) => { if (!ch) return; glisse = true; try { e.target.setPointerCapture?.(e.pointerId); } catch { /* pas de pointeur actif */ } curseur = tMes(mesureDe(versT(e))); jouer(curseur); });
     q('.ch-frise').addEventListener('pointerup', () => { glisse = false; });
 
     // ---------- Les onglets ----------
     function rendre() {
       el.querySelectorAll('[data-onglet]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.onglet === onglet)));
       const box = q('.ch-corps'); if (!ch) { box.innerHTML = ''; return; }
-      if (onglet === 'com') rendreComs(); else if (onglet === 'bat') rendreBat(); else rendrePiano();
+      if (onglet === 'com') rendreComs(); else if (onglet === 'bat') rendreBat(); else if (onglet === 'num') rendreNum(); else rendrePiano();
       dessiner(); majPos();
     }
     function rendreComs() {
@@ -261,6 +340,27 @@ export default {
         <p class="muted small">Touche une case pour poser une note (tu l’entends), retouche-la pour l’enlever. Les cases dorées sont les notes de l’accord qui joue : elles sonnent toujours bien. Les colonnes, ce sont des croches.</p>
         <div class="ec-row"><button class="btn primary" data-c="ecouter-pia">▶ Écouter le passage avec ma ligne</button><button class="btn" data-c="boucle-pia">🔁 En boucle</button></div>`;
     }
+    function rendreNum() {
+      const aVoix = !!ch.voix?.length; const aGrille = !!ch.grille?.length;
+      const bouton = (k, ico, nom, sous) => `<button class="ch-piste ${mix[k] ? 'on' : ''}" data-mix="${k}" aria-pressed="${mix[k]}"><span>${ico}</span><b>${nom}</b><small>${sous}</small></button>`;
+      q('.ch-corps').innerHTML = `
+        <p>Une copie numérique de la chanson, refaite avec ce que L’oreille a entendu : ${aGrille ? 'ses accords' : '<i>pas d’accords trouvés</i>'}, sa batterie (les coups repérés dans l’enregistrement)${aVoix ? ', la mélodie de ta voix' : ''}. Elle suit les mesures de la chanson, même quand le tempo bouge.</p>
+        ${num ? `<p class="ch-fait">✓ Refaite : ${num.bat.length} coups de batterie, ${num.basse.length} notes de basse, ${num.acc.length ? `${new Set(num.acc.map((e) => e.t)).size} accords` : 'pas d’accords'}${num.mel.length ? `, ${num.mel.length} notes de mélodie` : ''}.</p>` : ''}
+        <div class="ec-row"><button class="btn ${num ? '' : 'primary'}" data-c="refaire">🎛 ${num ? 'Refaire' : 'Refaire la chanson en numérique'}</button></div>
+        ${num ? `
+        <p class="ch-lab">Ce qui joue (touche pour allumer ou éteindre) :</p>
+        <div class="ch-pistes">
+          ${bouton('orig', '🎧', 'L’enregistrement', 'le vrai son')}
+          ${bouton('bat', '🥁', 'Batterie', 'numérique')}
+          ${bouton('basse', '🎸', 'Basse', 'sur la grosse caisse')}
+          ${bouton('acc', '🎹', 'Accords', 'piano électrique')}
+          ${aVoix ? bouton('mel', '🎶', 'Mélodie', 'ta voix, rejouée') : ''}
+        </div>
+        ${aVoix ? `<label class="ch-inst"><span>La mélodie jouée par</span><select data-c="melinst">${[['flute', 'la flûte'], ['clarinette', 'la clarinette'], ['piano', 'le piano'], ['cordes', 'les cordes']].map(([k, l]) => `<option value="${k}" ${mix.melInst === k ? 'selected' : ''}>${l}</option>`).join('')}</select></label>` : ''}
+        <div class="ch-detail"><b>La batterie numérique</b><div><span>plus simple</span><input type="range" min="0" max="1" step="0.05" value="${detail}" data-c="detail" aria-label="La batterie numérique : plus simple ou plus fidèle"><span>plus fidèle</span></div></div>
+        <div class="ec-row"><button class="btn primary" data-c="num-seul">▶ Seulement le numérique</button><button class="btn" data-c="num-ens">▶ Les deux ensemble</button><button class="btn" data-c="midi">⬇ En MIDI (pour Frog)</button></div>
+        <p class="muted small">Un toucher sur une mesure (en haut) fait partir la chanson de là. Ton idée de batterie (🥁) remplace la batterie numérique sur son passage ; ta ligne de piano (🎹) s’ajoute. Le MIDI s’ouvre dans un logiciel de musique, posé sous l’enregistrement : 4 pistes (basse, accords, mélodie, batterie).</p>` : `<p class="muted small">Ça prend quelques secondes. Rien ne touche à l’enregistrement.</p>`}`;
+    }
     // Une ligne qui monte (ou descend) : les notes de chaque accord, un temps chacune, toujours plus haut.
     function generer(sens) {
       const P = idees.piano; if (sens === 'vide') { P.notes = []; garderIdees(); rendre(); return; }
@@ -301,6 +401,9 @@ export default {
         if (i >= 0) P.notes.splice(i, 1); else { const d = Math.min(dureeNote, 8 * P.n - s); P.notes = P.notes.filter((n) => !(n.m === m && n.p < s + d && n.p + n.d > s)); P.notes.push({ p: s, m, d }); sonner({ f: 'piano', midi: m, dur: 0.5 }, c.currentTime + 0.01); }
         garderIdees(); rendre(); return;
       }
+      const ms = e.target.closest('[data-mes]'); if (ms && ch) { curseur = tMes(+ms.dataset.mes); jouer(curseur); return; }
+      const mx = e.target.closest('[data-mix]');
+      if (mx) { const k = mx.dataset.mix; mix[k] = !mix[k]; store.set('chantierMix', mix); if (k === 'orig' && lect) lect.g.gain.setTargetAtTime(mix.orig ? vol : 0, c.currentTime, 0.03); else if (lect) rebaser(); rendre(); return; }
       const lg = e.target.closest('[data-long]'); if (lg) { idees.batterie.long = +lg.dataset.long; garderIdees(); rendre(); return; }
       const mo = e.target.closest('[data-motif]');
       if (mo) { const B = idees.batterie; const p = MOTIFS[mo.dataset.motif].f(); FUTS.forEach(([f]) => { B.pas[f] = vide16(2); (p[f] || []).forEach((s) => { B.pas[f][s] = 1; B.pas[f][s + 16] = 1; }); }); garderIdees(); rendre(); return; }
@@ -327,6 +430,10 @@ export default {
         } catch (err) { toast(err.message || 'Pas pu garder le commentaire.'); b.disabled = false; return; }
         rendre();
       }
+      if (a === 'refaire') { const b = e.target.closest('button'); b.disabled = true; b.textContent = '🎛 J’écoute la batterie…'; setTimeout(() => { refaire(); rendre(); toast('La chanson est refaite en numérique. Allume ou éteins chaque partie.'); }, 30); }
+      if (a === 'num-seul') { mix.orig = false; ['bat', 'basse', 'acc', 'mel'].forEach((k) => { mix[k] = true; }); store.set('chantierMix', mix); rendre(); jouer(tMes(mesureDe(pos()))); }
+      if (a === 'num-ens') { mix.orig = true; store.set('chantierMix', mix); rendre(); jouer(tMes(mesureDe(pos()))); }
+      if (a === 'midi') { const f = midiNumerique(); if (!f) return; const l = document.createElement('a'); l.href = URL.createObjectURL(f); l.download = `${ch.nom} (numérique).mid`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(l); l.click(); l.remove(); }
       if (a === 'bat-ici') { const m = mesureDe(pos()) + 1; const B = idees.batterie; const L = B.a - B.de; B.de = m; B.a = Math.min(nbMes(), m + Math.max(B.long, L)); garderIdees(); rendre(); }
       if (a === 'pia-ici') { idees.piano.de = mesureDe(pos()) + 1; garderIdees(); rendre(); }
       if (a === 'ecouter-bat' || a === 'ecouter-pia') { const p = passage(a === 'ecouter-bat' ? 'bat' : 'pia'); jouer(p.a); }
@@ -334,7 +441,7 @@ export default {
     });
     el.addEventListener('input', (e) => {
       const a = e.target.dataset.c;
-      if (a === 'vol') { vol = +e.target.value; store.set('chantierVolume', vol); if (lect) lect.g.gain.setTargetAtTime(vol, c.currentTime, 0.03); }
+      if (a === 'vol') { vol = +e.target.value; store.set('chantierVolume', vol); if (lect) lect.g.gain.setTargetAtTime(mix.orig ? vol : 0, c.currentTime, 0.03); }
       if (a === 'texte' && composer) composer.texte = e.target.value;
     });
     el.addEventListener('change', (e) => {
@@ -346,6 +453,8 @@ export default {
       if (a === 'bat-a') { idees.batterie.a = Math.max(idees.batterie.de, v); garderIdees(); rendre(); }
       if (a === 'pia-de') { idees.piano.de = v; garderIdees(); rendre(); }
       if (a === 'toutes') { toutesNotes = e.target.checked; rendre(); }
+      if (a === 'melinst') { mix.melInst = e.target.value; store.set('chantierMix', mix); prechargerSons([mix.melInst]); }
+      if (a === 'detail') { detail = +e.target.value; store.set('chantierDetail', detail); refaire(); rendre(); }
     });
     const offEsp = onEspace((type) => { if (type === 'entries' && ch && !composer) { if (onglet === 'com') rendreComs(); dessiner(); } if (type === 'entries' && !ch) majSources(); });
     const auResize = () => { pics = null; dessiner(); }; addEventListener('resize', auResize);

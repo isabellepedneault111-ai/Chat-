@@ -36,7 +36,7 @@ export function lireAccord(t) {
 // Les accords entendus hésitent souvent entre Ré7, Rém7 et Rémaj7 (une seule note change). Dans la tonalité de la
 // chanson, on garde la couleur qui y appartient : en ré mineur, Ré7 et Rémaj7 redeviennent Rém (ou Rém7 si sa 7e est
 // dans la gamme). Seul le V en mineur peut rester majeur (La en ré mineur). Les accords hors gamme restent tels quels.
-function dansLaTonalite(c, ton) {
+export function dansLaTonalite(c, ton) {
   if (!c || !ton || !IV[c.q] || /sus|add/.test(c.q)) return c;
   const g = (ton.mineur ? [0, 2, 3, 5, 7, 8, 10] : [0, 2, 4, 5, 7, 9, 11]); const rel = (c.r - ton.r + 12) % 12;
   if (!g.includes(rel)) return c;
@@ -47,7 +47,7 @@ function dansLaTonalite(c, ton) {
   return { r: c.r, q };
 }
 // La tonalité écrite « Ré mineur » → { r: 2, mineur: true }.
-function lireTon(t) { const m = String(t || '').match(/^(\S+)\s+(majeur|mineur)/i); const c = m && lireAccord(m[1]); return c ? { r: c.r, mineur: /mineur/i.test(m[2]) } : null; }
+export function lireTon(t) { const m = String(t || '').match(/^(\S+)\s+(majeur|mineur)/i); const c = m && lireAccord(m[1]); return c ? { r: c.r, mineur: /mineur/i.test(m[2]) } : null; }
 // Les mesures nettoyées : les accords dans la tonalité, et un accord qui se répète n'est pas réécrit.
 function nettoyer(mesures, ton) {
   let avant = null;

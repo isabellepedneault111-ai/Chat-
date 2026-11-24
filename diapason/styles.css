@@ -4857,3 +4857,21 @@ body.ch-ouvert .arret-son, body.ch-ouvert .etincelle { display: none !important;
 .ch-bat-r { grid-template-columns: 82px repeat(var(--n), 30px); }
 .ch-bat-n { font-size: .8rem; white-space: nowrap; }
 @media (max-width: 640px) { .ch-bat-r { grid-template-columns: 76px repeat(var(--n), 28px); } }
+/* 1.18 — les mesures à portée de doigt, la chanson en numérique */
+.ch-mesures { display: flex; gap: 4px; overflow-x: auto; margin-top: 8px; padding-bottom: 4px; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+.ch-m { flex: 0 0 auto; min-width: 46px; min-height: 44px; border: 1.5px solid #c9bfa9; border-radius: 8px; background: #fffdf8; color: #1d1a15; cursor: pointer; display: grid; place-items: center; padding: 3px 6px; line-height: 1.1; }
+.ch-m b { font-size: .95rem; } .ch-m small { font-size: .72rem; color: #5c5446; white-space: nowrap; }
+.ch-m.ici { background: #1d1a15; border-color: #1d1a15; color: #fbe7a1; } .ch-m.ici small { color: #e6d9b0; }
+.ch-fait { font-weight: 700; color: #2d6a3e; }
+.ch-lab { font-weight: 700; margin: 12px 0 6px; }
+.ch-pistes { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.ch-piste { display: grid; justify-items: start; gap: 2px; text-align: left; padding: 10px; border-radius: 10px; border: 1.5px solid #c9bfa9; background: #fffdf8; color: #5c5446; cursor: pointer; }
+.ch-piste span { font-size: 1.3rem; } .ch-piste b { color: #1d1a15; } .ch-piste small { font-size: .78rem; }
+.ch-piste.on { border-color: #1d1a15; background: #fbeecb; box-shadow: 0 3px 0 #1d1a15; }
+.ch-piste:not(.on) { opacity: .7; } .ch-piste:not(.on) b { text-decoration: line-through; }
+.ch-inst, .ch-detail { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0; font-weight: 700; }
+.ch-detail input { flex: 1 1 140px; max-width: 260px; accent-color: #b8301c; }
+.ch-detail span { font-weight: 500; color: #5c5446; font-size: .9rem; }
+.ch-detail { display: grid; gap: 4px; }
+.ch-detail > div { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+.ch-detail input { max-width: none; width: 100%; }
