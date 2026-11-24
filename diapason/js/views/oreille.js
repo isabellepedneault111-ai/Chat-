@@ -91,6 +91,7 @@ export default {
           ${espace.connected ? '<button class="btn primary" data-o="piece" data-bulle="La chanson rejoint Joy Walk et Projet 1 : dans L’oreille, Placer mes paroles et partout où on choisit une pièce. Elle reste dans votre espace, privée.">⭐ Mettre dans nos pièces</button>' : ''}
           <button class="btn" data-o="boucle-wav">⬇ La boucle (WAV)</button>
           <button class="btn primary" data-o="mots" data-bulle="Ma voix → Mots sur la grille s’ouvre avec cette chanson : ses accords, son tempo, et la vraie chanson qui joue sous les paroles.">✍️ Des paroles sur cette chanson</button>
+          <button class="btn" data-o="chantier" data-bulle="Commenter des moments précis (écrit ou vocal), essayer une autre batterie ou une ligne de piano par-dessus cette chanson.">⚒ Le chantier de cette chanson</button>
           <button class="btn" data-o="texte" data-bulle="Les paroles de cette chanson en grand, la chanson dessous : coller tes paroles, marquer quand chaque ligne arrive, apprendre, exporter.">📄 Le texte de cette chanson</button>
           <button class="btn" data-o="ecrire">Écrire des paroles sur la boucle</button>
           ${espace.connected ? '<button class="btn" data-o="relais">Lancer la boucle au relais</button>' : ''}
@@ -822,6 +823,7 @@ export default {
         return;
       }
       if (o === 'harmo-non') { accs = accsEntendus; cadreG = null; corrigees = new Set(); montrerAccords(); harmo(false); return; }
+      if (o === 'chantier') { store.set('chantierSource', 'oreille'); location.hash = '#/chantier'; return; }
       if (o === 'mots' || o === 'texte') {
         if (o === 'texte') window.__flipTexte = true;
         if (!accs?.length) { toast('Pas encore d’accords pour cette chanson.'); return; }

@@ -4789,3 +4789,71 @@ body.fe-ouverte .arret-son, body.fe-ouverte .etincelle { display: none !importan
 .fe-modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .fe-modes button { padding: 9px 6px; }
 @media (max-width: 640px) { .fe-etapes button { padding: 7px 8px; font-size: .85rem; } .fe-etapes small { font-size: .74rem; } }
+
+/* 1.17 — Le chantier */
+.view-chantier { padding-bottom: 96px; }
+.ch-src { max-width: 640px; }
+.ch-src select { width: 100%; min-width: 0; }
+.ch-frise-p { padding: 12px; }
+.ch-frise-t { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; margin-bottom: 8px; }
+.ch-nom { font: 800 1.25rem var(--display); }
+.ch-frise { display: block; width: 100%; height: 96px; border-radius: 8px; cursor: pointer; touch-action: none; }
+.ch-legende { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; margin: 8px 0 0; }
+.ch-legende i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: -6px; vertical-align: -1px; }
+.ch-legende .lg-c { background: #f6d66b; border-radius: 50%; } .ch-legende .lg-b { background: #d93a24; } .ch-legende .lg-p { background: #569ce6; }
+.ch-onglets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 16px 0 10px; }
+.ch-onglets button { border: 1.5px solid #1d1a15; background: #fffdf8; color: #1d1a15; border-radius: 999px; padding: 10px 6px; font: 700 .95rem inherit; cursor: pointer; }
+.ch-onglets button[aria-selected="true"] { background: #1d1a15; color: #fbe7a1; }
+.ch-commenter { width: 100%; justify-content: center; white-space: normal; font-size: 1.05rem; padding: 14px; }
+.ch-compose { background: #fff7e0; border: 1px solid #e8cf8a; border-radius: 10px; padding: 12px; display: grid; gap: 10px; }
+.ch-compose p { margin: 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.ch-compose textarea { width: 100%; box-sizing: border-box; font: inherit; }
+.ch-compose audio { max-width: 100%; }
+.ch-coms { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+.ch-com { display: flex; gap: 10px; align-items: flex-start; background: #fffdf8; border: 1px solid #e3d6b4; border-radius: 10px; padding: 10px; }
+.ch-com-t { flex: 0 0 auto; border: 0; border-radius: 8px; background: #1d1a15; color: #fbe7a1; padding: 6px 8px; font-weight: 700; cursor: pointer; display: grid; text-align: center; }
+.ch-com-t small { font-size: .7rem; color: #e6d9b0; font-weight: 500; }
+.ch-com-c { flex: 1; min-width: 0; }
+.ch-com-c p { margin: 2px 0 6px; overflow-wrap: anywhere; }
+.ch-qui { font: 700 .8rem inherit; color: #5c5446; text-transform: uppercase; letter-spacing: .05em; }
+.ch-com-x { border: 0; background: none; color: #5c5446; font-size: 1rem; cursor: pointer; padding: 4px 8px; }
+.ch-on { display: flex; gap: 8px; align-items: center; font-weight: 700; margin-bottom: 10px; }
+.ch-passage, .ch-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+.ch-passage input { width: 4.2em; font: inherit; padding: 6px; border-radius: 6px; border: 1.5px solid #1d1a15; background: #fffdf8; color: #1d1a15; }
+.ch-row > span { font-weight: 700; }
+.ch-sep { margin-left: 6px; }
+.ch-defile { overflow-x: auto; margin: 10px 0; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
+.ch-bat { display: grid; gap: 4px; width: max-content; }
+.ch-bat-r { display: grid; grid-template-columns: 104px repeat(var(--n), 30px); gap: 3px; align-items: center; }
+.ch-bat-n, .ch-roll-n { position: sticky; left: 0; background: #f6f1e6; font: 700 .82rem inherit; padding-right: 6px; z-index: 1; }
+.ch-pas { height: 34px; border-radius: 6px; border: 1px solid #c9bfa9; background: #fffdf8; cursor: pointer; padding: 0; }
+.ch-pas.tps { background: #efe8da; }
+.ch-pas.mes { margin-left: 8px; }
+.ch-pas.on { background: #d93a24; border-color: #8f2414; }
+.ch-roll { display: grid; gap: 2px; width: max-content; }
+.ch-roll-r { display: grid; grid-template-columns: 56px repeat(var(--n), 28px); gap: 2px; align-items: center; }
+.ch-roll-r.do .ch-roll-n { color: #1d1a15; text-decoration: underline; }
+.ch-roll-acc .ch-roll-a { font: 700 .85rem var(--display); color: #1d1a15; padding: 2px 4px; border-left: 2px solid #c9a45c; }
+.ch-cel { height: 24px; border-radius: 4px; border: 1px solid #e3d6b4; background: #fffdf8; cursor: pointer; padding: 0; }
+.ch-cel.tps { background: #f6f1e6; }
+.ch-cel.ton { background: #fbeecb; }
+.ch-cel.mes { margin-left: 6px; }
+.ch-cel.note { background: #2f6fb3; border-color: #1f4c7c; border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.ch-cel.suite { background: #569ce6; border-color: #2f6fb3; border-radius: 0; }
+.ch-toutes { display: flex; gap: 6px; align-items: center; font-size: .9rem; }
+.ch-lecteur { position: fixed; left: 50%; transform: translateX(-50%); bottom: 72px; z-index: 55; width: min(720px, calc(100% - 24px)); box-sizing: border-box; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 14px; border-radius: 16px; background: #1d1a15; color: #fbe7a1; box-shadow: 0 10px 30px rgba(0, 0, 0, .3); }
+.ch-play { width: 52px; height: 52px; border-radius: 50%; border: 3px solid #fbe7a1; background: #b8301c; color: #fff; font-size: 1.3rem; cursor: pointer; flex: 0 0 auto; }
+.ch-pos { font-weight: 700; color: #fbe7a1; }
+.ch-mes { color: #e6d9b0; }
+.ch-vol { display: flex; align-items: center; gap: 8px; margin-left: auto; color: #e6d9b0; font-size: .85rem; }
+.ch-vol input { width: 120px; accent-color: #f6d66b; }
+@media (max-width: 640px) { .ch-lecteur { bottom: 64px; } .ch-vol input { width: 90px; } .ch-bat-r { grid-template-columns: 84px repeat(var(--n), 28px); } .ch-onglets button { font-size: .85rem; } }
+body.ch-ouvert .arret-son, body.ch-ouvert .etincelle { display: none !important; }
+.ch-lecteur { flex-wrap: nowrap; padding: 8px 12px; gap: 10px; }
+.ch-play { width: 46px; height: 46px; font-size: 1.15rem; }
+.ch-vol { white-space: nowrap; }
+.view-chantier .mod-head h1 { font-size: clamp(1.6rem, 6vw, 2.6rem); }
+@media (max-width: 640px) { .ch-mes { display: none; } .ch-vol input { width: 80px; } .ch-chapeau { font-size: .95rem; } }
+.ch-bat-r { grid-template-columns: 82px repeat(var(--n), 30px); }
+.ch-bat-n { font-size: .8rem; white-space: nowrap; }
+@media (max-width: 640px) { .ch-bat-r { grid-template-columns: 76px repeat(var(--n), 28px); } }

@@ -112,7 +112,7 @@ async function refresh(force) {
   const { data } = await api(`/${espace.id}/entries`);
   const before = new Set(espace.entries.map((e) => `${e.id}:${e.updatedAt}`));
   // Ce qui vient de l'autre et compte pour une personne : pas les profils, les traces, ni ce qui part à la corbeille.
-  const fresh = data.entries.filter((e) => !before.has(`${e.id}:${e.updatedAt}`) && e.editedBy !== espace.me && !['profil', 'trace', 'parcours', 'motsgrille'].includes(e.type) && !e.data?.corbeille)
+  const fresh = data.entries.filter((e) => !before.has(`${e.id}:${e.updatedAt}`) && e.editedBy !== espace.me && !['profil', 'trace', 'parcours', 'motsgrille'].includes(e.type) && !(e.type === 'chantier' && e.data?.kind === 'idees') && !e.data?.corbeille)
     .map((e) => ({ ...e, _nouveau: !espace.entries.some((x) => x.id === e.id) }));
   espace.entries = [...data.entries.filter((e) => !e.data?.corbeille), ...(espace.demoEntries || [])];
   espace.trash = data.entries.filter((e) => e.data?.corbeille);

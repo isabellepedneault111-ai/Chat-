@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.17', quand: '2026-11-24', titre: 'Le chantier', items: [
+    ['Une page pour travailler une chanson', ['Jouer → ⚒ Le chantier (ou, dans L’oreille, « ⚒ Le chantier de cette chanson »). En haut, la frise de la chanson : son onde, ses mesures, les commentaires (pastilles dorées) et tes idées (bandes rouge et bleue). Touche-la pour t’y rendre. En bas, ▶ et le volume de « la chanson » : baisse-le pour mieux entendre tes idées.']],
+    ['💬 Des commentaires à la seconde près', ['« 💬 Commenter ici » pose un commentaire au moment où tu es (0:42, mesure 12), écrit ou dit au micro (🎙, jusqu’à 1 min 30). Ils vont dans votre espace : Frog les voit dans la liste et sur la frise, et un toucher sur l’heure rejoue ce moment.']],
+    ['🥁 Une autre batterie, par-dessus', ['Un motif d’une ou deux mesures (grosse caisse, caisse claire, charleston, clap), répété sur le passage que tu choisis (« ⤓ Commencer ici »). Pars de Simple, Demi-temps, Ça pousse ou Juste le charleston, puis touche les cases : chaque coup s’entend tout de suite. ▶ ou 🔁 pour l’entendre avec la chanson. La batterie de l’enregistrement reste là.']],
+    ['🎹 Une ligne de piano, dessinée', ['Une grille de notes sur 2 ou 4 mesures, dans la tonalité de la chanson, avec ses accords au-dessus. Les cases dorées sont les notes de l’accord qui joue : elles sonnent toujours bien. Choisis la durée (une croche, un temps…), touche pour poser une note. « ↗ Une ligne qui monte » en propose une à partir des accords, à retoucher.']],
+  ] },
   { v: '1.16', quand: '2026-11-24', titre: 'Le texte seul, encore plus simple', items: [
     ['Trois étapes, toujours en vue', ['En haut du texte : 1 Colle tes paroles, 2 Marque les temps (3 / 34 lignes), 3 Apprends. La prochaine étape est en jaune, celles qui sont faites passent au vert ✓. Touche une étape pour y aller.']],
     ['Marquer sans réfléchir', ['Plus besoin de ▶ : le gros bouton jaune « ▶ Commencer » lance la chanson un peu avant la ligne à marquer, puis devient « ⏎ Maintenant! ». La ligne suivante se place au milieu de l’écran. À la fin, il t’amène à 🧠 Apprendre.']],
