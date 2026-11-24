@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.35', quand: '2026-11-24', titre: 'Plusieurs beats, un chef plus riche, vos mains en photo', items: [
+    ['Cinq beats', ['Dans Le moteur des mots, Le chef et Le trou : Pizza, Hip-hop, Carnaval, Rock patate, Reggae. Chaque beat change les sons, le rythme et les mots des 4 groupes (et vos mots se gardent beat par beat). Option « Le beat change tout seul » : une fois tout le monde entré, un nouveau beat toutes les 8 mesures, annoncé une mesure avant.']],
+    ['Le chef : les voix, la pluie, le tonnerre', ['En plus des 4 groupes, le chef fait entrer AAA, OOO, MMM (des notes tenues qui forment de vrais accords, avec la note écrite et la direction de la suivante), la pluie et le tonnerre. Chaque tuile s’allume ou s’éteint à son toucher.']],
+    ['Vos mains, en photo', ['Sous chaque geste en haut du Cercle : « Photo ». Un élève fait le geste, on le photographie, et sa photo remplace le dessin partout (pistes, chef, chanson). « Dessin » remet le dessin. Les photos restent sur l’appareil, rien n’est partagé.']],
+    ['Des dessins plus clairs', ['Des mains d’un seul trait, qui ressemblent à des mains.']],
+  ] },
   { v: '1.34', quand: '2026-11-24', titre: 'On voit le geste à faire', items: [
     ['Des dessins pour chaque son', ['Chaque son du corps a son dessin : la main à plat qui tape le bureau (BOUM), les mains qui se tapent (TAC), le bout des doigts (TIC), le claquement (TSK), les mains qui frottent (CHHH), le pied (BOUM des pieds). Et pour les voix, la forme de la bouche : grande ouverte (AAA), ronde (OOO), fermée (MMM).']],
     ['Partout dans Le cercle', ['Sur les cartes du haut, dans le rond du cœur, les cases de l’écho et de la chanson, les tuiles du chef, et dans les pistes du chœur : chaque bloc qui arrive montre le geste, et l’étiquette du groupe s’allume avec son dessin au moment de jouer.']],

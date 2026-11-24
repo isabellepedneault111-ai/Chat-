@@ -5199,3 +5199,24 @@ button.ce-g { font: inherit; color: inherit; text-align: left; width: 100%; back
 .ce-jam-r { grid-template-columns: 7em repeat(8, minmax(0, 1fr)); }
 @media (max-width: 640px) { .ce-jam-r { grid-template-columns: 5.2em repeat(8, minmax(0, 1fr)); } .ce-jam-r > b { font-size: .8rem; } }
 .ce-sons .ce-son .ce-img, .ce-sons .ce-son.grand .ce-img { width: min(100%, 120px); height: auto; aspect-ratio: 1; }
+
+/* Beats, pads du chef, photos de la classe (1.35) */
+.ce-grooves { flex-wrap: wrap; }
+.ce-pads { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+.ce-pad { display: grid; justify-items: center; gap: 4px; padding: 10px 6px; border-radius: 18px; border: 4px solid transparent; background: #211e19; color: #fff7dc; cursor: pointer; font: inherit; opacity: .55; }
+.ce-pad .ce-img { width: clamp(56px, 9vw, 96px); height: clamp(56px, 9vw, 96px); }
+.ce-pad b { font: 900 clamp(1rem, 2.4vw, 1.5rem) var(--display); color: var(--c); }
+.ce-pad-n { font: 800 clamp(.8rem, 1.6vw, 1rem) var(--display); color: #fff7dc; min-height: 1.2em; text-align: center; }
+.ce-pad.actif { opacity: 1; border-color: var(--c); background: #2a2620; }
+.ce-pad.entre { opacity: .8; border: 4px dashed var(--c); } .ce-pad.sort { border: 4px dashed #6b6455; }
+.ce-pad.bat .ce-img { animation: ce-bat .28s ease-out; }
+.ce-chef-g .ce-chef-etat { color: #e6dfc8; }
+.ce-photo-aide { margin: 4px 0 8px; color: var(--ink-2); }
+.ce-sons { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important; }
+.ce-photo-b { display: flex; gap: 6px; justify-content: center; margin-top: 4px; }
+.ce-photo, .ce-photo-b button { font: 800 .85rem var(--display); padding: 6px 12px; border-radius: 999px; border: 2px solid var(--ink); background: #fff; color: var(--ink); cursor: pointer; }
+.ce-img .photo, img.geste.photo { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
+@media (max-width: 640px) { .ce-pads { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.ce-sons { grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)) !important; }
+.ce-photo, .ce-photo-b button { padding: 4px 9px; font-size: .78rem; }
+.ce-photo-b { flex-wrap: wrap; }
