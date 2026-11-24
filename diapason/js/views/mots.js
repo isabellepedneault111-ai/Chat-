@@ -498,10 +498,12 @@ export default {
       // Nouvelle ligne : on la ramène au milieu de l'écran, au-dessus de la barre.
       if (cleBarre.split('|')[0] !== String(j)) el.querySelector(`.mo-l[data-i="${F.i}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
       cleBarre = cle;
-      lb.innerHTML = `<div class="mo-lb-acc">${cur ? `<b>${esc(nomAcc(cur.c))}</b>${diagramme(cur.c.r, cur.c.q, { taille: 64 })}` : `<b class="mo-lb-compte">${compte || ''}</b>`}${suiv ? `<small>puis ${esc(nomAcc(suiv.c))}</small>` : ''}</div>
-        <div class="mo-lb-mil"><p class="mo-lb-mots">${enIntro ? '<span class="dit">🎵 Musique seule… les paroles arrivent</span>' : lignes[F.i]?.pause ? '<span class="dit">🎵 Musique seule</span>' : motsAllumes(F, ks)}</p>${enIntro || lignes[F.i]?.pause ? '' : roulette(F, ks)}</div>
-        <button class="mo-lb-mic ${micLive ? 'on' : ''}" data-m="micdirect" aria-pressed="${micLive}" aria-label="${micLive ? 'Fermer le micro' : 'Voir ma voix en direct (micro)'}">🎤</button><span class="mo-mic-etat" aria-live="off"></span>
-        <button class="mo-lb-stop" data-m="stop" aria-label="Arrêter">■</button>`;
+      // Les boutons (🎤, ■) sont posés une fois et ne sont plus jamais redessinés : un doigt qui touche ■ pendant que
+      // les syllabes défilent tombe toujours sur un vrai bouton (avant, il était remplacé sous le doigt, et rien ne se passait).
+      if (!lb.querySelector('.mo-lb-stop')) lb.innerHTML = '<div class="mo-lb-acc"></div><div class="mo-lb-mil"></div><button class="mo-lb-mic" data-m="micdirect" aria-label="Voir ma voix en direct (micro)">🎤</button><span class="mo-mic-etat" aria-live="off"></span><button class="mo-lb-stop" data-m="stop" aria-label="Arrêter">■</button>';
+      lb.querySelector('.mo-lb-acc').innerHTML = `${cur ? `<b>${esc(nomAcc(cur.c))}</b>${diagramme(cur.c.r, cur.c.q, { taille: 64 })}` : `<b class="mo-lb-compte">${compte || ''}</b>`}${suiv ? `<small>puis ${esc(nomAcc(suiv.c))}</small>` : ''}`;
+      lb.querySelector('.mo-lb-mil').innerHTML = `<p class="mo-lb-mots">${enIntro ? '<span class="dit">🎵 Musique seule… les paroles arrivent</span>' : lignes[F.i]?.pause ? '<span class="dit">🎵 Musique seule</span>' : motsAllumes(F, ks)}</p>${enIntro || lignes[F.i]?.pause ? '' : roulette(F, ks)}`;
+      { const mb = lb.querySelector('.mo-lb-mic'); mb.textContent = '🎤'; mb.classList.toggle('on', micLive); mb.setAttribute('aria-pressed', String(micLive)); mb.setAttribute('aria-label', micLive ? 'Fermer le micro' : 'Voir ma voix en direct (micro)'); }
       dessinerVoix(lb, F, t);
       el.querySelectorAll('.pl-syl.dit').forEach((x) => x.classList.remove('dit'));
       const sp = el.querySelector(`.mo-l[data-i="${F.i}"] .pl-syl[data-k="${ks}"]`); if (sp) sp.classList.add('dit');
@@ -569,9 +571,9 @@ export default {
           let dur = 1; while (t + dur < 4 && !g.mesures[m][t + dur]) dur++;
           const iv = (() => { try { return chordIntervals(ch.q); } catch { return IV[ch.q] || IV.M; } })();
           const base = 48 + ch.r; accordSon('piano', iv.map((v) => base + v), { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.45, dest: bus });
-          if (!joue('piano', 36 + ch.r, { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.5, dest: bus })) iv.forEach((v) => notePiano(base + v, { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.5 }));
+          if (!joue('piano', 36 + ch.r, { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.5, dest: bus })) iv.forEach((v) => notePiano(base + v, { when: debut + (h * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.5, dest: bus }));
         }
-        if (q('[data-m=guide]')?.checked || lignes[i]?.choeur) syl.forEach((s, k) => { const kk = pl.pos[k]; if (kk < 0) return; const x = sl[kk]; if (!joue('voix', notes[k], { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: s.accent ? 0.95 : 0.75, dest: bus })) notePiano(notes[k] + 12, { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: 0.8 }); });
+        if (q('[data-m=guide]')?.checked || lignes[i]?.choeur) syl.forEach((s, k) => { const kk = pl.pos[k]; if (kk < 0) return; const x = sl[kk]; if (!joue('voix', notes[k], { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: s.accent ? 0.95 : 0.75, dest: bus })) notePiano(notes[k] + 12, { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: 0.8, dest: bus }); });
       });
       const fin = cur;
       lecture = { src, bus, stop: false };
@@ -623,6 +625,7 @@ export default {
       if (m === 'copier') { try { await navigator.clipboard.writeText(texte); toast('Copié.'); } catch { toast('Copie impossible ici : sélectionne le texte à la main.'); } return; }
       if (m === 'journal') { if (!texte) return; try { await saveEntry({ type: 'texte', title: lignes[0].txt.slice(0, 80), body: texte, data: { journal: true, date: new Date().toISOString().slice(0, 10), invite: `Mots sur la grille · ${st.themes.map((k) => THEMES[k]?.nom).filter(Boolean).join(', ')}`, stage: 0 } }); toast('Dans le journal.'); } catch (err) { toast(err.message); } }
     });
+    el.addEventListener('pointerdown', (e) => { if (e.target.closest('.mo-lb-stop') && lecture) { e.preventDefault(); arreter(); } });
     el.addEventListener('change', (e) => {
       const k = e.target.dataset.m;
       if (e.target.dataset.m === 'guide') { store.set('motsChoeurs', e.target.checked); return; }

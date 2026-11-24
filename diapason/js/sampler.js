@@ -99,8 +99,8 @@ export function accord(banque, notes, opts = {}) {
 }
 
 // Une note de vrai piano si les échantillons sont là ; sinon le son de secours, et on les charge pour la suite.
-export function notePiano(midi, { when = 0, dur = 1.2, vel = 0.7 } = {}) {
-  if (joue('piano', midi, { when, dur, vel })) return;
-  pluck(mtof(midi), { when, dur, gain: 0.28 * vel });
+export function notePiano(midi, { when = 0, dur = 1.2, vel = 0.7, dest = null } = {}) {
+  if (joue('piano', midi, { when, dur, vel, dest })) return;
+  pluck(mtof(midi), { when, dur, gain: 0.28 * vel, dest }); // dest : une sortie qu'on peut couper d'un coup (le Stop)
   prechargerSons(['piano']);
 }

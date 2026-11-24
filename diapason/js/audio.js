@@ -149,7 +149,7 @@ function env(g, t, peak, attack, dur) {
 }
 
 // Note de type piano électrique, pour les claviers.
-export function pluck(freq, { when = 0, dur = 1.4, gain = 0.28 } = {}) {
+export function pluck(freq, { when = 0, dur = 1.4, gain = 0.28, dest = null } = {}) {
   const c = audio();
   const t = Math.max(when, c.currentTime);
   const f = c.createBiquadFilter();
@@ -168,7 +168,7 @@ export function pluck(freq, { when = 0, dur = 1.4, gain = 0.28 } = {}) {
   g2.gain.value = 0.3;
   o1.connect(f);
   o2.connect(g2).connect(f);
-  f.connect(g).connect(out());
+  f.connect(g).connect(dest || out());
   [o1, o2].forEach((o) => { o.start(t); o.stop(t + dur + 0.05); });
 }
 
