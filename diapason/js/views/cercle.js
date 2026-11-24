@@ -81,7 +81,7 @@ export default {
     const c = audio();
     let act = store.get('cercleActivite', 'coeur'); let tempo = store.get('cercleTempo', 'lent');
     prechargerSons(['choeur', 'piano', 'rhodes']);
-    const reglages = { grille: store.get('cercleGrille', { boum: [0, 3, 4], tac: [2, 6], tic: [] }), ambiance: store.get('cercleAmbiance', 'chill'), tonique: store.get('cercleTonique', 60), nVoix: store.get('cercleNVoix', 2), modele: store.get('cercleModele', true), mots: GROUPES.map((g) => store.get(`cercleMot-${g.id}`, g.mot)), noms: store.get('cercleNoms', ''), niveau: store.get('cercleNiveau', 'facile') };
+    const reglages = { chGr: { rouge: true, bleu: true, aaa: true, ooo: true, mmm: false, ...store.get('cercleChoeurGr', {}) }, grille: store.get('cercleGrille', { boum: [0, 3, 4], tac: [2, 6], tic: [] }), ambiance: store.get('cercleAmbiance', 'chill'), tonique: store.get('cercleTonique', 60), nVoix: store.get('cercleNVoix', 2), modele: store.get('cercleModele', true), mots: GROUPES.map((g) => store.get(`cercleMot-${g.id}`, g.mot)), noms: store.get('cercleNoms', ''), niveau: store.get('cercleNiveau', 'facile') };
     let moteur = null; let file = []; let raf = 0;
     let prise = null; let enreg = null; let ecoute = null; // la classe, enregistrée puis réécoutée
     const bpm = () => TEMPOS.find((x) => x[0] === tempo)[2];
@@ -107,6 +107,7 @@ export default {
     const quand = (t, f) => file.push([t, f]);
     function boucle() {
       const now = c.currentTime; file = file.filter(([t, f]) => { if (t <= now) { try { f(); } catch { /* vue fermée */ } return false; } return true; });
+      if (act === 'choeur') A.choeur.dessiner();
       raf = requestAnimationFrame(boucle);
     }
     function planifier() { if (!moteur) return; const d = 60 / bpm() / 2; while (moteur.prochain < c.currentTime + 0.3) { moteur.fn(moteur.pas, moteur.prochain, d); moteur.prochain += d; moteur.pas++; } }
@@ -120,6 +121,22 @@ export default {
     const majJouer = () => { const b = el.querySelector('[data-c=jouer]'); if (b) { b.textContent = moteur ? 'Arrêter' : 'Démarrer'; b.classList.toggle('stop', !!moteur); } };
     const scene = () => el.querySelector('.ce-scene');
     const carte = (k, grand = false) => `<div class="ce-son ${grand ? 'grand' : ''}" style="--c:${SONS[k].c}"><b>${SONS[k].mot}</b>${grand ? `<small>${esc(SONS[k].geste)}</small>` : ''}</div>`;
+
+    // Une voix modèle synthétique, douce, différente pour chaque groupe (AAA claire à gauche, OOO ronde à droite,
+    // MMM fredonnée au centre) : on entend qui chante quoi.
+    function chante(midi, t, dur, i, vel = 0.13) {
+      const f = hz(midi); const types = ['sawtooth', 'triangle', 'sine']; const coupe = [1300, 700, 450]; const pans = [-0.6, 0.6, 0];
+      const o = c.createOscillator(); o.type = types[i] || 'sine'; o.frequency.value = f;
+      const o2 = c.createOscillator(); o2.type = types[i] || 'sine'; o2.frequency.value = f; o2.detune.value = 8;
+      const lfo = c.createOscillator(); lfo.frequency.value = 5.2; const lg = c.createGain(); lg.gain.value = f * 0.004; lfo.connect(lg); lg.connect(o.frequency); lg.connect(o2.frequency);
+      const fl = c.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = coupe[i] || 600; fl.Q.value = i === 0 ? 3 : 0.8;
+      const g = c.createGain(); const v = vel * (i === 0 ? 0.6 : 1);
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t + 0.2); g.gain.setValueAtTime(v, t + Math.max(0.25, dur - 0.3)); g.gain.linearRampToValueAtTime(0.0001, t + dur);
+      o.connect(fl); o2.connect(fl); fl.connect(g);
+      if (c.createStereoPanner) { const pn = c.createStereoPanner(); pn.pan.value = pans[i] || 0; g.connect(pn).connect(out()); } else g.connect(out());
+      [o, o2, lfo].forEach((n) => { n.start(t); n.stop(t + dur + 0.05); });
+    }
+    function arrondi(x, a, b, w, h, r) { r = Math.min(r, w / 2, h / 2); x.beginPath(); x.moveTo(a + r, b); x.arcTo(a + w, b, a + w, b + h, r); x.arcTo(a + w, b + h, a, b + h, r); x.arcTo(a, b + h, a, b, r); x.arcTo(a, b, a + w, b, r); x.closePath(); }
 
     // ---------- Les activités ----------
     const A = {
@@ -224,7 +241,7 @@ export default {
         },
       },
       // Le chef : une personne dirige (le prof, puis un élève). Elle touche un groupe pour le faire entrer ou sortir,
-      // choisit doux ou fort, ou fige tout le monde. Rien au hasard : chaque changement arrive au prochain « 1 »,
+      // choisit doux ou fort, ou fige tout le monde. Rien au hasard : chaque changement arrive au prochain temps,
       // annoncé à l'écran, et l'app joue le rythme des groupes allumés comme modèle.
       chef: {
         voulu: new Set([0]), actuel: new Set([0]), nuance: 'normal', nuanceActu: 'normal', fige: false, figeActu: false,
@@ -232,12 +249,13 @@ export default {
           return `<div class="ce-compte ce-chef-compte">${[1, 2, 3, 4].map((n) => `<span>${n}</span>`).join('')}</div>
           <div class="ce-groupes ce-chef">${GROUPES.map((g, gi) => { const syl = reglages.mots[gi].split(/[\s-]+/).filter(Boolean); return `<button class="ce-g ce-chef-g" data-chef-g="${gi}" style="--c:${g.c}"><span class="ce-g-t"><b>${g.nom}</b><span class="ce-chef-etat"></span></span><span class="ce-g-l">${[...Array(8)].map((_, p) => { const n = g.pos.indexOf(p); return `<span class="${n >= 0 ? 'joue' : ''}" data-p="${p}">${n >= 0 ? esc(syl[n % Math.max(1, syl.length)] || '•') : ''}</span>`; }).join('')}</span></button>`; }).join('')}</div>
           <div class="ce-fige-msg" hidden><b>ON FIGE</b><span>Personne ne bouge. Les yeux sur le chef.</span></div>
-          <div class="ce-chef-ctrl"><button data-chef="tous">Tout le monde</button><button data-chef="doux">Doux</button><button data-chef="normal">Normal</button><button data-chef="fort">Fort</button><button class="ce-chef-fige" data-chef="fige">On fige</button></div>
-          <p class="ce-dis ce-chef-dis">Le chef touche un groupe pour le faire <b>entrer</b> ou <b>sortir</b>. Le changement arrive au prochain <b>1</b>.</p>`;
+          <div class="ce-chef-ctrl"><button data-chef="tous">Tout le monde</button><button data-chef="personne">Personne</button><button data-chef="doux">Doux</button><button data-chef="normal">Normal</button><button data-chef="fort">Fort</button><button class="ce-chef-fige" data-chef="fige">On fige</button></div>
+          <p class="ce-dis ce-chef-dis">Le chef touche un groupe pour le faire <b>entrer</b> ou <b>sortir</b>. Touche encore pour défaire.</p>`;
         },
         toucher(quoi, gi) {
           if (quoi === 'g') { if (this.fige) this.fige = false; if (this.voulu.has(gi)) this.voulu.delete(gi); else this.voulu.add(gi); }
           if (quoi === 'tous') { this.fige = false; this.voulu = new Set([0, 1, 2, 3]); }
+          if (quoi === 'personne') { this.fige = false; this.voulu = new Set(); }
           if (quoi === 'doux' || quoi === 'normal' || quoi === 'fort') this.nuance = quoi;
           if (quoi === 'fige') this.fige = !this.fige;
           if (!moteur) this.appliquer(); // à l'arrêt : tout de suite
@@ -249,18 +267,18 @@ export default {
           sc.querySelectorAll('.ce-chef-g').forEach((b) => {
             const gi = +b.dataset.chefG; const on = this.actuel.has(gi) && !this.figeActu; const veut = this.voulu.has(gi) && !this.fige;
             b.classList.toggle('actif', on); b.classList.toggle('entre', !on && veut); b.classList.toggle('sort', on && !veut);
-            b.querySelector('.ce-chef-etat').textContent = on && !veut ? 'sort au prochain 1' : !on && veut ? 'entre au prochain 1' : '';
+            b.querySelector('.ce-chef-etat').textContent = on && !veut ? 'sort…' : !on && veut ? 'entre…' : '';
             b.querySelectorAll('.ce-g-l span').forEach((x) => x.classList.toggle('on', on && +x.dataset.p === p));
           });
-          sc.querySelectorAll('[data-chef]').forEach((b) => { const k = b.dataset.chef; b.classList.toggle('on', k === this.nuance || (k === 'fige' && this.fige) || (k === 'tous' && this.voulu.size === 4 && !this.fige)); });
+          sc.querySelectorAll('[data-chef]').forEach((b) => { const k = b.dataset.chef; b.classList.toggle('on', k === this.nuance || (k === 'fige' && this.fige) || (k === 'tous' && this.voulu.size === 4 && !this.fige) || (k === 'personne' && this.voulu.size === 0 && !this.fige)); });
           sc.querySelector('.ce-chef-fige').textContent = this.fige ? 'On repart' : 'On fige';
           sc.querySelector('.ce-fige-msg').hidden = !this.figeActu;
           sc.querySelector('.ce-chef').classList.toggle('doux', this.nuanceActu === 'doux'); sc.querySelector('.ce-chef').classList.toggle('fort', this.nuanceActu === 'fort');
           const changement = !this.figeActu !== !this.fige || this.nuance !== this.nuanceActu || [...this.voulu].sort().join() !== [...this.actuel].sort().join();
-          sc.querySelector('.ce-chef-dis').innerHTML = changement && moteur ? 'Ça change au prochain <b>1</b>…' : this.figeActu ? 'Le chef touche <b>On repart</b> : tout le monde reprend au <b>1</b>.' : 'Le chef touche un groupe pour le faire <b>entrer</b> ou <b>sortir</b>. Le changement arrive au prochain <b>1</b>.';
+          sc.querySelector('.ce-chef-dis').innerHTML = changement && moteur ? 'Ça change au prochain temps…' : this.figeActu ? 'Le chef touche <b>On repart</b> : tout le monde reprend.' : 'Le chef touche un groupe pour le faire <b>entrer</b> ou <b>sortir</b>. Touche encore pour défaire.';
         },
         fn(pas, t) {
-          const p = pas % 8; if (p === 0) this.appliquer();
+          const p = pas % 8; if (p % 2 === 0) this.appliquer(); // au prochain temps : la classe voit l'effet tout de suite
           const v = { doux: 0.35, normal: 0.8, fort: 1.15 }[this.nuanceActu];
           if (!this.figeActu) this.actuel.forEach((gi) => { const g = GROUPES[gi]; if (g.pos.includes(p)) sonne(g.son, t, v); });
           quand(t, () => { this.maj(p); if (p % 2 === 0) scene()?.querySelectorAll('.ce-chef-compte span').forEach((x, i) => x.classList.toggle('on', i === p / 2)); });
@@ -277,36 +295,94 @@ export default {
           if (pas % parEtape === 0) quand(t, () => { const sc = scene(); if (!sc) return; sc.querySelector('.ce-orage').innerHTML = k ? carte(k, true) : '<div class="ce-son grand" style="--c:#555"><b>CHUT</b></div>'; sc.querySelector('.ce-o-sous').textContent = txt; sc.querySelectorAll('.ce-points i').forEach((x, i) => x.classList.toggle('on', i <= e)); });
         },
       },
+      // Le chœur : chaque groupe a sa piste. Ses sons arrivent de la droite vers la ligne : quand un bloc touche la
+      // ligne, on le fait (BOUM, TAC), ou on chante et on tient tant que la barre passe (AAA, OOO, MMM). Plus la
+      // barre est haute dans la piste, plus la note est haute. On voit son tour venir, avec un décompte.
       choeur: {
-        rendre: () => `<div class="ce-compte ce-c-compte">${[1, 2, 3, 4].map((n) => `<span>${n}</span>`).join('')}</div>
-          <div class="ce-tous v${reglages.nVoix}" style="--n:${2 + reglages.nVoix}">
-            ${[GROUPES[0], GROUPES[1]].map((g) => `<div class="ce-col ce-perc actif" data-pg="${g.id}" style="--c:${g.c}"><small class="ce-col-g">${g.nom}</small><span class="ce-col-geste">${g.son === 'boum' ? 'main à plat' : 'taper des mains'}</span><b class="ce-col-mot">${SONS[g.son].mot}</b><span class="ce-col-quoi">${g.pos.length === 4 ? 'sur 1 2 3 4' : 'sur 2 et 4'}</span><span class="ce-col-pts">${[0, 1, 2, 3].map((n) => `<i class="${g.pos.includes(n * 2) ? 'oui' : ''}"></i>`).join('')}</span></div>`).join('')}
-            ${VOIX_C.slice(0, reglages.nVoix).map((v) => `<div class="ce-col ce-v" data-v="${v.id}" style="--c:${v.c}"><small class="ce-col-g">Groupe</small><b class="ce-voy">${v.voy}</b><span class="ce-v-n">écoutez…</span><span class="ce-v-fl"></span><div class="ce-v-b"><i></i></div></div>`).join('')}
-          </div>
-          <p class="ce-dis ce-c-dis">Les percussions d’abord… puis le groupe <b style="color:${VOIX_C[0].c}">AAA</b> chante. Respirez à chaque changement.</p>
-          <div class="ce-niveaux"><span class="ce-l">Tonalité</span>${TONS.map(([n, m]) => `<button class="${reglages.tonique === m ? 'on' : ''}" data-ton="${m}">${n}</button>`).join('')}<button class="${reglages.nVoix === 2 ? 'on' : ''}" data-nvoix="2">AAA + OOO</button><button class="${reglages.nVoix === 3 ? 'on' : ''}" data-nvoix="3">+ MMM</button><button class="${reglages.modele ? 'on' : ''}" data-modele="1">${reglages.modele ? 'Modèle chanté : oui' : 'Modèle chanté : non'}</button></div>`,
+        marques: [],
+        pistes() {
+          const g = reglages.chGr; const L = [];
+          if (g.rouge) L.push({ id: 'rouge', nom: 'ROUGE', mot: 'BOUM', geste: 'main à plat', c: GROUPES[0].c });
+          if (g.bleu) L.push({ id: 'bleu', nom: 'BLEU', mot: 'TAC', geste: 'taper des mains', c: GROUPES[1].c });
+          VOIX_C.forEach((v) => { if (g[v.id]) L.push({ id: v.id, nom: 'Groupe', mot: v.voy, c: v.c, voix: v }); });
+          return L;
+        },
+        // Les voix entrent une à une : la 1re après 2 mesures d'intro, puis une de plus toutes les 8 mesures.
+        entree(v) { const i = VOIX_C.filter((x) => reglages.chGr[x.id]).indexOf(v); return i < 0 ? Infinity : (2 + 8 * i) * 8; },
+        evts(pas) {
+          const r = []; if (pas < 0) return r; const p = pas % 8; const mes = Math.floor(pas / 8); const g = reglages.chGr; const T = reglages.tonique;
+          if (g.rouge && p % 2 === 0) r.push({ id: 'rouge', len: 1, debut: pas });
+          if (g.bleu && (p === 2 || p === 6)) r.push({ id: 'bleu', len: 1, debut: pas });
+          const v0 = VOIX_C.find((x) => g[x.id]);
+          if (mes === 1 && p === 0 && v0) r.push({ id: v0.id, len: 8, debut: pas, note: T + v0.notes[0], ecoute: true, voix: v0 });
+          if (mes >= 2 && p === 0 && (mes - 2) % 2 === 0) { const k = Math.floor((mes - 2) / 2) % 4; VOIX_C.forEach((v) => { if (g[v.id] && pas >= this.entree(v)) r.push({ id: v.id, len: 16, debut: pas, note: T + v.notes[k], k, voix: v }); }); }
+          return r;
+        },
+        rendre: () => `<canvas class="ce-pistes" aria-label="Les pistes des groupes : les sons arrivent vers la ligne"></canvas>
+          <p class="ce-dis ce-c-dis">Quand un bloc touche la ligne : <b>à vous!</b> Les voix tiennent la note tant que la barre passe.</p>
+          <div class="ce-niveaux"><span class="ce-l">Groupes</span>${[['rouge', 'ROUGE · BOUM', GROUPES[0].c], ['bleu', 'BLEU · TAC', GROUPES[1].c], ...VOIX_C.map((v) => [v.id, v.voy, v.c])].map(([k, l, c]) => `<button class="ce-chg ${reglages.chGr[k] ? 'on' : ''}" style="--c:${c}" data-chg="${k}" aria-pressed="${reglages.chGr[k]}">${l}</button>`).join('')}</div>
+          <div class="ce-niveaux"><span class="ce-l">Tonalité</span>${TONS.map(([n, m]) => `<button class="${reglages.tonique === m ? 'on' : ''}" data-ton="${m}">${n}</button>`).join('')}<button class="${reglages.modele ? 'on' : ''}" data-modele="1">${reglages.modele ? 'Modèle chanté : oui' : 'Modèle chanté : non'}</button></div>`,
         fn(pas, t, d) {
-          const mes = Math.floor(pas / 8); const p = pas % 8; const T = reglages.tonique;
-          // Les percussions : ROUGE (BOUM) et BLEU (TAC), tout le long.
-          [GROUPES[0], GROUPES[1]].forEach((g) => { if (g.pos.includes(p)) { sonne(g.son, t, g.son === 'boum' && p === 0 ? 0.9 : 0.7); quand(t, () => { const col = scene()?.querySelector(`[data-pg="${g.id}"]`); if (col) { col.classList.remove('bat'); void col.offsetWidth; col.classList.add('bat'); } }); } });
-          if (p % 2 === 0) quand(t, () => scene()?.querySelectorAll('.ce-c-compte span').forEach((x, i) => x.classList.toggle('on', i === p / 2)));
-          if (mes < 2) { if (p === 0) quand(t, () => { const e = scene()?.querySelector('.ce-c-dis'); if (e) e.innerHTML = `Les percussions… le groupe <b style="color:${VOIX_C[0].c}">AAA</b> entre dans ${mes === 0 ? '8' : '4'} temps. Écoutez la note!`; }); if (mes === 1 && p === 0 && reglages.modele) joue('choeur', T + VOIX_C[0].notes[0], { when: t, dur: 4 * 2 * d * 0.9, vel: 0.35 }); return; }
-          const m2 = mes - 2; if (p !== 0 || m2 % 2) return;
-          const k = Math.floor(m2 / 2) % 4; const tour = Math.floor(m2 / 8); const n = Math.min(reglages.nVoix, 1 + tour); const dur = 2 * 8 * d;
-          ACC_C[k].forEach((iv) => joue('piano', T - 12 + iv, { when: t, dur: dur * 0.95, vel: 0.28 })); // l'accord, tout doux, pour le repère
-          VOIX_C.slice(0, n).forEach((v) => { if (reglages.modele) joue('choeur', T + v.notes[k], { when: t, dur: dur * 0.92, vel: 0.42 }); });
-          quand(t, () => {
-            const sc = scene(); if (!sc) return;
-            VOIX_C.slice(0, reglages.nVoix).forEach((v, i) => {
-              const ln = sc.querySelector(`.ce-v[data-v="${v.id}"]`); if (!ln) return; const actif = i < n; ln.classList.toggle('actif', actif);
-              const note = T + v.notes[k]; const suiv = v.notes[(k + 1) % 4] - v.notes[k];
-              ln.querySelector('.ce-v-n').textContent = actif ? NOTE_FR[((note % 12) + 12) % 12] : 'écoutez…';
-              ln.querySelector('.ce-v-fl').textContent = actif ? (suiv > 0 ? 'ensuite : plus haut' : suiv < 0 ? 'ensuite : plus bas' : 'ensuite : la même') : '';
-              const bar = ln.querySelector('.ce-v-b i'); bar.style.transition = 'none'; bar.style.width = '0%'; void bar.offsetWidth; if (actif) { bar.style.transition = `width ${dur}s linear`; bar.style.width = '100%'; }
-            });
-            const e = sc.querySelector('.ce-c-dis'); const proch = n < reglages.nVoix && k === 3 ? VOIX_C[n] : null;
-            e.innerHTML = proch ? `Groupe <b style="color:${proch.c}">${proch.voy}</b> : à vous au prochain accord!` : `Accord <b>${NOMS_C[k]}</b> · tenez la note… respirez au changement.`;
+          if (pas === 0) this.marques = []; this.marques.push([pas, t, d]); if (this.marques.length > 48) this.marques.shift();
+          const p = pas % 8; const mes = Math.floor(pas / 8); const T = reglages.tonique;
+          this.evts(pas).forEach((e) => {
+            if (e.id === 'rouge') sonne('boum', t, p === 0 ? 0.9 : 0.7);
+            else if (e.id === 'bleu') sonne('tac', t, 0.7);
+            else if (reglages.modele) chante(e.note, t, e.len * d * 0.94, VOIX_C.indexOf(e.voix), e.ecoute ? 0.09 : 0.13);
           });
+          if (mes >= 2 && p === 0 && (mes - 2) % 2 === 0) { const k = Math.floor((mes - 2) / 2) % 4; ACC_C[k].forEach((iv) => joue('piano', T - 12 + iv, { when: t, dur: 16 * d * 0.95, vel: 0.2 })); }
+        },
+        // La position (en croches) maintenant, d'après l'horloge audio.
+        pos() {
+          if (!moteur || !this.marques.length) return -6;
+          const now = c.currentTime; let m = this.marques[0]; this.marques.forEach((x) => { if (x[1] <= now) m = x; });
+          return m[0] + (now - m[1]) / m[2];
+        },
+        dessiner() {
+          const cv = scene()?.querySelector('.ce-pistes'); if (!cv) return;
+          const L = this.pistes(); const dpr = window.devicePixelRatio || 1; const W = cv.clientWidth; const hP = W < 640 ? 64 : Math.min(110, Math.max(70, (innerHeight * 0.55) / Math.max(1, L.length)));
+          const H = Math.max(1, L.length) * hP + 26; if (cv.height !== Math.round(H * dpr) || cv.width !== Math.round(W * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.height = `${H}px`; }
+          const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, W, H);
+          const police = getComputedStyle(document.documentElement).getPropertyValue('--display') || 'sans-serif';
+          const pos = this.pos(); const gauche = W < 640 ? 92 : Math.min(260, W * 0.2); const ligne = gauche + 18; const ppc = (W - ligne - 6) / 18; const X = (pas) => ligne + (pas - pos) * ppc;
+          // Les temps : une ligne par temps, plus forte sur le 1 ; le compte en haut.
+          for (let b = Math.ceil(pos / 2) * 2; X(b) < W; b += 2) { const xx = X(b); const un = b % 8 === 0; x.fillStyle = un ? '#5a5346' : '#2e2a23'; x.fillRect(xx, 22, un ? 2 : 1, H - 22); x.fillStyle = un ? '#f1cf4e' : '#a39b87'; x.font = `800 ${un ? 15 : 12}px ${police}`; x.textAlign = 'center'; x.fillText(String((((b / 2) % 4) + 4) % 4 + 1), xx, 16); }
+          const evs = []; for (let q = Math.floor(pos) - 16; q < pos + 19; q++) evs.push(...this.evts(q));
+          L.forEach((pl, i) => {
+            const y0 = 22 + i * hP; x.fillStyle = i % 2 ? '#1b1915' : '#201d18'; x.fillRect(0, y0, W, hP - 4);
+            const mes = evs.filter((e) => e.id === pl.id); const ici = mes.find((e) => e.debut <= pos && pos < e.debut + e.len);
+            // Les blocs et les barres
+            const lo = pl.voix ? Math.min(...pl.voix.notes) : 0; const hi = pl.voix ? Math.max(...pl.voix.notes) : 1;
+            mes.forEach((e) => {
+              const xa = Math.max(ligne, X(e.debut)); const xb = X(e.debut + e.len) - 3; if (xb <= ligne || xa > W) return;
+              const actif = e === ici; x.globalAlpha = e.ecoute ? 0.45 : 1;
+              if (!pl.voix) {
+                const bh = hP * 0.62; const yy = y0 + (hP - 4 - bh) / 2; x.fillStyle = actif ? '#fff7dc' : pl.c; arrondi(x, xa, yy, Math.max(6, xb - xa), bh, 8); x.fill();
+                if (xb - xa > 34) { x.fillStyle = '#14120f'; x.font = `900 ${Math.round(Math.min(bh * 0.42, (xb - xa - 8) / 3.4))}px ${police}`; x.textAlign = 'left'; x.fillText(pl.mot, xa + 4, yy + bh * 0.64); }
+              } else {
+                const bh = hP * 0.42; const haut = hi === lo ? 0.5 : (e.voix.notes[e.k ?? 0] - lo) / (hi - lo); const yy = y0 + 4 + (hP - 12 - bh) * (1 - haut);
+                x.fillStyle = actif ? pl.c : `${pl.c}99`; arrondi(x, xa, yy, Math.max(6, xb - xa), bh, 10); x.fill();
+                if (actif) { x.fillStyle = 'rgba(255,247,220,.35)'; arrondi(x, xa, yy, Math.max(6, Math.min(xb - xa, (pos - e.debut) / e.len * (e.len * ppc))), bh, 10); x.fill(); }
+                if (xb - xa > 60) { x.fillStyle = '#14120f'; x.font = `900 ${Math.round(bh * 0.6)}px ${police}`; x.textAlign = 'left'; x.fillText(`${e.ecoute ? 'écoutez ' : ''}${NOTE_FR[((e.note % 12) + 12) % 12]}`, xa + 8, yy + bh * 0.72); }
+              }
+              x.globalAlpha = 1;
+            });
+            // L'étiquette : le groupe, quoi faire, et le décompte
+            const flash = ici && !ici.ecoute && (pl.voix ? pos - ici.debut < 1 : true); // le moment de jouer : l'étiquette s'allume
+            x.fillStyle = flash ? pl.c : '#14120f'; x.fillRect(0, y0, gauche, hP - 4); x.fillStyle = pl.c; x.fillRect(0, y0, 6, hP - 4);
+            x.textAlign = 'left'; x.fillStyle = flash ? '#14120f' : pl.c; x.font = `900 ${Math.round(hP * (W < 640 ? 0.3 : 0.34))}px ${police}`; x.fillText(pl.mot, 14, y0 + hP * 0.42);
+            let etat = pl.geste || ''; let fort = false;
+            if (pl.voix) {
+              const proch = mes.filter((e) => e.debut > pos && !e.ecoute).sort((a, b) => a.debut - b.debut)[0];
+              if (ici && !ici.ecoute) { etat = `chantez : ${NOTE_FR[((ici.note % 12) + 12) % 12]}`; fort = true; }
+              else if (proch && proch.debut - pos <= 8) { etat = `à vous dans ${Math.max(1, Math.ceil((proch.debut - pos) / 2))}`; fort = true; }
+              else if (ici?.ecoute) etat = 'écoutez la note';
+              else etat = this.entree(pl.voix) === Infinity ? '' : 'attendez…';
+            }
+            x.fillStyle = flash ? '#14120f' : fort ? '#fff7dc' : '#a39b87'; x.font = `800 ${Math.round(hP * (W < 640 ? 0.17 : 0.19))}px ${police}`; x.fillText(etat, 14, y0 + hP * 0.75);
+          });
+          // La ligne : c'est maintenant.
+          x.fillStyle = '#fff7dc'; x.fillRect(ligne - 2, 18, 4, H - 18);
         },
       },
       trou: {
@@ -340,7 +416,7 @@ export default {
             <button class="ce-rec ${prise ? 'rec' : ''}" data-c="rec">${prise ? 'Fin de l’enregistrement' : 'Enregistrer la classe'}</button>${enreg ? `<button class="ce-ecoute" data-c="ecoute">${ecoute ? 'Arrêter l’écoute' : 'Réécouter'}</button><button class="ce-ecoute" data-c="dl" >Télécharger</button>` : ''}</div>
         </section>
         ${act === 'mots' ? `<details class="panel ce-mots-edit"><summary>Changer les mots des groupes</summary>${GROUPES.map((g, gi) => `<label style="--c:${g.c}"><b>${g.nom}</b> <input class="input" data-mot="${gi}" value="${esc(reglages.mots[gi])}"> <small>${g.pos.length} syllabes</small></label>`).join('')}<p class="muted small">Un mot par battement allumé : le nom de l’école, un plat, une équipe. Le rythme ne change pas.</p></details>` : ''}`;
-      majJouer(); if (act === 'chef') A.chef.maj(-1);
+      majJouer(); if (act === 'chef') A.chef.maj(-1); if (act === 'choeur') { A.choeur.marques = []; cancelAnimationFrame(raf); raf = requestAnimationFrame(boucle); }
     }
     el.addEventListener('click', (e) => {
       const a = e.target.closest('[data-act]'); if (a) { act = a.dataset.act; store.set('cercleActivite', act); rendre(); return; }
@@ -349,6 +425,7 @@ export default {
       const nvx = e.target.closest('[data-nvoix]'); if (nvx) { reglages.nVoix = +nvx.dataset.nvoix; store.set('cercleNVoix', reglages.nVoix); rendre(); return; }
       const md = e.target.closest('[data-modele]'); if (md) { reglages.modele = !reglages.modele; store.set('cercleModele', reglages.modele); md.classList.toggle('on', reglages.modele); md.textContent = reglages.modele ? 'Modèle chanté : oui' : 'Modèle chanté : non'; return; }
       const nv = e.target.closest('[data-niveau]'); if (nv) { reglages.niveau = nv.dataset.niveau; store.set('cercleNiveau', reglages.niveau); el.querySelectorAll('[data-niveau]').forEach((b) => b.classList.toggle('on', b.dataset.niveau === reglages.niveau)); return; }
+      const chg = e.target.closest('[data-chg]'); if (chg) { const k = chg.dataset.chg; reglages.chGr[k] = !reglages.chGr[k]; store.set('cercleChoeurGr', reglages.chGr); chg.classList.toggle('on', reglages.chGr[k]); chg.setAttribute('aria-pressed', reglages.chGr[k]); return; }
       const gr = e.target.closest('[data-gr]'); if (gr) { const k = gr.dataset.gr; const i = +gr.dataset.gi; const l = reglages.grille[k]; reglages.grille[k] = l.includes(i) ? l.filter((x) => x !== i) : [...l, i].sort(); store.set('cercleGrille', reglages.grille); gr.classList.toggle('on'); if (!moteur) sonne(k, c.currentTime + 0.02); return; }
       const am = e.target.closest('[data-amb]'); if (am) { reglages.ambiance = am.dataset.amb; store.set('cercleAmbiance', reglages.ambiance); el.querySelectorAll('[data-amb]').forEach((b) => b.classList.toggle('on', b.dataset.amb === reglages.ambiance)); return; }
       const cg = e.target.closest('[data-chef-g]'); if (cg) { A.chef.toucher('g', +cg.dataset.chefG); return; }

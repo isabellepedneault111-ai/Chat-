@@ -5175,3 +5175,9 @@ button.ce-g { font: inherit; color: inherit; text-align: left; width: 100%; back
 .ce-jam-r button.et { background: #1b1915; }
 .ce-jam-r button.on { background: var(--c); border-color: var(--c); color: #14120f; }
 @media (max-width: 640px) { .ce-jam-plan b { font-size: .62rem; } .ce-jam-r { grid-template-columns: 3.4em repeat(8, minmax(0, 1fr)); gap: 3px; } .ce-jam-r button { min-height: 38px; } }
+
+/* Le chœur en pistes qui défilent (1.33) */
+.ce-pistes { display: block; width: 100%; border-radius: 16px; background: #14120f; }
+.ce-chg { border: 3px solid var(--c) !important; }
+.ce-chg:not(.on) { opacity: .5; text-decoration: line-through; }
+.ce-chg.on { background: var(--c) !important; color: #14120f !important; }

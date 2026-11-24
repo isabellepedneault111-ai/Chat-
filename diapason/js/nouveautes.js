@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.33', quand: '2026-11-24', titre: 'Le chœur : on voit son tour arriver', items: [
+    ['Des pistes qui défilent', ['Chaque groupe a sa piste. Ses sons arrivent de la droite vers la ligne blanche : quand un bloc touche la ligne, l’étiquette du groupe s’allume et on joue (BOUM, TAC). Les voix voient une barre : on chante en touchant la ligne et on tient tant qu’elle passe. Plus la barre est haute, plus la note est haute. Les groupes qui attendent voient « à vous dans 3, 2, 1 ».']],
+    ['Chaque groupe s’allume ou s’éteint', ['ROUGE, BLEU, AAA, OOO, MMM : un bouton chacun. Les voix entrent une à une (la première dès le début).']],
+    ['Une voix modèle qu’on distingue', ['Plus de chœur enregistré : AAA chante clair à gauche, OOO rond à droite, MMM fredonne au centre. Plus doux aussi.']],
+    ['Le chef répond tout de suite', ['Un groupe touché entre ou sort au prochain temps (pas au prochain 1), et on peut tout défaire : retoucher le groupe, ou Personne.']],
+  ] },
   { v: '1.32', quand: '2026-11-24', titre: 'La chanson (Le cercle)', items: [
     ['Une vraie chanson, du début à la fin', ['Intro, couplet, refrain, liberté, refrain, fin : environ une minute et demie. L’app joue le groupe (batterie, basse, accords), et le beat change à chaque partie, avec un roulement de caisse claire avant chaque nouvelle phrase. La classe est la section rythmique par-dessus.']],
     ['Le beat de la classe', ['Le couplet, c’est votre beat : touchez les cases BOUM, TAC, TIC pour l’inventer (avant ou pendant). Au refrain, un rythme commun, plus fort.']],
