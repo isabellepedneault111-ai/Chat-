@@ -4712,3 +4712,7 @@ body.mo-lit .etincelle { display: none !important; }
 .mo-reg-fin .btn, .mo-ajout .btn { white-space: normal; }
 .mo-ajout { flex-wrap: wrap; }
 .mo-vraie.mo-guide { display: block; } .mo-vraie.mo-guide input { vertical-align: middle; margin-right: 6px; } .mo-vraie.mo-guide small { display: block; margin-top: 2px; }
+.or-bords-in { margin: 12px 0; padding: 12px 14px; border-radius: 8px; background: #fff7e0; border: 1px solid #e8cf8a; }
+.or-bords-in p { margin: 0 0 8px; }
+.or-bord { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px dashed #e8cf8a; }
+.or-bord > span { flex: 1 1 260px; min-width: 0; }

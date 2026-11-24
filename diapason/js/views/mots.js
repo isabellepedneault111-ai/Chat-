@@ -110,7 +110,7 @@ export default {
     const st = { theme: 'nuit', themes: null, cles: '', schema: 'AABB', place: 'croches', pers: 'je', n: 4, source: 'jouer', main: 'Lam Fa Do Sol', ...store.get('motsReglages', {}) };
     if (!Array.isArray(st.themes) || !st.themes.length) st.themes = [st.theme || 'nuit'];
     // Les paroles appartiennent à UNE chanson : chaque chanson garde ses lignes, son départ et ses silences.
-    const nomPropre = (n) => String(n || '').replace(/ \(sans bruit\)$/, '').trim();
+    const nomPropre = (n) => String(n || '').replace(/( \(sans bruit\)| · montée)+$/, '').trim(); // une version nettoyée ou coupée reste la même chanson
     const nomJouer = () => nomPropre(grilleJouer().nom.replace(/^Jouer · /, '').replace(/^Accords de « (.*) »$/, '$1').replace(/^« (.*) »$/, '$1'));
     // Une chanson = son nom = un seul tiroir de paroles, qu'on l'ouvre par L'oreille, par Jouer ou par Nos pièces.
     const nomPiece = (src) => piecesEsp().find((e) => `piece:${e.id}` === src)?.title || '';
@@ -217,13 +217,13 @@ export default {
       if (st.source === 'oreille' && !chansonGardee) {
         // Rien en mémoire (rechargement, autre page) : la dernière chanson de L'oreille, gardée sur cet appareil.
         const f = await lireDerniere();
-        if (f?.blob) { try { const buf = await audio().decodeAudioData(await f.blob.arrayBuffer()); chansonGardee = { buf, nom: f.nom, t0: f.t0 || 0, temps: f.temps || 0.6, voix: f.voix || null }; chanson = chansonGardee; } catch { /* son illisible */ } }
+        if (f?.blob) { try { const buf = await audio().decodeAudioData(await f.blob.arrayBuffer()); chansonGardee = { buf, nom: f.nom, t0: f.t0 || 0, temps: f.temps || 0.6, debuts: f.debuts || null, voix: f.voix || null }; chanson = chansonGardee; } catch { /* son illisible */ } }
         majSous(); return;
       }
       if (!st.source.startsWith('piece:')) return;
       const e = piecesEsp().find((x) => `piece:${x.id}` === st.source); if (!e) return;
       if (!chansonsPieces.has(e.id)) chansonsPieces.set(e.id, audioURL(e.audio).then((u) => fetch(u)).then((r) => r.arrayBuffer()).then((b) => audio().decodeAudioData(b)));
-      try { const buf = await chansonsPieces.get(e.id); chanson = { buf, nom: e.title, t0: e.data.piece.t1 || 0, temps: e.data.piece.temps || 60 / (e.data.piece.bpm || 90), src: st.source, voix: e.data.piece.voix || null }; } catch { chanson = null; }
+      try { const buf = await chansonsPieces.get(e.id); chanson = { buf, nom: e.title, t0: e.data.piece.t1 || 0, temps: e.data.piece.temps || 60 / (e.data.piece.bpm || 90), debuts: e.data.piece.debuts || null, src: st.source, voix: e.data.piece.voix || null }; } catch { chanson = null; }
       majSous();
     }
     function majSous() {
@@ -243,7 +243,11 @@ export default {
     const mDe = (i, h, M) => (deb() + 2 * i + h) % M;
     const vraiOk = () => !!chanson && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source);
     // Le passage de la vraie chanson sous une ligne (deux mesures).
-    const passage = (i) => { const g = grille(); const s0 = chanson.t0 + mDe(i, 0, g.mesures.length) * 4 * chanson.temps; return { a: Math.max(0, s0), b: s0 + 8 * chanson.temps }; };
+    // L'instant où commence la mesure m dans la vraie chanson. Si L'oreille a suivi les temps un par un (le tempo bouge),
+    // chaque mesure a son propre début ; sinon, un tempo fixe depuis t0.
+    const tMes = (m) => { const d = chanson?.debuts; if (d?.length > 2) { const L = d.length - 1; if (m <= L) return d[m]; return d[L] + (m - L) * (d[L] - d[L - 1]); } return chanson.t0 + m * 4 * chanson.temps; };
+    const suitTemps = () => !!(chanson?.debuts?.length > 2);
+    const passage = (i) => { const g = grille(); const m = mDe(i, 0, g.mesures.length); return { a: Math.max(0, tMes(m)), b: tMes(m + 2) }; };
     // Où la chanson attaque ses notes, dans ce passage : des places pour les syllabes, calées sur les doubles-croches.
     const cacheAttaques = new Map();
     function attaques(i) {
@@ -329,7 +333,7 @@ export default {
       const d = chanson.buf.getChannelData(0); const sr = chanson.buf.sampleRate; const rms = [];
       // Par tranches de 100 ms : une mesure « sonne » si au moins le tiers de ses tranches a du son.
       const tr = Math.floor(sr * 0.1); const parMes = []; let max = 1e-6;
-      for (let m = 0; m < M; m++) { const a = Math.floor((chanson.t0 + m * 4 * chanson.temps) * sr); const b = Math.min(d.length, Math.floor(a + 4 * chanson.temps * sr)); const l = []; for (let p = Math.max(0, a); p + tr <= b; p += tr) { let e = 0; for (let i = p; i < p + tr; i += 8) e += d[i] * d[i]; const r = Math.sqrt(e / (tr / 8)); l.push(r); if (r > max) max = r; } parMes.push(l); }
+      for (let m = 0; m < M; m++) { const a = Math.floor(tMes(m) * sr); const b = Math.min(d.length, Math.floor(tMes(m + 1) * sr)); const l = []; for (let p = Math.max(0, a); p + tr <= b; p += tr) { let e = 0; for (let i = p; i < p + tr; i += 8) e += d[i] * d[i]; const r = Math.sqrt(e / (tr / 8)); l.push(r); if (r > max) max = r; } parMes.push(l); }
       return { act: parMes.map((l) => l.length > 0 && l.filter((r) => r > max * 0.12).length / l.length >= 0.34), via: 'le son' };
     }
     // ✨ Les paroles calées sur la chanson : elles commencent où ça chante, les passages sans voix deviennent des
@@ -487,27 +491,32 @@ export default {
       if (bouton) bouton.textContent = '…';
       await prechargerSons(['voix', 'piano']);
       const g = grille(); const noire = 60 / g.bpm; const dc = noire / 4; const mes = 4 * noire;
-      const nIntro = avecIntro ? deb() : 0; const t0 = c.currentTime + 0.25; const tIntro = t0 + mes; const t1 = tIntro + nIntro * mes; const src = [];
+      const nIntro = avecIntro ? deb() : 0; const t0 = c.currentTime + 0.25; const tIntro = t0 + mes; const src = [];
+      // Avec la vraie chanson suivie temps par temps, chaque ligne prend la longueur de SES deux mesures dans la chanson.
+      const suit = chanson && suitTemps() && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source);
+      const t1 = tIntro + (suit && nIntro ? tMes(nIntro) - tMes(0) : nIntro * mes);
+      const mesDe = (i) => { if (!suit) return mes; const m = mDe(i, 0, g.mesures.length); const L = (tMes(m + 2) - tMes(m)) / 2; return L > mes * 0.5 && L < mes * 2 ? L : mes; };
+      let cur = t1;
       const bus = c.createGain(); bus.connect(out()); // tout passe par ici : « Arrêter » coupe aussi les notes déjà prévues
       for (let k = 0; k < 4; k++) try { drums.hat?.(t0 + k * noire, k ? 0.35 : 0.6); } catch { /* pas de métronome */ }
       // L'intro : la musique seule, de la mesure 1 jusqu'aux paroles.
       if (nIntro) {
         const vraieI = chanson && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source) && q('[data-m=vraie]')?.checked;
-        if (vraieI) { const sN = c.createBufferSource(); sN.buffer = chanson.buf; sN.playbackRate.value = (chanson.temps * g.bpm) / 60 || 1; sN.connect(bus); sN.start(tIntro, Math.max(0, chanson.t0), nIntro * mes * sN.playbackRate.value + 0.05); src.push(sN); }
+        if (vraieI) { const sN = c.createBufferSource(); sN.buffer = chanson.buf; sN.playbackRate.value = suitTemps() ? 1 : (chanson.temps * g.bpm) / 60 || 1; sN.connect(bus); sN.start(tIntro, Math.max(0, tMes(0)), (suitTemps() ? tMes(nIntro) - tMes(0) : nIntro * mes * sN.playbackRate.value) + 0.05); src.push(sN); }
         else for (let m0 = 0; m0 < nIntro; m0++) for (let t = 0; t < 4; t++) { const m = m0 % g.mesures.length; const ch = g.mesures[m][t] || (t === 0 ? accordA(g, m, 0) : null); if (!ch) continue; let dur = 1; while (t + dur < 4 && !g.mesures[m][t + dur]) dur++; const iv = (() => { try { return chordIntervals(ch.q); } catch { return IV[ch.q] || IV.M; } })(); accordSon('piano', iv.map((v) => 48 + ch.r + v), { when: tIntro + (m0 * 4 + t) * noire, dur: dur * noire * 0.95, vel: 0.45, dest: bus }); }
       }
       const frise = []; // par ligne : ses syllabes et ses accords, avec leur moment
       quelles.forEach((i, j) => {
-        const { sl, syl, pl, notes } = analyse(txtDe(lignes[i]), i); const debut = t1 + j * 2 * mes;
-        const vraies = (() => { if (!chanson?.voix?.length || !vraiOk()) return []; const { a, b } = passage(i); const k = mes / (4 * chanson.temps); return chanson.voix.filter(([t, d]) => t + d > a && t < b).map(([t, d, m]) => ({ t: debut + (t - a) * k, d: d * k, m })); })();
+        const { sl, syl, pl, notes } = analyse(txtDe(lignes[i]), i); const mes = mesDe(i); const noire = mes / 4; const dc = noire / 4; const debut = cur; cur += 2 * mes;
+        const vraies = (() => { if (!chanson?.voix?.length || !vraiOk()) return []; const { a, b } = passage(i); const k = suit ? 1 : mes / (4 * chanson.temps); return chanson.voix.filter(([t, d]) => t + d > a && t < b).map(([t, d, m]) => ({ t: debut + (t - a) * k, d: d * k, m })); })();
         const F = { i, debut, fin: debut + 2 * mes, vraies, syl: syl.map((sy, k) => ({ txt: sy.txt, mot: sy.mot, t: pl.pos[k] >= 0 ? debut + sl[pl.pos[k]].s * dc : null, d: pl.pos[k] >= 0 ? sl[pl.pos[k]].d * dc : 0, note: notes[k], accent: sy.accent, k })), acc: [] };
         for (let h = 0; h < 2; h++) for (let t = 0; t < 4; t++) { const m = mDe(i, h, g.mesures.length); const ch = g.mesures[m][t] || (h === 0 && t === 0 ? accordA(g, m, 0) : null); if (ch) F.acc.push({ t: debut + (h * 4 + t) * noire, c: ch }); }
         frise.push(F);
         const vraie = chanson && (st.source === 'oreille' ? !chanson.src : chanson.src === st.source) && q('[data-m=vraie]')?.checked;
         if (vraie) {
           // Le passage de la vraie chanson qui porte ces deux mesures (la grille de L'oreille commence à t0).
-          const s0 = chanson.t0 + mDe(i, 0, g.mesures.length) * 4 * chanson.temps; const sN = c.createBufferSource(); sN.buffer = chanson.buf;
-          sN.playbackRate.value = (chanson.temps * g.bpm) / 60 || 1; const gv = c.createGain(); gv.gain.value = 0.85; sN.connect(gv).connect(bus);
+          const s0 = tMes(mDe(i, 0, g.mesures.length)); const sN = c.createBufferSource(); sN.buffer = chanson.buf;
+          sN.playbackRate.value = suit ? 1 : (chanson.temps * g.bpm) / 60 || 1; const gv = c.createGain(); gv.gain.value = 0.85; sN.connect(gv).connect(bus);
           sN.start(debut, Math.max(0, s0), 2 * mes * sN.playbackRate.value + 0.05); src.push(sN);
         }
         const piano = !vraie || q('[data-m=piano]')?.checked;
@@ -520,14 +529,14 @@ export default {
         }
         if (q('[data-m=guide]')?.checked || lignes[i]?.choeur) syl.forEach((s, k) => { const kk = pl.pos[k]; if (kk < 0) return; const x = sl[kk]; if (!joue('voix', notes[k], { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: s.accent ? 0.95 : 0.75, dest: bus })) notePiano(notes[k] + 12, { when: debut + x.s * dc, dur: Math.max(0.12, x.d * dc * 0.9), vel: 0.8 }); });
       });
-      const fin = t1 + quelles.length * 2 * mes;
+      const fin = cur;
       lecture = { src, bus, stop: false };
       if (bouton) bouton.textContent = '■ Arrêter';
       const tick = () => {
         if (!lecture) return; const t = c.currentTime;
         if (t > fin + 0.3) { arreter(); return; }
-        const j = Math.floor((t - t1) / (2 * mes)); const i = quelles[Math.max(0, Math.min(quelles.length - 1, j))];
-        el.querySelectorAll('.mo-l').forEach((a) => { const on = t >= t1 && +a.dataset.i === i; a.classList.toggle('chante', on); const h = a.querySelector('.pl-tete'); h.style.opacity = on ? 1 : 0; if (on) h.style.left = `${(((t - t1) - j * 2 * mes) / (2 * mes)) * 100}%`; });
+        let j = frise.findIndex((F) => t < F.fin); if (j < 0) j = frise.length - 1; const i = quelles[Math.max(0, Math.min(quelles.length - 1, j))]; const Fj = frise[Math.max(0, j)];
+        el.querySelectorAll('.mo-l').forEach((a) => { const on = t >= t1 && +a.dataset.i === i; a.classList.toggle('chante', on); const h = a.querySelector('.pl-tete'); h.style.opacity = on ? 1 : 0; if (on) h.style.left = `${Math.min(100, ((t - Fj.debut) / (Fj.fin - Fj.debut)) * 100)}%`; });
         majBarre(t, t0, t1, noire, frise, Math.max(0, Math.min(frise.length - 1, j)), tIntro);
         raf = requestAnimationFrame(tick);
       };

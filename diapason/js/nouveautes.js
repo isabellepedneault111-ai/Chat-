@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.14', quand: '2026-11-24', titre: 'Le tempo qui bouge, et les voix autour', items: [
+    ['La grille suit le tempo', ['L’oreille repère maintenant les temps un par un. Quand le tempo bouge (une intro plus lente, un refrain qui pousse), chaque mesure garde sa vraie longueur, et dans Mots sur la grille chaque ligne suit les deux mesures de la chanson qu’elle couvre. La grille l’annonce : « le tempo bouge : 108 à 124 BPM ». Repasse la chanson dans L’oreille une fois.']],
+    ['Couper ce qui n’est pas de la musique', ['Avant ou après la musique, quand on se parle (« on la refait? »), L’oreille le repère et propose « ▶ L’écouter » puis « ✂ Couper la fin » ou « Couper le début ». Le réducteur de bruit, lui, enlève un souffle régulier (micro, ventilation) : il ne peut pas enlever des voix qui parlent. La version coupée garde les paroles de la chanson.']],
+  ] },
   { v: '1.13', quand: '2026-11-23', titre: 'Des paroles qui tombent juste', items: [
     ['L’oreille trouve le bon tempo', ['Le tempo se calcule maintenant sur les attaques, 100 fois par seconde au lieu de 20. Projet 1 sortait à 60 BPM (la moitié) : il sort à 120, au centième près, et la grille se cale sur les temps entendus dans la musique. Repasse la chanson dans L’oreille une fois pour en profiter.']],
     ['Des accords dans la tonalité', ['Dans Mots sur la grille, les accords qui hésitaient (Ré7, Rém7, Rémaj7…) sont ramenés dans la tonalité entendue : en ré mineur, ils redeviennent Rém. L’accord principal est la tonalité trouvée par L’oreille (★ Rém pour Projet 1).']],

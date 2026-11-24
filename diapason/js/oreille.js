@@ -56,7 +56,32 @@ function tempoFin(buf) {
   let fin = bpm; let bf = -1; for (let t = bpm - 1.5; t <= bpm + 1.5; t += 0.01) { const v = puls(t)[0] + 0.5 * puls(t, 2)[0]; if (v > bf) { bf = v; fin = t; } }
   // La phase : l'angle de cette composante dit où tombent les temps.
   const L = 6000 / fin; const phi = ((((-puls(fin)[1]) / (2 * Math.PI)) * L) % L + L) % L;
-  return { bpm: fin, phase: phi / 100 };
+  return { bpm: fin, phase: phi / 100, temps: battre(o2, nF, 6000 / fin) };
+}
+
+// Les temps un par un, même quand le tempo bouge (un refrain qui pousse, une intro plus lente).
+// 1. Le tempo local : toutes les 2 s, sur 12 s autour, la période qui revient le plus (entre 0,75 et 1,33 fois la
+//    période d'ensemble : on ne confond pas un tempo avec son double).
+// 2. Les temps : programmation dynamique (Ellis 2007). Chaque temps cherche le précédent à environ une période locale
+//    en arrière, en ramassant le plus d'attaques possible ; un écart à la période coûte, mais reste permis.
+function battre(o2, nF, p0) {
+  if (nF < p0 * 8) return null;
+  let m = 0; for (let f = 0; f < nF; f++) m += o2[f] * o2[f]; const sd = Math.sqrt(m / nF) || 1; const o = Float32Array.from(o2, (v) => v / sd);
+  const acW = (lag, a0, a1) => { const l0 = Math.floor(lag); const fr = lag - l0; let t = 0; for (let i = a0; i + l0 + 1 < a1; i++) t += o[i] * (o[i + l0] * (1 - fr) + o[i + l0 + 1] * fr); return t / Math.max(1, a1 - a0 - l0 - 1); };
+  const pts = [];
+  for (let c = 0; c < nF; c += 200) { const W = 600; const a0 = Math.max(0, c - W); const a1 = Math.min(nF, c + W); let bp = p0; let bv = -1; for (let p = 0.75 * p0; p <= 1.33 * p0; p += 0.25) { const v = (acW(p, a0, a1) + 0.5 * acW(2 * p, a0, a1)) * Math.exp(-0.5 * (Math.log2(p / p0) / 0.3) ** 2); if (v > bv) { bv = v; bp = p; } } pts.push(bp); }
+  const R = 2; const lisse = pts.map((_, i) => { const v = pts.slice(Math.max(0, i - R), i + R + 1).sort((x, y) => x - y); return v[v.length >> 1]; });
+  const pL = (f) => { const x = f / 200; const i = Math.min(lisse.length - 1, Math.floor(x)); const j = Math.min(lisse.length - 1, i + 1); return lisse[i] + (lisse[j] - lisse[i]) * (x - i); };
+  const sc = new Float32Array(nF); const ar = new Int32Array(nF).fill(-1); const alpha = 400;
+  for (let t = 0; t < nF; t++) {
+    const p = pL(t); let best = -Infinity; let bi = -1;
+    for (let u = Math.max(0, Math.round(t - 2 * p)); u <= t - Math.round(p / 2); u++) { const v = sc[u] - alpha * Math.log((t - u) / p) ** 2; if (v > best) { best = v; bi = u; } }
+    if (bi >= 0 && best > 0) { sc[t] = o[t] + best; ar[t] = bi; } else sc[t] = o[t];
+  }
+  // Le dernier temps : le meilleur score dans la dernière période ; puis on remonte la chaîne.
+  let t = nF - 1; let bs = -1; for (let f = Math.max(0, Math.floor(nF - pL(nF - 1))); f < nF; f++) if (sc[f] > bs) { bs = sc[f]; t = f; }
+  const out = []; while (t >= 0) { out.push(t / 100); t = ar[t]; }
+  return out.reverse();
 }
 
 export async function ecouter(buf, onStep = () => {}) {
@@ -132,7 +157,7 @@ export async function ecouter(buf, onStep = () => {}) {
       await pause();
     }
   }
-  return { duree, db, silences, parties, bpm, bpmFin: tf.bpm, beat0: tf.phase, ton, momentFort: [mf, mf + 10], boucle };
+  return { duree, db, silences, parties, bpm, bpmFin: tf.bpm, beat0: tf.phase, battements: tf.temps, ton, momentFort: [mf, mf + 10], boucle };
 }
 
 // Joue un passage en boucle, avec un court fondu enchaîné à chaque tour pour que la jonction disparaisse.
@@ -409,7 +434,7 @@ export function grilleMesures(accs, bpm, parMesure = 4, cadre = null, battue = n
   for (let k = -40; k <= 40; k++) { const L = (60 / t0) * (1 + k * 0.0005); const sc = changes.reduce((s2, c) => s2 + Math.cos((2 * Math.PI * c) / L), 0) - Math.abs(k) * 0.002; if (sc > mieux) { mieux = sc; temps = L; } }
   if (battue?.bpm) temps = 60 / battue.bpm; // les temps entendus dans les attaques (plus sûrs que les changements d'accords)
   if (cadre) temps = cadre.temps;
-  const tempo = Math.round(60 / temps);
+  let tempo = Math.round(60 / temps);
   // Et la phase : on décale le départ pour que les changements tombent pile sur les temps, en moyenne.
   const ph = Math.atan2(changes.reduce((s2, c) => s2 + Math.sin((2 * Math.PI * c) / temps), 0), changes.reduce((s2, c) => s2 + Math.cos((2 * Math.PI * c) / temps), 0));
   let debutCale = cadre ? cadre.debutCale : debut + (ph / (2 * Math.PI)) * temps;
@@ -420,15 +445,35 @@ export function grilleMesures(accs, bpm, parMesure = 4, cadre = null, battue = n
     for (let j = 0; j < parMesure; j++) { const d0 = b0 + j * temps - (j ? M : 0); const sc = changes.reduce((s2, c) => s2 + Math.cos((2 * Math.PI * (c + debut - d0)) / M), 0); if (sc > sj) { sj = sc; mieuxJ = j; } }
     debutCale = b0 + mieuxJ * temps - (mieuxJ ? M : 0); if (debutCale < 0) debutCale += M;
   }
-  const fin = accs[accs.length - 1].b; const nb = cadre ? cadre.nb : Math.max(1, Math.ceil((fin - debut) / (temps * parMesure) - 0.25));
+  const fin = accs[accs.length - 1].b;
+  // Mieux encore : les temps entendus un par un (le tempo peut changer) ; une mesure = 4 temps, et le temps fort est
+  // celui où les accords changent le plus souvent.
+  let debuts = cadre ? cadre.debuts || null : null;
+  const B = battue?.temps;
+  if (!cadre && B?.length > parMesure * 4) {
+    const pres = (t) => { let lo = 0; let hi = B.length - 1; while (hi - lo > 1) { const mi = (lo + hi) >> 1; if (B[mi] < t) lo = mi; else hi = mi; } return Math.abs(B[lo] - t) < Math.abs(B[hi] - t) ? lo : hi; };
+    let i0 = B.findIndex((b) => b >= debut - temps * 0.5); if (i0 < 0) i0 = 0;
+    let mJ = 0; let sJ = -1;
+    for (let j = 0; j < parMesure; j++) { const s2 = changes.filter((c) => { const n = pres(c + debut); return Math.abs(B[n] - (c + debut)) < temps * 0.3 && ((n - i0 - j) % parMesure + parMesure) % parMesure === 0; }).length; if (s2 > sJ) { sJ = s2; mJ = j; } }
+    let s = i0 + mJ; while (s - parMesure >= 0 && B[s - parMesure] >= debut - temps * parMesure) s -= parMesure;
+    debuts = []; for (let k = s; k < B.length; k += parMesure) { debuts.push(B[k]); if (B[k] >= fin) break; }
+    if (debuts.length < 3) debuts = null;
+  }
+  if (debuts) { debutCale = debuts[0]; temps = (debuts[debuts.length - 1] - debuts[0]) / ((debuts.length - 1) * parMesure); }
+  const nb = debuts ? debuts.length - 1 : cadre ? cadre.nb : Math.max(1, Math.ceil((fin - debut) / (temps * parMesure) - 0.25));
+  // L'instant d'un temps (x, en temps, peut être fractionnaire) dans la mesure m.
+  const tB = (m, x) => (debuts && debuts[m + 1] != null ? debuts[m] + (x * (debuts[m + 1] - debuts[m])) / parMesure : debutCale + (m * parMesure + x) * temps);
+  // Le tempo bouge-t-il? (du plus lent au plus rapide, sans les 10 % extrêmes)
+  let tempos = null;
+  if (debuts) { const v = debuts.slice(1).map((d, i) => (60 * parMesure) / (d - debuts[i])).sort((x, y) => x - y); const lo = v[Math.floor(v.length * 0.1)]; const hi = v[Math.floor(v.length * 0.9)]; if (hi / lo > 1.06) tempos = [Math.round(lo), Math.round(hi)]; }
   // Un petit trou (moins d'un temps) entre deux accords : l'accord continue, le son s'est juste éteint un instant.
   const a = (t) => (accs.find((x) => t >= x.a - temps * 0.25 && t < x.b - temps * 0.25) || accs.find((x) => t >= x.b - temps * 0.25 && t < x.b + temps))?.nom || '';
   const mesures = [];
   for (let m = 0; m < nb; m++) {
-    const tps = [...Array(parMesure)].map((_, k) => a(debutCale + (m * parMesure + k + 0.5) * temps));
+    const tps = [...Array(parMesure)].map((_, k) => a(tB(m, k + 0.5)));
     // Les temps qui répètent l'accord d'avant s'effacent : « Rém · · · », « Do · Sol · ».
     const cases = tps.map((x, k) => (k && x === tps[k - 1] ? '' : x || '—'));
-    mesures.push({ m: m + 1, t: debutCale + m * parMesure * temps, cases, cle: tps.join('|') });
+    mesures.push({ m: m + 1, t: tB(m, 0), cases, cle: tps.join('|') });
   }
   // La boucle : la plus petite période (en mesures) qui se répète sur toute la suite, au moins deux fois.
   // (Tolérante : 80 % des mesures doivent revenir, car l'oreille peut se tromper sur un temps au début ou à la fin.)
@@ -439,7 +484,8 @@ export function grilleMesures(accs, bpm, parMesure = 4, cadre = null, battue = n
   }
   // La boucle écrite une fois : pour chaque mesure de la boucle, la version la plus fréquente.
   const boucle = periode ? [...Array(periode)].map((_, j) => { const v = mesures.filter((_, i) => i % periode === j); const n = {}; v.forEach((x) => { n[x.cle] = (n[x.cle] || 0) + 1; }); const top = Object.entries(n).sort((a2, b2) => b2[1] - a2[1])[0][0]; return v.find((x) => x.cle === top); }) : null;
-  return { mesures, periode, boucle, tours: periode ? Math.round(mesures.length / periode) : 0, tempo, temps, debutCale, nb };
+  if (debuts) tempo = Math.round(60 / temps);
+  return { mesures, periode, boucle, tours: periode ? Math.round(mesures.length / periode) : 0, tempo, temps, debutCale, nb, debuts, tempos };
 }
 // La grille d’accords en texte, quatre mesures par ligne, prête à copier.
 export function grilleTexte(g, titre = '') {
@@ -659,4 +705,22 @@ export async function reduireBruit(buf, { force = 1, onStep = () => {} } = {}) {
   let pic = 0; for (let i = 0; i < L; i++) { d[i] = norme[i] > 1e-3 ? y[i] / norme[i] : 0; pic = Math.max(pic, Math.abs(d[i])); }
   if (pic > 0.99) for (let i = 0; i < L; i++) d[i] *= 0.99 / pic;
   return out;
+}
+
+// Où la musique commence et finit. Un mémo garde souvent ce qu'il y a autour : on se parle avant de jouer, ou après
+// (« on la refait? »). Le réducteur de bruit n'y peut rien : une voix qui parle n'est pas un bruit de fond régulier.
+// Ici, la musique = là où des accords tiennent (au moins 0,9 s chacun), denses sur 7 secondes (au moins la moitié).
+// Des paroles dites n'en font pas : quelques « accords » courts et épars, au plus.
+export function bordsMusique(accs, duree) {
+  const seg = (accs || []).filter((x) => x.nom && x.b - x.a >= 0.9);
+  if (seg.length < 4 || !(duree > 10)) return null;
+  const n = Math.ceil(duree); const cov = new Float32Array(n);
+  seg.forEach((x) => { for (let s = Math.floor(x.a); s < Math.ceil(x.b) && s < n; s++) cov[s] += Math.max(0, Math.min(x.b, s + 1) - Math.max(x.a, s)); });
+  const dens = (s) => { let t = 0; for (let k = s - 3; k <= s + 3; k++) t += cov[k] ?? 0; return t / 7; };
+  let fin = n - 1; while (fin > 0 && dens(fin) < 0.5) fin--;
+  let deb = 0; while (deb < n - 1 && dens(deb) < 0.5) deb++;
+  if (fin <= deb) return null;
+  const finT = Math.min(duree, Math.max(...seg.filter((x) => x.a <= fin + 1).map((x) => x.b)));
+  const debT = Math.max(0, Math.min(...seg.filter((x) => x.b >= deb).map((x) => x.a)));
+  return { debut: debT, fin: finT };
 }

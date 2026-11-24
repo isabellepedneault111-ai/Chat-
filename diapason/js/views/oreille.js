@@ -7,7 +7,7 @@ import { toast, autoCanvas, keyboard, store } from '../ui.js';
 import { esc } from './carnet.js';
 import { garderDerniere } from '../memoire-son.js';
 import { surveiller, reprendre, arreter as arreterDossier, surEtat, dossierPossible, recoit, recevoirIci, envoyerAOrdi } from '../arrivee.js';
-import { chromaDuSpectre, accordDuChroma, hauteurDirecte, diagnosticHarmonie, ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, harmoniserVoix, reduireBruit, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
+import { bordsMusique, chromaDuSpectre, accordDuChroma, hauteurDirecte, diagnosticHarmonie, ecouter, boucler, rendreBoucle, corrigerNotes, changerAccordSon, plan, wav, copier, couper, coller, remplir, diagnostic, notesVoix, harmoniserVoix, reduireBruit, nomNote, trouverAccords, grilleMesures, grilleTexte, nomAccord, SORTES_ACCORD, NOTES_FR } from '../oreille.js';
 import { chargerGrille, poserFond } from './studio.js';
 import { diagramme, nomSimple } from '../guitare.js';
 
@@ -74,6 +74,7 @@ export default {
             <label class="check"><input type="checkbox" data-jvoir="maison"> <i class="lg-maison"></i> la tonique <small>la note « maison »</small></label></div>
           <p class="muted small or-jeu-aide">En orange, l’accord qui joue (ses touches frappent à chaque temps) ; cerclées, celles de l’accord suivant ; les pastilles, les notes pour improviser par-dessus (les mêmes cases que dans Jouer). Tu peux jouer sur ce clavier.</p>
         </div>
+        <div class="or-bords" aria-live="polite"></div>
         <div class="or-monter"></div>
         <div class="or-harmo"></div>
         <div class="or-grille-box"></div>
@@ -320,7 +321,7 @@ export default {
     // Les notes vraiment chantées (moment, durée, hauteur), pour les montrer sous les paroles.
     const notesListe = (max = 1500) => (voix?.voix && voix.notes ? voix.notes.flatMap((b) => b.occ.map((t, k) => [Math.round(t * 100) / 100, Math.round((b.occD?.[k] || 0.2) * 100) / 100, b.m])).sort((x, y) => x[0] - y[0]).slice(0, max) : null);
     function garderSon() {
-      const og = store.get('oreilleGrille', null); if (og) { og.chant = ouChante(); store.set('oreilleGrille', og); } if (blobCourant && res) garderDerniere({ blob: blobCourant, nom, t0: cadreG?.debutCale ?? 0, temps: cadreG?.temps ?? 60 / res.bpm, at: Date.now(), voix: notesListe() });
+      const og = store.get('oreilleGrille', null); if (og) { og.chant = ouChante(); store.set('oreilleGrille', og); } if (blobCourant && res) garderDerniere({ blob: blobCourant, nom, t0: cadreG?.debutCale ?? 0, temps: cadreG?.temps ?? 60 / res.bpm, debuts: cadreG?.debuts || null, at: Date.now(), voix: notesListe() });
     }
     // Y a-t-il du souffle? On compare les passages les plus calmes aux plus forts (trames de 50 ms).
     function niveauBruit(b) {
@@ -369,9 +370,19 @@ export default {
         montrerAccords();
         voix = await notesVoix(buf, etat); etat('');
         montrerVoix();
-        accsEntendus = accs; harmo(true);
+        accsEntendus = accs; harmo(true); montrerBords();
         garderSon(); conseillerBruit();
       }
+    }
+    // Avant ou après la musique (on se parle, on rit, « on la refait? ») : on propose de couper, après écoute.
+    function montrerBords() {
+      const box = q('.or-bords'); if (!box) return; box.innerHTML = '';
+      const bd = res && !accsEntendus?.propose ? bordsMusique(accsEntendus, res.duree) : null; if (!bd) return;
+      const avant = bd.debut > 8 ? bd.debut : 0; const apres = res.duree - bd.fin > 4 ? bd.fin : 0;
+      if (!avant && !apres) return;
+      const ligne = (quoi, a, b) => `<div class="or-bord"><span>${quoi === 'fin' ? `Après <b>${mmss(a)}</b>, la musique s’arrête : ${Math.round(b - a)} s d’autre chose (des voix qui se parlent?).` : `Avant <b>${mmss(b)}</b>, pas encore de musique : ${Math.round(b - a)} s (on se parle, on s’installe?).`}</span>
+        <button class="btn small" data-m="bord-ecoute" data-a="${a}" data-b="${b}">▶ L’écouter</button><button class="btn small primary" data-m="bord-couper" data-ba="${a}" data-bb="${b}">✂ ${quoi === 'fin' ? 'Couper la fin' : 'Couper le début'}</button></div>`;
+      box.innerHTML = `<div class="or-bords-in"><p><b>🎙️ Autour de la musique</b> <span class="muted small">Le réducteur de bruit enlève un souffle régulier (micro, ventilation), pas des voix qui parlent : celles-là, on les coupe.</span></p>${avant ? ligne('debut', 0, Math.max(0, avant - 0.3)) : ''}${apres ? ligne('fin', Math.min(res.duree, apres + 0.5), res.duree) : ''}</div>`;
     }
     // Une voix seule : des accords proposés sous la mélodie (auto quand l'oreille n'en entend aucun).
     function harmo(auto) {
@@ -522,12 +533,12 @@ export default {
       const box = q('.or-accords');
       if (!accs?.length) { q('.or-grille-box').innerHTML = ''; box.innerHTML = '<p class="muted small">Accords : rien de clair à reconnaître ici (trop de batterie ou d’effets, ou pas d’accords tenus).</p>'; return; }
       const ton = res.ton.split(' ou ')[0]; const NOMS = ['Do', 'Do♯', 'Ré', 'Mi♭', 'Mi', 'Fa', 'Fa♯', 'Sol', 'La♭', 'La', 'Si♭', 'Si'];
-      q('.or-grille-box').innerHTML = (() => { const g = grilleMesures(accs, res.bpm, 4, cadreG, res.bpmFin ? { bpm: res.bpmFin, phase: res.beat0 } : null); if (!g) return ''; if (!cadreG) { cadreG = { temps: g.temps, debutCale: g.debutCale, nb: g.nb, periode: g.periode };
+      q('.or-grille-box').innerHTML = (() => { const g = grilleMesures(accs, res.bpm, 4, cadreG, res.bpmFin ? { bpm: res.bpmFin, phase: res.beat0, temps: res.battements } : null); if (!g) return ''; if (!cadreG) { cadreG = { temps: g.temps, debutCale: g.debutCale, nb: g.nb, periode: g.periode, debuts: g.debuts || null };
             // Le tempo recalé sur les changements d'accords est le plus juste : il devient LE tempo de la pièce, partout.
             if (Math.abs(g.tempo - res.bpm) <= res.bpm * 0.07) { res.bpm = g.tempo; const f = [...el.querySelectorAll('.or-faits > div')].find((d) => d.querySelector('small')?.textContent === 'Tempo'); if (f) f.querySelector('b').textContent = `${g.tempo} BPM`; } } box._grille = g; const l = g.boucle || g.mesures;
       // Gardée pour « Mots sur la grille » (Ma voix) : la boucle, ou toute la pièce, mesure par mesure.
-      try { const ancien = store.get('oreilleGrille', null); store.set('oreilleGrille', { nom: typeof nom === 'string' ? nom : '', bpm: g.tempo, mesures: g.mesures.slice(0, 160).map((x) => x.cases), boucle: g.boucle ? g.boucle.map((x) => x.cases) : null, t0: g.debutCale, temps: g.temps, at: Date.now(), ton: res?.ton ? String(res.ton).split(' ou ')[0] : null, propose: !!accs.propose, chant: ancien?.nom === nom ? ancien.chant || null : null }); } catch { /* rien */ }
-          return `<div class="or-grille"><div class="or-grille-t"><h4>La grille</h4><span>${res.bpm} BPM · 4 temps par mesure${g.periode ? ` · <span class="or-rep">‖: ${g.periode} mesure${g.periode > 1 ? 's' : ''} qui reviennent ${g.tours} fois :‖</span>` : ''}</span><button class="btn small or-etsi" data-o="etsi" data-bulle="Une mesure au hasard, une autre couleur d’accord, entendue tout de suite dans le son. Rien ne change tant que tu n’approuves pas.">🎲 Et si… ?</button></div>
+      try { const ancien = store.get('oreilleGrille', null); store.set('oreilleGrille', { nom: typeof nom === 'string' ? nom : '', bpm: g.tempo, mesures: g.mesures.slice(0, 160).map((x) => x.cases), boucle: g.boucle ? g.boucle.map((x) => x.cases) : null, t0: g.debutCale, temps: g.temps, debuts: g.debuts ? g.debuts.slice(0, 161).map((x) => Math.round(x * 1000) / 1000) : null, tempos: g.tempos || null, at: Date.now(), ton: res?.ton ? String(res.ton).split(' ou ')[0] : null, propose: !!accs.propose, chant: ancien?.nom === nom ? ancien.chant || null : null }); } catch { /* rien */ }
+          return `<div class="or-grille"><div class="or-grille-t"><h4>La grille</h4><span>${g.tempos ? `le tempo bouge : ${g.tempos[0]} à ${g.tempos[1]} BPM` : `${res.bpm} BPM`} · 4 temps par mesure${g.periode ? ` · <span class="or-rep">‖: ${g.periode} mesure${g.periode > 1 ? 's' : ''} qui reviennent ${g.tours} fois :‖</span>` : ''}</span><button class="btn small or-etsi" data-o="etsi" data-bulle="Une mesure au hasard, une autre couleur d’accord, entendue tout de suite dans le son. Rien ne change tant que tu n’approuves pas.">🎲 Et si… ?</button></div>
             <div class="or-mesures">${l.map((x, i) => { const segs = []; x.cases.forEach((c) => { if (c) segs.push({ c, n: 1 }); else if (segs.length) segs[segs.length - 1].n++; else segs.push({ c: '—', n: 1 }); });
               return `<button class="or-mes n${segs.length} ${g.periode && i === 0 ? 'rep-a' : ''} ${g.periode && i === l.length - 1 ? 'rep-b' : ''} ${corrigee(i, x, g) ? 'corrigee' : ''}" data-mes="${i}" data-t="${x.t}" title="Mesure ${g.boucle ? i + 1 : x.m} · ${mmss(x.t)}"><small>${g.boucle ? i + 1 : x.m}</small><span class="or-bts">${temps4(x)}</span></button>`; }).join('')}</div>
             <div class="or-edit" hidden></div>
@@ -793,7 +804,7 @@ export default {
       if (o === 'piece') {
         if (!res || !blobCourant) return; const b = e.target.closest('[data-o]'); const lab = b.textContent; b.disabled = true;
         const [nm, mode] = String(res.ton).split(' ou ')[0].split(' '); const pc = Math.max(0, NOTES_FR.findIndex((x) => x.toLowerCase() === String(nm).toLowerCase()));
-        const og = store.get('oreilleGrille', null); const piece = { bpm: res.bpm, t1: cadreG?.debutCale ?? 0, tonique: pc, mineur: /^min/i.test(mode || ''), grille: og?.mesures || null, chant: og?.chant || null, voix: notesListe(700), temps: cadreG?.temps ?? 60 / res.bpm };
+        const og = store.get('oreilleGrille', null); const piece = { bpm: res.bpm, t1: cadreG?.debutCale ?? 0, tonique: pc, mineur: /^min/i.test(mode || ''), grille: og?.mesures || null, chant: og?.chant || null, voix: notesListe(700), temps: cadreG?.temps ?? 60 / res.bpm, debuts: cadreG?.debuts ? cadreG.debuts.slice(0, 161).map((x) => Math.round(x * 1000) / 1000) : null };
         try {
           const ex = entreeCourante && espace.entries.find((x) => x.id === entreeCourante);
           if (ex) await saveEntry({ ...ex, data: { ...(ex.data || {}), piece } }, { force: true });
@@ -812,7 +823,7 @@ export default {
       if (o === 'harmo-non') { accs = accsEntendus; cadreG = null; corrigees = new Set(); montrerAccords(); harmo(false); return; }
       if (o === 'mots') {
         if (!accs?.length) { toast('Pas encore d’accords pour cette chanson.'); return; }
-        window.__flipMots = { buf, nom, t0: cadreG?.debutCale ?? 0, temps: cadreG?.temps ?? 60 / res.bpm, voix: notesListe() };
+        window.__flipMots = { buf, nom, t0: cadreG?.debutCale ?? 0, temps: cadreG?.temps ?? 60 / res.bpm, debuts: cadreG?.debuts || null, voix: notesListe() };
         const st = store.get('motsReglages', {}); store.set('motsReglages', { ...st, source: 'oreille' });
         location.hash = '#/mots'; return;
       }
@@ -833,6 +844,7 @@ export default {
       const mo = e.target.closest('[data-m]')?.dataset.m;
       if (mo) {
         const { a, b } = plage || {}; const L = (b || 0) - (a || 0);
+        if (mo === 'bord-couper') { const bt = e.target.closest('[data-m]'); await monterAvec(couper(buf, +bt.dataset.ba, +bt.dataset.bb), `Coupé : ${mmss(+bt.dataset.ba)} à ${mmss(+bt.dataset.bb)}.`); return; }
         if (mo === 'ecouter') joueDe(a, b);
         if (mo === 'fermer') { plage = null; montrerMonter(); dessiner(); }
         if (mo === 'copier') { bout = copier(buf, a, b); montrerMonter(); toast(`Copié : ${L.toFixed(1).replace('.', ',')} s. Choisis un autre passage : « Coller ici » ou « Remplir avec le bout copié ».`); }
