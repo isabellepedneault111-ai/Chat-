@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.32', quand: '2026-11-24', titre: 'La chanson (Le cercle)', items: [
+    ['Une vraie chanson, du début à la fin', ['Intro, couplet, refrain, liberté, refrain, fin : environ une minute et demie. L’app joue le groupe (batterie, basse, accords), et le beat change à chaque partie, avec un roulement de caisse claire avant chaque nouvelle phrase. La classe est la section rythmique par-dessus.']],
+    ['Le beat de la classe', ['Le couplet, c’est votre beat : touchez les cases BOUM, TAC, TIC pour l’inventer (avant ou pendant). Au refrain, un rythme commun, plus fort.']],
+    ['Liberté', ['8 mesures où chacun fait ce qu’il veut avec son corps, à une seule règle : le 1, on le frappe tous ensemble. Si des noms sont inscrits (dans Le trou), l’app appelle un soliste au centre toutes les 2 mesures.']],
+    ['Trois ambiances', ['Chill, Soleil, Nuit : trois couleurs d’accords pour la même chanson. Et ça finit net, tous ensemble : HÉ!']],
+  ] },
   { v: '1.31', quand: '2026-11-24', titre: 'Le chef, refait au complet', items: [
     ['Le chef : une vraie personne dirige', ['Fini le hasard. Le prof, puis un élève, touche un groupe pour le faire entrer ou sortir ; choisit Doux, Normal ou Fort ; ou touche On fige : tout le monde s’arrête net et ne bouge plus, puis On repart. Chaque changement arrive au prochain 1, annoncé à l’écran (« entre au prochain 1 »), et chaque groupe voit ses syllabes s’allumer.']],
     ['Un seul bouton : Démarrer / Arrêter', ['Le bouton FREEZE est parti : Arrêter, c’est la fin de l’activité. Se figer, c’est un jeu, et il vit maintenant dans Le chef.']],
