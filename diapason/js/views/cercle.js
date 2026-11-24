@@ -36,6 +36,8 @@ const GROOVES = {
 };
 // Les pads du chef, en plus des 4 groupes : les voix tenues, la pluie, le tonnerre.
 const PADS = [['aaa', 'AAA', '#ff8a3d'], ['ooo', 'OOO', '#3fbf7f'], ['mmm', 'MMM', '#b25cff'], ['pluie', 'La pluie', '#5aa9e6'], ['tonnerre', 'Le tonnerre', '#f1cf4e']];
+// Le cœur, pour pratiquer : un son, un rythme ; ou la partie d'un groupe d'un beat, toute seule.
+const RYTHMES_C = { temps: ['Chaque temps', [0, 2, 4, 6]], deux: ['Sur 2 et 4', [2, 6]], croches: ['Deux par temps', [0, 1, 2, 3, 4, 5, 6, 7]], entre: ['Entre les temps', [1, 3, 5, 7]], galop: ['Le galop', [0, 3, 6]] };
 const ACTIVITES = [
   { id: 'jam', nom: 'La chanson', but: 'Une vraie chanson : intro, couplet, refrain, liberté, fin. Le beat change à chaque partie.' },
   { id: 'coeur', nom: 'Le cœur', but: 'Tout le monde ensemble, sur le même battement.' },
@@ -92,7 +94,7 @@ export default {
     const c = audio();
     let act = store.get('cercleActivite', 'coeur'); let tempo = store.get('cercleTempo', 'lent');
     prechargerSons(['choeur', 'piano', 'rhodes']);
-    const reglages = { groove: store.get('cercleGroove', 'pizza'), enchainer: store.get('cercleEnchainer', false), chGr: { rouge: true, bleu: true, aaa: true, ooo: true, mmm: false, ...store.get('cercleChoeurGr', {}) }, grille: store.get('cercleGrille', { boum: [0, 3, 4], tac: [2, 6], tic: [] }), ambiance: store.get('cercleAmbiance', 'chill'), tonique: store.get('cercleTonique', 60), nVoix: store.get('cercleNVoix', 2), modele: store.get('cercleModele', true), mots: GROUPES.map((g) => store.get(`cercleMot-${g.id}`, g.mot)), noms: store.get('cercleNoms', ''), niveau: store.get('cercleNiveau', 'facile') };
+    const reglages = { coeurSon: store.get('cercleCoeurSon', 'boum'), coeurRythme: store.get('cercleCoeurRythme', 'temps'), jamPart: null, jamVoix: { aaa: false, ooo: false, mmm: false, ...store.get('cercleJamVoix', {}) }, jamModele: store.get('cercleJamModele', true), groove: store.get('cercleGroove', 'pizza'), enchainer: store.get('cercleEnchainer', false), chGr: { rouge: true, bleu: true, aaa: true, ooo: true, mmm: false, ...store.get('cercleChoeurGr', {}) }, grille: store.get('cercleGrille', { boum: [0, 3, 4], tac: [2, 6], tic: [] }), ambiance: store.get('cercleAmbiance', 'chill'), tonique: store.get('cercleTonique', 60), nVoix: store.get('cercleNVoix', 2), modele: store.get('cercleModele', true), mots: GROUPES.map((g) => store.get(`cercleMot-${g.id}`, g.mot)), noms: store.get('cercleNoms', ''), niveau: store.get('cercleNiveau', 'facile') };
     let moteur = null; let file = []; let raf = 0;
     let prise = null; let enreg = null; let ecoute = null; // la classe, enregistrée puis réécoutée
     const bpm = () => TEMPOS.find((x) => x[0] === tempo)[2];
@@ -116,7 +118,7 @@ export default {
       try {
         // Les sons d'origine, toujours : un son perso enregistré (long, avec son propre rythme dedans) brouillerait le groove.
         const kick = drums.kickOrigine || drums.kick; const hat = drums.hatOrigine || drums.hat; const clap = drums.clapOrigine || drums.clap;
-        if (k === 'boum') kick(t, v); else if (k === 'tic') hat(t, 0.55 * v); else if (k === 'tac') clap(t, v);
+        if (k === 'boum') kick(t, v); else if (k === 'tic') { hat(t, 1.1 * v); click(t, false); } else if (k === 'tac') clap(t, v);
         else if (k === 'tsk') click(t, true); else if (k === 'chhh') chhh(t, v); else if (k === 'pieds') { kick(t, v); kick(t + 0.02, 0.6 * v); }
       } catch { /* son absent */ }
     }
@@ -157,12 +159,28 @@ export default {
     }
     function arrondi(x, a, b, w, h, r) { r = Math.min(r, w / 2, h / 2); x.beginPath(); x.moveTo(a + r, b); x.arcTo(a + w, b, a + w, b + h, r); x.arcTo(a + w, b + h, a, b + h, r); x.arcTo(a, b + h, a, b, r); x.arcTo(a, b, a + w, b, r); x.closePath(); }
 
+    function voixJam(amb) {
+      const r = {}; const ids = ['mmm', 'ooo', 'aaa'];
+      ids.forEach((id, j) => { let n = amb.acc[0][j]; const L = [n]; for (let k = 1; k < 4; k++) { const cands = amb.acc[k].flatMap((x) => [x - 12, x, x + 12]); n = cands.reduce((a, b) => (Math.abs(b - n) < Math.abs(a - n) ? b : a)); L.push(n); } r[id] = L; });
+      return r;
+    }
+    // Faire entendre la note d'un groupe, seule et claire (pour que chaque groupe trouve SA note).
+    function ecouterNote(id) {
+      const v = VOIX_C.find((x) => x.id === id); if (!v) return; const i = VOIX_C.indexOf(v); const T = reglages.tonique;
+      let k = 0; if (moteur && act === 'choeur') { const pos = A.choeur.pos(); const mes = Math.floor(pos / 8); if (mes >= 2) k = Math.floor((mes - 2) / 2) % 4; }
+      try { c.resume(); } catch { /* iOS */ }
+      const t = c.currentTime + 0.05; chante(T + v.notes[k], t, 2.4, i, 0.22); joue('piano', T + v.notes[k], { when: t, dur: 2, vel: 0.5 });
+    }
+
     // ---------- Les activités ----------
     const A = {
       jam: {
         rendre() {
           const g = reglages.grille;
-          return `<div class="ce-jam-plan">${PLAN_JAM.map((x, i) => `<span data-sec="${i}" style="flex:${x.mes}"><b>${x.nom}</b><i></i></span>`).join('')}</div>
+          const vx = voixJam(AMBIANCES[reglages.ambiance] || AMBIANCES.chill);
+          return `<p class="ce-jam-mode">${reglages.jamPart == null ? 'Toute la chanson. Pour pratiquer une partie seule, touchez-la :' : `On pratique : <b>${PLAN_JAM[reglages.jamPart].nom}</b>, en boucle.`}</p>
+          <div class="ce-jam-plan">${PLAN_JAM.map((x, i) => `<button data-jpart="${i}" class="${reglages.jamPart === i ? 'choisi' : ''}" style="flex:${x.mes}"><b>${x.nom}</b><i></i></button>`).join('')}<button data-jpart="tout" class="ce-jam-tout ${reglages.jamPart == null ? 'choisi' : ''}"><b>Tout ensemble</b></button></div>
+          <div class="ce-jam-voix">${VOIX_C.filter((v) => reglages.jamVoix[v.id]).map((v) => `<div class="ce-pad actif" data-jv="${v.id}" style="--c:${v.c}"><span class="ce-img">${geste(v.id, v.c)}</span><b>${v.voy}</b><span class="ce-pad-n">${NOTE_FR[vx[v.id][0] % 12]}</span></div>`).join('')}</div>
           <div class="ce-compte ce-jam-compte">${[1, 2, 3, 4].map((n) => `<span>${n}</span>`).join('')}</div>
           <p class="ce-phase ce-jam-titre">Prêts?</p>
           <div class="ce-ligne ce-jam-ligne">${[...Array(8)].map((_, i) => `<div class="ce-case ${i % 2 ? 'et' : ''}" data-i="${i}"></div>`).join('')}</div>
@@ -170,6 +188,7 @@ export default {
           <details class="ce-jam-ed" open><summary>Le beat de la classe (le couplet) : touchez les cases pour l’inventer</summary>
             ${['boum', 'tac', 'tic'].map((k) => `<div class="ce-jam-r" style="--c:${SONS[k].c}"><b><span class="ce-img">${geste(k, SONS[k].c)}</span>${SONS[k].mot}</b>${[...Array(8)].map((_, i) => `<button class="${g[k].includes(i) ? 'on' : ''} ${i % 2 ? 'et' : ''}" data-gr="${k}" data-gi="${i}" aria-label="${SONS[k].mot} sur ${i % 2 ? 'le et' : `le ${i / 2 + 1}`}">${i % 2 ? '·' : i / 2 + 1}</button>`).join('')}</div>`).join('')}
           </details>
+          <div class="ce-niveaux"><span class="ce-l">Les voix</span>${VOIX_C.map((v) => `<button class="ce-chg ${reglages.jamVoix[v.id] ? 'on' : ''}" style="--c:${v.c}" data-jamv="${v.id}"><span class="ce-img">${geste(v.id, '#fff7dc')}</span>${v.voy}</button>`).join('')}<button class="${reglages.jamModele ? 'on' : ''}" data-jamm="1">${reglages.jamModele ? 'L’app joue avec vous : oui' : 'L’app joue avec vous : non'}</button></div>
           <div class="ce-niveaux"><span class="ce-l">Ambiance</span>${Object.entries(AMBIANCES).map(([k, a]) => `<button class="${reglages.ambiance === k ? 'on' : ''}" data-amb="${k}">${a.nom}</button>`).join('')}</div>`;
         },
         // Ce que la classe joue maintenant, case par case.
@@ -184,8 +203,10 @@ export default {
         },
         fn(pas, t, d) {
           const mes = Math.floor(pas / 8); const p = pas % 8;
-          if (mes >= TOTAL_JAM) { if (p === 0) quand(t, () => { arreter(); const sc = scene(); if (sc) { sc.querySelector('.ce-jam-titre').textContent = 'Bravo!'; sc.querySelector('.ce-jam-dit').textContent = 'Encore? Changez le beat de la classe ou l’ambiance, et Démarrer.'; } }); return; }
-          let sec = 0; DEBUTS_JAM.forEach((x, i) => { if (mes >= x) sec = i; }); const S = PLAN_JAM[sec]; const m = mes - DEBUTS_JAM[sec];
+          if (reglages.jamPart == null && mes >= TOTAL_JAM) { if (p === 0) quand(t, () => { arreter(); const sc = scene(); if (sc) { sc.querySelector('.ce-jam-titre').textContent = 'Bravo!'; sc.querySelector('.ce-jam-dit').textContent = 'Encore? Changez le beat de la classe ou l’ambiance, et Démarrer.'; } }); return; }
+          let sec = 0; DEBUTS_JAM.forEach((x, i) => { if (mes >= x) sec = i; }); let m = mes - DEBUTS_JAM[sec];
+          if (reglages.jamPart != null) { sec = reglages.jamPart; m = mes % PLAN_JAM[sec].mes; }
+          const S = PLAN_JAM[sec];
           const amb = AMBIANCES[reglages.ambiance] || AMBIANCES.chill; const k4 = mes % 4; const M = 8 * d;
           const kick = drums.kickOrigine || drums.kick; const snare = drums.snareOrigine || drums.snare; const hat = drums.hatOrigine || drums.hat; const clap = drums.clapOrigine || drums.clap;
           // La batterie de l'app : elle change à chaque partie, avec un roulement avant chaque nouvelle phrase.
@@ -196,6 +217,11 @@ export default {
             if (B.k?.includes(p)) kick(t, S.id === 'libre' ? 0.55 : 0.7);
             if (roule) { snare(t, 0.35 + 0.12 * (p - 4)); if (p >= 6) snare(t + d / 2, 0.45 + 0.1 * (p - 6)); }
             else { if (B.s?.includes(p)) snare(t, 0.5); if (B.c?.includes(p)) clap(t, 0.45); if (B.h?.includes(p)) hat(t, S.id === 'couplet' ? (p % 2 ? 0.18 : 0.28) : 0.3); }
+            // Le beat de la classe, joué par l'app (on l'entend, TIC compris) : on peut le couper quand la classe le tient.
+            if (S.id === 'couplet' && reglages.jamModele) ['boum', 'tac', 'tic'].forEach((k) => { if (reglages.grille[k].includes(p)) sonne(k, t, 0.55); });
+            if (S.id === 'refrain' && reglages.jamModele && REFRAIN[p]) sonne(REFRAIN[p], t, 0.5);
+            // Les voix : une note tenue par accord (une mesure), qui bouge le moins possible.
+            if (p === 0 && S.id !== 'intro' && reglages.jamModele) { const vx = voixJam(amb); VOIX_C.forEach((v, i) => { if (reglages.jamVoix[v.id]) chante(vx[v.id][k4], t, M * 0.95, i, 0.12); }); }
             // La basse et les accords : une progression de 4 accords, une mesure chacun.
             const bn = amb.basse[k4];
             if (S.id === 'couplet' && B.k.includes(p)) bass(hz(bn), t, d * 1.6);
@@ -212,8 +238,10 @@ export default {
             if (p === 0) {
               const part = this.partition(sec, m);
               sc.querySelectorAll('.ce-jam-ligne .ce-case').forEach((x, i) => { x.innerHTML = part[i].map(([mot, c, k]) => `${k && part[i].length === 1 ? `<span class="ce-img">${geste(k, c)}</span>` : ''}<b style="--c:${c}">${mot}</b>`).join(''); });
-              sc.querySelectorAll('.ce-jam-plan span').forEach((x, i) => { x.classList.toggle('on', i === sec); x.classList.toggle('fait', i < sec); x.querySelector('i').style.width = i < sec ? '100%' : i === sec ? `${((m + 1) / S.mes) * 100}%` : '0%'; });
-              const avant = m === S.mes - 1 && PLAN_JAM[sec + 1];
+              sc.querySelectorAll('.ce-jam-plan [data-jpart]:not([data-jpart=tout])').forEach((x, i) => { x.classList.toggle('on', i === sec); x.classList.toggle('fait', reglages.jamPart == null && i < sec); x.querySelector('i').style.width = reglages.jamPart == null && i < sec ? '100%' : i === sec ? `${((m + 1) / S.mes) * 100}%` : '0%'; });
+              const vx = voixJam(amb); const chante2 = S.id !== 'intro';
+              sc.querySelectorAll('[data-jv]').forEach((x) => { const id = x.dataset.jv; const n = vx[id][k4]; const sv = vx[id][(k4 + 1) % 4] - n; x.classList.toggle('actif', chante2); x.querySelector('.ce-pad-n').textContent = chante2 ? `${NOTE_FR[n % 12]}${sv > 0 ? ' · ensuite plus haut' : sv < 0 ? ' · ensuite plus bas' : ' · ensuite la même'}` : `écoutez · ${NOTE_FR[n % 12]}`; });
+              const avant = reglages.jamPart == null && m === S.mes - 1 && PLAN_JAM[sec + 1];
               sc.querySelector('.ce-jam-titre').textContent = S.id === 'fin' && m === 1 ? 'HÉ!' : S.nom;
               let dit = avant ? `Prochaine partie : <b>${PLAN_JAM[sec + 1].nom}</b>…` : S.dit;
               if (S.id === 'libre' && m % 2 === 0) { const noms = reglages.noms.split('\n').map((x) => x.trim()).filter(Boolean); if (noms.length) dit = `Solo : <b>${esc(noms[Math.floor(Math.random() * noms.length)])}</b>, au centre! Le 1, tous ensemble.`; }
@@ -225,8 +253,33 @@ export default {
         },
       },
       coeur: {
-        rendre: () => `<div class="ce-centre"><div class="ce-rond" style="--c:${SONS.boum.c}"><span class="ce-img">${geste('boum', '#fff7dc')}</span><b>BOUM</b></div><p class="ce-compte"><span>1</span><span>2</span><span>3</span><span>4</span></p><p class="ce-dis">Main à plat sur le bureau, <b>avec le rond</b>.</p></div>`,
-        fn: (pas, t) => { if (pas % 2) return; const temps = (pas / 2) % 4; sonne('boum', t, temps === 0 ? 1 : 0.75); quand(t, () => { const r = scene()?.querySelector('.ce-rond'); if (r) { r.classList.remove('bat'); void r.offsetWidth; r.classList.add('bat'); } scene()?.querySelectorAll('.ce-compte span').forEach((s, i) => s.classList.toggle('on', i === temps)); }); },
+        // Ce qu'on pratique : { son, pos, syl } (un son + un rythme, ou un groupe d'un beat).
+        quoi() {
+          const r = reglages.coeurRythme;
+          if (r.startsWith('g:')) { const [, gk, gi] = r.split(':'); const G = GROOVES[gk]; if (G) { const g = { ...GROUPES[+gi], ...G.g[+gi] }; const k = gk === 'pizza' ? `cercleMot-${g.id}` : `cercleMot-${gk}-${g.id}`; return { son: g.son, pos: g.pos, syl: store.get(k, g.mot).split(/[\s-]+/).filter(Boolean), c: g.c, nom: `${G.nom} · ${g.nom}` }; } }
+          const R = RYTHMES_C[r] || RYTHMES_C.temps; const k = reglages.coeurSon; return { son: k, pos: R[1], syl: [SONS[k].mot], c: SONS[k].c, nom: R[0] };
+        },
+        rendre() {
+          const q = this.quoi();
+          return `<div class="ce-centre"><div class="ce-rond" style="--c:${q.c}"><span class="ce-img">${geste(q.son, '#fff7dc')}</span><b>${SONS[q.son].mot}</b></div>
+          <p class="ce-compte"><span>1</span><span>2</span><span>3</span><span>4</span></p>
+          <div class="ce-ligne ce-coeur-ligne">${[...Array(8)].map((_, i) => { const n = q.pos.indexOf(i); return `<div class="ce-case ${i % 2 ? 'et' : ''}" data-i="${i}">${n >= 0 ? `<span class="ce-img">${geste(q.son, q.c)}</span><b style="--c:${q.c}">${esc(q.syl[n % q.syl.length] || SONS[q.son].mot)}</b>` : ''}</div>`; }).join('')}</div>
+          <p class="ce-dis">${esc(SONS[q.son].geste)} : <b>${esc(q.nom)}</b>. Quand la case s’allume, on joue.</p></div>
+          <div class="ce-niveaux ce-coeur-sons"><span class="ce-l">Son</span>${Object.keys(SONS).map((k) => `<button class="ce-chg ${!reglages.coeurRythme.startsWith('g:') && reglages.coeurSon === k ? 'on' : ''}" style="--c:${SONS[k].c}" data-coeur-son="${k}"><span class="ce-img">${geste(k, '#fff7dc')}</span>${k === 'pieds' ? 'PIEDS' : SONS[k].mot}</button>`).join('')}</div>
+          <div class="ce-niveaux"><span class="ce-l">Rythme</span>${Object.entries(RYTHMES_C).map(([k, [nom]]) => `<button class="${reglages.coeurRythme === k ? 'on' : ''}" data-coeur-r="${k}">${nom}</button>`).join('')}</div>
+          <div class="ce-niveaux"><label class="ce-l" for="ce-coeur-g">Ou pratiquer un groupe d’un beat</label><select id="ce-coeur-g" class="ce-select" data-coeur-g><option value="">…</option>${Object.entries(GROOVES).map(([gk, G]) => `<optgroup label="${G.nom}">${G.g.map((x, gi) => `<option value="g:${gk}:${gi}" ${reglages.coeurRythme === `g:${gk}:${gi}` ? 'selected' : ''}>${G.nom} · ${GROUPES[gi].nom} (${esc(x.mot)})</option>`).join('')}</optgroup>`).join('')}</select></div>`;
+        },
+        fn(pas, t) {
+          const p = pas % 8; const q = this.quoi();
+          if (q.pos.includes(p)) sonne(q.son, t, p === 0 ? 1 : 0.8);
+          if (p % 2 === 0 && !q.pos.includes(p)) click(t, p === 0); // le temps, tout doux, pour se repérer
+          quand(t, () => {
+            const sc = scene(); if (!sc) return;
+            if (q.pos.includes(p)) { const r = sc.querySelector('.ce-rond'); if (r) { r.classList.remove('bat'); void r.offsetWidth; r.classList.add('bat'); } }
+            sc.querySelectorAll('.ce-coeur-ligne .ce-case').forEach((x, i) => x.classList.toggle('on', i === p));
+            if (p % 2 === 0) sc.querySelectorAll('.ce-compte span').forEach((x, i) => x.classList.toggle('on', i === p / 2));
+          });
+        },
       },
       echo: {
         motif: null,
@@ -363,11 +416,15 @@ export default {
           if (g.bleu && (p === 2 || p === 6)) r.push({ id: 'bleu', len: 1, debut: pas });
           const v0 = VOIX_C.find((x) => g[x.id]);
           if (mes === 1 && p === 0 && v0) r.push({ id: v0.id, len: 8, debut: pas, note: T + v0.notes[0], ecoute: true, voix: v0 });
+          // Les voix suivantes : une mesure avant leur entrée, l'app leur chante leur note, à elles seules.
+          if (p === 0) VOIX_C.forEach((v) => { const e = this.entree(v); if (v !== v0 && g[v.id] && pas === e - 8) { const ke = Math.floor((e / 8 - 2) / 2) % 4; r.push({ id: v.id, len: 8, debut: pas, note: T + v.notes[ke], ecoute: true, voix: v }); } });
           if (mes >= 2 && p === 0 && (mes - 2) % 2 === 0) { const k = Math.floor((mes - 2) / 2) % 4; VOIX_C.forEach((v) => { if (g[v.id] && pas >= this.entree(v)) r.push({ id: v.id, len: 16, debut: pas, note: T + v.notes[k], k, voix: v }); }); }
           return r;
         },
         rendre: () => `<canvas class="ce-pistes" aria-label="Les pistes des groupes : les sons arrivent vers la ligne"></canvas>
           <p class="ce-dis ce-c-dis">Quand un bloc touche la ligne : <b>à vous!</b> Les voix tiennent la note tant que la barre passe.</p>
+          <div class="ce-niveaux ce-ecoute-n"><span class="ce-l">Trouver sa note</span>${VOIX_C.filter((v) => reglages.chGr[v.id]).map((v) => `<button class="ce-chg on" style="--c:${v.c}" data-ecoute-v="${v.id}"><span class="ce-img">${geste(v.id, '#fff7dc')}</span>Écouter la note de ${v.voy}</button>`).join('')}</div>
+          <p class="ce-astuce">Astuce : placez les AAA à gauche de la classe et les OOO à droite. La voix modèle de chaque groupe vient de son côté. Chaque groupe peut écouter sa note seule avant de commencer, et une mesure avant d’entrer, l’app la lui chante.</p>
           <div class="ce-niveaux"><span class="ce-l">Groupes</span>${[['rouge', 'ROUGE · BOUM', GROUPES[0].c, 'boum'], ['bleu', 'BLEU · TAC', GROUPES[1].c, 'tac'], ...VOIX_C.map((v) => [v.id, v.voy, v.c, v.id])].map(([k, l, c, im]) => `<button class="ce-chg ${reglages.chGr[k] ? 'on' : ''}" style="--c:${c}" data-chg="${k}" aria-pressed="${reglages.chGr[k]}"><span class="ce-img">${geste(im, '#fff7dc')}</span>${l}</button>`).join('')}</div>
           <div class="ce-niveaux"><span class="ce-l">Tonalité</span>${TONS.map(([n, m]) => `<button class="${reglages.tonique === m ? 'on' : ''}" data-ton="${m}">${n}</button>`).join('')}<button class="${reglages.modele ? 'on' : ''}" data-modele="1">${reglages.modele ? 'Modèle chanté : oui' : 'Modèle chanté : non'}</button></div>`,
         fn(pas, t, d) {
@@ -452,6 +509,8 @@ export default {
       },
     };
 
+    // Refaire le contenu de l'activité sans couper la musique (réglages changés en jouant).
+    function majCorps() { const cp = el.querySelector('.ce-corps'); if (cp) cp.innerHTML = A[act].rendre.call(A[act]); }
     function rendre() {
       arreter();
       el.innerHTML = `
@@ -481,6 +540,12 @@ export default {
       const gv = e.target.closest('[data-groove]'); if (gv) { reglages.groove = gv.dataset.groove; store.set('cercleGroove', reglages.groove); el.querySelectorAll('[data-groove]').forEach((b) => b.classList.toggle('on', b.dataset.groove === reglages.groove)); if (act === 'chef') { el.querySelector('.ce-chef').innerHTML = A.chef.html(); A.chef.maj(-1); } else if (act === 'mots' && moteur) el.querySelector('.ce-groupes').innerHTML = A.mots.html(); else rendre(); return; }
       const en = e.target.closest('[data-enchainer]'); if (en) { reglages.enchainer = !reglages.enchainer; store.set('cercleEnchainer', reglages.enchainer); en.classList.toggle('on', reglages.enchainer); en.textContent = reglages.enchainer ? 'Le beat change tout seul : oui' : 'Le beat change tout seul : non'; return; }
       const px = e.target.closest('[data-photo-x]'); if (px) { retirerPhoto(px.dataset.photoX); rendre(); return; }
+      const ev = e.target.closest('[data-ecoute-v]'); if (ev) { ecouterNote(ev.dataset.ecouteV); return; }
+      const cs = e.target.closest('[data-coeur-son]'); if (cs) { reglages.coeurSon = cs.dataset.coeurSon; if (reglages.coeurRythme.startsWith('g:')) reglages.coeurRythme = 'temps'; store.set('cercleCoeurSon', reglages.coeurSon); store.set('cercleCoeurRythme', reglages.coeurRythme); majCorps(); sonne(reglages.coeurSon, c.currentTime + 0.02); return; }
+      const cr = e.target.closest('[data-coeur-r]'); if (cr) { reglages.coeurRythme = cr.dataset.coeurR; store.set('cercleCoeurRythme', reglages.coeurRythme); majCorps(); return; }
+      const jp = e.target.closest('[data-jpart]'); if (jp) { reglages.jamPart = jp.dataset.jpart === 'tout' ? null : +jp.dataset.jpart; const enMarche = !!moteur; majCorps(); if (enMarche) { const ac = A[act]; demarrer((q, t, d) => ac.fn.call(ac, q, t, d)); } return; }
+      const jv = e.target.closest('[data-jamv]'); if (jv) { const k = jv.dataset.jamv; reglages.jamVoix[k] = !reglages.jamVoix[k]; store.set('cercleJamVoix', reglages.jamVoix); majCorps(); return; }
+      const jm = e.target.closest('[data-jamm]'); if (jm) { reglages.jamModele = !reglages.jamModele; store.set('cercleJamModele', reglages.jamModele); jm.classList.toggle('on', reglages.jamModele); jm.textContent = reglages.jamModele ? 'L’app joue avec vous : oui' : 'L’app joue avec vous : non'; return; }
       const chg = e.target.closest('[data-chg]'); if (chg) { const k = chg.dataset.chg; reglages.chGr[k] = !reglages.chGr[k]; store.set('cercleChoeurGr', reglages.chGr); chg.classList.toggle('on', reglages.chGr[k]); chg.setAttribute('aria-pressed', reglages.chGr[k]); return; }
       const gr = e.target.closest('[data-gr]'); if (gr) { const k = gr.dataset.gr; const i = +gr.dataset.gi; const l = reglages.grille[k]; reglages.grille[k] = l.includes(i) ? l.filter((x) => x !== i) : [...l, i].sort(); store.set('cercleGrille', reglages.grille); gr.classList.toggle('on'); if (!moteur) sonne(k, c.currentTime + 0.02); return; }
       const am = e.target.closest('[data-amb]'); if (am) { reglages.ambiance = am.dataset.amb; store.set('cercleAmbiance', reglages.ambiance); el.querySelectorAll('[data-amb]').forEach((b) => b.classList.toggle('on', b.dataset.amb === reglages.ambiance)); return; }
@@ -500,6 +565,7 @@ export default {
       if (c2 === 'plein') { const s = el.querySelector('.ce-scene'); if (document.fullscreenElement) document.exitFullscreen?.(); else (s.requestFullscreen || s.webkitRequestFullscreen)?.call(s); }
     });
     el.addEventListener('change', (e) => {
+      if (e.target.dataset?.coeurG != null && e.target.value) { reglages.coeurRythme = e.target.value; store.set('cercleCoeurRythme', reglages.coeurRythme); majCorps(); return; }
       const k = e.target.dataset?.photo; const f = e.target.files?.[0]; if (!k || !f) return;
       garderPhoto(k, f).then(() => rendre()).catch(() => {});
     });

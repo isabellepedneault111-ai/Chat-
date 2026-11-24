@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.36', quand: '2026-11-24', titre: 'Pratiquer avant de tout mettre ensemble', items: [
+    ['Le chœur : chaque groupe trouve SA note', ['« Écouter la note de AAA / OOO / MMM » : la note du groupe, seule, claire (voix + piano), à l’arrêt comme en jouant. Et une mesure avant d’entrer, l’app chante sa note au groupe qui arrive (« écoutez »). Astuce : AAA à gauche de la classe, OOO à droite, la voix modèle vient de leur côté.']],
+    ['Le cœur : pratiquer n’importe quel son, n’importe quel rythme', ['Choisissez le son (BOUM, TIC, TAC, TSK, CHHH, PIEDS) et le rythme (chaque temps, sur 2 et 4, deux par temps, entre les temps, le galop). Ou pratiquez la partie d’un groupe d’un beat, toute seule (ex. : Hip-hop · ROUGE, BOUM BA DA). Ça change sans arrêter la musique.']],
+    ['La chanson : une partie à la fois', ['Touchez Intro, Couplet, Refrain, Liberté ou Fin : elle tourne en boucle pour pratiquer. « Tout ensemble » remet la chanson complète.']],
+    ['La chanson : des voix, et on entend tout', ['AAA, OOO, MMM peuvent chanter dans la chanson : une note tenue par accord, écrite à l’écran avec la direction de la suivante. Et l’app joue le beat de la classe avec vous (TIC compris, plus fort qu’avant) ; coupez-la quand la classe le tient seule.']],
+  ] },
   { v: '1.35', quand: '2026-11-24', titre: 'Plusieurs beats, un chef plus riche, vos mains en photo', items: [
     ['Cinq beats', ['Dans Le moteur des mots, Le chef et Le trou : Pizza, Hip-hop, Carnaval, Rock patate, Reggae. Chaque beat change les sons, le rythme et les mots des 4 groupes (et vos mots se gardent beat par beat). Option « Le beat change tout seul » : une fois tout le monde entré, un nouveau beat toutes les 8 mesures, annoncé une mesure avant.']],
     ['Le chef : les voix, la pluie, le tonnerre', ['En plus des 4 groupes, le chef fait entrer AAA, OOO, MMM (des notes tenues qui forment de vrais accords, avec la note écrite et la direction de la suivante), la pluie et le tonnerre. Chaque tuile s’allume ou s’éteint à son toucher.']],

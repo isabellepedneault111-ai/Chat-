@@ -5220,3 +5220,24 @@ button.ce-g { font: inherit; color: inherit; text-align: left; width: 100%; back
 .ce-sons { grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)) !important; }
 .ce-photo, .ce-photo-b button { padding: 4px 9px; font-size: .78rem; }
 .ce-photo-b { flex-wrap: wrap; }
+
+/* Pratiquer : le cœur, la chanson partie par partie, les voix de la chanson, trouver sa note (1.36) */
+.ce-coeur-ligne { margin-top: 8px; }
+.ce-coeur-ligne .ce-case { aspect-ratio: auto; min-height: clamp(90px, 15vh, 140px); }
+.ce-coeur-ligne .ce-case b, .ce-case b[style] { background: var(--c); color: #14120f; padding: 2px 8px; border-radius: 8px; }
+.ce-coeur-sons { flex-wrap: wrap; }
+.ce-select { font: 700 1rem inherit; padding: 8px 10px; border-radius: 12px; background: #2a2620; color: #fff7dc; border: 2px solid #4a4438; max-width: 100%; }
+.ce-jam-mode { margin: 0; color: #e6dfc8; text-align: center; }
+.ce-jam-plan button { position: relative; overflow: hidden; border-radius: 10px; background: #211e19; padding: 10px 6px; text-align: center; min-width: 0; border: 3px solid transparent; cursor: pointer; font: inherit; }
+.ce-jam-plan button b { position: relative; z-index: 1; font: 800 clamp(.7rem, 1.6vw, 1rem) var(--display); color: #a39b87; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.ce-jam-plan button i { position: absolute; inset: 0 auto 0 0; width: 0; background: #3a342b; transition: width .3s; }
+.ce-jam-plan button.on { outline: 3px solid #f1cf4e; } .ce-jam-plan button.on b, .ce-jam-plan button.fait b, .ce-jam-plan button.choisi b { color: #fff7dc; }
+.ce-jam-plan button.choisi { border-color: #3fbf7f; }
+.ce-jam-plan .ce-jam-tout { flex: 0 0 auto; padding: 10px 14px; background: #2a2620; }
+.ce-jam-voix { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.ce-jam-voix:empty { display: none; }
+.ce-jam-voix .ce-pad { min-width: 160px; cursor: default; }
+.ce-astuce { margin: 0; color: #a39b87; font-size: .95rem; text-align: center; }
+.ce-ecoute-n { flex-wrap: wrap; }
+.ce-rond .ce-img { width: clamp(90px, 16vw, 150px); height: clamp(90px, 16vw, 150px); }
+.ce-coeur-sons .ce-chg:not(.on), .ce-ecoute-n .ce-chg { text-decoration: none; opacity: .8; }
