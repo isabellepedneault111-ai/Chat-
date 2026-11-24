@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.31', quand: '2026-11-24', titre: 'Le chef, refait au complet', items: [
+    ['Le chef : une vraie personne dirige', ['Fini le hasard. Le prof, puis un élève, touche un groupe pour le faire entrer ou sortir ; choisit Doux, Normal ou Fort ; ou touche On fige : tout le monde s’arrête net et ne bouge plus, puis On repart. Chaque changement arrive au prochain 1, annoncé à l’écran (« entre au prochain 1 »), et chaque groupe voit ses syllabes s’allumer.']],
+    ['Un seul bouton : Démarrer / Arrêter', ['Le bouton FREEZE est parti : Arrêter, c’est la fin de l’activité. Se figer, c’est un jeu, et il vit maintenant dans Le chef.']],
+    ['Le cercle sans emojis', ['Des mots, des couleurs, c’est tout.']],
+  ] },
   { v: '1.30', quand: '2026-11-24', titre: 'Le chœur : tout le monde à l’écran', items: [
     ['👀 Tout le monde, côte à côte', ['Dans Le chœur, chaque groupe a sa colonne sur le même écran : ROUGE (BOUM) et BLEU (TAC) s’allument à chaque coup, AAA, OOO et MMM montrent leur note, la flèche et la barre à tenir. Le compte 1 2 3 4 avance en haut.']],
     ['🥁 Un beat qui ne bouge plus', ['Le cercle joue toujours ses propres sons de percussion, jamais un son enregistré dans les réglages (un son long, avec son propre rythme dedans, brouillait le groove). Et les coups sont prévus plus d’avance : un écran projeté qui rame une seconde ne les décale plus.']],

@@ -5134,3 +5134,25 @@ body.ce-ouvert .arret-son, body.ce-ouvert .etincelle { display: none !important;
   .ce-tous .ce-v { min-height: 170px; }
 }
 .ce-tous .ce-v-n { font-size: clamp(1rem, calc(var(--larg) / 5.5), 2.2rem); }
+
+/* Le chef, à 180° : une personne dirige (1.31) */
+.ce-chef-compte { justify-content: center; }
+button.ce-g { font: inherit; color: inherit; text-align: left; width: 100%; background: #211e19; border: 4px solid transparent; border-radius: 18px; padding: 10px 12px; cursor: pointer; }
+.ce-chef-g.actif { border-color: var(--c); background: #2a2620; }
+.ce-chef-g.entre { opacity: .75; border: 4px dashed var(--c); }
+.ce-chef-g.sort { border: 4px dashed #6b6455; }
+.ce-chef-etat { font: 800 clamp(.85rem, 1.8vw, 1.1rem) var(--display); color: #e6dfc8; }
+.ce-g-t { flex-wrap: wrap; }
+.ce-chef.doux .ce-g-l span.on { transform: scale(.95); opacity: .7; }
+.ce-chef.fort .ce-g-l span.on { transform: scale(1.18); }
+.ce-chef-ctrl { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.ce-chef-ctrl button { font: 900 clamp(1.1rem, 2.6vw, 1.5rem) var(--display); padding: 14px 22px; border-radius: 16px; border: 3px solid #fff7dc; background: #2a2620; color: #fff7dc; cursor: pointer; }
+.ce-chef-ctrl button.on { background: #f1cf4e; color: #14120f; border-color: #f1cf4e; }
+.ce-chef-ctrl .ce-chef-fige { background: #e5452c; border-color: #e5452c; color: #fff; }
+.ce-chef-ctrl .ce-chef-fige.on { background: #fff7dc; color: #14120f; border-color: #fff7dc; }
+.ce-fige-msg { display: grid; justify-items: center; gap: 4px; padding: 18px; border-radius: 18px; background: #e5452c; color: #fff; text-align: center; }
+.ce-fige-msg[hidden] { display: none; }
+.ce-fige-msg b { font: 900 clamp(2.4rem, 8vw, 5rem)/1 var(--display); } .ce-fige-msg span { font-size: clamp(1rem, 2.4vw, 1.4rem); }
+.ce-col-geste { color: #e6dfc8; font: 800 clamp(.9rem, 1.8vw, 1.2rem) var(--display); }
+.ce-case b[style] { background: var(--c); color: #14120f; padding: 4px 8px; border-radius: 8px; }
+.ce-plein { font: 800 .95rem var(--display); padding: 8px 14px; border-radius: 12px; }

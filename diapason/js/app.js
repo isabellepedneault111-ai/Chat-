@@ -113,7 +113,7 @@ const LIEUX = {
 const NOMS = { '': ['☼', 'Aujourd’hui'], evasion: ['🗝', 'L’évasion'], calendrier: ['◷', 'Calendrier'], projet: ['✦', 'Notre projet'], bilan: ['↗', 'Notre bilan'], passage: ['☾', 'Nos lunes'],
   carnet: ['▦', 'Le mur'], relais: ['⇄', 'Nos échanges'], coffre: ['✧', 'Le coffre'],
   ecrire: ['✎', 'Écrire'], paroles: ['¶', 'Paroles'], placer: ['↧', 'Placer mes paroles'], jeux: ['✺', 'Le grimoire'], lexique: ['Aa', 'Notre lexique'],
-  studio: ['♪', 'Jouer'], accord: ['♫', 'Ma voix'], oreille: ['◎', 'L’oreille'], chantier: ['⚒', 'Le chantier'], cercle: ['🥁', 'Le cercle'], labo: ['∿', 'Le labo'], cathedrale: ['✶', 'La cathédrale'], materiel: ['⌂', 'Mon studio'] };
+  studio: ['♪', 'Jouer'], accord: ['♫', 'Ma voix'], oreille: ['◎', 'L’oreille'], chantier: ['⚒', 'Le chantier'], cercle: ['○', 'Le cercle'], labo: ['∿', 'Le labo'], cathedrale: ['✶', 'La cathédrale'], materiel: ['⌂', 'Mon studio'] };
 const NOMS_FAM = { projet: 'Le cap et le plan', depart: 'Notre point de départ', ames: 'Nos deux âmes' };
 const lieuDe = (id) => Object.keys(LIEUX).find((k) => LIEUX[k].pages.includes(id) || LIEUX[k].aussi.includes(id)) || null;
 const view = $('#view');
