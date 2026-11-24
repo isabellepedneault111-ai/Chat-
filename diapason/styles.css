@@ -5160,7 +5160,7 @@ button.ce-g { font: inherit; color: inherit; text-align: left; width: 100%; back
 /* La chanson (1.32) */
 .ce-jam-plan { display: flex; gap: 4px; }
 .ce-jam-plan span { position: relative; overflow: hidden; border-radius: 10px; background: #211e19; padding: 8px 6px; text-align: center; min-width: 0; }
-.ce-jam-plan b { position: relative; z-index: 1; font: 800 clamp(.7rem, 1.6vw, 1rem) var(--display); color: #8a8270; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.ce-jam-plan b { position: relative; z-index: 1; font: 800 clamp(.7rem, 1.6vw, 1rem) var(--display); color: #a39b87; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
 .ce-jam-plan i { position: absolute; inset: 0 auto 0 0; width: 0; background: #3a342b; transition: width .3s; }
 .ce-jam-plan span.on { outline: 3px solid #f1cf4e; } .ce-jam-plan span.on b, .ce-jam-plan span.fait b { color: #fff7dc; }
 .ce-jam-compte { justify-content: center; }
@@ -5171,7 +5171,7 @@ button.ce-g { font: inherit; color: inherit; text-align: left; width: 100%; back
 .ce-jam-ed summary { cursor: pointer; font-weight: 700; }
 .ce-jam-r { display: grid; grid-template-columns: 4.5em repeat(8, minmax(0, 1fr)); gap: 6px; align-items: center; margin-top: 8px; }
 .ce-jam-r > b { font: 900 1rem var(--display); color: var(--c); }
-.ce-jam-r button { min-height: 44px; border-radius: 10px; border: 2px solid #4a4438; background: #2a2620; color: #8a8270; font: 800 1rem var(--display); cursor: pointer; }
+.ce-jam-r button { min-height: 44px; border-radius: 10px; border: 2px solid #4a4438; background: #2a2620; color: #a39b87; font: 800 1rem var(--display); cursor: pointer; }
 .ce-jam-r button.et { background: #1b1915; }
 .ce-jam-r button.on { background: var(--c); border-color: var(--c); color: #14120f; }
 @media (max-width: 640px) { .ce-jam-plan b { font-size: .62rem; } .ce-jam-r { grid-template-columns: 3.4em repeat(8, minmax(0, 1fr)); gap: 3px; } .ce-jam-r button { min-height: 38px; } }
