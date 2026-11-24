@@ -479,7 +479,7 @@ export default {
         r.onstop = () => { flux.getTracks().forEach((t) => t.stop()); composer.rec = null; composer.blob = new Blob(bouts, { type: r.mimeType || 'audio/mp4' }); composer.url = URL.createObjectURL(composer.blob); rendre(); };
         r.start(); composer.rec = r; rendre();
         setTimeout(() => { if (composer?.rec === r) r.stop(); }, 90000); // 1 min 30 au plus
-      } catch { toast('Le micro est refusé : autorise-le dans les réglages du navigateur.'); }
+      } catch { /* l'aide (pourquoi, quoi faire) s'affiche toute seule : micro.js */ }
     }
 
     // ---------- Les gestes ----------

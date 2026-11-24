@@ -150,7 +150,7 @@ export default {
     // Ta voix en direct pendant le chant : la hauteur entendue au micro, dessinée sur la mélodie proposée.
     let micLive = store.get('motsMicLive', false); let micOuvert = false; let trace = []; let echelle = null;
     const offPitch = onPitch((r) => { if (micLive && lecture && r?.midi) { trace.push([r.t, r.midi]); if (trace.length > 4000) trace.splice(0, 1000); } });
-    async function ouvrirMic() { if (micOuvert) return true; micOuvert = await startMic(); if (!micOuvert) { micLive = false; store.set('motsMicLive', false); toast('Le micro est refusé : autorise-le dans les réglages du navigateur.'); } return micOuvert; }
+    async function ouvrirMic() { if (micOuvert) return true; micOuvert = await startMic(); if (!micOuvert) { micLive = false; store.set('motsMicLive', false); cleBarre = ''; } return micOuvert; } // l'aide (pourquoi, quoi faire) s'affiche toute seule : micro.js
     const voix = espace.connected ? profileOf(espace.me)?.voix || null : null;
     // Les paroles de chaque chanson voyagent avec l'espace (une entrée cachée par chanson et par personne) :
     // elles se retrouvent sur l'iPhone comme sur l'ordi. La version la plus récente gagne.

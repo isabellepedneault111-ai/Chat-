@@ -1,4 +1,5 @@
 // Coquille de l'application de Zaza & Frog : routage, micro, « pourquoi ça marche », contraintes, visite guidée.
+import './micro.js'; // une seule porte pour le micro : réessaie, puis dit pourquoi et quoi faire
 import { $, $$, toast, store } from './ui.js';
 import { toggleMic, onMicStatus, onPitch } from './audio.js';
 import { MODULES } from './data.js';

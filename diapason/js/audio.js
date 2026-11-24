@@ -371,6 +371,7 @@ export async function startMic() {
     });
   } catch (e) {
     console.warn(e);
+    if (!navigator.mediaDevices) import('./micro.js').then((m) => m.aideMicro({ name: 'NotSupportedError' })); // un navigateur intégré (Messenger…) sans micro du tout
     statusListeners.forEach((fn) => fn(false, e));
     return false;
   }
