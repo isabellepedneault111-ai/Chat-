@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.38', quand: '2026-11-24', titre: 'La table de mixage', items: [
+    ['Tout contrôler dans La chanson', ['Une table de mixage sous la chanson : la batterie de l’app, la basse, les accords, BOUM, TAC, TIC et les voix AAA, OOO, MMM. Chaque couche s’allume ou s’éteint, et a son propre volume. Ça s’applique partout : une partie, toute la chanson, tout en même temps.']],
+    ['Les préréglages', ['« Juste le chant » (seulement les voix), « Juste le beat », « La classe seule » (l’app se tait, les pistes restent à l’écran pour guider) et « Tout ».']],
+  ] },
   { v: '1.37', quand: '2026-11-24', titre: 'La chanson : tout en même temps', items: [
     ['Tout en même temps, avec les voix', ['Nouveau bouton dans La chanson : le beat de la classe (BOUM, TAC, TIC) et les voix (AAA, OOO, MMM) jouent ensemble, en boucle, avec le groupe de l’app. L’écran passe en pistes, comme Le chœur : chaque groupe voit ses blocs arriver vers la ligne, et les voix voient leur note, plus haute ou plus basse. On ajoute un TIC ou une voix en jouant : sa piste apparaît.']],
     ['« Toute la chanson »', ['L’ancien « Tout ensemble » s’appelle maintenant « Toute la chanson » : la chanson du début à la fin.']],

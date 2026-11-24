@@ -307,7 +307,7 @@ export function pad(freqs, t, dur, gain = 0.05) {
 }
 
 // Une note de basse synthétique, courte et ronde (onde triangle).
-export function bass(freq, t, dur = 0.35) {
+export function bass(freq, t, dur = 0.35, gain = 0.5) {
   const c = audio();
   const o = c.createOscillator();
   o.type = 'triangle';
@@ -316,7 +316,7 @@ export function bass(freq, t, dur = 0.35) {
   s.type = 'sine';
   s.frequency.value = freq / 2;
   const g = c.createGain();
-  env(g, t, 0.5, 0.005, dur);
+  env(g, t, gain, 0.005, dur);
   o.connect(g); s.connect(g);
   g.connect(out());
   [o, s].forEach((x) => { x.start(t); x.stop(t + dur + 0.02); });
