@@ -43,6 +43,7 @@ import tessiture from './views/tessiture.js';
 import gym from './views/gym.js';
 import mots from './views/mots.js';
 import chantier from './views/chantier.js';
+import evasion from './views/evasion.js';
 import { initArrivee } from './arrivee.js';
 import labo from './views/labo.js';
 import studio from './views/studio.js';
@@ -67,6 +68,7 @@ const APPUIS = {
   calendrier: ['Des séances courtes, régulières et planifiées d’avance tiennent mieux que les élans de dernière minute ; un rendez-vous fixé à deux est un engagement.', 'Rohrer 2004 · Gollwitzer 1999'],
   miroir: ['Voir sa hauteur pendant qu’on chante corrige la justesse plus vite que l’oreille seule.', 'Welch, Howard & Rush 1989'],
   tessiture: ['Chanter dans sa tessiture confortable ménage la voix : moins d’effort, moins de fatigue.', 'Titze 1994'],
+  evasion: ['On retient mieux ce qu’on a fait que ce qu’on a lu : chaque cadenas fait faire le geste, sur une vraie chanson.', 'Freeman et al. 2014'],
   chantier: ['Commenter un moment précis et essayer une idée par-dessus la vraie chanson fait arriver à la séance avec des choix déjà entendus, pas seulement imaginés.', 'Schön 1983'],
   mots: ['Les syllabes accentuées posées sur les temps forts font qu’un texte se chante sans boiter ; un brouillon imparfait donne de la matière à réécrire.', 'Pattison 2009'],
   gym: ['Les exercices à conduit vocal semi-fermé (paille, lèvres, « vv ») échauffent la voix avec moins d’effort.', 'Titze 2006'],
@@ -82,7 +84,7 @@ const APPUIS = {
   placer: ['La prosodie : quand les syllabes accentuées tombent sur les temps forts, le texte se chante tout seul ; à côté, il boite.', 'Pattison 2009'],
 };
 
-const routes = { '': home, miroir, tessiture, gym, mots, chantier, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles: home, elan, cathedrale, passage, calendrier, projet: home };
+const routes = { '': home, miroir, tessiture, gym, mots, chantier, evasion, labo, studio, paroles, carnet, mur: carnet, session, depart, evolution, accord, relais, bilan, jeux, coffre, lexique, ecrire: ecrireV, atelier, corbeille, etincelles, oreille, placer, ames, arbre, materiel, nouvelles: home, elan, cathedrale, passage, calendrier, projet: home };
 // Onglet en arrière-plan : le titre compte ce que l'autre vient d'ajouter, « (2) FLIP ». Revenir remet à zéro.
 {
   const base = document.title; let n = 0;
@@ -101,12 +103,12 @@ initArrivee(); // les sons qui arrivent sur l'ordi (glissés, ouverts avec FLIP,
 const VOIX = ['accord', 'miroir', 'tessiture', 'gym', 'mots'];
 const PROJET = ['projet', 'depart', 'ames']; // notre projet, et ses deux sections : d'où chacun part, ce que ça donne à deux
 const LIEUX = {
-  home: { nom: 'Accueil', pages: ['', 'calendrier', 'projet', 'bilan', 'passage'], aussi: ['nouvelles', 'ames', 'depart', 'evolution', 'arbre', 'elan'] },
+  home: { nom: 'Accueil', pages: ['', 'evasion', 'calendrier', 'projet', 'bilan', 'passage'], aussi: ['nouvelles', 'ames', 'depart', 'evolution', 'arbre', 'elan'] },
   carnet: { nom: 'Nos idées', pages: ['carnet', 'relais', 'coffre'], aussi: ['mur', 'corbeille', 'etincelles'] },
   ecrire: { nom: 'Écrire', pages: ['ecrire', 'paroles', 'placer', 'jeux', 'lexique'], aussi: ['atelier'] },
   studio: { nom: 'Jouer', pages: ['studio', 'accord', 'oreille', 'chantier', 'labo', 'cathedrale', 'materiel'], aussi: [...VOIX] },
 };
-const NOMS = { '': ['☼', 'Aujourd’hui'], calendrier: ['◷', 'Calendrier'], projet: ['✦', 'Notre projet'], bilan: ['↗', 'Notre bilan'], passage: ['☾', 'Nos lunes'],
+const NOMS = { '': ['☼', 'Aujourd’hui'], evasion: ['🗝', 'L’évasion'], calendrier: ['◷', 'Calendrier'], projet: ['✦', 'Notre projet'], bilan: ['↗', 'Notre bilan'], passage: ['☾', 'Nos lunes'],
   carnet: ['▦', 'Le mur'], relais: ['⇄', 'Nos échanges'], coffre: ['✧', 'Le coffre'],
   ecrire: ['✎', 'Écrire'], paroles: ['¶', 'Paroles'], placer: ['↧', 'Placer mes paroles'], jeux: ['✺', 'Le grimoire'], lexique: ['Aa', 'Notre lexique'],
   studio: ['♪', 'Jouer'], accord: ['♫', 'Ma voix'], oreille: ['◎', 'L’oreille'], chantier: ['⚒', 'Le chantier'], labo: ['∿', 'Le labo'], cathedrale: ['✶', 'La cathédrale'], materiel: ['⌂', 'Mon studio'] };

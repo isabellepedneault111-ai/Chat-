@@ -60,6 +60,9 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.24', quand: '2026-11-24', titre: 'L’évasion', items: [
+    ['🗝 Sept cadenas, une chanson', ['Accueil › 🗝 L’évasion : « Projet 1 » est enfermée. Chaque cadenas s’ouvre avec ce que l’app te fait trouver ou faire : son tempo, sa tonalité, des paroles gardées, une ligne chantée juste au micro, un commentaire laissé dans Le chantier, une ligne de piano jouée par-dessus, le MIDI téléchargé. Un chrono, des indices (+1 minute), et à la fin un mot sur le mur pour l’autre.']],
+  ] },
   { v: '1.23', quand: '2026-11-24', titre: 'Le micro dit pourquoi', items: [
     ['🎤 Un micro qui ne marche pas t’explique quoi faire', ['Partout dans l’app, si le micro ne s’ouvre pas, une fenêtre dit la vraie raison et les gestes pour la régler sur TON appareil : bloqué dans Safari sur l’iPhone (« aA » › Réglages du site web › Microphone › Autoriser), pris par une autre app (un appel, FaceTime, la dictée), un lien ouvert dans Messenger ou Instagram (ouvre-le dans Safari), ou pas de micro du tout. Un bouton « Recharger » relance la page.']],
     ['Moins de refus', ['Quand une demande de micro trop précise échoue (un micro choisi qui n’est plus branché), l’app redemande tout simplement « un micro », sans t’embêter.']],

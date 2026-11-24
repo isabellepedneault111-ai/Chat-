@@ -148,7 +148,7 @@ export default {
     if (aCaler && lignes.length) aCaler = false; // cette chanson a déjà ses paroles : on ne touche à rien
     let graine = Date.now() % 100000; let lecture = null; let raf = 0;
     // Ta voix en direct pendant le chant : la hauteur entendue au micro, dessinée sur la mélodie proposée.
-    let micLive = store.get('motsMicLive', false); let micOuvert = false; let trace = []; let echelle = null;
+    const justes = new Set(); let micLive = store.get('motsMicLive', false); let micOuvert = false; let trace = []; let echelle = null;
     const offPitch = onPitch((r) => { if (micLive && lecture && r?.midi) { trace.push([r.t, r.midi]); if (trace.length > 4000) trace.splice(0, 1000); } });
     async function ouvrirMic() { if (micOuvert) return true; micOuvert = await startMic(); if (!micOuvert) { micLive = false; store.set('motsMicLive', false); cleBarre = ''; } return micOuvert; } // l'aide (pourquoi, quoi faire) s'affiche toute seule : micro.js
     const voix = espace.connected ? profileOf(espace.me)?.voix || null : null;
@@ -524,7 +524,7 @@ export default {
         const px = ((tp - F.debut) / D) * W; const py = Math.max(2, Math.min(H - 2, Y(mm)));
         x.fillStyle = e == null ? '#9fd4ff' : Math.abs(e) < 0.5 ? '#5ee08a' : Math.abs(e) < 1.5 ? '#ffc24a' : '#ff6b4a';
         x.beginPath(); x.arc(px, py, 2.6, 0, 2 * Math.PI); x.fill();
-        der = [tp, mm, px, py]; derEcart = e;
+        der = [tp, mm, px, py]; derEcart = e; if (e != null && Math.abs(e) < 0.5 && !justes.has(tp)) { justes.add(tp); if (justes.size === 25) store.set('evasionJuste', true); } // L'évasion : « l'app t'entend juste »
       });
       if (der && t - der[0] < 0.25) { x.strokeStyle = '#fff'; x.beginPath(); x.arc(der[2], der[3], 6, 0, 2 * Math.PI); x.stroke(); }
       if (etat) etat.textContent = !der || t - der[0] > 0.4 ? '🎤 …' : derEcart == null ? `🎤 ${nomNote(Math.round(der[1]))}` : Math.abs(derEcart) < 0.5 ? `🎤 ${nomNote(Math.round(der[1]))} ✓ juste` : derEcart < 0 ? `🎤 ${nomNote(Math.round(der[1]))} ↑ monte un peu` : `🎤 ${nomNote(Math.round(der[1]))} ↓ descends un peu`;

@@ -448,7 +448,7 @@ export default {
         const m = Math.max(36, Math.min(84, n.m)); if (!notes.some((x) => x.m === m && x.p === pas)) notes.push({ p: pas, m, d });
       });
       enr = null; arreter();
-      if (notes.length) { avantEnr = P.notes; P.notes = notes; garderIdees(); toast(`${notes.length} note${notes.length > 1 ? 's' : ''} posée${notes.length > 1 ? 's' : ''} sur la grille. Touche une case pour corriger.`); }
+      if (notes.length) { avantEnr = P.notes; P.notes = notes; garderIdees(); store.set('evasionLigne', true); toast(`${notes.length} note${notes.length > 1 ? 's' : ''} posée${notes.length > 1 ? 's' : ''} sur la grille. Touche une case pour corriger.`); }
       else toast('Aucune note entendue : joue pendant que la chanson tourne (au clavier MIDI ou sur les touches).');
       rendre();
     }
@@ -530,7 +530,7 @@ export default {
       if (a === 'refaire') { const b = e.target.closest('button'); b.disabled = true; b.textContent = '🎛 J’écoute la batterie…'; setTimeout(() => { refaire(); rendre(); toast('La chanson est refaite en numérique. Allume ou éteins chaque partie.'); }, 30); }
       if (a === 'num-seul') { mix.orig = false; ['bat', 'basse', 'acc', 'mel'].forEach((k) => { mix[k] = true; }); store.set('chantierMix', mix); rendre(); jouer(tMes(mesureDe(pos()))); }
       if (a === 'num-ens') { mix.orig = true; store.set('chantierMix', mix); rendre(); jouer(tMes(mesureDe(pos()))); }
-      if (a === 'midi') { const f = midiNumerique(); if (!f) return; const l = document.createElement('a'); l.href = URL.createObjectURL(f); l.download = `${ch.nom} (numérique).mid`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(l); l.click(); l.remove(); }
+      if (a === 'midi') { const f = midiNumerique(); if (!f) return; store.set('evasionMidi', true); const l = document.createElement('a'); l.href = URL.createObjectURL(f); l.download = `${ch.nom} (numérique).mid`.replace(/[\\/:*?"<>|]+/g, ' '); document.body.append(l); l.click(); l.remove(); }
       if (a === 'enr') { if (enr) finirEnr(); else commencerEnr(); return; }
       if (a === 'enr-annuler') { if (avantEnr) { idees.piano.notes = avantEnr; avantEnr = null; garderIdees(); rendre(); } return; }
       if (a === 'bat-ici') { const m = mesureDe(pos()) + 1; const B = idees.batterie; const L = B.a - B.de; B.de = m; B.a = Math.min(nbMes(), m + Math.max(B.long, L)); garderIdees(); rendre(); }
