@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.37', quand: '2026-11-24', titre: 'La chanson : tout en même temps', items: [
+    ['Tout en même temps, avec les voix', ['Nouveau bouton dans La chanson : le beat de la classe (BOUM, TAC, TIC) et les voix (AAA, OOO, MMM) jouent ensemble, en boucle, avec le groupe de l’app. L’écran passe en pistes, comme Le chœur : chaque groupe voit ses blocs arriver vers la ligne, et les voix voient leur note, plus haute ou plus basse. On ajoute un TIC ou une voix en jouant : sa piste apparaît.']],
+    ['« Toute la chanson »', ['L’ancien « Tout ensemble » s’appelle maintenant « Toute la chanson » : la chanson du début à la fin.']],
+  ] },
   { v: '1.36', quand: '2026-11-24', titre: 'Pratiquer avant de tout mettre ensemble', items: [
     ['Le chœur : chaque groupe trouve SA note', ['« Écouter la note de AAA / OOO / MMM » : la note du groupe, seule, claire (voix + piano), à l’arrêt comme en jouant. Et une mesure avant d’entrer, l’app chante sa note au groupe qui arrive (« écoutez »). Astuce : AAA à gauche de la classe, OOO à droite, la voix modèle vient de leur côté.']],
     ['Le cœur : pratiquer n’importe quel son, n’importe quel rythme', ['Choisissez le son (BOUM, TIC, TAC, TSK, CHHH, PIEDS) et le rythme (chaque temps, sur 2 et 4, deux par temps, entre les temps, le galop). Ou pratiquez la partie d’un groupe d’un beat, toute seule (ex. : Hip-hop · ROUGE, BOUM BA DA). Ça change sans arrêter la musique.']],

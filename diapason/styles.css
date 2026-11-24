@@ -5241,3 +5241,7 @@ button.ce-g { font: inherit; color: inherit; text-align: left; width: 100%; back
 .ce-ecoute-n { flex-wrap: wrap; }
 .ce-rond .ce-img { width: clamp(90px, 16vw, 150px); height: clamp(90px, 16vw, 150px); }
 .ce-coeur-sons .ce-chg:not(.on), .ce-ecoute-n .ce-chg { text-decoration: none; opacity: .8; }
+
+/* La chanson : tout en même temps (1.37) */
+.ce-jam-plan .ce-jam-mix { background: #3a2f1a; }
+.ce-jam-plan .ce-jam-mix b { color: #f1cf4e; }

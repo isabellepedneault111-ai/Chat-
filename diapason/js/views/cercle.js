@@ -128,6 +128,7 @@ export default {
     function boucle() {
       const now = c.currentTime; file = file.filter(([t, f]) => { if (t <= now) { try { f(); } catch { /* vue fermée */ } return false; } return true; });
       if (act === 'choeur') A.choeur.dessiner();
+      if (act === 'jam' && reglages.jamPart === 'mix') A.jam.dessiner();
       raf = requestAnimationFrame(boucle);
     }
     function planifier() { if (!moteur) return; const d = 60 / bpm() / 2; while (moteur.prochain < c.currentTime + 0.3) { moteur.fn(moteur.pas, moteur.prochain, d); moteur.prochain += d; moteur.pas++; } }
@@ -172,25 +173,96 @@ export default {
       const t = c.currentTime + 0.05; chante(T + v.notes[k], t, 2.4, i, 0.22); joue('piano', T + v.notes[k], { when: t, dur: 2, vel: 0.5 });
     }
 
+    // La position (en croches) maintenant, d'après l'horloge audio et les croches déjà planifiées.
+    function posDe(marques) {
+      if (!moteur || !marques.length) return -6;
+      const now = c.currentTime; let m = marques[0]; marques.forEach((x) => { if (x[1] <= now) m = x; });
+      return m[0] + (now - m[1]) / m[2];
+    }
+    function dessinerPistes(cv, L, evtsDe, pos, attente) {
+          if (!cv) return; const dpr = window.devicePixelRatio || 1; const W = cv.clientWidth; const hP = W < 640 ? 72 : Math.min(130, Math.max(84, (innerHeight * 0.6) / Math.max(1, L.length)));
+          const H = Math.max(1, L.length) * hP + 26; if (cv.height !== Math.round(H * dpr) || cv.width !== Math.round(W * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.height = `${H}px`; }
+          const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, W, H);
+          const police = getComputedStyle(document.documentElement).getPropertyValue('--display') || 'sans-serif';
+          const gauche = W < 640 ? 118 : Math.min(300, W * 0.24); const ligne = gauche + 18; const ppc = (W - ligne - 6) / 18; const X = (pas) => ligne + (pas - pos) * ppc;
+          // Les temps : une ligne par temps, plus forte sur le 1 ; le compte en haut.
+          for (let b = Math.ceil(pos / 2) * 2; X(b) < W; b += 2) { const xx = X(b); const un = b % 8 === 0; x.fillStyle = un ? '#5a5346' : '#2e2a23'; x.fillRect(xx, 22, un ? 2 : 1, H - 22); x.fillStyle = un ? '#f1cf4e' : '#a39b87'; x.font = `800 ${un ? 15 : 12}px ${police}`; x.textAlign = 'center'; x.fillText(String((((b / 2) % 4) + 4) % 4 + 1), xx, 16); }
+          const evs = []; for (let q = Math.floor(pos) - 16; q < pos + 19; q++) evs.push(...evtsDe(q));
+          L.forEach((pl, i) => {
+            const y0 = 22 + i * hP; x.fillStyle = i % 2 ? '#1b1915' : '#201d18'; x.fillRect(0, y0, W, hP - 4);
+            const mes = evs.filter((e) => e.id === pl.id); const ici = mes.find((e) => e.debut <= pos && pos < e.debut + e.len);
+            // Les blocs et les barres
+            mes.forEach((e) => {
+              const xa = Math.max(ligne, X(e.debut)); const xb = X(e.debut + e.len) - 3; if (xb <= ligne || xa > W) return;
+              const actif = e === ici; x.globalAlpha = e.ecoute ? 0.45 : 1;
+              if (!pl.voix) {
+                const bh = hP * 0.78; const yy = y0 + (hP - 4 - bh) / 2; x.fillStyle = actif ? '#fff7dc' : '#2a2620'; x.strokeStyle = pl.c; x.lineWidth = 3; arrondi(x, xa, yy, Math.max(6, xb - xa), bh, 10); x.fill(); x.stroke();
+                const im = gesteImage(pl.im, pl.c); const tI = Math.min(bh - 6, xb - xa - 6); if (tI > 16 && im.complete) x.drawImage(im, xa + (xb - xa - tI) / 2, yy + (bh - tI) / 2, tI, tI);
+              } else {
+                const bh = hP * 0.42; const haut = e.h ?? 0.5; const yy = y0 + 4 + (hP - 12 - bh) * (1 - haut);
+                x.fillStyle = actif ? pl.c : `${pl.c}99`; arrondi(x, xa, yy, Math.max(6, xb - xa), bh, 10); x.fill();
+                if (actif) { x.fillStyle = 'rgba(255,247,220,.35)'; arrondi(x, xa, yy, Math.max(6, Math.min(xb - xa, (pos - e.debut) / e.len * (e.len * ppc))), bh, 10); x.fill(); }
+                const im = gesteImage(pl.im, pl.c); const tI = bh + 10; let tx = xa + 8; if (xb - xa > tI + 10 && im.complete) { x.drawImage(im, xa + 4, yy - 5, tI, tI); tx = xa + tI + 8; }
+                if (xb - tx > 40) { x.fillStyle = '#14120f'; x.font = `900 ${Math.round(bh * 0.6)}px ${police}`; x.textAlign = 'left'; x.fillText(`${e.ecoute ? 'écoutez ' : ''}${NOTE_FR[((e.note % 12) + 12) % 12]}`, tx, yy + bh * 0.72); }
+              }
+              x.globalAlpha = 1;
+            });
+            // L'étiquette : le groupe, quoi faire, et le décompte
+            const flash = ici && !ici.ecoute && (pl.voix ? pos - ici.debut < 1 : true); // le moment de jouer : l'étiquette s'allume
+            x.fillStyle = flash ? pl.c : '#14120f'; x.fillRect(0, y0, gauche, hP - 4); x.fillStyle = pl.c; x.fillRect(0, y0, 6, hP - 4);
+            x.save(); x.beginPath(); x.rect(0, y0, gauche, hP - 4); x.clip(); // le texte reste dans l'étiquette
+            const imL = gesteImage(pl.im, flash ? '#fff7dc' : pl.c); const tL = (hP - 4) * (flash ? 0.92 : 0.82); if (imL.complete) x.drawImage(imL, 10 + ((hP - 4) * 0.92 - tL) / 2, y0 + (hP - 4 - tL) / 2 + (flash && !pl.voix ? 4 : 0), tL, tL);
+            const tx0 = 14 + (hP - 4) * 0.92;
+            x.textAlign = 'left'; x.fillStyle = flash ? '#14120f' : pl.c; x.font = `900 ${Math.round(hP * (W < 640 ? 0.24 : 0.32))}px ${police}`; x.fillText(pl.mot, tx0, y0 + hP * 0.42);
+            let etat = pl.geste || ''; let fort = false;
+            if (pl.voix) {
+              const proch = mes.filter((e) => e.debut > pos && !e.ecoute).sort((a, b) => a.debut - b.debut)[0];
+              if (ici && !ici.ecoute) { etat = `chantez : ${NOTE_FR[((ici.note % 12) + 12) % 12]}`; fort = true; }
+              else if (proch && proch.debut - pos <= 8) { etat = `à vous dans ${Math.max(1, Math.ceil((proch.debut - pos) / 2))}`; fort = true; }
+              else if (ici?.ecoute) etat = 'écoutez la note';
+              else etat = attente ? attente(pl) : 'attendez…';
+            }
+            x.fillStyle = flash ? '#14120f' : fort ? '#fff7dc' : '#a39b87'; x.font = `800 ${Math.round(hP * (W < 640 ? 0.15 : 0.19))}px ${police}`; x.fillText(W < 640 ? (pl.voix ? etat.replace('à vous dans', 'dans').replace('chantez : ', '').replace('écoutez la note', 'écoutez').replace('attendez…', '…') : '') : etat, tx0, y0 + hP * 0.75); x.restore();
+          });
+          // La ligne : c'est maintenant.
+          x.fillStyle = '#fff7dc'; x.fillRect(ligne - 2, 18, 4, H - 18);
+    }
+
     // ---------- Les activités ----------
     const A = {
       jam: {
         rendre() {
           const g = reglages.grille;
           const vx = voixJam(AMBIANCES[reglages.ambiance] || AMBIANCES.chill);
-          return `<p class="ce-jam-mode">${reglages.jamPart == null ? 'Toute la chanson. Pour pratiquer une partie seule, touchez-la :' : `On pratique : <b>${PLAN_JAM[reglages.jamPart].nom}</b>, en boucle.`}</p>
-          <div class="ce-jam-plan">${PLAN_JAM.map((x, i) => `<button data-jpart="${i}" class="${reglages.jamPart === i ? 'choisi' : ''}" style="flex:${x.mes}"><b>${x.nom}</b><i></i></button>`).join('')}<button data-jpart="tout" class="ce-jam-tout ${reglages.jamPart == null ? 'choisi' : ''}"><b>Tout ensemble</b></button></div>
-          <div class="ce-jam-voix">${VOIX_C.filter((v) => reglages.jamVoix[v.id]).map((v) => `<div class="ce-pad actif" data-jv="${v.id}" style="--c:${v.c}"><span class="ce-img">${geste(v.id, v.c)}</span><b>${v.voy}</b><span class="ce-pad-n">${NOTE_FR[vx[v.id][0] % 12]}</span></div>`).join('')}</div>
-          <div class="ce-compte ce-jam-compte">${[1, 2, 3, 4].map((n) => `<span>${n}</span>`).join('')}</div>
+          const mix = reglages.jamPart === 'mix';
+          return `<p class="ce-jam-mode">${mix ? '<b>Tout en même temps</b> : le beat de la classe et les voix ensemble, en boucle. Chaque groupe suit sa piste.' : reglages.jamPart == null ? 'Toute la chanson. Pour pratiquer une partie seule, touchez-la :' : `On pratique : <b>${PLAN_JAM[reglages.jamPart].nom}</b>, en boucle.`}</p>
+          <div class="ce-jam-plan">${PLAN_JAM.map((x, i) => `<button data-jpart="${i}" class="${reglages.jamPart === i ? 'choisi' : ''}" style="flex:${x.mes}"><b>${x.nom}</b><i></i></button>`).join('')}<button data-jpart="tout" class="ce-jam-tout ${reglages.jamPart == null ? 'choisi' : ''}"><b>Toute la chanson</b></button><button data-jpart="mix" class="ce-jam-tout ce-jam-mix ${reglages.jamPart === 'mix' ? 'choisi' : ''}"><b>Tout en même temps</b></button></div>
+          ${mix ? `<canvas class="ce-pistes ce-jam-pistes" aria-label="Les pistes : le beat de la classe et les voix"></canvas>${VOIX_C.some((v) => reglages.jamVoix[v.id]) ? '' : '<p class="ce-dis">Allumez des voix (AAA, OOO, MMM) plus bas pour les entendre avec le beat.</p>'}` : ''}
+          <div class="ce-jam-voix" ${mix ? 'hidden' : ''}>${VOIX_C.filter((v) => reglages.jamVoix[v.id]).map((v) => `<div class="ce-pad actif" data-jv="${v.id}" style="--c:${v.c}"><span class="ce-img">${geste(v.id, v.c)}</span><b>${v.voy}</b><span class="ce-pad-n">${NOTE_FR[vx[v.id][0] % 12]}</span></div>`).join('')}</div>
+          ${mix ? '' : `<div class="ce-compte ce-jam-compte">${[1, 2, 3, 4].map((n) => `<span>${n}</span>`).join('')}</div>
           <p class="ce-phase ce-jam-titre">Prêts?</p>
           <div class="ce-ligne ce-jam-ligne">${[...Array(8)].map((_, i) => `<div class="ce-case ${i % 2 ? 'et' : ''}" data-i="${i}"></div>`).join('')}</div>
-          <p class="ce-dis ce-jam-dit">L’app joue le groupe. Vous, vous êtes la batterie.</p>
+          <p class="ce-dis ce-jam-dit">L’app joue le groupe. Vous, vous êtes la batterie.</p>`}
           <details class="ce-jam-ed" open><summary>Le beat de la classe (le couplet) : touchez les cases pour l’inventer</summary>
             ${['boum', 'tac', 'tic'].map((k) => `<div class="ce-jam-r" style="--c:${SONS[k].c}"><b><span class="ce-img">${geste(k, SONS[k].c)}</span>${SONS[k].mot}</b>${[...Array(8)].map((_, i) => `<button class="${g[k].includes(i) ? 'on' : ''} ${i % 2 ? 'et' : ''}" data-gr="${k}" data-gi="${i}" aria-label="${SONS[k].mot} sur ${i % 2 ? 'le et' : `le ${i / 2 + 1}`}">${i % 2 ? '·' : i / 2 + 1}</button>`).join('')}</div>`).join('')}
           </details>
           <div class="ce-niveaux"><span class="ce-l">Les voix</span>${VOIX_C.map((v) => `<button class="ce-chg ${reglages.jamVoix[v.id] ? 'on' : ''}" style="--c:${v.c}" data-jamv="${v.id}"><span class="ce-img">${geste(v.id, '#fff7dc')}</span>${v.voy}</button>`).join('')}<button class="${reglages.jamModele ? 'on' : ''}" data-jamm="1">${reglages.jamModele ? 'L’app joue avec vous : oui' : 'L’app joue avec vous : non'}</button></div>
           <div class="ce-niveaux"><span class="ce-l">Ambiance</span>${Object.entries(AMBIANCES).map(([k, a]) => `<button class="${reglages.ambiance === k ? 'on' : ''}" data-amb="${k}">${a.nom}</button>`).join('')}</div>`;
         },
+        marques: [],
+        pistes() {
+          const g = reglages.grille; const L = [];
+          ['boum', 'tac', 'tic'].forEach((k) => { if (g[k].length) L.push({ id: k, mot: SONS[k].mot, c: SONS[k].c, im: k, geste: SONS[k].geste }); });
+          VOIX_C.forEach((v) => { if (reglages.jamVoix[v.id]) L.push({ id: v.id, mot: v.voy, c: v.c, im: v.id, voix: v }); });
+          return L;
+        },
+        evts(pas) {
+          const r = []; if (pas < 0) return r; const p = pas % 8; const g = reglages.grille;
+          ['boum', 'tac', 'tic'].forEach((k) => { if (g[k].includes(p)) r.push({ id: k, debut: pas, len: 1 }); });
+          if (p === 0) { const vx = voixJam(AMBIANCES[reglages.ambiance] || AMBIANCES.chill); const k4 = Math.floor(pas / 8) % 4; VOIX_C.forEach((v) => { if (!reglages.jamVoix[v.id]) return; const L = vx[v.id]; const lo = Math.min(...L); const hi = Math.max(...L); r.push({ id: v.id, debut: pas, len: 8, note: L[k4], h: hi === lo ? 0.5 : (L[k4] - lo) / (hi - lo) }); }); }
+          return r;
+        },
+        dessiner() { dessinerPistes(scene()?.querySelector('.ce-jam-pistes'), this.pistes(), (q) => this.evts(q), posDe(this.marques), () => ''); },
         // Ce que la classe joue maintenant, case par case.
         partition(sec, m) {
           const id = PLAN_JAM[sec].id; const g = reglages.grille;
@@ -205,7 +277,9 @@ export default {
           const mes = Math.floor(pas / 8); const p = pas % 8;
           if (reglages.jamPart == null && mes >= TOTAL_JAM) { if (p === 0) quand(t, () => { arreter(); const sc = scene(); if (sc) { sc.querySelector('.ce-jam-titre').textContent = 'Bravo!'; sc.querySelector('.ce-jam-dit').textContent = 'Encore? Changez le beat de la classe ou l’ambiance, et Démarrer.'; } }); return; }
           let sec = 0; DEBUTS_JAM.forEach((x, i) => { if (mes >= x) sec = i; }); let m = mes - DEBUTS_JAM[sec];
-          if (reglages.jamPart != null) { sec = reglages.jamPart; m = mes % PLAN_JAM[sec].mes; }
+          if (pas === 0) this.marques = []; this.marques.push([pas, t, d]); if (this.marques.length > 48) this.marques.shift();
+          const mix = reglages.jamPart === 'mix';
+          if (mix) { sec = 1; m = mes % 4; } else if (reglages.jamPart != null) { sec = reglages.jamPart; m = mes % PLAN_JAM[sec].mes; }
           const S = PLAN_JAM[sec];
           const amb = AMBIANCES[reglages.ambiance] || AMBIANCES.chill; const k4 = mes % 4; const M = 8 * d;
           const kick = drums.kickOrigine || drums.kick; const snare = drums.snareOrigine || drums.snare; const hat = drums.hatOrigine || drums.hat; const clap = drums.clapOrigine || drums.clap;
@@ -234,11 +308,11 @@ export default {
           }
           // L'écran
           quand(t, () => {
-            const sc = scene(); if (!sc) return;
+            const sc = scene(); if (!sc || !sc.querySelector('.ce-jam-titre')) return; // en « tout en même temps », ce sont les pistes qui parlent
             if (p === 0) {
               const part = this.partition(sec, m);
               sc.querySelectorAll('.ce-jam-ligne .ce-case').forEach((x, i) => { x.innerHTML = part[i].map(([mot, c, k]) => `${k && part[i].length === 1 ? `<span class="ce-img">${geste(k, c)}</span>` : ''}<b style="--c:${c}">${mot}</b>`).join(''); });
-              sc.querySelectorAll('.ce-jam-plan [data-jpart]:not([data-jpart=tout])').forEach((x, i) => { x.classList.toggle('on', i === sec); x.classList.toggle('fait', reglages.jamPart == null && i < sec); x.querySelector('i').style.width = reglages.jamPart == null && i < sec ? '100%' : i === sec ? `${((m + 1) / S.mes) * 100}%` : '0%'; });
+              sc.querySelectorAll('.ce-jam-plan [data-jpart]:not(.ce-jam-tout)').forEach((x, i) => { x.classList.toggle('on', i === sec); x.classList.toggle('fait', reglages.jamPart == null && i < sec); x.querySelector('i').style.width = reglages.jamPart == null && i < sec ? '100%' : i === sec ? `${((m + 1) / S.mes) * 100}%` : '0%'; });
               const vx = voixJam(amb); const chante2 = S.id !== 'intro';
               sc.querySelectorAll('[data-jv]').forEach((x) => { const id = x.dataset.jv; const n = vx[id][k4]; const sv = vx[id][(k4 + 1) % 4] - n; x.classList.toggle('actif', chante2); x.querySelector('.ce-pad-n').textContent = chante2 ? `${NOTE_FR[n % 12]}${sv > 0 ? ' · ensuite plus haut' : sv < 0 ? ' · ensuite plus bas' : ' · ensuite la même'}` : `écoutez · ${NOTE_FR[n % 12]}`; });
               const avant = reglages.jamPart == null && m === S.mes - 1 && PLAN_JAM[sec + 1];
@@ -412,13 +486,14 @@ export default {
         entree(v) { const i = VOIX_C.filter((x) => reglages.chGr[x.id]).indexOf(v); return i < 0 ? Infinity : (2 + 8 * i) * 8; },
         evts(pas) {
           const r = []; if (pas < 0) return r; const p = pas % 8; const mes = Math.floor(pas / 8); const g = reglages.chGr; const T = reglages.tonique;
+          const h = (v, n) => { const lo = Math.min(...v.notes); const hi = Math.max(...v.notes); return hi === lo ? 0.5 : (n - T - lo) / (hi - lo); };
           if (g.rouge && p % 2 === 0) r.push({ id: 'rouge', len: 1, debut: pas });
           if (g.bleu && (p === 2 || p === 6)) r.push({ id: 'bleu', len: 1, debut: pas });
           const v0 = VOIX_C.find((x) => g[x.id]);
-          if (mes === 1 && p === 0 && v0) r.push({ id: v0.id, len: 8, debut: pas, note: T + v0.notes[0], ecoute: true, voix: v0 });
+          if (mes === 1 && p === 0 && v0) r.push({ id: v0.id, len: 8, debut: pas, note: T + v0.notes[0], ecoute: true, voix: v0, h: h(v0, T + v0.notes[0]) });
           // Les voix suivantes : une mesure avant leur entrée, l'app leur chante leur note, à elles seules.
-          if (p === 0) VOIX_C.forEach((v) => { const e = this.entree(v); if (v !== v0 && g[v.id] && pas === e - 8) { const ke = Math.floor((e / 8 - 2) / 2) % 4; r.push({ id: v.id, len: 8, debut: pas, note: T + v.notes[ke], ecoute: true, voix: v }); } });
-          if (mes >= 2 && p === 0 && (mes - 2) % 2 === 0) { const k = Math.floor((mes - 2) / 2) % 4; VOIX_C.forEach((v) => { if (g[v.id] && pas >= this.entree(v)) r.push({ id: v.id, len: 16, debut: pas, note: T + v.notes[k], k, voix: v }); }); }
+          if (p === 0) VOIX_C.forEach((v) => { const e = this.entree(v); if (v !== v0 && g[v.id] && pas === e - 8) { const ke = Math.floor((e / 8 - 2) / 2) % 4; r.push({ id: v.id, len: 8, debut: pas, note: T + v.notes[ke], ecoute: true, voix: v, h: h(v, T + v.notes[ke]) }); } });
+          if (mes >= 2 && p === 0 && (mes - 2) % 2 === 0) { const k = Math.floor((mes - 2) / 2) % 4; VOIX_C.forEach((v) => { if (g[v.id] && pas >= this.entree(v)) r.push({ id: v.id, len: 16, debut: pas, note: T + v.notes[k], k, voix: v, h: h(v, T + v.notes[k]) }); }); }
           return r;
         },
         rendre: () => `<canvas class="ce-pistes" aria-label="Les pistes des groupes : les sons arrivent vers la ligne"></canvas>
@@ -438,61 +513,8 @@ export default {
           if (mes >= 2 && p === 0 && (mes - 2) % 2 === 0) { const k = Math.floor((mes - 2) / 2) % 4; ACC_C[k].forEach((iv) => joue('piano', T - 12 + iv, { when: t, dur: 16 * d * 0.95, vel: 0.2 })); }
         },
         // La position (en croches) maintenant, d'après l'horloge audio.
-        pos() {
-          if (!moteur || !this.marques.length) return -6;
-          const now = c.currentTime; let m = this.marques[0]; this.marques.forEach((x) => { if (x[1] <= now) m = x; });
-          return m[0] + (now - m[1]) / m[2];
-        },
-        dessiner() {
-          const cv = scene()?.querySelector('.ce-pistes'); if (!cv) return;
-          const L = this.pistes(); const dpr = window.devicePixelRatio || 1; const W = cv.clientWidth; const hP = W < 640 ? 72 : Math.min(130, Math.max(84, (innerHeight * 0.6) / Math.max(1, L.length)));
-          const H = Math.max(1, L.length) * hP + 26; if (cv.height !== Math.round(H * dpr) || cv.width !== Math.round(W * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); cv.style.height = `${H}px`; }
-          const x = cv.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, W, H);
-          const police = getComputedStyle(document.documentElement).getPropertyValue('--display') || 'sans-serif';
-          const pos = this.pos(); const gauche = W < 640 ? 118 : Math.min(300, W * 0.24); const ligne = gauche + 18; const ppc = (W - ligne - 6) / 18; const X = (pas) => ligne + (pas - pos) * ppc;
-          // Les temps : une ligne par temps, plus forte sur le 1 ; le compte en haut.
-          for (let b = Math.ceil(pos / 2) * 2; X(b) < W; b += 2) { const xx = X(b); const un = b % 8 === 0; x.fillStyle = un ? '#5a5346' : '#2e2a23'; x.fillRect(xx, 22, un ? 2 : 1, H - 22); x.fillStyle = un ? '#f1cf4e' : '#a39b87'; x.font = `800 ${un ? 15 : 12}px ${police}`; x.textAlign = 'center'; x.fillText(String((((b / 2) % 4) + 4) % 4 + 1), xx, 16); }
-          const evs = []; for (let q = Math.floor(pos) - 16; q < pos + 19; q++) evs.push(...this.evts(q));
-          L.forEach((pl, i) => {
-            const y0 = 22 + i * hP; x.fillStyle = i % 2 ? '#1b1915' : '#201d18'; x.fillRect(0, y0, W, hP - 4);
-            const mes = evs.filter((e) => e.id === pl.id); const ici = mes.find((e) => e.debut <= pos && pos < e.debut + e.len);
-            // Les blocs et les barres
-            const lo = pl.voix ? Math.min(...pl.voix.notes) : 0; const hi = pl.voix ? Math.max(...pl.voix.notes) : 1;
-            mes.forEach((e) => {
-              const xa = Math.max(ligne, X(e.debut)); const xb = X(e.debut + e.len) - 3; if (xb <= ligne || xa > W) return;
-              const actif = e === ici; x.globalAlpha = e.ecoute ? 0.45 : 1;
-              if (!pl.voix) {
-                const bh = hP * 0.78; const yy = y0 + (hP - 4 - bh) / 2; x.fillStyle = actif ? '#fff7dc' : '#2a2620'; x.strokeStyle = pl.c; x.lineWidth = 3; arrondi(x, xa, yy, Math.max(6, xb - xa), bh, 10); x.fill(); x.stroke();
-                const im = gesteImage(pl.im, pl.c); const tI = Math.min(bh - 6, xb - xa - 6); if (tI > 16 && im.complete) x.drawImage(im, xa + (xb - xa - tI) / 2, yy + (bh - tI) / 2, tI, tI);
-              } else {
-                const bh = hP * 0.42; const haut = hi === lo ? 0.5 : (e.voix.notes[e.k ?? 0] - lo) / (hi - lo); const yy = y0 + 4 + (hP - 12 - bh) * (1 - haut);
-                x.fillStyle = actif ? pl.c : `${pl.c}99`; arrondi(x, xa, yy, Math.max(6, xb - xa), bh, 10); x.fill();
-                if (actif) { x.fillStyle = 'rgba(255,247,220,.35)'; arrondi(x, xa, yy, Math.max(6, Math.min(xb - xa, (pos - e.debut) / e.len * (e.len * ppc))), bh, 10); x.fill(); }
-                const im = gesteImage(pl.im, pl.c); const tI = bh + 10; let tx = xa + 8; if (xb - xa > tI + 10 && im.complete) { x.drawImage(im, xa + 4, yy - 5, tI, tI); tx = xa + tI + 8; }
-                if (xb - tx > 40) { x.fillStyle = '#14120f'; x.font = `900 ${Math.round(bh * 0.6)}px ${police}`; x.textAlign = 'left'; x.fillText(`${e.ecoute ? 'écoutez ' : ''}${NOTE_FR[((e.note % 12) + 12) % 12]}`, tx, yy + bh * 0.72); }
-              }
-              x.globalAlpha = 1;
-            });
-            // L'étiquette : le groupe, quoi faire, et le décompte
-            const flash = ici && !ici.ecoute && (pl.voix ? pos - ici.debut < 1 : true); // le moment de jouer : l'étiquette s'allume
-            x.fillStyle = flash ? pl.c : '#14120f'; x.fillRect(0, y0, gauche, hP - 4); x.fillStyle = pl.c; x.fillRect(0, y0, 6, hP - 4);
-            x.save(); x.beginPath(); x.rect(0, y0, gauche, hP - 4); x.clip(); // le texte reste dans l'étiquette
-            const imL = gesteImage(pl.im, flash ? '#fff7dc' : pl.c); const tL = (hP - 4) * (flash ? 0.92 : 0.82); if (imL.complete) x.drawImage(imL, 10 + ((hP - 4) * 0.92 - tL) / 2, y0 + (hP - 4 - tL) / 2 + (flash && !pl.voix ? 4 : 0), tL, tL);
-            const tx0 = 14 + (hP - 4) * 0.92;
-            x.textAlign = 'left'; x.fillStyle = flash ? '#14120f' : pl.c; x.font = `900 ${Math.round(hP * (W < 640 ? 0.24 : 0.32))}px ${police}`; x.fillText(pl.mot, tx0, y0 + hP * 0.42);
-            let etat = pl.geste || ''; let fort = false;
-            if (pl.voix) {
-              const proch = mes.filter((e) => e.debut > pos && !e.ecoute).sort((a, b) => a.debut - b.debut)[0];
-              if (ici && !ici.ecoute) { etat = `chantez : ${NOTE_FR[((ici.note % 12) + 12) % 12]}`; fort = true; }
-              else if (proch && proch.debut - pos <= 8) { etat = `à vous dans ${Math.max(1, Math.ceil((proch.debut - pos) / 2))}`; fort = true; }
-              else if (ici?.ecoute) etat = 'écoutez la note';
-              else etat = this.entree(pl.voix) === Infinity ? '' : 'attendez…';
-            }
-            x.fillStyle = flash ? '#14120f' : fort ? '#fff7dc' : '#a39b87'; x.font = `800 ${Math.round(hP * (W < 640 ? 0.15 : 0.19))}px ${police}`; x.fillText(W < 640 ? (pl.voix ? etat.replace('à vous dans', 'dans').replace('chantez : ', '').replace('écoutez la note', 'écoutez').replace('attendez…', '…') : '') : etat, tx0, y0 + hP * 0.75); x.restore();
-          });
-          // La ligne : c'est maintenant.
-          x.fillStyle = '#fff7dc'; x.fillRect(ligne - 2, 18, 4, H - 18);
-        },
+        pos() { return posDe(this.marques); },
+        dessiner() { dessinerPistes(scene()?.querySelector('.ce-pistes'), this.pistes(), (q) => this.evts(q), this.pos(), (pl) => (this.entree(pl.voix) === Infinity ? '' : 'attendez…')); },
       },
       trou: {
         rendre: () => `<div class="ce-centre"><div class="ce-solo"><p class="ce-solo-t">Le groove…</p><p class="ce-solo-n"></p></div><p class="ce-dis">3 mesures de groove (le moteur des mots), puis <b>1 mesure de silence</b> : un·e volontaire la remplit comme il veut!</p>
@@ -510,7 +532,7 @@ export default {
     };
 
     // Refaire le contenu de l'activité sans couper la musique (réglages changés en jouant).
-    function majCorps() { const cp = el.querySelector('.ce-corps'); if (cp) cp.innerHTML = A[act].rendre.call(A[act]); }
+    function majCorps() { const cp = el.querySelector('.ce-corps'); if (cp) cp.innerHTML = A[act].rendre.call(A[act]); if (!raf) raf = requestAnimationFrame(boucle); }
     function rendre() {
       arreter();
       el.innerHTML = `
@@ -528,7 +550,7 @@ export default {
             <button class="ce-rec ${prise ? 'rec' : ''}" data-c="rec">${prise ? 'Fin de l’enregistrement' : 'Enregistrer la classe'}</button>${enreg ? `<button class="ce-ecoute" data-c="ecoute">${ecoute ? 'Arrêter l’écoute' : 'Réécouter'}</button><button class="ce-ecoute" data-c="dl" >Télécharger</button>` : ''}</div>
         </section>
         ${act === 'mots' ? `<details class="panel ce-mots-edit"><summary>Changer les mots des groupes (beat ${GROOVES[reglages.groove].nom})</summary>${grp().map((g, gi) => `<label style="--c:${g.c}"><b>${g.nom}</b> <input class="input" data-mot="${gi}" value="${esc(motDe(gi))}"> <small>${g.pos.length} syllabes</small></label>`).join('')}<p class="muted small">Un mot par battement allumé : le nom de l’école, un plat, une équipe. Le rythme ne change pas.</p></details>` : ''}`;
-      majJouer(); if (act === 'chef') A.chef.maj(-1); if (act === 'choeur') { A.choeur.marques = []; cancelAnimationFrame(raf); raf = requestAnimationFrame(boucle); }
+      majJouer(); if (act === 'chef') A.chef.maj(-1); if (act === 'choeur' || act === 'jam') { A.choeur.marques = []; cancelAnimationFrame(raf); raf = requestAnimationFrame(boucle); }
     }
     el.addEventListener('click', (e) => {
       const a = e.target.closest('[data-act]'); if (a) { act = a.dataset.act; store.set('cercleActivite', act); rendre(); return; }
@@ -543,7 +565,7 @@ export default {
       const ev = e.target.closest('[data-ecoute-v]'); if (ev) { ecouterNote(ev.dataset.ecouteV); return; }
       const cs = e.target.closest('[data-coeur-son]'); if (cs) { reglages.coeurSon = cs.dataset.coeurSon; if (reglages.coeurRythme.startsWith('g:')) reglages.coeurRythme = 'temps'; store.set('cercleCoeurSon', reglages.coeurSon); store.set('cercleCoeurRythme', reglages.coeurRythme); majCorps(); sonne(reglages.coeurSon, c.currentTime + 0.02); return; }
       const cr = e.target.closest('[data-coeur-r]'); if (cr) { reglages.coeurRythme = cr.dataset.coeurR; store.set('cercleCoeurRythme', reglages.coeurRythme); majCorps(); return; }
-      const jp = e.target.closest('[data-jpart]'); if (jp) { reglages.jamPart = jp.dataset.jpart === 'tout' ? null : +jp.dataset.jpart; const enMarche = !!moteur; majCorps(); if (enMarche) { const ac = A[act]; demarrer((q, t, d) => ac.fn.call(ac, q, t, d)); } return; }
+      const jp = e.target.closest('[data-jpart]'); if (jp) { reglages.jamPart = jp.dataset.jpart === 'tout' ? null : jp.dataset.jpart === 'mix' ? 'mix' : +jp.dataset.jpart; const enMarche = !!moteur; majCorps(); if (enMarche) { const ac = A[act]; demarrer((q, t, d) => ac.fn.call(ac, q, t, d)); } return; }
       const jv = e.target.closest('[data-jamv]'); if (jv) { const k = jv.dataset.jamv; reglages.jamVoix[k] = !reglages.jamVoix[k]; store.set('cercleJamVoix', reglages.jamVoix); majCorps(); return; }
       const jm = e.target.closest('[data-jamm]'); if (jm) { reglages.jamModele = !reglages.jamModele; store.set('cercleJamModele', reglages.jamModele); jm.classList.toggle('on', reglages.jamModele); jm.textContent = reglages.jamModele ? 'L’app joue avec vous : oui' : 'L’app joue avec vous : non'; return; }
       const chg = e.target.closest('[data-chg]'); if (chg) { const k = chg.dataset.chg; reglages.chGr[k] = !reglages.chGr[k]; store.set('cercleChoeurGr', reglages.chGr); chg.classList.toggle('on', reglages.chGr[k]); chg.setAttribute('aria-pressed', reglages.chGr[k]); return; }
