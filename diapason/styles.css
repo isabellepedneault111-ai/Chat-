@@ -5102,3 +5102,35 @@ body.ce-ouvert .arret-son, body.ce-ouvert .etincelle { display: none !important;
 .ce-l { color: #e6dfc8; font-weight: 700; align-self: center; margin-right: 4px; }
 .ce-niveaux { flex-wrap: wrap; }
 @media (max-width: 640px) { .ce-v { grid-template-columns: 1fr; gap: 4px; } }
+
+/* Le chœur : tout le monde côte à côte (1.30) */
+.ce-c-compte { justify-content: center; }
+.ce-tous { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+.ce-col { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 16px 8px; border-radius: 20px; background: #211e19; border: 4px solid transparent; min-height: clamp(220px, 42vh, 420px); opacity: .4; transition: opacity .3s, background .08s; }
+.ce-col.actif { opacity: 1; border-color: var(--c); background: #2a2620; }
+.ce-col-g { font: 800 clamp(.9rem, 1.8vw, 1.2rem) var(--display); color: var(--c); letter-spacing: .08em; text-transform: uppercase; }
+.ce-col-ico { font-size: clamp(3rem, 8vw, 5.5rem); line-height: 1; transition: transform .08s; }
+.ce-col-mot { font: 900 clamp(1.8rem, 5vw, 3.4rem)/1 var(--display); color: var(--c); }
+.ce-col-quoi { color: #e6dfc8; font-size: clamp(.95rem, 2vw, 1.2rem); }
+.ce-col-pts { display: flex; gap: 8px; } .ce-col-pts i { width: 14px; height: 14px; border-radius: 50%; background: #4a4438; } .ce-col-pts i.oui { background: var(--c); }
+.ce-perc.bat { background: color-mix(in srgb, var(--c) 45%, #2a2620); } .ce-perc.bat .ce-col-ico { transform: scale(1.18); }
+.ce-tous .ce-v { display: flex; grid-template-columns: none; }
+.ce-tous .ce-voy { font-size: clamp(2.4rem, 7vw, 5rem); }
+.ce-tous .ce-v-n { font-size: clamp(1.3rem, 3.4vw, 2.2rem); }
+.ce-tous .ce-v-fl { font-size: clamp(.9rem, 1.8vw, 1.15rem); }
+.ce-tous .ce-v-b { width: 90%; }
+.ce-scene:fullscreen .ce-col { min-height: 55vh; }
+@media (max-width: 640px) { .ce-tous { gap: 6px; } .ce-col { padding: 10px 4px; min-height: 200px; } .ce-col-quoi, .ce-v-fl { font-size: .8rem; } }
+/* La taille des lettres suit la largeur des colonnes ; sur un téléphone : les percussions en haut, les voix en bas. */
+.ce-tous { --larg: calc((min(100vw, 1400px) - 140px) / var(--n)); }
+.ce-tous .ce-voy { font-size: clamp(1.6rem, calc(var(--larg) / 2.9), 5rem); letter-spacing: 0; }
+.ce-tous .ce-col-mot { font-size: clamp(1.4rem, calc(var(--larg) / 3.6), 3.4rem); }
+.ce-tous .ce-col-ico { font-size: clamp(2.2rem, calc(var(--larg) / 3), 5.5rem); }
+@media (max-width: 640px) {
+  .ce-tous { grid-template-columns: repeat(6, minmax(0, 1fr)); --larg: calc((100vw - 60px) / 2); }
+  .ce-tous .ce-perc { grid-column: span 3; min-height: 150px; }
+  .ce-tous.v2 .ce-v { grid-column: span 3; --larg: calc((100vw - 60px) / 2); }
+  .ce-tous.v3 .ce-v { grid-column: span 2; --larg: calc((100vw - 60px) / 3); }
+  .ce-tous .ce-v { min-height: 170px; }
+}
+.ce-tous .ce-v-n { font-size: clamp(1rem, calc(var(--larg) / 5.5), 2.2rem); }

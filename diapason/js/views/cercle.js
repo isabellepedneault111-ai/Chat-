@@ -68,8 +68,10 @@ export default {
     function sonne(k, t, v = 1) {
       if (gel) return;
       try {
-        if (k === 'boum') drums.kick(t, v); else if (k === 'tic') drums.hat(t, 0.55 * v); else if (k === 'tac') drums.clap(t, v);
-        else if (k === 'tsk') click(t, true); else if (k === 'chhh') chhh(t, v); else if (k === 'pieds') { drums.kick(t, v); drums.kick(t + 0.02, 0.6 * v); }
+        // Les sons d'origine, toujours : un son perso enregistré (long, avec son propre rythme dedans) brouillerait le groove.
+        const kick = drums.kickOrigine || drums.kick; const hat = drums.hatOrigine || drums.hat; const clap = drums.clapOrigine || drums.clap;
+        if (k === 'boum') kick(t, v); else if (k === 'tic') hat(t, 0.55 * v); else if (k === 'tac') clap(t, v);
+        else if (k === 'tsk') click(t, true); else if (k === 'chhh') chhh(t, v); else if (k === 'pieds') { kick(t, v); kick(t + 0.02, 0.6 * v); }
       } catch { /* son absent */ }
     }
 
@@ -79,8 +81,8 @@ export default {
       const now = c.currentTime; file = file.filter(([t, f]) => { if (t <= now) { try { f(); } catch { /* vue fermée */ } return false; } return true; });
       raf = requestAnimationFrame(boucle);
     }
-    function planifier() { if (!moteur) return; const d = 60 / bpm() / 2; while (moteur.prochain < c.currentTime + 0.12) { moteur.fn(moteur.pas, moteur.prochain, d); moteur.prochain += d; moteur.pas++; } }
-    function demarrer(fn) { arreter(); try { c.resume(); } catch { /* iOS */ } gel = false; moteur = { prochain: c.currentTime + 0.2, pas: 0, fn, timer: setInterval(planifier, 25) }; planifier(); cancelAnimationFrame(raf); raf = requestAnimationFrame(boucle); majJouer(); }
+    function planifier() { if (!moteur) return; const d = 60 / bpm() / 2; while (moteur.prochain < c.currentTime + 0.3) { moteur.fn(moteur.pas, moteur.prochain, d); moteur.prochain += d; moteur.pas++; } }
+    function demarrer(fn) { arreter(); try { c.resume(); } catch { /* iOS */ } gel = false; moteur = { prochain: c.currentTime + 0.3, pas: 0, fn, timer: setInterval(planifier, 25) }; planifier(); cancelAnimationFrame(raf); raf = requestAnimationFrame(boucle); majJouer(); }
     function arreter() { if (moteur) clearInterval(moteur.timer); moteur = null; file = []; majJouer(); }
     function majBas() {
       const r = el.querySelector('[data-c=rec]'); if (!r) return; r.classList.toggle('rec', !!prise); r.textContent = prise ? '■ Fin de l’enregistrement' : '🎙 Enregistrer la classe';
@@ -155,14 +157,18 @@ export default {
         },
       },
       choeur: {
-        rendre: () => `<div class="ce-choeur">${VOIX_C.slice(0, reglages.nVoix).map((v) => `<div class="ce-v" data-v="${v.id}" style="--c:${v.c}"><b class="ce-voy">${v.voy}</b><div class="ce-v-m"><span class="ce-v-n">…</span><span class="ce-v-fl"></span><div class="ce-v-b"><i></i></div></div></div>`).join('')}</div>
+        rendre: () => `<div class="ce-compte ce-c-compte">${[1, 2, 3, 4].map((n) => `<span>${n}</span>`).join('')}</div>
+          <div class="ce-tous v${reglages.nVoix}" style="--n:${2 + reglages.nVoix}">
+            ${[GROUPES[0], GROUPES[1]].map((g) => `<div class="ce-col ce-perc actif" data-pg="${g.id}" style="--c:${g.c}"><small class="ce-col-g">${g.nom}</small><span class="ce-col-ico">${SONS[g.son].ico}</span><b class="ce-col-mot">${SONS[g.son].mot}</b><span class="ce-col-quoi">${g.pos.length === 4 ? 'sur 1 2 3 4' : 'sur 2 et 4'}</span><span class="ce-col-pts">${[0, 1, 2, 3].map((n) => `<i class="${g.pos.includes(n * 2) ? 'oui' : ''}"></i>`).join('')}</span></div>`).join('')}
+            ${VOIX_C.slice(0, reglages.nVoix).map((v) => `<div class="ce-col ce-v" data-v="${v.id}" style="--c:${v.c}"><small class="ce-col-g">Groupe</small><b class="ce-voy">${v.voy}</b><span class="ce-v-n">écoutez…</span><span class="ce-v-fl"></span><div class="ce-v-b"><i></i></div></div>`).join('')}
+          </div>
           <p class="ce-dis ce-c-dis">Les percussions d’abord… puis le groupe <b style="color:${VOIX_C[0].c}">AAA</b> chante. Respirez à chaque changement.</p>
-          <div class="ce-niveaux"><span class="ce-l">Tonalité</span>${TONS.map(([n, m]) => `<button class="${reglages.tonique === m ? 'on' : ''}" data-ton="${m}">${n}</button>`).join('')}</div>
-          <div class="ce-niveaux"><button class="${reglages.nVoix === 2 ? 'on' : ''}" data-nvoix="2">AAA + OOO</button><button class="${reglages.nVoix === 3 ? 'on' : ''}" data-nvoix="3">+ MMM</button><button class="${reglages.modele ? 'on' : ''}" data-modele="1">${reglages.modele ? '🎶 L’app chante le modèle' : '🔇 Sans modèle'}</button></div>`,
+          <div class="ce-niveaux"><span class="ce-l">Tonalité</span>${TONS.map(([n, m]) => `<button class="${reglages.tonique === m ? 'on' : ''}" data-ton="${m}">${n}</button>`).join('')}<button class="${reglages.nVoix === 2 ? 'on' : ''}" data-nvoix="2">AAA + OOO</button><button class="${reglages.nVoix === 3 ? 'on' : ''}" data-nvoix="3">+ MMM</button><button class="${reglages.modele ? 'on' : ''}" data-modele="1">${reglages.modele ? '🎶 L’app chante le modèle' : '🔇 Sans modèle'}</button></div>`,
         fn(pas, t, d) {
           const mes = Math.floor(pas / 8); const p = pas % 8; const T = reglages.tonique;
           // Les percussions : ROUGE (BOUM) et BLEU (TAC), tout le long.
-          [GROUPES[0], GROUPES[1]].forEach((g) => { if (g.pos.includes(p)) sonne(g.son, t, g.son === 'boum' && p === 0 ? 0.9 : 0.7); });
+          [GROUPES[0], GROUPES[1]].forEach((g) => { if (g.pos.includes(p)) { sonne(g.son, t, g.son === 'boum' && p === 0 ? 0.9 : 0.7); quand(t, () => { const col = scene()?.querySelector(`[data-pg="${g.id}"]`); if (col) { col.classList.remove('bat'); void col.offsetWidth; col.classList.add('bat'); } }); } });
+          if (p % 2 === 0) quand(t, () => scene()?.querySelectorAll('.ce-c-compte span').forEach((x, i) => x.classList.toggle('on', i === p / 2)));
           if (mes < 2) { if (p === 0) quand(t, () => { const e = scene()?.querySelector('.ce-c-dis'); if (e) e.innerHTML = `Les percussions… le groupe <b style="color:${VOIX_C[0].c}">AAA</b> entre dans ${mes === 0 ? '8' : '4'} temps. Écoutez la note!`; }); if (mes === 1 && p === 0 && reglages.modele) joue('choeur', T + VOIX_C[0].notes[0], { when: t, dur: 4 * 2 * d * 0.9, vel: 0.35 }); return; }
           const m2 = mes - 2; if (p !== 0 || m2 % 2) return;
           const k = Math.floor(m2 / 2) % 4; const tour = Math.floor(m2 / 8); const n = Math.min(reglages.nVoix, 1 + tour); const dur = 2 * 8 * d;

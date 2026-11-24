@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.30', quand: '2026-11-24', titre: 'Le chœur : tout le monde à l’écran', items: [
+    ['👀 Tout le monde, côte à côte', ['Dans Le chœur, chaque groupe a sa colonne sur le même écran : ROUGE (BOUM) et BLEU (TAC) s’allument à chaque coup, AAA, OOO et MMM montrent leur note, la flèche et la barre à tenir. Le compte 1 2 3 4 avance en haut.']],
+    ['🥁 Un beat qui ne bouge plus', ['Le cercle joue toujours ses propres sons de percussion, jamais un son enregistré dans les réglages (un son long, avec son propre rythme dedans, brouillait le groove). Et les coups sont prévus plus d’avance : un écran projeté qui rame une seconde ne les décale plus.']],
+  ] },
   { v: '1.29', quand: '2026-11-24', titre: 'Le chœur de la classe', items: [
     ['🎶 Le cercle › Le chœur', ['Pendant que les percussions jouent (BOUM et TAC), le groupe AAA tient une note, puis le groupe OOO entre sur une autre (et MMM si tu veux trois groupes). Les notes forment de vrais accords (I – IV – V – I), deux mesures chacun, et chaque groupe bouge le moins possible : l’écran dit la note, et si la prochaine est plus haute, plus basse ou la même. Une barre se remplit le temps de la tenir ; on respire au changement.']],
     ['Juste, dans la bonne tonalité', ['Choisis la tonalité (Sol, La, Si♭, Do, Ré, Mi) selon les voix de la classe. L’app chante le modèle tout doux (le chœur, et l’accord au piano) ; coupe-le (🔇) quand la classe tient seule.']],
