@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.25', quand: '2026-11-24', titre: 'Le réducteur de bruit ne massacre plus la musique', items: [
+    ['🧹 Un nettoyage doux, en stéréo', ['L’ancien « Réduire le bruit » enlevait le souffle, mais abîmait la musique (un son métallique, « sous l’eau ») et passait tout en mono. Le nouveau garde ce qui dépasse le bruit, en proportion, ne baisse jamais plus de 12 dB, et garde la stéréo. Mesuré sur Projet 1 : avant, il ne restait que 5 dB de fidélité même sur un son propre ; maintenant, 24 dB.']],
+    ['Si une chanson sonne mal', ['Une version « (sans bruit) » faite avant aujourd’hui garde les dégâts de l’ancien nettoyage : reprends le fichier d’origine (le mémo de l’iPhone) dans L’oreille, puis, si tu veux, « 🧹 Réduire le bruit » à nouveau, et « ⭐ Mettre dans nos pièces ».']],
+  ] },
   { v: '1.24', quand: '2026-11-24', titre: 'L’évasion', items: [
     ['🗝 Sept cadenas, une chanson', ['Accueil › 🗝 L’évasion : « Projet 1 » est enfermée. Chaque cadenas s’ouvre avec ce que l’app te fait trouver ou faire : son tempo, sa tonalité, des paroles gardées, une ligne chantée juste au micro, un commentaire laissé dans Le chantier, une ligne de piano jouée par-dessus, le MIDI téléchargé. Un chrono, des indices (+1 minute), et à la fin un mot sur le mur pour l’autre.']],
   ] },

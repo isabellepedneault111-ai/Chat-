@@ -679,31 +679,43 @@ function fftDB(re, im, inv = false) {
   if (inv) for (let i = 0; i < n; i++) { re[i] /= n; im[i] /= n; }
 }
 export async function reduireBruit(buf, { force = 1, onStep = () => {} } = {}) {
+  // Version douce (1.25). L'ancienne soustrayait fort (×2,2) jusqu'à −23 dB et passait tout en mono : le souffle partait,
+  // mais la musique sonnait « sous l'eau », métallique. Ici : un filtre de Wiener (on garde ce qui dépasse le bruit, en
+  // proportion), lissé dans le temps, qui ne descend jamais sous −12 dB, et la stéréo reste intacte.
   onStep('Je mesure le bruit de fond…'); await pause();
-  const sr = buf.sampleRate; const L = buf.length; const x = new Float32Array(L);
-  for (let c = 0; c < buf.numberOfChannels; c++) { const d = buf.getChannelData(c); for (let i = 0; i < L; i++) x[i] += d[i] / buf.numberOfChannels; }
+  const sr = buf.sampleRate; const L = buf.length; const C = buf.numberOfChannels; const canaux = [...Array(C)].map((_, c) => buf.getChannelData(c));
+  const x = new Float32Array(L); for (let c = 0; c < C; c++) for (let i = 0; i < L; i++) x[i] += canaux[c][i] / C;
   const N = 2048; const H = 512; const B = N / 2 + 1; const w = new Float32Array(N); for (let i = 0; i < N; i++) w[i] = 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / N);
-  const nT = Math.max(1, Math.floor((L - N) / H) + 1);
-  // 1. Le profil du bruit : la moyenne des spectres des trames les plus calmes.
-  const energies = new Float32Array(nT); for (let t = 0; t < nT; t++) { let e = 0; for (let i = 0; i < N; i += 4) { const v = x[t * H + i] || 0; e += v * v; } energies[t] = e; }
-  const seuil = [...energies].sort((a, b) => a - b)[Math.floor(nT * 0.12)];
-  const bruit = new Float64Array(B); let nb = 0; const re = new Float64Array(N); const im = new Float64Array(N);
-  for (let t = 0; t < nT; t++) { if (energies[t] > seuil) continue; for (let i = 0; i < N; i++) { re[i] = (x[t * H + i] || 0) * w[i]; im[i] = 0; } fftDB(re, im); for (let k = 0; k < B; k++) bruit[k] += re[k] * re[k] + im[k] * im[k]; nb++; if (nb > 400) break; }
-  for (let k = 0; k < B; k++) bruit[k] /= Math.max(1, nb);
-  // 2. Le nettoyage, trame par trame, puis on recolle (chevauchement de 75 %).
-  const y = new Float32Array(L); const norme = new Float32Array(L); const gPrec = new Float32Array(B).fill(1); const g = new Float32Array(B);
-  const alpha = 2.2 * force; const plancher = Math.max(0.04, 0.12 - 0.05 * force);
+  const nT = Math.max(1, Math.floor((L - N) / H) + 1); const re = new Float64Array(N); const im = new Float64Array(N);
+  // 1. Le bruit, bande par bande : le niveau sous lequel le son ne descend presque jamais (le 10e centile des trames).
+  //    Plus sûr que « les trames les plus calmes » : une intro douce n'est pas prise pour du bruit.
+  const pas = Math.max(1, Math.floor(nT / 1200)); const ech = []; for (let t = 0; t < nT; t += pas) ech.push(t);
+  const spec = ech.map((t) => { for (let i = 0; i < N; i++) { re[i] = (x[t * H + i] || 0) * w[i]; im[i] = 0; } fftDB(re, im); const p = new Float32Array(B); for (let k = 0; k < B; k++) p[k] = re[k] * re[k] + im[k] * im[k]; return p; });
+  const bruit = new Float64Array(B); const col = new Float32Array(spec.length);
+  for (let k = 0; k < B; k++) { for (let n = 0; n < spec.length; n++) col[n] = spec[n][k]; col.sort(); bruit[k] = col[Math.floor(col.length * 0.1)] * 1.2; }
+  // 2. Les gains de Wiener, trame par trame (calculés sur le mélange, appliqués à chaque canal).
+  const plancher = Math.pow(10, -(6 + 6 * Math.min(1.5, force)) / 20); // −12 dB à force 1
+  const sorties = canaux.map(() => new Float32Array(L)); const norme = new Float32Array(L);
+  const prec = new Float64Array(B); const g = new Float32Array(B); const reC = new Float64Array(N); const imC = new Float64Array(N);
   for (let t = 0; t < nT; t++) {
     const o = t * H; for (let i = 0; i < N; i++) { re[i] = (x[o + i] || 0) * w[i]; im[i] = 0; } fftDB(re, im);
-    for (let k = 0; k < B; k++) { const p = re[k] * re[k] + im[k] * im[k] + 1e-12; const v = Math.max(plancher, 1 - (alpha * bruit[k]) / p); g[k] = v > gPrec[k] ? v : 0.55 * gPrec[k] + 0.45 * v; }
-    for (let k = 0; k < B; k++) { const gs = (g[Math.max(0, k - 1)] + 2 * g[k] + g[Math.min(B - 1, k + 1)]) / 4; gPrec[k] = g[k]; re[k] *= gs; im[k] *= gs; if (k > 0 && k < N / 2) { re[N - k] = re[k]; im[N - k] = -im[k]; } }
-    fftDB(re, im, true);
-    for (let i = 0; i < N; i++) { y[o + i] += re[i] * w[i]; norme[o + i] += w[i] * w[i]; }
-    if (t % 400 === 0) { onStep(`Je nettoie le son… ${Math.round((t / nT) * 100)} %`); await pause(); }
+    for (let k = 0; k < B; k++) {
+      const p = re[k] * re[k] + im[k] * im[k]; const post = p / (bruit[k] + 1e-12);
+      const prio = 0.96 * (prec[k] / (bruit[k] + 1e-12)) + 0.04 * Math.max(post - 1, 0); // « décision dirigée » : pas de gazouillis
+      const v = Math.max(plancher, prio / (1 + prio)); g[k] = v; prec[k] = v * v * p;
+    }
+    for (let k = 0; k < B; k++) g[k] = (g[Math.max(0, k - 1)] + 2 * g[k] + g[Math.min(B - 1, k + 1)]) / 4;
+    for (let c = 0; c < C; c++) {
+      for (let i = 0; i < N; i++) { reC[i] = (canaux[c][o + i] || 0) * w[i]; imC[i] = 0; } fftDB(reC, imC);
+      for (let k = 0; k < B; k++) { reC[k] *= g[k]; imC[k] *= g[k]; if (k > 0 && k < N / 2) { reC[N - k] = reC[k]; imC[N - k] = -imC[k]; } }
+      fftDB(reC, imC, true); const y = sorties[c]; for (let i = 0; i < N; i++) y[o + i] += reC[i] * w[i];
+    }
+    for (let i = 0; i < N; i++) norme[o + i] += w[i] * w[i];
+    if (t % 300 === 0) { onStep(`Je nettoie le son… ${Math.round((t / nT) * 100)} %`); await pause(); }
   }
-  const out = new AudioBuffer({ numberOfChannels: 1, length: L, sampleRate: sr }); const d = out.getChannelData(0);
-  let pic = 0; for (let i = 0; i < L; i++) { d[i] = norme[i] > 1e-3 ? y[i] / norme[i] : 0; pic = Math.max(pic, Math.abs(d[i])); }
-  if (pic > 0.99) for (let i = 0; i < L; i++) d[i] *= 0.99 / pic;
+  const out = new AudioBuffer({ numberOfChannels: C, length: L, sampleRate: sr }); let pic = 0;
+  for (let c = 0; c < C; c++) { const d = out.getChannelData(c); const y = sorties[c]; for (let i = 0; i < L; i++) { d[i] = norme[i] > 1e-3 ? y[i] / norme[i] : 0; pic = Math.max(pic, Math.abs(d[i])); } }
+  if (pic > 0.99) for (let c = 0; c < C; c++) { const d = out.getChannelData(c); for (let i = 0; i < L; i++) d[i] *= 0.99 / pic; }
   return out;
 }
 
