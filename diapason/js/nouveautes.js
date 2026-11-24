@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.39', quand: '2026-11-24', titre: 'Le cercle des voix, et un parcours', items: [
+    ['Le cercle des voix', ['Juste des voix. Trois boucles chantées, avec des mots (les aigus, le milieu, les graves), dans une gamme où aucune note n’est fausse (do ré mi sol la). Quatre étapes : 1. Écouter (l’app chante chaque boucle), 2. En écho (l’app chante, puis c’est à vous), 3. Ensemble (les boucles s’empilent une à une), 4. Solo libre (un élève improvise par-dessus avec un clavier de 5 notes). Les mots défilent dans les pistes, sur la note à chanter.']],
+    ['Entendre avant, changer les mots', ['« Entendre seule » fait chanter une boucle à l’arrêt. Les mots se changent : vos noms, un plat, une phrase de la classe, une syllabe par note. Un bourdon (la tonique tenue) aide à rester juste ; l’app chante fort, doux ou pas du tout.']],
+    ['Un parcours numéroté', ['Les activités du Cercle sont numérotées dans l’ordre d’une première séance : 1 Le cœur, 2 L’écho, 3 Le moteur des mots, 4 Le chef, 5 La chanson. Le 6 est le cercle des voix. Les autres sont des variantes.']],
+  ] },
   { v: '1.38', quand: '2026-11-24', titre: 'La table de mixage', items: [
     ['Tout contrôler dans La chanson', ['Une table de mixage sous la chanson : la batterie de l’app, la basse, les accords, BOUM, TAC, TIC et les voix AAA, OOO, MMM. Chaque couche s’allume ou s’éteint, et a son propre volume. Ça s’applique partout : une partie, toute la chanson, tout en même temps.']],
     ['Les préréglages', ['« Juste le chant » (seulement les voix), « Juste le beat », « La classe seule » (l’app se tait, les pistes restent à l’écran pour guider) et « Tout ».']],

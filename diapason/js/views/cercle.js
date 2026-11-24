@@ -47,16 +47,36 @@ const PRESETS = {
   beat: ['Juste le beat', (k) => ({ on: !['aaa', 'ooo', 'mmm'].includes(k), vol: 1 })],
   classe: ['La classe seule (l’app se tait)', (k, m) => ({ on: m[k].on, vol: 0 })],
 };
+// Les activités, dans l'ordre d'une première séance : d'abord la pulsation commune, puis l'écho (on apprend sans
+// explication : on imite), les mots qui deviennent des rythmes, les couches qu'on empile, le chef qui sculpte, et
+// enfin la chanson. Les voix ont leur propre cercle. Les autres sont des variantes.
 const ACTIVITES = [
-  { id: 'jam', nom: 'La chanson', but: 'Une vraie chanson : intro, couplet, refrain, liberté, fin. Le beat change à chaque partie.' },
-  { id: 'coeur', nom: 'Le cœur', but: 'Tout le monde ensemble, sur le même battement.' },
-  { id: 'echo', nom: 'L’écho', but: 'L’app joue un rythme ; la classe le répète.' },
-  { id: 'mots', nom: 'Le moteur des mots', but: '4 groupes, 4 mots, un seul groove.' },
-  { id: 'chef', nom: 'Le chef', but: 'Une personne dirige : elle fait entrer et sortir les groupes, doux, fort, on fige.' },
-  { id: 'orage', nom: 'L’orage', but: 'La pluie monte… puis redescend.' },
+  { id: 'coeur', n: 1, nom: 'Le cœur', but: 'Tout le monde sur le même battement. Toujours commencer par là.' },
+  { id: 'echo', n: 2, nom: 'L’écho', but: 'L’app joue un rythme ; la classe le répète. On apprend en imitant.' },
+  { id: 'mots', n: 3, nom: 'Le moteur des mots', but: 'Des mots deviennent des rythmes ; 4 groupes s’empilent.' },
+  { id: 'chef', n: 4, nom: 'Le chef', but: 'Un élève dirige : qui joue, doux, fort, on fige.' },
+  { id: 'jam', n: 5, nom: 'La chanson', but: 'On assemble : intro, couplet, refrain, liberté, fin.' },
+  { id: 'voix', n: 6, nom: 'Le cercle des voix', but: 'Juste des voix : 3 boucles chantées avec des mots, puis un solo libre.' },
   { id: 'choeur', nom: 'Le chœur', but: 'AAA, OOO : des notes tenues, justes, sur les percussions.' },
+  { id: 'orage', nom: 'L’orage', but: 'La pluie monte… puis redescend.' },
   { id: 'trou', nom: 'Le trou', but: 'Un solo à tour de rôle, dans le silence.' },
 ];
+// Le cercle des voix : la gamme pentatonique (do ré mi sol la) : toutes les notes vont ensemble, aucune n'est fausse.
+const PENTA = [0, 2, 4, 7, 9];
+const degre = (d) => { const o = Math.floor(d / 5); return 12 * o + PENTA[((d % 5) + 5) % 5]; };
+// Trois boucles de deux mesures (16 croches) : t = début, l = durée (en croches), d = degré dans la gamme.
+const PARTIES_V = [
+  { id: 'aigus', nom: 'Les aigus', im: 'aaa', c: '#ff8a3d', timbre: 0, mots: 'Tout le mon-de chan-te, tout le mon-de!', notes: [{ t: 0, l: 1, d: 4 }, { t: 1, l: 1, d: 4 }, { t: 2, l: 2, d: 3 }, { t: 4, l: 2, d: 2 }, { t: 6, l: 2, d: 3 }, { t: 8, l: 1, d: 4 }, { t: 9, l: 1, d: 4 }, { t: 10, l: 2, d: 5 }, { t: 12, l: 2, d: 4 }, { t: 14, l: 2, d: 3 }] },
+  { id: 'milieu', nom: 'Le milieu', im: 'ooo', c: '#3fbf7f', timbre: 1, mots: 'On est là, on est là', notes: [{ t: 2, l: 2, d: 2 }, { t: 4, l: 2, d: 2 }, { t: 6, l: 2, d: 1 }, { t: 10, l: 2, d: 1 }, { t: 12, l: 2, d: 1 }, { t: 14, l: 2, d: 0 }] },
+  { id: 'graves', nom: 'Les graves', im: 'mmm', c: '#b25cff', timbre: 2, mots: 'Doum, doum da doum, doum, doum da doum', notes: [{ t: 0, l: 3, d: 0 }, { t: 4, l: 2, d: -2 }, { t: 6, l: 1, d: -2 }, { t: 7, l: 1, d: -1 }, { t: 8, l: 3, d: -1 }, { t: 12, l: 2, d: -2 }, { t: 14, l: 1, d: -2 }, { t: 15, l: 1, d: -1 }] },
+];
+const ETAPES_V = [
+  ['ecoute', '1. Écouter', 'L’app chante chaque boucle, une à la fois. On écoute, on suit les mots.'],
+  ['echo', '2. En écho', 'L’app chante une boucle… puis c’est à vous : la même chose, tout de suite après.'],
+  ['ensemble', '3. Ensemble', 'Les boucles entrent une à une et s’empilent. Chaque groupe garde la sienne.'],
+  ['solo', '4. Solo libre', 'Tout le monde tient sa boucle ; un élève improvise par-dessus avec les 5 notes. Aucune n’est fausse.'],
+];
+
 // Le chœur : des voyelles tenues, deux mesures chacune, sur 4 accords (I – IV – V – I). Chaque groupe bouge le moins
 // possible d'un accord à l'autre (une note qui reste, ou qui monte ou descend d'un cran) : facile à chanter juste.
 const VOIX_C = [
@@ -103,7 +123,7 @@ export default {
     const c = audio();
     let act = store.get('cercleActivite', 'coeur'); let tempo = store.get('cercleTempo', 'lent');
     prechargerSons(['choeur', 'piano', 'rhodes']);
-    const reglages = { mixJ: Object.fromEntries(Object.entries(MIX_DEF).map(([k, v]) => [k, { ...v, ...(store.get('cercleMix', {})[k] || {}) }])), coeurSon: store.get('cercleCoeurSon', 'boum'), coeurRythme: store.get('cercleCoeurRythme', 'temps'), jamPart: null, jamVoix: null, jamModele: store.get('cercleJamModele', true), groove: store.get('cercleGroove', 'pizza'), enchainer: store.get('cercleEnchainer', false), chGr: { rouge: true, bleu: true, aaa: true, ooo: true, mmm: false, ...store.get('cercleChoeurGr', {}) }, grille: store.get('cercleGrille', { boum: [0, 3, 4], tac: [2, 6], tic: [] }), ambiance: store.get('cercleAmbiance', 'chill'), tonique: store.get('cercleTonique', 60), nVoix: store.get('cercleNVoix', 2), modele: store.get('cercleModele', true), mots: GROUPES.map((g) => store.get(`cercleMot-${g.id}`, g.mot)), noms: store.get('cercleNoms', ''), niveau: store.get('cercleNiveau', 'facile') };
+    const reglages = { vEtape: store.get('cercleVEtape', 'ecoute'), vParts: { aigus: true, milieu: true, graves: true, ...store.get('cercleVParts', {}) }, vModele: store.get('cercleVModele', 'fort'), vBourdon: store.get('cercleVBourdon', true), mixJ: Object.fromEntries(Object.entries(MIX_DEF).map(([k, v]) => [k, { ...v, ...(store.get('cercleMix', {})[k] || {}) }])), coeurSon: store.get('cercleCoeurSon', 'boum'), coeurRythme: store.get('cercleCoeurRythme', 'temps'), jamPart: null, jamVoix: null, jamModele: store.get('cercleJamModele', true), groove: store.get('cercleGroove', 'pizza'), enchainer: store.get('cercleEnchainer', false), chGr: { rouge: true, bleu: true, aaa: true, ooo: true, mmm: false, ...store.get('cercleChoeurGr', {}) }, grille: store.get('cercleGrille', { boum: [0, 3, 4], tac: [2, 6], tic: [] }), ambiance: store.get('cercleAmbiance', 'chill'), tonique: store.get('cercleTonique', 60), nVoix: store.get('cercleNVoix', 2), modele: store.get('cercleModele', true), mots: GROUPES.map((g) => store.get(`cercleMot-${g.id}`, g.mot)), noms: store.get('cercleNoms', ''), niveau: store.get('cercleNiveau', 'facile') };
     let moteur = null; let file = []; let raf = 0;
     let prise = null; let enreg = null; let ecoute = null; // la classe, enregistrée puis réécoutée
     const bpm = () => TEMPOS.find((x) => x[0] === tempo)[2];
@@ -141,6 +161,7 @@ export default {
       const now = c.currentTime; file = file.filter(([t, f]) => { if (t <= now) { try { f(); } catch { /* vue fermée */ } return false; } return true; });
       if (act === 'choeur') A.choeur.dessiner();
       if (act === 'jam' && reglages.jamPart === 'mix') A.jam.dessiner();
+      if (act === 'voix') A.voix.dessiner();
       raf = requestAnimationFrame(boucle);
     }
     function planifier() { if (!moteur) return; const d = 60 / bpm() / 2; while (moteur.prochain < c.currentTime + 0.3) { moteur.fn(moteur.pas, moteur.prochain, d); moteur.prochain += d; moteur.pas++; } }
@@ -214,8 +235,8 @@ export default {
                 const bh = hP * 0.42; const haut = e.h ?? 0.5; const yy = y0 + 4 + (hP - 12 - bh) * (1 - haut);
                 x.fillStyle = actif ? pl.c : `${pl.c}99`; arrondi(x, xa, yy, Math.max(6, xb - xa), bh, 10); x.fill();
                 if (actif) { x.fillStyle = 'rgba(255,247,220,.35)'; arrondi(x, xa, yy, Math.max(6, Math.min(xb - xa, (pos - e.debut) / e.len * (e.len * ppc))), bh, 10); x.fill(); }
-                const im = gesteImage(pl.im, pl.c); const tI = bh + 10; let tx = xa + 8; if (xb - xa > tI + 10 && im.complete) { x.drawImage(im, xa + 4, yy - 5, tI, tI); tx = xa + tI + 8; }
-                if (xb - tx > 40) { x.fillStyle = '#14120f'; x.font = `900 ${Math.round(bh * 0.6)}px ${police}`; x.textAlign = 'left'; x.fillText(`${e.ecoute ? 'écoutez ' : ''}${NOTE_FR[((e.note % 12) + 12) % 12]}`, tx, yy + bh * 0.72); }
+                const im = gesteImage(pl.im, pl.c); const tI = bh + 10; let tx = xa + 6; if (!e.mot && xb - xa > tI + 10 && im.complete) { x.drawImage(im, xa + 4, yy - 5, tI, tI); tx = xa + tI + 8; }
+                const lab = e.mot || `${e.ecoute ? 'écoutez ' : ''}${NOTE_FR[((e.note % 12) + 12) % 12]}`; const fs = Math.min(bh * 0.6, (xb - tx - 4) / Math.max(1.6, lab.length * 0.62)); if (fs >= 10) { x.fillStyle = '#14120f'; x.font = `900 ${Math.round(fs)}px ${police}`; x.textAlign = 'left'; x.fillText(lab, tx, yy + bh * 0.5 + fs * 0.36); }
               }
               x.globalAlpha = 1;
             });
@@ -225,13 +246,13 @@ export default {
             x.save(); x.beginPath(); x.rect(0, y0, gauche, hP - 4); x.clip(); // le texte reste dans l'étiquette
             const imL = gesteImage(pl.im, flash ? '#fff7dc' : pl.c); const tL = (hP - 4) * (flash ? 0.92 : 0.82); if (imL.complete) x.drawImage(imL, 10 + ((hP - 4) * 0.92 - tL) / 2, y0 + (hP - 4 - tL) / 2 + (flash && !pl.voix ? 4 : 0), tL, tL);
             const tx0 = 14 + (hP - 4) * 0.92;
-            x.textAlign = 'left'; x.fillStyle = flash ? '#14120f' : pl.c; x.font = `900 ${Math.round(hP * (W < 640 ? 0.24 : 0.32))}px ${police}`; x.fillText(pl.mot, tx0, y0 + hP * 0.42);
+            x.textAlign = 'left'; x.fillStyle = flash ? '#14120f' : pl.c; x.font = `900 ${Math.round(Math.min(hP * (W < 640 ? 0.24 : 0.32), (gauche - tx0 - 6) / Math.max(2, pl.mot.length * 0.66)))}px ${police}`; x.fillText(pl.mot, tx0, y0 + hP * 0.42);
             let etat = pl.geste || ''; let fort = false;
             if (pl.voix) {
               const proch = mes.filter((e) => e.debut > pos && !e.ecoute).sort((a, b) => a.debut - b.debut)[0];
-              if (ici && !ici.ecoute) { etat = `chantez : ${NOTE_FR[((ici.note % 12) + 12) % 12]}`; fort = true; }
+              if (ici && !ici.ecoute) { etat = `chantez : ${ici.mot || NOTE_FR[((ici.note % 12) + 12) % 12]}`; fort = true; }
               else if (proch && proch.debut - pos <= 8) { etat = `à vous dans ${Math.max(1, Math.ceil((proch.debut - pos) / 2))}`; fort = true; }
-              else if (ici?.ecoute) etat = 'écoutez la note';
+              else if (ici?.ecoute) etat = ici.mot ? 'écoutez' : 'écoutez la note';
               else etat = attente ? attente(pl) : 'attendez…';
             }
             x.fillStyle = flash ? '#14120f' : fort ? '#fff7dc' : '#a39b87'; x.font = `800 ${Math.round(hP * (W < 640 ? 0.15 : 0.19))}px ${police}`; x.fillText(W < 640 ? (pl.voix ? etat.replace('à vous dans', 'dans').replace('chantez : ', '').replace('écoutez la note', 'écoutez').replace('attendez…', '…') : '') : etat, tx0, y0 + hP * 0.75); x.restore();
@@ -242,6 +263,52 @@ export default {
 
     // ---------- Les activités ----------
     const A = {
+      voix: {
+        marques: [],
+        parts() { return PARTIES_V.filter((x) => reglages.vParts[x.id]); },
+        syl(P) { const L = store.get(`cercleVMots-${P.id}`, P.mots).split(/[\s-]+/).map((x) => x.replace(/[,.;!?]/g, '')).filter(Boolean); return L.length ? L : ['la']; },
+        // Les notes d'une boucle qui commencent à cette croche, et si l'app les chante (son) ou si c'est la classe (ecoute = l'app chante, la classe écoute).
+        evts(pas) {
+          const r = []; if (pas < 0) return r; const L = this.parts(); if (!L.length) return r; const T = reglages.tonique; const q = pas % 16; const boucle = Math.floor(pas / 16); const et = reglages.vEtape;
+          L.forEach((P, j) => {
+            let actif = false; let ecoute = false; let son = false;
+            if (et === 'ecoute') { actif = boucle % L.length === j; ecoute = true; son = true; }
+            else if (et === 'echo') { actif = Math.floor(boucle / 2) % L.length === j; ecoute = boucle % 2 === 0; son = ecoute; }
+            else if (et === 'ensemble') { actif = boucle >= 2 * j; son = reglages.vModele !== 'sans'; }
+            else { actif = true; son = reglages.vModele !== 'sans'; }
+            if (!actif) return;
+            const syl = this.syl(P); const degs = P.notes.map((n) => degre(n.d)); const lo = Math.min(...degs); const hi = Math.max(...degs);
+            P.notes.forEach((n, i) => { if (n.t === q) r.push({ id: P.id, debut: pas, len: n.l, note: T + degre(n.d), mot: syl[i % syl.length], h: hi === lo ? 0.5 : (degre(n.d) - lo) / (hi - lo), ecoute, son, P }); });
+          });
+          return r;
+        },
+        rendre() {
+          const et = ETAPES_V.find((x) => x[0] === reglages.vEtape) || ETAPES_V[0];
+          return `<div class="ce-v-etapes">${ETAPES_V.map(([k, nom]) => `<button data-vetape="${k}" class="${k === reglages.vEtape ? 'on' : ''}">${nom}</button>`).join('')}</div>
+          <p class="ce-dis ce-v-dit">${et[2]}</p>
+          <canvas class="ce-pistes ce-v-pistes" aria-label="Les boucles chantées, avec leurs mots"></canvas>
+          ${reglages.vEtape === 'solo' ? `<div class="ce-clavier" aria-label="Les 5 notes du solo">${[0, 1, 2, 3, 4, 5].map((d) => `<button data-vnote="${d}" style="--c:${['#e5452c', '#ff8a3d', '#f1cf4e', '#3fbf7f', '#3d6bff', '#b25cff'][d]}">${NOTE_FR[(reglages.tonique + degre(d)) % 12]}</button>`).join('')}</div><p class="ce-astuce">Touchez une note pour l’entendre. Le soliste chante ce qu’il veut avec ces notes : des mots, des sons, son nom. Il revient sur ${NOTE_FR[reglages.tonique % 12]} pour finir.</p>` : ''}
+          <div class="ce-niveaux"><span class="ce-l">Les boucles</span>${PARTIES_V.map((P) => `<button class="ce-chg ${reglages.vParts[P.id] ? 'on' : ''}" style="--c:${P.c}" data-vpart="${P.id}"><span class="ce-img">${geste(P.im, '#fff7dc')}</span>${P.nom}</button>`).join('')}</div>
+          <div class="ce-niveaux"><span class="ce-l">Entendre seule</span>${PARTIES_V.map((P) => `<button data-vseul="${P.id}" style="--c:${P.c}">${P.nom}</button>`).join('')}</div>
+          <div class="ce-niveaux"><span class="ce-l">L’app chante</span>${[['fort', 'Fort'], ['doux', 'Doux'], ['sans', 'Pas du tout']].map(([k, l]) => `<button class="${reglages.vModele === k ? 'on' : ''}" data-vmodele="${k}">${l}</button>`).join('')}<button class="${reglages.vBourdon ? 'on' : ''}" data-vbourdon="1">${reglages.vBourdon ? 'Bourdon : oui' : 'Bourdon : non'}</button></div>
+          <div class="ce-niveaux"><span class="ce-l">Tonalité</span>${TONS.map(([n, m]) => `<button class="${reglages.tonique === m ? 'on' : ''}" data-ton="${m}">${n}</button>`).join('')}</div>
+          <details class="ce-jam-ed"><summary>Changer les mots des boucles (vos noms, un plat, une phrase de la classe)</summary>
+            ${PARTIES_V.map((P) => `<label class="ce-v-mots" style="--c:${P.c}"><b>${P.nom}</b> <input class="input" data-vmots="${P.id}" value="${esc(store.get(`cercleVMots-${P.id}`, P.mots))}"><small>${P.notes.length} notes : un mot ou une syllabe par note (séparez avec des espaces ou des tirets)</small></label>`).join('')}
+          </details>`;
+        },
+        fn(pas, t, d) {
+          if (pas === 0) this.marques = []; this.marques.push([pas, t, d]); if (this.marques.length > 48) this.marques.shift();
+          const T = reglages.tonique; const p = pas % 8; const vol = reglages.vModele === 'doux' ? 0.45 : 1;
+          this.evts(pas).forEach((e) => { if (e.son) chante(e.note, t, e.len * d * 0.92, e.P.timbre, 0.16 * (e.ecoute ? 1 : vol)); });
+          if (p % 2 === 0) click(t, p === 0); // la pulsation, tout doucement : on garde le tempo ensemble
+          if (reglages.vBourdon && pas % 16 === 0) { chante(T - 12, t, 16 * d * 0.98, 2, 0.05); chante(T - 5, t, 16 * d * 0.98, 2, 0.035); } // le bourdon : la tonique et la quinte, tenues
+          quand(t, () => { const sc = scene(); const e = sc?.querySelector('.ce-v-dit'); if (!e || p !== 0) return; const L = this.parts(); const et = reglages.vEtape; const b = Math.floor(pas / 16);
+            if (et === 'echo' && L.length) { const P = L[Math.floor(b / 2) % L.length]; e.innerHTML = b % 2 === 0 ? `<b style="color:${P.c}">${P.nom}</b> : écoutez…` : `<b style="color:${P.c}">${P.nom}</b> : à vous!`; }
+            if (et === 'ensemble' && L.length) { const n = Math.min(L.length, Math.floor(b / 2) + 1); const proch = L[n]; e.innerHTML = proch && b % 2 === 1 ? `<b style="color:${proch.c}">${proch.nom}</b> : à vous au prochain tour!` : `${L.slice(0, n).map((P) => `<b style="color:${P.c}">${P.nom}</b>`).join(' + ')}`; }
+          });
+        },
+        dessiner() { dessinerPistes(scene()?.querySelector('.ce-v-pistes'), this.parts().map((P) => ({ id: P.id, mot: P.nom.toUpperCase(), c: P.c, im: P.im, voix: true })), (q) => this.evts(q), posDe(this.marques), () => 'attendez…'); },
+      },
       jam: {
         rendre() {
           const g = reglages.grille;
@@ -558,7 +625,8 @@ export default {
           <p class="muted">Aucun instrument, aucune connaissance : les mains, les doigts, les pieds. Projette cette page, lance une activité : l’app tient le tempo et montre quoi faire.</p></div></div>
         <p class="ce-photo-aide"><b>Vos mains, en photo.</b> Touchez « Photo » sous un geste : un élève le fait, on le photographie, et sa photo remplace le dessin partout. Les photos restent sur cet appareil.</p>
         <div class="ce-sons">${[...Object.keys(SONS).map((k) => [k, SONS[k].mot, SONS[k].c, SONS[k].geste]), ...VOIX_C.map((v) => [v.id, v.voy, v.c, v.id === 'aaa' ? 'la bouche grande ouverte' : v.id === 'ooo' ? 'la bouche ronde' : 'la bouche fermée'])].map(([k, mot, c, g]) => `<div class="ce-son grand" style="--c:${c}"><span class="ce-img">${geste(k, c)}</span><b>${mot}</b><small>${esc(g)}</small><span class="ce-photo-b"><label class="ce-photo">Photo<input type="file" accept="image/*" data-photo="${k}" hidden></label>${photoDe(k) ? `<button data-photo-x="${k}">Dessin</button>` : ''}</span></div>`).join('')}</div>
-        <div class="ce-acts" role="tablist">${ACTIVITES.map((a) => `<button role="tab" aria-selected="${a.id === act}" data-act="${a.id}"><b>${a.nom}</b><small>${a.but}</small></button>`).join('')}</div>
+        <p class="ce-parcours"><b>Première fois?</b> Suivez les numéros, de 1 à 5 : chaque activité prépare la suivante. Le 6 est un cercle de voix seulement.</p>
+        <div class="ce-acts" role="tablist">${ACTIVITES.map((a) => `<button role="tab" aria-selected="${a.id === act}" data-act="${a.id}" class="${a.n ? '' : 'variante'}"><b>${a.n ? `<i class="ce-n">${a.n}</i>` : ''}${a.nom}</b><small>${a.but}</small></button>`).join('')}</div>
         <section class="ce-scene" aria-live="off">
           <div class="ce-haut"><b class="ce-titre">${ACTIVITES.find((a) => a.id === act).nom}</b>
             <span class="ce-tempos">${TEMPOS.map(([k, l]) => `<button class="${k === tempo ? 'on' : ''}" data-tempo="${k}">${l}</button>`).join('')}</span>
@@ -568,7 +636,7 @@ export default {
             <button class="ce-rec ${prise ? 'rec' : ''}" data-c="rec">${prise ? 'Fin de l’enregistrement' : 'Enregistrer la classe'}</button>${enreg ? `<button class="ce-ecoute" data-c="ecoute">${ecoute ? 'Arrêter l’écoute' : 'Réécouter'}</button><button class="ce-ecoute" data-c="dl" >Télécharger</button>` : ''}</div>
         </section>
         ${act === 'mots' ? `<details class="panel ce-mots-edit"><summary>Changer les mots des groupes (beat ${GROOVES[reglages.groove].nom})</summary>${grp().map((g, gi) => `<label style="--c:${g.c}"><b>${g.nom}</b> <input class="input" data-mot="${gi}" value="${esc(motDe(gi))}"> <small>${g.pos.length} syllabes</small></label>`).join('')}<p class="muted small">Un mot par battement allumé : le nom de l’école, un plat, une équipe. Le rythme ne change pas.</p></details>` : ''}`;
-      majJouer(); if (act === 'chef') A.chef.maj(-1); if (act === 'choeur' || act === 'jam') { A.choeur.marques = []; cancelAnimationFrame(raf); raf = requestAnimationFrame(boucle); }
+      majJouer(); if (act === 'chef') A.chef.maj(-1); if (act === 'choeur' || act === 'jam' || act === 'voix') { A.choeur.marques = []; cancelAnimationFrame(raf); raf = requestAnimationFrame(boucle); }
     }
     el.addEventListener('click', (e) => {
       const a = e.target.closest('[data-act]'); if (a) { act = a.dataset.act; store.set('cercleActivite', act); rendre(); return; }
@@ -580,6 +648,14 @@ export default {
       const gv = e.target.closest('[data-groove]'); if (gv) { reglages.groove = gv.dataset.groove; store.set('cercleGroove', reglages.groove); el.querySelectorAll('[data-groove]').forEach((b) => b.classList.toggle('on', b.dataset.groove === reglages.groove)); if (act === 'chef') { el.querySelector('.ce-chef').innerHTML = A.chef.html(); A.chef.maj(-1); } else if (act === 'mots' && moteur) el.querySelector('.ce-groupes').innerHTML = A.mots.html(); else rendre(); return; }
       const en = e.target.closest('[data-enchainer]'); if (en) { reglages.enchainer = !reglages.enchainer; store.set('cercleEnchainer', reglages.enchainer); en.classList.toggle('on', reglages.enchainer); en.textContent = reglages.enchainer ? 'Le beat change tout seul : oui' : 'Le beat change tout seul : non'; return; }
       const px = e.target.closest('[data-photo-x]'); if (px) { retirerPhoto(px.dataset.photoX); rendre(); return; }
+      const ve = e.target.closest('[data-vetape]'); if (ve) { reglages.vEtape = ve.dataset.vetape; store.set('cercleVEtape', reglages.vEtape); const enMarche = !!moteur; majCorps(); if (enMarche) { const ac = A[act]; demarrer((q, t, d) => ac.fn.call(ac, q, t, d)); } return; }
+      const vp = e.target.closest('[data-vpart]'); if (vp) { const k = vp.dataset.vpart; reglages.vParts[k] = !reglages.vParts[k]; store.set('cercleVParts', reglages.vParts); majCorps(); return; }
+      const vm = e.target.closest('[data-vmodele]'); if (vm) { reglages.vModele = vm.dataset.vmodele; store.set('cercleVModele', reglages.vModele); el.querySelectorAll('[data-vmodele]').forEach((b) => b.classList.toggle('on', b === vm)); return; }
+      const vb = e.target.closest('[data-vbourdon]'); if (vb) { reglages.vBourdon = !reglages.vBourdon; store.set('cercleVBourdon', reglages.vBourdon); vb.classList.toggle('on', reglages.vBourdon); vb.textContent = reglages.vBourdon ? 'Bourdon : oui' : 'Bourdon : non'; return; }
+      const vs = e.target.closest('[data-vseul]'); if (vs) { // une boucle, seule, une fois (à l'arrêt) : pour l'entendre avant
+        const P = PARTIES_V.find((x) => x.id === vs.dataset.vseul); arreter(); try { c.resume(); } catch { /* iOS */ } const d = 60 / bpm() / 2; const t0 = c.currentTime + 0.1; const syl = A.voix.syl(P);
+        P.notes.forEach((n) => chante(reglages.tonique + degre(n.d), t0 + n.t * d, n.l * d * 0.92, P.timbre, 0.18));
+        const dit = el.querySelector('.ce-v-dit'); if (dit) dit.innerHTML = `<b style="color:${P.c}">${P.nom}</b> : ${syl.slice(0, P.notes.length).map(esc).join(' ')}`; return; }
       const ev = e.target.closest('[data-ecoute-v]'); if (ev) { ecouterNote(ev.dataset.ecouteV); return; }
       const cs = e.target.closest('[data-coeur-son]'); if (cs) { reglages.coeurSon = cs.dataset.coeurSon; if (reglages.coeurRythme.startsWith('g:')) reglages.coeurRythme = 'temps'; store.set('cercleCoeurSon', reglages.coeurSon); store.set('cercleCoeurRythme', reglages.coeurRythme); majCorps(); sonne(reglages.coeurSon, c.currentTime + 0.02); return; }
       const cr = e.target.closest('[data-coeur-r]'); if (cr) { reglages.coeurRythme = cr.dataset.coeurR; store.set('cercleCoeurRythme', reglages.coeurRythme); majCorps(); return; }
@@ -604,12 +680,17 @@ export default {
       if (c2 === 'dl' && enreg) { const l = document.createElement('a'); l.href = URL.createObjectURL(enWav(enreg)); l.download = 'Notre cercle.wav'; document.body.append(l); l.click(); l.remove(); }
       if (c2 === 'plein') { const s = el.querySelector('.ce-scene'); if (document.fullscreenElement) document.exitFullscreen?.(); else (s.requestFullscreen || s.webkitRequestFullscreen)?.call(s); }
     });
+    el.addEventListener('pointerdown', (e) => {
+      const b = e.target.closest('[data-vnote]'); if (!b) return; try { c.resume(); } catch { /* iOS */ }
+      chante(reglages.tonique + degre(+b.dataset.vnote), c.currentTime + 0.02, 0.7, 0, 0.24); b.classList.remove('bat'); void b.offsetWidth; b.classList.add('bat');
+    });
     el.addEventListener('change', (e) => {
       if (e.target.dataset?.coeurG != null && e.target.value) { reglages.coeurRythme = e.target.value; store.set('cercleCoeurRythme', reglages.coeurRythme); majCorps(); return; }
       const k = e.target.dataset?.photo; const f = e.target.files?.[0]; if (!k || !f) return;
       garderPhoto(k, f).then(() => rendre()).catch(() => {});
     });
     el.addEventListener('input', (e) => {
+      if (e.target.dataset.vmots) { store.set(`cercleVMots-${e.target.dataset.vmots}`, e.target.value); return; }
       if (e.target.dataset.mxv) { const k = e.target.dataset.mxv; reglages.mixJ[k].vol = +e.target.value / 100; garderMix(); return; }
       if (e.target.dataset.mot != null) { setMot(+e.target.dataset.mot, e.target.value); }
       if (e.target.dataset.c === 'noms') { reglages.noms = e.target.value; store.set('cercleNoms', e.target.value); }

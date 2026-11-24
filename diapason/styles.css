@@ -5258,3 +5258,16 @@ button.ce-g { font: inherit; color: inherit; text-align: left; width: 100%; back
 .ce-mx-r button b { font: 900 1.05rem var(--display); color: var(--c); }
 .ce-mx-r button small { margin-left: auto; color: #a39b87; font-weight: 700; }
 .ce-mx-r input[type=range] { width: 100%; accent-color: var(--c); }
+
+/* Le parcours et le cercle des voix (1.39) */
+.ce-parcours { margin: 0 0 8px; color: var(--ink-2); }
+.ce-n { display: inline-grid; place-items: center; width: 1.6em; height: 1.6em; margin-right: 6px; border-radius: 50%; background: #f1cf4e; color: #1b1915; font-style: normal; font-size: .9em; }
+.ce-acts button.variante { opacity: .85; border-style: dashed; }
+.ce-v-etapes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.ce-v-etapes button { font: 900 clamp(.95rem, 2.2vw, 1.3rem) var(--display); padding: 14px 8px; border-radius: 16px; border: 3px solid #4a4438; background: #211e19; color: #fff7dc; cursor: pointer; }
+.ce-v-etapes button.on { background: #f1cf4e; color: #14120f; border-color: #f1cf4e; }
+.ce-clavier { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.ce-clavier button { min-height: clamp(70px, 12vh, 120px); border-radius: 18px; border: 4px solid var(--c); background: #2a2620; color: #fff7dc; font: 900 clamp(1.2rem, 3vw, 2rem) var(--display); cursor: pointer; touch-action: manipulation; }
+.ce-clavier button.bat { background: var(--c); color: #14120f; }
+.ce-v-mots { display: grid; gap: 2px; margin: 8px 0; } .ce-v-mots b { color: var(--c); font: 900 1rem var(--display); } .ce-v-mots small { color: #a39b87; }
+@media (max-width: 640px) { .ce-v-etapes { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ce-clavier { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
