@@ -116,7 +116,7 @@ function ecouter(son) {
 }
 
 // Le grand dessin : l'arbre radial de la vraie structure (data/arbre.json, généré à chaque construction).
-const COUL = { dossier: '#e8c27a', js: '#ff6fae', mjs: '#ff6fae', css: '#6f9fe0', html: '#9fe0c3', mp3: '#b58cf0', json: '#93b08e', tsv: '#93b08e', jpg: '#f0a36f', mp4: '#f0a36f', svg: '#f0a36f', py: '#e9e4d8', sh: '#e9e4d8', toml: '#e9e4d8', md: '#e9e4d8', txt: '#e9e4d8' };
+const COUL = { dossier: '#e8c27a', js: '#ff6fae', mjs: '#ff6fae', css: '#6f9fe0', html: '#9fe0c3', mp3: '#b58cf0', json: '#93b08e', tsv: '#93b08e', jpg: '#f0a36f', mp4: '#f0a36f', svg: '#f0a36f', py: '#dddfe4', sh: '#dddfe4', toml: '#dddfe4', md: '#dddfe4', txt: '#dddfe4' };
 // D'où vient un fichier, en une phrase : affiché en passant dessus dans l'arbre.
 const ORIGINE = (nom) => (/^piano-/.test(nom) ? 'Piano à queue Salamander, enregistré par Alexander Holm (CC BY 3.0)'
   : /^rhodes-/.test(nom) ? 'Piano électrique Rhodes du jeu FluidR3, par Frank Wen (MIT)'

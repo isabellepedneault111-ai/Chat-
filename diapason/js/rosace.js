@@ -79,7 +79,7 @@ export function dessinerRosace(ctx, taille, { cle, couleurs, lumiere = -1, actif
   ctx.beginPath(); ctx.arc(cx, cy, rMax, 0, Math.PI * 2); ctx.lineWidth = 4; ctx.strokeStyle = '#0d0b09'; ctx.stroke();
   // Le cœur : la clé de voûte elle-même, gravée.
   ctx.beginPath(); ctx.arc(cx, cy, rMin, 0, Math.PI * 2); ctx.fillStyle = '#1b1814'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = '#0d0b09'; ctx.stroke();
-  ctx.fillStyle = '#efe6d2'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#dddfe4'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   const t = cle.join(':'); ctx.font = `800 ${Math.max(10, Math.min(rMin * 0.62, (rMin * 2.6) / t.length))}px "Literata", serif`; ctx.fillText(t, cx, cy);
   // Un voile de lumière, pour la profondeur du verre.
   const voile = ctx.createRadialGradient(cx - R * 0.25, cy - R * 0.3, R * 0.05, cx, cy, R);

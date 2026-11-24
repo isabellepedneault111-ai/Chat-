@@ -24,14 +24,14 @@ export const dessin = (s, couleur) => `<svg viewBox="0 0 120 60" class="m-svg" a
 
 // Les couleurs du matériel : le corps et son contour (des variables CSS lues par .m-corps).
 export const COULEURS = {
-  noir: ['Noir', '--corps:#2a2620;--trait:#8a7f6c'], blanc: ['Blanc', '--corps:#e9e4d8;--trait:#8a7f6c'],
+  noir: ['Noir', '--corps:#2a2620;--trait:#8a7f6c'], blanc: ['Blanc', '--corps:#dddfe4;--trait:#8a7f6c'],
   argent: ['Argent', '--corps:#a9aaa6;--trait:#5d5e5a'], bois: ['Bois', '--corps:#8a5a32;--trait:#d9a56e'],
   rouge: ['Rouge', '--corps:#a3271b;--trait:#f0875a'], bleu: ['Bleu', '--corps:#24456e;--trait:#7fb1f0'],
   vert: ['Vert', '--corps:#2f5a3a;--trait:#93b08e'], creme: ['Crème', '--corps:#d8c7a0;--trait:#8a6d3c'],
 };
 
 // Les couleurs des meubles : quelques teintes de bois et de tissu ; on peut aussi en choisir une libre.
-export const TEINTES = { '': ['Comme il vient', ''], chene: ['Chêne clair', '#c9a26b'], noyer: ['Noyer', '#6b4423'], noir: ['Noir', '#2a2620'], blanc: ['Blanc', '#e9e4d8'], gris: ['Gris', '#8d8a84'], vin: ['Rouge vin', '#6d1f2a'], nuit: ['Bleu nuit', '#24345a'], foret: ['Vert forêt', '#2f5a3a'], moutarde: ['Moutarde', '#c89b2b'], terre: ['Terracotta', '#b5603c'], rose: ['Vieux rose', '#c98f95'] };
+export const TEINTES = { '': ['Comme il vient', ''], chene: ['Chêne clair', '#c9a26b'], noyer: ['Noyer', '#6b4423'], noir: ['Noir', '#2a2620'], blanc: ['Blanc', '#dddfe4'], gris: ['Gris', '#8d8a84'], vin: ['Rouge vin', '#6d1f2a'], nuit: ['Bleu nuit', '#24345a'], foret: ['Vert forêt', '#2f5a3a'], moutarde: ['Moutarde', '#c89b2b'], terre: ['Terracotta', '#b5603c'], rose: ['Vieux rose', '#c98f95'] };
 const valTeinte = (t) => (t ? TEINTES[t]?.[1] || (/^#[0-9a-f]{6}$/i.test(t) ? t : '') : '');
 // Un meuble, avec sa couleur s'il en a une : le corps prend la teinte, les coussins et les motifs une teinte plus claire.
 export const teinteG = (m) => { const v = valTeinte(m.teinte); const d = MEUBLES[m.sorte]?.[3] || ''; return v ? `<g class="teinte" style="--t:${v}">${d}</g>` : d; };
@@ -56,7 +56,7 @@ export const MEUBLES = {
 // Les planchers qu’on peut choisir pour sa pièce.
 export const SOLS = { vin: 'Tapis rouge vin', bois: 'Plancher de bois', sombre: 'Bois foncé', beton: 'Béton', tapis: 'Tapis mur à mur', carrelage: 'Carrelage' };
 // Les couleurs de murs qu’on peut choisir.
-export const MURS = { braise: '#3a2a22', nuit: '#1d2230', foret: '#1f2a22', craie: '#d9d2c3', brique: '#6b3324', noir: '#141210' };
+export const MURS = { braise: '#3a2a22', nuit: '#1d2230', foret: '#1f2a22', craie: '#c9ccd3', brique: '#6b3324', noir: '#141210' };
 
 const DEFAUT = { sol: 'bois', mur: 'braise', meubles: [], partage: true, photo: null, photoOpacite: 0.35 };
 // Le studio de Frog a un tapis rouge vin au sol : c'est le point de départ, qu'il ajuste.

@@ -158,7 +158,7 @@ function flottants(cv, words) {
     for (const o of W) {
       o.y -= o.v; if (o.y < -0.05) { o.y = 1.05; o.x = Math.random(); }
       c.globalAlpha = 0.08 + 0.12 * Math.abs(Math.sin(t * 0.3 + o.p));
-      c.fillStyle = '#f3ead6'; c.font = `600 ${o.s}px Literata, Georgia, serif`;
+      c.fillStyle = '#e2e3e7'; c.font = `600 ${o.s}px Literata, Georgia, serif`;
       c.fillText(o.w, o.x * w, o.y * h);
     }
     c.globalAlpha = 1;

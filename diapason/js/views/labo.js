@@ -358,7 +358,7 @@ export default {
         l.push({ id: x.id, type: 'g', x: Xp, y: Yp, r: R, label: x.g, titre: `Groupe ${x.g} : tout le groupe`, c: GROUPES[x.g] });
         m.forEach(([t, i], j) => { const b = (j / m.length) * Math.PI * 2 - Math.PI / 2; l.push({ id: String(i), type: 'm', r: 14, x: Xp + Math.cos(b) * rm, y: Yp + Math.sin(b) * rm, label: `D${i + 1}`, titre: `Disque ${i + 1}, dans le groupe ${x.g}`, c: colors[i] }); });
       });
-      utilises.forEach((k, j) => { const [titre, label] = SOURCES[k]; l.push({ id: k, type: 's', r: 15, x: 20, y: 24 + j * ((H - 48) / (utilises.length - 1)), label, nom: titre.replace(/^(La |Le |Une |Ta |L’)/, ''), titre: SOURCES[k].join(' : '), c: liens.some((x) => x.src === k) ? '#efe6d2' : '#8a7f6c' }); });
+      utilises.forEach((k, j) => { const [titre, label] = SOURCES[k]; l.push({ id: k, type: 's', r: 15, x: 20, y: 24 + j * ((H - 48) / (utilises.length - 1)), label, nom: titre.replace(/^(La |Le |Une |Ta |L’)/, ''), titre: SOURCES[k].join(' : '), c: liens.some((x) => x.src === k) ? '#dddfe4' : '#8a7f6c' }); });
       return { l, W, H };
     }
     // Le nœud sous un point : le plus petit qui le contient (un disque dans un anneau gagne sur l'anneau).
@@ -383,7 +383,7 @@ export default {
       const forme = (x) => {
         if (x.type === 'g') return `<circle r="${x.r}" fill="rgba(255,255,255,.03)" stroke="${x.c}" stroke-width="4"/><text y="${-x.r - 7}" text-anchor="middle" fill="${x.c}" class="ls-glettre">Groupe ${x.label}</text>`;
         if (x.type === 'm') return `<circle r="${x.r}" fill="#1b1915" stroke="${x.c}" stroke-width="2.5"/><text y="4" text-anchor="middle" fill="${x.c}" class="ls-petit">${x.label}</text>`;
-        if (x.type === 's') return `<circle r="${x.r}" fill="#1b1915" stroke="${x.c}" stroke-width="2"/><text y="5" text-anchor="middle" fill="#efe6d2">${x.label}</text><text x="${x.r + 6}" y="4" class="ls-nom">${x.nom}</text><rect x="${-x.r - 4}" y="${-x.r - 3}" width="${x.r * 2 + 14 + x.nom.length * 6.6}" height="${x.r * 2 + 6}" rx="10" fill="transparent"/>`;
+        if (x.type === 's') return `<circle r="${x.r}" fill="#1b1915" stroke="${x.c}" stroke-width="2"/><text y="5" text-anchor="middle" fill="#dddfe4">${x.label}</text><text x="${x.r + 6}" y="4" class="ls-nom">${x.nom}</text><rect x="${-x.r - 4}" y="${-x.r - 3}" width="${x.r * 2 + 14 + x.nom.length * 6.6}" height="${x.r * 2 + 6}" rx="10" fill="transparent"/>`;
         return `<circle r="${x.r}" fill="#1b1915" stroke="${x.c}" stroke-width="3"/><text y="3" text-anchor="middle" fill="${x.c}">${x.label}</text><text y="15" text-anchor="middle" class="ls-sous">${x.sous}</text>`;
       };
       // Les anneaux d'abord, puis les flèches, puis les disques et les déclencheurs par-dessus (on les attrape toujours).

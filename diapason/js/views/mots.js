@@ -203,7 +203,7 @@ export default {
         <label class="mo-vraie mo-guide"><input type="checkbox" data-m="miclive" ${store.get('motsMicLive', false) ? 'checked' : ''}> 🎤 Ma voix en direct pendant le chant <small class="muted">(le micro dessine ta hauteur sur la mélodie : vert quand c’est juste ; des écouteurs aident)</small></label>
         <label class="mo-vraie mo-guide"><input type="checkbox" data-m="guide"> 🎤 Chœurs sur toutes les lignes <small class="muted">(des « ouuu » synthétiques chantent la note de chaque syllabe ; éteints d’office, ou ligne par ligne avec 🎤)</small></label>
 
-      <div class="ec-row mo-reg-fin"><button class="btn primary" data-m="generer" data-fermer="1">↻ Écrire les lignes avec ces réglages</button><button class="btn" data-m="chanter">▶ Chanter sur la grille</button></div>
+      <div class="ec-row mo-reg-fin"><button class="btn primary" data-m="generer" data-fermer="1">↻ Réécrire encore (autre tirage)</button><button class="btn" data-m="chanter">▶ Chanter sur la grille</button></div>
       </details>
       <section class="mo-lignes" aria-live="polite"></section>
       <div class="mo-ajout"><button class="btn" data-m="ajout">＋ Ajouter une ligne</button><button class="btn primary" data-m="chanter">▶ Chanter sur la grille</button><span class="muted small">Touche une ligne pour changer ses mots. ↑ ↓ pour la déplacer (ou glisse-la par ⠿).</span></div>
@@ -410,6 +410,13 @@ export default {
     }
 
     // Écrit (ou réécrit) les lignes non gardées. « seule » : une seule ligne à refaire.
+    // Changer un réglage (thèmes, mots-clés, rimes, qui parle, nombre de lignes) réécrit tout seul les lignes non gardées :
+    // plus besoin de cliquer pour réécrire après chaque réglage.
+    let tReecrire = 0;
+    function reecrire(delai = 600) {
+      clearTimeout(tReecrire);
+      tReecrire = setTimeout(async () => { arreter(); const avant = lignes.filter((L) => L.garde && L.txt).length; await generer(); toast(avant ? `Lignes réécrites avec ces réglages. Tes ${avant} ligne${avant > 1 ? 's' : ''} gardée${avant > 1 ? 's' : ''} ✓ ne bouge${avant > 1 ? 'nt' : ''} pas.` : 'Lignes réécrites avec ces réglages. Coche « Garder » pour protéger une ligne.'); }, delai);
+    }
     async function generer(seule = null) {
       q('[data-m=generer]').disabled = true; q('[data-m=generer]').textContent = 'J’écris…';
       await loadLexique();
@@ -444,6 +451,7 @@ export default {
       cancelAnimationFrame(raf);
       if (lecture) { lecture.stop = true; try { lecture.bus.gain.value = 0; lecture.bus.disconnect(); } catch { /* déjà coupé */ } lecture.src.forEach((s) => { try { s.stop(); } catch { /* déjà arrêtée */ } }); lecture = null; }
       el.querySelectorAll('.pl-tete').forEach((t) => { t.style.opacity = 0; });
+      el.querySelectorAll('.mo-l.karaoke').forEach((x) => { x.classList.remove('karaoke'); x.querySelector('.mo-kara')?.remove(); });
       el.querySelectorAll('.mo-l.chante').forEach((x) => x.classList.remove('chante'));
       el.querySelectorAll('[data-m=chanter]').forEach((b) => { b.textContent = b.dataset.lbl || '▶ Chanter sur la grille'; });
       el.querySelectorAll('[data-m=une]').forEach((x) => { x.textContent = '▶'; }); el.querySelectorAll('[data-m=boucle]').forEach((x) => { x.textContent = '🔁'; });
@@ -483,6 +491,10 @@ export default {
       const enIntro = t >= tIntro && t < t1; const compte = enIntro ? `Intro ${Math.floor((t - tIntro) / (4 * noire)) + 1}` : t < t1 ? Math.min(4, Math.floor((t - t0) / noire) + 1) : 0;
       const tete = lb.querySelector('.mo-roll-tete'); if (tete) { const x = (t - F.debut) / (F.fin - F.debut); tete.style.left = `${Math.max(0, Math.min(1, x)) * 100}%`; tete.style.opacity = x >= 0 && x <= 1 ? 1 : 0; }
       const cle = `${j}|${ic}|${ks}|${compte}|${micLive}`; if (cle === cleBarre) { dessinerVoix(lb, F, t); return; }
+      // Les mots s'allument aussi dans la carte de la ligne, sur la page (pas seulement dans la barre du bas).
+      const carte = el.querySelector(`.mo-l[data-i="${F.i}"]`);
+      el.querySelectorAll('.mo-l.karaoke').forEach((x) => { if (x !== carte) { x.classList.remove('karaoke'); x.querySelector('.mo-kara')?.remove(); } });
+      if (carte && !lignes[F.i]?.pause && t >= t1) { let k = carte.querySelector('.mo-kara'); if (!k) { k = document.createElement('p'); k.className = 'mo-kara'; k.setAttribute('aria-hidden', 'true'); carte.querySelector('.mo-txt')?.after(k); carte.classList.add('karaoke'); } k.innerHTML = motsAllumes(F, ks); }
       // Nouvelle ligne : on la ramène au milieu de l'écran, au-dessus de la barre.
       if (cleBarre.split('|')[0] !== String(j)) el.querySelector(`.mo-l[data-i="${F.i}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
       cleBarre = cle;
@@ -585,7 +597,7 @@ export default {
     }
     el.addEventListener('click', async (e) => {
       const th = e.target.closest('[data-theme]');
-      if (th) { const k = th.dataset.theme; st.themes = st.themes.includes(k) ? st.themes.filter((x) => x !== k) : [...st.themes, k]; if (!st.themes.length) st.themes = [k]; st.theme = st.themes[0]; el.querySelectorAll('[data-theme]').forEach((x) => { const on = st.themes.includes(x.dataset.theme); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); x.textContent = `${on ? '✓ ' : ''}${THEMES[x.dataset.theme].nom}`; }); sauver(); return; }
+      if (th) { const k = th.dataset.theme; st.themes = st.themes.includes(k) ? st.themes.filter((x) => x !== k) : [...st.themes, k]; if (!st.themes.length) st.themes = [k]; st.theme = st.themes[0]; el.querySelectorAll('[data-theme]').forEach((x) => { const on = st.themes.includes(x.dataset.theme); x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); x.textContent = `${on ? '✓ ' : ''}${THEMES[x.dataset.theme].nom}`; }); sauver(); reecrire(); return; }
       const b = e.target.closest('[data-m]'); const m = b?.dataset.m; if (!m || b.tagName === 'SELECT' || b.tagName === 'INPUT') return;
       if (m === 'generer') { arreter(); await generer(); if (b.dataset.fermer) { const r = q('.mo-reg'); if (r) r.open = false; q('.mo-a-qui')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); } return; }
       if (m === 'caler') { await caler(false); return; }
@@ -621,9 +633,10 @@ export default {
       st[k] = k === 'n' ? +e.target.value : e.target.value; if (k === 'n') st.cale = false;
       if (k === 'source') { q('.mo-main').hidden = st.source !== 'main'; changerDeChanson(); majSous(); chargerPiece().then(async () => { rendre(); await remplirSiVide(); }); }
       sauver(); arreter(); rendre();
+      if (['schema', 'pers', 'n'].includes(k)) reecrire();
     });
     el.addEventListener('input', (e) => {
-      if (e.target.dataset.m === 'cles') { st.cles = e.target.value; sauver(); return; }
+      if (e.target.dataset.m === 'cles') { st.cles = e.target.value; sauver(); reecrire(1400); return; }
       if (e.target.dataset.m === 'debut') { st.debut = Math.max(1, Math.min(64, +e.target.value || 1)); sauver(); arreter(); rendre(); return; }
       if (e.target.dataset.m === 'main') { st.main = e.target.value; sauver(); rendre(); return; }
       if (e.target.classList.contains('mo-txt')) { const L = lignes[+e.target.dataset.i]; L.txt = e.target.value; if (!L.garde) { L.garde = true; const cb = el.querySelector(`[data-garde="${e.target.dataset.i}"]`); if (cb) cb.checked = true; e.target.closest('.mo-l')?.classList.add('garde'); } sauver(); }

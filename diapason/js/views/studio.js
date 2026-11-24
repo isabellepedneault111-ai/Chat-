@@ -1095,12 +1095,12 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 // Avec notre art : l'image en bichromie, du grain, un cadre typographique ; le vrai son en fines lignes.
 // Couleurs : fond, encre, accent.
 const PALETTES = {
-  'Encre et or': ['#141210', '#efe6d2', '#c9a45c'],
-  'Nuit bleue': ['#0e1726', '#e9e4d8', '#6f9fe0'],
+  'Encre et or': ['#141210', '#dddfe4', '#c9a45c'],
+  'Nuit bleue': ['#0e1726', '#dddfe4', '#6f9fe0'],
   'Brique': ['#2a1511', '#f2e3cf', '#d4583c'],
-  'Sauge': ['#1c2420', '#e9e7d9', '#93b08e'],
+  'Sauge': ['#1c2420', '#dee0e4', '#93b08e'],
   'Rose poudre': ['#231a1d', '#f4e7e4', '#da8aa6'],
-  'Papier': ['#ece5d6', '#1b1915', '#d93a24'],
+  'Papier': ['#dee0e4', '#1b1915', '#d93a24'],
 };
 // Dessine la pochette sur un canvas : fond, titre, artiste, motifs selon l’ambiance choisie.
 function drawCover(canvas, { title, artist, mood }, art = {}) {

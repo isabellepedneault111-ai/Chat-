@@ -59,14 +59,14 @@ export function laboVivant(cv) {
     if (w > SPIN_MAX) { ctx.fillStyle = '#f3c77a'; ctx.textAlign = 'right'; ctx.fillText(`ralenti ×${Math.round(w / SPIN_MAX)}`, W - 14, 14); ctx.textAlign = 'left'; }
     ctx.textAlign = 'center';
     if (!chante) {
-      ctx.fillStyle = '#efe9dc'; ctx.font = '600 15px "Atkinson Hyperlegible", sans-serif';
+      ctx.fillStyle = '#e3e4e8'; ctx.font = '600 15px "Atkinson Hyperlegible", sans-serif';
       ctx.fillText(tau < mesure ? '6, 7 et 9 frappes par mesure, sur le temps de ta musique' : `${Math.round(clics)} frappes par seconde`, cx, H - 30);
     } else {
       ctx.fillStyle = '#fff'; ctx.font = `italic 700 ${Math.round(R * 0.32)}px "Literata", Georgia, serif`; ctx.textBaseline = 'middle';
       ctx.globalAlpha = Math.min(1, (tau - fin) * 2); ctx.fillText('Ça chante.', cx, cy);
       ctx.font = '700 15px "Atkinson Hyperlegible", sans-serif'; ctx.textBaseline = 'top';
       NOTES.forEach((nm, i) => { ctx.fillStyle = COUL[i]; ctx.fillText(nm, cx + (i - 1) * 70, H - 50); });
-      ctx.fillStyle = '#efe9dc'; ctx.fillText('Un ré mineur qu’aucun piano ne peut jouer', cx, H - 28);
+      ctx.fillStyle = '#e3e4e8'; ctx.fillText('Un ré mineur qu’aucun piano ne peut jouer', cx, H - 28);
       ctx.globalAlpha = 1;
     }
     ctx.textAlign = 'left';

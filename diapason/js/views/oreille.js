@@ -424,7 +424,7 @@ export default {
           ${voulus2.length ? `<h4 class="or-voulu-t">C’est voulu</h4><ul>${voulus2.map((o) => item(o, 'voulu')).join('')}</ul>` : ''}</div>`;
     }
     // L'énergie de chaque partie, en trois teintes d'un même bleu : plus c'est foncé, plus ça pousse.
-    const FORCE = { douce: '#9cc0e8', moyenne: '#4a86cf', forte: '#1d4f8f', silence: '#d9d2c4' };
+    const FORCE = { douce: '#9cc0e8', moyenne: '#4a86cf', forte: '#1d4f8f', silence: '#caccd3' };
     function forceDe(p) {
       if (p.silence) return 'silence';
       const nv = res.parties.filter((x) => !x.silence).map((x) => x.niveau).sort((u, v) => u - v); if (nv.length < 3) return 'moyenne';

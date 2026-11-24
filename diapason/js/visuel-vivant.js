@@ -3,7 +3,7 @@
 import { ecouter } from './oreille.js';
 import { tamponPiste, positionPiste } from './visite-sons.js';
 
-const FOND = '#141210'; const ENCRE = '#efe6d2'; const OR = '#c9a45c';
+const FOND = '#141210'; const ENCRE = '#dddfe4'; const OR = '#c9a45c';
 let analyse = null; // une seule écoute par visite
 // Prépare (une seule fois) l’écoute de la pièce qui anime le portrait.
 export const preparerPortrait = () => (analyse ||= Promise.resolve(tamponPiste('projet1')).then((b) => (b ? ecouter(b) : null)).catch(() => null));

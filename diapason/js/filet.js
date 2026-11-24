@@ -111,14 +111,14 @@ function ouvrir() {
       const y = r * hR + hR / 2; const on = actives.has(p.k); const e = envs[r];
       g.strokeStyle = on ? (p.k === 'app' ? '#ff6fae' : '#93b08e') : '#4a4338'; g.lineWidth = Math.max(1, (L - 16) / nW * 0.7);
       for (let w = 0; w < nW; w++) { const h = Math.max(0.5, Math.min(1, e[w] * 1.6) * hR * 0.42); const x = X(w / 10); g.beginPath(); g.moveTo(x, y - h); g.lineTo(x, y + h); g.stroke(); }
-      g.fillStyle = on ? '#efe6d2' : '#6d655a'; g.font = '600 11px "Atkinson Hyperlegible", sans-serif'; g.textAlign = 'left'; g.fillText(p.nom, 12, r * hR + 13);
+      g.fillStyle = on ? '#dddfe4' : '#6d655a'; g.font = '600 11px "Atkinson Hyperlegible", sans-serif'; g.textAlign = 'left'; g.fillText(p.nom, 12, r * hR + 13);
     });
     if (s.midi.length) {
       const r = s.pistes.length; const y0 = r * hR; const notes = s.midi.filter((m) => (m.d[0] & 0xf0) === 0x90 && m.d[2]);
       const hs = notes.map((m) => m.d[1]); const lo = Math.min(...hs) - 1; const hi = Math.max(...hs) + 1;
       g.fillStyle = midiOn ? '#b58cf0' : '#4a4338';
       notes.forEach((m) => { const fin = s.midi.find((o) => o.t > m.t && o.d[1] === m.d[1] && ((o.d[0] & 0xf0) === 0x80 || ((o.d[0] & 0xf0) === 0x90 && !o.d[2]))); g.fillRect(X(m.t), y0 + 16 + (1 - (m.d[1] - lo) / (hi - lo)) * (hR - 22), Math.max(2, X(fin ? fin.t : m.t + 0.3) - X(m.t)), 3); });
-      g.fillStyle = midiOn ? '#efe6d2' : '#6d655a'; g.font = '600 11px "Atkinson Hyperlegible", sans-serif'; g.fillText('Notes MIDI', 12, y0 + 13);
+      g.fillStyle = midiOn ? '#dddfe4' : '#6d655a'; g.font = '600 11px "Atkinson Hyperlegible", sans-serif'; g.fillText('Notes MIDI', 12, y0 + 13);
     }
     g.strokeStyle = '#e8c27a'; g.lineWidth = 2; [sel.a, sel.b].forEach((t) => { g.beginPath(); g.moveTo(X(t), 0); g.lineTo(X(t), H - 18); g.stroke(); });
     if (tete != null) { g.strokeStyle = '#fff'; g.lineWidth = 1.5; g.beginPath(); g.moveTo(X(tete), 0); g.lineTo(X(tete), H - 18); g.stroke(); }

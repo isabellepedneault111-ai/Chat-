@@ -60,6 +60,12 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.21', quand: '2026-11-24', titre: 'Les mots s’allument, les lignes se réécrivent', items: [
+    ['Les mots s’allument dans la carte', ['Pendant « ▶ Chanter », la ligne qui joue s’encadre de jaune sur la page et ses mots s’allument un à un, en gros, comme au karaoké. Plus besoin de fixer la barre noire.']],
+    ['Les réglages réécrivent tout seuls', ['Changer les thèmes, les mots-clés, les rimes, « Qui parle » ou le nombre de lignes réécrit aussitôt les lignes non gardées. Les lignes cochées « Garder » ne bougent pas. Le bouton du bas devient « ↻ Réécrire encore » (un autre tirage).']],
+    ['Fini le beige, pour vrai', ['Toutes les teintes crème et beige du site sont remplacées par des tons neutres et nets ; les lueurs de couleur sont plus franches.']],
+    ['Des tuiles uniformes', ['Accords, cartes, disques, commentaires, pistes : la même forme partout (coins arrondis, contour d’encre, petite ombre).']],
+  ] },
   { v: '1.20', quand: '2026-11-24', titre: 'Du punch, et ta voix en direct', items: [
     ['Fini le beige', ['Un papier clair et net, une bande de couleurs en haut, des lueurs rouge, bleu et or, des cartes qui ont du relief, des titres soulignés d’un trait de couleur.']],
     ['🎤 Ta voix en direct pendant le chant', ['Dans Mots sur la grille, pendant « ▶ Chanter », touche 🎤 dans la barre du bas (ou coche-le dans ⚙) : le micro dessine ta voix sur la mélodie proposée. Vert quand c’est juste, jaune un peu à côté, rouge loin ; à côté, « ✓ juste », « ↑ monte un peu » ou « ↓ descends un peu ». Une voix une octave plus bas compte comme juste. Avec des écouteurs, c’est plus précis.']],
