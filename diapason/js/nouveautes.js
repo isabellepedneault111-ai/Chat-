@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.26', quand: '2026-11-24', titre: 'Le cercle : un jam pour la classe', items: [
+    ['🥁 Jouer › Le cercle', ['Un jam de percussion corporelle pour des élèves qui ne connaissent rien en musique : les mains sur le bureau (BOUM), le bout des doigts (TIC), taper des mains (TAC), claquer des doigts (TSK), frotter les mains (CHHH), les pieds. Projette la page : l’app tient le tempo, joue le modèle et montre en gros quoi faire.']],
+    ['Six activités qui roulent toutes seules', ['❤️ Le cœur (tous sur le même battement) · 🔁 L’écho (l’app joue, la classe répète ; facile, moyen, défi) · 🍕 Le moteur des mots (4 groupes, 4 mots qui s’empilent toutes les 4 mesures ; les mots se changent) · 🎬 Le chef (l’app dirige : qui joue, fort, doux, FREEZE) · ⛈️ L’orage (la pluie monte puis redescend) · 🎤 Le trou (une mesure de silence pour un solo, avec la liste des noms).']],
+    ['✋ FREEZE', ['Un gros bouton rouge (ou la touche F) fige tout et remplit l’écran. Tempo lent, moyen ou vite ; plein écran ; barre d’espace pour lancer ou arrêter.']],
+  ] },
   { v: '1.25', quand: '2026-11-24', titre: 'Le réducteur de bruit ne massacre plus la musique', items: [
     ['🧹 Un nettoyage doux, en stéréo', ['L’ancien « Réduire le bruit » enlevait le souffle, mais abîmait la musique (un son métallique, « sous l’eau ») et passait tout en mono. Le nouveau garde ce qui dépasse le bruit, en proportion, ne baisse jamais plus de 12 dB, et garde la stéréo. Mesuré sur Projet 1 : avant, il ne restait que 5 dB de fidélité même sur un son propre ; maintenant, 24 dB.']],
     ['Si une chanson sonne mal', ['Une version « (sans bruit) » faite avant aujourd’hui garde les dégâts de l’ancien nettoyage : reprends le fichier d’origine (le mémo de l’iPhone) dans L’oreille, puis, si tu veux, « 🧹 Réduire le bruit » à nouveau, et « ⭐ Mettre dans nos pièces ».']],
