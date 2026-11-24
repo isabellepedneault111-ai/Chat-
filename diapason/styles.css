@@ -5090,3 +5090,15 @@ body.ce-ouvert .arret-son, body.ce-ouvert .etincelle { display: none !important;
 .ce-rec, .ce-ecoute { font: 800 clamp(1rem, 2.4vw, 1.3rem) var(--display); padding: 14px 20px; border-radius: 18px; border: 3px solid #fff7dc; background: #2a2620; color: #fff7dc; cursor: pointer; }
 .ce-rec.rec { background: #ff3b2f; border-color: #fff; animation: ch-rec 1s infinite; }
 .ce-ecoute { background: #3fbf7f; color: #0f2a1c; }
+/* Le chœur (Le cercle) */
+.ce-choeur { display: grid; gap: 12px; }
+.ce-v { display: grid; grid-template-columns: minmax(140px, 260px) 1fr; gap: 16px; align-items: center; padding: 12px 16px; border-radius: 18px; background: #211e19; border: 3px solid transparent; opacity: .4; transition: opacity .3s; }
+.ce-v.actif { opacity: 1; border-color: var(--c); background: #2a2620; }
+.ce-voy { font: 900 clamp(2.6rem, 9vw, 5.5rem)/1 var(--display); color: var(--c); letter-spacing: .04em; }
+.ce-v-m { display: grid; gap: 6px; }
+.ce-v-n { font: 900 clamp(1.4rem, 4vw, 2.4rem) var(--display); color: #fff7dc; }
+.ce-v-fl { font-size: clamp(1rem, 2.4vw, 1.3rem); color: #e6dfc8; min-height: 1.3em; }
+.ce-v-b { height: 14px; border-radius: 7px; background: #14120f; overflow: hidden; } .ce-v-b i { display: block; height: 100%; width: 0; background: var(--c); }
+.ce-l { color: #e6dfc8; font-weight: 700; align-self: center; margin-right: 4px; }
+.ce-niveaux { flex-wrap: wrap; }
+@media (max-width: 640px) { .ce-v { grid-template-columns: 1fr; gap: 4px; } }

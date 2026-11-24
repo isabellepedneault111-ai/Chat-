@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.29', quand: '2026-11-24', titre: 'Le chœur de la classe', items: [
+    ['🎶 Le cercle › Le chœur', ['Pendant que les percussions jouent (BOUM et TAC), le groupe AAA tient une note, puis le groupe OOO entre sur une autre (et MMM si tu veux trois groupes). Les notes forment de vrais accords (I – IV – V – I), deux mesures chacun, et chaque groupe bouge le moins possible : l’écran dit la note, et si la prochaine est plus haute, plus basse ou la même. Une barre se remplit le temps de la tenir ; on respire au changement.']],
+    ['Juste, dans la bonne tonalité', ['Choisis la tonalité (Sol, La, Si♭, Do, Ré, Mi) selon les voix de la classe. L’app chante le modèle tout doux (le chœur, et l’accord au piano) ; coupe-le (🔇) quand la classe tient seule.']],
+  ] },
   { v: '1.28', quand: '2026-11-24', titre: 'Des voix par-dessus', items: [
     ['🎙 Le chantier devient une loop station', ['Mets des mesures en boucle (🔁), puis ● (dans la barre du bas ou l’onglet 🎙 Voix) : tu chantes par-dessus, et la prise s’arrête toute seule au tour suivant. Réappuie pour empiler une autre couche : une harmonie, un chœur, du beatbox, des claps. Chaque voix rejoue pile au bon moment, avec son volume, 🔇, ⏪ ⏩ (20 ms) si elle arrive un poil tôt ou tard, ⬇ en WAV. Sans boucle, ● enregistre sur la chanson, d’ici jusqu’à ■.']],
     ['Les voix de l’autre', ['Tes voix partent dans votre espace ; celles de Frog arrivent dans ta liste et jouent avec les tiennes (en pointillé).']],
