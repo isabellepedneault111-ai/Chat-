@@ -5271,3 +5271,11 @@ button.ce-g { font: inherit; color: inherit; text-align: left; width: 100%; back
 .ce-clavier button.bat { background: var(--c); color: #14120f; }
 .ce-v-mots { display: grid; gap: 2px; margin: 8px 0; } .ce-v-mots b { color: var(--c); font: 900 1rem var(--display); } .ce-v-mots small { color: #a39b87; }
 @media (max-width: 640px) { .ce-v-etapes { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ce-clavier { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* Le cercle des voix : les paroles en entier (1.40) */
+.ce-v-themes { flex-wrap: wrap; }
+.ce-paroles { display: grid; gap: 6px; padding: 12px 16px; border-radius: 16px; background: #211e19; }
+.ce-paroles p { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.ce-paroles b { color: var(--c); font: 900 1rem var(--display); min-width: 6.5em; }
+.ce-paroles span { color: #fff7dc; font: 800 clamp(1.1rem, 2.6vw, 1.6rem) var(--display); }
+.ce-paroles small { color: #f1cf4e; font-weight: 700; }

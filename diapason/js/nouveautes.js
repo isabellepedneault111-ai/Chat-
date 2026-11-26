@@ -60,6 +60,11 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.40', quand: '2026-11-26', titre: 'Le cercle des voix : des paroles qui ont du sens', items: [
+    ['Trois thèmes, trois phrases qui vont ensemble', ['Bonjour (« On va chanter ensemble » / « Tout le monde est là » / « Bonjour, bonjour »), La pluie (« Moi, je reste au chaud dans ma maison » / « Il pleut, il pleut sur la ville » / « Plic, ploc ») et On fait de la musique (« On fait de la musique ensemble » / « Les mains, les pieds, la voix » / « Doum, doum, on y va »). Empilées, les trois phrases racontent la même chose.']],
+    ['Le rythme suit la parole', ['Chaque mélodie a été écrite pour sa phrase : la syllabe accentuée tombe sur un temps fort et dure plus longtemps, comme quand on la dit. Les trois phrases s’affichent en entier, en gros, au-dessus des pistes.']],
+    ['Vos paroles ne sont plus recoupées', ['Vous écrivez votre phrase sur la mélodie du thème (une syllabe par note). S’il manque des syllabes, les notes en trop se taisent ; s’il y en a trop, l’écran le dit. Plus jamais de mots coupés en boucle.']],
+  ] },
   { v: '1.39', quand: '2026-11-24', titre: 'Le cercle des voix, et un parcours', items: [
     ['Le cercle des voix', ['Juste des voix. Trois boucles chantées, avec des mots (les aigus, le milieu, les graves), dans une gamme où aucune note n’est fausse (do ré mi sol la). Quatre étapes : 1. Écouter (l’app chante chaque boucle), 2. En écho (l’app chante, puis c’est à vous), 3. Ensemble (les boucles s’empilent une à une), 4. Solo libre (un élève improvise par-dessus avec un clavier de 5 notes). Les mots défilent dans les pistes, sur la note à chanter.']],
     ['Entendre avant, changer les mots', ['« Entendre seule » fait chanter une boucle à l’arrêt. Les mots se changent : vos noms, un plat, une phrase de la classe, une syllabe par note. Un bourdon (la tonique tenue) aide à rester juste ; l’app chante fort, doux ou pas du tout.']],
