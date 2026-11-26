@@ -60,6 +60,10 @@ export function nouveautesHTML() {
 // À la première ouverture après une mise à jour, chacun voit une fois ce qui a changé : Frog, avec le mot de Zaza ;
 // Zaza, avec l'aperçu de ce que Frog va découvrir. Chaque version garde sa liste : s'il en a manqué plusieurs, il les voit toutes, la plus récente en premier.
 export const VERSIONS = [
+  { v: '1.41', quand: '2026-11-26', titre: 'Les voix, couche par couche ; un Cercle plus simple', items: [
+    ['Les voix : on construit', ['On commence avec un seul groupe qui tient un son (OU). « + Ajouter un groupe » propose la suite : la rythmique (DOU sur chaque temps), un autre son qui va bien (A, plus haut), PA sur 2 et 4, TCHI, puis des mots. Chaque groupe a trois boutons : Son, Note, Rythme. On touche, ça change, et on l’entend aussitôt. Toutes les notes vont ensemble.']],
+    ['Un Cercle plus épuré', ['Les gestes et les photos sont repliés en haut. Le chœur, l’orage et le trou passent dans « Autres jeux ». La table de mixage de La chanson est repliée.']],
+  ] },
   { v: '1.40', quand: '2026-11-26', titre: 'Le cercle des voix : des paroles qui ont du sens', items: [
     ['Trois thèmes, trois phrases qui vont ensemble', ['Bonjour (« On va chanter ensemble » / « Tout le monde est là » / « Bonjour, bonjour »), La pluie (« Moi, je reste au chaud dans ma maison » / « Il pleut, il pleut sur la ville » / « Plic, ploc ») et On fait de la musique (« On fait de la musique ensemble » / « Les mains, les pieds, la voix » / « Doum, doum, on y va »). Empilées, les trois phrases racontent la même chose.']],
     ['Le rythme suit la parole', ['Chaque mélodie a été écrite pour sa phrase : la syllabe accentuée tombe sur un temps fort et dure plus longtemps, comme quand on la dit. Les trois phrases s’affichent en entier, en gros, au-dessus des pistes.']],

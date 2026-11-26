@@ -5279,3 +5279,21 @@ button.ce-g { font: inherit; color: inherit; text-align: left; width: 100%; back
 .ce-paroles b { color: var(--c); font: 900 1rem var(--display); min-width: 6.5em; }
 .ce-paroles span { color: #fff7dc; font: 800 clamp(1.1rem, 2.6vw, 1.6rem) var(--display); }
 .ce-paroles small { color: #f1cf4e; font-weight: 700; }
+
+/* Les voix, couche par couche ; un Cercle plus épuré (1.41) */
+.ce-couches { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.ce-couche { display: grid; gap: 8px; padding: 12px; border-radius: 18px; background: #2a2620; border: 3px solid var(--c); }
+.ce-couche-t { display: flex; align-items: center; gap: 10px; }
+.ce-couche-t .ce-img { width: 52px; height: 52px; }
+.ce-couche-t small { display: block; color: #a39b87; font-weight: 700; }
+.ce-couche-t b { font: 900 clamp(1.4rem, 3vw, 2rem)/1.05 var(--display); color: var(--c); }
+.ce-couche-x { margin-left: auto; font: 700 .8rem inherit; padding: 4px 10px; border-radius: 999px; border: 1px solid #6b6455; background: none; color: #a39b87; cursor: pointer; }
+.ce-couche-pts { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
+.ce-couche-pts i { height: 12px; border-radius: 4px; background: #1b1915; } .ce-couche-pts i.oui { background: var(--c); } .ce-couche-pts i.tient { background: color-mix(in srgb, var(--c) 45%, #1b1915); }
+.ce-couche-b { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.ce-couche-b button { font: 800 .9rem var(--display); padding: 8px 6px; border-radius: 12px; border: 2px solid #4a4438; background: #1b1915; color: #fff7dc; cursor: pointer; }
+.ce-couche .input { font-size: 1.1rem; }
+.ce-ajout { display: grid; place-content: center; gap: 4px; min-height: 150px; border-radius: 18px; border: 3px dashed #f1cf4e; background: transparent; color: #f1cf4e; cursor: pointer; font: inherit; text-align: center; padding: 12px; }
+.ce-ajout b { font: 900 clamp(1.2rem, 2.6vw, 1.6rem) var(--display); } .ce-ajout small { color: #e6dfc8; }
+.ce-gestes { margin: 0 0 12px; } .ce-gestes summary { cursor: pointer; font-weight: 800; color: var(--ink); }
+.ce-autres { margin: -6px 0 14px; color: var(--ink-2); } .ce-autres button { font: 700 .9rem inherit; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--ink); background: #fff; cursor: pointer; } .ce-autres button.on { background: #1b1915; color: #fff7dc; }
