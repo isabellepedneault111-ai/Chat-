@@ -629,7 +629,7 @@ export default {
     };
 
     // Refaire le contenu de l'activité sans couper la musique (réglages changés en jouant).
-    function majCorps() { const cp = el.querySelector('.ce-corps'); if (cp) cp.innerHTML = A[act].rendre.call(A[act]); if (!raf) raf = requestAnimationFrame(boucle); }
+    function majCorps() { const cp = el.querySelector('.ce-corps'); if (!cp) return; const ouverts = [...cp.querySelectorAll('details')].map((x) => x.open); cp.innerHTML = A[act].rendre.call(A[act]); cp.querySelectorAll('details').forEach((x, i) => { if (ouverts[i] != null) x.open = ouverts[i]; }); if (!raf) raf = requestAnimationFrame(boucle); } // les volets restent ouverts ou fermés comme on les a laissés
     function rendre() {
       arreter();
       el.innerHTML = `
